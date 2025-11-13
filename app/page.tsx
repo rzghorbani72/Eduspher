@@ -32,7 +32,15 @@ export default async function Home() {
 
   const hasCatalogAccess = coursePayload !== null;
   const courses = coursePayload?.courses ?? [];
-  const primarySchool = schools?.[0];
+  const schoolMatchById = schoolContext.id
+    ? schools.find((school) => school.id === schoolContext.id)
+    : null;
+  const schoolMatchBySlug = schoolContext.slug
+    ? schools.find((school) => school.slug === schoolContext.slug)
+    : null;
+  const primarySchool = schoolMatchById ?? schoolMatchBySlug ?? schools[0] ?? null;
+  const schoolDisplayName = primarySchool?.name ?? schoolContext.name;
+  const schoolHeroLabel = primarySchool?.domain?.public_address ?? primarySchool?.domain?.private_address ?? "Premier digital campus";
 
   return (
     <div className="space-y-20">
@@ -40,7 +48,7 @@ export default async function Home() {
         <div className="space-y-6">
           <Badge variant="soft" className="w-fit">New • Winter learning festival</Badge>
           <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
-            Learn faster with {schoolContext.name}. Real mentors, real-world projects, real growth.
+            Learn faster with {schoolDisplayName}. Real mentors, real-world projects, real growth.
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
             Build job-ready skills with curated courses, guided learning paths, and support from
@@ -74,7 +82,7 @@ export default async function Home() {
         <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-sky-50 via-white to-emerald-50 p-8 shadow-xl dark:border-slate-800 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900">
           <div className="space-y-4">
             <p className="text-sm font-semibold uppercase tracking-wide text-sky-600 dark:text-sky-400">
-              {primarySchool?.name ?? "Premier digital campus"}
+              {schoolHeroLabel}
             </p>
             <p className="text-lg font-semibold text-slate-900 dark:text-white">
               Personalised learning paths matched to your ambitions.
@@ -263,7 +271,7 @@ export default async function Home() {
               href={buildPath("/auth/login")}
               className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-base font-semibold text-sky-700 shadow-lg shadow-sky-900/20 transition hover:-translate-y-0.5 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              Join EduSpher
+              Join {schoolDisplayName}
             </Link>
             <Link href={buildPath("/pricing")} className="text-sm font-semibold text-white underline">
               View pricing →
@@ -271,7 +279,7 @@ export default async function Home() {
           </div>
         </div>
         <img
-          src={buildOgImageUrl(schoolContext.name, "Flexible online learning for ambitious students")}
+          src={buildOgImageUrl(schoolDisplayName, "Flexible online learning for ambitious students")}
           alt=""
           className="pointer-events-none absolute -right-32 -top-32 hidden h-80 w-80 opacity-10 lg:block"
         />

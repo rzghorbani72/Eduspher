@@ -73,12 +73,19 @@ const extractCandidateSlug = (host?: string | null) => {
   return firstPart;
 };
 
-const matchSchool = (schools: PublicSchool[], options: { slug?: string | null; host?: string | null }) => {
+const matchSchool = (
+  schools: PublicSchool[],
+  options: { slug?: string | null; host?: string | null; id?: string | null }
+) => {
   const targetSlug = options.slug?.toLowerCase();
   const host = options.host?.toLowerCase();
-  const hostWithoutSubdomain = host?.replace(/^www\\./, "");
+  const hostWithoutSubdomain = host?.replace(/^www\./, "");
+  const targetId = options.id ? String(options.id) : null;
 
   return schools.find((school) => {
+    if (targetId && String(school.id) === targetId) {
+      return true;
+    }
     const schoolSlug = school.slug?.toLowerCase();
     if (targetSlug && schoolSlug === targetSlug) {
       return true;
@@ -137,7 +144,16 @@ export async function middleware(request: NextRequest) {
     matchedSchool = matchSchool(schools, {
       slug: candidateSlug,
       host: hostHeader ?? undefined,
+      id: numericSlugId ?? existingId,
     }) ?? null;
+  }
+
+  if (!matchedSchool && numericSlugId && schools) {
+    matchedSchool = matchSchool(schools, { id: numericSlugId }) ?? null;
+  }
+
+  if (!matchedSchool && existingId && schools) {
+    matchedSchool = matchSchool(schools, { id: existingId }) ?? null;
   }
 
   const requestHeaders = new Headers(request.headers);
@@ -167,7 +183,10 @@ export async function middleware(request: NextRequest) {
       requestHeaders.set(SCHOOL_HEADER_SLUG, existingSlug);
     }
   } else if (DEFAULT_SCHOOL_SLUG && schools) {
-    const fallback = matchSchool(schools, { slug: DEFAULT_SCHOOL_SLUG });
+    const fallback = matchSchool(schools, {
+      slug: DEFAULT_SCHOOL_SLUG,
+      id: env.defaultSchoolId ? String(env.defaultSchoolId) : null,
+    });
     if (fallback) {
       addCookie(SCHOOL_ID_COOKIE, String(fallback.id));
       if (fallback.slug) {
@@ -195,7 +214,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!cookiesToSet.some((cookie) => cookie.name === SCHOOL_NAME_COOKIE)) {
-    const matchedName = matchedSchool?.name ?? decodedExistingName ?? env.siteName;
+    const headerSchoolId = requestHeaders.get(SCHOOL_HEADER_ID);
+    const nameFromList = headerSchoolId && schools
+      ? matchSchool(schools ?? [], { id: headerSchoolId })?.name
+      : null;
+    const matchedName = matchedSchool?.name ?? nameFromList ?? decodedExistingName ?? env.siteName;
     addCookie(SCHOOL_NAME_COOKIE, encodeURIComponent(matchedName ?? env.siteName));
   }
 
