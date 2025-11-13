@@ -13,13 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSchoolContext } from "@/lib/school-context";
 
-const secondaryStats = [
-  { label: "Graduates", value: "48k" },
-  { label: "Expert Mentors", value: "320" },
-  { label: "Courses", value: "780" },
-  { label: "Average Rating", value: "4.9/5" },
-];
-
 export default async function Home() {
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
@@ -41,6 +34,13 @@ export default async function Home() {
   const primarySchool = schoolMatchById ?? schoolMatchBySlug ?? schools[0] ?? null;
   const schoolDisplayName = primarySchool?.name ?? schoolContext.name;
   const schoolHeroLabel = primarySchool?.domain?.public_address ?? primarySchool?.domain?.private_address ?? "Premier digital campus";
+  const stats = {
+    students: primarySchool?.student_count ?? null,
+    mentors: primarySchool?.mentor_count ?? null,
+    courses:
+      primarySchool?.course_count ?? coursePayload?.pagination?.total ?? null,
+    rating: primarySchool?.average_rating ?? null,
+  };
 
   return (
     <div className="space-y-20">
@@ -69,7 +69,12 @@ export default async function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-            {secondaryStats.map((stat) => (
+            {[
+              { label: "Learners", value: stats.students ? stats.students.toLocaleString() : "—" },
+              { label: "Mentors", value: stats.mentors ? stats.mentors.toLocaleString() : "—" },
+              { label: "Courses", value: stats.courses ? stats.courses.toLocaleString() : "—" },
+              { label: "Avg. Rating", value: stats.rating ? `${stats.rating.toFixed(1)}/5` : "—" },
+            ].map((stat) => (
               <div key={stat.label} className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm dark:border-slate-800 dark:bg-slate-950">
                 <p className="text-2xl font-semibold text-slate-900 dark:text-white">{stat.value}</p>
                 <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">

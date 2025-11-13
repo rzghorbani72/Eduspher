@@ -38,7 +38,8 @@ const detailItems = (course: Awaited<ReturnType<typeof getCourseById>>) => {
 
 export default async function CourseDetailPage({ params }: { params: PageParams }) {
   const { id } = await params;
-  const token = cookies().get("jwt");
+  const cookieStore = await cookies();
+  const token = cookieStore.get("jwt");
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 

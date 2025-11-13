@@ -98,6 +98,10 @@ export interface SchoolSummary {
 
 export interface SchoolDetail extends SchoolSummary {
   slug?: string;
+  student_count?: number | null;
+  mentor_count?: number | null;
+  course_count?: number | null;
+  average_rating?: number | null;
 }
 
 export interface UserProfileSummary {

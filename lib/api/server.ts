@@ -153,7 +153,14 @@ export async function getCourses(params?: {
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      return null;
+      const fallback = await serverFetch<CourseListPayload>("/courses/public", {
+        includeAuth: false,
+        query: {
+          ...params,
+          published: true,
+        },
+      }).catch(() => null);
+      return fallback?.data ?? null;
     }
     throw error;
   }
@@ -161,12 +168,14 @@ export async function getCourses(params?: {
 
 export async function getCourseById(id: string | number) {
   try {
-    const result = await serverFetch<CourseSummary>(`/courses/${id}`, {
-    });
+    const result = await serverFetch<CourseSummary>(`/courses/${id}`);
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      return null;
+      const fallback = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
+        includeAuth: false,
+      }).catch(() => null);
+      return fallback?.data ?? null;
     }
     throw error;
   }
