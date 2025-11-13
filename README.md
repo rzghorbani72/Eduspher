@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduSpher Storefront
+
+EduSpher is the end-user learning marketplace for the SkillForge platform. It is built with the Next.js App Router, server-first data loading, and modern UI patterns to deliver a marketing-friendly, SEO-aware experience for prospective students.
+
+## Features
+
+- **SEO-ready marketing site** with hero storytelling, category highlights, and blog articles powered by the backend content API.
+- **Authenticated course catalogue** that integrates with the SkillForge backend using JWT cookies and server-side requests.
+- **Dynamic course detail pages** with curriculum outlines, resource links, and related course recommendations.
+- **Account hub** that surfaces learner context from the session token and promotes continued engagement.
+- **Responsive, accessible UI** implemented with Tailwind CSS v4, reusable primitives, and sensible defaults for dark mode.
+
+## Project Structure
+
+```
+app/
+  ├── (marketing) ... landing sections
+  ├── courses/ ... catalogue & detail routes
+  ├── articles/ ... blog index & detail
+  └── auth/ ... login, register, password reset
+components/
+  ├── courses/ ... reusable course cards
+  ├── layout/ ... header & footer chrome
+  ├── providers/ ... auth context
+  └── ui/ ... button, input, badge, card primitives
+lib/
+  ├── api/ ... server/client API helpers
+  ├── auth/ ... session utilities
+  ├── env.ts ... runtime configuration
+  └── utils.ts ... formatting helpers
+```
+
+## Requirements
+
+- Node.js 18+
+- Access to the SkillForge backend (dev or staging) with CORS enabled for the frontend origin.
+
+## Environment Variables
+
+Copy `env.example.txt` to `.env.local` and adjust as needed:
+
+```
+NEXT_PUBLIC_BACKEND_ORIGIN=http://localhost:3000
+NEXT_PUBLIC_BACKEND_API_PATH=/api
+NEXT_PUBLIC_DEFAULT_SCHOOL_ID=1
+NEXT_PUBLIC_SITE_NAME=EduSpher
+NEXT_PUBLIC_SITE_DESCRIPTION=Discover flexible online learning with EduSpher.
+```
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Dev server: http://localhost:5000
+- API (default): http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open http://localhost:5000 to view the site. The application connects to the backend defined by `NEXT_PUBLIC_BACKEND_ORIGIN`. Authentication requests expect the backend to issue the `jwt` cookie.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Integrating With SkillForge Backend
 
-## Learn More
+- The frontend uses server-side `fetch` helpers (`lib/api/server.ts`) to include the JWT cookie when retrieving protected resources such as courses.
+- Client-side actions (login, register, logout) proxy directly to the backend via `fetch` with `credentials: "include"`.
+- If the backend responds with 401/403, the UI gracefully prompts users to sign in before accessing gated content.
 
-To learn more about Next.js, take a look at the following resources:
+## Development Tips
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Run the backend and frontend on separate ports (`localhost:3000` for API, `localhost:5000` for frontend) or update the env variables.
+- Tailwind v4 uses the `@import "tailwindcss"` entrypoint and `@theme` tokens defined in `app/globals.css`.
+- Use `npm run lint` to run the Next.js/ESLint checks.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use `npm run build` followed by `npm run start` for a production preview. Ensure environment variables are configured in your hosting provider before deploying.
