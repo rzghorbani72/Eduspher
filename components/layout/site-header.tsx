@@ -7,9 +7,9 @@ import { useCallback, useState, useTransition } from "react";
 import { Menu, X } from "lucide-react";
 
 import { logout } from "@/lib/api/client";
-import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
+import { useSchoolContext, useSchoolPath } from "@/components/providers/school-provider";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
@@ -22,6 +22,8 @@ const navItems = [
 export const SiteHeader = () => {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
+  const { name: schoolName } = useSchoolContext();
+  const buildPath = useSchoolPath();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -39,7 +41,7 @@ export const SiteHeader = () => {
         await logout();
         setAuthenticated(false);
         closeMobile();
-        router.push("/");
+        router.push(buildPath("/"));
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to logout");
@@ -50,12 +52,12 @@ export const SiteHeader = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/90 backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-950/80">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href={buildPath("/")} className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-lg shadow-sky-600/30">
             <span className="text-lg font-semibold">ES</span>
           </div>
           <div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-white">{env.siteName}</p>
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">{schoolName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">Learn without limits</p>
           </div>
         </Link>
@@ -63,7 +65,7 @@ export const SiteHeader = () => {
           {navItems.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={buildPath(item.href)}
               className={cn(
                 "text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
               )}
@@ -76,7 +78,7 @@ export const SiteHeader = () => {
           {isAuthenticated ? (
             <>
               <Link
-                href="/account"
+                href={buildPath("/account")}
                 className="hidden text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-white md:block"
               >
                 My Learning
@@ -94,16 +96,10 @@ export const SiteHeader = () => {
           ) : (
             <>
               <Link
-                href="/auth/login"
-                className="hidden text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-white md:block"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/auth/register"
+                href={buildPath("/auth/login")}
                 className="hidden h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400 md:inline-flex"
               >
-                Get started
+                Login / Sign up
               </Link>
             </>
           )}
@@ -137,7 +133,7 @@ export const SiteHeader = () => {
               {isAuthenticated ? (
                 <>
                   <Link
-                    href="/account"
+                    href={buildPath("/account")}
                     onClick={closeMobile}
                     className="rounded-full border border-slate-200 px-5 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
                   >
@@ -155,18 +151,11 @@ export const SiteHeader = () => {
               ) : (
                 <>
                   <Link
-                    href="/auth/login"
-                    onClick={closeMobile}
-                    className="rounded-full border border-slate-200 px-5 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/auth/register"
+                    href={buildPath("/auth/login")}
                     onClick={closeMobile}
                     className="rounded-full bg-sky-600 px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
                   >
-                    Get started
+                    Login / Sign up
                   </Link>
                 </>
               )}

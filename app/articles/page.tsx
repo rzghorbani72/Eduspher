@@ -3,9 +3,12 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { getArticles } from "@/lib/api/server";
-import { resolveAssetUrl, truncate } from "@/lib/utils";
+import { buildSchoolPath, resolveAssetUrl, truncate } from "@/lib/utils";
+import { getSchoolContext } from "@/lib/school-context";
 
 export default async function ArticlesPage() {
+  const schoolContext = await getSchoolContext();
+  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
   const articles = await getArticles().catch(() => []);
 
   if (!articles.length) {
@@ -54,7 +57,7 @@ export default async function ArticlesPage() {
                   {truncate(article.excerpt ?? article.description ?? "", 180)}
                 </p>
                 <Link
-                  href={`/articles/${article.id}`}
+                  href={buildPath(`/articles/${article.id}`)}
                   className="mt-auto inline-flex text-sm font-semibold text-sky-600 transition hover:translate-x-1 dark:text-sky-400"
                 >
                   Read article →

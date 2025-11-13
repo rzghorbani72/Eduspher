@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useSchoolPath } from "@/components/providers/school-provider";
 
 const registerSchema = z
   .object({
@@ -37,6 +38,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export const RegisterForm = () => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
+  const buildPath = useSchoolPath();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +68,7 @@ export const RegisterForm = () => {
           email: values.email || undefined,
         });
         setAuthenticated(true);
-        router.push("/courses");
+        router.push(buildPath("/courses"));
         router.refresh();
       } catch (err) {
         const message = err instanceof Error ? err.message : "Unable to create account. Try again.";

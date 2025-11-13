@@ -4,6 +4,8 @@ import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { getCourses } from "@/lib/api/server";
+import { buildSchoolPath } from "@/lib/utils";
+import { getSchoolContext } from "@/lib/school-context";
 
 type SearchParams = Promise<{
   q?: string;
@@ -32,6 +34,8 @@ const buildQueryString = (params: Record<string, string | number | undefined>) =
 };
 
 export default async function CoursesPage({ searchParams }: { searchParams: SearchParams }) {
+  const schoolContext = await getSchoolContext();
+  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
   const params = await searchParams;
   const query = params?.q ?? "";
   const page = parseNumber(params?.page) ?? 1;
@@ -121,7 +125,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                 Apply filters
               </button>
               <Link
-                href="/courses"
+                href={buildPath("/courses")}
                 className="inline-flex h-11 items-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
               >
                 Clear
@@ -136,7 +140,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
           <div className="space-y-8">
             <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
               {courses.map((course) => (
-                <CourseCard key={course.id} course={course} />
+                <CourseCard key={course.id} course={course} schoolSlug={schoolContext.slug} />
               ))}
             </div>
             {pagination && pagination.pages > 1 ? (
@@ -155,7 +159,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                   return (
                     <Link
                       key={targetPage}
-                      href={`/courses${href}`}
+                      href={`${buildPath("/courses")}${href}`}
                       className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition ${
                         isActive
                           ? "bg-sky-600 text-white shadow"
@@ -175,7 +179,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
             description="Try adjusting your filter set or explore another category."
             action={
               <Link
-                href="/courses"
+                href={buildPath("/courses")}
                 className="inline-flex h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
               >
                 Reset filters
@@ -190,13 +194,13 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
           action={
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
-                href="/auth/login"
+                href={buildPath("/auth/login")}
                 className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
               >
                 Log in
               </Link>
               <Link
-                href="/auth/register"
+                href={buildPath("/auth/login")}
                 className="inline-flex h-11 items-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
               >
                 Create account

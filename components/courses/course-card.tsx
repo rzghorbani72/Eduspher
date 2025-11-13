@@ -1,17 +1,19 @@
 import Link from "next/link";
 
 import type { CourseSummary } from "@/lib/api/types";
-import { formatCurrency, resolveAssetUrl, truncate } from "@/lib/utils";
+import { buildSchoolPath, formatCurrency, resolveAssetUrl, truncate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardMedia } from "@/components/ui/card";
 
 interface CourseCardProps {
   course: CourseSummary;
+  schoolSlug?: string | null;
 }
 
-export const CourseCard = ({ course }: CourseCardProps) => {
+export const CourseCard = ({ course, schoolSlug = null }: CourseCardProps) => {
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
   const priceLabel = course.is_free ? "Free" : formatCurrency(course.price || 0);
+  const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
 
   return (
     <Card>
@@ -35,7 +37,7 @@ export const CourseCard = ({ course }: CourseCardProps) => {
           {course.author ? <span>{course.author.display_name}</span> : null}
         </div>
         <Link
-          href={`/courses/${course.id}`}
+          href={detailHref}
           className="inline-flex items-center text-sm font-semibold text-sky-600 transition hover:translate-x-1 dark:text-sky-400"
         >
           View course →

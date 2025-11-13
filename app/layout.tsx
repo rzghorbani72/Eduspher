@@ -6,7 +6,9 @@ import "./globals.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { SchoolProvider } from "@/components/providers/school-provider";
 import { env } from "@/lib/env";
+import { getSchoolContext } from "@/lib/school-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +43,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schoolContext = await getSchoolContext();
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt");
   const isAuthenticated = Boolean(token?.value);
@@ -52,13 +55,15 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider initialAuthenticated={isAuthenticated}>
-          <div className="flex min-h-screen flex-col bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
-            <SiteHeader />
-            <main className="flex-1">
-              <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-16 md:py-20">{children}</div>
-            </main>
-            <SiteFooter />
-          </div>
+          <SchoolProvider initialValue={schoolContext}>
+            <div className="flex min-h-screen flex-col bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+              <SiteHeader />
+              <main className="flex-1">
+                <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-16 md:py-20">{children}</div>
+              </main>
+              <SiteFooter />
+            </div>
+          </SchoolProvider>
         </AuthProvider>
       </body>
     </html>

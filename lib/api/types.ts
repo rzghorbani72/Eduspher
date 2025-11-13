@@ -96,6 +96,27 @@ export interface SchoolSummary {
   cover?: MediaAsset | null;
 }
 
+export interface SchoolDetail extends SchoolSummary {
+  slug?: string;
+}
+
+export interface UserProfileSummary {
+  id: number;
+  display_name: string;
+  role: string;
+  has_password: boolean;
+  school: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+}
+
+export interface UserProfilesResponse {
+  success: boolean;
+  profiles: UserProfileSummary[];
+}
+
 export interface AuthResponse {
   message: string;
   access_token: string;

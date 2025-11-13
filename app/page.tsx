@@ -8,10 +8,10 @@ import {
   getSchoolsPublic,
 } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
-import { env } from "@/lib/env";
-import { buildOgImageUrl, resolveAssetUrl, truncate } from "@/lib/utils";
+import { buildOgImageUrl, resolveAssetUrl, truncate, buildSchoolPath } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getSchoolContext } from "@/lib/school-context";
 
 const secondaryStats = [
   { label: "Graduates", value: "48k" },
@@ -21,6 +21,8 @@ const secondaryStats = [
 ];
 
 export default async function Home() {
+  const schoolContext = await getSchoolContext();
+  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
   const [schools, categories, articles, coursePayload] = await Promise.all([
     getSchoolsPublic().catch(() => []),
     getCategories().catch(() => []),
@@ -38,7 +40,7 @@ export default async function Home() {
         <div className="space-y-6">
           <Badge variant="soft" className="w-fit">New • Winter learning festival</Badge>
           <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
-            Learn faster with {env.siteName}. Real mentors, real-world projects, real growth.
+            Learn faster with {schoolContext.name}. Real mentors, real-world projects, real growth.
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-300">
             Build job-ready skills with curated courses, guided learning paths, and support from
@@ -46,13 +48,13 @@ export default async function Home() {
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <Link
-              href="/courses"
+              href={buildPath("/courses")}
               className="inline-flex h-12 items-center justify-center rounded-full bg-sky-600 px-8 text-base font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
             >
               Browse courses
             </Link>
             <Link
-              href="/auth/register"
+              href={buildPath("/auth/login")}
               className="inline-flex h-12 items-center justify-center rounded-full border border-slate-200 px-8 text-base font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
             >
               Start for free
@@ -112,7 +114,7 @@ export default async function Home() {
           {hasCatalogAccess ? (
             <Link
               className="text-sm font-semibold text-sky-600 transition hover:text-sky-700 dark:text-sky-400"
-              href="/courses"
+              href={buildPath("/courses")}
             >
               Explore full catalogue →
             </Link>
@@ -121,7 +123,7 @@ export default async function Home() {
         {courses.length ? (
           <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard key={course.id} course={course} schoolSlug={schoolContext.slug} />
             ))}
           </div>
         ) : (
@@ -136,13 +138,13 @@ export default async function Home() {
               hasCatalogAccess ? null : (
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <Link
-                    href="/auth/login"
+                    href={buildPath("/auth/login")}
                     className="inline-flex h-11 items-center justify-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
                   >
                     Log in
                   </Link>
                   <Link
-                    href="/auth/register"
+                    href={buildPath("/auth/register")}
                     className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
                   >
                     Create account
@@ -159,7 +161,7 @@ export default async function Home() {
           <div className="flex items-center justify-between">
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-white">Top categories</h2>
             <Link
-              href="/courses?view=categories"
+              href={buildPath("/courses?view=categories")}
               className="text-sm font-semibold text-sky-600 transition hover:text-sky-700 dark:text-sky-400"
             >
               Browse by interest →
@@ -196,7 +198,7 @@ export default async function Home() {
           <div className="flex items-center justify-between">
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-white">From the journal</h2>
             <Link
-              href="/articles"
+              href={buildPath("/articles")}
               className="text-sm font-semibold text-sky-600 transition hover:text-sky-700 dark:text-sky-400"
             >
               Read all insights →
@@ -233,7 +235,7 @@ export default async function Home() {
                       {truncate(description, 140)}
                     </p>
                     <Link
-                      href={`/articles/${article.id}`}
+                      href={buildPath(`/articles/${article.id}`)}
                       className="mt-auto inline-flex text-sm font-semibold text-sky-600 transition hover:translate-x-1 dark:text-sky-400"
                     >
                       Read article →
@@ -258,18 +260,18 @@ export default async function Home() {
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <Link
-              href="/auth/register"
+              href={buildPath("/auth/login")}
               className="inline-flex h-12 items-center justify-center rounded-full bg-white px-8 text-base font-semibold text-sky-700 shadow-lg shadow-sky-900/20 transition hover:-translate-y-0.5 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Join EduSpher
             </Link>
-            <Link href="/pricing" className="text-sm font-semibold text-white underline">
+            <Link href={buildPath("/pricing")} className="text-sm font-semibold text-white underline">
               View pricing →
             </Link>
           </div>
         </div>
         <img
-          src={buildOgImageUrl("EduSpher", env.siteDescription)}
+          src={buildOgImageUrl(schoolContext.name, "Flexible online learning for ambitious students")}
           alt=""
           className="pointer-events-none absolute -right-32 -top-32 hidden h-80 w-80 opacity-10 lg:block"
         />

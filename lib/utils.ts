@@ -32,3 +32,14 @@ export const resolveAssetUrl = (path?: string | null) => {
   return `${env.backendOrigin}${normalized}`;
 };
 
+export const buildSchoolPath = (slug: string | null, path: string): string => {
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  if (!slug) {
+    return normalized === "//" ? "/" : normalized;
+  }
+  if (normalized === "/") {
+    return `/${slug}`;
+  }
+  return `/${slug}${normalized}`;
+};
+

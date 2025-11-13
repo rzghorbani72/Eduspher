@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { env } from "@/lib/env";
+import { getSchoolContext } from "@/lib/school-context";
+import { buildSchoolPath } from "@/lib/utils";
 
 const footerLinks = [
   {
@@ -32,7 +34,9 @@ const footerLinks = [
   },
 ];
 
-export const SiteFooter = () => {
+export const SiteFooter = async () => {
+  const school = await getSchoolContext();
+  const buildPath = (path: string) => buildSchoolPath(school.slug, path);
   return (
     <footer className="border-t border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-950/60">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-12 md:flex-row md:justify-between md:gap-16">
@@ -41,14 +45,14 @@ export const SiteFooter = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-lg shadow-sky-600/30">
               <span className="text-lg font-semibold">ES</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-white">{env.siteName}</p>
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">{school.name}</p>
           </div>
           <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
             {env.siteDescription} Grow your skills with curated lessons, guided paths, and
             mentoring from experts.
           </p>
           <p className="text-xs text-slate-400 dark:text-slate-600">
-            &copy; {new Date().getFullYear()} {env.siteName}. All rights reserved.
+            &copy; {new Date().getFullYear()} {school.name}. All rights reserved.
           </p>
         </div>
         <div className="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-3">
@@ -60,7 +64,7 @@ export const SiteFooter = () => {
               <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
                 {section.items.map((item) => (
                   <li key={item.label}>
-                    <Link className="hover:text-slate-900 dark:hover:text-white" href={item.href}>
+                    <Link className="hover:text-slate-900 dark:hover:text-white" href={buildPath(item.href)}>
                       {item.label}
                     </Link>
                   </li>

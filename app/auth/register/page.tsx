@@ -2,13 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { RegisterForm } from "@/components/auth/register-form";
+import { getSchoolContext } from "@/lib/school-context";
+import { buildSchoolPath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Create account",
   description: "Join EduSpher and start your personalised learning journey.",
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  const schoolContext = await getSchoolContext();
+  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
   return (
     <div className="mx-auto grid max-w-5xl gap-12 rounded-3xl border border-slate-200 bg-white px-8 py-12 shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-[1.2fr_1fr] lg:px-12 lg:py-16">
       <div className="space-y-6">
@@ -24,7 +28,7 @@ export default function RegisterPage() {
         </ul>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Already have an account?{" "}
-          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href="/auth/login">
+          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/auth/login")}>
             Sign in here
           </Link>
           .
@@ -34,11 +38,11 @@ export default function RegisterPage() {
         <RegisterForm />
         <p className="text-xs text-slate-500 dark:text-slate-400">
           By creating an account you agree to our{" "}
-          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href="/legal/terms">
+          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/legal/terms")}>
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href="/legal/privacy">
+          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/legal/privacy")}>
             Privacy Policy
           </Link>
           .

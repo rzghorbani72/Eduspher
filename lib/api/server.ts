@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers as nextHeaders } from "next/headers";
 
 import { backendApiBaseUrl, env } from "@/lib/env";
 import type {
@@ -9,7 +9,9 @@ import type {
   CategorySummary,
   CourseListPayload,
   CourseSummary,
+  SchoolDetail,
   SchoolSummary,
+  UserProfilesResponse,
 } from "@/lib/api/types";
 
 type FetchOptions = RequestInit & {
@@ -37,14 +39,36 @@ const buildHeaders = async (
   initHeaders?: HeadersInit
 ): Promise<HeadersInit> => {
   const headers = new Headers(initHeaders);
+  const headerStore = await nextHeaders();
   if (!headers.has("Accept")) {
     headers.set("Accept", "application/json");
   }
   if (!headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
+  const cookieStore = await cookies();
+  const headerSchoolId = headerStore?.get?.("x-school-id") ?? null;
+  const headerSchoolSlug = headerStore?.get?.("x-school-slug") ?? null;
+  const cookieSchoolId = cookieStore.get(env.schoolIdCookie)?.value;
+  const cookieSchoolSlug = cookieStore.get(env.schoolSlugCookie)?.value;
+  const resolvedSchoolId = headerSchoolId ?? cookieSchoolId ?? (env.defaultSchoolId ? String(env.defaultSchoolId) : null);
+  const resolvedSchoolSlug = headerSchoolSlug ?? cookieSchoolSlug ?? env.defaultSchoolSlug ?? null;
+  if (resolvedSchoolId && !headers.has("X-School-ID")) {
+    headers.set("X-School-ID", resolvedSchoolId);
+  }
+  if (resolvedSchoolSlug && !headers.has("X-School-Slug")) {
+    headers.set("X-School-Slug", resolvedSchoolSlug);
+  }
+  const proto = headerStore?.get?.("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
+  const host = headerStore?.get?.("host") ?? null;
+  if (host && !headers.has("Referer")) {
+    headers.set("Referer", `${proto}://${host}`);
+  }
+  if (host && !headers.has("Origin")) {
+    headers.set("Origin", `${proto}://${host}`);
+  }
   if (includeAuth) {
-    const token = cookies().get("jwt")?.value;
+    const token = cookieStore.get("jwt")?.value;
     if (token && !headers.has("Authorization")) {
       headers.set("Authorization", `Bearer ${token}`);
     }
@@ -52,10 +76,10 @@ const buildHeaders = async (
   return headers;
 };
 
-async function serverFetch<T>(
+const baseFetch = async (
   path: string,
   { query, includeAuth = true, ...init }: FetchOptions = {}
-): Promise<ApiEnvelope<T>> {
+) => {
   const url = buildUrl(path, query);
   const headers = await buildHeaders(includeAuth, init.headers);
   const response = await fetch(url, {
@@ -71,8 +95,24 @@ async function serverFetch<T>(
     throw new Error(message);
   }
 
+  return response;
+};
+
+async function serverFetch<T>(
+  path: string,
+  config?: FetchOptions
+): Promise<ApiEnvelope<T>> {
+  const response = await baseFetch(path, config);
   return response.json();
 }
+
+const serverFetchRaw = async <T>(
+  path: string,
+  config?: FetchOptions
+): Promise<T> => {
+  const response = await baseFetch(path, config);
+  return response.json() as Promise<T>;
+};
 
 export async function getSchoolsPublic() {
   const result = await serverFetch<SchoolSummary[]>("/schools/public", {
@@ -107,7 +147,6 @@ export async function getCourses(params?: {
   try {
     const result = await serverFetch<CourseListPayload>("/courses", {
       query: {
-        school_id: env.defaultSchoolId,
         ...params,
       },
     });
@@ -123,9 +162,6 @@ export async function getCourses(params?: {
 export async function getCourseById(id: string | number) {
   try {
     const result = await serverFetch<CourseSummary>(`/courses/${id}`, {
-      query: {
-        school_id: env.defaultSchoolId,
-      },
     });
     return result.data;
   } catch (error) {
@@ -141,5 +177,32 @@ export async function getArticleById(id: string | number) {
     includeAuth: false,
   });
   return result.data;
+}
+
+export async function getCurrentSchool() {
+  try {
+    const result = await serverFetch<SchoolDetail>("/schools/current");
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function getUserProfiles() {
+  try {
+    const result = await serverFetchRaw<UserProfilesResponse>("/auth/profiles", {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+    return result.profiles ?? [];
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      return null;
+    }
+    throw error;
+  }
 }
 

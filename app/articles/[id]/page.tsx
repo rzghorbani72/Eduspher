@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getArticleById } from "@/lib/api/server";
-import { resolveAssetUrl } from "@/lib/utils";
+import { getSchoolContext } from "@/lib/school-context";
+import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
 
 type PageParams = Promise<{
   id: string;
@@ -13,7 +14,11 @@ type PageParams = Promise<{
 
 export default async function ArticleDetailPage({ params }: { params: PageParams }) {
   const { id } = await params;
-  const article = await getArticleById(id).catch(() => null);
+  const [article, schoolContext] = await Promise.all([
+    getArticleById(id).catch(() => null),
+    getSchoolContext(),
+  ]);
+  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
   if (!article) {
     return notFound();
@@ -59,7 +64,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
       )}
       <footer className="rounded-3xl border border-slate-200 bg-slate-50 px-6 py-5 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
         Want guidance picking your next learning path?{" "}
-        <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href="/contact">
+        <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/contact")}>
           Talk to our advisors
         </Link>
         .

@@ -7,7 +7,8 @@ import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getCourseById, getCourses } from "@/lib/api/server";
-import { resolveAssetUrl } from "@/lib/utils";
+import { getSchoolContext } from "@/lib/school-context";
+import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
 
 type PageParams = Promise<{
   id: string;
@@ -38,6 +39,8 @@ const detailItems = (course: Awaited<ReturnType<typeof getCourseById>>) => {
 export default async function CourseDetailPage({ params }: { params: PageParams }) {
   const { id } = await params;
   const token = cookies().get("jwt");
+  const schoolContext = await getSchoolContext();
+  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
   const course = await getCourseById(id);
 
@@ -50,13 +53,13 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
           action={
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
-                href="/auth/login"
+                href={buildPath("/auth/login")}
                 className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
               >
                 Log in
               </Link>
               <Link
-                href="/auth/register"
+                href={buildPath("/auth/login")}
                 className="inline-flex h-11 items-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
               >
                 Create account
@@ -148,7 +151,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 ))}
               </div>
               <Link
-                href={`/checkout?course=${course.id}`}
+                href={buildPath(`/checkout?course=${course.id}`)}
                 className="inline-flex h-12 w-full items-center justify-center rounded-full bg-sky-600 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
               >
                 Enroll now
@@ -199,7 +202,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             {relatedCourses.courses
               .filter((item) => item.id !== course.id)
               .map((item) => (
-                <CourseCard key={item.id} course={item} />
+                <CourseCard key={item.id} course={item} schoolSlug={schoolContext.slug} />
               ))}
           </div>
         </section>

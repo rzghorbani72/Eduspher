@@ -12,6 +12,12 @@ type RequestOptions = {
   signal?: AbortSignal;
 };
 
+const getCookieValue = (name: string) => {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+  return match ? decodeURIComponent(match[1]) : null;
+};
+
 async function handleResponse<T>(response: Response): Promise<T> {
   const contentType = response.headers.get("Content-Type") ?? "";
   const isJson = contentType.includes("application/json");
@@ -40,13 +46,24 @@ const postJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions
 ) => {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
   const response = await fetch(`${baseUrl}${path}`, {
     method: "POST",
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
+    headers,
     body: JSON.stringify(body),
     signal: options?.signal,
   });
