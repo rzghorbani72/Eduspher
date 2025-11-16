@@ -82,6 +82,7 @@ const baseFetch = async (
 ) => {
   const url = buildUrl(path, query);
   const headers = await buildHeaders(includeAuth, init.headers);
+  console.log("url", url);
   const response = await fetch(url, {
     ...init,
     headers,

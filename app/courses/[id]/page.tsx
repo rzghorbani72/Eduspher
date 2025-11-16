@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";
+import { CourseCurriculum } from "@/components/courses/course-curriculum";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getCourseById, getCourses } from "@/lib/api/server";
@@ -44,7 +45,6 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
   const course = await getCourseById(id);
-
   if (!course) {
     if (!token?.value) {
       return (
@@ -73,10 +73,19 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     return notFound();
   }
 
-  const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/globe.svg";
-  const videoUrl = resolveAssetUrl(course.video?.url);
-  const audioUrl = resolveAssetUrl(course.audio?.url);
-  const documentUrl = resolveAssetUrl(course.document?.url);
+  const normalizedCourse = {
+    ...course,
+    access_control: undefined,
+    seasons: (course.seasons ?? []).map((season) => ({
+      ...season,
+      lessons: season.lessons ?? [],
+    })),
+  };
+
+  const coverUrl = resolveAssetUrl(normalizedCourse.cover?.url) ?? "/globe.svg";
+  const videoUrl = resolveAssetUrl(normalizedCourse.video?.url);
+  const audioUrl = resolveAssetUrl(normalizedCourse.audio?.url);
+  const documentUrl = resolveAssetUrl(normalizedCourse.document?.url);
 
   const relatedCourses = await getCourses({
     published: true,
@@ -89,21 +98,21 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
       <section className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
         <div className="space-y-6">
           <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-500">
-            {course.category ? <Badge variant="soft">{course.category.name}</Badge> : null}
-            {course.is_featured ? <Badge variant="warning">Featured</Badge> : null}
-            {course.is_certificate ? <Badge variant="success">Certificate</Badge> : null}
+            {normalizedCourse.category ? <Badge variant="soft">{normalizedCourse.category.name}</Badge> : null}
+            {normalizedCourse.is_featured ? <Badge variant="warning">Featured</Badge> : null}
+            {normalizedCourse.is_certificate ? <Badge variant="success">Certificate</Badge> : null}
           </div>
-          <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">{course.title}</h1>
-          {course.short_description ? (
+          <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">{normalizedCourse.title}</h1>
+          {normalizedCourse.short_description ? (
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {course.short_description}
+              {normalizedCourse.short_description}
             </p>
           ) : null}
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">What you will learn</h2>
-            {course.description ? (
+            {normalizedCourse.description ? (
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                {course.description}
+                {normalizedCourse.description}
               </p>
             ) : (
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
@@ -111,36 +120,14 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               </p>
             )}
           </div>
-          {course.seasons?.length ? (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Curriculum outline</h2>
-              <ol className="space-y-3">
-                {course.seasons.map((season, index) => (
-                  <li
-                    key={season.id}
-                    className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300"
-                  >
-                    <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 text-xs font-semibold text-white">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">{season.title}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Guided lessons, projects, and mentor critique aligned to this milestone.
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          ) : null}
+          <CourseCurriculum courseTitle={normalizedCourse.title} seasons={normalizedCourse.seasons ?? []} />
         </div>
         <aside className="space-y-6">
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950">
-            <img src={coverUrl} alt={course.title} className="h-56 w-full object-cover" />
+            <img src={coverUrl} alt={normalizedCourse.title} className="h-56 w-full object-cover" />
             <div className="space-y-5 p-6">
               <div className="grid gap-2 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(course).map((item) => (
+                {detailItems(normalizedCourse).map((item) => (
                   <div key={item.label} className="flex items-center justify-between">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
@@ -152,7 +139,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 ))}
               </div>
               <Link
-                href={buildPath(`/checkout?course=${course.id}`)}
+                href={buildPath(`/checkout?course=${normalizedCourse.id}`)}
                 className="inline-flex h-12 w-full items-center justify-center rounded-full bg-sky-600 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
               >
                 Enroll now
@@ -168,7 +155,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               {videoUrl ? (
                 <li>
                   <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={videoUrl}>
-                    Watch preview video →
+                    Watch course trailer →
                   </Link>
                 </li>
               ) : null}
@@ -201,7 +188,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
           <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">You might also like</h2>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {relatedCourses.courses
-              .filter((item) => item.id !== course.id)
+              .filter((item) => item.id !== normalizedCourse.id)
               .map((item) => (
                 <CourseCard key={item.id} course={item} schoolSlug={schoolContext.slug} />
               ))}

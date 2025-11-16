@@ -20,6 +20,26 @@ export interface AuthorSummary {
   display_name: string;
 }
 
+export interface LessonSummary {
+  id: number;
+  title: string;
+  description?: string | null;
+  duration?: number | null;
+  is_free?: boolean;
+  order?: number | null;
+  video?: MediaAsset | null;
+  audio?: MediaAsset | null;
+  document?: MediaAsset | null;
+}
+
+export interface SeasonSummary {
+  id: number;
+  title: string;
+  order?: number | null;
+  description?: string | null;
+  lessons?: LessonSummary[];
+}
+
 export interface CourseSummary {
   id: number;
   title: string;
@@ -36,7 +56,7 @@ export interface CourseSummary {
   author?: AuthorSummary | null;
   category?: CategorySummary | null;
   cover?: MediaAsset | null;
-  seasons?: { id: number; title: string }[];
+  seasons?: SeasonSummary[];
   video?: MediaAsset | null;
   audio?: MediaAsset | null;
   document?: MediaAsset | null;
