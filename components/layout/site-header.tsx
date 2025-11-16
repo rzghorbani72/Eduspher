@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 import { Menu, X } from "lucide-react";
 
-import { logout } from "@/lib/api/client";
+import { logout, checkAuth } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useSchoolContext, useSchoolPath } from "@/components/providers/school-provider";
@@ -28,6 +28,22 @@ export const SiteHeader = () => {
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Check authentication status on mount using server action (checks SSR cookies)
+  useEffect(() => {
+    const verifyAuth = async () => {
+      try {
+        const { isAuthenticated } = await checkAuth();
+        setAuthenticated(isAuthenticated);
+      } catch {
+        // If check fails, assume not authenticated
+        setAuthenticated(false);
+      }
+    };
+
+    verifyAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
+
   const toggleMobile = useCallback(() => {
     setMobileOpen((prev) => !prev);
   }, []);
@@ -38,13 +54,20 @@ export const SiteHeader = () => {
     setError(null);
     startTransition(async () => {
       try {
-        await logout();
-        setAuthenticated(false);
-        closeMobile();
-        router.push(buildPath("/"));
-        router.refresh();
+        const result = await logout();
+        if (result.success) {
+          setAuthenticated(false);
+          closeMobile();
+          router.push(buildPath("/"));
+          router.refresh();
+        } else {
+          setError(result.error || "Unable to logout");
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unable to logout");
+        // Fallback redirect if server action fails
+        router.push(buildPath("/"));
+        router.refresh();
       }
     });
   };

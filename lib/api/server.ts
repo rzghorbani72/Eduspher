@@ -12,6 +12,8 @@ import type {
   SchoolDetail,
   SchoolSummary,
   UserProfilesResponse,
+  EnrollmentSummary,
+  Pagination,
 } from "@/lib/api/types";
 
 type FetchOptions = RequestInit & {
@@ -92,6 +94,12 @@ const baseFetch = async (
   });
 
   if (!response.ok) {
+    // Handle 401 specifically - this will be caught by middleware for redirect
+    if (response.status === 401) {
+      const error = new Error(`Unauthorized (401): ${response.statusText}`);
+      (error as any).status = 401;
+      throw error;
+    }
     const message = `API request failed: ${response.status} ${response.statusText}`;
     throw new Error(message);
   }
@@ -202,13 +210,81 @@ export async function getCurrentSchool() {
   }
 }
 
+export async function getCurrentUser() {
+  try {
+    const result = await serverFetchRaw<{
+      status: string;
+      data: {
+        id: number;
+        email: string;
+        phone_number: string;
+        name: string;
+        country_code?: string;
+        preferred_currency?: string;
+        currentProfile: {
+          id: number;
+          schoolId: number;
+          role: string;
+          displayName: string;
+          isActive: boolean;
+          isVerified: boolean;
+        };
+        currentSchool: {
+          id: number;
+          name: string;
+          slug: string;
+          domain: string | null;
+          currency: string;
+          currency_symbol: string;
+        } | null;
+        permissions: string[];
+      };
+    }>("/auth/me");
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
 export async function getUserProfiles() {
   try {
     const result = await serverFetchRaw<UserProfilesResponse>("/auth/profiles", {
       method: "POST",
       body: JSON.stringify({}),
     });
+    console.log("profiles result", result);
     return result.profiles ?? [];
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function getEnrollments(params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  course_id?: number;
+}) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        enrollments: EnrollmentSummary[];
+        pagination: Pagination;
+      };
+    }>("/enrollments", {
+      query: {
+        ...params,
+      },
+    });
+    return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
       return null;

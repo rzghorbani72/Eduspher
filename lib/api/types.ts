@@ -179,3 +179,39 @@ export interface AuthResponse {
   }[];
 }
 
+export interface ProgressSummary {
+  id: number;
+  lesson_id: number;
+  enrollment_id: number;
+  status: string;
+  completed_at?: string | null;
+  watch_time: number;
+  last_position: number;
+  lesson?: {
+    id: number;
+    title: string;
+    season?: {
+      id: number;
+      title: string;
+      course?: {
+        id: number;
+        title: string;
+      } | null;
+    } | null;
+  } | null;
+}
+
+export interface EnrollmentSummary {
+  id: number;
+  user_id: number;
+  course_id: number;
+  profile_id: number;
+  status: string;
+  enrolled_at: string;
+  completed_at?: string | null;
+  last_accessed: string;
+  progress_percent: number;
+  course?: CourseSummary | null;
+  progress?: ProgressSummary[];
+}
+

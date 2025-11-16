@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { decodeJwt } from "jose";
 
 import { env } from "./lib/env";
 
@@ -51,6 +52,12 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "robots.txt",
   "sitemap.xml",
 ]);
+
+// Define protected routes that require authentication
+const protectedRoutes = ["/account"];
+
+// Define public routes that don't require authentication
+const publicRoutes = ["/", "/courses", "/articles", "/about", "/auth/login", "/auth/register", "/auth/forgot-password"];
 
 const extractHost = (hostHeader?: string | null) => {
   if (!hostHeader) return null;
@@ -220,6 +227,62 @@ export async function middleware(request: NextRequest) {
       : null;
     const matchedName = matchedSchool?.name ?? nameFromList ?? decodedExistingName ?? env.siteName;
     addCookie(SCHOOL_NAME_COOKIE, encodeURIComponent(matchedName ?? env.siteName));
+  }
+
+  // Determine the actual path (without school slug) for authentication checks
+  let actualPathname = requestUrl.pathname;
+  if (slugFromPath) {
+    const cleanedPathSegments = pathnameSegments.slice(1);
+    actualPathname = `/${cleanedPathSegments.join("/")}`.replace(/\/+$/, "") || "/";
+  }
+
+  // Check authentication for protected routes
+  const isProtectedRoute = protectedRoutes.some((route) => 
+    actualPathname === route || actualPathname.startsWith(`${route}/`)
+  );
+  const isPublicRoute = publicRoutes.some((route) => 
+    actualPathname === route || actualPathname.startsWith(`${route}/`)
+  );
+  const isAuthRoute = actualPathname.startsWith("/auth/");
+
+  // Get and validate the token from cookies
+  // If request/response has valid SSR cookie, assume isAuthenticated
+  const token = request.cookies.get("jwt")?.value;
+  let isAuthenticated = false;
+  
+  if (token) {
+    try {
+      // Validate the JWT token by decoding it (decodeJwt doesn't verify signature, but checks structure)
+      const payload = decodeJwt(token);
+      // Check if token has required fields and is not expired
+      const hasUserId = payload.userId && (typeof payload.userId === "number" || typeof payload.userId === "string");
+      const isExpired = payload.exp && typeof payload.exp === "number" && payload.exp < Date.now() / 1000;
+      
+      // If token is valid (has userId and not expired), assume authenticated
+      if (hasUserId && !isExpired) {
+        isAuthenticated = true;
+      }
+    } catch (error) {
+      // Token is invalid, malformed, or expired - not authenticated
+      isAuthenticated = false;
+    }
+  }
+
+  // If user is on an auth route and is already authenticated, redirect to home
+  if (isAuthRoute && isAuthenticated && (actualPathname === "/auth/login" || actualPathname === "/auth/register")) {
+    const redirectUrl = requestUrl.clone();
+    redirectUrl.pathname = slugFromPath ? `/${slugFromPath}` : "/";
+    redirectUrl.searchParams.delete("redirect");
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // If user is not authenticated and trying to access a protected route, redirect to login
+  if (!isAuthenticated && isProtectedRoute && !isPublicRoute) {
+    // Build login URL with school slug if present
+    const loginPath = slugFromPath ? `/${slugFromPath}/auth/login` : "/auth/login";
+    const loginUrl = new URL(loginPath, requestUrl);
+    loginUrl.searchParams.set("redirect", requestUrl.pathname + requestUrl.search);
+    return NextResponse.redirect(loginUrl);
   }
 
   let internalUrl: URL | null = null;

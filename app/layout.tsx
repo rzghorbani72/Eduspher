@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -9,6 +8,7 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { SchoolProvider } from "@/components/providers/school-provider";
 import { env } from "@/lib/env";
 import { getSchoolContext } from "@/lib/school-context";
+import { getSession } from "@/lib/auth/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,9 +44,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const schoolContext = await getSchoolContext();
-  const cookieStore = await cookies();
-  const token = cookieStore.get("jwt");
-  const isAuthenticated = Boolean(token?.value);
+  const session = await getSession();
+  const isAuthenticated = Boolean(session?.userId);
 
   return (
     <html lang="en" suppressHydrationWarning>

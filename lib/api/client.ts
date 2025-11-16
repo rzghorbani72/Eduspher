@@ -22,6 +22,34 @@ async function handleResponse<T>(response: Response): Promise<T> {
   const contentType = response.headers.get("Content-Type") ?? "";
   const isJson = contentType.includes("application/json");
 
+  // Handle unauthorized responses globally
+  if (response.status === 401) {
+    // In the browser, redirect to login and preserve the current path
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname + window.location.search;
+      const schoolSlug = getCookieValue(env.schoolSlugCookie);
+      const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
+      if(currentPath.includes('/login')){
+        return null as unknown as T;
+      }
+      const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
+      window.location.href = redirectUrl;
+    }
+
+    let errorMessage = "Unauthorized (401)";
+    if (isJson) {
+      try {
+        const parsed = (await response.json()) as unknown;
+        if (typeof parsed === "object" && parsed !== null && "message" in parsed) {
+          errorMessage = String((parsed as { message?: unknown }).message ?? errorMessage);
+        }
+      } catch {
+        // Ignore JSON parse errors
+      }
+    }
+    throw new Error(errorMessage);
+  }
+
   if (isJson) {
     const parsed = (await response.json()) as unknown;
     if (!response.ok) {
@@ -70,6 +98,19 @@ const postJson = async <T>(
   return handleResponse<T>(response);
 };
 
+const getJson = async <T>(path: string, options?: RequestOptions) => {
+  const headers: HeadersInit = {
+    Accept: "application/json",
+  };
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "GET",
+    credentials: "include",
+    headers,
+    signal: options?.signal,
+  });
+  return handleResponse<T>(response);
+};
+
 export type LoginPayload = {
   identifier: string;
   password: string;
@@ -78,8 +119,9 @@ export type LoginPayload = {
 };
 
 export const login = (payload: LoginPayload, options?: RequestOptions) => {
+  // Don't filter by role for public login - allow any public role (USER, STUDENT)
+  // The backend will validate the role after finding the matching profile
   return postJson<AuthResponse>("/auth/login", {
-    role: "USER",
     school_id: env.defaultSchoolId,
     ...payload,
   }, options);
@@ -109,5 +151,9 @@ export const register = (payload: RegisterPayload, options?: RequestOptions) => 
 
 export const logout = (options?: RequestOptions) => {
   return postJson<AuthResponse>("/auth/logout", {}, options);
+};
+
+export const me = (options?: RequestOptions) => {
+  return getJson<{ id?: number; status?: string; data?: unknown }>("/auth/me", options);
 };
 
