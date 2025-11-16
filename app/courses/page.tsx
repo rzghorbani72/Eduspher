@@ -49,7 +49,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
     max_price: max,
     page,
     limit: pageSize,
-    order_by: orderBy || undefined,
+    // order_by: orderBy || undefined,
     published: true,
   }).catch(() => null);
 

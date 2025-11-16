@@ -84,7 +84,7 @@ const baseFetch = async (
 ) => {
   const url = buildUrl(path, query);
   const headers = await buildHeaders(includeAuth, init.headers);
-  console.log("url", url);
+
   const response = await fetch(url, {
     ...init,
     headers,
@@ -255,7 +255,7 @@ export async function getUserProfiles() {
       method: "POST",
       body: JSON.stringify({}),
     });
-    console.log("profiles result", result);
+
     return result.profiles ?? [];
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {

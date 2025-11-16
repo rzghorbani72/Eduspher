@@ -45,6 +45,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
   const course = await getCourseById(id);
+
   if (!course) {
     if (!token?.value) {
       return (
