@@ -144,6 +144,7 @@ export async function getCourses(params?: {
   limit?: number;
   order_by?: string;
   published?: boolean;
+  is_featured?: boolean;
 }) {
   try {
     const result = await serverFetch<CourseListPayload>("/courses", {

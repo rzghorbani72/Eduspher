@@ -20,11 +20,11 @@ export default async function Home() {
     getSchoolsPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
-    getCourses({ limit: 3, published: true }).catch(() => null),
+    getCourses({ limit: 3, published: true, is_featured: true, order_by: "NEWEST" } as any).catch(() => null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
-  const courses = coursePayload?.courses ?? [];
+  const featuredCourses = coursePayload?.courses ?? [];
   const schoolMatchById = schoolContext.id
     ? schools.find((school) => school.id === schoolContext.id)
     : null;
@@ -41,6 +41,8 @@ export default async function Home() {
       primarySchool?.course_count ?? coursePayload?.pagination?.total ?? null,
     rating: primarySchool?.average_rating ?? null,
   };
+
+
 
   return (
     <div className="space-y-20">
@@ -133,9 +135,9 @@ export default async function Home() {
             </Link>
           ) : null}
         </div>
-        {courses.length ? (
+        {featuredCourses.length ? (
           <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-            {courses.map((course) => (
+            {featuredCourses.map((course) => (
               <CourseCard key={course.id} course={course} schoolSlug={schoolContext.slug} />
             ))}
           </div>
