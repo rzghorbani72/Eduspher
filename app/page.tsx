@@ -20,7 +20,7 @@ export default async function Home() {
     getSchoolsPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
-    getCourses({ limit: 3, published: true, is_featured: true, order_by: "NEWEST" } as any).catch(() => null),
+    getCourses({ limit: 3, published: true, is_featured: true} as any).catch(() => null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
