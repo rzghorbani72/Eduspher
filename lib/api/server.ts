@@ -145,6 +145,7 @@ export async function getArticles() {
 }
 
 export async function getCourses(params?: {
+  search?: string;
   title?: string;
   min_price?: number;
   max_price?: number;
@@ -153,6 +154,8 @@ export async function getCourses(params?: {
   order_by?: string;
   published?: boolean;
   is_featured?: boolean;
+  is_free?: boolean;
+  category_id?: number;
 }) {
   try {
     const result = await serverFetch<CourseListPayload>("/courses", {

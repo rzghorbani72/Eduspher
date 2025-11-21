@@ -67,6 +67,9 @@ export interface Pagination {
   limit: number;
   total: number;
   pages: number;
+  totalPages?: number;
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
 }
 
 export interface CourseListPayload {

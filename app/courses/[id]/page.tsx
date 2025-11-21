@@ -92,6 +92,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     published: true,
     limit: 3,
     order_by: "NEWEST",
+    category_id: normalizedCourse.category?.id,
   }).catch(() => null);
 
   return (
