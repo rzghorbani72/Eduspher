@@ -46,10 +46,13 @@ export const LoginForm = () => {
     startTransition(async () => {
       try {
         await login(values);
+        // Only set authenticated if login succeeds (2xx response)
         setAuthenticated(true);
         router.push(buildPath("/courses"));
         router.refresh();
       } catch (err) {
+        // Ensure user is not authenticated on error
+        setAuthenticated(false);
         const message = err instanceof Error ? err.message : "Unable to login. Try again.";
         setError(message);
       }

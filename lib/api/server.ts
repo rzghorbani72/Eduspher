@@ -293,3 +293,78 @@ export async function getEnrollments(params?: {
   }
 }
 
+export async function createPayment(data: {
+  course_id: number;
+  user_id: number;
+  profile_id: number;
+  amount: number;
+  payment_method: string;
+  status?: string;
+  gateway_id?: string;
+  coupon_code?: string;
+}) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id: number;
+        course_id: number;
+        user_id: number;
+        profile_id: number;
+        amount: number;
+        currency: string;
+        status: string;
+        payment_method: string;
+        gateway_id?: string | null;
+        coupon_code?: string | null;
+        created_at: string;
+      };
+    }>("/payments", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      throw new Error("Unauthorized. Please log in to continue.");
+    }
+    throw error;
+  }
+}
+
+export async function createEnrollment(data: {
+  course_id: number;
+  user_id: number;
+  profile_id: number;
+  payment_id?: number;
+  status?: string;
+  progress_percent?: number;
+}) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id: number;
+        course_id: number;
+        user_id: number;
+        profile_id: number;
+        status: string;
+        enrolled_at: string;
+        progress_percent: number;
+        payment_id?: number | null;
+      };
+    }>("/enrollments", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      throw new Error("Unauthorized. Please log in to continue.");
+    }
+    throw error;
+  }
+}
+

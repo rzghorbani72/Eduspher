@@ -31,11 +31,19 @@ export default async function LoginPage() {
       </div>
       <div className="flex-1 space-y-6">
         <LoginForm />
-        <div className="text-center text-sm text-slate-500 dark:text-slate-400">
-          Forgot password?{" "}
-          <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/auth/forgot-password")}>
-            Reset it here
-          </Link>
+        <div className="space-y-3 text-center text-sm">
+          <div className="text-slate-500 dark:text-slate-400">
+            Forgot password?{" "}
+            <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/auth/forgot-password")}>
+              Reset it here
+            </Link>
+          </div>
+          <div className="text-slate-500 dark:text-slate-400">
+            Don't have an account?{" "}
+            <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/auth/register")}>
+              Sign up
+            </Link>
+          </div>
         </div>
       </div>
     </div>

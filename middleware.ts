@@ -310,8 +310,23 @@ export async function middleware(request: NextRequest) {
     response.cookies.set(name, value, {
       path: "/",
       sameSite: "lax",
+      httpOnly: false, // School cookies are not httpOnly so they can be read by client
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 365, // 1 year
     });
   });
+
+  // Ensure jwt cookie from request is preserved if it exists
+  const jwtCookie = request.cookies.get("jwt");
+  if (jwtCookie) {
+    response.cookies.set("jwt", jwtCookie.value, {
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
+  }
 
   if (searchParamSlug) {
     const cleanedUrl = requestUrl.clone();

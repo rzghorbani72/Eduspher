@@ -22,50 +22,62 @@ async function handleResponse<T>(response: Response): Promise<T> {
   const contentType = response.headers.get("Content-Type") ?? "";
   const isJson = contentType.includes("application/json");
 
-  // Handle unauthorized responses globally
-  if (response.status === 401) {
-    // In the browser, redirect to login and preserve the current path
-    if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname + window.location.search;
-      const schoolSlug = getCookieValue(env.schoolSlugCookie);
-      const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
-      if(currentPath.includes('/login')){
-        return null as unknown as T;
-      }
-      const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
-      window.location.href = redirectUrl;
-    }
+  // Check if response is not in 2xx range
+  if (!response.ok) {
+    let errorMessage = response.statusText || "Request failed";
 
-    let errorMessage = "Unauthorized (401)";
     if (isJson) {
       try {
         const parsed = (await response.json()) as unknown;
-        if (typeof parsed === "object" && parsed !== null && "message" in parsed) {
-          errorMessage = String((parsed as { message?: unknown }).message ?? errorMessage);
+        if (typeof parsed === "object" && parsed !== null) {
+          // Try to extract error message from various possible fields
+          if ("message" in parsed && typeof parsed.message === "string") {
+            errorMessage = parsed.message;
+          } else if ("error" in parsed && typeof parsed.error === "string") {
+            errorMessage = parsed.error;
+          } else if ("error" in parsed && typeof parsed.error === "object" && parsed.error !== null) {
+            const errorObj = parsed.error as { message?: string };
+            if (errorObj.message) {
+              errorMessage = errorObj.message;
+            }
+          }
         }
       } catch {
-        // Ignore JSON parse errors
+        // If JSON parsing fails, use status text
+      }
+    } else {
+      try {
+        const text = await response.text();
+        if (text) {
+          errorMessage = text;
+        }
+      } catch {
+        // If text parsing fails, use status text
       }
     }
+
+    // Handle 401 specifically - don't redirect if already on login page
+    if (response.status === 401 && typeof window !== "undefined") {
+      const currentPath = window.location.pathname + window.location.search;
+      const schoolSlug = getCookieValue(env.schoolSlugCookie);
+      const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
+      if (!currentPath.includes('/login')) {
+        const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
+        window.location.href = redirectUrl;
+        return null as unknown as T;
+      }
+    }
+
     throw new Error(errorMessage);
   }
 
+  // Response is successful (2xx), parse and return
   if (isJson) {
     const parsed = (await response.json()) as unknown;
-    if (!response.ok) {
-      const message =
-        typeof parsed === "object" && parsed !== null && "message" in parsed
-          ? String((parsed as { message?: unknown }).message ?? "")
-          : response.statusText;
-      throw new Error(message || "Request failed");
-    }
     return parsed as T;
   }
 
   const text = await response.text();
-  if (!response.ok) {
-    throw new Error(text || response.statusText || "Request failed");
-  }
   return text as unknown as T;
 }
 
@@ -118,13 +130,36 @@ export type LoginPayload = {
   role?: string;
 };
 
-export const login = (payload: LoginPayload, options?: RequestOptions) => {
-  // Don't filter by role for public login - allow any public role (USER, STUDENT)
-  // The backend will validate the role after finding the matching profile
-  return postJson<AuthResponse>("/auth/login", {
-    school_id: env.defaultSchoolId,
-    ...payload,
-  }, options);
+export const login = async (payload: LoginPayload, options?: RequestOptions) => {
+  // Use API route to proxy the request and forward Set-Cookie headers
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+
+  const response = await fetch(`/api/auth/login`, {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: JSON.stringify({
+      school_id: env.defaultSchoolId,
+      ...payload,
+    }),
+    signal: options?.signal,
+  });
+
+  return handleResponse<AuthResponse>(response);
 };
 
 export type RegisterPayload = {
@@ -141,19 +176,123 @@ export type RegisterPayload = {
   location?: string;
 };
 
-export const register = (payload: RegisterPayload, options?: RequestOptions) => {
-  return postJson<AuthResponse>("/auth/register", {
-    role: "USER",
-    school_id: env.defaultSchoolId,
-    ...payload,
-  }, options);
+export const register = async (payload: RegisterPayload, options?: RequestOptions) => {
+  // Use API route to proxy the request and forward Set-Cookie headers
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+
+  const response = await fetch(`/api/auth/register`, {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: JSON.stringify({
+      role: "USER",
+      school_id: env.defaultSchoolId,
+      ...payload,
+    }),
+    signal: options?.signal,
+  });
+
+  return handleResponse<AuthResponse>(response);
 };
 
-export const logout = (options?: RequestOptions) => {
-  return postJson<AuthResponse>("/auth/logout", {}, options);
+export const logout = async (options?: RequestOptions) => {
+  // Use API route to proxy the request and forward Set-Cookie headers
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+
+  const response = await fetch(`/api/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: JSON.stringify({}),
+    signal: options?.signal,
+  });
+
+  return handleResponse<AuthResponse>(response);
 };
 
 export const me = (options?: RequestOptions) => {
   return getJson<{ id?: number; status?: string; data?: unknown }>("/auth/me", options);
+};
+
+export type SendOtpPayload = {
+  email?: string;
+  phone_number?: string;
+};
+
+export type VerifyOtpPayload = {
+  email?: string;
+  phone_number?: string;
+  otp: string;
+};
+
+export type ForgetPasswordPayload = {
+  identifier: string;
+  password: string;
+  confirmed_password: string;
+  otp: string;
+  school_id?: number;
+};
+
+export const sendEmailOtp = (email: string, type: string, options?: RequestOptions) => {
+  return postJson<{ message: string; status: string }>("/auth/otp/send-email", {
+    email,
+    type,
+  }, options);
+};
+
+export const sendPhoneOtp = (phone_number: string, type: string, options?: RequestOptions) => {
+  return postJson<{ message: string; status: string }>("/auth/otp/send-phone", {
+    phone_number,
+    type,
+  }, options);
+};
+
+export const verifyEmailOtp = (email: string, otp: string, type: string, options?: RequestOptions) => {
+  return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-email", {
+    email,
+    otp,
+  }, options);
+};
+
+export const verifyPhoneOtp = (phone_number: string, otp: string, type: string, options?: RequestOptions) => {
+  return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-phone", {
+    phone_number,
+    otp,
+  }, options);
+};
+
+export const forgetPassword = (payload: ForgetPasswordPayload, options?: RequestOptions) => {
+  return postJson<{ message: string; status: string }>("/auth/forget-password", {
+    ...payload,
+    school_id: payload.school_id || env.defaultSchoolId,
+  }, options);
 };
 
