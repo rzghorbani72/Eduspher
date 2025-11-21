@@ -41,8 +41,8 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
   const currentTitle = currentLesson?.title ?? courseTitle;
 
   return (
-    <div className="space-y-6">
-      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-black shadow-lg dark:border-slate-800">
+    <div className="space-y-5">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-lg transition-all hover:shadow-xl dark:border-slate-800">
         {currentVideoUrl ? (
           <video key={currentVideoUrl} src={currentVideoUrl} controls className="aspect-video w-full bg-black">
             Your browser does not support the video tag.
@@ -75,10 +75,10 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
               return (
                 <div
                   key={season.id}
-                  className="rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950"
+                  className="rounded-xl border border-slate-200 bg-white transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950"
                 >
                   <div className="flex items-start gap-3 border-b border-slate-200 p-4 dark:border-slate-800">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sky-600 text-sm font-semibold text-white">
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30">
                       {seasonIndex + 1}
                     </span>
                     <div>
@@ -111,13 +111,18 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
                                 })
                               }
                               className={cn(
-                                "flex w-full items-start gap-3 px-4 py-3 text-left transition",
+                                "flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-200",
                                 isActive
-                                  ? "bg-sky-50 text-slate-900 dark:bg-sky-500/10 dark:text-slate-100"
+                                  ? "bg-[var(--theme-primary)]/10 text-slate-900 dark:bg-[var(--theme-primary)]/10 dark:text-slate-100"
                                   : "bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-900"
                               )}
                             >
-                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-xs font-semibold dark:border-slate-700">
+                              <div className={cn(
+                                "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
+                                isActive
+                                  ? "border-[var(--theme-primary)] bg-[var(--theme-primary)] text-white"
+                                  : "border-slate-200 dark:border-slate-700"
+                              )}>
                                 {lessonIndex + 1}
                               </div>
                               <div className="flex flex-1 flex-col gap-1">
@@ -147,7 +152,7 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
               );
             })
         ) : (
-          <p className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
+          <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
             Lessons coming soon. Check back for new modules.
           </p>
         )}

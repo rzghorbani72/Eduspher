@@ -30,46 +30,52 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
     : "";
 
   return (
-    <div className="space-y-10">
-      <header className="space-y-4">
+    <article className="space-y-6">
+      <header className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Badge variant="soft" className="w-fit">
           {article.category?.name ?? "Learning insights"}
         </Badge>
-        <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">{article.title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+          {article.title}
+        </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           {publishedDate}
           {article.author ? ` • ${article.author.display_name}` : ""}
         </p>
       </header>
-      <div className="overflow-hidden rounded-3xl">
-        <img
-          src={imageUrl}
-          alt={article.title}
-          className="h-auto w-full rounded-3xl border border-slate-200 object-cover shadow-lg dark:border-slate-800"
-        />
+      <div className="overflow-hidden rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 shadow-lg dark:border-slate-800">
+          <img
+            src={imageUrl}
+            alt={article.title}
+            className="h-auto w-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+        </div>
       </div>
       {article.content ? (
-        <div className="prose prose-lg max-w-none text-slate-700 prose-headings:text-slate-900 dark:prose-invert dark:text-slate-100">
+        <div className="prose prose-lg max-w-none text-slate-700 prose-headings:text-slate-900 dark:prose-invert dark:text-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           <div dangerouslySetInnerHTML={{ __html: article.content }} />
         </div>
       ) : article.description ? (
-        <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
+        <p className="text-base leading-7 text-slate-600 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           {article.description}
         </p>
       ) : (
-        <EmptyState
-          title="Full article coming soon"
-          description="Our team is finalising the long-form content for this story. Check back shortly."
-        />
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+          <EmptyState
+            title="Full article coming soon"
+            description="Our team is finalising the long-form content for this story. Check back shortly."
+          />
+        </div>
       )}
-      <footer className="rounded-3xl border border-slate-200 bg-slate-50 px-6 py-5 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
+      <footer className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         Want guidance picking your next learning path?{" "}
-        <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={buildPath("/contact")}>
+        <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/contact")}>
           Talk to our advisors
         </Link>
         .
       </footer>
-    </div>
+    </article>
   );
 }
 

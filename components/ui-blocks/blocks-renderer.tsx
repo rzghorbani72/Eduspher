@@ -2,9 +2,10 @@ import { UIBlockConfig } from "@/lib/theme-config";
 import { HeroBlock } from "./hero-block";
 import { FeaturesBlock } from "./features-block";
 import { CoursesBlock } from "./courses-block";
-import { TestimonialsBlock } from "./testimonials-block";
 import { HeaderBlock } from "./header-block";
 import { FooterBlock } from "./footer-block";
+import { TestimonialsBlock } from "./testimonials-block";
+import { SidebarBlock } from "./sidebar-block";
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -20,26 +21,44 @@ export function BlocksRenderer({ blocks, schoolContext }: BlocksRendererProps) {
     return null;
   }
 
+  // Sort blocks by order to ensure correct rendering sequence
+  // Filter out invisible blocks
+  const visibleBlocks = blocks
+    .filter((block) => block.isVisible !== false)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  if (visibleBlocks.length === 0) {
+    return null;
+  }
+
   return (
     <>
-      {blocks.map((block) => {
-        if (!block.isVisible) return null;
-
-        switch (block.type) {
-          case "header":
-            return <HeaderBlock key={block.id} config={block.config} />;
-          case "hero":
-            return <HeroBlock key={block.id} config={block.config} />;
-          case "features":
-            return <FeaturesBlock key={block.id} config={block.config} />;
-          case "courses":
-            return <CoursesBlock key={block.id} config={block.config} />;
-          case "testimonials":
-            return <TestimonialsBlock key={block.id} config={block.config} />;
-          case "footer":
-            return <FooterBlock key={block.id} config={block.config} />;
-          default:
-            return null;
+      {visibleBlocks.map((block) => {
+        try {
+          switch (block.type) {
+            case "header":
+              return <HeaderBlock key={block.id} id={block.id} config={block.config} />;
+            case "hero":
+              return <HeroBlock key={block.id} id={block.id} config={block.config} schoolContext={schoolContext} />;
+            case "features":
+              return <FeaturesBlock key={block.id} id={block.id} config={block.config} />;
+            case "courses":
+              return <CoursesBlock key={block.id} id={block.id} config={block.config} schoolContext={schoolContext} />;
+            case "testimonials":
+              return <TestimonialsBlock key={block.id} id={block.id} config={block.config} />;
+            case "sidebar":
+              return <SidebarBlock key={block.id} id={block.id} config={block.config} />;
+            case "footer":
+              return <FooterBlock key={block.id} id={block.id} config={block.config} />;
+            default:
+              return null;
+          }
+        } catch (error) {
+          return (
+            <div key={block.id} className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800">Error rendering block: {block.type}</p>
+            </div>
+          );
         }
       })}
     </>

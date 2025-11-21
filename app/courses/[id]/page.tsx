@@ -96,21 +96,23 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   }).catch(() => null);
 
   return (
-    <div className="space-y-12">
-      <section className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-500">
+    <div className="space-y-6">
+      <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-5">
+          <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
             {normalizedCourse.category ? <Badge variant="soft">{normalizedCourse.category.name}</Badge> : null}
             {normalizedCourse.is_featured ? <Badge variant="warning">Featured</Badge> : null}
             {normalizedCourse.is_certificate ? <Badge variant="success">Certificate</Badge> : null}
           </div>
-          <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">{normalizedCourse.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+            {normalizedCourse.title}
+          </h1>
           {normalizedCourse.short_description ? (
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
               {normalizedCourse.short_description}
             </p>
           ) : null}
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-250">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">What you will learn</h2>
             {normalizedCourse.description ? (
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
@@ -122,15 +124,19 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               </p>
             )}
           </div>
-          <CourseCurriculum courseTitle={normalizedCourse.title} seasons={normalizedCourse.seasons ?? []} />
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+            <CourseCurriculum courseTitle={normalizedCourse.title} seasons={normalizedCourse.seasons ?? []} />
+          </div>
         </div>
-        <aside className="space-y-6">
-          <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950">
-            <img src={coverUrl} alt={normalizedCourse.title} className="h-56 w-full object-cover" />
-            <div className="space-y-5 p-6">
-              <div className="grid gap-2 text-sm text-slate-600 dark:text-slate-300">
+        <aside className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950">
+            <div className="relative overflow-hidden">
+              <img src={coverUrl} alt={normalizedCourse.title} className="h-56 w-full object-cover transition-transform duration-500 hover:scale-105" />
+            </div>
+            <div className="space-y-4 p-5">
+              <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
                 {detailItems(normalizedCourse).map((item) => (
-                  <div key={item.label} className="flex items-center justify-between">
+                  <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
                     </span>
@@ -142,35 +148,35 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               </div>
               <Link
                 href={buildPath(`/checkout?course=${normalizedCourse.id}`)}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-sky-600 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
                 Enroll now
               </Link>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
                 Includes 14-day satisfaction guarantee. Cancel anytime in your dashboard.
               </p>
             </div>
           </div>
-          <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Resources</h2>
-            <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Resources</h2>
+            <ul className="space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
               {videoUrl ? (
                 <li>
-                  <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={videoUrl}>
+                  <Link className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" href={videoUrl}>
                     Watch course trailer →
                   </Link>
                 </li>
               ) : null}
               {audioUrl ? (
                 <li>
-                  <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={audioUrl}>
+                  <Link className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" href={audioUrl}>
                     Listen to sample audio →
                   </Link>
                 </li>
               ) : null}
               {documentUrl ? (
                 <li>
-                  <Link className="font-semibold text-sky-600 hover:underline dark:text-sky-400" href={documentUrl}>
+                  <Link className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" href={documentUrl}>
                     Download syllabus PDF →
                   </Link>
                 </li>
@@ -186,13 +192,19 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
       </section>
 
       {relatedCourses?.courses?.length ? (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">You might also like</h2>
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">You might also like</h2>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {relatedCourses.courses
               .filter((item) => item.id !== normalizedCourse.id)
-              .map((item) => (
-                <CourseCard key={item.id} course={item} schoolSlug={schoolContext.slug} />
+              .map((item, index) => (
+                <div
+                  key={item.id}
+                  className="animate-in fade-in slide-in-from-bottom-4 duration-500"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <CourseCard course={item} schoolSlug={schoolContext.slug} />
+                </div>
               ))}
           </div>
         </section>

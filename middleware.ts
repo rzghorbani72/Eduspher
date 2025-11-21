@@ -334,6 +334,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(cleanedUrl);
   }
 
+  // Add pathname to headers for layout to detect home page
+  const actualPath = internalUrl ? internalUrl.pathname : requestUrl.pathname;
+  response.headers.set("x-pathname", actualPath);
+
   return response;
 }
 

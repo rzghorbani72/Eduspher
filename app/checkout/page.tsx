@@ -74,16 +74,18 @@ export default async function CheckoutPage({
   if (course.is_free) {
     // For free courses, we can enroll directly without payment
     return (
-      <div className="mx-auto max-w-4xl space-y-8 px-6 py-12">
-        <div className="space-y-4">
-          <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
+      <div className="mx-auto max-w-4xl space-y-6">
+        <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             Complete Your Enrollment
           </h1>
-          <p className="text-slate-600 dark:text-slate-300">
+          <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
             This course is free. Complete your enrollment to get started.
           </p>
         </div>
-        <CheckoutForm course={course} user={user} session={session} />
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <CheckoutForm course={course} user={user} session={session} />
+        </div>
       </div>
     );
   }
@@ -93,19 +95,19 @@ export default async function CheckoutPage({
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 px-6 py-12">
-      <div className="space-y-4">
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">
+    <div className="mx-auto max-w-4xl space-y-6">
+      <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           Complete Your Purchase
         </h1>
-        <p className="text-slate-600 dark:text-slate-300">
+        <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
           Review your order and complete your enrollment.
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
-        <div className="space-y-6">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
+        <div className="space-y-5">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
             <div className="flex gap-4">
               {course.cover?.url && (
                 <img
@@ -132,25 +134,25 @@ export default async function CheckoutPage({
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
               What's included
             </h3>
-            <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+            <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
               <li className="flex items-center gap-2">
-                <span className="text-sky-600 dark:text-sky-400">✓</span>
+                <span className="text-[var(--theme-primary)] font-bold">✓</span>
                 Lifetime access to course materials
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-sky-600 dark:text-sky-400">✓</span>
+                <span className="text-[var(--theme-primary)] font-bold">✓</span>
                 Certificate of completion {course.is_certificate ? "(included)" : "(not included)"}
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-sky-600 dark:text-sky-400">✓</span>
+                <span className="text-[var(--theme-primary)] font-bold">✓</span>
                 14-day satisfaction guarantee
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-sky-600 dark:text-sky-400">✓</span>
+                <span className="text-[var(--theme-primary)] font-bold">✓</span>
                 Cancel anytime from your dashboard
               </li>
             </ul>
@@ -158,7 +160,7 @@ export default async function CheckoutPage({
         </div>
 
         <div className="lg:sticky lg:top-6 lg:h-fit">
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
               Order Summary
             </h3>

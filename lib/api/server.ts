@@ -3,6 +3,22 @@ import "server-only";
 import { cookies, headers as nextHeaders } from "next/headers";
 
 import { backendApiBaseUrl, env } from "@/lib/env";
+
+/**
+ * Custom error class for 401 Unauthorized errors
+ * Used to trigger redirects to login in protected routes
+ */
+export class UnauthorizedError extends Error {
+  status: number;
+  redirectTo: string;
+
+  constructor(message: string, redirectTo: string = "/auth/login") {
+    super(message);
+    this.name = "UnauthorizedError";
+    this.status = 401;
+    this.redirectTo = redirectTo;
+  }
+}
 import type {
   ApiEnvelope,
   ArticleSummary,
@@ -94,11 +110,28 @@ const baseFetch = async (
   });
 
   if (!response.ok) {
-    // Handle 401 specifically - this will be caught by middleware for redirect
+    // Handle 401 specifically - only throw UnauthorizedError for account/profile endpoints
+    // Other endpoints (theme, template, courses, etc.) should fail gracefully
     if (response.status === 401) {
-      const error = new Error(`Unauthorized (401): ${response.statusText}`);
-      (error as any).status = 401;
-      throw error;
+      // Check if this is an account/profile-related endpoint
+      const isAccountOrProfileEndpoint = path.includes('/auth/me') || 
+                                         path.includes('/auth/profiles') || 
+                                         path.includes('/enrollments') ||
+                                         path.includes('/account');
+      
+      if (isAccountOrProfileEndpoint) {
+        // Get school context to build proper login path
+        const cookieStore = await cookies();
+        const headerStore = await nextHeaders();
+        const cookieSchoolSlug = cookieStore.get(env.schoolSlugCookie)?.value;
+        const headerSchoolSlug = headerStore?.get?.("x-school-slug") ?? null;
+        const schoolSlug = headerSchoolSlug ?? cookieSchoolSlug ?? env.defaultSchoolSlug ?? null;
+        
+        const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
+        
+        throw new UnauthorizedError(`Unauthorized (401): ${response.statusText}`, loginPath);
+      }
+      // For non-account/profile endpoints, just throw a regular error (no redirect)
     }
     
     // Try to extract error message from response body
@@ -404,9 +437,13 @@ export async function createEnrollment(data: {
 // Theme and UI Template functions
 export async function getSchoolThemeConfig(schoolSlug?: string) {
   try {
-    const path = schoolSlug 
-      ? `/theme/public/${schoolSlug}/config`
-      : "/theme/current/config";
+    // Theme config should always use public endpoint
+    // If no schoolSlug provided, we can't fetch theme (theme is school-specific)
+    if (!schoolSlug) {
+      return null;
+    }
+
+    const path = `/theme/public/${schoolSlug}/config`;
     const result = await serverFetchRaw<{
       message: string;
       status: string;
@@ -421,11 +458,82 @@ export async function getSchoolThemeConfig(schoolSlug?: string) {
         [key: string]: any;
       };
     }>(path, {
-      includeAuth: false,
+      includeAuth: false, // Always use public endpoint for theme config
     });
     return result.data;
   } catch (error) {
-    console.error("Failed to fetch theme config:", error);
+    // Theme config is not critical - fail gracefully without throwing
+    // Don't log 401/404 errors as they're expected in some cases
+    if (error instanceof UnauthorizedError) {
+      // Theme config should never require auth, but if it does, just return null
+      return null;
+    }
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Failed to fetch theme config:", error);
+    }
+    return null;
+  }
+}
+
+/**
+ * Get current UI template for authenticated user
+ * Uses /ui-template/current endpoint with authentication
+ */
+export async function getCurrentUITemplate() {
+  try {
+    const path = "/ui-template/current";
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id?: number;
+        school_id?: number;
+        blocks?: Array<{
+          id: string;
+          type: string;
+          order: number;
+          isVisible: boolean;
+          config?: Record<string, any>;
+        }>;
+        template_preset?: string;
+        is_active?: boolean;
+        created_at?: string;
+        updated_at?: string;
+      };
+    }>(path, {
+      includeAuth: true,
+    });
+
+    // Ensure we have valid data structure
+    if (!result || !result.data) {
+      return null;
+    }
+
+    // Return the data object with blocks sorted by order
+    const templateData = result.data;
+    if (templateData.blocks && Array.isArray(templateData.blocks)) {
+      templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
+    }
+
+    return templateData;
+  } catch (error) {
+    // Log error details for debugging but don't throw
+    // This is a non-critical feature, so we gracefully degrade
+    if (error instanceof Error) {
+      const status = (error as any).status;
+      // Only log non-401/404 errors to avoid noise
+      // 401 means not authenticated, 404 means template doesn't exist
+      if (status !== 401 && status !== 404 && !error.message.includes('401') && !error.message.includes('404')) {
+        // Log with more context in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error(
+            `Failed to fetch current UI template:`,
+            error.message
+          );
+        }
+      }
+    }
+    // Return null to allow the app to continue with default UI
     return null;
   }
 }
@@ -458,7 +566,19 @@ export async function getSchoolUITemplate(schoolSlug?: string) {
     }>(path, {
       includeAuth: false,
     });
-    return result.data;
+
+    // Ensure we have valid data structure
+    if (!result || !result.data) {
+      return null;
+    }
+
+    // Return the data object with blocks sorted by order
+    const templateData = result.data;
+    if (templateData.blocks && Array.isArray(templateData.blocks)) {
+      templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
+    }
+
+    return templateData;
   } catch (error) {
     // Log error details for debugging but don't throw
     // This is a non-critical feature, so we gracefully degrade

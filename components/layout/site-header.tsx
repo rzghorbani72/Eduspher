@@ -73,10 +73,10 @@ export const SiteHeader = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/90 backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-950/80">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href={buildPath("/")} className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-lg shadow-sky-600/30">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/90 backdrop-blur-md transition-all dark:border-slate-800/80 dark:bg-slate-950/80">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+        <Link href={buildPath("/")} className="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--theme-primary)] text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105">
             <span className="text-lg font-semibold">ES</span>
           </div>
           <div>
@@ -90,7 +90,7 @@ export const SiteHeader = () => {
               key={item.href}
               href={buildPath(item.href)}
               className={cn(
-                "text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
+                "text-sm font-medium text-slate-600 transition-all hover:text-[var(--theme-primary)] dark:text-slate-300 dark:hover:text-[var(--theme-primary)]"
               )}
             >
               {item.label}
@@ -120,7 +120,7 @@ export const SiteHeader = () => {
             <>
               <Link
                 href={buildPath("/auth/login")}
-                className="hidden h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow-lg shadow-sky-600/30 transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400 md:inline-flex"
+                className="hidden h-10 items-center rounded-full bg-[var(--theme-primary)] px-5 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] md:inline-flex"
               >
                 Login / Sign up
               </Link>
@@ -176,7 +176,7 @@ export const SiteHeader = () => {
                   <Link
                     href={buildPath("/auth/login")}
                     onClick={closeMobile}
-                    className="rounded-full bg-sky-600 px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
+                    className="rounded-full bg-[var(--theme-primary)] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)]"
                   >
                     Login / Sign up
                   </Link>

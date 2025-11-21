@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -53,9 +54,29 @@ export default async function RootLayout({
   
   const { theme, template } = await getSchoolThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
+  
+  // Check if we're on the home page
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isHomePage = pathname === "" || pathname === "/";
+  const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
+  const hasTemplateHeader = hasTemplateBlocks && template.blocks.some((b) => b.type === "header" && b.isVisible);
+  const hasTemplateFooter = hasTemplateBlocks && template.blocks.some((b) => b.type === "footer" && b.isVisible);
+  
+  // Show header/footer on all pages except home page with template blocks
+  const showHeader = !(isHomePage && hasTemplateHeader);
+  const showFooter = !(isHomePage && hasTemplateFooter);
+  const useTemplateLayout = isHomePage && hasTemplateBlocks;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html 
+      lang="en" 
+      suppressHydrationWarning
+      // Don't force dark mode - let system preference handle it
+      style={{
+        colorScheme: "light dark", // Support both, let system decide
+      } as React.CSSProperties}
+    >
       <head>
         {themeCSS && (
           <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
@@ -67,9 +88,9 @@ export default async function RootLayout({
         style={
           theme
             ? {
+                // Use backend colors as-is - no conversion
+                // System preference will determine dark/light mode via CSS media queries
                 backgroundColor: theme.background_color || undefined,
-                colorScheme: theme.dark_mode ? "dark" : "light",
-                // Apply theme colors as CSS variables for use in components
                 "--theme-primary": theme.primary_color || "#3b82f6",
                 "--theme-secondary": theme.secondary_color || "#6366f1",
                 "--theme-accent": theme.accent_color || "#f59e0b",
@@ -81,26 +102,24 @@ export default async function RootLayout({
         <AuthProvider initialAuthenticated={isAuthenticated}>
           <SchoolProvider initialValue={schoolContext}>
             <div
-              className={`flex min-h-screen flex-col ${
-                theme?.dark_mode
-                  ? "dark bg-slate-900 text-slate-100"
-                  : "bg-slate-50/70 text-slate-900"
-              }`}
+              className="flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
+              // Let CSS media query handle dark/light mode based on system preference
             >
-              {/* Conditionally render header/footer if not in template */}
-              {!template?.blocks?.some((b) => b.type === "header" && b.isVisible) && <SiteHeader />}
+              {/* Show header on all pages except home with template header */}
+              {showHeader && <SiteHeader />}
               <main className="flex-1">
-                {/* If UI template exists, let blocks handle their own layout */}
-                {/* Otherwise use default container */}
-                {template?.blocks && template.blocks.length > 0 ? (
+                {/* Home page with template: let blocks handle their own layout */}
+                {/* All other pages: use centered container with proper spacing */}
+                {useTemplateLayout ? (
                   <>{children}</>
                 ) : (
-                  <div className="mx-auto w-full max-w-6xl px-6 py-12 sm:py-16 md:py-20">
+                  <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
                     {children}
                   </div>
                 )}
               </main>
-              {!template?.blocks?.some((b) => b.type === "footer" && b.isVisible) && <SiteFooter />}
+              {/* Show footer on all pages except home with template footer */}
+              {showFooter && <SiteFooter />}
             </div>
           </SchoolProvider>
         </AuthProvider>

@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourses, getCurrentUser, getUserProfiles, getEnrollments } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, UnauthorizedError } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
@@ -39,19 +40,20 @@ export default async function AccountPage() {
     );
   }
 
-  const [userData, profilesData, recommended, enrollmentsData] = await Promise.all([
-    getCurrentUser(),
-    getUserProfiles(),
-    getCourses({
-      limit: 3,
-      published: true,
-    }).catch(() => null),
-    getEnrollments({
-      limit: 100,
-    }).catch(() => null),
-  ]);
+  try {
+    const [userData, profilesData, recommended, enrollmentsData] = await Promise.all([
+      getCurrentUser(),
+      getUserProfiles(),
+      getCourses({
+        limit: 3,
+        published: true,
+      }).catch(() => null),
+      getEnrollments({
+        limit: 100,
+      }).catch(() => null),
+    ]);
 
-  if (userData === null) {
+    if (userData === null) {
     return (
       <EmptyState
         title="Your session expired"
@@ -103,11 +105,11 @@ export default async function AccountPage() {
   const allRoles = [...new Set(profiles.map((p) => p.role))];
 
   return (
-    <div className="space-y-10">
-      <div className="space-y-4">
-        <h1 className="text-3xl font-semibold text-slate-900 dark:text-white">Your learning hub</h1>
+    <div className="space-y-6">
+      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Your learning hub</h1>
         <div className="grid gap-4 md:grid-cols-4">
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Display name</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">
               {userData.currentProfile.displayName}
@@ -116,7 +118,7 @@ export default async function AccountPage() {
               Account #{userData.id} • Profile #{userData.currentProfile.id}
             </p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-150">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Roles</p>
             <div className="flex flex-wrap gap-2 mt-2">
               {allRoles.map((role) => (
@@ -129,7 +131,7 @@ export default async function AccountPage() {
               {primaryProfile?.has_password ? "Password protected" : "Password not set"}
             </p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Bought courses</p>
             <p className="text-2xl font-semibold text-slate-900 dark:text-white">
               {enrollments.length}
@@ -138,7 +140,7 @@ export default async function AccountPage() {
               {activeEnrollments.length} active • {completedEnrollments.length} completed
             </p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-250">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">School</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">{schoolName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -148,9 +150,9 @@ export default async function AccountPage() {
         </div>
       </div>
       {/* Roles Section */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Roles</h2>
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+      <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Roles</h2>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
           <div className="mb-4">
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Your roles across all profiles and schools
@@ -199,23 +201,27 @@ export default async function AccountPage() {
 
       {/* Bought Courses Section */}
       {enrollments.length > 0 ? (
-        <section className="space-y-4">
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Bought Courses</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bought Courses</h2>
             <Link
               href={buildPath("/courses")}
-              className="text-sm font-semibold text-sky-600 transition hover:text-sky-700 dark:text-sky-400"
+              className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
             >
               Browse more →
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {enrollments.map((enrollment) => {
+            {enrollments.map((enrollment, index) => {
               if (!enrollment.course) return null;
               return (
-                <div key={enrollment.id} className="relative">
+                <div
+                  key={enrollment.id}
+                  className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
                   <CourseCard course={enrollment.course} schoolSlug={schoolContext.slug} />
-                  <div className="absolute top-2 right-2">
+                  <div className="absolute top-2 right-2 z-10">
                     <Badge variant={enrollment.status === "COMPLETED" ? "success" : "soft"}>
                       {enrollment.status}
                     </Badge>
@@ -230,15 +236,15 @@ export default async function AccountPage() {
           </div>
         </section>
       ) : (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Bought Courses</h2>
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bought Courses</h2>
           <EmptyState
             title="No courses purchased yet"
             description="Browse our course catalog and enroll in courses to start learning."
             action={
               <Link
                 href={buildPath("/courses")}
-                className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
+                className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
                 Browse Courses
               </Link>
@@ -249,11 +255,11 @@ export default async function AccountPage() {
 
       {/* Watched Courses and Videos Section */}
       {watchedLessons.length > 0 ? (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Watched Courses and Videos</h2>
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-            <div className="space-y-4">
-              {watchedLessons.map((progress) => {
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Watched Courses and Videos</h2>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+            <div className="space-y-3">
+              {watchedLessons.map((progress, index) => {
                 const course = enrollments.find((e) => e.id === progress.enrollment_id)?.course;
                 if (!course || !progress.lesson) return null;
                 
@@ -263,7 +269,8 @@ export default async function AccountPage() {
                 return (
                   <div
                     key={progress.id}
-                    className="flex items-center gap-4 rounded-2xl border border-slate-200 p-4 dark:border-slate-800"
+                    className="flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition-all hover:border-[var(--theme-primary)]/30 hover:shadow-sm dark:border-slate-800 animate-in fade-in slide-in-from-bottom-2 duration-500"
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex-1">
                       <p className="font-semibold text-slate-900 dark:text-white">
@@ -283,8 +290,8 @@ export default async function AccountPage() {
           </div>
         </section>
       ) : (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Watched Courses and Videos</h2>
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Watched Courses and Videos</h2>
           <EmptyState
             title="No videos watched yet"
             description="Start watching course videos to track your progress here."
@@ -294,19 +301,20 @@ export default async function AccountPage() {
 
       {/* Accesses Section */}
       {recentlyAccessed.length > 0 ? (
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Accesses</h2>
+        <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Accesses</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Recently accessed courses and learning materials
           </p>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {recentlyAccessed.map((enrollment) => {
+            {recentlyAccessed.map((enrollment, index) => {
               if (!enrollment.course) return null;
               return (
                 <Link
                   key={enrollment.id}
                   href={buildPath(`/courses/${enrollment.course.id}`)}
-                  className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md dark:border-slate-800 dark:bg-slate-950"
+                  className="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--theme-primary)]/30 hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="flex items-start gap-3">
                     {enrollment.course.cover?.url && (
@@ -317,7 +325,7 @@ export default async function AccountPage() {
                       />
                     )}
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-900 group-hover:text-sky-600 dark:text-white dark:group-hover:text-sky-400">
+                      <p className="font-semibold text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-white dark:group-hover:text-[var(--theme-primary)]">
                         {enrollment.course.title}
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -326,7 +334,7 @@ export default async function AccountPage() {
                       <div className="mt-2">
                         <div className="h-1.5 w-full rounded-full bg-slate-200 dark:bg-slate-800">
                           <div
-                            className="h-1.5 rounded-full bg-sky-600"
+                            className="h-1.5 rounded-full bg-[var(--theme-primary)] transition-all duration-500"
                             style={{ width: `${Math.min(enrollment.progress_percent, 100)}%` }}
                           />
                         </div>
@@ -344,5 +352,14 @@ export default async function AccountPage() {
       ) : null}
     </div>
   );
+  } catch (error) {
+    // Handle 401 Unauthorized errors by redirecting to login
+    if (error instanceof UnauthorizedError) {
+      const loginPath = error.redirectTo || buildPath("/auth/login");
+      redirect(`${loginPath}?redirect=${encodeURIComponent("/account")}`);
+    }
+    // Re-throw other errors
+    throw error;
+  }
 }
 

@@ -66,33 +66,43 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const pagination = coursePayload?.pagination;
 
   return (
-    <div className="space-y-10">
-      <div className="space-y-3">
-        <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">Course catalogue</h1>
-        <p className="max-w-2xl text-base text-slate-600 dark:text-slate-300">
+    <div className="space-y-6">
+      <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+          Course catalogue
+        </h1>
+        <p className="max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
           Browse comprehensive courses created with practitioners. Use filters to refine by category,
           format, or newest releases.
         </p>
       </div>
 
-      <CourseFilters
-        categories={categories}
-        initialQuery={query}
-        initialCategoryId={categoryId}
-        initialOrderBy={orderBy}
-        initialIsFree={isFree}
-      />
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+        <CourseFilters
+          categories={categories}
+          initialQuery={query}
+          initialCategoryId={categoryId}
+          initialOrderBy={orderBy}
+          initialIsFree={isFree}
+        />
+      </div>
 
       {hasCatalogAccess ? (
         courses.length ? (
-          <div className="space-y-8">
-            <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
-              {courses.map((course) => (
-                <CourseCard key={course.id} course={course} schoolSlug={schoolContext.slug} />
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {courses.map((course, index) => (
+                <div
+                  key={course.id}
+                  className="animate-in fade-in slide-in-from-bottom-4 duration-500"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <CourseCard course={course} schoolSlug={schoolContext.slug} />
+                </div>
               ))}
             </div>
             {pagination && (pagination.pages > 1 || (pagination.totalPages ?? 0) > 1) ? (
-              <div className="flex flex-wrap items-center justify-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
                 {pagination.hasPreviousPage && (
                   <Link
                     href={`${buildPath("/courses")}${buildQueryString({
@@ -102,7 +112,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       is_free: isFree,
                       page: page - 1,
                     })}`}
-                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     ←
                   </Link>
@@ -124,10 +134,10 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       <Link
                         key={targetPage}
                         href={`${buildPath("/courses")}${href}`}
-                        className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition ${
+                        className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition-all ${
                           isActive
-                            ? "bg-sky-600 text-white shadow"
-                            : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                            ? "bg-[var(--theme-primary)] text-white shadow-lg shadow-[var(--theme-primary)]/30 scale-105"
+                            : "border border-slate-200 bg-white text-slate-600 hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                         }`}
                       >
                         {targetPage}
@@ -144,7 +154,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       is_free: isFree,
                       page: page + 1,
                     })}`}
-                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     →
                   </Link>
@@ -159,7 +169,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
             action={
               <Link
                 href={buildPath("/courses")}
-                className="inline-flex h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
+                className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
                 Reset filters
               </Link>

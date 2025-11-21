@@ -92,9 +92,9 @@ export function CourseFilters({
   };
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
       <form
-        className="grid gap-6 md:grid-cols-[2fr_1fr_1fr] md:items-end"
+        className="grid gap-5 md:grid-cols-[2fr_1fr_1fr] md:items-end"
         onSubmit={(e) => {
           e.preventDefault();
         }}
@@ -110,6 +110,7 @@ export function CourseFilters({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by title, description..."
             disabled={isPending}
+            className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
           />
         </div>
         <div className="space-y-2">
@@ -122,7 +123,7 @@ export function CourseFilters({
             value={categoryId}
             onChange={(e) => handleCategoryChange(e.target.value)}
             disabled={isPending}
-            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
             <option value="">All categories</option>
             {categories.map((category) => (
@@ -142,7 +143,7 @@ export function CourseFilters({
             value={orderBy}
             onChange={(e) => handleOrderByChange(e.target.value)}
             disabled={isPending}
-            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
             <option value="">Newest</option>
             <option value="OLDEST">Oldest</option>
@@ -151,7 +152,7 @@ export function CourseFilters({
             <option value="UPDATED_DESC">Recently Updated</option>
           </select>
         </div>
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 border-t border-slate-100 pt-4 dark:border-slate-800">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <input
@@ -161,7 +162,7 @@ export function CourseFilters({
                 checked={isFree}
                 onChange={(e) => handleIsFreeChange(e.target.checked)}
                 disabled={isPending}
-                className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 disabled:opacity-50 dark:border-slate-600"
+                className="h-4 w-4 rounded border-slate-300 text-[var(--theme-primary)] focus:ring-[var(--theme-primary)] disabled:opacity-50 dark:border-slate-600 transition-all"
               />
               <label htmlFor="is_free" className="text-sm font-medium text-slate-700 dark:text-slate-200">
                 Free courses only
@@ -171,7 +172,7 @@ export function CourseFilters({
               type="button"
               onClick={handleClear}
               disabled={isPending}
-              className="inline-flex h-11 items-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+              className="inline-flex h-10 items-center rounded-full border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
             >
               Clear
             </button>
