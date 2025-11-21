@@ -100,8 +100,38 @@ const baseFetch = async (
       (error as any).status = 401;
       throw error;
     }
-    const message = `API request failed: ${response.status} ${response.statusText}`;
-    throw new Error(message);
+    
+    // Try to extract error message from response body
+    let errorMessage = `${response.status} ${response.statusText}`;
+    try {
+      const contentType = response.headers.get("Content-Type") ?? "";
+      if (contentType.includes("application/json")) {
+        const errorData = await response.json().catch(() => null);
+        if (errorData) {
+          if (typeof errorData === "object" && errorData !== null) {
+            if ("message" in errorData && typeof errorData.message === "string") {
+              errorMessage = errorData.message;
+            } else if ("error" in errorData) {
+              if (typeof errorData.error === "string") {
+                errorMessage = errorData.error;
+              } else if (typeof errorData.error === "object" && errorData.error !== null) {
+                const errorObj = errorData.error as { message?: string };
+                if (errorObj.message) {
+                  errorMessage = errorObj.message;
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch {
+      // If parsing fails, use default message
+    }
+    
+    const message = `API request failed: ${errorMessage}`;
+    const error = new Error(message);
+    (error as any).status = response.status;
+    throw error;
   }
 
   return response;
@@ -368,6 +398,86 @@ export async function createEnrollment(data: {
       throw new Error("Unauthorized. Please log in to continue.");
     }
     throw error;
+  }
+}
+
+// Theme and UI Template functions
+export async function getSchoolThemeConfig(schoolSlug?: string) {
+  try {
+    const path = schoolSlug 
+      ? `/theme/public/${schoolSlug}/config`
+      : "/theme/current/config";
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        themeId?: number;
+        name?: string;
+        primary_color?: string;
+        secondary_color?: string;
+        accent_color?: string;
+        background_color?: string;
+        dark_mode?: boolean;
+        [key: string]: any;
+      };
+    }>(path, {
+      includeAuth: false,
+    });
+    return result.data;
+  } catch (error) {
+    console.error("Failed to fetch theme config:", error);
+    return null;
+  }
+}
+
+export async function getSchoolUITemplate(schoolSlug?: string) {
+  try {
+    // Only use public endpoint if schoolSlug is provided
+    // Otherwise return null to avoid authentication issues
+    if (!schoolSlug) {
+      return null;
+    }
+
+    const path = `/ui-template/public/${schoolSlug}`;
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id?: number;
+        school_id?: number;
+        blocks?: Array<{
+          id: string;
+          type: string;
+          order: number;
+          isVisible: boolean;
+          config?: Record<string, any>;
+        }>;
+        template_preset?: string;
+        is_active?: boolean;
+      };
+    }>(path, {
+      includeAuth: false,
+    });
+    return result.data;
+  } catch (error) {
+    // Log error details for debugging but don't throw
+    // This is a non-critical feature, so we gracefully degrade
+    if (error instanceof Error) {
+      const status = (error as any).status;
+      // Only log non-404 errors to avoid noise
+      // 404 means school/template doesn't exist, which is acceptable
+      if (status !== 404 && !error.message.includes('404')) {
+        // Log with more context in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error(
+            `Failed to fetch UI template for school "${schoolSlug}":`,
+            error.message
+          );
+        }
+      }
+    }
+    // Return null to allow the app to continue with default UI
+    return null;
   }
 }
 

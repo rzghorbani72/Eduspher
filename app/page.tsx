@@ -12,15 +12,18 @@ import { buildOgImageUrl, resolveAssetUrl, truncate, buildSchoolPath } from "@/l
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getSchoolContext } from "@/lib/school-context";
+import { getSchoolThemeAndTemplate } from "@/lib/theme-config";
+import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
 
 export default async function Home() {
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-  const [schools, categories, articles, coursePayload] = await Promise.all([
+  const [schools, categories, articles, coursePayload, themeAndTemplate] = await Promise.all([
     getSchoolsPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
     getCourses({ limit: 3, published: true, is_featured: true} as any).catch(() => null),
+    getSchoolThemeAndTemplate().catch(() => ({ theme: null, template: null })),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
@@ -44,8 +47,19 @@ export default async function Home() {
 
 
 
+  // If we have a UI template, render blocks dynamically
+  // Otherwise, use the default static layout
+  const hasUITemplate = themeAndTemplate.template?.blocks && themeAndTemplate.template.blocks.length > 0;
+
   return (
     <div className="space-y-20">
+      {hasUITemplate && themeAndTemplate.template ? (
+        <BlocksRenderer
+          blocks={themeAndTemplate.template.blocks}
+          schoolContext={schoolContext}
+        />
+      ) : (
+        <>
       <section className="grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:items-center">
         <div className="space-y-6">
           <Badge variant="soft" className="w-fit">New • Winter learning festival</Badge>
@@ -291,6 +305,8 @@ export default async function Home() {
           className="pointer-events-none absolute -right-32 -top-32 hidden h-80 w-80 opacity-10 lg:block"
         />
       </section>
+        </>
+      )}
     </div>
   );
 }

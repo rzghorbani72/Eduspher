@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { ButtonHTMLAttributes } from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 import { cn } from "@/lib/utils";
 
@@ -10,6 +11,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
+  asChild?: boolean;
 }
 
 const baseClasses =
@@ -34,18 +36,26 @@ const sizeClasses: Record<ButtonSize, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, children, variant = "primary", size = "md", loading, disabled, ...props }, ref) => {
+  ({ className, children, variant = "primary", size = "md", loading, disabled, asChild = false, ...props }, ref) => {
     const isDisabled = loading || disabled;
+    const Comp = asChild ? Slot : "button";
+    
+    // If asChild is true, we don't want to pass disabled/aria-busy to the child component
+    // as it might be a Link or other non-button element
+    // Also, we need to exclude asChild from props to prevent it from being passed to DOM
+    const { asChild: _, ...restProps } = props;
+    const buttonProps = asChild
+      ? restProps
+      : { ...restProps, disabled: isDisabled, "aria-busy": loading };
+    
     return (
-      <button
+      <Comp
         ref={ref}
         className={cn(baseClasses, variantClasses[variant], sizeClasses[size], className)}
-        disabled={isDisabled}
-        aria-busy={loading}
-        {...props}
+        {...buttonProps}
       >
         {children}
-      </button>
+      </Comp>
     );
   }
 );
