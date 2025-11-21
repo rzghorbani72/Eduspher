@@ -137,7 +137,7 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
                 asChild
                 className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
-                <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")}>
+                <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")} className="text-white">
                   {ctaText}
                 </Link>
               </Button>
@@ -153,7 +153,7 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
                       : "border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                 >
-                  <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/about")}>
+                  <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/about")} className="text-white">
                     {config.ctaSecondary}
                   </Link>
                 </Button>
