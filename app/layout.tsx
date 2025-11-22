@@ -60,12 +60,10 @@ export default async function RootLayout({
   const pathname = headersList.get("x-pathname") || "";
   const isHomePage = pathname === "" || pathname === "/";
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
-  const hasTemplateHeader = hasTemplateBlocks && template.blocks.some((b) => b.type === "header" && b.isVisible);
-  const hasTemplateFooter = hasTemplateBlocks && template.blocks.some((b) => b.type === "footer" && b.isVisible);
   
-  // Show header/footer on all pages except home page with template blocks
-  const showHeader = !(isHomePage && hasTemplateHeader);
-  const showFooter = !(isHomePage && hasTemplateFooter);
+  // Always show header and footer on all pages (including login, register, etc.)
+  const showHeader = true;
+  const showFooter = true;
   const useTemplateLayout = isHomePage && hasTemplateBlocks;
 
   return (
@@ -105,7 +103,7 @@ export default async function RootLayout({
               className="flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
               // Let CSS media query handle dark/light mode based on system preference
             >
-              {/* Show header on all pages except home with template header */}
+              {/* Show header on all pages */}
               {showHeader && <SiteHeader />}
               <main className="flex-1">
                 {/* Home page with template: let blocks handle their own layout */}
@@ -118,7 +116,7 @@ export default async function RootLayout({
                   </div>
                 )}
               </main>
-              {/* Show footer on all pages except home with template footer */}
+              {/* Show footer on all pages */}
               {showFooter && <SiteFooter />}
             </div>
           </SchoolProvider>

@@ -252,6 +252,49 @@ textarea {
   border-color: var(--theme-primary);
 }
 
+/* Light gradient backgrounds using theme colors */
+.bg-gradient-theme-primary {
+  position: relative;
+  background: linear-gradient(135deg, 
+    var(--theme-primary),
+    var(--theme-secondary)
+  );
+}
+
+.bg-gradient-theme-primary > * {
+  position: relative;
+  z-index: 1;
+}
+
+.bg-gradient-theme-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.5)
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bg-gradient-theme-primary::before {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.15),
+      rgba(255, 255, 255, 0.1)
+    );
+  }
+}
+
+.dark .bg-gradient-theme-primary::before {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.1)
+  );
+}
+
 .bg-theme-secondary {
   background-color: var(--theme-secondary);
 }

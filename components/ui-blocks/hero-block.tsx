@@ -133,9 +133,9 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
               )}
             >
               <Button 
-                size={height === "small" ? "default" : "lg"}
+                size={height === "small" ? "md" : "lg"}
                 asChild
-                className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+                className="bg-gradient-theme-primary hover:opacity-90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40 relative"
               >
                 <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")} className="text-white">
                   {ctaText}
@@ -143,7 +143,7 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
               </Button>
               {config?.ctaSecondary && (
                 <Button 
-                  size={height === "small" ? "default" : "lg"}
+                  size={height === "small" ? "md" : "lg"}
                   variant="outline" 
                   asChild
                   className={cn(
