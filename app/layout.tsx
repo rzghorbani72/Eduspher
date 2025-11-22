@@ -61,9 +61,7 @@ export default async function RootLayout({
   const isHomePage = pathname === "" || pathname === "/";
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
-  // Always show header and footer on all pages (including login, register, etc.)
-  const showHeader = true;
-  const showFooter = true;
+  // Always show header and footer in layout for all pages
   const useTemplateLayout = isHomePage && hasTemplateBlocks;
 
   return (
@@ -103,8 +101,8 @@ export default async function RootLayout({
               className="flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
               // Let CSS media query handle dark/light mode based on system preference
             >
-              {/* Show header on all pages */}
-              {showHeader && <SiteHeader />}
+              {/* Header always rendered in layout for all pages */}
+              <SiteHeader />
               <main className="flex-1">
                 {/* Home page with template: let blocks handle their own layout */}
                 {/* All other pages: use centered container with proper spacing */}
@@ -116,8 +114,8 @@ export default async function RootLayout({
                   </div>
                 )}
               </main>
-              {/* Show footer on all pages */}
-              {showFooter && <SiteFooter />}
+              {/* Footer always rendered in layout for all pages */}
+              <SiteFooter />
             </div>
           </SchoolProvider>
         </AuthProvider>

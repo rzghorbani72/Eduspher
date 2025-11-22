@@ -2,8 +2,6 @@ import { UIBlockConfig } from "@/lib/theme-config";
 import { HeroBlock } from "./hero-block";
 import { FeaturesBlock } from "./features-block";
 import { CoursesBlock } from "./courses-block";
-import { HeaderBlock } from "./header-block";
-import { FooterBlock } from "./footer-block";
 import { TestimonialsBlock } from "./testimonials-block";
 import { SidebarBlock } from "./sidebar-block";
 
@@ -22,9 +20,9 @@ export function BlocksRenderer({ blocks, schoolContext }: BlocksRendererProps) {
   }
 
   // Sort blocks by order to ensure correct rendering sequence
-  // Filter out invisible blocks
+  // Filter out invisible blocks and header/footer blocks (they're rendered in layout)
   const visibleBlocks = blocks
-    .filter((block) => block.isVisible !== false)
+    .filter((block) => block.isVisible !== false && block.type !== "header" && block.type !== "footer")
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   if (visibleBlocks.length === 0) {
@@ -36,8 +34,6 @@ export function BlocksRenderer({ blocks, schoolContext }: BlocksRendererProps) {
       {visibleBlocks.map((block) => {
         try {
           switch (block.type) {
-            case "header":
-              return <HeaderBlock key={block.id} id={block.id} config={block.config} />;
             case "hero":
               return <HeroBlock key={block.id} id={block.id} config={block.config} schoolContext={schoolContext} />;
             case "features":
@@ -48,8 +44,10 @@ export function BlocksRenderer({ blocks, schoolContext }: BlocksRendererProps) {
               return <TestimonialsBlock key={block.id} id={block.id} config={block.config} />;
             case "sidebar":
               return <SidebarBlock key={block.id} id={block.id} config={block.config} />;
+            case "header":
             case "footer":
-              return <FooterBlock key={block.id} id={block.id} config={block.config} />;
+              // Header and footer are rendered in layout, skip them here
+              return null;
             default:
               return null;
           }
