@@ -479,9 +479,18 @@ export async function getSchoolThemeConfig(schoolSlug?: string) {
  * Get current UI template for authenticated user
  * Uses /ui-template/current endpoint with authentication
  */
+/**
+ * Get current UI template for authenticated user
+ * Uses http://localhost:3000/api/ui-template/current endpoint with authentication
+ */
 export async function getCurrentUITemplate() {
   try {
     const path = "/ui-template/current";
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[getCurrentUITemplate] Fetching from: ${path}`);
+    }
+    
     const result = await serverFetchRaw<{
       message: string;
       status: string;
@@ -506,6 +515,9 @@ export async function getCurrentUITemplate() {
 
     // Ensure we have valid data structure
     if (!result || !result.data) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[getCurrentUITemplate] No data returned from API');
+      }
       return null;
     }
 
@@ -513,6 +525,12 @@ export async function getCurrentUITemplate() {
     const templateData = result.data;
     if (templateData.blocks && Array.isArray(templateData.blocks)) {
       templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[getCurrentUITemplate] Fetched ${templateData.blocks.length} blocks:`, 
+          templateData.blocks.map(b => ({ type: b.type, order: b.order, isVisible: b.isVisible }))
+        );
+      }
     }
 
     return templateData;
@@ -521,16 +539,21 @@ export async function getCurrentUITemplate() {
     // This is a non-critical feature, so we gracefully degrade
     if (error instanceof Error) {
       const status = (error as any).status;
-      // Only log non-401/404 errors to avoid noise
+      // Log all errors in development for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.error(
+          `[getCurrentUITemplate] Error fetching UI template:`,
+          {
+            message: error.message,
+            status,
+            stack: error.stack
+          }
+        );
+      }
+      // Only log non-401/404 errors in production to avoid noise
       // 401 means not authenticated, 404 means template doesn't exist
       if (status !== 401 && status !== 404 && !error.message.includes('401') && !error.message.includes('404')) {
-        // Log with more context in development
-        if (process.env.NODE_ENV === 'development') {
-          console.error(
-            `Failed to fetch current UI template:`,
-            error.message
-          );
-        }
+        console.error(`Failed to fetch current UI template:`, error.message);
       }
     }
     // Return null to allow the app to continue with default UI

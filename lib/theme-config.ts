@@ -47,12 +47,29 @@ export async function getSchoolThemeAndTemplate() {
       themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
       templateData = authTemplateData.status === 'fulfilled' ? authTemplateData.value : null;
 
+      // Log in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[getSchoolThemeAndTemplate] Auth template fetch:', {
+          success: authTemplateData.status === 'fulfilled',
+          hasData: !!templateData,
+          blocksCount: templateData?.blocks?.length || 0
+        });
+      }
+
       // If authenticated template endpoint failed, fallback to public template endpoint
       if (!templateData && schoolContext.slug) {
-        const publicTemplateData = await Promise.allSettled([
+        const publicTemplateResult = await Promise.allSettled([
           getSchoolUITemplate(schoolContext.slug),
         ]);
-        templateData = publicTemplateData[0].status === 'fulfilled' ? publicTemplateData[0].value : null;
+        templateData = publicTemplateResult[0].status === 'fulfilled' ? publicTemplateResult[0].value : null;
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[getSchoolThemeAndTemplate] Public template fetch:', {
+            success: publicTemplateResult[0].status === 'fulfilled',
+            hasData: !!templateData,
+            blocksCount: templateData?.blocks?.length || 0
+          });
+        }
       }
     } else {
       // Not authenticated, use public endpoints

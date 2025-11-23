@@ -49,6 +49,20 @@ export default async function Home() {
   // Otherwise, use the default static layout
   const hasUITemplate = themeAndTemplate.template?.blocks && themeAndTemplate.template.blocks.length > 0;
   
+  // Log template status in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Home Page] Template status:', {
+      hasTemplate: !!themeAndTemplate.template,
+      blocksCount: themeAndTemplate.template?.blocks?.length || 0,
+      blocks: themeAndTemplate.template?.blocks?.map(b => ({
+        id: b.id,
+        type: b.type,
+        order: b.order,
+        isVisible: b.isVisible
+      }))
+    });
+  }
+  
   // If we have a UI template, render blocks directly without wrapper
   // Blocks handle their own full-width layouts (header, hero, footer)
   if (hasUITemplate && themeAndTemplate.template) {
@@ -56,6 +70,7 @@ export default async function Home() {
       <BlocksRenderer
         blocks={themeAndTemplate.template.blocks}
         schoolContext={schoolContext}
+        includeHeaderFooter={false}
       />
     );
   }
