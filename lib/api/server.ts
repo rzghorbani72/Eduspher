@@ -624,3 +624,55 @@ export async function getSchoolUITemplate(schoolSlug?: string) {
   }
 }
 
+export interface CourseQnA {
+  id: number;
+  course_id: number;
+  user_id: number;
+  profile_id: number;
+  question: string;
+  answer: string | null;
+  is_approved: boolean;
+  answered_by: number | null;
+  answered_at: string | null;
+  created_at: string;
+  updated_at: string;
+  user?: {
+    id: number;
+    name: string;
+  };
+  profile?: {
+    id: number;
+    display_name: string;
+  };
+  answerer?: {
+    id: number;
+    display_name: string;
+  } | null;
+}
+
+export async function getCourseQnAs(courseId: number) {
+  try {
+    const result = await serverFetch<CourseQnA[]>(`/courses/${courseId}/qna`, {
+      includeAuth: true,
+    });
+    return result.data ?? [];
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      return [];
+    }
+    throw error;
+  }
+}
+
+export async function createCourseQnA(courseId: number, question: string) {
+  const result = await serverFetchRaw<{
+    message: string;
+    status: string;
+    data: CourseQnA;
+  }>(`/courses/${courseId}/qna`, {
+    method: 'POST',
+    body: JSON.stringify({ question }),
+  });
+  return result.data;
+}
+

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseCurriculum } from "@/components/courses/course-curriculum";
+import { CourseQnA } from "@/components/courses/course-qna";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getCourseById, getCourses, getCurrentUser } from "@/lib/api/server";
@@ -218,6 +219,8 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
           </div>
         </aside>
       </section>
+
+      <CourseQnA courseId={normalizedCourse.id} isLoggedIn={!!user} />
 
       {relatedCourses?.courses?.length ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">

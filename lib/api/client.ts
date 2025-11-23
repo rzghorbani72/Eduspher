@@ -296,3 +296,51 @@ export const forgetPassword = (payload: ForgetPasswordPayload, options?: Request
   }, options);
 };
 
+export interface CourseQnA {
+  id: number;
+  course_id: number;
+  user_id: number;
+  profile_id: number;
+  question: string;
+  answer: string | null;
+  is_approved: boolean;
+  answered_by: number | null;
+  answered_at: string | null;
+  created_at: string;
+  updated_at: string;
+  user?: {
+    id: number;
+    name: string;
+  };
+  profile?: {
+    id: number;
+    display_name: string;
+  };
+  answerer?: {
+    id: number;
+    display_name: string;
+  } | null;
+}
+
+export const getCourseQnAs = async (courseId: number, options?: RequestOptions) => {
+  const response = await getJson<{
+    message: string;
+    status: string;
+    data: CourseQnA[];
+  }>(`/courses/${courseId}/qna`, options);
+  return response.data ?? [];
+};
+
+export const createCourseQnA = async (
+  courseId: number,
+  question: string,
+  options?: RequestOptions
+) => {
+  const response = await postJson<{
+    message: string;
+    status: string;
+    data: CourseQnA;
+  }>(`/courses/${courseId}/qna`, { question }, options);
+  return response.data;
+};
+
