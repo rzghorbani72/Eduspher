@@ -84,8 +84,6 @@ export default async function RootLayout({
         style={
           theme
             ? {
-                // Use backend colors as-is - no conversion
-                // System preference will determine dark/light mode via CSS media queries
                 backgroundColor: theme.background_color || undefined,
                 "--theme-primary": theme.primary_color || "#3b82f6",
                 "--theme-secondary": theme.secondary_color || "#6366f1",
@@ -99,13 +97,9 @@ export default async function RootLayout({
           <SchoolProvider initialValue={schoolContext}>
             <div
               className="flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
-              // Let CSS media query handle dark/light mode based on system preference
             >
-              {/* Header always rendered in layout for all pages */}
               <SiteHeader />
               <main className="flex-1">
-                {/* Home page with template: let blocks handle their own layout */}
-                {/* All other pages: use centered container with proper spacing */}
                 {useTemplateLayout ? (
                   <>{children}</>
                 ) : (
@@ -114,7 +108,6 @@ export default async function RootLayout({
                   </div>
                 )}
               </main>
-              {/* Footer always rendered in layout for all pages */}
               <SiteFooter />
             </div>
           </SchoolProvider>

@@ -7,6 +7,7 @@ import { processCheckout } from "@/app/actions/checkout";
 import type { CourseSummary } from "@/lib/api/types";
 import { useSchoolPath } from "@/components/providers/school-provider";
 import { CheckCircle, Loader2, AlertCircle } from "lucide-react";
+import { formatCurrencyWithSchool } from "@/lib/utils";
 
 interface CheckoutFormProps {
   course: CourseSummary;
@@ -21,6 +22,14 @@ interface CheckoutFormProps {
       role: string;
       displayName: string;
     };
+    currentSchool?: {
+      id: number;
+      name: string;
+      slug: string;
+      domain: string | null;
+      currency: string;
+      currency_symbol: string;
+    } | null;
   };
   session: {
     userId: number;
@@ -121,7 +130,7 @@ export function CheckoutForm({ course, user, session }: CheckoutFormProps) {
           ) : course.is_free ? (
             "Complete Enrollment"
           ) : (
-            `Complete Purchase - $${course.price.toFixed(2)}`
+            `Complete Purchase - ${formatCurrencyWithSchool(course.price, user.currentSchool || null)}`
           )}
         </Button>
 

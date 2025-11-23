@@ -4,7 +4,7 @@ import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCourseById, getCurrentUser } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
+import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 type SearchParams = Promise<{
@@ -168,14 +168,14 @@ export default async function CheckoutPage({
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-600 dark:text-slate-300">Course</span>
                 <span className="font-medium text-slate-900 dark:text-white">
-                  ${course.price.toFixed(2)}
+                  {formatCurrencyWithSchool(course.price, user?.currentSchool || null)}
                 </span>
               </div>
               {course.original_price && course.original_price > course.price && (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-slate-600 dark:text-slate-300">Original Price</span>
                   <span className="text-slate-500 line-through dark:text-slate-400">
-                    ${course.original_price.toFixed(2)}
+                    {formatCurrencyWithSchool(course.original_price, user?.currentSchool || null)}
                   </span>
                 </div>
               )}
@@ -183,7 +183,7 @@ export default async function CheckoutPage({
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-900 dark:text-white">Total</span>
                   <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                    ${course.price.toFixed(2)}
+                    {formatCurrencyWithSchool(course.price, user?.currentSchool || null)}
                   </span>
                 </div>
               </div>

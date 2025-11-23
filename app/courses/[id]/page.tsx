@@ -7,16 +7,22 @@ import { CourseCard } from "@/components/courses/course-card";
 import { CourseCurriculum } from "@/components/courses/course-curriculum";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourseById, getCourses } from "@/lib/api/server";
+import { getCourseById, getCourses, getCurrentUser } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
+import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
 
 type PageParams = Promise<{
   id: string;
 }>;
 
-const detailItems = (course: Awaited<ReturnType<typeof getCourseById>>) => {
+const detailItems = (
+  course: Awaited<ReturnType<typeof getCourseById>>,
+  school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null
+) => {
   if (!course) return [];
+  const priceDisplay = course.is_free
+    ? "Free"
+    : formatCurrencyWithSchool(course.price, school);
   return [
     {
       label: "Certificate",
@@ -28,7 +34,7 @@ const detailItems = (course: Awaited<ReturnType<typeof getCourseById>>) => {
     },
     {
       label: "Price",
-      value: course.is_free ? "Free" : `$${course.price.toFixed(2)}`,
+      value: priceDisplay,
     },
     {
       label: "Category",
@@ -44,7 +50,11 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
-  const course = await getCourseById(id);
+  const [course, user] = await Promise.all([
+    getCourseById(id),
+    getCurrentUser().catch(() => null),
+  ]);
+  const school = user?.currentSchool || null;
 
   if (!course) {
     if (!token?.value) {
@@ -135,7 +145,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(normalizedCourse).map((item) => (
+                {detailItems(normalizedCourse, school).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
