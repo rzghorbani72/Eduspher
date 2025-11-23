@@ -20,8 +20,20 @@ const detailItems = (
   school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null
 ) => {
   if (!course) return [];
+  const hasDiscount = course.original_price && course.original_price > course.price;
   const priceDisplay = course.is_free
     ? "Free"
+    : hasDiscount
+    ? (
+        <div className="flex flex-col items-end gap-1">
+          <span className="text-slate-500 line-through dark:text-slate-400">
+            {formatCurrencyWithSchool(course.original_price, school)}
+          </span>
+          <span className="text-[var(--theme-primary)] font-semibold">
+            {formatCurrencyWithSchool(course.price, school)}
+          </span>
+        </div>
+      )
     : formatCurrencyWithSchool(course.price, school);
   return [
     {
@@ -150,9 +162,15 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
                     </span>
-                    <span className="font-semibold text-slate-900 dark:text-white">
-                      {item.value}
-                    </span>
+                    {typeof item.value === 'string' ? (
+                      <span className="font-semibold text-slate-900 dark:text-white">
+                        {item.value}
+                      </span>
+                    ) : (
+                      <div className="font-semibold text-slate-900 dark:text-white">
+                        {item.value}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

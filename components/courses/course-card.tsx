@@ -12,7 +12,7 @@ interface CourseCardProps {
 
 export const CourseCard = ({ course, schoolSlug = null }: CourseCardProps) => {
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
-  const priceLabel = course.is_free ? "Free" : formatCurrency(course.price || 0);
+  const hasDiscount = course.original_price && course.original_price > course.price;
   const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
 
   return (
@@ -33,7 +33,24 @@ export const CourseCard = ({ course, schoolSlug = null }: CourseCardProps) => {
           </p>
         ) : null}
         <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm font-semibold text-slate-700 dark:border-slate-800 dark:text-slate-200">
-          <span className="text-[var(--theme-primary)]">{priceLabel}</span>
+          <div className="flex flex-col gap-1">
+            {course.is_free ? (
+              <span className="text-[var(--theme-primary)]">Free</span>
+            ) : hasDiscount ? (
+              <>
+                <span className="text-slate-500 line-through dark:text-slate-400">
+                  {formatCurrency(course.original_price || 0)}
+                </span>
+                <span className="text-[var(--theme-primary)]">
+                  {formatCurrency(course.price || 0)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[var(--theme-primary)]">
+                {formatCurrency(course.price || 0)}
+              </span>
+            )}
+          </div>
           {course.author ? <span className="text-slate-600 dark:text-slate-400">{course.author.display_name}</span> : null}
         </div>
         <Link
