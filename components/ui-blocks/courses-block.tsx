@@ -41,7 +41,6 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
   const coursePayload = await getCourses({
     limit,
     published: true,
-    is_featured: config?.featured || false,
   }).catch(() => null);
 
   const courses = coursePayload?.courses || [];
