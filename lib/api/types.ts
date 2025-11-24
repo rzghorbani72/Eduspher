@@ -109,7 +109,9 @@ export interface ArticleSummary {
 export interface SchoolSummary {
   id: number;
   name: string;
+  slug?: string;
   is_active?: boolean;
+  country_code?: string;
   domain?: {
     public_address?: string | null;
     private_address?: string | null;
@@ -132,6 +134,8 @@ export interface UserProfileSummary {
   display_name: string;
   role: string;
   has_password: boolean;
+  email_confirmed?: boolean;
+  phone_confirmed?: boolean;
   school: {
     id: number;
     name: string;

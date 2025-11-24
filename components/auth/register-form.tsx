@@ -2,17 +2,18 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Phone, Lock, CheckCircle, ArrowLeft } from "lucide-react";
+import { Mail, Phone, Lock, CheckCircle } from "lucide-react";
 
 import { 
-  register as registerUser,
+  validatePhoneAndEmail,
   sendEmailOtp,
   sendPhoneOtp,
   verifyEmailOtp,
   verifyPhoneOtp,
+  postJson,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
 import { useAuthContext } from "@/components/providers/auth-provider";
@@ -20,7 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { useSchoolPath } from "@/components/providers/school-provider";
+import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
+import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
+import { env } from "@/lib/env";
 
 const registerSchema = z
   .object({
@@ -43,29 +48,35 @@ const registerSchema = z
 
 type RegisterValues = z.infer<typeof registerSchema>;
 
-type Step = "form" | "phone-otp" | "email-otp" | "success";
+type Step = "verification" | "form";
 
-export const RegisterForm = () => {
+interface RegisterFormProps {
+  defaultCountryCode?: string;
+}
+
+export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useSchoolPath();
-  const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [step, setStep] = useState<Step>("form");
+  const [step, setStep] = useState<Step>("verification");
   const [isLoading, setIsLoading] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false);
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
   const [emailOtpSent, setEmailOtpSent] = useState(false);
   const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [validated, setValidated] = useState(false);
+  const isSubmittingRef = useRef(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     getValues,
+    setValue,
+    watch,
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -79,21 +90,29 @@ export const RegisterForm = () => {
     },
   });
 
-  const formValues = watch();
+  const getInitialCountry = () => {
+    if (defaultCountryCode) {
+      const country = getCountryByCode(defaultCountryCode);
+      if (country) return country;
+    }
+    return getDefaultCountry();
+  };
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneOtp, setPhoneOtp] = useState("");
   const [emailOtp, setEmailOtp] = useState("");
+
+  const isValidPhone = (phone: string) => {
+    const cleaned = cleanPhoneNumber(phone, selectedCountry);
+    return isValidPhoneNumber(cleaned, selectedCountry);
+  };
 
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const isValidPhone = (phone: string) => {
-    return /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
-  };
-
-  const handleSendPhoneOtp = async () => {
-    const phone = getValues("phone_number");
-    if (!phone || !isValidPhone(phone)) {
+  const handleValidatePhoneAndEmail = async () => {
+    if (!phoneNumber || !isValidPhone(phoneNumber)) {
       setError("Please enter a valid phone number first");
       return;
     }
@@ -103,7 +122,39 @@ export const RegisterForm = () => {
     setMessage(null);
 
     try {
-      await sendPhoneOtp(phone, OtpType.REGISTER_PHONE_VERIFICATION);
+      const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
+      const email = getValues("email");
+      const normalizedEmail = email && isValidEmail(email) ? email : undefined;
+      
+      await validatePhoneAndEmail(fullPhone, normalizedEmail);
+      setValidated(true);
+      setMessage("Phone and email validated successfully");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to validate phone and email";
+      setError(errorMessage);
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleSendPhoneOtp = async () => {
+    if (!validated) {
+      await handleValidatePhoneAndEmail();
+      return;
+    }
+
+    if (!phoneNumber || !isValidPhone(phoneNumber)) {
+      setError("Please enter a valid phone number first");
+      return;
+    }
+
+    setOtpLoading(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
+      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
       setPhoneOtpSent(true);
       setMessage("OTP sent to your phone number");
     } catch (err) {
@@ -125,25 +176,12 @@ export const RegisterForm = () => {
     setMessage(null);
 
     try {
-      const phone = getValues("phone_number");
-      const result = await verifyPhoneOtp(
-        phone,
-        phoneOtp,
-        OtpType.REGISTER_PHONE_VERIFICATION
-      );
+      const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
+      const result = await verifyPhoneOtp(fullPhone, phoneOtp, OtpType.REGISTER_PHONE_VERIFICATION);
       
       if (result.success !== false) {
         setPhoneOtpVerified(true);
         setMessage("Phone verified successfully");
-        
-        // If email is provided, move to email OTP step, otherwise proceed to registration
-        const email = getValues("email");
-        if (email && isValidEmail(email)) {
-          setStep("email-otp");
-        } else {
-          // No email, proceed directly to registration
-          await handleFinalRegistration();
-        }
       } else {
         setError("Invalid OTP. Please try again.");
       }
@@ -156,6 +194,11 @@ export const RegisterForm = () => {
   };
 
   const handleSendEmailOtp = async () => {
+    if (!validated) {
+      setError("Please validate phone and email first");
+      return;
+    }
+
     const email = getValues("email");
     if (!email || !isValidEmail(email)) {
       setError("Please enter a valid email address first");
@@ -195,16 +238,11 @@ export const RegisterForm = () => {
     setMessage(null);
 
     try {
-      const result = await verifyEmailOtp(
-        email as string,
-        emailOtp,
-        OtpType.REGISTER_EMAIL_VERIFICATION
-      );
+      const result = await verifyEmailOtp(email as string, emailOtp, OtpType.REGISTER_EMAIL_VERIFICATION);
       
       if (result.success !== false) {
         setEmailOtpVerified(true);
         setMessage("Email verified successfully");
-        await handleFinalRegistration();
       } else {
         setError("Invalid OTP. Please try again.");
       }
@@ -216,102 +254,111 @@ export const RegisterForm = () => {
     }
   };
 
-  const handleFinalRegistration = async () => {
-    // The user was already created in onFormSubmit
-    // The OTP verification already updated the confirmation status (phone_confirmed/email_confirmed)
-    // Registration is complete - we can proceed to login
-    setAuthenticated(true);
-    setStep("success");
-    setTimeout(() => {
-      router.push(buildPath("/courses"));
-      router.refresh();
-    }, 2000);
-  };
+  const handleVerificationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const onFormSubmit = handleSubmit(async (values) => {
-    setError(null);
-    setMessage(null);
-    
-    // Validate phone number
-    if (!isValidPhone(values.phone_number)) {
-      setError("Please enter a valid phone number");
+    if (!validated) {
+      await handleValidatePhoneAndEmail();
       return;
     }
 
-    // First, create the user account (with unconfirmed status) so we can send OTP
+    if (!phoneOtpSent) {
+      await handleSendPhoneOtp();
+      return;
+    }
+
+    if (!phoneOtpVerified) {
+      setError("Please verify your phone OTP first");
+      return;
+    }
+
+    const email = getValues("email");
+    if (email && isValidEmail(email)) {
+      if (!emailOtpSent) {
+        await handleSendEmailOtp();
+        return;
+      }
+      if (!emailOtpVerified) {
+        setError("Please verify your email OTP first");
+        return;
+      }
+    }
+
+    // All verifications complete, move to form step
+    setStep("form");
+    setError(null);
+    setMessage(null);
+  };
+
+  const onFormSubmit = handleSubmit(async (values) => {
+    if (isLoading || isSubmittingRef.current) {
+      return;
+    }
+
     setIsLoading(true);
+    isSubmittingRef.current = true;
+    setError(null);
+    setMessage(null);
+
     try {
-      // Create user first via register endpoint - this creates user with unconfirmed status
-      // This is necessary because sendPhoneOtp requires the user to exist
-      await registerUser({
-        ...values,
-        email: values.email || undefined,
-      });
+      // Ensure both OTPs are verified before allowing registration
+      if (!phoneOtpVerified) {
+        setError("Please verify phone OTP first");
+        return;
+      }
+
+      const email = values.email;
+      if (email && isValidEmail(email) && !emailOtpVerified) {
+        setError("Please verify email OTP first");
+        return;
+      }
+
+      const cleanedPhone = cleanPhoneNumber(phoneNumber, selectedCountry);
+      const fullPhone = getFullPhoneNumber(cleanedPhone, selectedCountry);
       
-      // Now that user exists, we can send OTP
-      setStep("phone-otp");
-      // Send OTP automatically
-      setOtpLoading(true);
-      try {
-        await sendPhoneOtp(values.phone_number, OtpType.REGISTER_PHONE_VERIFICATION);
-        setPhoneOtpSent(true);
-        setMessage("OTP sent to your phone number");
-      } catch (otpErr) {
-        const otpErrorMessage = otpErr instanceof Error ? otpErr.message : "Failed to send OTP";
-        setError(otpErrorMessage);
-      } finally {
-        setOtpLoading(false);
-      }
+      const getCookieValue = (name: string) => {
+        if (typeof document === "undefined") return null;
+        const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+        return match ? decodeURIComponent(match[1]) : null;
+      };
+      
+      const schoolId = getCookieValue(env.schoolIdCookie);
+      const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+      
+      const userData: any = {
+        ...values,
+        phone_number: fullPhone,
+        email: values.email || undefined,
+        phone_otp: phoneOtpVerified && phoneOtp.trim() ? phoneOtp.trim() : undefined,
+        email_otp: email && emailOtpVerified && emailOtp.trim() ? emailOtp.trim() : undefined,
+        role: "USER",
+        school_id: finalSchoolId,
+      };
+
+      await postJson("/auth/register", userData);
+      
+      setAuthenticated(true);
+      setMessage("Registration successful! Redirecting...");
+      setTimeout(() => {
+        router.push(buildPath("/courses"));
+        router.refresh();
+      }, 2000);
     } catch (err) {
-      // If user already exists or registered, that's okay - proceed to OTP
       const errorMessage = err instanceof Error ? err.message : "Unable to create account. Try again.";
-      // Check if error is about existing user - if so, proceed to OTP
-      if (errorMessage.toLowerCase().includes("already") || 
-          errorMessage.toLowerCase().includes("exists") ||
-          errorMessage.toLowerCase().includes("registered")) {
-        setStep("phone-otp");
-        // Try to send OTP anyway - user might exist
-        setOtpLoading(true);
-        try {
-          await sendPhoneOtp(values.phone_number, OtpType.REGISTER_PHONE_VERIFICATION);
-          setPhoneOtpSent(true);
-          setMessage("OTP sent to your phone number");
-        } catch (otpErr) {
-          const otpErrorMessage = otpErr instanceof Error ? otpErr.message : "Failed to send OTP";
-          setError(otpErrorMessage);
-        } finally {
-          setOtpLoading(false);
-        }
-      } else {
-        setError(errorMessage);
-      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
+      isSubmittingRef.current = false;
     }
   });
 
+  const watchedEmail = watch("email");
+  const hasEmail = watchedEmail && isValidEmail(watchedEmail);
+
   return (
     <div className="space-y-6">
-      {step === "form" && (
-        <form onSubmit={onFormSubmit} className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full name</Label>
-              <Input id="name" autoComplete="name" {...register("name")} />
-              {errors.name ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">{errors.name.message}</p>
-              ) : null}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="display_name">Display name</Label>
-              <Input id="display_name" {...register("display_name")} />
-              {errors.display_name ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">
-                  {errors.display_name.message}
-                </p>
-              ) : null}
-            </div>
-          </div>
+      {step === "verification" && (
+        <form onSubmit={handleVerificationSubmit} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="email">Email (optional)</Label>
@@ -333,17 +380,26 @@ export const RegisterForm = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone_number">Phone number</Label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Phone className="h-5 w-5 text-slate-400" />
-                </div>
-                <Input 
-                  id="phone_number" 
-                  autoComplete="tel" 
-                  {...register("phone_number")}
-                  className="pl-10"
-                />
-              </div>
+              <PhoneInput
+                id="phone_number"
+                value={phoneNumber}
+                onChange={(value) => {
+                  setPhoneNumber(value);
+                  const cleaned = cleanPhoneNumber(value, selectedCountry);
+                  const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+                  setValue("phone_number", fullPhone, { shouldValidate: true });
+                }}
+                onCountryChange={(country) => {
+                  setSelectedCountry(country);
+                  if (phoneNumber) {
+                    const cleaned = cleanPhoneNumber(phoneNumber, country);
+                    const fullPhone = getFullPhoneNumber(cleaned, country);
+                    setValue("phone_number", fullPhone, { shouldValidate: true });
+                  }
+                }}
+                defaultCountry={selectedCountry}
+                placeholder="Enter phone number"
+              />
               {errors.phone_number ? (
                 <p className="text-sm text-amber-600 dark:text-amber-400">
                   {errors.phone_number.message}
@@ -351,6 +407,154 @@ export const RegisterForm = () => {
               ) : null}
             </div>
           </div>
+
+          {!validated && (
+            <Button
+              type="button"
+              onClick={handleValidatePhoneAndEmail}
+              disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
+              className="w-full"
+            >
+              {otpLoading ? "Validating..." : "Validate Phone & Email"}
+            </Button>
+          )}
+
+          {/* Phone OTP Section */}
+          {validated && (
+            <div className="space-y-2">
+              <Label htmlFor="phoneOtp">Phone OTP</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="phoneOtp"
+                  type="text"
+                  placeholder="Enter phone OTP"
+                  value={phoneOtp}
+                  onChange={(e) => {
+                    setPhoneOtp(e.target.value);
+                    setError(null);
+                  }}
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  disabled={isLoading || otpLoading}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={handleSendPhoneOtp}
+                  disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
+                  variant="outline"
+                  className="whitespace-nowrap"
+                >
+                  {otpLoading ? "Sending..." : phoneOtpSent ? "Resend OTP" : "Send Phone OTP"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleVerifyPhoneOtp}
+                  disabled={otpLoading || !phoneOtp.trim() || phoneOtpVerified}
+                  variant="outline"
+                  className="whitespace-nowrap"
+                >
+                  {otpLoading ? "Verifying..." : phoneOtpVerified ? "✓ Verified" : "Verify Phone OTP"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Email OTP Section - Only show if email is provided and validated */}
+          {validated && hasEmail && (
+            <div className="space-y-2">
+              <Label htmlFor="emailOtp">Email OTP</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="emailOtp"
+                  type="text"
+                  placeholder="Enter email OTP"
+                  value={emailOtp}
+                  onChange={(e) => {
+                    setEmailOtp(e.target.value);
+                    setError(null);
+                  }}
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  disabled={isLoading || otpLoading}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  onClick={handleSendEmailOtp}
+                  disabled={otpLoading || !hasEmail}
+                  variant="outline"
+                  className="whitespace-nowrap"
+                >
+                  {otpLoading ? "Sending..." : emailOtpSent ? "Resend OTP" : "Send Email OTP"}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleVerifyEmailOtp}
+                  disabled={otpLoading || !emailOtp.trim() || emailOtpVerified}
+                  variant="outline"
+                  className="whitespace-nowrap"
+                >
+                  {otpLoading ? "Verifying..." : emailOtpVerified ? "✓ Verified" : "Verify Email OTP"}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {error ? (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+              {error}
+            </div>
+          ) : null}
+
+          {message && !error ? (
+            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+              {message}
+            </div>
+          ) : null}
+
+          <Button type="submit" className="w-full" disabled={isLoading || otpLoading}>
+            {isLoading || otpLoading ? "Processing..." : "Continue to Form"}
+          </Button>
+        </form>
+      )}
+
+      {step === "form" && (
+        <form onSubmit={onFormSubmit} className="space-y-6">
+          <div className="rounded-xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950/70">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
+                <CheckCircle className="h-4 w-4" />
+                Phone verified
+              </div>
+              {emailOtpVerified && (
+                <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
+                  <CheckCircle className="h-4 w-4" />
+                  Email verified
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full name</Label>
+              <Input id="name" autoComplete="name" {...register("name")} />
+              {errors.name ? (
+                <p className="text-sm text-amber-600 dark:text-amber-400">{errors.name.message}</p>
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="display_name">Display name</Label>
+              <Input id="display_name" {...register("display_name")} />
+              {errors.display_name ? (
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  {errors.display_name.message}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -391,6 +595,7 @@ export const RegisterForm = () => {
               ) : null}
             </div>
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="bio">Bio (optional)</Label>
             <Textarea id="bio" rows={3} {...register("bio")} />
@@ -398,151 +603,34 @@ export const RegisterForm = () => {
               <p className="text-sm text-amber-600 dark:text-amber-400">{errors.bio.message}</p>
             ) : null}
           </div>
+
           {error ? (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
               {error}
             </div>
           ) : null}
-          <Button type="submit" className="w-full" loading={pending || otpLoading || isLoading}>
-            {pending || otpLoading || isLoading ? "Processing..." : "Continue to Verification"}
-          </Button>
+
+          {message && !error ? (
+            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+              {message}
+            </div>
+          ) : null}
+
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setStep("verification")}
+              className="flex-1"
+            >
+              Back to Verification
+            </Button>
+            <Button type="submit" className="flex-1" disabled={isLoading} loading={isLoading}>
+              {isLoading ? "Registering..." : "Register"}
+            </Button>
+          </div>
         </form>
-      )}
-
-      {step === "phone-otp" && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="phone_otp">Phone Verification Code</Label>
-            <Input
-              id="phone_otp"
-              type="text"
-              placeholder="Enter 6-digit code"
-              value={phoneOtp}
-              onChange={(e) => {
-                setPhoneOtp(e.target.value);
-                setError(null);
-              }}
-              maxLength={6}
-              autoComplete="one-time-code"
-            />
-            {!phoneOtpSent && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleSendPhoneOtp}
-                disabled={otpLoading}
-                className="w-full"
-                loading={otpLoading}
-              >
-                {otpLoading ? "Sending..." : "Send OTP"}
-              </Button>
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setStep("form")}
-              className="flex-1"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            <Button
-              type="button"
-              onClick={handleVerifyPhoneOtp}
-              disabled={otpLoading || !phoneOtp.trim()}
-              className="flex-1"
-              loading={otpLoading}
-            >
-              {otpLoading ? "Verifying..." : "Verify Phone"}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {step === "email-otp" && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email_otp">Email Verification Code</Label>
-            <Input
-              id="email_otp"
-              type="text"
-              placeholder="Enter 6-digit code"
-              value={emailOtp}
-              onChange={(e) => {
-                setEmailOtp(e.target.value);
-                setError(null);
-              }}
-              maxLength={6}
-              autoComplete="one-time-code"
-            />
-            {!emailOtpSent && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleSendEmailOtp}
-                disabled={otpLoading}
-                className="w-full"
-                loading={otpLoading}
-              >
-                {otpLoading ? "Sending..." : "Send OTP"}
-              </Button>
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setStep("phone-otp")}
-              className="flex-1"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            <Button
-              type="button"
-              onClick={handleVerifyEmailOtp}
-              disabled={otpLoading || !emailOtp.trim()}
-              className="flex-1"
-              loading={otpLoading}
-            >
-              {otpLoading ? "Verifying..." : "Verify Email"}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {step === "success" && (
-        <div className="space-y-4 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
-            <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Account Created Successfully!
-            </h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-              Redirecting you to your dashboard...
-            </p>
-          </div>
-        </div>
-      )}
-
-      {error && step !== "form" && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-          {error}
-        </div>
-      )}
-
-      {message && !error && (
-        <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-          {message}
-        </div>
       )}
     </div>
   );
 };
-

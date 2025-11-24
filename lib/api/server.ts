@@ -276,6 +276,19 @@ export async function getCurrentSchool() {
   }
 }
 
+export async function getSchoolBySlug(slug: string): Promise<SchoolSummary | null> {
+  try {
+    const result = await serverFetchRaw<{ status: string; data: SchoolSummary[] }>("/schools/public", {
+      includeAuth: false,
+    });
+    const schools = result.data || [];
+    const school = schools.find((s) => s.slug === slug);
+    return school || null;
+  } catch (error) {
+    return null;
+  }
+}
+
 export async function getCurrentUser() {
   try {
     const result = await serverFetchRaw<{

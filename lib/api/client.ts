@@ -81,7 +81,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
   return text as unknown as T;
 }
 
-const postJson = async <T>(
+export const postJson = async <T>(
   path: string,
   body: Record<string, unknown>,
   options?: RequestOptions
@@ -131,35 +131,13 @@ export type LoginPayload = {
 };
 
 export const login = async (payload: LoginPayload, options?: RequestOptions) => {
-  // Use API route to proxy the request and forward Set-Cookie headers
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  
   const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
-  }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
-  }
-
-  const response = await fetch(`/api/auth/login`, {
-    method: "POST",
-    credentials: "include",
-    headers,
-    body: JSON.stringify({
-      school_id: env.defaultSchoolId,
-      ...payload,
-    }),
-    signal: options?.signal,
-  });
-
-  return handleResponse<AuthResponse>(response);
+  const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+  
+  return postJson<AuthResponse>("/auth/login", {
+    ...payload,
+    school_id: finalSchoolId,
+  }, options);
 };
 
 export type RegisterPayload = {
@@ -177,65 +155,18 @@ export type RegisterPayload = {
 };
 
 export const register = async (payload: RegisterPayload, options?: RequestOptions) => {
-  // Use API route to proxy the request and forward Set-Cookie headers
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  
   const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
-  }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
-  }
-
-  const response = await fetch(`/api/auth/register`, {
-    method: "POST",
-    credentials: "include",
-    headers,
-    body: JSON.stringify({
-      role: "USER",
-      school_id: env.defaultSchoolId,
-      ...payload,
-    }),
-    signal: options?.signal,
-  });
-
-  return handleResponse<AuthResponse>(response);
+  const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+  
+  return postJson<AuthResponse>("/auth/register", {
+    role: "USER",
+    school_id: finalSchoolId,
+    ...payload,
+  }, options);
 };
 
 export const logout = async (options?: RequestOptions) => {
-  // Use API route to proxy the request and forward Set-Cookie headers
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
-  }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
-  }
-
-  const response = await fetch(`/api/auth/logout`, {
-    method: "POST",
-    credentials: "include",
-    headers,
-    body: JSON.stringify({}),
-    signal: options?.signal,
-  });
-
-  return handleResponse<AuthResponse>(response);
+  return postJson<AuthResponse>("/auth/logout", {}, options);
 };
 
 export const me = (options?: RequestOptions) => {
@@ -259,6 +190,13 @@ export type ForgetPasswordPayload = {
   confirmed_password: string;
   otp: string;
   school_id?: number;
+};
+
+export const validatePhoneAndEmail = (phone_number?: string, email?: string, options?: RequestOptions) => {
+  return postJson<{ success: boolean; message: string; phone_number: string; email: string }>("/auth/otp/validate-phone-email", {
+    ...(phone_number ? { phone_number } : {}),
+    ...(email ? { email } : {}),
+  }, options);
 };
 
 export const sendEmailOtp = (email: string, type: string, options?: RequestOptions) => {

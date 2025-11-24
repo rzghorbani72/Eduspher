@@ -53,6 +53,8 @@ export default async function AccountPage() {
       }).catch(() => null),
     ]);
 
+    console.log("userData", userData);
+
     if (userData === null) {
     return (
       <EmptyState
@@ -84,6 +86,7 @@ export default async function AccountPage() {
   const profiles = profilesData ?? [];
   const primaryProfile = profiles.find((profile) => profile.id === userData.currentProfile.id) ?? profiles[0];
 
+  console.log("primaryProfile", primaryProfile);
   const schoolName = userData.currentSchool?.name ?? "—";
   const schoolDomain = userData.currentSchool?.domain ?? null;
 
@@ -108,21 +111,33 @@ export default async function AccountPage() {
     <div className="space-y-6">
       <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Your learning hub</h1>
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Display name</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Full name</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">
-              {userData.currentProfile.displayName}
+              {userData.name || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Account #{userData.id} • Profile #{userData.currentProfile.id}
+              Display: {userData.currentProfile.displayName} • Account #{userData.id}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-150">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Roles</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Email</p>
+            <p className="text-xl font-semibold text-slate-900 dark:text-white break-all">
+              {userData.email || "—"}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {primaryProfile?.email_confirmed ? "Email confirmed" : "Email not confirmed"} • {userData.currentProfile.isVerified ? "Profile verified" : "Not verified"}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Role</p>
             <div className="flex flex-wrap gap-2 mt-2">
-              {allRoles.map((role) => (
-                <Badge key={role} variant={role === userData.currentProfile.role ? "success" : "soft"}>
+              <Badge variant="success" className="text-sm px-3 py-1">
+                {userData.currentProfile.role}
+              </Badge>
+              {allRoles.filter(role => role !== userData.currentProfile.role).map((role) => (
+                <Badge key={role} variant="soft" className="text-sm px-3 py-1">
                   {role}
                 </Badge>
               ))}
@@ -131,7 +146,7 @@ export default async function AccountPage() {
               {primaryProfile?.has_password ? "Password protected" : "Password not set"}
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-250">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Bought courses</p>
             <p className="text-2xl font-semibold text-slate-900 dark:text-white">
               {enrollments.length}
@@ -140,11 +155,22 @@ export default async function AccountPage() {
               {activeEnrollments.length} active • {completedEnrollments.length} completed
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-250">
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-300">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">School</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">{schoolName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {schoolDomain ? `Domain: ${schoolDomain}` : "Domain information unavailable"}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-350">
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Phone number</p>
+            <p className="text-xl font-semibold text-slate-900 dark:text-white">
+              {userData.phone_number || "—"}
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              {primaryProfile?.phone_confirmed ? "Phone confirmed" : "Phone not confirmed"} • {userData.country_code ? `Country: ${userData.country_code}` : `Profile #${userData.currentProfile.id}`}
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { RegisterForm } from "@/components/auth/register-form";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath } from "@/lib/utils";
+import { getSchoolBySlug } from "@/lib/api/server";
 
 export const metadata: Metadata = {
   title: "Create account",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
 export default async function RegisterPage() {
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const school = schoolContext.slug ? await getSchoolBySlug(schoolContext.slug) : null;
+  const defaultCountryCode = school?.country_code || undefined;
   return (
     <div className="mx-auto grid w-full max-w-5xl gap-8 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-[1.2fr_1fr] lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="space-y-5">
@@ -44,7 +47,7 @@ export default async function RegisterPage() {
         </p>
       </div>
       <div className="space-y-5">
-        <RegisterForm />
+        <RegisterForm defaultCountryCode={defaultCountryCode} />
         <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
           By creating an account you agree to our{" "}
           <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/legal/terms")}>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Mail, Phone, Lock, ArrowLeft, CheckCircle } from "lucide-react";
 
 import { 
+  validatePhoneAndEmail,
   sendEmailOtp, 
   sendPhoneOtp, 
   verifyEmailOtp, 
@@ -36,6 +37,7 @@ export const ForgotPasswordForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [validated, setValidated] = useState(false);
   
   const [formData, setFormData] = useState({
     identifier: "",
@@ -87,8 +89,36 @@ export const ForgotPasswordForm = () => {
     return true;
   };
 
-  const handleSendOtp = async () => {
+  const handleValidate = async () => {
     if (!validateIdentifier()) return;
+
+    setIsLoading(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const phone = authMethod === "phone" ? formData.identifier : undefined;
+      const email = authMethod === "email" ? formData.identifier : undefined;
+      
+      const result = await validatePhoneAndEmail(phone, email);
+      if (result.phone_number === "unverified" || result.email === "unverified") {
+        setError("Phone or email is not verified. Please verify your phone or email first.");
+      }
+      setValidated(true);
+      setMessage("User validated successfully");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "User not found. Please check your email or phone number.";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!validated) {
+      await handleValidate();
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -241,15 +271,27 @@ export const ForgotPasswordForm = () => {
             </div>
           </div>
 
-          <Button
-            type="button"
-            onClick={handleSendOtp}
-            disabled={isLoading}
-            className="w-full"
-            loading={isLoading}
-          >
-            {isLoading ? "Sending..." : "Send OTP"}
-          </Button>
+          {!validated ? (
+            <Button
+              type="button"
+              onClick={handleValidate}
+              disabled={isLoading}
+              className="w-full"
+              loading={isLoading}
+            >
+              {isLoading ? "Validating..." : "Validate"}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={handleSendOtp}
+              disabled={isLoading}
+              className="w-full"
+              loading={isLoading}
+            >
+              {isLoading ? "Sending..." : "Send OTP"}
+            </Button>
+          )}
         </div>
       )}
 
