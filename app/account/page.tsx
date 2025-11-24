@@ -246,7 +246,7 @@ export default async function AccountPage() {
                   className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CourseCard course={enrollment.course} schoolSlug={schoolContext.slug} />
+                  <CourseCard course={enrollment.course} schoolSlug={schoolContext.slug} school={userData.currentSchool || null} />
                   <div className="absolute top-2 right-2 z-10">
                     <Badge variant={enrollment.status === "COMPLETED" ? "success" : "soft"}>
                       {enrollment.status}

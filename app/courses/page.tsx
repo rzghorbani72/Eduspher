@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseFilters } from "@/components/courses/course-filters";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourses, getCategories } from "@/lib/api/server";
+import { getCourses, getCategories, getCurrentUser, getCurrentSchool } from "@/lib/api/server";
 import { buildSchoolPath } from "@/lib/utils";
 import { getSchoolContext } from "@/lib/school-context";
 
@@ -48,7 +48,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const categoryId = parseNumber(params?.category_id);
   const isFree = parseBoolean(params?.is_free);
 
-  const [coursePayload, categories] = await Promise.all([
+  const [coursePayload, categories, user, currentSchool] = await Promise.all([
     getCourses({
       search: query || undefined,
       page,
@@ -59,11 +59,14 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
       is_free: isFree,
     }).catch(() => null),
     getCategories().catch(() => []),
+    getCurrentUser().catch(() => null),
+    getCurrentSchool().catch(() => null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
   const courses = coursePayload?.courses ?? [];
   const pagination = coursePayload?.pagination;
+  const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
 
   return (
     <div className="space-y-6">
@@ -97,7 +100,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CourseCard course={course} schoolSlug={schoolContext.slug} />
+                  <CourseCard course={course} schoolSlug={schoolContext.slug} school={schoolCurrency} />
                 </div>
               ))}
             </div>

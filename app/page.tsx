@@ -6,6 +6,8 @@ import {
   getCategories,
   getCourses,
   getSchoolsPublic,
+  getCurrentUser,
+  getCurrentSchool,
 } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import { buildOgImageUrl, resolveAssetUrl, truncate, buildSchoolPath } from "@/lib/utils";
@@ -18,12 +20,14 @@ import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
 export default async function Home() {
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-  const [schools, categories, articles, coursePayload, themeAndTemplate] = await Promise.all([
+  const [schools, categories, articles, coursePayload, themeAndTemplate, user, currentSchool] = await Promise.all([
     getSchoolsPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
     getCourses({ limit: 3, published: true, is_featured: true} as any).catch(() => null),
     getSchoolThemeAndTemplate().catch(() => ({ theme: null, template: null })),
+    getCurrentUser().catch(() => null),
+    getCurrentSchool().catch(() => null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
@@ -36,6 +40,7 @@ export default async function Home() {
     : null;
   const primarySchool = schoolMatchById ?? schoolMatchBySlug ?? schools[0] ?? null;
   const schoolDisplayName = primarySchool?.name ?? schoolContext.name;
+  const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
   const schoolHeroLabel = primarySchool?.domain?.public_address ?? primarySchool?.domain?.private_address ?? "Premier digital campus";
   const stats = {
     students: (primarySchool as any)?.student_count ?? null,
@@ -176,7 +181,7 @@ export default async function Home() {
                 className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <CourseCard course={course} schoolSlug={schoolContext.slug} />
+                <CourseCard course={course} schoolSlug={schoolContext.slug} school={schoolCurrency} />
               </div>
             ))}
           </div>

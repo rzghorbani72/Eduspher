@@ -71,3 +71,4 @@ export const getDefaultCountry = (): CountryCode => {
   return COUNTRY_CODES[0]; // Default to US
 };
 
+

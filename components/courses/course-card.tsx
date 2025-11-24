@@ -1,16 +1,21 @@
 import Link from "next/link";
 
 import type { CourseSummary } from "@/lib/api/types";
-import { buildSchoolPath, formatCurrency, resolveAssetUrl, truncate } from "@/lib/utils";
+import { buildSchoolPath, formatCurrencyWithSchool, resolveAssetUrl, truncate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardMedia } from "@/components/ui/card";
 
 interface CourseCardProps {
   course: CourseSummary;
   schoolSlug?: string | null;
+  school?: {
+    currency?: string;
+    currency_symbol?: string;
+    currency_position?: "before" | "after";
+  } | null;
 }
 
-export const CourseCard = ({ course, schoolSlug = null }: CourseCardProps) => {
+export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseCardProps) => {
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
   const hasDiscount = course.original_price && course.original_price > course.price;
   const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
@@ -39,15 +44,15 @@ export const CourseCard = ({ course, schoolSlug = null }: CourseCardProps) => {
             ) : hasDiscount ? (
               <>
                 <span className="text-slate-500 line-through dark:text-slate-400">
-                  {formatCurrency(course.original_price || 0)}
+                  {formatCurrencyWithSchool(course.original_price || 0, school)}
                 </span>
                 <span className="text-[var(--theme-primary)]">
-                  {formatCurrency(course.price || 0)}
+                  {formatCurrencyWithSchool(course.price || 0, school)}
                 </span>
               </>
             ) : (
               <span className="text-[var(--theme-primary)]">
-                {formatCurrency(course.price || 0)}
+                {formatCurrencyWithSchool(course.price || 0, school)}
               </span>
             )}
           </div>

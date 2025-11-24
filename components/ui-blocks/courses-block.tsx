@@ -1,4 +1,4 @@
-import { getCourses } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getCurrentSchool } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -38,12 +38,17 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
   };
 
-  const coursePayload = await getCourses({
-    limit,
-    published: true,
-  }).catch(() => null);
+  const [coursePayload, user, currentSchool] = await Promise.all([
+    getCourses({
+      limit,
+      published: true,
+    }).catch(() => null),
+    getCurrentUser().catch(() => null),
+    getCurrentSchool().catch(() => null),
+  ]);
 
   const courses = coursePayload?.courses || [];
+  const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
 
   if (courses.length === 0) {
     return null;
@@ -75,7 +80,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
             )}
           >
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} />
+              <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} school={schoolCurrency} />
             ))}
           </div>
         </div>
@@ -109,7 +114,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
             )}
           >
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} />
+              <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} school={schoolCurrency} />
             ))}
           </div>
           {showViewAll && (
@@ -159,7 +164,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
           >
             {courses.map((course) => (
               <div key={course.id} className="transform transition-all hover:scale-105">
-                <CourseCard course={course} schoolSlug={schoolContext?.slug ?? null} />
+                <CourseCard course={course} schoolSlug={schoolContext?.slug ?? null} school={schoolCurrency} />
               </div>
             ))}
           </div>
