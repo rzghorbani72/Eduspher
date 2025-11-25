@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Mail, Phone, Lock, CheckCircle } from "lucide-react";
 
 import { 
-  validatePhoneAndEmail,
   sendEmailOtp,
   sendPhoneOtp,
   verifyEmailOtp,
@@ -27,11 +26,15 @@ import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/cou
 import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
 import { env } from "@/lib/env";
 
-const registerSchema = z
+const createRegisterSchema = (primaryMethod: 'phone' | 'email') => z
   .object({
     name: z.string({ required_error: "Full name is required" }).min(2, "Enter your full name"),
-    email: z.string().email("Enter a valid email address").optional().or(z.literal("")),
-    phone_number: z.string({ required_error: "Phone number is required" }).min(6, "Enter a valid phone number"),
+    email: primaryMethod === 'email' 
+      ? z.string({ required_error: "Email is required" }).email("Enter a valid email address")
+      : z.string().email("Enter a valid email address").optional().or(z.literal("")),
+    phone_number: primaryMethod === 'phone'
+      ? z.string({ required_error: "Phone number is required" }).min(6, "Enter a valid phone number")
+      : z.string().min(6, "Enter a valid phone number").optional().or(z.literal("")),
     display_name: z
       .string({ required_error: "Display name is required" })
       .min(2, "Display name is required"),
@@ -46,15 +49,14 @@ const registerSchema = z
     message: "Passwords must match",
   });
 
-type RegisterValues = z.infer<typeof registerSchema>;
-
 type Step = "verification" | "form";
 
 interface RegisterFormProps {
   defaultCountryCode?: string;
+  primaryVerificationMethod?: 'phone' | 'email';
 }
 
-export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
+export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useSchoolPath();
@@ -67,8 +69,10 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
   const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
-  const [validated, setValidated] = useState(false);
   const isSubmittingRef = useRef(false);
+
+  const registerSchema = createRegisterSchema(primaryVerificationMethod);
+  type RegisterValues = z.infer<typeof registerSchema>;
 
   const {
     register,
@@ -111,38 +115,7 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleValidatePhoneAndEmail = async () => {
-    if (!phoneNumber || !isValidPhone(phoneNumber)) {
-      setError("Please enter a valid phone number first");
-      return;
-    }
-
-    setOtpLoading(true);
-    setError(null);
-    setMessage(null);
-
-    try {
-      const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
-      const email = getValues("email");
-      const normalizedEmail = email && isValidEmail(email) ? email : undefined;
-      
-      await validatePhoneAndEmail(fullPhone, normalizedEmail);
-      setValidated(true);
-      setMessage("Phone and email validated successfully");
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to validate phone and email";
-      setError(errorMessage);
-    } finally {
-      setOtpLoading(false);
-    }
-  };
-
   const handleSendPhoneOtp = async () => {
-    if (!validated) {
-      await handleValidatePhoneAndEmail();
-      return;
-    }
-
     if (!phoneNumber || !isValidPhone(phoneNumber)) {
       setError("Please enter a valid phone number first");
       return;
@@ -194,11 +167,6 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
   };
 
   const handleSendEmailOtp = async () => {
-    if (!validated) {
-      setError("Please validate phone and email first");
-      return;
-    }
-
     const email = getValues("email");
     if (!email || !isValidEmail(email)) {
       setError("Please enter a valid email address first");
@@ -257,23 +225,18 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
   const handleVerificationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validated) {
-      await handleValidatePhoneAndEmail();
-      return;
-    }
-
-    if (!phoneOtpSent) {
-      await handleSendPhoneOtp();
-      return;
-    }
-
-    if (!phoneOtpVerified) {
-      setError("Please verify your phone OTP first");
-      return;
-    }
-
-    const email = getValues("email");
-    if (email && isValidEmail(email)) {
+    // Only verify primary method during registration
+    if (primaryVerificationMethod === 'phone') {
+      if (!phoneOtpSent) {
+        await handleSendPhoneOtp();
+        return;
+      }
+      if (!phoneOtpVerified) {
+        setError("Please verify your phone OTP first");
+        return;
+      }
+    } else {
+      // Email is primary
       if (!emailOtpSent) {
         await handleSendEmailOtp();
         return;
@@ -301,21 +264,14 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
     setMessage(null);
 
     try {
-      // Ensure both OTPs are verified before allowing registration
-      if (!phoneOtpVerified) {
-        setError("Please verify phone OTP first");
+      // Ensure primary method OTP is verified
+      const primaryVerified = primaryVerificationMethod === 'phone' ? phoneOtpVerified : emailOtpVerified;
+      if (!primaryVerified) {
+        const methodName = primaryVerificationMethod === 'phone' ? 'phone' : 'email';
+        setError(`Please verify ${methodName} OTP first`);
         return;
       }
 
-      const email = values.email;
-      if (email && isValidEmail(email) && !emailOtpVerified) {
-        setError("Please verify email OTP first");
-        return;
-      }
-
-      const cleanedPhone = cleanPhoneNumber(phoneNumber, selectedCountry);
-      const fullPhone = getFullPhoneNumber(cleanedPhone, selectedCountry);
-      
       const getCookieValue = (name: string) => {
         if (typeof document === "undefined") return null;
         const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -325,15 +281,36 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
       const schoolId = getCookieValue(env.schoolIdCookie);
       const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
       
+      // Build user data based on primary method
       const userData: any = {
-        ...values,
-        phone_number: fullPhone,
-        email: values.email || undefined,
-        phone_otp: phoneOtpVerified && phoneOtp.trim() ? phoneOtp.trim() : undefined,
-        email_otp: email && emailOtpVerified && emailOtp.trim() ? emailOtp.trim() : undefined,
+        name: values.name,
+        display_name: values.display_name,
+        password: values.password,
+        confirmed_password: values.confirmed_password,
+        bio: values.bio,
         role: "USER",
         school_id: finalSchoolId,
       };
+
+      // Add primary method (required) - only one method is shown and verified during registration
+      if (primaryVerificationMethod === 'phone') {
+        if (!phoneNumber || !isValidPhone(phoneNumber)) {
+          setError("Phone number is required");
+          return;
+        }
+        const cleanedPhone = cleanPhoneNumber(phoneNumber, selectedCountry);
+        const fullPhone = getFullPhoneNumber(cleanedPhone, selectedCountry);
+        userData.phone_number = fullPhone;
+        userData.phone_otp = phoneOtpVerified && phoneOtp.trim() ? phoneOtp.trim() : undefined;
+      } else {
+        if (!values.email || !isValidEmail(values.email)) {
+          setError("Email is required");
+          return;
+        }
+        userData.email = values.email;
+        userData.email_otp = emailOtpVerified && emailOtp.trim() ? emailOtp.trim() : undefined;
+      }
+      // Note: Secondary method (email or phone) can be verified later in account settings
 
       await postJson("/auth/register", userData);
       
@@ -359,9 +336,10 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
     <div className="space-y-6">
       {step === "verification" && (
         <form onSubmit={handleVerificationSubmit} className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
+          {/* Show only primary verification method */}
+          {primaryVerificationMethod === 'email' ? (
             <div className="space-y-2">
-              <Label htmlFor="email">Email (optional)</Label>
+              <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Mail className="h-5 w-5 text-slate-400" />
@@ -378,6 +356,7 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
                 <p className="text-sm text-amber-600 dark:text-amber-400">{errors.email.message}</p>
               ) : null}
             </div>
+          ) : (
             <div className="space-y-2">
               <Label htmlFor="phone_number">Phone number</Label>
               <PhoneInput
@@ -406,99 +385,87 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
                 </p>
               ) : null}
             </div>
-          </div>
-
-          {!validated && (
-            <Button
-              type="button"
-              onClick={handleValidatePhoneAndEmail}
-              disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
-              className="w-full"
-            >
-              {otpLoading ? "Validating..." : "Validate Phone & Email"}
-            </Button>
           )}
 
-          {/* Phone OTP Section */}
-          {validated && (
-            <div className="space-y-2">
-              <Label htmlFor="phoneOtp">Phone OTP</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="phoneOtp"
-                  type="text"
-                  placeholder="Enter phone OTP"
-                  value={phoneOtp}
-                  onChange={(e) => {
-                    setPhoneOtp(e.target.value);
-                    setError(null);
-                  }}
-                  maxLength={6}
-                  autoComplete="one-time-code"
-                  disabled={isLoading || otpLoading}
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  onClick={handleSendPhoneOtp}
-                  disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
-                  variant="outline"
-                  className="whitespace-nowrap"
-                >
-                  {otpLoading ? "Sending..." : phoneOtpSent ? "Resend OTP" : "Send Phone OTP"}
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleVerifyPhoneOtp}
-                  disabled={otpLoading || !phoneOtp.trim() || phoneOtpVerified}
-                  variant="outline"
-                  className="whitespace-nowrap"
-                >
-                  {otpLoading ? "Verifying..." : phoneOtpVerified ? "✓ Verified" : "Verify Phone OTP"}
-                </Button>
+          {/* Show only primary method OTP section */}
+          {(
+            primaryVerificationMethod === 'phone' ? (
+              <div className="space-y-2">
+                <Label htmlFor="phoneOtp">Phone OTP</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="phoneOtp"
+                    type="text"
+                    placeholder="Enter phone OTP"
+                    value={phoneOtp}
+                    onChange={(e) => {
+                      setPhoneOtp(e.target.value);
+                      setError(null);
+                    }}
+                    maxLength={6}
+                    autoComplete="one-time-code"
+                    disabled={isLoading || otpLoading}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleSendPhoneOtp}
+                    disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
+                    variant="outline"
+                    className="whitespace-nowrap"
+                  >
+                    {otpLoading ? "Sending..." : phoneOtpSent ? "Resend OTP" : "Send Phone OTP"}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleVerifyPhoneOtp}
+                    disabled={otpLoading || !phoneOtp.trim() || phoneOtpVerified}
+                    variant="outline"
+                    className="whitespace-nowrap"
+                  >
+                    {otpLoading ? "Verifying..." : phoneOtpVerified ? "✓ Verified" : "Verify Phone OTP"}
+                  </Button>
+                </div>
               </div>
-            </div>
-          )}
-
-          {/* Email OTP Section - Only show if email is provided and validated */}
-          {validated && hasEmail && (
-            <div className="space-y-2">
-              <Label htmlFor="emailOtp">Email OTP</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="emailOtp"
-                  type="text"
-                  placeholder="Enter email OTP"
-                  value={emailOtp}
-                  onChange={(e) => {
-                    setEmailOtp(e.target.value);
-                    setError(null);
-                  }}
-                  maxLength={6}
-                  autoComplete="one-time-code"
-                  disabled={isLoading || otpLoading}
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  onClick={handleSendEmailOtp}
-                  disabled={otpLoading || !hasEmail}
-                  variant="outline"
-                  className="whitespace-nowrap"
-                >
-                  {otpLoading ? "Sending..." : emailOtpSent ? "Resend OTP" : "Send Email OTP"}
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleVerifyEmailOtp}
-                  disabled={otpLoading || !emailOtp.trim() || emailOtpVerified}
-                  variant="outline"
-                  className="whitespace-nowrap"
-                >
-                  {otpLoading ? "Verifying..." : emailOtpVerified ? "✓ Verified" : "Verify Email OTP"}
-                </Button>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="emailOtp">Email OTP</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="emailOtp"
+                    type="text"
+                    placeholder="Enter email OTP"
+                    value={emailOtp}
+                    onChange={(e) => {
+                      setEmailOtp(e.target.value);
+                      setError(null);
+                    }}
+                    maxLength={6}
+                    autoComplete="one-time-code"
+                    disabled={isLoading || otpLoading}
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleSendEmailOtp}
+                    disabled={otpLoading || !hasEmail}
+                    variant="outline"
+                    className="whitespace-nowrap"
+                  >
+                    {otpLoading ? "Sending..." : emailOtpSent ? "Resend OTP" : "Send Email OTP"}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleVerifyEmailOtp}
+                    disabled={otpLoading || !emailOtp.trim() || emailOtpVerified}
+                    variant="outline"
+                    className="whitespace-nowrap"
+                  >
+                    {otpLoading ? "Verifying..." : emailOtpVerified ? "✓ Verified" : "Verify Email OTP"}
+                  </Button>
+                </div>
               </div>
-            </div>
+            )
           )}
 
           {error ? (
@@ -525,14 +492,11 @@ export const RegisterForm = ({ defaultCountryCode }: RegisterFormProps) => {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
                 <CheckCircle className="h-4 w-4" />
-                Phone verified
+                {primaryVerificationMethod === 'phone' ? 'Phone verified' : 'Email verified'}
               </div>
-              {emailOtpVerified && (
-                <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
-                  <CheckCircle className="h-4 w-4" />
-                  Email verified
-                </div>
-              )}
+              <p className="text-xs text-green-600 dark:text-green-400">
+                You can verify your {primaryVerificationMethod === 'phone' ? 'email' : 'phone'} later in account settings
+              </p>
             </div>
           </div>
 

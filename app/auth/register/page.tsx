@@ -17,7 +17,7 @@ export default async function RegisterPage() {
   const school = schoolContext.slug ? await getSchoolBySlug(schoolContext.slug) : null;
   const defaultCountryCode = school?.country_code || undefined;
   return (
-    <div className="mx-auto grid w-full max-w-5xl gap-8 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-[1.2fr_1fr] lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto grid w-full max-w-5xl gap-8 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:grid-cols-[1fr_1.2fr] lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="space-y-5">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Join EduSpher</h1>
         <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
@@ -47,7 +47,10 @@ export default async function RegisterPage() {
         </p>
       </div>
       <div className="space-y-5">
-        <RegisterForm defaultCountryCode={defaultCountryCode} />
+        <RegisterForm 
+          defaultCountryCode={defaultCountryCode}
+          primaryVerificationMethod={school?.primary_verification_method || 'phone'}
+        />
         <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
           By creating an account you agree to our{" "}
           <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/legal/terms")}>
