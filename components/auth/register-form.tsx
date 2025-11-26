@@ -314,10 +314,9 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
 
       await postJson("/auth/register", userData);
       
-      setAuthenticated(true);
-      setMessage("Registration successful! Redirecting...");
+      setMessage("Registration successful! Redirecting to login...");
       setTimeout(() => {
-        router.push(buildPath("/courses"));
+        router.push(buildPath("/auth/login"));
         router.refresh();
       }, 2000);
     } catch (err) {
