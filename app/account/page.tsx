@@ -4,11 +4,13 @@ import { redirect } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, UnauthorizedError } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getSchoolBySlug, UnauthorizedError } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
 import type { EnrollmentSummary } from "@/lib/api/types";
+import { ChangePasswordForm } from "@/components/account/change-password-form";
+import { AddContactForm } from "@/components/account/add-contact-form";
 
 export default async function AccountPage() {
   const session = await getSession();
@@ -41,7 +43,7 @@ export default async function AccountPage() {
   }
 
   try {
-    const [userData, profilesData, recommended, enrollmentsData] = await Promise.all([
+    const [userData, profilesData, recommended, enrollmentsData, school] = await Promise.all([
       getCurrentUser(),
       getUserProfiles(),
       getCourses({
@@ -51,9 +53,8 @@ export default async function AccountPage() {
       getEnrollments({
         limit: 100,
       }).catch(() => null),
+      schoolContext.slug ? getSchoolBySlug(schoolContext.slug) : null,
     ]);
-
-    console.log("userData", userData);
 
     if (userData === null) {
     return (
@@ -84,9 +85,10 @@ export default async function AccountPage() {
   }
 
   const profiles = profilesData ?? [];
-  const primaryProfile = profiles.find((profile) => profile.id === userData.currentProfile.id) ?? profiles[0];
 
-  console.log("primaryProfile", primaryProfile);
+  const primaryProfile = userData.currentProfile;
+
+
   const schoolName = userData.currentSchool?.name ?? "—";
   const schoolDomain = userData.currentSchool?.domain ?? null;
 
@@ -106,6 +108,21 @@ export default async function AccountPage() {
 
   // Get all unique roles from profiles
   const allRoles = [...new Set(profiles.map((p) => p.role))];
+
+  // Determine primary and secondary verification methods
+  const primaryMethod = school?.primary_verification_method || 'phone';
+  const secondaryMethod = primaryMethod === 'phone' ? 'email' : 'phone';
+  
+  // Check if user has secondary method and if it's confirmed
+  const hasSecondaryEmail = !!userData.email && primaryMethod === 'phone';
+  const hasSecondaryPhone = !!userData.phone_number && primaryMethod === 'email';
+  const hasSecondaryEmailConfirmed = hasSecondaryEmail && primaryProfile?.email_confirmed;
+  const hasSecondaryPhoneConfirmed = hasSecondaryPhone && primaryProfile?.phone_confirmed;
+  
+  // Show add secondary method if user doesn't have it or it's not confirmed
+  const needsSecondaryMethod = primaryMethod === 'phone' 
+    ? (!hasSecondaryEmail || !hasSecondaryEmailConfirmed)
+    : (!hasSecondaryPhone || !hasSecondaryPhoneConfirmed);
 
   return (
     <div className="space-y-6">
@@ -127,7 +144,7 @@ export default async function AccountPage() {
               {userData.email || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {primaryProfile?.email_confirmed ? "Email confirmed" : "Email not confirmed"} • {userData.currentProfile.isVerified ? "Profile verified" : "Not verified"}
+              {primaryProfile?.email_confirmed ? "Email confirmed" : "Email not confirmed"}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
@@ -143,7 +160,7 @@ export default async function AccountPage() {
               ))}
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              {primaryProfile?.has_password ? "Password protected" : "Password not set"}
+              {userData.has_password ? "Password protected" : "Password not set"}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-250">
@@ -175,6 +192,35 @@ export default async function AccountPage() {
           </div>
         </div>
       </div>
+      {/* Account Settings Section */}
+      <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Account Settings</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Change Password */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Change Password</h3>
+            <ChangePasswordForm profileId={userData.currentProfile.id} />
+          </div>
+
+          {/* Add Secondary Contact Method */}
+          {needsSecondaryMethod && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                Add {secondaryMethod === 'email' ? 'Email' : 'Phone Number'}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+                Add your {secondaryMethod === 'email' ? 'email address' : 'phone number'} as a secondary verification method.
+              </p>
+              <AddContactForm 
+                method={secondaryMethod}
+                primaryMethod={primaryMethod}
+                defaultCountryCode={school?.country_code || userData.country_code || undefined}
+              />
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Roles Section */}
       <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Roles</h2>

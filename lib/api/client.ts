@@ -234,6 +234,15 @@ export const forgetPassword = (payload: ForgetPasswordPayload, options?: Request
   }, options);
 };
 
+export const changePassword = (payload: {
+  profile_id: number;
+  current_password: string;
+  new_password: string;
+  confirm_new_password: string;
+}, options?: RequestOptions) => {
+  return postJson<{ message: string; status: string; success?: boolean }>("/auth/change-password", payload, options);
+};
+
 export interface CourseQnA {
   id: number;
   course_id: number;

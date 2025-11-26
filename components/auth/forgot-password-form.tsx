@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Mail, Phone, Lock, ArrowLeft, CheckCircle } from "lucide-react";
 
 import { 
+  validatePhoneAndEmail,
   sendEmailOtp, 
   sendPhoneOtp, 
   verifyEmailOtp, 
@@ -16,20 +17,19 @@ import { OtpType } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PhoneInput } from "@/components/ui/phone-input";
 import { useSchoolPath } from "@/components/providers/school-provider";
-import { isValidEmail, isValidPhone, getEmailValidationError, getPhoneValidationError } from "@/lib/validation";
-import { cn } from "@/lib/utils";
-import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
+
+const isValidEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isValidPhone = (phone: string) => {
+  return /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
+};
 
 type Step = "identifier" | "otp" | "password" | "success";
 
-interface ForgotPasswordFormProps {
-  defaultCountryCode?: string;
-}
-
-export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormProps = {}) => {
+export const ForgotPasswordForm = () => {
   const router = useRouter();
   const buildPath = useSchoolPath();
   const [step, setStep] = useState<Step>("identifier");
@@ -37,18 +37,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [identifierError, setIdentifierError] = useState<string | null>(null);
-  
-  const getInitialCountry = () => {
-    if (defaultCountryCode) {
-      const country = getCountryByCode(defaultCountryCode);
-      if (country) return country;
-    }
-    return getDefaultCountry();
-  };
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
+  const [validated, setValidated] = useState(false);
   
   const [formData, setFormData] = useState({
     identifier: "",
@@ -60,13 +49,25 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
-    
-    // Real-time validation for identifier field (only for email, phone handled separately)
-    if (field === "identifier" && authMethod === "email") {
-      setEmail(value);
-      const emailError = getEmailValidationError(value);
-      setIdentifierError(emailError);
+  };
+
+  const validateIdentifier = () => {
+    if (!formData.identifier.trim()) {
+      setError("Email or phone number is required");
+      return false;
     }
+
+    if (authMethod === "email" && !isValidEmail(formData.identifier)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+
+    if (authMethod === "phone" && !isValidPhone(formData.identifier)) {
+      setError("Please enter a valid phone number");
+      return false;
+    }
+
+    return true;
   };
 
   const validatePassword = () => {
@@ -88,49 +89,47 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     return true;
   };
 
+  const handleValidate = async () => {
+    if (!validateIdentifier()) return;
+
+    setIsLoading(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      const phone = authMethod === "phone" ? formData.identifier : undefined;
+      const email = authMethod === "email" ? formData.identifier : undefined;
+      
+      const result = await validatePhoneAndEmail(phone, email);
+      if (result.phone_number === "unverified" || result.email === "unverified") {
+        setError("Phone or email is not verified. Please verify your phone or email first.");
+      }
+      setValidated(true);
+      setMessage("User validated successfully");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "User not found. Please check your email or phone number.";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSendOtp = async () => {
-    // Validate identifier format first
-    if (authMethod === "email") {
-      if (!email.trim()) {
-        setError("Email is required");
-        setIdentifierError("Email is required");
-        return;
-      }
-      const emailError = getEmailValidationError(email);
-      if (emailError) {
-        setError(emailError);
-        setIdentifierError(emailError);
-        return;
-      }
-    } else {
-      if (!phoneNumber.trim()) {
-        setError("Phone number is required");
-        setIdentifierError("Phone number is required");
-        return;
-      }
-      const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-      const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-      const phoneError = getPhoneValidationError(fullPhone);
-      if (phoneError) {
-        setError(phoneError);
-        setIdentifierError(phoneError);
-        return;
-      }
+    if (!validated) {
+      await handleValidate();
+      return;
     }
 
     setIsLoading(true);
     setError(null);
     setMessage(null);
-    setIdentifierError(null);
 
     try {
       if (authMethod === "email") {
-        await sendEmailOtp(email, OtpType.RESET_PASSWORD_BY_EMAIL);
+        await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL);
         setMessage("OTP sent to your email address");
       } else {
-        const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-        const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-        await sendPhoneOtp(fullPhone, OtpType.RESET_PASSWORD_BY_PHONE);
+        await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE);
         setMessage("OTP sent to your phone number");
       }
       setStep("otp");
@@ -155,15 +154,13 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     try {
       if (authMethod === "email") {
         await verifyEmailOtp(
-          email,
+          formData.identifier,
           formData.otp,
           OtpType.RESET_PASSWORD_BY_EMAIL
         );
       } else {
-        const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-        const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
         await verifyPhoneOtp(
-          fullPhone,
+          formData.identifier,
           formData.otp,
           OtpType.RESET_PASSWORD_BY_PHONE
         );
@@ -186,16 +183,8 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     setMessage(null);
 
     try {
-      let identifier: string;
-      if (authMethod === "email") {
-        identifier = email;
-      } else {
-        const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-        identifier = getFullPhoneNumber(cleaned, selectedCountry);
-      }
-
       await forgetPassword({
-        identifier,
+        identifier: formData.identifier,
         password: formData.password,
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
@@ -219,11 +208,8 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
       confirmed_password: "",
       otp: "",
     });
-    setEmail("");
-    setPhoneNumber("");
     setError(null);
     setMessage(null);
-    setIdentifierError(null);
   };
 
   return (
@@ -236,9 +222,6 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               onClick={() => {
                 setAuthMethod("email");
                 setError(null);
-                setIdentifierError(null);
-                setEmail("");
-                setPhoneNumber("");
               }}
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "email"
@@ -253,9 +236,6 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               onClick={() => {
                 setAuthMethod("phone");
                 setError(null);
-                setIdentifierError(null);
-                setEmail("");
-                setPhoneNumber("");
               }}
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "phone"
@@ -267,78 +247,51 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             </button>
           </div>
 
-          {authMethod === "email" ? (
-            <div className="space-y-1">
-              <Label htmlFor="identifier">Email Address</Label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+          <div className="space-y-2">
+            <Label htmlFor="identifier">
+              {authMethod === "email" ? "Email Address" : "Phone Number"}
+            </Label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                {authMethod === "email" ? (
                   <Mail className="h-5 w-5 text-slate-400" />
-                </div>
-                <Input
-                  id="identifier"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setEmail(value);
-                    const error = getEmailValidationError(value);
-                    setIdentifierError(error);
-                  }}
-                  onBlur={(e) => {
-                    const error = getEmailValidationError(e.target.value);
-                    setIdentifierError(error);
-                  }}
-                  className={cn("pl-10", identifierError && "border-amber-500 focus:border-amber-500")}
-                  autoComplete="email"
-                />
+                ) : (
+                  <Phone className="h-5 w-5 text-slate-400" />
+                )}
               </div>
-              {identifierError && (
-                <p className="text-sm text-amber-600 dark:text-amber-400">{identifierError}</p>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <Label htmlFor="identifier">Phone Number</Label>
-              <PhoneInput
+              <Input
                 id="identifier"
-                value={phoneNumber}
-                onChange={(value) => {
-                  setPhoneNumber(value);
-                  const cleaned = cleanPhoneNumber(value, selectedCountry);
-                  const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-                  const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
-                  setIdentifierError(error);
-                }}
-                onCountryChange={(country) => {
-                  setSelectedCountry(country);
-                  if (phoneNumber) {
-                    const cleaned = cleanPhoneNumber(phoneNumber, country);
-                    const fullPhone = getFullPhoneNumber(cleaned, country);
-                    const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
-                    setIdentifierError(error);
-                  }
-                }}
-                defaultCountry={selectedCountry}
-                placeholder="Enter phone number"
-                autoComplete="tel"
-                className={identifierError ? "border-amber-500 focus:border-amber-500" : ""}
+                type={authMethod === "email" ? "email" : "tel"}
+                placeholder={authMethod === "email" ? "Enter your email" : "Enter your phone number"}
+                value={formData.identifier}
+                onChange={(e) => handleInputChange("identifier", e.target.value)}
+                className="pl-10"
+                autoComplete={authMethod === "email" ? "email" : "tel"}
               />
-              {identifierError && (
-                <p className="text-sm text-amber-600 dark:text-amber-400">{identifierError}</p>
-              )}
             </div>
-          )}
+          </div>
 
-          <Button
-            type="button"
-            onClick={handleSendOtp}
-            disabled={isLoading || !!identifierError}
-            className="w-full"
-            loading={isLoading}
-          >
-            {isLoading ? "Sending..." : "Send OTP"}
-          </Button>
+          {!validated ? (
+            <Button
+              type="button"
+              onClick={handleValidate}
+              disabled={isLoading}
+              className="w-full"
+              loading={isLoading}
+            >
+              {isLoading ? "Validating..." : "Validate"}
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={handleSendOtp}
+              disabled={isLoading}
+              className="w-full"
+              loading={isLoading}
+            >
+              {isLoading ? "Sending..." : "Send OTP"}
+            </Button>
+          )}
         </div>
       )}
 

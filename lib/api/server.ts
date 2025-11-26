@@ -300,10 +300,13 @@ export async function getCurrentUser() {
         name: string;
         country_code?: string;
         preferred_currency?: string;
+        has_password: boolean;
         currentProfile: {
           id: number;
           schoolId: number;
           role: string;
+          email_confirmed: boolean;
+          phone_confirmed: boolean;
           displayName: string;
           isActive: boolean;
           isVerified: boolean;
