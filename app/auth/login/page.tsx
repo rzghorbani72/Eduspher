@@ -17,7 +17,7 @@ export default async function LoginPage() {
   const school = schoolContext.slug ? await getSchoolBySlug(schoolContext.slug) : null;
   const defaultCountryCode = school?.country_code || undefined;
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:flex-row lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:flex-row lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex-1 space-y-5">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Welcome back</h1>
         <p className="text-base leading-7 text-slate-600 dark:text-slate-300">

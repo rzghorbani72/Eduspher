@@ -34,6 +34,13 @@ export const PhoneInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Update selectedCountry when defaultCountry prop changes
+  useEffect(() => {
+    if (defaultCountry) {
+      setSelectedCountry(defaultCountry);
+    }
+  }, [defaultCountry]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

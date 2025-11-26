@@ -16,8 +16,9 @@ import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useSchoolPath } from "@/components/providers/school-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
+import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
 import { cn } from "@/lib/utils";
+import { isValidEmail, isValidPhone, getEmailValidationError, getPhoneValidationError } from "@/lib/validation";
 
 const loginSchema = z.object({
   identifier: z
@@ -49,6 +50,8 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const {
     register,
@@ -65,6 +68,24 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
 
   const onSubmit = handleSubmit((values) => {
     setError(null);
+    
+    // Validate email or phone before submitting
+    if (loginMethod === "email") {
+      const emailValidationError = getEmailValidationError(email);
+      if (emailValidationError) {
+        setEmailError(emailValidationError);
+        return;
+      }
+    } else if (loginMethod === "phone") {
+      const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+      const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+      const phoneValidationError = getPhoneValidationError(fullPhone);
+      if (phoneValidationError) {
+        setPhoneError(phoneValidationError);
+        return;
+      }
+    }
+    
     startTransition(async () => {
       try {
         let identifier = values.identifier;
@@ -142,47 +163,77 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           </button>
         </div>
         {loginMethod === "email" ? (
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-slate-400" />
+          <div className="space-y-1">
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Mail className="h-5 w-5 text-slate-400" />
+              </div>
+              <Input
+                id="identifier"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setEmail(value);
+                  setValue("identifier", value);
+                  const error = getEmailValidationError(value);
+                  setEmailError(error);
+                }}
+                onBlur={(e) => {
+                  const error = getEmailValidationError(e.target.value);
+                  setEmailError(error);
+                }}
+                className={cn("pl-10", emailError && "border-amber-500 focus:border-amber-500")}
+                placeholder="Enter your email"
+              />
             </div>
-            <Input
-              id="identifier"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setValue("identifier", e.target.value);
-              }}
-              className="pl-10"
-              placeholder="Enter your email"
-            />
+            {emailError && (
+              <p className="text-sm text-amber-600 dark:text-amber-400">{emailError}</p>
+            )}
           </div>
         ) : (
-          <PhoneInput
-            id="identifier"
-            value={phoneNumber}
-            onChange={(value) => {
-              setPhoneNumber(value);
-              const cleaned = cleanPhoneNumber(value, selectedCountry);
-              const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-              setValue("identifier", fullPhone);
-            }}
-            onCountryChange={(country) => {
-              setSelectedCountry(country);
-              if (phoneNumber) {
-                const cleaned = cleanPhoneNumber(phoneNumber, country);
-                const fullPhone = getFullPhoneNumber(cleaned, country);
+          <div className="space-y-1">
+            <PhoneInput
+              id="identifier"
+              value={phoneNumber}
+              onChange={(value) => {
+                setPhoneNumber(value);
+                const cleaned = cleanPhoneNumber(value, selectedCountry);
+                const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
                 setValue("identifier", fullPhone);
-              }
-            }}
-            defaultCountry={selectedCountry}
-            placeholder="Enter phone number"
-            autoComplete="tel"
-          />
+                const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+                setPhoneError(error);
+              }}
+              onBlur={() => {
+                if (phoneNumber) {
+                  const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+                  const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+                  const error = getPhoneValidationError(fullPhone);
+                  setPhoneError(error);
+                }
+              }}
+              onCountryChange={(country) => {
+                setSelectedCountry(country);
+                if (phoneNumber) {
+                  const cleaned = cleanPhoneNumber(phoneNumber, country);
+                  const fullPhone = getFullPhoneNumber(cleaned, country);
+                  setValue("identifier", fullPhone);
+                  const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+                  setPhoneError(error);
+                }
+              }}
+              defaultCountry={selectedCountry}
+              placeholder="Enter phone number"
+              autoComplete="tel"
+              className={phoneError ? "border-amber-500 focus:border-amber-500" : ""}
+            />
+            {phoneError && (
+              <p className="text-sm text-amber-600 dark:text-amber-400">{phoneError}</p>
+            )}
+          </div>
         )}
-        {errors.identifier ? (
+        {errors.identifier && !emailError && !phoneError ? (
           <p className="text-sm text-amber-600 dark:text-amber-400">{errors.identifier.message}</p>
         ) : null}
       </div>

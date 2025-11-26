@@ -25,6 +25,8 @@ import { useSchoolPath } from "@/components/providers/school-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
 import { env } from "@/lib/env";
+import { isValidEmail, isValidPhone, getEmailValidationError, getPhoneValidationError } from "@/lib/validation";
+import { cn } from "@/lib/utils";
 
 const createRegisterSchema = (primaryMethod: 'phone' | 'email') => z
   .object({
@@ -106,18 +108,37 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
   const [phoneOtp, setPhoneOtp] = useState("");
   const [emailOtp, setEmailOtp] = useState("");
 
-  const isValidPhone = (phone: string) => {
+  const [phoneValidationError, setPhoneValidationError] = useState<string | null>(null);
+  const [emailValidationError, setEmailValidationError] = useState<string | null>(null);
+
+  const validatePhone = (phone: string) => {
     const cleaned = cleanPhoneNumber(phone, selectedCountry);
-    return isValidPhoneNumber(cleaned, selectedCountry);
+    const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+    const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+    setPhoneValidationError(error);
+    return !error && isValidPhoneNumber(cleaned, selectedCountry);
   };
 
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateEmail = (email: string) => {
+    const error = getEmailValidationError(email);
+    setEmailValidationError(error);
+    return !error && isValidEmail(email);
   };
 
   const handleSendPhoneOtp = async () => {
-    if (!phoneNumber || !isValidPhone(phoneNumber)) {
-      setError("Please enter a valid phone number first");
+    if (!phoneNumber) {
+      setError("Please enter a phone number first");
+      return;
+    }
+    const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+    const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+    const phoneError = getPhoneValidationError(fullPhone);
+    if (phoneError) {
+      setPhoneValidationError(phoneError);
+      setError(phoneError);
+      return;
+    }
+    if (!validatePhone(phoneNumber)) {
       return;
     }
 
@@ -168,8 +189,17 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
 
   const handleSendEmailOtp = async () => {
     const email = getValues("email");
-    if (!email || !isValidEmail(email)) {
-      setError("Please enter a valid email address first");
+    if (!email) {
+      setError("Please enter an email address first");
+      return;
+    }
+    const emailError = getEmailValidationError(email as string);
+    if (emailError) {
+      setEmailValidationError(emailError);
+      setError(emailError);
+      return;
+    }
+    if (!validateEmail(email as string)) {
       return;
     }
 
@@ -347,11 +377,22 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
                   id="email" 
                   type="email" 
                   autoComplete="email" 
-                  {...register("email")}
-                  className="pl-10"
+                  {...register("email", {
+                    onChange: (e) => {
+                      const error = getEmailValidationError(e.target.value);
+                      setEmailValidationError(error);
+                    },
+                    onBlur: (e) => {
+                      const error = getEmailValidationError(e.target.value);
+                      setEmailValidationError(error);
+                    }
+                  })}
+                  className={cn("pl-10", emailValidationError && "border-amber-500 focus:border-amber-500")}
                 />
               </div>
-              {errors.email ? (
+              {emailValidationError ? (
+                <p className="text-sm text-amber-600 dark:text-amber-400">{emailValidationError}</p>
+              ) : errors.email ? (
                 <p className="text-sm text-amber-600 dark:text-amber-400">{errors.email.message}</p>
               ) : null}
             </div>
@@ -366,6 +407,8 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
                   const cleaned = cleanPhoneNumber(value, selectedCountry);
                   const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
                   setValue("phone_number", fullPhone, { shouldValidate: true });
+                  const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+                  setPhoneValidationError(error);
                 }}
                 onCountryChange={(country) => {
                   setSelectedCountry(country);
@@ -373,12 +416,19 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
                     const cleaned = cleanPhoneNumber(phoneNumber, country);
                     const fullPhone = getFullPhoneNumber(cleaned, country);
                     setValue("phone_number", fullPhone, { shouldValidate: true });
+                    const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+                    setPhoneValidationError(error);
                   }
                 }}
                 defaultCountry={selectedCountry}
                 placeholder="Enter phone number"
+                className={phoneValidationError ? "border-amber-500 focus:border-amber-500" : ""}
               />
-              {errors.phone_number ? (
+              {phoneValidationError ? (
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  {phoneValidationError}
+                </p>
+              ) : errors.phone_number ? (
                 <p className="text-sm text-amber-600 dark:text-amber-400">
                   {errors.phone_number.message}
                 </p>
@@ -409,7 +459,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
                   <Button
                     type="button"
                     onClick={handleSendPhoneOtp}
-                    disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
+                    disabled={otpLoading || !phoneNumber || !!phoneValidationError}
                     variant="outline"
                     className="whitespace-nowrap"
                   >
