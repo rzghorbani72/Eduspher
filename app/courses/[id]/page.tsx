@@ -28,7 +28,7 @@ const detailItems = (
     ? (
         <div className="flex flex-col items-end gap-1">
           <span className="text-slate-500 line-through dark:text-slate-400">
-            {formatCurrencyWithSchool(course.original_price, school)}
+            {formatCurrencyWithSchool(course.original_price || 0, school)}
           </span>
           <span className="text-[var(--theme-primary)] font-semibold">
             {formatCurrencyWithSchool(course.price, school)}
@@ -220,7 +220,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
         </aside>
       </section>
 
-      <CourseQnA courseId={normalizedCourse.id} isLoggedIn={!!user} />
+      <CourseQnA courseId={normalizedCourse.id} isLoggedIn={!!user} userRole={user?.role} />
 
       {relatedCourses?.courses?.length ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">

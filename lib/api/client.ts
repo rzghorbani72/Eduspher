@@ -123,6 +123,64 @@ const getJson = async <T>(path: string, options?: RequestOptions) => {
   return handleResponse<T>(response);
 };
 
+const putJson = async <T>(
+  path: string,
+  body: Record<string, unknown>,
+  options?: RequestOptions
+) => {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "PUT",
+    credentials: "include",
+    headers,
+    body: JSON.stringify(body),
+    signal: options?.signal,
+  });
+  return handleResponse<T>(response);
+};
+
+const patchJson = async <T>(
+  path: string,
+  body: Record<string, unknown>,
+  options?: RequestOptions
+) => {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers,
+    body: JSON.stringify(body),
+    signal: options?.signal,
+  });
+  return handleResponse<T>(response);
+};
+
 export type LoginPayload = {
   identifier: string;
   password: string;
@@ -243,6 +301,43 @@ export const changePassword = (payload: {
   return postJson<{ message: string; status: string; success?: boolean }>("/auth/change-password", payload, options);
 };
 
+export const updateProfile = async (
+  profileId: number,
+  data: { display_name?: string; image_id?: number },
+  options?: RequestOptions
+) => {
+  const response = await patchJson<{
+    message: string;
+    status: string;
+    data: {
+      id: number;
+      display_name: string;
+      avatar?: {
+        id: number;
+        filename: string;
+        url: string;
+      };
+    };
+  }>(`/profiles/${profileId}`, data, options);
+  return response.data;
+};
+
+export const updateSchool = async (
+  data: { name?: string; description?: string },
+  options?: RequestOptions
+) => {
+  const response = await patchJson<{
+    message: string;
+    status: string;
+    data: {
+      id: number;
+      name: string;
+      description?: string;
+    };
+  }>("/schools/current", data, options);
+  return response.data;
+};
+
 export interface CourseQnA {
   id: number;
   course_id: number;
@@ -288,6 +383,34 @@ export const createCourseQnA = async (
     status: string;
     data: CourseQnA;
   }>(`/courses/${courseId}/qna`, { question }, options);
+  return response.data;
+};
+
+export const approveCourseQnA = async (
+  courseId: number,
+  qnaId: number,
+  isApproved: boolean,
+  options?: RequestOptions
+) => {
+  const response = await putJson<{
+    message: string;
+    status: string;
+    data: CourseQnA;
+  }>(`/courses/${courseId}/qna/${qnaId}/approve`, { is_approved: isApproved }, options);
+  return response.data;
+};
+
+export const answerCourseQnA = async (
+  courseId: number,
+  qnaId: number,
+  answer: string,
+  options?: RequestOptions
+) => {
+  const response = await putJson<{
+    message: string;
+    status: string;
+    data: CourseQnA;
+  }>(`/courses/${courseId}/qna/${qnaId}/answer`, { answer }, options);
   return response.data;
 };
 

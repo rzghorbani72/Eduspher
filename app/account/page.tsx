@@ -11,6 +11,8 @@ import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
 import type { EnrollmentSummary } from "@/lib/api/types";
 import { ChangePasswordForm } from "@/components/account/change-password-form";
 import { AddContactForm } from "@/components/account/add-contact-form";
+import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
+import { EditSchoolNameForm } from "@/components/account/edit-school-name-form";
 
 export default async function AccountPage() {
   const session = await getSession();
@@ -194,11 +196,25 @@ export default async function AccountPage() {
       <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Account Settings</h2>
         <div className="grid gap-4 md:grid-cols-2">
+          {/* Edit Display Name */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Display Name</h3>
+            <EditDisplayNameForm profileId={userData.id} currentDisplayName={userData.display_name} />
+          </div>
+
           {/* Change Password */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Change Password</h3>
             <ChangePasswordForm profileId={userData.id} />
           </div>
+
+          {/* Edit School Name (Manager only) */}
+          {userData.role === 'MANAGER' && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">School Name</h3>
+              <EditSchoolNameForm currentSchoolName={schoolName} />
+            </div>
+          )}
 
           {/* Add Secondary Contact Method */}
           {needsSecondaryMethod && (
