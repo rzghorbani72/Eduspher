@@ -55,11 +55,7 @@ export default async function AccountPage() {
       }).catch(() => null),
       schoolContext.slug ? getSchoolBySlug(schoolContext.slug) : null,
     ]);
-    console.log("userData", userData);
-    console.log("profilesData", profilesData);
-    console.log("recommended", recommended);
-    console.log("enrollmentsData", enrollmentsData);
-    console.log("school", school);
+    
     if (userData === null) {
     return (
       <EmptyState
