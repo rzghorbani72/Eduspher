@@ -53,6 +53,12 @@ export interface CourseSummary {
   is_published: boolean;
   is_featured: boolean;
   is_certificate: boolean;
+  rating?: number;
+  rating_count?: number;
+  students_count?: number;
+  lessons_count?: number;
+  duration?: number | null;
+  comments_count?: number;
   author?: AuthorSummary | null;
   category?: CategorySummary | null;
   cover?: MediaAsset | null;

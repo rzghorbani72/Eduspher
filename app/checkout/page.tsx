@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
+import { OrderSummary } from "@/components/checkout/order-summary";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCourseById, getCurrentUser } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
@@ -160,36 +161,7 @@ export default async function CheckoutPage({
         </div>
 
         <div className="lg:sticky lg:top-6 lg:h-fit">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Order Summary
-            </h3>
-            <div className="mt-4 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-300">Course</span>
-                <span className="font-medium text-slate-900 dark:text-white">
-                  {formatCurrencyWithSchool(course.price, user?.currentSchool || null)}
-                </span>
-              </div>
-              {course.original_price && course.original_price > course.price && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-300">Original Price</span>
-                  <span className="text-slate-500 line-through dark:text-slate-400">
-                    {formatCurrencyWithSchool(course.original_price, user?.currentSchool || null)}
-                  </span>
-                </div>
-              )}
-              <div className="border-t border-slate-200 pt-3 dark:border-slate-800">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-900 dark:text-white">Total</span>
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {formatCurrencyWithSchool(course.price, user?.currentSchool || null)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <CheckoutForm course={course} user={user} session={session} />
-          </div>
+          <OrderSummary course={course} user={user} session={session} />
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ interface CheckoutRequest {
   course_id: number;
   user_id: number;
   profile_id: number;
+  voucher_code?: string;
 }
 
 interface CheckoutResult {
@@ -61,6 +62,7 @@ export async function processCheckout(
           amount: Math.round(course.price * 100), // Convert to smallest currency unit (cents)
           payment_method: "ONLINE",
           status: "PENDING", // Will be updated when payment gateway confirms
+          coupon_code: request.voucher_code,
         });
 
         if (!paymentResult || !paymentResult.id) {

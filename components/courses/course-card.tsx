@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MessageSquare, Star, Users, BookOpen, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";
 import { buildSchoolPath, formatCurrencyWithSchool, resolveAssetUrl, truncate } from "@/lib/utils";
@@ -37,6 +38,45 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
             {truncate(course.short_description, 160)}
           </p>
         ) : null}
+        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+          {course.comments_count !== undefined && course.comments_count > 0 && (
+            <div className="flex items-center gap-1.5">
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span>{course.comments_count}</span>
+            </div>
+          )}
+          {course.rating !== undefined && course.rating > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <span>{course.rating.toFixed(1)}</span>
+              {course.rating_count !== undefined && course.rating_count > 0 && (
+                <span className="text-slate-400">({course.rating_count})</span>
+              )}
+            </div>
+          )}
+          {course.students_count !== undefined && course.students_count > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Users className="h-3.5 w-3.5" />
+              <span>{course.students_count}</span>
+            </div>
+          )}
+          {course.lessons_count !== undefined && course.lessons_count > 0 && (
+            <div className="flex items-center gap-1.5">
+              <BookOpen className="h-3.5 w-3.5" />
+              <span>{course.lessons_count}</span>
+            </div>
+          )}
+          {course.duration !== undefined && course.duration !== null && course.duration > 0 && (
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5" />
+              <span>
+                {course.duration >= 60
+                  ? `${Math.floor(course.duration / 60)}h ${course.duration % 60}m`
+                  : `${course.duration}m`}
+              </span>
+            </div>
+          )}
+        </div>
         <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm font-semibold text-slate-700 dark:border-slate-800 dark:text-slate-200">
           <div className="flex flex-col gap-1">
             {course.is_free ? (

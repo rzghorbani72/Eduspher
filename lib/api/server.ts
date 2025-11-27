@@ -653,3 +653,28 @@ export async function createCourseQnA(courseId: number, question: string) {
   return result.data;
 }
 
+export async function validateDiscount(data: {
+  code: string;
+  amount: number;
+  profile_id?: number;
+}) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        discount_amount: number;
+        final_amount: number;
+        discount_code_id: number;
+      };
+    }>("/discounts/validate", {
+      method: "POST",
+      body: JSON.stringify(data),
+      includeAuth: false,
+    });
+    return result.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
