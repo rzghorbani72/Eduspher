@@ -91,6 +91,13 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         });
         
         setAuthenticated(true);
+        
+        // Sync cart after login (non-blocking)
+        const { loadAndMergeCart } = await import("@/app/actions/cart");
+        loadAndMergeCart().catch(() => {
+          // Silently fail - cart is still in localStorage
+        });
+        
         router.push(buildPath("/courses"));
         router.refresh();
       } catch (err) {

@@ -133,6 +133,13 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
         });
 
         if (result.success) {
+          // If bank redirect URL is provided, redirect to bank payment
+          if (result.bankRedirectUrl) {
+            window.location.href = result.bankRedirectUrl;
+            return;
+          }
+          
+          // For free courses or direct enrollment
           setSuccess(true);
           setTimeout(() => {
             router.push(buildPath(`/courses/${course.id}`));

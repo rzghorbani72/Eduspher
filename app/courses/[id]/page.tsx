@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseCurriculum } from "@/components/courses/course-curriculum";
 import { CourseQnA } from "@/components/courses/course-qna";
+import { CartButton } from "@/components/cart/cart-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getCourseById, getCourses, getCurrentUser } from "@/lib/api/server";
@@ -175,12 +176,17 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                   </div>
                 ))}
               </div>
-              <Link
-                href={buildPath(`/checkout?course=${normalizedCourse.id}`)}
-                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
-              >
-                Enroll now
-              </Link>
+              <div className="space-y-3">
+                <Link
+                  href={buildPath(`/checkout?course=${normalizedCourse.id}`)}
+                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+                >
+                  Enroll now
+                </Link>
+                {!normalizedCourse.is_free && (
+                  <CartButton course={normalizedCourse} />
+                )}
+              </div>
               <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
                 Includes 14-day satisfaction guarantee. Cancel anytime in your dashboard.
               </p>

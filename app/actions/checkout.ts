@@ -1,10 +1,11 @@
 "use server";
 
 import { getSession } from "@/lib/auth/session";
-import { createPayment, createEnrollment } from "@/lib/api/server";
+import { createPayment, createEnrollment, createBasket } from "@/lib/api/server";
 
 interface CheckoutRequest {
-  course_id: number;
+  course_id?: number;
+  course_ids?: number[];
   user_id: number;
   profile_id: number;
   voucher_code?: string;
@@ -15,6 +16,8 @@ interface CheckoutResult {
   error?: string;
   enrollmentId?: number;
   paymentId?: number;
+  basketId?: number;
+  bankRedirectUrl?: string;
 }
 
 export async function processCheckout(
@@ -37,32 +40,97 @@ export async function processCheckout(
       };
     }
 
-    // For free courses, create enrollment directly without payment
-    // For paid courses, create payment first, then enrollment
-    let paymentId: number | undefined;
-
     try {
-      // Check if course is free by fetching it
-      const { getCourseById } = await import("@/lib/api/server");
-      const course = await getCourseById(request.course_id);
+      const { getCourseById, getCart } = await import("@/lib/api/server");
+      
+      // Determine course IDs - from request or cart
+      let courseIds: number[] = [];
+      if (request.course_ids && request.course_ids.length > 0) {
+        courseIds = request.course_ids;
+      } else if (request.course_id) {
+        courseIds = [request.course_id];
+      } else {
+        // Get from server cart (hybrid approach - server is source of truth at checkout)
+        const cart = await getCart();
+        if (cart && cart.items) {
+          courseIds = cart.items.map((item: any) => item.course_id);
+        }
+        
+        // If no server cart, try to sync local cart first
+        if (courseIds.length === 0) {
+          // This would sync local cart to server, then get it
+          // For now, we'll rely on client to pass course_ids
+        }
+      }
 
-      if (!course) {
+      if (courseIds.length === 0) {
         return {
           success: false,
-          error: "Course not found",
+          error: "No courses selected",
         };
       }
 
-      if (!course.is_free && course.price > 0) {
-        // Create payment for paid courses
+      // Fetch all courses to check if any are free
+      const courses = await Promise.all(
+        courseIds.map((id) => getCourseById(id).catch(() => null))
+      );
+
+      const validCourses = courses.filter((c) => c !== null);
+      if (validCourses.length === 0) {
+        return {
+          success: false,
+          error: "No valid courses found",
+        };
+      }
+
+      const hasPaidCourses = validCourses.some((c) => !c.is_free && c.price > 0);
+      const totalAmount = validCourses.reduce(
+        (sum, c) => sum + (c.is_free ? 0 : c.price * 100),
+        0
+      );
+
+      // For free courses only, enroll directly
+      if (!hasPaidCourses) {
+        const enrollments = await Promise.all(
+          validCourses.map((course) =>
+            createEnrollment({
+              course_id: course.id,
+              user_id: request.user_id,
+              profile_id: request.profile_id,
+              status: "ACTIVE",
+            })
+          )
+        );
+
+        return {
+          success: true,
+          enrollmentId: enrollments[0]?.id,
+        };
+      }
+
+      // For paid courses, create basket first
+      const basket = await createBasket({
+        profile_id: request.profile_id,
+        course_ids: courseIds,
+        voucher_code: request.voucher_code,
+      });
+
+      if (!basket || !basket.id) {
+        return {
+          success: false,
+          error: "Failed to create basket",
+        };
+      }
+
+      // Create payment with basket reference
         const paymentResult = await createPayment({
-          course_id: request.course_id,
+        course_id: courseIds[0], // Keep for backward compatibility
           user_id: request.user_id,
           profile_id: request.profile_id,
-          amount: Math.round(course.price * 100), // Convert to smallest currency unit (cents)
+        amount: basket.final_amount,
           payment_method: "ONLINE",
-          status: "PENDING", // Will be updated when payment gateway confirms
-          coupon_code: request.voucher_code,
+        status: "PENDING",
+        coupon_code: request.voucher_code,
         });
 
         if (!paymentResult || !paymentResult.id) {
@@ -72,29 +140,19 @@ export async function processCheckout(
           };
         }
 
-        paymentId = paymentResult.id;
-      }
-
-      // Create enrollment
-      const enrollmentResult = await createEnrollment({
-        course_id: request.course_id,
-        user_id: request.user_id,
+      // Call bank API to get redirect URL
+      const bankRedirectUrl = await callBankAPI({
+        amount: basket.final_amount,
+        payment_id: paymentResult.id,
+        basket_id: basket.id,
         profile_id: request.profile_id,
-        payment_id: paymentId,
-        status: "ACTIVE",
       });
-
-      if (!enrollmentResult || !enrollmentResult.id) {
-        return {
-          success: false,
-          error: "Failed to create enrollment",
-        };
-      }
 
       return {
         success: true,
-        enrollmentId: enrollmentResult.id,
-        paymentId: paymentId,
+        paymentId: paymentResult.id,
+        basketId: basket.id,
+        bankRedirectUrl,
       };
     } catch (apiError) {
       const errorMessage =
@@ -120,5 +178,40 @@ export async function processCheckout(
       error: errorMessage,
     };
   }
+}
+
+async function callBankAPI(data: {
+  amount: number;
+  payment_id: number;
+  basket_id: number;
+  profile_id: number;
+}): Promise<string> {
+  // Hardcoded bank API integration
+  // In production, this would call the actual bank gateway API
+  
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const callbackUrl = `${baseUrl}/payment/callback`;
+  
+  // Simulate bank API call - in real implementation, this would be:
+  // const response = await fetch('https://bank-api.example.com/payment', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({
+  //     amount: data.amount,
+  //     callback_url: callbackUrl,
+  //     payment_id: data.payment_id,
+  //   }),
+  // });
+  // const result = await response.json();
+  // return result.redirect_url;
+
+  // For now, return a mock redirect URL that will redirect to our callback
+  const mockBankUrl = new URL(`${baseUrl}/payment/bank-redirect`);
+  mockBankUrl.searchParams.set("payment_id", data.payment_id.toString());
+  mockBankUrl.searchParams.set("basket_id", data.basket_id.toString());
+  mockBankUrl.searchParams.set("amount", data.amount.toString());
+  mockBankUrl.searchParams.set("callback_url", callbackUrl);
+  
+  return mockBankUrl.toString();
 }
 

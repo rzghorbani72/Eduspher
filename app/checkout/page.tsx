@@ -2,8 +2,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { OrderSummary } from "@/components/checkout/order-summary";
+import { CartCheckout } from "@/components/checkout/cart-checkout";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourseById, getCurrentUser } from "@/lib/api/server";
+import { getCourseById, getCurrentUser, getCart } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
@@ -20,33 +21,54 @@ export default async function CheckoutPage({
   const params = await searchParams;
   const courseId = params.course;
 
-  if (!courseId) {
-    return (
-      <EmptyState
-        title="Course not specified"
-        description="Please select a course to enroll in."
-        action={
-          <Link
-            href="/courses"
-            className="inline-flex h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
-          >
-            Browse Courses
-          </Link>
-        }
-      />
-    );
-  }
-
   const session = await getSession();
   if (!session || !session.userId || !session.profileId) {
     const schoolContext = await getSchoolContext();
     const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-    redirect(buildPath(`/auth/login?redirect=${encodeURIComponent(`/checkout?course=${courseId}`)}`));
+    const redirectUrl = courseId 
+      ? `/checkout?course=${courseId}`
+      : "/checkout";
+    redirect(buildPath(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`));
   }
 
-  const [course, user] = await Promise.all([
+  const user = await getCurrentUser();
+  if (!user) {
+    const schoolContext = await getSchoolContext();
+    const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+    redirect(buildPath("/auth/login"));
+  }
+
+  // If no course ID, show cart checkout
+  if (!courseId) {
+    return (
+      <div className="mx-auto max-w-4xl space-y-6">
+        <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Checkout
+          </h1>
+          <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
+            Review your cart and complete your purchase.
+          </p>
+        </div>
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <CartCheckout 
+            user={{
+              ...user,
+              name: user.display_name || user.email || user.phone_number || "User",
+            }} 
+            session={{
+              userId: session.userId!,
+              profileId: session.profileId!,
+              schoolId: session.schoolId,
+            }} 
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const [course] = await Promise.all([
     getCourseById(courseId).catch(() => null),
-    getCurrentUser(),
   ]);
 
   if (!course) {
@@ -66,11 +88,6 @@ export default async function CheckoutPage({
     );
   }
 
-  if (!user) {
-    const schoolContext = await getSchoolContext();
-    const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-    redirect(buildPath(`/auth/login?redirect=${encodeURIComponent(`/checkout?course=${courseId}`)}`));
-  }
 
   if (course.is_free) {
     // For free courses, we can enroll directly without payment
@@ -85,7 +102,18 @@ export default async function CheckoutPage({
           </p>
         </div>
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-          <CheckoutForm course={course} user={user} session={session} />
+          <CheckoutForm 
+            course={course} 
+            user={{
+              ...user,
+              name: user.display_name || user.email || user.phone_number || "User",
+            }} 
+            session={{
+              userId: session.userId!,
+              profileId: session.profileId!,
+              schoolId: session.schoolId,
+            }} 
+          />
         </div>
       </div>
     );
@@ -161,7 +189,18 @@ export default async function CheckoutPage({
         </div>
 
         <div className="lg:sticky lg:top-6 lg:h-fit">
-          <OrderSummary course={course} user={user} session={session} />
+          <OrderSummary 
+            course={course} 
+            user={{
+              ...user,
+              name: user.display_name || user.email || user.phone_number || "User",
+            }} 
+            session={{
+              userId: session.userId!,
+              profileId: session.profileId!,
+              schoolId: session.schoolId,
+            }} 
+          />
         </div>
       </div>
     </div>

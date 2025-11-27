@@ -678,3 +678,146 @@ export async function validateDiscount(data: {
   }
 }
 
+// Cart API functions for hybrid approach
+export async function getCart() {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id: number;
+        profile_id: number;
+        items: Array<{
+          id: number;
+          cart_id: number;
+          course_id: number;
+          course: CourseSummary;
+          created_at: string;
+        }>;
+        created_at: string;
+        updated_at: string;
+      };
+    }>("/cart", {
+      method: "GET",
+    });
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      return null;
+    }
+    throw error;
+  }
+}
+
+export async function syncCart(items: Array<{
+  course_id: number;
+  course_title: string;
+  course_price: number;
+  course_cover?: string;
+  added_at: string;
+}>) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id: number;
+        profile_id: number;
+        items: Array<{
+          id: number;
+          cart_id: number;
+          course_id: number;
+          created_at: string;
+        }>;
+      };
+    }>("/cart/sync", {
+      method: "POST",
+      body: JSON.stringify({ items }),
+    });
+    return result.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function addToCart(course_id: number) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id: number;
+        cart_id: number;
+        course_id: number;
+        created_at: string;
+      };
+    }>("/cart/items", {
+      method: "POST",
+      body: JSON.stringify({ course_id }),
+    });
+    return result.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function removeFromCart(cart_item_id: number) {
+  try {
+    await serverFetchRaw<{
+      message: string;
+      status: string;
+    }>(`/cart/items/${cart_item_id}`, {
+      method: "DELETE",
+    });
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function clearCart() {
+  try {
+    await serverFetchRaw<{
+      message: string;
+      status: string;
+    }>("/cart", {
+      method: "DELETE",
+    });
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createBasket(data: {
+  profile_id: number;
+  course_ids: number[];
+  voucher_code?: string;
+}) {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        id: number;
+        profile_id: number;
+        total_amount: number;
+        discount_amount: number;
+        final_amount: number;
+        voucher_code?: string;
+        items: Array<{
+          course_id: number;
+          course_price: number;
+        }>;
+        created_at: string;
+      };
+    }>("/baskets", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return result.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
