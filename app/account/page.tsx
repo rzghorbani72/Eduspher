@@ -43,9 +43,8 @@ export default async function AccountPage() {
   }
 
   try {
-    const [userData, profilesData, recommended, enrollmentsData, school] = await Promise.all([
+    const [userData, recommended, enrollmentsData, school] = await Promise.all([
       getCurrentUser(),
-      getUserProfiles(),
       getCourses({
         limit: 3,
         published: true,
@@ -55,7 +54,10 @@ export default async function AccountPage() {
       }).catch(() => null),
       schoolContext.slug ? getSchoolBySlug(schoolContext.slug) : null,
     ]);
-
+    console.log("userData", userData);
+    console.log("recommended", recommended);
+    console.log("enrollmentsData", enrollmentsData);
+    console.log("school", school);
     if (userData === null) {
     return (
       <EmptyState
@@ -65,7 +67,7 @@ export default async function AccountPage() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={buildPath("/auth/login")}
-              className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
+              className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline-slate-900 dark:bg-slate-600 dark:text-slate-900"
             >
               Log in
             </Link>
@@ -75,7 +77,7 @@ export default async function AccountPage() {
     );
   }
 
-  if (!userData.currentProfile) {
+  if (!userData.isActive) {
     return (
       <EmptyState
         title="No active profiles"
@@ -85,8 +87,6 @@ export default async function AccountPage() {
   }
 
   const profiles = profilesData ?? [];
-
-  const primaryProfile = userData.currentProfile;
 
 
   const schoolName = userData.currentSchool?.name ?? "—";
@@ -116,8 +116,8 @@ export default async function AccountPage() {
   // Check if user has secondary method and if it's confirmed
   const hasSecondaryEmail = !!userData.email && primaryMethod === 'phone';
   const hasSecondaryPhone = !!userData.phone_number && primaryMethod === 'email';
-  const hasSecondaryEmailConfirmed = hasSecondaryEmail && primaryProfile?.email_confirmed;
-  const hasSecondaryPhoneConfirmed = hasSecondaryPhone && primaryProfile?.phone_confirmed;
+  const hasSecondaryEmailConfirmed = hasSecondaryEmail && userData.email_confirmed;
+  const hasSecondaryPhoneConfirmed = hasSecondaryPhone && userData.phone_confirmed;
   
   // Show add secondary method if user doesn't have it or it's not confirmed
   const needsSecondaryMethod = primaryMethod === 'phone' 
@@ -132,10 +132,10 @@ export default async function AccountPage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Full name</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">
-              {userData.name || "—"}
+              {userData.display_name || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Display: {userData.currentProfile.displayName} • Account #{userData.id}
+              Display: {userData.display_name} • Account #{userData.id}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-150">
@@ -144,16 +144,16 @@ export default async function AccountPage() {
               {userData.email || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {primaryProfile?.email_confirmed ? "Email confirmed" : "Email not confirmed"}
+              {userData.email_confirmed ? "Email confirmed" : "Email not confirmed"}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Role</p>
             <div className="flex flex-wrap gap-2 mt-2">
               <Badge variant="success" className="text-sm px-3 py-1">
-                {userData.currentProfile.role}
+                {userData.role}
               </Badge>
-              {allRoles.filter(role => role !== userData.currentProfile.role).map((role) => (
+              {allRoles.filter(role => role !== userData.role).map((role) => (
                 <Badge key={role} variant="soft" className="text-sm px-3 py-1">
                   {role}
                 </Badge>
@@ -187,7 +187,7 @@ export default async function AccountPage() {
               {userData.phone_number || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {primaryProfile?.phone_confirmed ? "Phone confirmed" : "Phone not confirmed"} • {userData.country_code ? `Country: ${userData.country_code}` : `Profile #${userData.currentProfile.id}`}
+              {userData.phone_confirmed ? "Phone confirmed" : "Phone not confirmed"} • Profile #{userData.id}
             </p>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default async function AccountPage() {
           {/* Change Password */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Change Password</h3>
-            <ChangePasswordForm profileId={userData.currentProfile.id} />
+            <ChangePasswordForm profileId={userData.id} />
           </div>
 
           {/* Add Secondary Contact Method */}
@@ -214,7 +214,7 @@ export default async function AccountPage() {
               <AddContactForm 
                 method={secondaryMethod}
                 primaryMethod={primaryMethod}
-                defaultCountryCode={school?.country_code || userData.country_code || undefined}
+                defaultCountryCode={school?.country_code || undefined}
               />
             </div>
           )}
@@ -234,7 +234,7 @@ export default async function AccountPage() {
             {allRoles.map((role) => (
               <Badge 
                 key={role} 
-                variant={role === userData.currentProfile.role ? "success" : "soft"}
+                variant={role === userData.role ? "success" : "soft"}
                 className="text-sm px-4 py-2"
               >
                 {role}
@@ -256,7 +256,7 @@ export default async function AccountPage() {
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">
                         {profile.display_name}
                       </p>
-                      <Badge variant={profile.id === userData.currentProfile.id ? "success" : "soft"}>
+                      <Badge variant={profile.id === userData.id ? "success" : "soft"}>
                         {profile.role}
                       </Badge>
                     </div>

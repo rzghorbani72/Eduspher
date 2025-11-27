@@ -108,7 +108,7 @@ export function CheckoutForm({ course, user, session }: CheckoutFormProps) {
             Enrolling as
           </div>
           <div className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
-            {user.currentProfile.displayName}
+            {user.display_name}
           </div>
           <div className="mt-1 text-xs text-slate-600 dark:text-slate-300">
             {user.email || user.phone_number}

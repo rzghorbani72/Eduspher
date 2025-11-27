@@ -295,22 +295,18 @@ export async function getCurrentUser() {
       status: string;
       data: {
         id: number;
-        email: string;
-        phone_number: string;
-        name: string;
-        country_code?: string;
-        preferred_currency?: string;
+        email: string | null;
+        phone_number: string | null;
+        display_name: string;
         has_password: boolean;
-        currentProfile: {
-          id: number;
-          schoolId: number;
-          role: string;
-          email_confirmed: boolean;
-          phone_confirmed: boolean;
-          displayName: string;
-          isActive: boolean;
-          isVerified: boolean;
-        };
+        last_login: Date | null;
+        login_count: number;
+        schoolId: number;
+        role: string;
+        email_confirmed: boolean;
+        phone_confirmed: boolean;
+        isActive: boolean;
+        isVerified: boolean;
         currentSchool: {
           id: number;
           name: string;
