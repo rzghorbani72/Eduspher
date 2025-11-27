@@ -40,6 +40,16 @@ export async function checkAuth(): Promise<{ isAuthenticated: boolean }> {
   }
 }
 
+export async function getUserDisplayName(): Promise<{ displayName: string | null }> {
+  try {
+    const { getCurrentUser } = await import('@/lib/api/server');
+    const user = await getCurrentUser();
+    return { displayName: user?.display_name || null };
+  } catch {
+    return { displayName: null };
+  }
+}
+
 export async function logout(): Promise<{ success: boolean; error?: string }> {
   try {
     const cookieStore = await cookies();

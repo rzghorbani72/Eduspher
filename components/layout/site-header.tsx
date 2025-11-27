@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 
 import { Menu, X } from "lucide-react";
 
-import { logout, checkAuth } from "@/app/actions/auth";
+import { logout, checkAuth, getUserDisplayName } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useSchoolContext, useSchoolPath } from "@/components/providers/school-provider";
@@ -27,6 +27,7 @@ export const SiteHeader = () => {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [displayName, setDisplayName] = useState<string | null>(null);
 
   // Check authentication status on mount using server action (checks SSR cookies)
   useEffect(() => {
@@ -34,6 +35,16 @@ export const SiteHeader = () => {
       try {
         const { isAuthenticated } = await checkAuth();
         setAuthenticated(isAuthenticated);
+        
+        // If authenticated, fetch display name
+        if (isAuthenticated) {
+          try {
+            const { displayName } = await getUserDisplayName();
+            setDisplayName(displayName);
+          } catch {
+            // If fetching display name fails, just continue without it
+          }
+        }
       } catch {
         // If check fails, assume not authenticated
         setAuthenticated(false);
@@ -104,7 +115,7 @@ export const SiteHeader = () => {
                 href={buildPath("/account")}
                 className="hidden text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-white md:block"
               >
-                My Learning
+                {displayName || "My Learning"}
               </Link>
               <Button
                 variant="outline"
@@ -160,7 +171,7 @@ export const SiteHeader = () => {
                     onClick={closeMobile}
                     className="rounded-full border border-slate-200 px-5 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
                   >
-                    My Learning
+                    {displayName || "My Learning"}
                   </Link>
                   <button
                     type="button"
