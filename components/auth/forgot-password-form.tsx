@@ -17,7 +17,10 @@ import { OtpType } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { useSchoolPath } from "@/components/providers/school-provider";
+import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
+import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
 
 const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -29,7 +32,11 @@ const isValidPhone = (phone: string) => {
 
 type Step = "identifier" | "otp" | "password" | "success";
 
-export const ForgotPasswordForm = () => {
+interface ForgotPasswordFormProps {
+  defaultCountryCode?: string;
+}
+
+export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormProps) => {
   const router = useRouter();
   const buildPath = useSchoolPath();
   const [step, setStep] = useState<Step>("identifier");
@@ -38,6 +45,16 @@ export const ForgotPasswordForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
+  const getInitialCountry = () => {
+    if (defaultCountryCode) {
+      const country = getCountryByCode(defaultCountryCode);
+      if (country) return country;
+    }
+    return getDefaultCountry();
+  };
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
   
   const [formData, setFormData] = useState({
     identifier: "",
@@ -48,6 +65,20 @@ export const ForgotPasswordForm = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setError(null);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhoneNumber(value);
+    const cleaned = cleanPhoneNumber(value, selectedCountry);
+    const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+    setFormData((prev) => ({ ...prev, identifier: fullPhone }));
+    setError(null);
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setFormData((prev) => ({ ...prev, identifier: value }));
     setError(null);
   };
 
@@ -208,6 +239,9 @@ export const ForgotPasswordForm = () => {
       confirmed_password: "",
       otp: "",
     });
+    setPhoneNumber("");
+    setEmail("");
+    setValidated(false);
     setError(null);
     setMessage(null);
   };
@@ -222,6 +256,9 @@ export const ForgotPasswordForm = () => {
               onClick={() => {
                 setAuthMethod("email");
                 setError(null);
+                if (email) {
+                  setFormData((prev) => ({ ...prev, identifier: email }));
+                }
               }}
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "email"
@@ -236,6 +273,11 @@ export const ForgotPasswordForm = () => {
               onClick={() => {
                 setAuthMethod("phone");
                 setError(null);
+                if (phoneNumber) {
+                  const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+                  const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+                  setFormData((prev) => ({ ...prev, identifier: fullPhone }));
+                }
               }}
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "phone"
@@ -251,24 +293,39 @@ export const ForgotPasswordForm = () => {
             <Label htmlFor="identifier">
               {authMethod === "email" ? "Email Address" : "Phone Number"}
             </Label>
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                {authMethod === "email" ? (
+            {authMethod === "email" ? (
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Mail className="h-5 w-5 text-slate-400" />
-                ) : (
-                  <Phone className="h-5 w-5 text-slate-400" />
-                )}
+                </div>
+                <Input
+                  id="identifier"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                  className="pl-10"
+                  autoComplete="email"
+                />
               </div>
-              <Input
+            ) : (
+              <PhoneInput
                 id="identifier"
-                type={authMethod === "email" ? "email" : "tel"}
-                placeholder={authMethod === "email" ? "Enter your email" : "Enter your phone number"}
-                value={formData.identifier}
-                onChange={(e) => handleInputChange("identifier", e.target.value)}
-                className="pl-10"
-                autoComplete={authMethod === "email" ? "email" : "tel"}
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                onCountryChange={(country) => {
+                  setSelectedCountry(country);
+                  if (phoneNumber) {
+                    const cleaned = cleanPhoneNumber(phoneNumber, country);
+                    const fullPhone = getFullPhoneNumber(cleaned, country);
+                    setFormData((prev) => ({ ...prev, identifier: fullPhone }));
+                  }
+                }}
+                defaultCountry={selectedCountry}
+                placeholder="Enter phone number"
+                autoComplete="tel"
               />
-            </div>
+            )}
           </div>
 
           {!validated ? (
