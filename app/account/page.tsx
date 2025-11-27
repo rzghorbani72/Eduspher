@@ -43,8 +43,9 @@ export default async function AccountPage() {
   }
 
   try {
-    const [userData, recommended, enrollmentsData, school] = await Promise.all([
+    const [userData, profilesData, recommended, enrollmentsData, school] = await Promise.all([
       getCurrentUser(),
+      getUserProfiles().catch(() => null),
       getCourses({
         limit: 3,
         published: true,
@@ -55,6 +56,7 @@ export default async function AccountPage() {
       schoolContext.slug ? getSchoolBySlug(schoolContext.slug) : null,
     ]);
     console.log("userData", userData);
+    console.log("profilesData", profilesData);
     console.log("recommended", recommended);
     console.log("enrollmentsData", enrollmentsData);
     console.log("school", school);

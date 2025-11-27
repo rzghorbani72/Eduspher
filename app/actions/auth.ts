@@ -20,11 +20,13 @@ export async function checkAuth(): Promise<{ isAuthenticated: boolean }> {
     try {
       // Validate the JWT token by decoding it
       const payload = decodeJwt(token);
-      // Check if token has required fields and is not expired
+      // Check if token has required fields (profileId or userId) and is not expired
+      const hasProfileId = payload.profileId && (typeof payload.profileId === 'number' || typeof payload.profileId === 'string');
       const hasUserId = payload.userId && (typeof payload.userId === 'number' || typeof payload.userId === 'string');
+      const hasValidId = hasProfileId || hasUserId;
       const isExpired = payload.exp && typeof payload.exp === 'number' && payload.exp < Date.now() / 1000;
       
-      if (hasUserId && !isExpired) {
+      if (hasValidId && !isExpired) {
         return { isAuthenticated: true };
       }
     } catch {

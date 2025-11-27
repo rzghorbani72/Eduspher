@@ -16,9 +16,12 @@ export const getSession = async (): Promise<SessionPayload | null> => {
   if (!token) return null;
   try {
     const payload = decodeJwt(token);
+    // Token contains profileId (primary), use it for both userId and profileId for backward compatibility
+    const profileId = typeof payload.profileId === "number" ? payload.profileId : 
+                     (typeof payload.userId === "number" ? payload.userId : null);
     return {
-      userId: typeof payload.userId === "number" ? payload.userId : null,
-      profileId: typeof payload.profileId === "number" ? payload.profileId : null,
+      userId: profileId, // Use profileId as userId for backward compatibility
+      profileId: profileId,
       schoolId: typeof payload.schoolId === "number" ? payload.schoolId : null,
       roles: Array.isArray(payload.roles) ? (payload.roles as string[]) : [],
     };
