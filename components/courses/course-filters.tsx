@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useRef, useLayoutEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import type { CategorySummary } from "@/lib/api/types";
@@ -25,20 +25,72 @@ export function CourseFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const isTypingRef = useRef(false);
+  const shouldRestoreFocusRef = useRef(false);
 
-  const [query, setQuery] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery ?? "");
   const [categoryId, setCategoryId] = useState(initialCategoryId?.toString() ?? "");
-  const [orderBy, setOrderBy] = useState(initialOrderBy);
-  const [isFree, setIsFree] = useState(initialIsFree);
+  const [orderBy, setOrderBy] = useState(initialOrderBy ?? "");
+  const [isFree, setIsFree] = useState(initialIsFree ?? false);
+  const [mounted, setMounted] = useState(false);
 
   const debouncedQuery = useDebounce(query, 500);
 
+  // Check for focus restoration on mount
   useEffect(() => {
-    setQuery(initialQuery);
-    setCategoryId(initialCategoryId?.toString() ?? "");
-    setOrderBy(initialOrderBy ?? "");
-    setIsFree(initialIsFree);
+    setMounted(true);
+    // Check if we should restore focus (from sessionStorage)
+    if (typeof window !== 'undefined' && sessionStorage.getItem('restoreSearchFocus') === 'true') {
+      shouldRestoreFocusRef.current = true;
+      sessionStorage.removeItem('restoreSearchFocus');
+    }
+  }, []);
+
+  // Only sync from props if user is not actively typing
+  useEffect(() => {
+    if (!isTypingRef.current) {
+      setQuery(initialQuery ?? "");
+      setCategoryId(initialCategoryId?.toString() ?? "");
+      setOrderBy(initialOrderBy ?? "");
+      setIsFree(initialIsFree ?? false);
+    }
   }, [initialQuery, initialCategoryId, initialOrderBy, initialIsFree]);
+
+  // Restore focus after URL update completes - use multiple strategies
+  useEffect(() => {
+    if (shouldRestoreFocusRef.current && mounted) {
+      // Use requestAnimationFrame to ensure DOM is ready
+      const rafId = requestAnimationFrame(() => {
+        const rafId2 = requestAnimationFrame(() => {
+          if (searchInputRef.current && document.contains(searchInputRef.current)) {
+            searchInputRef.current.focus();
+            // Restore cursor position to end of input
+            const length = searchInputRef.current.value.length;
+            searchInputRef.current.setSelectionRange(length, length);
+            shouldRestoreFocusRef.current = false;
+          }
+        });
+        return () => cancelAnimationFrame(rafId2);
+      });
+      return () => cancelAnimationFrame(rafId);
+    }
+  }, [mounted]);
+
+  // Also try to restore focus when searchParams change (after page re-render)
+  useEffect(() => {
+    if (shouldRestoreFocusRef.current && mounted) {
+      const timer = setTimeout(() => {
+        if (searchInputRef.current && document.contains(searchInputRef.current)) {
+          searchInputRef.current.focus();
+          const length = searchInputRef.current.value.length;
+          searchInputRef.current.setSelectionRange(length, length);
+          shouldRestoreFocusRef.current = false;
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, mounted]);
 
   const updateSearchParams = (updates: Record<string, string | number | boolean | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -53,8 +105,19 @@ export function CourseFilters({
 
     params.delete("page");
 
+    // Track if input was focused before update - persist to sessionStorage for remounts
+    const wasFocused = document.activeElement === searchInputRef.current;
+    if (wasFocused) {
+      shouldRestoreFocusRef.current = true;
+      // Also store in sessionStorage in case component remounts
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('restoreSearchFocus', 'true');
+      }
+    }
+
     startTransition(() => {
-      router.push(`${pathname}?${params.toString()}`);
+      // Use replace instead of push to avoid adding to history and maintain focus
+      router.replace(`${pathname}?${params.toString()}`);
     });
   };
 
@@ -86,8 +149,12 @@ export function CourseFilters({
     setCategoryId("");
     setOrderBy("");
     setIsFree(false);
+    const wasFocused = document.activeElement === searchInputRef.current;
+    if (wasFocused) {
+      shouldRestoreFocusRef.current = true;
+    }
     startTransition(() => {
-      router.push(pathname);
+      router.replace(pathname);
     });
   };
 
@@ -104,13 +171,28 @@ export function CourseFilters({
             Search courses
           </label>
           <Input
+            ref={searchInputRef}
             id="q"
             name="q"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              isTypingRef.current = true;
+              setQuery(e.target.value);
+              // Reset typing flag after a delay
+              setTimeout(() => {
+                isTypingRef.current = false;
+              }, 600);
+            }}
+            onBlur={() => {
+              // Allow prop sync after blur
+              setTimeout(() => {
+                isTypingRef.current = false;
+              }, 100);
+            }}
             placeholder="Search by title, description..."
             disabled={isPending}
             className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
+            autoComplete="off"
           />
         </div>
         <div className="space-y-2">
