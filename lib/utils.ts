@@ -14,6 +14,7 @@ export const formatCurrency = (
     currency_symbol?: string;
     currency_position?: "before" | "after";
     divideBy?: number;
+    locale?: string;
   }
 ) => {
   const {
@@ -21,16 +22,18 @@ export const formatCurrency = (
     currency_symbol,
     currency_position = "after",
     divideBy = 1,
+    locale = "en-US",
   } = options || {};
 
   const numericValue = value / divideBy;
 
-  // If custom symbol is provided, format manually
+  // If custom symbol is provided, format manually with thousand separators
   if (currency_symbol) {
-    const formattedNumber = new Intl.NumberFormat("en-US", {
-      notation: "compact",
+    // Use standard number formatting with thousand separators (no compact notation)
+    const formattedNumber = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 2,
+      maximumFractionDigits: 0, // No decimals for whole numbers
+      useGrouping: true, // Enable thousand separators
     }).format(numericValue);
 
     return currency_position === "before"
@@ -38,12 +41,13 @@ export const formatCurrency = (
       : `${formattedNumber} ${currency_symbol}`;
   }
 
-  // Use Intl.NumberFormat for standard currencies
-  return new Intl.NumberFormat("en-US", {
+  // Use Intl.NumberFormat for standard currencies with thousand separators
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: currency || "USD",
-    notation: "compact",
+    minimumFractionDigits: 0,
     maximumFractionDigits: 2,
+    useGrouping: true, // Enable thousand separators
   }).format(numericValue);
 };
 
@@ -60,6 +64,7 @@ export const formatCurrencyWithSchool = (
     currency?: string;
     currency_symbol?: string;
     currency_position?: "before" | "after";
+    country_code?: string;
   } | null,
   divideBy?: number
 ) => {
@@ -70,11 +75,32 @@ export const formatCurrencyWithSchool = (
   // For Toman (IRR), typically no division needed as it's already in the base unit
   const defaultDivideBy = school.currency === "IRR" ? 1 : 100;
 
+  // Determine locale based on country code for proper thousand separator
+  // Some countries use dots (.), others use commas (,)
+  // Default to en-US (commas) if not specified
+  let locale = "en-US"; // Default: uses commas for thousands
+  if (school.country_code) {
+    // Countries that typically use dots for thousands: DE, IT, ES, FR, etc.
+    const dotSeparatorCountries = ["DE", "IT", "ES", "FR", "NL", "BE", "AT", "CH", "PL", "CZ", "SK", "HU", "RO", "BG", "HR", "SI"];
+    // Countries that use commas: US, UK, CA, AU, IN, IR, etc.
+    const commaSeparatorCountries = ["US", "GB", "CA", "AU", "IN", "IR", "AE", "SA"];
+    
+    if (dotSeparatorCountries.includes(school.country_code.toUpperCase())) {
+      locale = "de-DE"; // German locale uses dots for thousands
+    } else if (commaSeparatorCountries.includes(school.country_code.toUpperCase())) {
+      locale = "en-US"; // US locale uses commas for thousands
+    } else {
+      // Default to en-US for unknown countries
+      locale = "en-US";
+    }
+  }
+
   return formatCurrency(value, {
     currency: school.currency || "USD",
     currency_symbol: school.currency_symbol,
     currency_position: school.currency_position || "after",
     divideBy: divideBy ?? defaultDivideBy,
+    locale,
   });
 };
 
