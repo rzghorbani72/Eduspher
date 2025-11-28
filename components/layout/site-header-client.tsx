@@ -15,6 +15,7 @@ import { CartIcon } from "@/components/cart/cart-icon";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/courses", label: "Courses" },
+  { href: "/products", label: "Products" },
   { href: "/articles", label: "Articles" },
   { href: "/about", label: "About" },
 ];

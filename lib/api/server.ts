@@ -25,6 +25,8 @@ import type {
   CategorySummary,
   CourseListPayload,
   CourseSummary,
+  ProductListPayload,
+  ProductSummary,
   SchoolDetail,
   SchoolSummary,
   UserProfilesResponse,
@@ -249,6 +251,57 @@ export async function getCourseById(id: string | number) {
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
       const fallback = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
+        includeAuth: false,
+      }).catch(() => null);
+      return fallback?.data ?? null;
+    }
+    throw error;
+  }
+}
+
+export async function getProducts(params?: {
+  search?: string;
+  title?: string;
+  min_price?: number;
+  max_price?: number;
+  page?: number;
+  limit?: number;
+  order_by?: string;
+  published?: boolean;
+  is_featured?: boolean;
+  product_type?: 'DIGITAL' | 'PHYSICAL';
+  category_id?: number;
+  author_id?: number;
+}) {
+  try {
+    const result = await serverFetch<ProductListPayload>("/products", {
+      query: {
+        ...params,
+      },
+    });
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      const fallback = await serverFetch<ProductListPayload>("/products/public", {
+        includeAuth: false,
+        query: {
+          ...params,
+          published: true,
+        },
+      }).catch(() => null);
+      return fallback?.data ?? null;
+    }
+    throw error;
+  }
+}
+
+export async function getProductById(id: string | number) {
+  try {
+    const result = await serverFetch<ProductSummary>(`/products/${id}`);
+    return result.data;
+  } catch (error) {
+    if (error instanceof Error && /401/.test(error.message)) {
+      const fallback = await serverFetch<ProductSummary>(`/products/public/${id}`, {
         includeAuth: false,
       }).catch(() => null);
       return fallback?.data ?? null;

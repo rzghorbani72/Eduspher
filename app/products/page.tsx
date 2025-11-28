@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import { CourseCard } from "@/components/courses/course-card";
-import { CourseFilters } from "@/components/courses/course-filters";
+import { ProductCard } from "@/components/products/product-card";
+import { ProductFilters } from "@/components/products/product-filters";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourses, getCategories, getCurrentUser, getCurrentSchool } from "@/lib/api/server";
+import { getProducts, getCategories, getCurrentUser, getCurrentSchool } from "@/lib/api/server";
 import { buildSchoolPath } from "@/lib/utils";
 import { getSchoolContext } from "@/lib/school-context";
 
@@ -12,7 +12,7 @@ type SearchParams = Promise<{
   page?: string;
   order_by?: string;
   category_id?: string;
-  is_free?: string;
+  product_type?: string;
 }>;
 
 const pageSize = 9;
@@ -21,11 +21,6 @@ const parseNumber = (value?: string) => {
   if (!value) return undefined;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : undefined;
-};
-
-const parseBoolean = (value?: string) => {
-  if (!value) return undefined;
-  return value === "true" || value === "1";
 };
 
 const buildQueryString = (params: Record<string, string | number | boolean | undefined>) => {
@@ -38,7 +33,7 @@ const buildQueryString = (params: Record<string, string | number | boolean | und
   return qs ? `?${qs}` : "";
 };
 
-export default async function CoursesPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function ProductsPage({ searchParams }: { searchParams: SearchParams }) {
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
   const params = await searchParams;
@@ -46,60 +41,59 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const page = parseNumber(params?.page) ?? 1;
   const orderBy = params?.order_by;
   const categoryId = parseNumber(params?.category_id);
-  const isFree = parseBoolean(params?.is_free);
+  const productType = params?.product_type as 'DIGITAL' | 'PHYSICAL' | undefined;
 
-  const [coursePayload, categories, user, currentSchool] = await Promise.all([
-    getCourses({
+  const [productPayload, categories, user, currentSchool] = await Promise.all([
+    getProducts({
       search: query || undefined,
       page,
       limit: pageSize,
       order_by: orderBy || undefined,
       published: true,
       category_id: categoryId,
-      is_free: isFree,
+      product_type: productType,
     }).catch(() => null),
     getCategories().catch(() => []),
     getCurrentUser().catch(() => null),
     getCurrentSchool().catch(() => null),
   ]);
 
-  // Courses are public - anyone can view them
-  const courses = coursePayload?.courses ?? [];
-  const pagination = coursePayload?.pagination;
+  // Products are public - anyone can view them
+  const products = productPayload?.products ?? [];
+  const pagination = productPayload?.pagination;
   const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
 
   return (
     <div className="space-y-6">
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-          Course catalogue
+          Product Store
         </h1>
         <p className="max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
-          Browse comprehensive courses created with practitioners. Use filters to refine by category,
-          format, or newest releases.
+          Browse products from all teachers. Find digital downloads, physical items, and more related to your courses.
         </p>
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-        <CourseFilters
+        <ProductFilters
           categories={categories}
           initialQuery={query}
           initialCategoryId={categoryId}
           initialOrderBy={orderBy}
-          initialIsFree={isFree}
+          initialProductType={productType}
         />
       </div>
 
-      {courses.length > 0 ? (
+      {products.length > 0 ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {courses.map((course, index) => (
+              {products.map((product, index) => (
                 <div
-                  key={course.id}
+                  key={product.id}
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CourseCard course={course} schoolSlug={schoolContext.slug} school={schoolCurrency} />
+                  <ProductCard product={product} schoolSlug={schoolContext.slug} school={schoolCurrency} />
                 </div>
               ))}
             </div>
@@ -107,11 +101,11 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
               <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
                 {pagination.hasPreviousPage && (
                   <Link
-                    href={`${buildPath("/courses")}${buildQueryString({
+                    href={`${buildPath("/products")}${buildQueryString({
                       q: query || undefined,
                       order_by: orderBy || undefined,
                       category_id: categoryId,
-                      is_free: isFree,
+                      product_type: productType,
                       page: page - 1,
                     })}`}
                     className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
@@ -127,7 +121,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       q: query || undefined,
                       order_by: orderBy || undefined,
                       category_id: categoryId,
-                      is_free: isFree,
+                      product_type: productType,
                       page: targetPage,
                     });
 
@@ -135,7 +129,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                     return (
                       <Link
                         key={targetPage}
-                        href={`${buildPath("/courses")}${href}`}
+                        href={`${buildPath("/products")}${href}`}
                         className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition-all ${
                           isActive
                             ? "bg-[var(--theme-primary)] text-white shadow-lg shadow-[var(--theme-primary)]/30 scale-105"
@@ -149,11 +143,11 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                 )}
                 {pagination.hasNextPage && (
                   <Link
-                    href={`${buildPath("/courses")}${buildQueryString({
+                    href={`${buildPath("/products")}${buildQueryString({
                       q: query || undefined,
                       order_by: orderBy || undefined,
                       category_id: categoryId,
-                      is_free: isFree,
+                      product_type: productType,
                       page: page + 1,
                     })}`}
                     className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
@@ -166,11 +160,11 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
           </div>
         ) : (
           <EmptyState
-            title="No courses match your filters"
+            title="No products match your filters"
             description="Try adjusting your filter set or explore another category."
             action={
               <Link
-                href={buildPath("/courses")}
+                href={buildPath("/products")}
                 className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
                 Reset filters

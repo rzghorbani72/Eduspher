@@ -83,6 +83,36 @@ export interface CourseListPayload {
   pagination: Pagination;
 }
 
+export interface ProductSummary {
+  id: number;
+  title: string;
+  short_description?: string | null;
+  description?: string | null;
+  slug: string;
+  price: number;
+  original_price?: number | null;
+  discount_percent?: number | null;
+  product_type: 'DIGITAL' | 'PHYSICAL';
+  stock_quantity?: number | null;
+  sku?: string | null;
+  is_published: boolean;
+  is_featured: boolean;
+  rating?: number;
+  rating_count?: number;
+  sales_count?: number;
+  weight?: number | null;
+  dimensions?: string | null;
+  author?: AuthorSummary | null;
+  category?: CategorySummary | null;
+  cover?: MediaAsset | null;
+  reviews_count?: number;
+}
+
+export interface ProductListPayload {
+  products: ProductSummary[];
+  pagination: Pagination;
+}
+
 export interface ApiEnvelope<T> {
   status: string;
   message: string;
