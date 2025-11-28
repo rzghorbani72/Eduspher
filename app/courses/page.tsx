@@ -175,9 +175,9 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
               >
                 Reset filters
               </Link>
-            }
-          />
-        )}
+          }
+        />
+      )}
     </div>
   );
 }

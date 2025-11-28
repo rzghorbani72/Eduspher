@@ -66,6 +66,13 @@ export interface CourseSummary {
   video?: MediaAsset | null;
   audio?: MediaAsset | null;
   document?: MediaAsset | null;
+  productCourses?: Array<{
+    id: number;
+    product_id: number;
+    course_id: number;
+    relation_type: string;
+    product?: ProductSummary;
+  }>;
 }
 
 export interface Pagination {
@@ -106,6 +113,13 @@ export interface ProductSummary {
   category?: CategorySummary | null;
   cover?: MediaAsset | null;
   reviews_count?: number;
+  productCourses?: Array<{
+    id: number;
+    product_id: number;
+    course_id: number;
+    relation_type: string;
+    course?: CourseSummary;
+  }>;
 }
 
 export interface ProductListPayload {

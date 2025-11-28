@@ -25,20 +25,39 @@ export function ProductFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [mounted, setMounted] = useState(false);
 
-  const [query, setQuery] = useState(initialQuery);
-  const [categoryId, setCategoryId] = useState(initialCategoryId?.toString() ?? "");
-  const [orderBy, setOrderBy] = useState(initialOrderBy);
-  const [productType, setProductType] = useState(initialProductType ?? "");
+  // Initialize state from URL params on mount to avoid hydration mismatch
+  const [query, setQuery] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [orderBy, setOrderBy] = useState("");
+  const [productType, setProductType] = useState("");
 
   const debouncedQuery = useDebounce(query, 500);
 
+  // Set mounted state and initialize from props/URL on client side only
   useEffect(() => {
-    setQuery(initialQuery);
-    setCategoryId(initialCategoryId?.toString() ?? "");
-    setOrderBy(initialOrderBy ?? "");
-    setProductType(initialProductType ?? "");
-  }, [initialQuery, initialCategoryId, initialOrderBy, initialProductType]);
+    setMounted(true);
+    const urlQuery = searchParams.get("q") ?? initialQuery;
+    const urlCategoryId = searchParams.get("category_id") ?? (initialCategoryId?.toString() ?? "");
+    const urlOrderBy = searchParams.get("order_by") ?? initialOrderBy;
+    const urlProductType = searchParams.get("product_type") ?? (initialProductType ?? "");
+    
+    setQuery(urlQuery);
+    setCategoryId(urlCategoryId);
+    setOrderBy(urlOrderBy);
+    setProductType(urlProductType);
+  }, []); // Only run on mount
+
+  // Update state when props change (for navigation)
+  useEffect(() => {
+    if (mounted) {
+      setQuery(initialQuery);
+      setCategoryId(initialCategoryId?.toString() ?? "");
+      setOrderBy(initialOrderBy ?? "");
+      setProductType(initialProductType ?? "");
+    }
+  }, [mounted, initialQuery, initialCategoryId, initialOrderBy, initialProductType]);
 
   const updateSearchParams = (updates: Record<string, string | number | boolean | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -90,6 +109,67 @@ export function ProductFilters({
       router.push(pathname);
     });
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+        <form className="grid gap-5 md:grid-cols-[2fr_1fr_1fr_1fr] md:items-end">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="q">
+              Search products
+            </label>
+            <Input
+              id="q"
+              name="q"
+              placeholder="Search by title, description..."
+              disabled
+              className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="category_id">
+              Category
+            </label>
+            <select
+              id="category_id"
+              name="category_id"
+              disabled
+              className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            >
+              <option value="">All categories</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="product_type">
+              Type
+            </label>
+            <select
+              id="product_type"
+              name="product_type"
+              disabled
+              className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            >
+              <option value="">All types</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="order_by">
+              Sort by
+            </label>
+            <select
+              id="order_by"
+              name="order_by"
+              disabled
+              className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            >
+              <option value="">Newest</option>
+            </select>
+          </div>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">

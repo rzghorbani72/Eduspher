@@ -4,48 +4,44 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";
-import { CourseCurriculum } from "@/components/courses/course-curriculum";
-import { CourseQnA } from "@/components/courses/course-qna";
+import { RelatedCourses } from "@/components/products/RelatedCourses";
 import { RelatedProducts } from "@/components/courses/RelatedProducts";
-import { CartButton } from "@/components/cart/cart-button";
+import { ProductCartButton } from "@/components/cart/product-cart-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourseById, getCourses, getProducts, getCurrentUser } from "@/lib/api/server";
+import { getProductById, getCourses, getProducts, getCurrentUser } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
+import { Package, ShoppingCart } from "lucide-react";
 
 type PageParams = Promise<{
   id: string;
 }>;
 
 const detailItems = (
-  course: Awaited<ReturnType<typeof getCourseById>>,
+  product: Awaited<ReturnType<typeof getProductById>>,
   school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null
 ) => {
-  if (!course) return [];
-  const hasDiscount = course.original_price && course.original_price > course.price;
-  const priceDisplay = course.is_free
-    ? "Free"
-    : hasDiscount
+  if (!product) return [];
+  const hasDiscount = product.original_price && product.original_price > product.price;
+  const isPhysical = product.product_type === 'PHYSICAL';
+  const priceDisplay = hasDiscount
     ? (
         <div className="flex flex-col items-end gap-1">
           <span className="text-slate-500 line-through dark:text-slate-400">
-            {formatCurrencyWithSchool(course.original_price || 0, school)}
+            {formatCurrencyWithSchool(product.original_price || 0, school)}
           </span>
           <span className="text-[var(--theme-primary)] font-semibold">
-            {formatCurrencyWithSchool(course.price, school)}
+            {formatCurrencyWithSchool(product.price, school)}
           </span>
         </div>
       )
-    : formatCurrencyWithSchool(course.price, school);
-  return [
+    : formatCurrencyWithSchool(product.price, school);
+  
+  const items = [
     {
-      label: "Certificate",
-      value: course.is_certificate ? "Awarded" : "Not included",
-    },
-    {
-      label: "Format",
-      value: course.is_free ? "Self-paced preview" : "Mentor-guided cohort",
+      label: "Type",
+      value: isPhysical ? "Physical" : "Digital",
     },
     {
       label: "Price",
@@ -53,30 +49,60 @@ const detailItems = (
     },
     {
       label: "Category",
-      value: course.category?.name ?? "General",
+      value: product.category?.name ?? "General",
     },
   ];
+
+  if (isPhysical && product.stock_quantity !== null) {
+    items.push({
+      label: "Stock",
+      value: `${product.stock_quantity} available`,
+    });
+  }
+
+  if (product.weight) {
+    items.push({
+      label: "Weight",
+      value: `${product.weight} kg`,
+    });
+  }
+
+  if (product.dimensions) {
+    items.push({
+      label: "Dimensions",
+      value: product.dimensions,
+    });
+  }
+
+  if (product.author) {
+    items.push({
+      label: "Seller",
+      value: product.author.display_name,
+    });
+  }
+
+  return items;
 };
 
-export default async function CourseDetailPage({ params }: { params: PageParams }) {
+export default async function ProductDetailPage({ params }: { params: PageParams }) {
   const { id } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt");
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
-  const [course, user] = await Promise.all([
-    getCourseById(id),
+  const [product, user] = await Promise.all([
+    getProductById(id).catch(() => null),
     getCurrentUser().catch(() => null),
   ]);
   const school = user?.currentSchool || null;
 
-  if (!course) {
+  if (!product) {
     if (!token?.value) {
       return (
         <EmptyState
-          title="Sign in to view course details"
-          description="Create a free account or log in to read the full syllabus, view resources, and enroll."
+          title="Sign in to view product details"
+          description="Create a free account or log in to view product details and make purchases."
           action={
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
@@ -99,76 +125,93 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     return notFound();
   }
 
-  const normalizedCourse = {
-    ...course,
+  const normalizedProduct = {
+    ...product,
     access_control: undefined,
-    seasons: (course.seasons ?? []).map((season) => ({
-      ...season,
-      lessons: season.lessons ?? [],
-    })),
   };
 
-  const coverUrl = resolveAssetUrl(normalizedCourse.cover?.url) ?? "/globe.svg";
-  const videoUrl = resolveAssetUrl(normalizedCourse.video?.url);
-  const audioUrl = resolveAssetUrl(normalizedCourse.audio?.url);
-  const documentUrl = resolveAssetUrl(normalizedCourse.document?.url);
+  const coverUrl = resolveAssetUrl(normalizedProduct.cover?.url) ?? "/globe.svg";
+  const isPhysical = normalizedProduct.product_type === 'PHYSICAL';
+  const isOutOfStock = isPhysical && normalizedProduct.stock_quantity !== null && normalizedProduct.stock_quantity <= 0;
 
-  const [relatedCourses, relatedProducts] = await Promise.all([
-    getCourses({
-      published: true,
-      limit: 3,
-      order_by: "NEWEST",
-      category_id: normalizedCourse.category?.id,
-    }).catch(() => null),
+  // Extract related courses from productCourses
+  const relatedCoursesData = ((normalizedProduct as any).productCourses || [])
+    .map((pc: any) => pc?.course)
+    .filter((course: any) => course && (course.is_published !== false || course.is_published === undefined)) || [];
+
+  // Fetch related products and additional courses
+  const [relatedProducts, additionalCourses] = await Promise.all([
     getProducts({
       published: true,
       limit: 3,
       order_by: "NEWEST",
-      course_id: normalizedCourse.id,
+      category_id: normalizedProduct.category?.id,
+    }).catch(() => null),
+    getCourses({
+      published: true,
+      limit: 3,
+      order_by: "NEWEST",
+      category_id: normalizedProduct.category?.id,
     }).catch(() => null),
   ]);
+
+  // Combine and deduplicate courses
+  const allRelatedCourses = [
+    ...relatedCoursesData,
+    ...(additionalCourses?.courses?.filter(
+      (c) => !relatedCoursesData.some((rc: any) => rc.id === c.id) && c.id !== normalizedProduct.id
+    ) || []),
+  ].slice(0, 6);
 
   return (
     <div className="space-y-6">
       <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="space-y-5">
           <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
-            {normalizedCourse.category ? <Badge variant="soft">{normalizedCourse.category.name}</Badge> : null}
-            {normalizedCourse.is_featured ? <Badge variant="warning">Featured</Badge> : null}
-            {normalizedCourse.is_certificate ? <Badge variant="success">Certificate</Badge> : null}
+            {normalizedProduct.category ? <Badge variant="soft">{normalizedProduct.category.name}</Badge> : null}
+            {normalizedProduct.is_featured ? <Badge variant="warning">Featured</Badge> : null}
+            {isPhysical ? (
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Package className="h-3 w-3" />
+                Physical
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="flex items-center gap-1">
+                <ShoppingCart className="h-3 w-3" />
+                Digital
+              </Badge>
+            )}
+            {isOutOfStock && <Badge variant="destructive">Out of Stock</Badge>}
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-            {normalizedCourse.title}
+            {normalizedProduct.title}
           </h1>
-          {normalizedCourse.short_description ? (
+          {normalizedProduct.short_description ? (
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-              {normalizedCourse.short_description}
+              {normalizedProduct.short_description}
             </p>
           ) : null}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-250">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">What you will learn</h2>
-            {normalizedCourse.description ? (
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">About this product</h2>
+            {normalizedProduct.description ? (
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                {normalizedCourse.description}
+                {normalizedProduct.description}
               </p>
             ) : (
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-                Detailed curriculum coming soon. Contact support for a personalised syllabus preview.
+                Detailed information coming soon. Contact support for more details.
               </p>
             )}
-          </div>
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <CourseCurriculum courseTitle={normalizedCourse.title} seasons={normalizedCourse.seasons ?? []} />
           </div>
         </div>
         <aside className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950">
             <div className="relative overflow-hidden">
-              <img src={coverUrl} alt={normalizedCourse.title} className="h-56 w-full object-cover transition-transform duration-500 hover:scale-105" />
+              <img src={coverUrl} alt={normalizedProduct.title} className="h-56 w-full object-cover transition-transform duration-500 hover:scale-105" />
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(normalizedCourse, school).map((item) => (
+                {detailItems(normalizedProduct, school).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
@@ -186,72 +229,68 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 ))}
               </div>
               <div className="space-y-3">
-                <Link
-                  href={buildPath(`/checkout?course=${normalizedCourse.id}`)}
-                  className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
-                >
-                  Enroll now
-                </Link>
-                {!normalizedCourse.is_free && (
-                  <CartButton course={normalizedCourse} />
+                {!isOutOfStock ? (
+                  <ProductCartButton product={normalizedProduct} />
+                ) : (
+                  <button
+                    disabled
+                    className="inline-flex h-12 w-full items-center justify-center rounded-full bg-slate-300 text-sm font-semibold text-slate-500 cursor-not-allowed"
+                  >
+                    Out of Stock
+                  </button>
                 )}
               </div>
               <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
-                Includes 14-day satisfaction guarantee. Cancel anytime in your dashboard.
+                {isPhysical
+                  ? "Physical items will be shipped to your address. Shipping costs calculated at checkout."
+                  : "Digital products are available for immediate download after purchase."}
               </p>
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Resources</h2>
-            <ul className="space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
-              {videoUrl ? (
-                <li>
-                  <Link className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" href={videoUrl}>
-                    Watch course trailer →
-                  </Link>
-                </li>
-              ) : null}
-              {audioUrl ? (
-                <li>
-                  <Link className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" href={audioUrl}>
-                    Listen to sample audio →
-                  </Link>
-                </li>
-              ) : null}
-              {documentUrl ? (
-                <li>
-                  <Link className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" href={documentUrl}>
-                    Download syllabus PDF →
-                  </Link>
-                </li>
-              ) : null}
-              {!videoUrl && !audioUrl && !documentUrl ? (
-                <li className="text-xs text-slate-500 dark:text-slate-400">
-                  Additional resources will be available after enrollment.
-                </li>
-              ) : null}
-            </ul>
-          </div>
+          {normalizedProduct.images && normalizedProduct.images.length > 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Product Images</h2>
+              <ul className="space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
+                {normalizedProduct.images.map((image, index) => (
+                  <li key={image.id || index}>
+                    <Link 
+                      className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" 
+                      href={resolveAssetUrl(image.url) || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View image {index + 1} →
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </aside>
       </section>
 
-
       {relatedProducts?.products?.length ? (
         <RelatedProducts
-          products={relatedProducts.products}
+          products={relatedProducts.products.filter((p) => p.id !== normalizedProduct.id)}
           schoolSlug={schoolContext.slug}
           school={school}
         />
       ) : null}
 
-      <CourseQnA courseId={normalizedCourse.id} isLoggedIn={!!user} userRole={user?.role} />
+      {allRelatedCourses.length > 0 ? (
+        <RelatedCourses
+          courses={allRelatedCourses}
+          schoolSlug={schoolContext.slug}
+          school={school}
+        />
+      ) : null}
 
-      {relatedCourses?.courses?.length ? (
+      {additionalCourses?.courses?.length ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">You might also like</h2>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {relatedCourses.courses
-              .filter((item) => item.id !== normalizedCourse.id)
+            {additionalCourses.courses
+              .filter((item) => !allRelatedCourses.some((rc: any) => rc.id === item.id))
               .map((item, index) => (
                 <div
                   key={item.id}
@@ -267,4 +306,3 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     </div>
   );
 }
-

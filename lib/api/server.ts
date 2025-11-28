@@ -272,6 +272,7 @@ export async function getProducts(params?: {
   product_type?: 'DIGITAL' | 'PHYSICAL';
   category_id?: number;
   author_id?: number;
+  course_id?: number;
 }) {
   try {
     const result = await serverFetch<ProductListPayload>("/products", {
@@ -298,9 +299,9 @@ export async function getProducts(params?: {
 export async function getProductById(id: string | number) {
   try {
     const result = await serverFetch<ProductSummary>(`/products/${id}`);
-    return result.data;
+    return result;
   } catch (error) {
-    if (error instanceof Error && /401/.test(error.message)) {
+    if (error instanceof Error && (/401|404/.test(error.message))) {
       const fallback = await serverFetch<ProductSummary>(`/products/public/${id}`, {
         includeAuth: false,
       }).catch(() => null);
@@ -314,7 +315,7 @@ export async function getArticleById(id: string | number) {
   const result = await serverFetch<ArticleSummary>(`/articles/${id}`, {
     includeAuth: false,
   });
-  return result.data;
+  return result;
 }
 
 export async function getCurrentSchool() {
@@ -763,10 +764,15 @@ export async function getCart() {
 }
 
 export async function syncCart(items: Array<{
-  course_id: number;
-  course_title: string;
-  course_price: number;
+  item_type: 'COURSE' | 'PRODUCT';
+  course_id?: number;
+  product_id?: number;
+  course_title?: string;
+  product_title?: string;
+  course_price?: number;
+  product_price?: number;
   course_cover?: string;
+  product_cover?: string;
   added_at: string;
 }>) {
   try {

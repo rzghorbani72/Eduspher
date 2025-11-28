@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { CheckCircle, Loader2, AlertCircle, X, Trash2 } from "lucide-react";
 import { formatCurrencyWithSchool } from "@/lib/utils";
 import { useSchoolPath } from "@/components/providers/school-provider";
-import { getCartItems, removeCourseFromCart, syncCart, type CartItem } from "@/app/actions/cart";
+import { getCartItems, removeCourseFromCart, removeProductFromCart, syncCart, type CartItem } from "@/app/actions/cart";
 import { validateVoucher } from "@/app/actions/voucher";
 import { processCheckout } from "@/app/actions/checkout";
 import { useTransition } from "react";
@@ -79,8 +79,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     };
   }, []);
 
-  const handleRemoveItem = (courseId: number) => {
-    removeCourseFromCart(courseId);
+  const handleRemoveItem = (item: CartItem) => {
+    // Handle legacy items without item_type (assume COURSE if has course_id)
+    const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+    if (itemType === 'PRODUCT' && item.product_id) {
+      removeProductFromCart(item.product_id);
+    } else if (item.course_id) {
+      removeCourseFromCart(item.course_id);
+    }
     setCart(getCartItems());
     setDiscount(null);
   };
@@ -92,7 +98,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     setValidatingVoucher(true);
 
     const totalAmount = cart.reduce(
-      (sum: number, item: CartItem) => sum + (item.course_price * 100),
+      (sum: number, item: CartItem) => {
+        // Handle legacy items without item_type (assume COURSE if has course_id)
+        const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+        const price = itemType === 'PRODUCT' 
+          ? (item.product_price || 0) 
+          : (item.course_price || 0);
+        return sum + (price * 100);
+      },
       0
     );
 
@@ -182,7 +195,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   }
 
   const totalAmount = cart.reduce(
-    (sum: number, item: CartItem) => sum + (item.course_price * 100),
+    (sum: number, item: CartItem) => {
+      // Handle legacy items without item_type (assume COURSE if has course_id)
+      const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+      const price = itemType === 'PRODUCT' 
+        ? (item.product_price || 0) 
+        : (item.course_price || 0);
+      return sum + (price * 100);
+    },
     0
   );
   const finalPrice = discount ? discount.final_amount / 100 : totalAmount / 100;
@@ -195,28 +215,46 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           Cart Items ({cart.length})
         </h2>
         <div className="space-y-3">
-          {cart.map((item: CartItem) => (
-            <div
-              key={item.course_id}
-              className="flex gap-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950"
-            >
-              <div className="flex-1">
-                <h3 className="font-medium text-slate-900 dark:text-white">
-                  {item.course_title}
-                </h3>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                  {formatCurrencyWithSchool(item.course_price, user.currentSchool || null)}
-                </p>
-              </div>
-              <button
-                onClick={() => handleRemoveItem(item.course_id)}
-                className="text-red-600 hover:text-red-700 dark:text-red-400"
-                aria-label="Remove item"
+          {cart.map((item: CartItem) => {
+            // Handle legacy items without item_type (assume COURSE if has course_id)
+            const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+            const itemId = itemType === 'PRODUCT' ? item.product_id : item.course_id;
+            const itemTitle = itemType === 'PRODUCT' 
+              ? (item.product_title || 'Unknown Product')
+              : (item.course_title || 'Unknown Course');
+            const itemPrice = itemType === 'PRODUCT' 
+              ? (item.product_price || 0)
+              : (item.course_price || 0);
+            const itemTypeLabel = itemType === 'PRODUCT' ? 'Product' : 'Course';
+            
+            return (
+              <div
+                key={itemType === 'PRODUCT' ? `product_${item.product_id}` : `course_${item.course_id}`}
+                className="flex gap-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950"
               >
-                <Trash2 className="h-5 w-5" />
-              </button>
-            </div>
-          ))}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-slate-900 dark:text-white">
+                      {itemTitle}
+                    </h3>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                      ({itemTypeLabel})
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                    {formatCurrencyWithSchool(itemPrice, user.currentSchool || null)}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleRemoveItem(item)}
+                  className="text-red-600 hover:text-red-700 dark:text-red-400"
+                  aria-label="Remove item"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
