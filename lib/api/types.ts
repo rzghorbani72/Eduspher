@@ -162,6 +162,7 @@ export interface SchoolSummary {
   slug?: string;
   is_active?: boolean;
   country_code?: string;
+  language?: string;
   primary_verification_method?: 'phone' | 'email';
   domain?: {
     public_address?: string | null;
