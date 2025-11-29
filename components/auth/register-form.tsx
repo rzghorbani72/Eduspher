@@ -24,6 +24,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { useSchoolPath } from "@/components/providers/school-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
+import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
 
 const createRegisterSchema = (primaryMethod: 'phone' | 'email') => z
@@ -60,6 +61,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useSchoolPath();
+  const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("verification");
@@ -320,7 +322,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
         router.refresh();
       }, 2000);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Unable to create account. Try again.";
+      const errorMessage = err instanceof Error ? err.message : t("auth.unableToCreateAccount");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -491,10 +493,10 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
                 <CheckCircle className="h-4 w-4" />
-                {primaryVerificationMethod === 'phone' ? 'Phone verified' : 'Email verified'}
+                {primaryVerificationMethod === 'phone' ? t("auth.phoneVerified") : t("auth.emailVerified")}
               </div>
               <p className="text-xs text-green-600 dark:text-green-400">
-                You can verify your {primaryVerificationMethod === 'phone' ? 'email' : 'phone'} later in account settings
+                {primaryVerificationMethod === 'phone' ? t("auth.verifyEmailLater") : t("auth.verifyPhoneLater")}
               </p>
             </div>
           </div>

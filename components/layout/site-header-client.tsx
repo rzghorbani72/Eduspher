@@ -11,14 +11,7 @@ import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useSchoolContext, useSchoolPath } from "@/components/providers/school-provider";
 import { CartIcon } from "@/components/cart/cart-icon";
-
-const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/courses", label: "Courses" },
-  { href: "/products", label: "Products" },
-  { href: "/articles", label: "Articles" },
-  { href: "/about", label: "About" },
-];
+import { useTranslation } from "@/lib/i18n/hooks";
 
 interface SiteHeaderClientProps {
   displayName: string | null;
@@ -30,9 +23,17 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
   const { isAuthenticated, setAuthenticated } = useAuthContext();
   const { name: schoolName } = useSchoolContext();
   const buildPath = useSchoolPath();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navItems = [
+    { href: "/", label: t("navigation.home") },
+    { href: "/courses", label: t("navigation.courses") },
+    { href: "/products", label: t("navigation.products") },
+    { href: "/articles", label: t("navigation.articles") },
+  ];
 
   const toggleMobile = useCallback(() => {
     setMobileOpen((prev) => !prev);
@@ -51,10 +52,10 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
           router.push(buildPath("/"));
           router.refresh();
         } else {
-          setError(result.error || "Unable to logout");
+          setError(result.error || t("auth.unableToLogout"));
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unable to logout");
+        setError(err instanceof Error ? err.message : t("auth.unableToLogout"));
         router.push(buildPath("/"));
         router.refresh();
       }
@@ -72,7 +73,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
           </div>
           <div>
             <p className="text-lg font-semibold text-slate-900 dark:text-white">{schoolName}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Learn without limits</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{t("common.tagline")}</p>
           </div>
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
@@ -95,7 +96,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
                 href={buildPath("/account")}
                 className="hidden text-sm font-medium text-slate-600 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-white md:block"
               >
-                {displayName || "My Learning"}
+                {displayName || t("account.myCourses")}
               </Link>
               <CartIcon isAuthenticated={authStatus} />
             </>
@@ -105,7 +106,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
                 href={buildPath("/auth/login")}
                 className="hidden h-10 items-center rounded-full bg-[var(--theme-primary)] px-5 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] md:inline-flex"
               >
-                Login / Sign up
+                {t("auth.login")} / {t("auth.register")}
               </Link>
             </>
           )}
@@ -143,7 +144,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
                     onClick={closeMobile}
                     className="rounded-full border border-slate-200 px-5 py-2.5 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
                   >
-                    {displayName || "My Learning"}
+                    {displayName || t("account.myCourses")}
                   </Link>
                   <div className="flex items-center justify-center gap-3">
                     <CartIcon isAuthenticated={authStatus} />
@@ -154,7 +155,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
                     className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
                     disabled={pending}
                   >
-                    {pending ? "Logging out..." : "Log out"}
+                    {pending ? t("common.loading") : t("auth.logout")}
                   </button>
                 </>
               ) : (
@@ -164,7 +165,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
                     onClick={closeMobile}
                     className="rounded-full bg-[var(--theme-primary)] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)]"
                   >
-                    Login / Sign up
+                    {t("auth.login")} / {t("auth.register")}
                   </Link>
                 </>
               )}

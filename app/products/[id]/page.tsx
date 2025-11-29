@@ -9,9 +9,11 @@ import { RelatedProducts } from "@/components/courses/RelatedProducts";
 import { ProductCartButton } from "@/components/cart/product-cart-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getProductById, getCourses, getProducts, getCurrentUser } from "@/lib/api/server";
+import { getProductById, getCourses, getProducts, getCurrentUser, getSchoolBySlug, getCurrentSchool } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 import { Package, ShoppingCart } from "lucide-react";
 
 type PageParams = Promise<{
@@ -20,9 +22,11 @@ type PageParams = Promise<{
 
 const detailItems = (
   product: Awaited<ReturnType<typeof getProductById>>,
-  school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null
+  school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null,
+  translate?: (key: string) => string
 ) => {
   if (!product) return [];
+  const t = translate || ((key: string) => key);
   const hasDiscount = product.original_price && product.original_price > product.price;
   const isPhysical = product.product_type === 'PHYSICAL';
   const priceDisplay = hasDiscount
@@ -40,43 +44,43 @@ const detailItems = (
   
   const items = [
     {
-      label: "Type",
-      value: isPhysical ? "Physical" : "Digital",
+      label: t("products.typeLabel"),
+      value: isPhysical ? t("products.physical") : t("products.digital"),
     },
     {
-      label: "Price",
+      label: t("products.price"),
       value: priceDisplay,
     },
     {
-      label: "Category",
-      value: product.category?.name ?? "General",
+      label: t("products.category"),
+      value: product.category?.name ?? t("products.categoryGeneral"),
     },
   ];
 
   if (isPhysical && product.stock_quantity !== null) {
     items.push({
-      label: "Stock",
-      value: `${product.stock_quantity} available`,
+      label: t("products.stockLabel"),
+      value: `${product.stock_quantity} ${t("products.stockAvailable")}`,
     });
   }
 
   if (product.weight) {
     items.push({
-      label: "Weight",
+      label: t("products.weightLabel"),
       value: `${product.weight} kg`,
     });
   }
 
   if (product.dimensions) {
     items.push({
-      label: "Dimensions",
+      label: t("products.dimensionsLabel"),
       value: product.dimensions,
     });
   }
 
   if (product.author) {
     items.push({
-      label: "Seller",
+      label: t("products.sellerLabel"),
       value: product.author.display_name,
     });
   }
@@ -97,25 +101,33 @@ export default async function ProductDetailPage({ params }: { params: PageParams
   ]);
   const school = user?.currentSchool || null;
 
+  // Get school language for translations
+  let currentSchool = await getCurrentSchool().catch(() => null);
+  if (!currentSchool && schoolContext.slug) {
+    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const translate = (key: string) => t(key, language);
+
   if (!product) {
     if (!token?.value) {
       return (
         <EmptyState
-          title="Sign in to view product details"
-          description="Create a free account or log in to view product details and make purchases."
+          title={translate("products.signInToView")}
+          description={translate("products.signInToViewDescription")}
           action={
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href={buildPath("/auth/login")}
                 className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
               >
-                Log in
+                {translate("auth.login")}
               </Link>
               <Link
                 href={buildPath("/auth/login")}
                 className="inline-flex h-11 items-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
               >
-                Create account
+                {translate("auth.register")}
               </Link>
             </div>
           }
@@ -169,19 +181,19 @@ export default async function ProductDetailPage({ params }: { params: PageParams
         <div className="space-y-5">
           <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
             {normalizedProduct.category ? <Badge variant="soft">{normalizedProduct.category.name}</Badge> : null}
-            {normalizedProduct.is_featured ? <Badge variant="warning">Featured</Badge> : null}
+            {normalizedProduct.is_featured ? <Badge variant="warning">{translate("products.featured")}</Badge> : null}
             {isPhysical ? (
               <Badge variant="outline" className="flex items-center gap-1">
                 <Package className="h-3 w-3" />
-                Physical
+                {translate("products.physical")}
               </Badge>
             ) : (
               <Badge variant="outline" className="flex items-center gap-1">
                 <ShoppingCart className="h-3 w-3" />
-                Digital
+                {translate("products.digital")}
               </Badge>
             )}
-            {isOutOfStock && <Badge variant="destructive">Out of Stock</Badge>}
+            {isOutOfStock && <Badge variant="destructive">{translate("products.outOfStock")}</Badge>}
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
             {normalizedProduct.title}
@@ -192,14 +204,14 @@ export default async function ProductDetailPage({ params }: { params: PageParams
             </p>
           ) : null}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-250">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">About this product</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{translate("products.aboutThisProduct")}</h2>
             {normalizedProduct.description ? (
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                 {normalizedProduct.description}
               </p>
             ) : (
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
-                Detailed information coming soon. Contact support for more details.
+                {translate("products.detailedInfoComingSoon")}
               </p>
             )}
           </div>
@@ -211,7 +223,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(normalizedProduct, school).map((item) => (
+                {detailItems(normalizedProduct, school, translate).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
@@ -236,20 +248,20 @@ export default async function ProductDetailPage({ params }: { params: PageParams
                     disabled
                     className="inline-flex h-12 w-full items-center justify-center rounded-full bg-slate-300 text-sm font-semibold text-slate-500 cursor-not-allowed"
                   >
-                    Out of Stock
+                    {translate("products.outOfStock")}
                   </button>
                 )}
               </div>
               <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
                 {isPhysical
-                  ? "Physical items will be shipped to your address. Shipping costs calculated at checkout."
-                  : "Digital products are available for immediate download after purchase."}
+                  ? translate("products.physicalShippingInfo")
+                  : translate("products.digitalDownloadInfo")}
               </p>
             </div>
           </div>
           {normalizedProduct.images && normalizedProduct.images.length > 0 && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Product Images</h2>
+              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{translate("products.productImages")}</h2>
               <ul className="space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
                 {normalizedProduct.images.map((image, index) => (
                   <li key={image.id || index}>
@@ -259,7 +271,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      View image {index + 1} →
+                      {translate("products.viewImage")} {index + 1} →
                     </Link>
                   </li>
                 ))}
@@ -287,7 +299,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
 
       {additionalCourses?.courses?.length ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">You might also like</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("products.youMightAlsoLike")}</h2>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {additionalCourses.courses
               .filter((item) => !allRelatedCourses.some((rc: any) => rc.id === item.id))

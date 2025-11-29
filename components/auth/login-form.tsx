@@ -17,6 +17,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { useSchoolPath } from "@/components/providers/school-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
+import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
@@ -36,6 +37,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useSchoolPath();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
@@ -102,7 +104,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         router.refresh();
       } catch (err) {
         setAuthenticated(false);
-        const message = err instanceof Error ? err.message : "Unable to login. Try again.";
+        const message = err instanceof Error ? err.message : t("auth.unableToLogin");
         setError(message);
       }
     });
@@ -206,7 +208,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         </div>
       ) : null}
       <Button type="submit" className="w-full" loading={pending}>
-        {pending ? "Signing in..." : "Sign in"}
+        {pending ? t("auth.signingIn") : t("auth.signIn")}
       </Button>
     </form>
   );

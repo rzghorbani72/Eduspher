@@ -1,9 +1,11 @@
-import { getCourses, getCurrentUser, getCurrentSchool } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { buildSchoolPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface CoursesBlockProps {
   id?: string;
@@ -49,6 +51,14 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
 
   const courses = coursePayload?.courses || [];
   const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
+
+  // Get school language for translations
+  let schoolForLang = currentSchool;
+  if (!schoolForLang && schoolContext?.slug) {
+    schoolForLang = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  const language = getSchoolLanguage(schoolForLang?.language || null, schoolForLang?.country_code || null);
+  const translate = (key: string) => t(key, language);
 
   if (courses.length === 0) {
     return null;
@@ -126,7 +136,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
                 className="border-slate-300 dark:border-slate-600"
               >
                 <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")}>
-                  View All Courses
+                  {translate("home.viewAllCourses")}
                 </Link>
               </Button>
             </div>
@@ -205,7 +215,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
               className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105"
               >
                 <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")}>
-                  View All Courses
+                  {translate("home.viewAllCourses")}
                 </Link>
               </Button>
             </div>

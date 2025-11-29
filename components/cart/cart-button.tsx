@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { addCourseToCart, isInCart } from "@/app/actions/cart";
 import { useRouter } from "next/navigation";
 import { useSchoolPath } from "@/components/providers/school-provider";
+import { useTranslation } from "@/lib/i18n/hooks";
 import type { CourseSummary } from "@/lib/api/types";
 
 interface CartButtonProps {
@@ -16,6 +17,7 @@ interface CartButtonProps {
 export function CartButton({ course, className }: CartButtonProps) {
   const router = useRouter();
   const buildPath = useSchoolPath();
+  const { t } = useTranslation();
   const [added, setAdded] = useState(isInCart(course.id));
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +39,7 @@ export function CartButton({ course, className }: CartButtonProps) {
     if (success) {
       setAdded(true);
     } else {
-      setError("Course is already in cart");
+      setError(t("courses.alreadyInCart"));
     }
   };
 
@@ -51,12 +53,12 @@ export function CartButton({ course, className }: CartButtonProps) {
         {added ? (
           <>
             <Check className="h-4 w-4 mr-2" />
-            Go to Cart
+            {t("courses.goToCart")}
           </>
         ) : (
           <>
             <ShoppingCart className="h-4 w-4 mr-2" />
-            Add to Cart
+            {t("courses.addToCart")}
           </>
         )}
       </Button>

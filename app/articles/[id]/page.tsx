@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getArticleById } from "@/lib/api/server";
+import { getArticleById, getSchoolBySlug, getCurrentSchool } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 type PageParams = Promise<{
   id: string;
@@ -24,6 +26,14 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
     return notFound();
   }
 
+  // Get school language for translations
+  let currentSchool = await getCurrentSchool().catch(() => null);
+  if (!currentSchool && schoolContext.slug) {
+    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const translate = (key: string) => t(key, language);
+
   const imageUrl = resolveAssetUrl(article.featured_image?.url) ?? "/globe.svg";
   const publishedDate = article.published_at
     ? new Date(article.published_at).toLocaleDateString()
@@ -33,7 +43,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
     <article className="space-y-6">
       <header className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Badge variant="soft" className="w-fit">
-          {article.category?.name ?? "Learning insights"}
+          {article.category?.name ?? translate("articles.learningInsights")}
         </Badge>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
           {article.title}
@@ -63,15 +73,15 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
       ) : (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           <EmptyState
-            title="Full article coming soon"
-            description="Our team is finalising the long-form content for this story. Check back shortly."
+            title={translate("articles.fullArticleComingSoon")}
+            description={translate("articles.fullArticleDescription")}
           />
         </div>
       )}
       <footer className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-        Want guidance picking your next learning path?{" "}
+        {translate("articles.wantGuidance")}{" "}
         <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/contact")}>
-          Talk to our advisors
+          {translate("articles.talkToAdvisors")}
         </Link>
         .
       </footer>

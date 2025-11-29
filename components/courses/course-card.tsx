@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { MessageSquare, Star, Users, BookOpen, Clock } from "lucide-react";
 
@@ -5,6 +7,7 @@ import type { CourseSummary } from "@/lib/api/types";
 import { buildSchoolPath, formatCurrencyWithSchool, resolveAssetUrl, truncate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardMedia } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CourseCardProps {
   course: CourseSummary;
@@ -17,6 +20,7 @@ interface CourseCardProps {
 }
 
 export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseCardProps) => {
+  const { t } = useTranslation();
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
   const hasDiscount = course.original_price && course.original_price > course.price;
   const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
@@ -27,8 +31,8 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
       <CardContent className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {course.category ? <Badge variant="soft">{course.category.name}</Badge> : null}
-          {course.is_featured ? <Badge variant="warning">Featured</Badge> : null}
-          {course.is_certificate ? <Badge variant="success">Certificate</Badge> : null}
+          {course.is_featured ? <Badge variant="warning">{t("courses.featured")}</Badge> : null}
+          {course.is_certificate ? <Badge variant="success">{t("courses.certificate")}</Badge> : null}
         </div>
         <h3 className="text-lg font-semibold leading-7 text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-slate-100 dark:group-hover:text-[var(--theme-primary)]">
           {course.title}
@@ -80,7 +84,7 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
         <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm font-semibold text-slate-700 dark:border-slate-800 dark:text-slate-200">
           <div className="flex flex-col gap-1">
             {course.is_free ? (
-              <span className="text-[var(--theme-primary)]">Free</span>
+              <span className="text-[var(--theme-primary)]">{t("courses.free")}</span>
             ) : hasDiscount ? (
               <>
                 <span className="text-slate-500 line-through dark:text-slate-400">
@@ -102,7 +106,7 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
           href={detailHref}
           className="inline-flex items-center text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
         >
-          View course →
+          {t("courses.viewCourseLink")} →
         </Link>
       </CardContent>
     </Card>

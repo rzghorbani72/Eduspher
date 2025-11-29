@@ -48,6 +48,7 @@ interface CheckoutFormProps {
 export function CheckoutForm({ course, user, session, onDiscountChange }: CheckoutFormProps) {
   const router = useRouter();
   const buildPath = useSchoolPath();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -62,12 +63,12 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
 
   const handleApplyVoucher = async () => {
     if (!voucherCode.trim()) {
-      setVoucherError("Please enter a voucher code");
+      setVoucherError(t("checkout.pleaseEnterVoucher"));
       return;
     }
 
     if (course.is_free) {
-      setVoucherError("Voucher codes cannot be applied to free courses");
+      setVoucherError(t("checkout.voucherNotForFreeCourses"));
       return;
     }
 
@@ -95,14 +96,14 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           });
         }
       } else {
-        setVoucherError(result.error || "Invalid voucher code");
+        setVoucherError(result.error || t("checkout.invalidVoucher"));
         setDiscount(null);
         if (onDiscountChange) {
           onDiscountChange(null);
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to validate voucher code";
+      const errorMessage = err instanceof Error ? err.message : t("checkout.voucherValidationFailed");
       setVoucherError(errorMessage);
       setDiscount(null);
     } finally {
@@ -146,10 +147,10 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
             router.refresh();
           }, 1500);
         } else {
-          setError(result.error || "Failed to complete checkout. Please try again.");
+          setError(result.error || t("checkout.checkoutFailed"));
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+        const errorMessage = err instanceof Error ? err.message : t("common.error");
         setError(errorMessage);
       }
     });
@@ -166,10 +167,10 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
           <div>
             <h4 className="font-semibold text-green-900 dark:text-green-100">
-              Enrollment Successful!
+              {t("checkout.enrollmentSuccessful")}
             </h4>
             <p className="mt-1 text-sm text-green-700 dark:text-green-300">
-              Redirecting you to the course...
+              {t("checkout.redirectingToCourse")}
             </p>
           </div>
         </div>
@@ -191,7 +192,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
       <div className="space-y-3">
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
           <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Enrolling as
+            {t("checkout.enrollingAs")}
           </div>
           <div className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
             {user.display_name || user.currentProfile?.displayName || user.name}
@@ -204,7 +205,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
         {!course.is_free && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-900 dark:text-white">
-              Voucher Code
+              {t("checkout.voucherCode")}
             </label>
             {discount ? (
               <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/70">
@@ -213,13 +214,13 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
                     {voucherCode.toUpperCase()}
                   </div>
                   <div className="text-xs text-green-700 dark:text-green-300">
-                    Discount applied: {formatCurrencyWithSchool(discount.discount_amount / 100, user.currentSchool || null)}
+                    {t("checkout.discountApplied")}: {formatCurrencyWithSchool(discount.discount_amount / 100, user.currentSchool || null)}
                   </div>
                 </div>
                 <button
                   onClick={handleRemoveVoucher}
                   className="rounded-full p-1 text-green-700 hover:bg-green-100 dark:text-green-300 dark:hover:bg-green-900"
-                  aria-label="Remove voucher"
+                  aria-label={t("checkout.removeVoucher")}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -228,7 +229,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
               <div className="flex gap-2">
                 <Input
                   type="text"
-                  placeholder="Enter voucher code"
+                  placeholder={t("checkout.enterVoucherCode")}
                   value={voucherCode}
                   onChange={(e) => {
                     setVoucherCode(e.target.value.toUpperCase());
@@ -247,7 +248,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
                   loading={validatingVoucher}
                   size="md"
                 >
-                  Apply
+                  {t("checkout.apply")}
                 </Button>
               </div>
             )}
@@ -267,17 +268,17 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           {pending ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Processing...
+              {t("checkout.processing")}
             </>
           ) : course.is_free ? (
-            "Complete Enrollment"
+            t("checkout.completeEnrollment")
           ) : (
-            `Complete Purchase - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}`
+            `${t("checkout.completePurchase")} - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}`
           )}
         </Button>
 
         <p className="text-xs text-center text-slate-500 dark:text-slate-400">
-          By completing your purchase, you agree to our Terms of Service and Privacy Policy.
+          {t("checkout.termsAgreement")}
         </p>
       </div>
     </div>

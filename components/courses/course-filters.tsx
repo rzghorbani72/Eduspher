@@ -4,6 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState, useTransition, useRef, useLayoutEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import { useTranslation } from "@/lib/i18n/hooks";
 import type { CategorySummary } from "@/lib/api/types";
 
 interface CourseFiltersProps {
@@ -24,6 +25,7 @@ export function CourseFilters({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isTypingRef = useRef(false);
@@ -168,7 +170,7 @@ export function CourseFilters({
       >
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="q">
-            Search courses
+            {t("courses.searchCourses")}
           </label>
           <Input
             ref={searchInputRef}
@@ -189,7 +191,7 @@ export function CourseFilters({
                 isTypingRef.current = false;
               }, 100);
             }}
-            placeholder="Search by title, description..."
+            placeholder={t("courses.searchPlaceholder")}
             disabled={isPending}
             className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
             autoComplete="off"
@@ -197,7 +199,7 @@ export function CourseFilters({
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="category_id">
-            Category
+            {t("courses.category")}
           </label>
           <select
             id="category_id"
@@ -207,7 +209,7 @@ export function CourseFilters({
             disabled={isPending}
             className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
-            <option value="">All categories</option>
+            <option value="">{t("courses.allCategories")}</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -217,7 +219,7 @@ export function CourseFilters({
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="order_by">
-            Sort by
+            {t("courses.sortBy")}
           </label>
           <select
             id="order_by"
@@ -227,11 +229,11 @@ export function CourseFilters({
             disabled={isPending}
             className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
-            <option value="">Newest</option>
-            <option value="OLDEST">Oldest</option>
-            <option value="PRICE_LOW_TO_HIGH">Price: Low to High</option>
-            <option value="PRICE_HIGH_TO_LOW">Price: High to Low</option>
-            <option value="UPDATED_DESC">Recently Updated</option>
+            <option value="">{t("courses.newest")}</option>
+            <option value="OLDEST">{t("courses.oldest")}</option>
+            <option value="PRICE_LOW_TO_HIGH">{t("courses.priceLowToHigh")}</option>
+            <option value="PRICE_HIGH_TO_LOW">{t("courses.priceHighToLow")}</option>
+            <option value="UPDATED_DESC">{t("courses.recentlyUpdated")}</option>
           </select>
         </div>
         <div className="md:col-span-3 border-t border-slate-100 pt-4 dark:border-slate-800">
@@ -247,7 +249,7 @@ export function CourseFilters({
                 className="h-4 w-4 rounded border-slate-300 text-[var(--theme-primary)] focus:ring-[var(--theme-primary)] disabled:opacity-50 dark:border-slate-600 transition-all"
               />
               <label htmlFor="is_free" className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                Free courses only
+                {t("courses.freeCoursesOnly")}
               </label>
             </div>
             <button
@@ -256,7 +258,7 @@ export function CourseFilters({
               disabled={isPending}
               className="inline-flex h-10 items-center rounded-full border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
             >
-              Clear
+              {t("common.clear")}
             </button>
           </div>
         </div>

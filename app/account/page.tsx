@@ -4,10 +4,12 @@ import { redirect } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getSchoolBySlug, UnauthorizedError } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getSchoolBySlug, getCurrentSchool, UnauthorizedError } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 import type { EnrollmentSummary } from "@/lib/api/types";
 import { ChangePasswordForm } from "@/components/account/change-password-form";
 import { AddContactForm } from "@/components/account/add-contact-form";
@@ -19,24 +21,32 @@ export default async function AccountPage() {
   const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
+  // Get school language for translations
+  let currentSchool = await getCurrentSchool().catch(() => null);
+  if (!currentSchool && schoolContext.slug) {
+    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const translate = (key: string) => t(key, language);
+
   if (!session) {
     return (
       <EmptyState
-        title="Log in to view your learning hub"
-        description="Access personalized recommendations, saved resources, and mentor feedback by signing in to your account."
+        title={translate("account.loginToViewHub")}
+        description={translate("account.loginToViewHubDescription")}
         action={
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={buildPath("/auth/login")}
               className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-white"
             >
-              Log in
+              {translate("auth.login")}
             </Link>
             <Link
               href={buildPath("/auth/login")}
               className="inline-flex h-11 items-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
             >
-              Create account
+              {translate("auth.register")}
             </Link>
           </div>
         }
@@ -61,15 +71,15 @@ export default async function AccountPage() {
     if (userData === null) {
     return (
       <EmptyState
-        title="Your session expired"
-        description="Log back in to manage your learning profile."
+        title={translate("account.sessionExpired")}
+        description={translate("account.sessionExpiredDescription")}
         action={
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href={buildPath("/auth/login")}
               className="inline-flex h-11 items-center rounded-full bg-slate-900 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-slate-700 focus-visible:outline-slate-900 dark:bg-slate-600 dark:text-slate-900"
             >
-              Log in
+              {translate("auth.login")}
             </Link>
           </div>
         }
@@ -80,8 +90,8 @@ export default async function AccountPage() {
   if (!userData.isActive) {
     return (
       <EmptyState
-        title="No active profiles"
-        description="We couldn't find any active learning profile for this account. Contact support for assistance."
+        title={translate("account.noActiveProfiles")}
+        description={translate("account.noActiveProfilesDescription")}
       />
     );
   }
@@ -127,28 +137,28 @@ export default async function AccountPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Your learning hub</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.learningHub")}</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Full name</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.fullName")}</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">
               {userData.display_name || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Display: {userData.display_name} • Account #{userData.id}
+              {translate("account.display")}: {userData.display_name} • {translate("account.account")} #{userData.id}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-150">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Email</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.email")}</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white break-all">
               {userData.email || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {userData.email_confirmed ? "Email confirmed" : "Email not confirmed"}
+              {userData.email_confirmed ? translate("account.emailConfirmed") : translate("account.emailNotConfirmed")}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Role</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.role")}</p>
             <div className="flex flex-wrap gap-2 mt-2">
               <Badge variant="success" className="text-sm px-3 py-1">
                 {userData.role}
@@ -160,58 +170,58 @@ export default async function AccountPage() {
               ))}
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-              {userData.has_password ? "Password protected" : "Password not set"}
+              {userData.has_password ? translate("account.passwordProtected") : translate("account.passwordNotSet")}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-250">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Bought courses</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.boughtCourses")}</p>
             <p className="text-2xl font-semibold text-slate-900 dark:text-white">
               {enrollments.length}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {activeEnrollments.length} active • {completedEnrollments.length} completed
+              {activeEnrollments.length} {translate("account.active")} • {completedEnrollments.length} {translate("account.completed")}
             </p>
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-300">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">School</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.school")}</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">{schoolName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {schoolDomain ? `Domain: ${schoolDomain}` : "Domain information unavailable"}
+              {schoolDomain ? `${translate("account.domain")}: ${schoolDomain}` : translate("account.domainUnavailable")}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-350">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">Phone number</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.phoneNumber")}</p>
             <p className="text-xl font-semibold text-slate-900 dark:text-white">
               {userData.phone_number || "—"}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {userData.phone_confirmed ? "Phone confirmed" : "Phone not confirmed"} • Profile #{userData.id}
+              {userData.phone_confirmed ? translate("account.phoneConfirmed") : translate("account.phoneNotConfirmed")} • {translate("account.profile")} #{userData.id}
             </p>
           </div>
         </div>
       </div>
       {/* Account Settings Section */}
       <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Account Settings</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.accountSettings")}</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {/* Edit Display Name */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Display Name</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{translate("account.displayName")}</h3>
             <EditDisplayNameForm profileId={userData.id} currentDisplayName={userData.display_name} />
           </div>
 
           {/* Change Password */}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Change Password</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{translate("account.changePassword")}</h3>
             <ChangePasswordForm profileId={userData.id} />
           </div>
 
           {/* Edit School Name (Manager only) */}
           {userData.role === 'MANAGER' && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">School Name</h3>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{translate("account.schoolName")}</h3>
               <EditSchoolNameForm currentSchoolName={schoolName} />
             </div>
           )}
@@ -220,10 +230,10 @@ export default async function AccountPage() {
           {needsSecondaryMethod && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-                Add {secondaryMethod === 'email' ? 'Email' : 'Phone Number'}
+                {secondaryMethod === 'email' ? translate("account.addEmail") : translate("account.addPhoneNumber")}
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-                Add your {secondaryMethod === 'email' ? 'email address' : 'phone number'} as a secondary verification method.
+                {secondaryMethod === 'email' ? translate("account.addEmailDescription") : translate("account.addPhoneDescription")}
               </p>
               <AddContactForm 
                 method={secondaryMethod}
@@ -237,11 +247,11 @@ export default async function AccountPage() {
 
       {/* Roles Section */}
       <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Roles</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.roles")}</h2>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
           <div className="mb-4">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Your roles across all profiles and schools
+              {translate("account.rolesDescription")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -258,7 +268,7 @@ export default async function AccountPage() {
           {profiles.length > 1 && (
             <div className="mt-6">
               <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-                Linked Profiles ({profiles.length})
+                {translate("account.linkedProfiles")} ({profiles.length})
               </h3>
               <div className="grid gap-3 md:grid-cols-2">
                 {profiles.map((profile) => (
@@ -275,7 +285,7 @@ export default async function AccountPage() {
                       </Badge>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      School: {profile.school?.name ?? "Unknown"} • Profile #{profile.id}
+                      {translate("account.school")}: {profile.school?.name ?? translate("account.unknown")} • {translate("account.profile")} #{profile.id}
                     </p>
                   </div>
                 ))}
@@ -289,12 +299,12 @@ export default async function AccountPage() {
       {enrollments.length > 0 ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bought Courses</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.boughtCourses")}</h2>
             <Link
               href={buildPath("/courses")}
               className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
             >
-              Browse more →
+              {translate("account.browseMore")} →
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -313,8 +323,8 @@ export default async function AccountPage() {
                     </Badge>
                   </div>
                   <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                    Progress: {Math.round(enrollment.progress_percent)}% • 
-                    Last accessed: {new Date(enrollment.last_accessed).toLocaleDateString()}
+                    {translate("account.progress")}: {Math.round(enrollment.progress_percent)}% • 
+                    {translate("account.lastAccessed")}: {new Date(enrollment.last_accessed).toLocaleDateString()}
                   </div>
                 </div>
               );
@@ -323,16 +333,16 @@ export default async function AccountPage() {
         </section>
       ) : (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Bought Courses</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.boughtCourses")}</h2>
           <EmptyState
-            title="No courses purchased yet"
-            description="Browse our course catalog and enroll in courses to start learning."
+            title={translate("account.noCoursesPurchased")}
+            description={translate("account.browseCatalogDescription")}
             action={
               <Link
                 href={buildPath("/courses")}
                 className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
-                Browse Courses
+                {translate("account.browseCourses")}
               </Link>
             }
           />
@@ -342,7 +352,7 @@ export default async function AccountPage() {
       {/* Watched Courses and Videos Section */}
       {watchedLessons.length > 0 ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Watched Courses and Videos</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.watchedCoursesVideos")}</h2>
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
             <div className="space-y-3">
               {watchedLessons.map((progress, index) => {
@@ -363,11 +373,11 @@ export default async function AccountPage() {
                         {progress.lesson.title}
                       </p>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {course.title} • {watchTimeMinutes} min watched
+                        {course.title} • {watchTimeMinutes} {translate("account.minWatched")}
                       </p>
                     </div>
                     <Badge variant={isCompleted ? "success" : "soft"}>
-                      {isCompleted ? "Completed" : "In Progress"}
+                      {isCompleted ? translate("account.completed") : translate("account.inProgress")}
                     </Badge>
                   </div>
                 );
@@ -377,10 +387,10 @@ export default async function AccountPage() {
         </section>
       ) : (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Watched Courses and Videos</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.watchedCoursesVideos")}</h2>
           <EmptyState
-            title="No videos watched yet"
-            description="Start watching course videos to track your progress here."
+            title={translate("account.noVideosWatched")}
+            description={translate("account.startWatchingDescription")}
           />
         </section>
       )}
@@ -388,9 +398,9 @@ export default async function AccountPage() {
       {/* Accesses Section */}
       {recentlyAccessed.length > 0 ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600">
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Accesses</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.accesses")}</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Recently accessed courses and learning materials
+            {translate("account.recentlyAccessedDescription")}
           </p>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {recentlyAccessed.map((enrollment, index) => {
@@ -425,7 +435,7 @@ export default async function AccountPage() {
                           />
                         </div>
                         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                          {Math.round(enrollment.progress_percent)}% complete
+                          {Math.round(enrollment.progress_percent)}% {translate("account.complete")}
                         </p>
                       </div>
                     </div>

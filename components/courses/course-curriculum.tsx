@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import type { LessonSummary, SeasonSummary } from "@/lib/api/types";
 import { cn, resolveAssetUrl } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CourseCurriculumProps {
   courseTitle: string;
@@ -25,6 +26,7 @@ const buildLessons = (seasons: SeasonSummary[]): LessonWithSeason[] =>
   );
 
 export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps) => {
+  const { t } = useTranslation();
   const lessons = useMemo(() => buildLessons(seasons), [seasons]);
 
   const initialLesson = useMemo(() => {
@@ -37,7 +39,7 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
   const [currentLesson, setCurrentLesson] = useState<LessonWithSeason | null>(initialLesson);
 
   const currentVideoUrl = currentLesson?.video?.url ? resolveAssetUrl(currentLesson.video.url) : null;
-  const currentSeasonTitle = currentLesson?.seasonTitle ?? (seasons[0]?.title ?? "Course preview");
+  const currentSeasonTitle = currentLesson?.seasonTitle ?? (seasons[0]?.title ?? t("courses.coursePreview"));
   const currentTitle = currentLesson?.title ?? courseTitle;
 
   return (
@@ -45,12 +47,12 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-lg transition-all hover:shadow-xl dark:border-slate-800">
         {currentVideoUrl ? (
           <video key={currentVideoUrl} src={currentVideoUrl} controls className="aspect-video w-full bg-black">
-            Your browser does not support the video tag.
+            {t("courses.videoNotSupported")}
           </video>
         ) : (
           <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 bg-slate-900 text-slate-200">
-            <span className="text-sm font-medium">No preview available</span>
-            <span className="text-xs text-slate-400">Select a lesson to view its content</span>
+            <span className="text-sm font-medium">{t("courses.noPreviewAvailable")}</span>
+            <span className="text-xs text-slate-400">{t("courses.selectLessonToView")}</span>
           </div>
         )}
         <div className="space-y-1 border-t border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
@@ -88,8 +90,8 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
                       ) : null}
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         {seasonLessons.length
-                          ? `${seasonLessons.length} lesson${seasonLessons.length > 1 ? "s" : ""}`
-                          : "Lessons coming soon."}
+                          ? `${seasonLessons.length} ${seasonLessons.length > 1 ? t("courses.lessons") : t("courses.lesson")}`
+                          : t("courses.lessonsComingSoon")}
                       </p>
                     </div>
                   </div>
@@ -130,11 +132,11 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
                                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                                   {lesson.is_free ? (
                                     <span className="rounded-full bg-emerald-100 px-2 py-1 font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200">
-                                      Preview
+                                      {t("courses.preview")}
                                     </span>
                                   ) : null}
-                                  {lesson.duration ? <span>{`${lesson.duration} min`}</span> : null}
-                                  {!hasVideo ? <span>No video</span> : null}
+                                  {lesson.duration ? <span>{`${lesson.duration} ${t("courses.min")}`}</span> : null}
+                                  {!hasVideo ? <span>{t("courses.noVideo")}</span> : null}
                                 </div>
                                 {lesson.description ? (
                                   <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
@@ -153,7 +155,7 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
             })
         ) : (
           <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
-            Lessons coming soon. Check back for new modules.
+            {t("courses.lessonsComingSoonCheckBack")}
           </p>
         )}
       </div>

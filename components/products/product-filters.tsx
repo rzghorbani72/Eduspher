@@ -4,6 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useState, useTransition, useRef, useLayoutEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import { useTranslation } from "@/lib/i18n/hooks";
 import type { CategorySummary } from "@/lib/api/types";
 
 interface ProductFiltersProps {
@@ -24,6 +25,7 @@ export function ProductFilters({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const [mounted, setMounted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -176,19 +178,19 @@ export function ProductFilters({
         <form className="grid gap-5 md:grid-cols-[2fr_1fr_1fr_1fr] md:items-end">
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="q">
-              Search products
+              {t("products.searchProducts")}
             </label>
             <Input
               id="q"
               name="q"
-              placeholder="Search by title, description..."
+              placeholder={t("products.searchPlaceholder")}
               disabled
               className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="category_id">
-              Category
+              {t("products.category")}
             </label>
             <select
               id="category_id"
@@ -196,12 +198,12 @@ export function ProductFilters({
               disabled
               className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
             >
-              <option value="">All categories</option>
+              <option value="">{t("products.allCategories")}</option>
             </select>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="product_type">
-              Type
+              {t("products.type")}
             </label>
             <select
               id="product_type"
@@ -209,12 +211,12 @@ export function ProductFilters({
               disabled
               className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
             >
-              <option value="">All types</option>
+              <option value="">{t("products.allTypes")}</option>
             </select>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="order_by">
-              Sort by
+              {t("products.sortBy")}
             </label>
             <select
               id="order_by"
@@ -222,7 +224,7 @@ export function ProductFilters({
               disabled
               className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
             >
-              <option value="">Newest</option>
+              <option value="">{t("products.newest")}</option>
             </select>
           </div>
         </form>
@@ -240,7 +242,7 @@ export function ProductFilters({
       >
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="q">
-            Search products
+            {t("products.searchProducts")}
           </label>
           <Input
             ref={searchInputRef}
@@ -261,7 +263,7 @@ export function ProductFilters({
                 isTypingRef.current = false;
               }, 100);
             }}
-            placeholder="Search by title, description..."
+            placeholder={t("products.searchPlaceholder")}
             disabled={isPending}
             className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
             autoComplete="off"
@@ -269,7 +271,7 @@ export function ProductFilters({
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="category_id">
-            Category
+            {t("products.category")}
           </label>
           <select
             id="category_id"
@@ -279,7 +281,7 @@ export function ProductFilters({
             disabled={isPending}
             className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
-            <option value="">All categories</option>
+            <option value="">{t("products.allCategories")}</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -289,7 +291,7 @@ export function ProductFilters({
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="product_type">
-            Type
+            {t("products.type")}
           </label>
           <select
             id="product_type"
@@ -299,14 +301,14 @@ export function ProductFilters({
             disabled={isPending}
             className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
-            <option value="">All types</option>
-            <option value="DIGITAL">Digital</option>
-            <option value="PHYSICAL">Physical</option>
+            <option value="">{t("products.allTypes")}</option>
+            <option value="DIGITAL">{t("products.digital")}</option>
+            <option value="PHYSICAL">{t("products.physical")}</option>
           </select>
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="order_by">
-            Sort by
+            {t("products.sortBy")}
           </label>
           <select
             id="order_by"
@@ -316,12 +318,12 @@ export function ProductFilters({
             disabled={isPending}
             className="h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
-            <option value="">Newest</option>
-            <option value="OLDEST">Oldest</option>
-            <option value="PRICE_LOW_TO_HIGH">Price: Low to High</option>
-            <option value="PRICE_HIGH_TO_LOW">Price: High to Low</option>
-            <option value="SALES_COUNT">Best Selling</option>
-            <option value="UPDATED_DESC">Recently Updated</option>
+            <option value="">{t("products.newest")}</option>
+            <option value="OLDEST">{t("products.oldest")}</option>
+            <option value="PRICE_LOW_TO_HIGH">{t("products.priceLowToHigh")}</option>
+            <option value="PRICE_HIGH_TO_LOW">{t("products.priceHighToLow")}</option>
+            <option value="SALES_COUNT">{t("products.bestSelling")}</option>
+            <option value="UPDATED_DESC">{t("products.recentlyUpdated")}</option>
           </select>
         </div>
         <div className="md:col-span-4 border-t border-slate-100 pt-4 dark:border-slate-800">
@@ -332,7 +334,7 @@ export function ProductFilters({
               disabled={isPending}
               className="inline-flex h-10 items-center rounded-full border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
             >
-              Clear
+              {t("common.clear")}
             </button>
           </div>
         </div>

@@ -3,9 +3,11 @@ import Link from "next/link";
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseFilters } from "@/components/courses/course-filters";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourses, getCategories, getCurrentUser, getCurrentSchool } from "@/lib/api/server";
+import { getCourses, getCategories, getCurrentUser, getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
 import { buildSchoolPath } from "@/lib/utils";
 import { getSchoolContext } from "@/lib/school-context";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 type SearchParams = Promise<{
   q?: string;
@@ -68,15 +70,22 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const pagination = coursePayload?.pagination;
   const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
 
+  // Get school language for translations
+  let schoolForLang = currentSchool;
+  if (!schoolForLang && schoolContext.slug) {
+    schoolForLang = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  const language = getSchoolLanguage(schoolForLang?.language || null, schoolForLang?.country_code || null);
+  const translate = (key: string) => t(key, language);
+
   return (
     <div className="space-y-6">
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-          Course catalogue
+          {translate("pages.courseCatalogue")}
         </h1>
         <p className="max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
-          Browse comprehensive courses created with practitioners. Use filters to refine by category,
-          format, or newest releases.
+          {translate("pages.courseCatalogueDescription")}
         </p>
       </div>
 
@@ -166,14 +175,14 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
           </div>
         ) : (
           <EmptyState
-            title="No courses match your filters"
-            description="Try adjusting your filter set or explore another category."
+            title={translate("courses.noCoursesFound")}
+            description={translate("courses.noCoursesDescription")}
             action={
               <Link
                 href={buildPath("/courses")}
                 className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
-                Reset filters
+                {translate("pages.resetFilters")}
               </Link>
           }
         />

@@ -11,6 +11,7 @@ import { getCartItems, removeCourseFromCart, removeProductFromCart, syncCart, ty
 import { validateVoucher } from "@/app/actions/voucher";
 import { processCheckout } from "@/app/actions/checkout";
 import { useTransition } from "react";
+import { useTranslation } from "@/lib/i18n/hooks";
 import type { CourseSummary } from "@/lib/api/types";
 
 interface CartCheckoutProps {
@@ -45,6 +46,7 @@ interface CartCheckoutProps {
 export function CartCheckout({ user, session }: CartCheckoutProps) {
   const router = useRouter();
   const buildPath = useSchoolPath();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,11 +124,11 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         });
         setVoucherError(null);
       } else {
-        setVoucherError(result.error || "Invalid voucher code");
+        setVoucherError(result.error || t("checkout.invalidVoucher"));
         setDiscount(null);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to validate voucher code";
+      const errorMessage = err instanceof Error ? err.message : t("checkout.voucherValidationFailed");
       setVoucherError(errorMessage);
       setDiscount(null);
     } finally {
@@ -136,7 +138,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
 
   const handleCheckout = () => {
     if (!cart || cart.length === 0) {
-      setError("Cart is empty");
+      setError(t("cart.empty"));
       return;
     }
 
@@ -162,10 +164,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           router.push(buildPath("/account"));
           router.refresh();
         } else {
-          setError(result.error || "Failed to complete checkout. Please try again.");
+          setError(result.error || t("checkout.checkoutFailed"));
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+        const errorMessage = err instanceof Error ? err.message : t("common.error");
         setError(errorMessage);
       }
     });
@@ -182,13 +184,13 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   if (!cart || cart.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-600 dark:text-slate-400">Your cart is empty</p>
+        <p className="text-slate-600 dark:text-slate-400">{t("cart.empty")}</p>
         <Button
           onClick={() => router.push(buildPath("/courses"))}
           className="mt-4"
           variant="outline"
         >
-          Browse Courses
+          {t("cart.browseCourses")}
         </Button>
       </div>
     );
@@ -212,7 +214,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     <div className="space-y-6">
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-          Cart Items ({cart.length})
+          {t("cart.items")} ({cart.length})
         </h2>
         <div className="space-y-3">
           {cart.map((item: CartItem) => {
@@ -225,7 +227,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             const itemPrice = itemType === 'PRODUCT' 
               ? (item.product_price || 0)
               : (item.course_price || 0);
-            const itemTypeLabel = itemType === 'PRODUCT' ? 'Product' : 'Course';
+            const itemTypeLabel = itemType === 'PRODUCT' ? t("products.title") : t("courses.title");
             
             return (
               <div
@@ -248,7 +250,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 <button
                   onClick={() => handleRemoveItem(item)}
                   className="text-red-600 hover:text-red-700 dark:text-red-400"
-                  aria-label="Remove item"
+                  aria-label={t("cart.remove")}
                 >
                   <Trash2 className="h-5 w-5" />
                 </button>
@@ -260,7 +262,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
 
       <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
         <label className="text-sm font-medium text-slate-900 dark:text-white">
-          Voucher Code
+          {t("checkout.voucherCode")}
         </label>
         {discount ? (
           <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/70">
@@ -269,7 +271,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 {voucherCode.toUpperCase()}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">
-                Discount: {formatCurrencyWithSchool(discountAmount, user.currentSchool || null)}
+                {t("checkout.discount")}: {formatCurrencyWithSchool(discountAmount, user.currentSchool || null)}
               </div>
             </div>
             <button
@@ -287,7 +289,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           <div className="flex gap-2">
             <Input
               type="text"
-              placeholder="Enter voucher code"
+              placeholder={t("checkout.enterVoucherCode")}
               value={voucherCode}
               onChange={(e) => {
                 setVoucherCode(e.target.value.toUpperCase());
@@ -305,7 +307,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
               disabled={validatingVoucher || !voucherCode.trim()}
               loading={validatingVoucher}
             >
-              Apply
+              {t("checkout.apply")}
             </Button>
           </div>
         )}
@@ -316,14 +318,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
 
       <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
         <div className="flex justify-between text-sm">
-          <span className="text-slate-600 dark:text-slate-400">Subtotal</span>
+          <span className="text-slate-600 dark:text-slate-400">{t("checkout.subtotal")}</span>
           <span className="font-medium text-slate-900 dark:text-white">
             {formatCurrencyWithSchool(totalAmount / 100, user.currentSchool || null)}
           </span>
         </div>
         {discount && discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
-            <span>Discount</span>
+            <span>{t("checkout.discount")}</span>
             <span className="font-medium">
               -{formatCurrencyWithSchool(discountAmount, user.currentSchool || null)}
             </span>
@@ -331,7 +333,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         )}
         <div className="border-t border-slate-200 pt-3 dark:border-slate-800">
           <div className="flex justify-between">
-            <span className="font-semibold text-slate-900 dark:text-white">Total</span>
+            <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
             <span className="text-xl font-bold text-slate-900 dark:text-white">
               {formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}
             </span>
@@ -358,10 +360,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         {pending ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            Processing...
+            {t("checkout.processing")}
           </>
         ) : (
-          `Complete Purchase - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}`
+          `${t("checkout.completePurchase")} - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}`
         )}
       </Button>
     </div>

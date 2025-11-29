@@ -4,10 +4,12 @@ import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { OrderSummary } from "@/components/checkout/order-summary";
 import { CartCheckout } from "@/components/checkout/cart-checkout";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourseById, getCurrentUser, getCart } from "@/lib/api/server";
+import { getCourseById, getCurrentUser, getCart, getSchoolBySlug, getCurrentSchool } from "@/lib/api/server";
 import { getSchoolContext } from "@/lib/school-context";
 import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 type SearchParams = Promise<{
   course?: string;
@@ -38,16 +40,25 @@ export default async function CheckoutPage({
     redirect(buildPath("/auth/login"));
   }
 
+  // Get school language for translations
+  const schoolContext = await getSchoolContext();
+  let currentSchool = await getCurrentSchool().catch(() => null);
+  if (!currentSchool && schoolContext.slug) {
+    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const translate = (key: string) => t(key, language);
+
   // If no course ID, show cart checkout
   if (!courseId) {
     return (
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Checkout
+            {translate("checkout.title")}
           </h1>
           <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
-            Review your cart and complete your purchase.
+            {translate("checkout.reviewCart")}
           </p>
         </div>
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
@@ -73,18 +84,18 @@ export default async function CheckoutPage({
 
   if (!course) {
     return (
-      <EmptyState
-        title="Course not found"
-        description="The course you're looking for doesn't exist or is no longer available."
-        action={
-          <Link
-            href="/courses"
-            className="inline-flex h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
-          >
-            Browse Courses
-          </Link>
-        }
-      />
+        <EmptyState
+          title={translate("checkout.courseNotFound")}
+          description={translate("checkout.courseNotFoundDescription")}
+          action={
+            <Link
+              href="/courses"
+              className="inline-flex h-11 items-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-sky-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:bg-sky-500 dark:hover:bg-sky-400"
+            >
+              {translate("checkout.browseCourses")}
+            </Link>
+          }
+        />
     );
   }
 
@@ -95,10 +106,10 @@ export default async function CheckoutPage({
       <div className="mx-auto max-w-4xl space-y-6">
         <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Complete Your Enrollment
+            {translate("checkout.completeEnrollment")}
           </h1>
           <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
-            This course is free. Complete your enrollment to get started.
+            {translate("checkout.freeCourseEnrollment")}
           </p>
         </div>
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
@@ -120,17 +131,16 @@ export default async function CheckoutPage({
   }
 
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/globe.svg";
-  const schoolContext = await getSchoolContext();
   const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-          Complete Your Purchase
+          {translate("checkout.completePurchase")}
         </h1>
         <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
-          Review your order and complete your enrollment.
+          {translate("checkout.reviewOrder")}
         </p>
       </div>
 
@@ -165,24 +175,24 @@ export default async function CheckoutPage({
 
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-              What's included
+              {translate("checkout.whatsIncluded")}
             </h3>
             <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
               <li className="flex items-center gap-2">
                 <span className="text-[var(--theme-primary)] font-bold">✓</span>
-                Lifetime access to course materials
+                {translate("checkout.lifetimeAccess")}
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--theme-primary)] font-bold">✓</span>
-                Certificate of completion {course.is_certificate ? "(included)" : "(not included)"}
+                {translate("checkout.certificateOfCompletion")} {course.is_certificate ? `(${translate("checkout.included")})` : `(${translate("checkout.notIncluded")})`}
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--theme-primary)] font-bold">✓</span>
-                14-day satisfaction guarantee
+                {translate("checkout.satisfactionGuarantee")}
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--theme-primary)] font-bold">✓</span>
-                Cancel anytime from your dashboard
+                {translate("checkout.cancelAnytime")}
               </li>
             </ul>
           </div>

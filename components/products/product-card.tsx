@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Star, Package, ShoppingCart } from "lucide-react";
 
@@ -5,6 +7,7 @@ import type { ProductSummary } from "@/lib/api/types";
 import { buildSchoolPath, formatCurrencyWithSchool, resolveAssetUrl, truncate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardMedia } from "@/components/ui/card";
+import { useTranslation } from "@/lib/i18n/hooks";
 
 interface ProductCardProps {
   product: ProductSummary;
@@ -17,6 +20,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, schoolSlug = null, school = null }: ProductCardProps) => {
+  const { t } = useTranslation();
   const coverUrl = resolveAssetUrl(product.cover?.url) ?? "/window.svg";
   const hasDiscount = product.original_price && product.original_price > product.price;
   const detailHref = buildSchoolPath(schoolSlug, `/products/${product.id}`);
@@ -29,19 +33,19 @@ export const ProductCard = ({ product, schoolSlug = null, school = null }: Produ
       <CardContent className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {product.category ? <Badge variant="soft">{product.category.name}</Badge> : null}
-          {product.is_featured ? <Badge variant="warning">Featured</Badge> : null}
+          {product.is_featured ? <Badge variant="warning">{t("products.featured")}</Badge> : null}
           {isPhysical ? (
             <Badge variant="outline" className="flex items-center gap-1">
               <Package className="h-3 w-3" />
-              Physical
+              {t("products.physical")}
             </Badge>
           ) : (
             <Badge variant="outline" className="flex items-center gap-1">
               <ShoppingCart className="h-3 w-3" />
-              Digital
+              {t("products.digital")}
             </Badge>
           )}
-          {isOutOfStock && <Badge variant="destructive">Out of Stock</Badge>}
+          {isOutOfStock && <Badge variant="destructive">{t("products.outOfStock")}</Badge>}
         </div>
         <h3 className="text-lg font-semibold leading-7 text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-slate-100 dark:group-hover:text-[var(--theme-primary)]">
           {product.title}
@@ -62,13 +66,13 @@ export const ProductCard = ({ product, schoolSlug = null, school = null }: Produ
           {product.sales_count !== undefined && product.sales_count > 0 && (
             <div className="flex items-center gap-1.5">
               <ShoppingCart className="h-3.5 w-3.5" />
-              <span>{product.sales_count} sold</span>
+              <span>{product.sales_count} {t("products.soldCount")}</span>
             </div>
           )}
           {isPhysical && product.stock_quantity !== null && (
             <div className="flex items-center gap-1.5">
               <Package className="h-3.5 w-3.5" />
-              <span>{product.stock_quantity} in stock</span>
+              <span>{product.stock_quantity} {t("products.inStockCount")}</span>
             </div>
           )}
         </div>
@@ -95,7 +99,7 @@ export const ProductCard = ({ product, schoolSlug = null, school = null }: Produ
           href={detailHref}
           className="inline-flex items-center text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
         >
-          View product →
+          {t("products.viewProductLink")} →
         </Link>
       </CardContent>
     </Card>

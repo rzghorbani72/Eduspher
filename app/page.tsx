@@ -8,6 +8,7 @@ import {
   getSchoolsPublic,
   getCurrentUser,
   getCurrentSchool,
+  getSchoolBySlug,
 } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import { buildOgImageUrl, resolveAssetUrl, truncate, buildSchoolPath } from "@/lib/utils";
@@ -16,6 +17,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getSchoolContext } from "@/lib/school-context";
 import { getSchoolThemeAndTemplate } from "@/lib/theme-config";
 import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
+import { getSchoolLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 export default async function Home() {
   const schoolContext = await getSchoolContext();
@@ -49,6 +52,17 @@ export default async function Home() {
       (primarySchool as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
     rating: (primarySchool as any)?.average_rating ?? null,
   };
+
+  // Get school language for translations
+  let schoolForLang = currentSchool;
+  if (!schoolForLang && schoolContext.slug) {
+    schoolForLang = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  }
+  if (!schoolForLang && primarySchool) {
+    schoolForLang = primarySchool as any;
+  }
+  const language = getSchoolLanguage(schoolForLang?.language || null, schoolForLang?.country_code || null);
+  const translate = (key: string) => t(key, language);
 
   // If we have a UI template, render blocks dynamically
   // Otherwise, use the default static layout
@@ -86,34 +100,33 @@ export default async function Home() {
       <>
       <section className="grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-center py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="space-y-4">
-          <Badge variant="soft" className="w-fit">New • Winter learning festival</Badge>
+          <Badge variant="soft" className="w-fit">{translate("home.newBadge")}</Badge>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-            Learn faster with {schoolDisplayName}. Real mentors, real-world projects, real growth.
+            {translate("home.heroTitle").replace("{school}", schoolDisplayName)}
           </h1>
           <p className="max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300">
-            Build job-ready skills with curated courses, guided learning paths, and support from
-            industry mentors. Join thousands of learners finding confidence through mastery.
+            {translate("home.heroDescription")}
           </p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href={buildPath("/courses")}
               className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
             >
-              Browse courses
+              {translate("home.browseCourses")}
             </Link>
             <Link
               href={buildPath("/auth/login")}
               className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
             >
-              Start for free
+              {translate("home.startForFree")}
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
-              { label: "Learners", value: stats.students ? stats.students.toLocaleString() : "—" },
-              { label: "Mentors", value: stats.mentors ? stats.mentors.toLocaleString() : "—" },
-              { label: "Courses", value: stats.courses ? stats.courses.toLocaleString() : "—" },
-              { label: "Avg. Rating", value: stats.rating ? `${stats.rating.toFixed(1)}/5` : "—" },
+              { label: translate("home.learners"), value: stats.students ? stats.students.toLocaleString() : "—" },
+              { label: translate("home.mentors"), value: stats.mentors ? stats.mentors.toLocaleString() : "—" },
+              { label: translate("home.courses"), value: stats.courses ? stats.courses.toLocaleString() : "—" },
+              { label: translate("home.avgRating"), value: stats.rating ? `${stats.rating.toFixed(1)}/5` : "—" },
             ].map((stat, index) => (
               <div key={stat.label} className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${index * 50}ms` }}>
                 <p className="text-xl font-semibold text-slate-900 dark:text-white">{stat.value}</p>
@@ -130,24 +143,23 @@ export default async function Home() {
               {schoolHeroLabel}
             </p>
             <p className="text-base font-semibold text-slate-900 dark:text-white">
-              Personalised learning paths matched to your ambitions.
+              {translate("home.personalisedLearningPaths")}
             </p>
             <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
-              Enjoy adaptive recommendations, cohort-based mentorship, and progress analytics
-              designed to keep you motivated from day one to job-ready.
+              {translate("home.adaptiveRecommendations")}
             </p>
           </div>
           <div className="mt-6 grid gap-3">
             <div className="rounded-xl bg-white/90 p-4 shadow-md shadow-sky-100 transition-all hover:shadow-lg dark:bg-slate-900/80 dark:shadow-slate-900/40">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Guided projects</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">{translate("home.guidedProjects")}</p>
               <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
-                Pair theory with hands-on builds, get timely feedback, refine your craft.
+                {translate("home.guidedProjectsDescription")}
               </p>
             </div>
             <div className="rounded-xl bg-white/90 p-4 shadow-md shadow-emerald-100 transition-all hover:shadow-lg dark:bg-slate-900/80 dark:shadow-slate-900/40">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">Mentor check-ins</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-white">{translate("home.mentorCheckIns")}</p>
               <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
-                Weekly touch-points that unblock challenges and maintain positive momentum.
+                {translate("home.mentorCheckInsDescription")}
               </p>
             </div>
           </div>
@@ -157,11 +169,11 @@ export default async function Home() {
       <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Featured courses</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("courses.featuredCourses")}</h2>
             <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
               {hasCatalogAccess
-                ? "Curated picks based on trending skills and student success outcomes."
-                : "Log in to unlock full course details, lessons, and enrollment."}
+                ? translate("home.featuredCoursesDescription")
+                : translate("home.loginToUnlock")}
             </p>
           </div>
           {hasCatalogAccess ? (
@@ -169,7 +181,7 @@ export default async function Home() {
               className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
               href={buildPath("/courses")}
             >
-              Explore full catalogue →
+              {translate("home.exploreFullCatalogue")} →
             </Link>
           ) : null}
         </div>
@@ -187,11 +199,11 @@ export default async function Home() {
           </div>
         ) : (
           <EmptyState
-            title={hasCatalogAccess ? "No featured courses yet" : "Sign in to explore courses"}
+            title={hasCatalogAccess ? translate("home.noFeaturedCourses") : translate("home.signInToExplore")}
             description={
               hasCatalogAccess
-                ? "Check back soon for newly published programs and guided learning paths."
-                : "Create a free account or log in to view available courses, pricing, and enrollment options."
+                ? translate("home.checkBackSoon")
+                : translate("home.createAccountToView")
             }
             action={
               hasCatalogAccess ? null : (
@@ -200,13 +212,13 @@ export default async function Home() {
                     href={buildPath("/auth/login")}
                     className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
                   >
-                    Log in
+                    {translate("auth.login")}
                   </Link>
                   <Link
                     href={buildPath("/auth/register")}
                     className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
                   >
-                    Create account
+                    {translate("auth.register")}
                   </Link>
                 </div>
               )
@@ -218,12 +230,12 @@ export default async function Home() {
       {categories.length ? (
         <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Top categories</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("home.topCategories")}</h2>
             <Link
               href={buildPath("/courses?view=categories")}
               className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
             >
-              Browse by interest →
+              {translate("home.browseByInterest")} →
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -235,7 +247,7 @@ export default async function Home() {
               >
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                    Category
+                    {translate("home.categoryLabel")}
                   </p>
                   <p className="text-base font-semibold text-slate-900 dark:text-white">
                     {category.name}
@@ -256,12 +268,12 @@ export default async function Home() {
       {articles.length ? (
         <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">From the journal</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("home.fromTheJournal")}</h2>
             <Link
               href={buildPath("/articles")}
               className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
             >
-              Read all insights →
+              {translate("home.readAllInsights")} →
             </Link>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
@@ -300,7 +312,7 @@ export default async function Home() {
                       href={buildPath(`/articles/${article.id}`)}
                       className="mt-auto inline-flex items-center text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
                     >
-                      Read article →
+                      {translate("home.readArticle")} →
                     </Link>
                   </div>
                 </article>
@@ -312,23 +324,22 @@ export default async function Home() {
 
       <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--theme-primary)] via-[var(--theme-secondary)] to-[var(--theme-accent)] p-8 text-white shadow-2xl transition-all hover:shadow-3xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600">
         <div className="relative z-10 max-w-3xl space-y-3">
-          <Badge variant="soft" className="bg-white/20 text-white">Ready to begin?</Badge>
+          <Badge variant="soft" className="bg-white/20 text-white">{translate("home.readyToBegin")}</Badge>
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Create your learning account today and unlock personalised onboarding in minutes.
+            {translate("home.createLearningAccount")}
           </h2>
           <p className="text-sm leading-6 text-white/90">
-            Choose a learning path, meet your mentor, and access premium content with a flexible
-            monthly plan. Cancel anytime.
+            {translate("home.createLearningAccountDescription")}
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={buildPath("/auth/login")}
               className="inline-flex h-11 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-[var(--theme-primary)] shadow-lg shadow-white/20 transition-all hover:scale-105 hover:bg-slate-100"
             >
-              Join {schoolDisplayName}
+              {translate("home.joinSchool").replace("{school}", schoolDisplayName)}
             </Link>
             <Link href={buildPath("/pricing")} className="text-sm font-semibold text-white transition-all hover:translate-x-1 hover:underline">
-              View pricing →
+              {translate("home.viewPricing")} →
             </Link>
           </div>
         </div>

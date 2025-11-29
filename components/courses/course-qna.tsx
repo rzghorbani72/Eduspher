@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { 
   getCourseQnAs, 
   createCourseQnA, 
@@ -19,6 +20,7 @@ interface CourseQnAProps {
 }
 
 export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
+  const { t } = useTranslation();
   const [qnas, setQnas] = useState<CourseQnA[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [question, setQuestion] = useState('');
@@ -128,7 +130,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
     <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
-          Questions & Answers
+          {t("courseQnA.title")}
         </h2>
 
         {message && (
@@ -149,20 +151,20 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
               htmlFor="question"
               className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
             >
-              Ask a question about this course
+              {t("courseQnA.askQuestion")}
             </label>
             <Textarea
               id="question"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Type your question here..."
+              placeholder={t("courseQnA.questionPlaceholder")}
               rows={4}
               className="w-full"
               minLength={10}
               maxLength={2000}
             />
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              {question.length}/2000 characters
+              {t("courseQnA.charactersCount").replace("{count}", question.length.toString())}
             </p>
           </div>
           <Button
@@ -170,7 +172,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
             disabled={isSubmitting || question.trim().length < 10}
             className="w-full sm:w-auto"
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Question'}
+            {isSubmitting ? t("courseQnA.submitting") : t("courseQnA.submitQuestion")}
           </Button>
         </form>
 
@@ -180,7 +182,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
           </div>
         ) : displayQnas.length === 0 ? (
           <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-            <p>No questions yet. Be the first to ask!</p>
+            <p>{t("courseQnA.noQuestionsYet")}</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -207,7 +209,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                               ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' 
                               : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
                           }`}>
-                            {qna.is_approved ? 'Approved' : 'Pending'}
+                            {qna.is_approved ? t("courseQnA.approved") : t("courseQnA.pending")}
                           </span>
                         )}
                       </div>
@@ -222,7 +224,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                               className="h-8 text-green-700 border-green-200 hover:bg-green-50 dark:text-green-300 dark:border-green-800 dark:hover:bg-green-950/30"
                             >
                               <CheckCircle2 className="h-4 w-4 mr-1" />
-                              Approve
+                              {t("courseQnA.approve")}
                             </Button>
                           ) : (
                             <Button
@@ -233,7 +235,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                               className="h-8 text-amber-700 border-amber-200 hover:bg-amber-50 dark:text-amber-300 dark:border-amber-800 dark:hover:bg-amber-950/30"
                             >
                               <XCircle className="h-4 w-4 mr-1" />
-                              Deny
+                              {t("courseQnA.deny")}
                             </Button>
                           )}
                         </div>
@@ -245,7 +247,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                     <div className="ml-4 pl-4 border-l-2 border-[var(--theme-primary)]">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-sm font-semibold text-[var(--theme-primary)]">
-                          {qna.answerer?.display_name || 'Instructor'}
+                          {qna.answerer?.display_name || t("courseQnA.instructor")}
                         </span>
                         {qna.answered_at && (
                           <span className="text-xs text-slate-500 dark:text-slate-400">
@@ -262,7 +264,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                           <Textarea
                             value={answerText[qna.id] || ''}
                             onChange={(e) => setAnswerText({ ...answerText, [qna.id]: e.target.value })}
-                            placeholder="Type your answer here..."
+                            placeholder={t("courseQnA.answerPlaceholder")}
                             rows={3}
                             className="w-full"
                             minLength={10}
@@ -275,7 +277,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                               disabled={processingQnaId === qna.id || !answerText[qna.id]?.trim() || answerText[qna.id]?.trim().length < 10}
                               className="h-8"
                             >
-                              {processingQnaId === qna.id ? 'Submitting...' : 'Submit Answer'}
+                              {processingQnaId === qna.id ? t("courseQnA.submitting") : t("courseQnA.submitAnswer")}
                             </Button>
                             <Button
                               size="sm"
@@ -287,7 +289,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                               disabled={processingQnaId === qna.id}
                               className="h-8"
                             >
-                              Cancel
+                              {t("common.cancel")}
                             </Button>
                           </div>
                         </div>
@@ -299,7 +301,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                           className="h-8"
                         >
                           <MessageSquare className="h-4 w-4 mr-1" />
-                          Answer
+                          {t("courseQnA.answer")}
                         </Button>
                       )}
                     </div>
