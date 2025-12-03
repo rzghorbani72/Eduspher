@@ -10,6 +10,7 @@ const baseUrl = withTrailingSlash(backendApiBaseUrl);
 
 type RequestOptions = {
   signal?: AbortSignal;
+  skipRefresh?: boolean; // Skip token refresh for this request
 };
 
 const getCookieValue = (name: string) => {
@@ -18,7 +19,68 @@ const getCookieValue = (name: string) => {
   return match ? decodeURIComponent(match[1]) : null;
 };
 
-async function handleResponse<T>(response: Response): Promise<T> {
+// Token refresh state management
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
+/**
+ * Attempt to refresh the access token using the refresh token cookie
+ */
+async function refreshToken(): Promise<boolean> {
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshing = true;
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${baseUrl}/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        console.log("[Auth] Token refreshed successfully");
+        return true;
+      }
+
+      console.warn("[Auth] Token refresh failed:", response.status);
+      return false;
+    } catch (error) {
+      console.error("[Auth] Token refresh error:", error);
+      return false;
+    } finally {
+      isRefreshing = false;
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+/**
+ * Redirect to login page
+ */
+function redirectToLogin(): void {
+  if (typeof window !== "undefined") {
+    const currentPath = window.location.pathname + window.location.search;
+    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+    const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
+    if (!currentPath.includes('/login')) {
+      const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
+      window.location.href = redirectUrl;
+    }
+  }
+}
+
+async function handleResponse<T>(
+  response: Response, 
+  retryFn?: () => Promise<T>,
+  skipRefresh?: boolean
+): Promise<T> {
   const contentType = response.headers.get("Content-Type") ?? "";
   const isJson = contentType.includes("application/json");
 
@@ -56,16 +118,25 @@ async function handleResponse<T>(response: Response): Promise<T> {
       }
     }
 
-    // Handle 401 specifically - don't redirect if already on login page
-    if (response.status === 401 && typeof window !== "undefined") {
-      const currentPath = window.location.pathname + window.location.search;
-      const schoolSlug = getCookieValue(env.schoolSlugCookie);
-      const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
-      if (!currentPath.includes('/login')) {
-        const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
-        window.location.href = redirectUrl;
-        return null as unknown as T;
+    // Handle 401 - attempt token refresh
+    if (response.status === 401 && !skipRefresh && retryFn) {
+      console.log("[Auth] Access token expired, attempting refresh...");
+      const refreshSuccess = await refreshToken();
+      
+      if (refreshSuccess) {
+        // Retry the original request
+        return retryFn();
       }
+      
+      // Refresh failed - redirect to login
+      redirectToLogin();
+      return null as unknown as T;
+    }
+
+    // Handle 401 without retry (already retried or auth endpoint)
+    if (response.status === 401) {
+      redirectToLogin();
+      return null as unknown as T;
     }
 
     throw new Error(errorMessage);
@@ -85,121 +156,159 @@ export const postJson = async <T>(
   path: string,
   body: Record<string, unknown>,
   options?: RequestOptions
-) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+): Promise<T> => {
+  const makeRequest = async (skipRefresh = false): Promise<T> => {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    const schoolId = getCookieValue(env.schoolIdCookie);
+    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+    
+    // Add CSRF token for protection
+    const csrfToken = getCookieValue('csrf-token');
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+    
+    if (schoolId) {
+      headers["X-School-ID"] = schoolId;
+    } else if (env.defaultSchoolId) {
+      headers["X-School-ID"] = String(env.defaultSchoolId);
+    }
+    if (schoolSlug) {
+      headers["X-School-Slug"] = schoolSlug;
+    }
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
+    
+    // Skip refresh for auth endpoints
+    const isAuthEndpoint = path.includes('/auth/login') || 
+                           path.includes('/auth/register') ||
+                           path.includes('/auth/refresh');
+    
+    return handleResponse<T>(
+      response, 
+      isAuthEndpoint ? undefined : () => makeRequest(true),
+      skipRefresh || isAuthEndpoint
+    );
   };
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
   
-  // Add CSRF token for protection
-  const csrfToken = getCookieValue('csrf-token');
-  if (csrfToken) {
-    headers["X-CSRF-Token"] = csrfToken;
-  }
-  
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
-  }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
-  }
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "POST",
-    credentials: "include",
-    headers,
-    body: JSON.stringify(body),
-    signal: options?.signal,
-  });
-  return handleResponse<T>(response);
+  return makeRequest(options?.skipRefresh);
 };
 
-const getJson = async <T>(path: string, options?: RequestOptions) => {
-  const headers: HeadersInit = {
-    Accept: "application/json",
+const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
+  const makeRequest = async (skipRefresh = false): Promise<T> => {
+    const headers: HeadersInit = {
+      Accept: "application/json",
+    };
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "GET",
+      credentials: "include",
+      headers,
+      signal: options?.signal,
+    });
+    return handleResponse<T>(
+      response, 
+      () => makeRequest(true),
+      skipRefresh
+    );
   };
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "GET",
-    credentials: "include",
-    headers,
-    signal: options?.signal,
-  });
-  return handleResponse<T>(response);
+  
+  return makeRequest(options?.skipRefresh);
 };
 
 const putJson = async <T>(
   path: string,
   body: Record<string, unknown>,
   options?: RequestOptions
-) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+): Promise<T> => {
+  const makeRequest = async (skipRefresh = false): Promise<T> => {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    const schoolId = getCookieValue(env.schoolIdCookie);
+    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+    
+    // Add CSRF token for protection
+    const csrfToken = getCookieValue('csrf-token');
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+    
+    if (schoolId) {
+      headers["X-School-ID"] = schoolId;
+    } else if (env.defaultSchoolId) {
+      headers["X-School-ID"] = String(env.defaultSchoolId);
+    }
+    if (schoolSlug) {
+      headers["X-School-Slug"] = schoolSlug;
+    }
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "PUT",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
+    return handleResponse<T>(
+      response, 
+      () => makeRequest(true),
+      skipRefresh
+    );
   };
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
   
-  // Add CSRF token for protection
-  const csrfToken = getCookieValue('csrf-token');
-  if (csrfToken) {
-    headers["X-CSRF-Token"] = csrfToken;
-  }
-  
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
-  }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
-  }
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "PUT",
-    credentials: "include",
-    headers,
-    body: JSON.stringify(body),
-    signal: options?.signal,
-  });
-  return handleResponse<T>(response);
+  return makeRequest(options?.skipRefresh);
 };
 
 const patchJson = async <T>(
   path: string,
   body: Record<string, unknown>,
   options?: RequestOptions
-) => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+): Promise<T> => {
+  const makeRequest = async (skipRefresh = false): Promise<T> => {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    const schoolId = getCookieValue(env.schoolIdCookie);
+    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+    
+    // Add CSRF token for protection
+    const csrfToken = getCookieValue('csrf-token');
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+    
+    if (schoolId) {
+      headers["X-School-ID"] = schoolId;
+    } else if (env.defaultSchoolId) {
+      headers["X-School-ID"] = String(env.defaultSchoolId);
+    }
+    if (schoolSlug) {
+      headers["X-School-Slug"] = schoolSlug;
+    }
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
+    return handleResponse<T>(
+      response, 
+      () => makeRequest(true),
+      skipRefresh
+    );
   };
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
   
-  // Add CSRF token for protection
-  const csrfToken = getCookieValue('csrf-token');
-  if (csrfToken) {
-    headers["X-CSRF-Token"] = csrfToken;
-  }
-  
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
-  }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
-  }
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "PATCH",
-    credentials: "include",
-    headers,
-    body: JSON.stringify(body),
-    signal: options?.signal,
-  });
-  return handleResponse<T>(response);
+  return makeRequest(options?.skipRefresh);
 };
 
 export type LoginPayload = {
