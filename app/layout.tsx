@@ -97,7 +97,11 @@ export default async function RootLayout({
     >
       <head>
         {themeCSS && (
-          <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+          <style 
+            dangerouslySetInnerHTML={{ 
+              __html: themeCSS // CSS variables from server - safe as generated internally
+            }} 
+          />
         )}
       </head>
       <body

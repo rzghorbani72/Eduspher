@@ -1,8 +1,43 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { decodeJwt } from "jose";
+import { jwtVerify, decodeJwt, type JWTPayload } from "jose";
 
 import { env } from "./lib/env";
+
+/**
+ * Verify JWT token signature and decode payload
+ * Uses jose library for secure JWT verification in Edge runtime
+ */
+async function verifyJWT(token: string): Promise<{ valid: boolean; payload: JWTPayload | null }> {
+  try {
+    const secret = process.env.JWT_SECRET;
+    
+    // In development or if no secret, fall back to decode-only with expiry check
+    if (!secret) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️ JWT_SECRET not set - JWT signature verification disabled. Set JWT_SECRET in production!');
+      }
+      const payload = decodeJwt(token);
+      // At minimum, check expiration
+      const isExpired = payload.exp && typeof payload.exp === 'number' && payload.exp < Date.now() / 1000;
+      if (isExpired) {
+        return { valid: false, payload: null };
+      }
+      return { valid: true, payload };
+    }
+
+    // Verify the token signature using the secret
+    const secretKey = new TextEncoder().encode(secret);
+    const { payload } = await jwtVerify(token, secretKey, {
+      algorithms: ['HS256']
+    });
+
+    return { valid: true, payload };
+  } catch (error) {
+    // Token verification failed (invalid signature, expired, malformed)
+    return { valid: false, payload: null };
+  }
+}
 
 const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? "http://localhost:3000";
 const BACKEND_API_PATH = process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? "/api";
@@ -246,27 +281,23 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = actualPathname.startsWith("/auth/");
 
   // Get and validate the token from cookies
-  // If request/response has valid SSR cookie, assume isAuthenticated
+  // Verify JWT signature AND check required fields
   const token = request.cookies.get("jwt")?.value;
   let isAuthenticated = false;
   
   if (token) {
-    try {
-      // Validate the JWT token by decoding it (decodeJwt doesn't verify signature, but checks structure)
-      const payload = decodeJwt(token);
-      // Check if token has required fields (profileId or userId) and is not expired
+    const { valid, payload } = await verifyJWT(token);
+    
+    if (valid && payload) {
+      // Check if token has required fields (profileId or userId)
       const hasProfileId = payload.profileId && (typeof payload.profileId === "number" || typeof payload.profileId === "string");
       const hasUserId = payload.userId && (typeof payload.userId === "number" || typeof payload.userId === "string");
       const hasValidId = hasProfileId || hasUserId;
-      const isExpired = payload.exp && typeof payload.exp === "number" && payload.exp < Date.now() / 1000;
       
-      // If token is valid (has profileId/userId and not expired), assume authenticated
-      if (hasValidId && !isExpired) {
+      // Token is valid only if verified AND has required fields
+      if (hasValidId) {
         isAuthenticated = true;
       }
-    } catch (error) {
-      // Token is invalid, malformed, or expired - not authenticated
-      isAuthenticated = false;
     }
   }
 

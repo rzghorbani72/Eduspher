@@ -92,6 +92,13 @@ export const postJson = async <T>(
   };
   const schoolId = getCookieValue(env.schoolIdCookie);
   const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  
+  // Add CSRF token for protection
+  const csrfToken = getCookieValue('csrf-token');
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+  
   if (schoolId) {
     headers["X-School-ID"] = schoolId;
   } else if (env.defaultSchoolId) {
@@ -134,6 +141,13 @@ const putJson = async <T>(
   };
   const schoolId = getCookieValue(env.schoolIdCookie);
   const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  
+  // Add CSRF token for protection
+  const csrfToken = getCookieValue('csrf-token');
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+  
   if (schoolId) {
     headers["X-School-ID"] = schoolId;
   } else if (env.defaultSchoolId) {
@@ -163,6 +177,13 @@ const patchJson = async <T>(
   };
   const schoolId = getCookieValue(env.schoolIdCookie);
   const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  
+  // Add CSRF token for protection
+  const csrfToken = getCookieValue('csrf-token');
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+  
   if (schoolId) {
     headers["X-School-ID"] = schoolId;
   } else if (env.defaultSchoolId) {
