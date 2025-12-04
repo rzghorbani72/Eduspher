@@ -521,6 +521,26 @@ export async function getSchoolThemeConfig(schoolSlug?: string) {
         accent_color?: string;
         background_color?: string;
         dark_mode?: boolean;
+        configs?: {
+          primary_color?: string;
+          primary_color_light?: string;
+          primary_color_dark?: string;
+          secondary_color?: string;
+          secondary_color_light?: string;
+          secondary_color_dark?: string;
+          accent_color?: string;
+          background_color?: string;
+          background_color_light?: string;
+          background_color_dark?: string;
+          dark_mode?: boolean | string | null;
+          background_animation_type?: string;
+          background_animation_speed?: string;
+          background_svg_pattern?: string;
+          element_animation_style?: string;
+          border_radius_style?: string;
+          shadow_style?: string;
+          [key: string]: any;
+        };
         [key: string]: any;
       };
     }>(path, {

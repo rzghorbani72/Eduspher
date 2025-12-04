@@ -98,7 +98,17 @@ export default async function Home() {
   return (
     <div className="space-y-6">
       <>
-      <section className="grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-center py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <section 
+        data-scroll-animate="fadeIn"
+        data-scroll-delay="0"
+        className="relative grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-center py-6 sm:py-8 overflow-hidden"
+      >
+        {/* Creative background elements for homepage */}
+        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+          {/* Animated gradient blobs */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[var(--theme-primary)]/10 to-[var(--theme-secondary)]/10 rounded-full blur-3xl animate-float-slow" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-[var(--theme-secondary)]/10 to-[var(--theme-accent)]/10 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
+        </div>
         <div className="space-y-4">
           <Badge variant="soft" className="w-fit">{translate("home.newBadge")}</Badge>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">

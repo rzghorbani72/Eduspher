@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { SchoolProvider } from "@/components/providers/school-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { env } from "@/lib/env";
 import { getSchoolContext } from "@/lib/school-context";
@@ -16,9 +17,12 @@ import {
   getSchoolThemeAndTemplate,
   generateThemeCSSVariables,
 } from "@/lib/theme-config";
-import { getCurrentSchool } from "@/lib/api/server";
+import { getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
 import { getSchoolLanguage, getSchoolDirection, isSchoolRTL } from "@/lib/i18n/server";
 import type { LanguageCode } from "@/lib/i18n/config";
+import { CreativeBackground } from "@/components/motion/creative-background";
+import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
+import { resolveAssetUrl } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,9 +70,36 @@ export default async function RootLayout({
   
   // If no authenticated school, try to get public school by slug
   if (!currentSchool && schoolContext.slug) {
-    const { getSchoolBySlug } = await import("@/lib/api/server");
     currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
   }
+
+  // Extract school icons for flying animation
+  const schoolIcons: string[] = [];
+  if (currentSchool) {
+    // Get logo if available
+    if ((currentSchool as any).logo?.url) {
+      const logoUrl = resolveAssetUrl((currentSchool as any).logo.url);
+      if (logoUrl) schoolIcons.push(logoUrl);
+    }
+    // Get cover image if available
+    if (currentSchool.cover?.url) {
+      const coverUrl = resolveAssetUrl(currentSchool.cover.url);
+      if (coverUrl) schoolIcons.push(coverUrl);
+    }
+    // Get other images if available
+    if (currentSchool.images && Array.isArray(currentSchool.images)) {
+      currentSchool.images.slice(0, 5).forEach((img: any) => {
+        const imgUrl = img.url || img.filename;
+        if (imgUrl) {
+          const resolvedUrl = resolveAssetUrl(imgUrl);
+          if (resolvedUrl) schoolIcons.push(resolvedUrl);
+        }
+      });
+    }
+  }
+  
+  // Filter out empty strings
+  const validSchoolIcons = schoolIcons.filter(Boolean);
   
   // Determine language and direction from school config (server-side)
   const countryCode = currentSchool?.country_code || null;
@@ -111,11 +142,11 @@ export default async function RootLayout({
         style={
           theme
             ? {
-                backgroundColor: theme.background_color || undefined,
-                "--theme-primary": theme.primary_color || "#3b82f6",
-                "--theme-secondary": theme.secondary_color || "#6366f1",
-                "--theme-accent": theme.accent_color || "#f59e0b",
-                "--theme-background": theme.background_color || "#f8fafc",
+                // Use appropriate colors based on dark_mode setting
+                backgroundColor: theme.dark_mode === true
+                  ? (theme.background_color_dark || theme.background_color || "#0f172a")
+                  : (theme.background_color_light || theme.background_color || "#f8fafc"),
+                // CSS variables are set in the <style> tag above via generateThemeCSSVariables
               } as React.CSSProperties
             : undefined
         }
@@ -123,22 +154,28 @@ export default async function RootLayout({
         <AuthProvider initialAuthenticated={isAuthenticated}>
           <SchoolProvider initialValue={schoolContext}>
             <ThemeProvider initialTheme={theme}>
+            <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
             <I18nProvider initialLanguage={language} countryCode={countryCode || undefined}>
-              <div
-                className="flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
-              >
-                <SiteHeader />
-                <main className="flex-1">
-                  {useTemplateLayout ? (
-                    <>{children}</>
-                  ) : (
-                    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
-                      {children}
-                    </div>
-                  )}
-                </main>
-                <SiteFooter />
-              </div>
+              <ScrollAnimationProvider>
+                <div
+                  className="relative flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100 overflow-hidden"
+                >
+                  {/* Creative animated background with gradients and flying icons */}
+                  <CreativeBackground theme={theme} schoolIcons={validSchoolIcons} />
+                  
+                  <SiteHeader />
+                  <main className="relative flex-1 z-10">
+                    {useTemplateLayout ? (
+                      <>{children}</>
+                    ) : (
+                      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+                        {children}
+                      </div>
+                    )}
+                  </main>
+                  <SiteFooter />
+                </div>
+              </ScrollAnimationProvider>
             </I18nProvider>
             </ThemeProvider>
           </SchoolProvider>

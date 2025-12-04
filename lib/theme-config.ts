@@ -91,10 +91,15 @@ export async function getSchoolThemeAndTemplate() {
       // Errors are already handled by Promise.allSettled, but we can log if needed
     }
 
+    // Extract configs from response - API returns { data: { configs: {...} } }
     const configs = (themeData as any)?.configs || {};
+    const themeId = (themeData as any)?.themeId;
+    const themeName = (themeData as any)?.name;
+    
     return {
       theme: themeData
         ? {
+            // Use configs first (from API response), then fallback to themeData root, then defaults
             primary_color: configs.primary_color || themeData.primary_color || "#3b82f6",
             primary_color_light: configs.primary_color_light || themeData.primary_color_light || configs.primary_color || themeData.primary_color || "#3b82f6",
             primary_color_dark: configs.primary_color_dark || themeData.primary_color_dark || configs.primary_color || themeData.primary_color || "#60a5fa",
@@ -105,13 +110,23 @@ export async function getSchoolThemeAndTemplate() {
             background_color: configs.background_color || themeData.background_color || "#f8fafc",
             background_color_light: configs.background_color_light || themeData.background_color_light || configs.background_color || themeData.background_color || "#f8fafc",
             background_color_dark: configs.background_color_dark || themeData.background_color_dark || configs.background_color || themeData.background_color || "#0f172a",
-            dark_mode: configs.dark_mode !== undefined ? (configs.dark_mode === null ? null : configs.dark_mode === 'true' || configs.dark_mode === true) : (themeData.dark_mode !== undefined ? themeData.dark_mode : null),
-            background_animation_type: configs.background_animation_type || 'none',
-            background_animation_speed: configs.background_animation_speed || 'medium',
-            background_svg_pattern: configs.background_svg_pattern || '',
-            element_animation_style: configs.element_animation_style || 'subtle',
-            border_radius_style: configs.border_radius_style || 'rounded',
-            shadow_style: configs.shadow_style || 'medium',
+            // Handle dark_mode: can be boolean, string "true"/"false", or null
+            dark_mode: configs.dark_mode !== undefined 
+              ? (configs.dark_mode === null || configs.dark_mode === 'null' 
+                  ? null 
+                  : configs.dark_mode === true || configs.dark_mode === 'true' || configs.dark_mode === '1')
+              : (themeData.dark_mode !== undefined 
+                  ? (themeData.dark_mode === null || themeData.dark_mode === 'null'
+                      ? null
+                      : themeData.dark_mode === true || themeData.dark_mode === 'true' || themeData.dark_mode === '1')
+                  : null),
+            // Animation and style settings from configs
+            background_animation_type: configs.background_animation_type || themeData.background_animation_type || 'none',
+            background_animation_speed: configs.background_animation_speed || themeData.background_animation_speed || 'medium',
+            background_svg_pattern: configs.background_svg_pattern || themeData.background_svg_pattern || '',
+            element_animation_style: configs.element_animation_style || themeData.element_animation_style || 'subtle',
+            border_radius_style: configs.border_radius_style || themeData.border_radius_style || 'rounded',
+            shadow_style: configs.shadow_style || themeData.shadow_style || 'medium',
           }
         : null,
       template: templateData
@@ -181,15 +196,30 @@ export function generateThemeCSSVariables(theme: ThemeConfig | null): string {
     strong: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
   };
 
+  // Determine if dark mode is active (for server-side rendering, default to light)
+  // The actual dark mode will be determined client-side by ThemeProvider
+  const isDark = theme.dark_mode === true;
+
+  // Use appropriate colors based on dark_mode setting
+  const primaryColor = isDark 
+    ? (theme.primary_color_dark || theme.primary_color || "#60a5fa")
+    : (theme.primary_color_light || theme.primary_color || "#3b82f6");
+  const secondaryColor = isDark
+    ? (theme.secondary_color_dark || theme.secondary_color || "#818cf8")
+    : (theme.secondary_color_light || theme.secondary_color || "#6366f1");
+  const backgroundColor = isDark
+    ? (theme.background_color_dark || theme.background_color || "#0f172a")
+    : (theme.background_color_light || theme.background_color || "#f8fafc");
+
   const vars = [
-    `--theme-primary: ${theme.primary_color || "#3b82f6"};`,
+    `--theme-primary: ${primaryColor};`,
     `--theme-primary-light: ${theme.primary_color_light || theme.primary_color || "#3b82f6"};`,
     `--theme-primary-dark: ${theme.primary_color_dark || theme.primary_color || "#60a5fa"};`,
-    `--theme-secondary: ${theme.secondary_color || "#6366f1"};`,
+    `--theme-secondary: ${secondaryColor};`,
     `--theme-secondary-light: ${theme.secondary_color_light || theme.secondary_color || "#6366f1"};`,
     `--theme-secondary-dark: ${theme.secondary_color_dark || theme.secondary_color || "#818cf8"};`,
     `--theme-accent: ${theme.accent_color || "#f59e0b"};`,
-    `--theme-background: ${theme.background_color || "#f8fafc"};`,
+    `--theme-background: ${backgroundColor};`,
     `--theme-background-light: ${theme.background_color_light || theme.background_color || "#f8fafc"};`,
     `--theme-background-dark: ${theme.background_color_dark || theme.background_color || "#0f172a"};`,
     `--theme-border-radius: ${borderRadiusMap[theme.border_radius_style || 'rounded'] || '16px'};`,

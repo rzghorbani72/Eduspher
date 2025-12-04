@@ -26,8 +26,25 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
   const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
 
   return (
-    <Card className="transition-all duration-300 hover:border-[var(--theme-primary)]/30" data-animation-style="moderate">
-      <CardMedia src={coverUrl} alt={course.title} />
+    <Card 
+      data-scroll-animate="scaleUp"
+      data-scroll-delay="0"
+      className="group relative overflow-hidden transition-all duration-300 hover:border-[var(--theme-primary)]/30 hover-lift hover:shadow-xl" 
+      data-animation-style="dynamic"
+    >
+      {/* Animated gradient overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-primary)]/0 via-[var(--theme-secondary)]/0 to-[var(--theme-accent)]/0 opacity-0 transition-opacity duration-500 group-hover:opacity-5 -z-10" />
+      
+      {/* Enhanced floating particles effect with theme colors */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute top-4 right-4 w-2 h-2 bg-[var(--theme-primary)] rounded-full animate-float-slow shadow-lg shadow-[var(--theme-primary)]/50" style={{ animationDelay: '0s' }} />
+        <div className="absolute bottom-8 left-8 w-1.5 h-1.5 bg-[var(--theme-secondary)] rounded-full animate-float-slow shadow-lg shadow-[var(--theme-secondary)]/50" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/4 w-1 h-1 bg-[var(--theme-accent)] rounded-full animate-float-slow shadow-lg shadow-[var(--theme-accent)]/50" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 right-1/3 w-1.5 h-1.5 bg-[var(--theme-primary)]/60 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-primary)]/50" style={{ animationDelay: '0.5s' }} />
+        <div className="absolute bottom-1/3 right-1/4 w-1 h-1 bg-[var(--theme-secondary)]/60 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-secondary)]/50" style={{ animationDelay: '1.5s' }} />
+      </div>
+      
+      <CardMedia src={coverUrl} alt={course.title} className="transition-transform duration-500 group-hover:scale-110" />
       <CardContent className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {course.category ? <Badge variant="soft">{course.category.name}</Badge> : null}

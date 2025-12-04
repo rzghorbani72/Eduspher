@@ -142,7 +142,13 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
+      {/* Creative background elements for course detail page */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-0 w-80 h-80 bg-gradient-to-br from-[var(--theme-primary)]/10 to-[var(--theme-secondary)]/10 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute bottom-20 left-0 w-96 h-96 bg-gradient-to-br from-[var(--theme-accent)]/8 to-[var(--theme-primary)]/8 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-[var(--theme-secondary)]/6 to-[var(--theme-accent)]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+      </div>
       <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="space-y-5">
           <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">

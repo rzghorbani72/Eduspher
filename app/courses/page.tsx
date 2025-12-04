@@ -79,7 +79,13 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const translate = (key: string) => t(key, language);
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
+      {/* Creative background elements for courses page */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-72 h-72 bg-gradient-to-br from-[var(--theme-primary)]/8 to-[var(--theme-secondary)]/8 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-gradient-to-br from-[var(--theme-secondary)]/8 to-[var(--theme-accent)]/8 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: "1.5s" }} />
+      </div>
+      
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
           {translate("pages.courseCatalogue")}

@@ -74,12 +74,25 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
       )}
       
-      {/* Decorative background elements */}
+      {/* Enhanced animated decorative background elements */}
       {!hasBackgroundImage && (
           <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-sky-400/20 blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-emerald-400/20 blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-400/10 blur-3xl" />
+          {/* Animated gradient orbs with motion */}
+          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-to-br from-[var(--theme-primary)]/20 to-[var(--theme-secondary)]/20 blur-3xl animate-float-slow" />
+          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-to-br from-[var(--theme-secondary)]/20 to-[var(--theme-accent)]/20 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-[var(--theme-accent)]/10 via-[var(--theme-primary)]/10 to-[var(--theme-secondary)]/10 blur-3xl animate-pulse" style={{ animationDelay: "0.5s" }} />
+          
+          {/* Additional floating gradient orbs */}
+          <div className="absolute top-1/4 right-1/3 h-64 w-64 rounded-full bg-gradient-to-br from-[var(--theme-primary)]/15 to-[var(--theme-accent)]/15 blur-3xl animate-float-slow" style={{ animationDelay: "2s" }} />
+          <div className="absolute bottom-1/3 left-1/4 h-72 w-72 rounded-full bg-gradient-to-br from-[var(--theme-secondary)]/15 to-[var(--theme-primary)]/15 blur-3xl animate-float-slow" style={{ animationDelay: "1.2s" }} />
+          
+          {/* Floating particles with theme colors */}
+          <div className="absolute top-20 left-20 w-2 h-2 bg-[var(--theme-primary)]/30 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-primary)]/50" style={{ animationDelay: "0s" }} />
+          <div className="absolute bottom-32 right-32 w-1.5 h-1.5 bg-[var(--theme-secondary)]/30 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-secondary)]/50" style={{ animationDelay: "1.5s" }} />
+          <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-[var(--theme-accent)]/40 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-accent)]/50" style={{ animationDelay: "2s" }} />
+          <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-[var(--theme-primary)]/25 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-primary)]/50" style={{ animationDelay: "0.8s" }} />
+          <div className="absolute top-1/2 right-1/5 w-2 h-2 bg-[var(--theme-secondary)]/20 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-secondary)]/50" style={{ animationDelay: "2.5s" }} />
+          <div className="absolute bottom-1/5 left-1/2 w-1 h-1 bg-[var(--theme-accent)]/35 rounded-full animate-float-slow shadow-lg shadow-[var(--theme-accent)]/50" style={{ animationDelay: "1.8s" }} />
           </div>
       )}
 
@@ -92,6 +105,8 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
           )}
         >
           <h1
+            data-scroll-animate="fadeInUp"
+            data-scroll-delay="0"
             className={cn(
               "font-bold tracking-tight",
               height === "small"
@@ -104,10 +119,14 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
                 : "text-slate-900 dark:text-white"
             )}
           >
+            <span className="text-gradient-theme bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-primary)] via-[var(--theme-secondary)] to-[var(--theme-accent)]">
             {title}
+            </span>
           </h1>
           {subtitle && (
             <p
+              data-scroll-animate="fadeIn"
+              data-scroll-delay="0.2"
               className={cn(
                 "mt-3 leading-relaxed",
                 height === "small"
@@ -123,6 +142,8 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
           )}
           {showCTA && (
             <div
+              data-scroll-animate="fadeIn"
+              data-scroll-delay="0.4"
               className={cn(
                 "mt-6 flex flex-wrap gap-4",
                 alignment === "center"
