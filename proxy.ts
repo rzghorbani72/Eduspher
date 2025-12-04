@@ -161,7 +161,7 @@ const fetchSchools = async () => {
   }
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   if (shouldBypass(request)) {
     return NextResponse.next();
   }
@@ -303,17 +303,17 @@ export async function middleware(request: NextRequest) {
 
   // If user is on an auth route and is already authenticated, redirect to home
   if (isAuthRoute && isAuthenticated && (actualPathname === "/auth/login" || actualPathname === "/auth/register")) {
-    const redirectUrl = requestUrl.clone();
-    redirectUrl.pathname = slugFromPath ? `/${slugFromPath}` : "/";
+    const redirectPath = slugFromPath ? `/${slugFromPath}` : "/";
+    const redirectUrl = new URL(redirectPath, requestUrl.origin);
     redirectUrl.searchParams.delete("redirect");
     return NextResponse.redirect(redirectUrl);
   }
 
   // If user is not authenticated and trying to access a protected route, redirect to login
   if (!isAuthenticated && isProtectedRoute && !isPublicRoute) {
-    // Build login URL with school slug if present
+    // Build login URL with school slug if present - use absolute URL
     const loginPath = slugFromPath ? `/${slugFromPath}/auth/login` : "/auth/login";
-    const loginUrl = new URL(loginPath, requestUrl);
+    const loginUrl = new URL(loginPath, requestUrl.origin);
     loginUrl.searchParams.set("redirect", requestUrl.pathname + requestUrl.search);
     return NextResponse.redirect(loginUrl);
   }
@@ -362,7 +362,8 @@ export async function middleware(request: NextRequest) {
   }
 
   if (searchParamSlug) {
-    const cleanedUrl = requestUrl.clone();
+    const cleanedUrl = new URL(requestUrl.pathname, requestUrl.origin);
+    cleanedUrl.search = requestUrl.search;
     cleanedUrl.searchParams.delete("school");
     return NextResponse.redirect(cleanedUrl);
   }

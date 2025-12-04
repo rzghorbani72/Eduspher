@@ -136,7 +136,7 @@ async function handleResponse<T>(
     // Handle 401 without retry (already retried or auth endpoint)
     if (response.status === 401) {
       redirectToLogin();
-      return null as unknown as T;
+        return null as unknown as T;
     }
 
     throw new Error(errorMessage);
@@ -158,12 +158,12 @@ export const postJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    const schoolId = getCookieValue(env.schoolIdCookie);
-    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
     
     // Add CSRF token for protection
     const csrfToken = getCookieValue('csrf-token');
@@ -171,21 +171,21 @@ export const postJson = async <T>(
       headers["X-CSRF-Token"] = csrfToken;
     }
     
-    if (schoolId) {
-      headers["X-School-ID"] = schoolId;
-    } else if (env.defaultSchoolId) {
-      headers["X-School-ID"] = String(env.defaultSchoolId);
-    }
-    if (schoolSlug) {
-      headers["X-School-Slug"] = schoolSlug;
-    }
-    const response = await fetch(`${baseUrl}${path}`, {
-      method: "POST",
-      credentials: "include",
-      headers,
-      body: JSON.stringify(body),
-      signal: options?.signal,
-    });
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: JSON.stringify(body),
+    signal: options?.signal,
+  });
     
     // Skip refresh for auth endpoints
     const isAuthEndpoint = path.includes('/auth/login') || 
@@ -204,15 +204,15 @@ export const postJson = async <T>(
 
 const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers: HeadersInit = {
-      Accept: "application/json",
-    };
-    const response = await fetch(`${baseUrl}${path}`, {
-      method: "GET",
-      credentials: "include",
-      headers,
-      signal: options?.signal,
-    });
+  const headers: HeadersInit = {
+    Accept: "application/json",
+  };
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "GET",
+    credentials: "include",
+    headers,
+    signal: options?.signal,
+  });
     return handleResponse<T>(
       response, 
       () => makeRequest(true),
@@ -229,12 +229,12 @@ const putJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    };
-    const schoolId = getCookieValue(env.schoolIdCookie);
-    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
     
     // Add CSRF token for protection
     const csrfToken = getCookieValue('csrf-token');
@@ -242,21 +242,21 @@ const putJson = async <T>(
       headers["X-CSRF-Token"] = csrfToken;
     }
     
-    if (schoolId) {
-      headers["X-School-ID"] = schoolId;
-    } else if (env.defaultSchoolId) {
-      headers["X-School-ID"] = String(env.defaultSchoolId);
-    }
-    if (schoolSlug) {
-      headers["X-School-Slug"] = schoolSlug;
-    }
-    const response = await fetch(`${baseUrl}${path}`, {
-      method: "PUT",
-      credentials: "include",
-      headers,
-      body: JSON.stringify(body),
-      signal: options?.signal,
-    });
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "PUT",
+    credentials: "include",
+    headers,
+    body: JSON.stringify(body),
+    signal: options?.signal,
+  });
     return handleResponse<T>(
       response, 
       () => makeRequest(true),
@@ -273,8 +273,50 @@ const patchJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  const schoolId = getCookieValue(env.schoolIdCookie);
+  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+    
+    // Add CSRF token for protection
+    const csrfToken = getCookieValue('csrf-token');
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+    
+  if (schoolId) {
+    headers["X-School-ID"] = schoolId;
+  } else if (env.defaultSchoolId) {
+    headers["X-School-ID"] = String(env.defaultSchoolId);
+  }
+  if (schoolSlug) {
+    headers["X-School-Slug"] = schoolSlug;
+  }
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers,
+    body: JSON.stringify(body),
+    signal: options?.signal,
+  });
+    return handleResponse<T>(
+      response, 
+      () => makeRequest(true),
+      skipRefresh
+    );
+  };
+  
+  return makeRequest(options?.skipRefresh);
+};
+
+const deleteJson = async <T>(
+  path: string,
+  options?: RequestOptions
+): Promise<T> => {
+  const makeRequest = async (skipRefresh = false): Promise<T> => {
     const headers: HeadersInit = {
-      "Content-Type": "application/json",
       Accept: "application/json",
     };
     const schoolId = getCookieValue(env.schoolIdCookie);
@@ -295,10 +337,9 @@ const patchJson = async <T>(
       headers["X-School-Slug"] = schoolSlug;
     }
     const response = await fetch(`${baseUrl}${path}`, {
-      method: "PATCH",
+      method: "DELETE",
       credentials: "include",
       headers,
-      body: JSON.stringify(body),
       signal: options?.signal,
     });
     return handleResponse<T>(
@@ -542,5 +583,49 @@ export const answerCourseQnA = async (
     data: CourseQnA;
   }>(`/courses/${courseId}/qna/${qnaId}/answer`, { answer }, options);
   return response.data;
+};
+
+// ============================================================================
+// SESSION MANAGEMENT APIs
+// ============================================================================
+
+export interface ActiveSession {
+  id: number;
+  device_info: string;
+  ip_address: string;
+  created_at: string;
+  last_used_at: string;
+  is_current: boolean;
+}
+
+/**
+ * Get all active sessions for the current user
+ */
+export const getActiveSessions = async (options?: RequestOptions) => {
+  const response = await getJson<{
+    success: boolean;
+    sessions: ActiveSession[];
+  }>("/auth/sessions", options);
+  return response.sessions ?? [];
+};
+
+/**
+ * Revoke a specific session by ID
+ */
+export const revokeSession = async (sessionId: number, options?: RequestOptions) => {
+  return deleteJson<{
+    success: boolean;
+    message: string;
+  }>(`/auth/sessions/${sessionId}`, options);
+};
+
+/**
+ * Logout from all devices (revoke all sessions)
+ */
+export const logoutAllDevices = async (options?: RequestOptions) => {
+  return postJson<{
+    message: string;
+    revokedCount: number;
+  }>("/auth/logout-all", {}, options);
 };
 

@@ -20,7 +20,7 @@ interface CourseCardProps {
 }
 
 export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseCardProps) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
   const hasDiscount = course.original_price && course.original_price > course.price;
   const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
@@ -88,15 +88,15 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
             ) : hasDiscount ? (
               <>
                 <span className="text-slate-500 line-through dark:text-slate-400">
-                  {formatCurrencyWithSchool(course.original_price || 0, school)}
+                  {formatCurrencyWithSchool(course.original_price || 0, school, undefined, language)}
                 </span>
                 <span className="text-[var(--theme-primary)]">
-                  {formatCurrencyWithSchool(course.price || 0, school)}
+                  {formatCurrencyWithSchool(course.price || 0, school, undefined, language)}
                 </span>
               </>
             ) : (
               <span className="text-[var(--theme-primary)]">
-                {formatCurrencyWithSchool(course.price || 0, school)}
+                {formatCurrencyWithSchool(course.price || 0, school, undefined, language)}
               </span>
             )}
           </div>

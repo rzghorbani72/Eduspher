@@ -23,7 +23,8 @@ type PageParams = Promise<{
 const detailItems = (
   product: Awaited<ReturnType<typeof getProductById>>,
   school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null,
-  translate?: (key: string) => string
+  translate?: (key: string) => string,
+  language?: string
 ) => {
   if (!product) return [];
   const t = translate || ((key: string) => key);
@@ -33,14 +34,14 @@ const detailItems = (
     ? (
         <div className="flex flex-col items-end gap-1">
           <span className="text-slate-500 line-through dark:text-slate-400">
-            {formatCurrencyWithSchool(product.original_price || 0, school)}
+            {formatCurrencyWithSchool(product.original_price || 0, school, undefined, language)}
           </span>
           <span className="text-[var(--theme-primary)] font-semibold">
-            {formatCurrencyWithSchool(product.price, school)}
+            {formatCurrencyWithSchool(product.price, school, undefined, language)}
           </span>
         </div>
       )
-    : formatCurrencyWithSchool(product.price, school);
+    : formatCurrencyWithSchool(product.price, school, undefined, language);
   
   const items = [
     {
@@ -223,7 +224,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(normalizedProduct, school, translate).map((item) => (
+                {detailItems(normalizedProduct, school, translate, language).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}

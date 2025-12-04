@@ -20,7 +20,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, schoolSlug = null, school = null }: ProductCardProps) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const coverUrl = resolveAssetUrl(product.cover?.url) ?? "/window.svg";
   const hasDiscount = product.original_price && product.original_price > product.price;
   const detailHref = buildSchoolPath(schoolSlug, `/products/${product.id}`);
@@ -81,15 +81,15 @@ export const ProductCard = ({ product, schoolSlug = null, school = null }: Produ
             {hasDiscount ? (
               <>
                 <span className="text-slate-500 line-through dark:text-slate-400">
-                  {formatCurrencyWithSchool(product.original_price || 0, school)}
+                  {formatCurrencyWithSchool(product.original_price || 0, school, undefined, language)}
                 </span>
                 <span className="text-[var(--theme-primary)]">
-                  {formatCurrencyWithSchool(product.price || 0, school)}
+                  {formatCurrencyWithSchool(product.price || 0, school, undefined, language)}
                 </span>
               </>
             ) : (
               <span className="text-[var(--theme-primary)]">
-                {formatCurrencyWithSchool(product.price || 0, school)}
+                {formatCurrencyWithSchool(product.price || 0, school, undefined, language)}
               </span>
             )}
           </div>

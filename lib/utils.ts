@@ -7,6 +7,49 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Currency symbol mapping for localization
+ * Maps currency codes to their localized symbols based on language
+ */
+const CURRENCY_SYMBOLS: Record<string, Record<string, string>> = {
+  IRR: {
+    fa: 'تومان',
+    ar: 'تومان',
+    en: 'Toman',
+    tr: 'Toman',
+  },
+  USD: {
+    fa: 'دلار',
+    ar: 'دولار',
+    en: '$',
+    tr: 'Dolar',
+  },
+  EUR: {
+    fa: 'یورو',
+    ar: 'يورو',
+    en: '€',
+    tr: 'Euro',
+  },
+};
+
+/**
+ * Get localized currency symbol
+ * @param currency - Currency code (e.g., 'IRR', 'USD')
+ * @param language - Language code (e.g., 'fa', 'en')
+ * @param fallbackSymbol - Fallback symbol if not found
+ */
+export const getLocalizedCurrencySymbol = (
+  currency: string,
+  language: string = 'en',
+  fallbackSymbol?: string
+): string => {
+  const currencySymbols = CURRENCY_SYMBOLS[currency?.toUpperCase()];
+  if (currencySymbols) {
+    return currencySymbols[language] || currencySymbols['en'] || fallbackSymbol || currency;
+  }
+  return fallbackSymbol || currency;
+};
+
 export const formatCurrency = (
   value: number,
   options?: {
@@ -15,6 +58,7 @@ export const formatCurrency = (
     currency_position?: "before" | "after";
     divideBy?: number;
     locale?: string;
+    language?: string; // Language for localized currency symbol
   }
 ) => {
   const {
@@ -23,12 +67,23 @@ export const formatCurrency = (
     currency_position = "after",
     divideBy = 1,
     locale = "en-US",
+    language,
   } = options || {};
 
   const numericValue = value / divideBy;
 
-  // If custom symbol is provided, format manually with thousand separators
-  if (currency_symbol) {
+  // Determine the symbol to use
+  // Priority: 1. Localized symbol for IRR, 2. Custom symbol, 3. Default
+  let symbol = currency_symbol;
+  
+  // For IRR (Iranian Rial/Toman), always use localized symbol
+  if (currency?.toUpperCase() === 'IRR') {
+    const lang = language || (locale.startsWith('fa') ? 'fa' : locale.startsWith('ar') ? 'ar' : 'en');
+    symbol = getLocalizedCurrencySymbol('IRR', lang, currency_symbol);
+  }
+
+  // If custom symbol is provided or we have a localized symbol, format manually
+  if (symbol) {
     // Use standard number formatting with thousand separators (no compact notation)
     const formattedNumber = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 0,
@@ -37,8 +92,8 @@ export const formatCurrency = (
     }).format(numericValue);
 
     return currency_position === "before"
-      ? `${currency_symbol}${formattedNumber}`
-      : `${formattedNumber} ${currency_symbol}`;
+      ? `${symbol}${formattedNumber}`
+      : `${formattedNumber} ${symbol}`;
   }
 
   // Use Intl.NumberFormat for standard currencies with thousand separators
@@ -56,6 +111,7 @@ export const formatCurrency = (
  * @param value - Amount in smallest currency unit
  * @param school - School object with currency configuration
  * @param divideBy - Divisor to convert from smallest unit (default: 1 for tomans, 100 for cents)
+ * @param language - Language code for localized currency symbols (e.g., 'fa', 'en')
  * @returns Formatted currency string
  */
 export const formatCurrencyWithSchool = (
@@ -65,8 +121,10 @@ export const formatCurrencyWithSchool = (
     currency_symbol?: string;
     currency_position?: "before" | "after";
     country_code?: string;
+    language?: string;
   } | null,
-  divideBy?: number
+  divideBy?: number,
+  language?: string
 ) => {
   if (!school) {
     return formatCurrency(value, { divideBy: divideBy || 1 });
@@ -95,12 +153,35 @@ export const formatCurrencyWithSchool = (
     }
   }
 
+  // Determine language for currency symbol localization
+  // Priority: 1. Explicit language param, 2. School language, 3. Derive from country code
+  let lang = language || school.language;
+  if (!lang && school.country_code) {
+    // Map country codes to languages
+    const countryToLanguage: Record<string, string> = {
+      'IR': 'fa', // Iran -> Persian
+      'AF': 'fa', // Afghanistan -> Persian/Dari
+      'TJ': 'fa', // Tajikistan -> Persian/Tajik
+      'SA': 'ar', // Saudi Arabia -> Arabic
+      'AE': 'ar', // UAE -> Arabic
+      'EG': 'ar', // Egypt -> Arabic
+      'IQ': 'ar', // Iraq -> Arabic
+      'TR': 'tr', // Turkey -> Turkish
+      'US': 'en',
+      'GB': 'en',
+      'CA': 'en',
+      'AU': 'en',
+    };
+    lang = countryToLanguage[school.country_code.toUpperCase()] || 'en';
+  }
+
   return formatCurrency(value, {
     currency: school.currency || "USD",
     currency_symbol: school.currency_symbol,
     currency_position: school.currency_position || "after",
     divideBy: divideBy ?? defaultDivideBy,
     locale,
+    language: lang,
   });
 };
 

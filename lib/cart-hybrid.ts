@@ -153,6 +153,34 @@ export async function syncCartToServer(): Promise<boolean> {
     });
 
     if (response.ok) {
+      const result = await response.json();
+      
+      // Remove invalid items from localStorage if any were removed
+      if (result.removedItems && Array.isArray(result.removedItems) && result.removedItems.length > 0) {
+        const removedIds = new Set(
+          result.removedItems.map((item: { type: string; id: number }) => 
+            item.type === 'COURSE' ? item.id : item.id
+          )
+        );
+        
+        // Filter out removed items from local cart
+        const updatedCart = localCart.filter((item) => {
+          if (item.item_type === 'COURSE' && item.course_id) {
+            return !removedIds.has(item.course_id);
+          }
+          if (item.item_type === 'PRODUCT' && item.product_id) {
+            return !removedIds.has(item.product_id);
+          }
+          return true;
+        });
+        
+        // Update localStorage
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedCart));
+        
+        // Dispatch event to notify components
+        window.dispatchEvent(new Event("cartUpdated"));
+      }
+      
       markCartSynced();
       return true;
     }

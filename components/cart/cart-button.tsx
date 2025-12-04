@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { addCourseToCart, isInCart } from "@/app/actions/cart";
@@ -18,8 +18,26 @@ export function CartButton({ course, className }: CartButtonProps) {
   const router = useRouter();
   const buildPath = useSchoolPath();
   const { t } = useTranslation();
-  const [added, setAdded] = useState(isInCart(course.id));
+  // Initialize to false to match SSR (localStorage not available during SSR)
+  const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check cart state after component mounts on client
+  useEffect(() => {
+    const checkCartState = () => {
+      setAdded(isInCart(course.id));
+    };
+    
+    // Check initial state
+    checkCartState();
+    
+    // Listen for cart updates
+    window.addEventListener("cartUpdated", checkCartState);
+    
+    return () => {
+      window.removeEventListener("cartUpdated", checkCartState);
+    };
+  }, [course.id]);
 
   const handleAddToCart = () => {
     setError(null);

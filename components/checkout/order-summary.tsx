@@ -41,7 +41,7 @@ interface OrderSummaryProps {
 }
 
 export function OrderSummary({ course, user, session, onDiscountChange }: OrderSummaryProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [discount, setDiscount] = useState<{
     discount_amount: number;
     final_amount: number;
@@ -65,14 +65,14 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-600 dark:text-slate-300">{t("courses.title")}</span>
           <span className="font-medium text-slate-900 dark:text-white">
-            {formatCurrencyWithSchool(course.price, user?.currentSchool || null)}
+            {formatCurrencyWithSchool(course.price, user?.currentSchool || null, undefined, language)}
           </span>
         </div>
         {course.original_price && course.original_price > course.price && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-slate-600 dark:text-slate-300">{t("courses.originalPrice")}</span>
             <span className="text-slate-500 line-through dark:text-slate-400">
-              {formatCurrencyWithSchool(course.original_price, user?.currentSchool || null)}
+              {formatCurrencyWithSchool(course.original_price, user?.currentSchool || null, undefined, language)}
             </span>
           </div>
         )}
@@ -80,7 +80,7 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
           <div className="flex items-center justify-between text-sm text-green-600 dark:text-green-400">
             <span>{t("checkout.discount")}</span>
             <span className="font-medium">
-              -{formatCurrencyWithSchool(discountAmount, user?.currentSchool || null)}
+              -{formatCurrencyWithSchool(discountAmount, user?.currentSchool || null, undefined, language)}
             </span>
           </div>
         )}
@@ -88,7 +88,7 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
           <div className="flex items-center justify-between">
             <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
             <span className="text-2xl font-bold text-slate-900 dark:text-white">
-              {formatCurrencyWithSchool(finalPrice, user?.currentSchool || null)}
+              {formatCurrencyWithSchool(finalPrice, user?.currentSchool || null, undefined, language)}
             </span>
           </div>
         </div>

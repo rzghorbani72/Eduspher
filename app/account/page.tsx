@@ -15,6 +15,7 @@ import { ChangePasswordForm } from "@/components/account/change-password-form";
 import { AddContactForm } from "@/components/account/add-contact-form";
 import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
 import { EditSchoolNameForm } from "@/components/account/edit-school-name-form";
+import { ActiveSessions } from "@/components/account/active-sessions";
 
 export default async function AccountPage() {
   const session = await getSession();
@@ -242,6 +243,31 @@ export default async function AccountPage() {
               />
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Security & Sessions Section */}
+      <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-350">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("account.securitySessions") || "Security & Sessions"}</h2>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+          <ActiveSessions 
+            translations={{
+              title: translate("account.activeSessions") || "Active Sessions",
+              description: translate("account.activeSessionsDescription") || "Manage your active sessions across devices. You can revoke access to any session you don't recognize.",
+              currentSession: translate("account.currentSession") || "Current Session",
+              lastUsed: translate("account.lastUsed") || "Last used",
+              createdAt: translate("account.createdAt") || "Created",
+              revokeSession: translate("account.revokeSession") || "Revoke",
+              logoutAllDevices: translate("account.logoutAllDevices") || "Logout from all devices",
+              refresh: translate("account.refresh") || "Refresh",
+              noSessions: translate("account.noSessions") || "No active sessions found",
+              sessionRevoked: translate("account.sessionRevoked") || "Session revoked successfully",
+              allSessionsRevoked: translate("account.allSessionsRevoked") || "All sessions have been revoked. Please log in again.",
+              errorLoadingSessions: translate("account.errorLoadingSessions") || "Failed to load sessions",
+              errorRevokingSession: translate("account.errorRevokingSession") || "Failed to revoke session",
+              confirmRevokeAll: translate("account.confirmRevokeAll") || "Are you sure you want to logout from all devices? You will need to log in again.",
+            }}
+          />
         </div>
       </section>
 

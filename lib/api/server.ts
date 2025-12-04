@@ -789,11 +789,16 @@ export async function syncCart(items: Array<{
           created_at: string;
         }>;
       };
+      removedItems?: Array<{
+        type: string;
+        id: number;
+        reason: string;
+      }>;
     }>("/cart/sync", {
       method: "POST",
       body: JSON.stringify({ items }),
     });
-    return result.data;
+    return result;
   } catch (error) {
     throw error;
   }

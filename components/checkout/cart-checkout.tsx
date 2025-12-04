@@ -46,7 +46,7 @@ interface CartCheckoutProps {
 export function CartCheckout({ user, session }: CartCheckoutProps) {
   const router = useRouter();
   const buildPath = useSchoolPath();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -244,7 +244,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    {formatCurrencyWithSchool(itemPrice, user.currentSchool || null)}
+                    {formatCurrencyWithSchool(itemPrice, user.currentSchool || null, undefined, language)}
                   </p>
                 </div>
                 <button
@@ -271,7 +271,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 {voucherCode.toUpperCase()}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">
-                {t("checkout.discount")}: {formatCurrencyWithSchool(discountAmount, user.currentSchool || null)}
+                {t("checkout.discount")}: {formatCurrencyWithSchool(discountAmount, user.currentSchool || null, undefined, language)}
               </div>
             </div>
             <button
@@ -320,14 +320,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         <div className="flex justify-between text-sm">
           <span className="text-slate-600 dark:text-slate-400">{t("checkout.subtotal")}</span>
           <span className="font-medium text-slate-900 dark:text-white">
-            {formatCurrencyWithSchool(totalAmount / 100, user.currentSchool || null)}
+            {formatCurrencyWithSchool(totalAmount / 100, user.currentSchool || null, undefined, language)}
           </span>
         </div>
         {discount && discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
             <span>{t("checkout.discount")}</span>
             <span className="font-medium">
-              -{formatCurrencyWithSchool(discountAmount, user.currentSchool || null)}
+              -{formatCurrencyWithSchool(discountAmount, user.currentSchool || null, undefined, language)}
             </span>
           </div>
         )}
@@ -335,7 +335,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           <div className="flex justify-between">
             <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
             <span className="text-xl font-bold text-slate-900 dark:text-white">
-              {formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}
+              {formatCurrencyWithSchool(finalPrice, user.currentSchool || null, undefined, language)}
             </span>
           </div>
         </div>
@@ -363,7 +363,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             {t("checkout.processing")}
           </>
         ) : (
-          `${t("checkout.completePurchase")} - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null)}`
+          `${t("checkout.completePurchase")} - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null, undefined, language)}`
         )}
       </Button>
     </div>

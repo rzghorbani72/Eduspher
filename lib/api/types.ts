@@ -30,6 +30,7 @@ export interface LessonSummary {
   video?: MediaAsset | null;
   audio?: MediaAsset | null;
   document?: MediaAsset | null;
+  image?: MediaAsset | null;
 }
 
 export interface SeasonSummary {

@@ -23,11 +23,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Sync cart to backend
-    await syncCart(items);
+    const result = await syncCart(items);
 
     return NextResponse.json({
       success: true,
-      message: "Cart synced successfully",
+      message: result.message || "Cart synced successfully",
+      removedItems: result.removedItems,
     });
   } catch (error) {
     return NextResponse.json(
