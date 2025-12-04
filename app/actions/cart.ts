@@ -81,10 +81,11 @@ export function addProductToCart(item: {
 export function removeCourseFromCart(course_id: number): boolean {
   const success = removeFromLocalCart(course_id, 'COURSE');
   
-  // Background sync if authenticated (non-blocking)
+  // Sync immediately after removal (don't wait for background)
   if (success) {
-    syncCartToServer().catch(() => {
-      // Silently fail - cart is still in localStorage
+    syncCartToServer().catch((error) => {
+      // Log error but don't block UI - cart is still in localStorage
+      console.error("Failed to sync cart after removal:", error);
     });
   }
   
@@ -94,10 +95,11 @@ export function removeCourseFromCart(course_id: number): boolean {
 export function removeProductFromCart(product_id: number): boolean {
   const success = removeFromLocalCart(product_id, 'PRODUCT');
   
-  // Background sync if authenticated (non-blocking)
+  // Sync immediately after removal (don't wait for background)
   if (success) {
-    syncCartToServer().catch(() => {
-      // Silently fail - cart is still in localStorage
+    syncCartToServer().catch((error) => {
+      // Log error but don't block UI - cart is still in localStorage
+      console.error("Failed to sync cart after removal:", error);
     });
   }
   

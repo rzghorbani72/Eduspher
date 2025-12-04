@@ -28,6 +28,40 @@ export interface CartItem {
   added_at: string;
 }
 
+// Deduplicate cart items - keep only the first occurrence of each item
+function deduplicateCart(cart: CartItem[]): CartItem[] {
+  const seen = new Set<string>();
+  const deduplicated: CartItem[] = [];
+  
+  for (const item of cart) {
+    // Determine item type (handle legacy items)
+    const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+    
+    // Create unique key for the item
+    let key: string;
+    if (itemType === 'COURSE' && item.course_id !== undefined && item.course_id !== null) {
+      key = `course_${item.course_id}`;
+    } else if (itemType === 'PRODUCT' && item.product_id !== undefined && item.product_id !== null) {
+      key = `product_${item.product_id}`;
+    } else {
+      // Skip invalid items
+      continue;
+    }
+    
+    // Only add if we haven't seen this key before
+    if (!seen.has(key)) {
+      seen.add(key);
+      // Ensure item_type is set
+      deduplicated.push({
+        ...item,
+        item_type: itemType,
+      });
+    }
+  }
+  
+  return deduplicated;
+}
+
 // Client-side cart operations (localStorage)
 export function getLocalCart(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -35,7 +69,18 @@ export function getLocalCart(): CartItem[] {
   try {
     const cartData = localStorage.getItem(CART_STORAGE_KEY);
     if (!cartData) return [];
-    return JSON.parse(cartData);
+    const cart = JSON.parse(cartData);
+    // Deduplicate cart items
+    const deduplicated = deduplicateCart(cart);
+    
+    // If duplicates were found, save the cleaned cart back to localStorage
+    if (deduplicated.length !== cart.length) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(deduplicated));
+      // Dispatch event to notify components of the cleanup
+      window.dispatchEvent(new CustomEvent("cartUpdated"));
+    }
+    
+    return deduplicated;
   } catch {
     return [];
   }
@@ -47,13 +92,20 @@ export function addToLocalCart(item: Omit<CartItem, "added_at">): boolean {
   try {
     const cart = getLocalCart();
     
+    // Determine item type (handle legacy items)
+    const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+    
     // Check if already in cart (by course_id or product_id)
     const isDuplicate = cart.some((i) => {
-      if (item.item_type === 'COURSE' && i.item_type === 'COURSE') {
-        return i.course_id === item.course_id;
+      // Determine existing item type (handle legacy items)
+      const existingItemType = i.item_type || (i.course_id ? 'COURSE' : 'PRODUCT');
+      
+      // Only compare items of the same type
+      if (itemType === 'COURSE' && existingItemType === 'COURSE') {
+        return i.course_id === item.course_id && i.course_id !== undefined && i.course_id !== null;
       }
-      if (item.item_type === 'PRODUCT' && i.item_type === 'PRODUCT') {
-        return i.product_id === item.product_id;
+      if (itemType === 'PRODUCT' && existingItemType === 'PRODUCT') {
+        return i.product_id === item.product_id && i.product_id !== undefined && i.product_id !== null;
       }
       return false;
     });
@@ -64,6 +116,7 @@ export function addToLocalCart(item: Omit<CartItem, "added_at">): boolean {
     
     cart.push({
       ...item,
+      item_type: itemType, // Ensure item_type is set
       added_at: new Date().toISOString(),
     });
     
@@ -83,15 +136,22 @@ export function removeFromLocalCart(itemId: number, itemType: CartItemType = 'CO
   try {
     const cart = getLocalCart();
     const filtered = cart.filter((item) => {
-      if (itemType === 'COURSE') {
+      // Check item_type to ensure we're comparing the right type of item
+      const actualItemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+      
+      // Only filter out items that match both the type and the ID
+      if (itemType === 'COURSE' && actualItemType === 'COURSE') {
         return item.course_id !== itemId;
-      } else {
+      } else if (itemType === 'PRODUCT' && actualItemType === 'PRODUCT') {
         return item.product_id !== itemId;
       }
+      // Keep items of different types
+      return true;
     });
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(filtered));
     localStorage.removeItem(CART_SYNC_KEY);
     window.dispatchEvent(new CustomEvent("cartUpdated"));
+    
     
     return true;
   } catch {
@@ -129,23 +189,35 @@ export async function syncCartToServer(): Promise<boolean> {
   
   try {
     const localCart = getLocalCart();
-    if (localCart.length === 0) {
-      markCartSynced();
-      return true;
-    }
-
+    
     // Transform cart items to match backend format
-    const transformedItems = localCart.map((item) => ({
-      item_type: item.item_type,
-      course_id: item.course_id,
-      product_id: item.product_id,
-      title: item.item_type === 'COURSE' ? item.course_title : item.product_title,
-      price: item.item_type === 'COURSE' ? item.course_price : item.product_price,
-      cover: item.item_type === 'COURSE' ? item.course_cover : item.product_cover,
-      added_at: item.added_at,
-    }));
+    // Ensure item_type is set correctly for legacy items
+    // IMPORTANT: Always sync, even if cart is empty, so server knows to clear it
+    const transformedItems = localCart
+      .filter((item) => {
+        // Only include items that have valid IDs
+        const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+        if (itemType === 'COURSE') {
+          return item.course_id !== undefined && item.course_id !== null;
+        } else {
+          return item.product_id !== undefined && item.product_id !== null;
+        }
+      })
+      .map((item) => {
+        const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
+        return {
+          item_type: itemType,
+          course_id: item.course_id,
+          product_id: item.product_id,
+          title: itemType === 'COURSE' ? item.course_title : item.product_title,
+          price: itemType === 'COURSE' ? item.course_price : item.product_price,
+          cover: itemType === 'COURSE' ? item.course_cover : item.product_cover,
+          added_at: item.added_at,
+        };
+      });
 
     // Call Next.js API route which will call backend
+    // Always send the sync request, even if cart is empty (to clear server cart)
     const response = await fetch("/api/cart/sync", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -157,14 +229,16 @@ export async function syncCartToServer(): Promise<boolean> {
       
       // Remove invalid items from localStorage if any were removed
       if (result.removedItems && Array.isArray(result.removedItems) && result.removedItems.length > 0) {
+        // Re-read cart from localStorage to get the latest state (avoid stale data)
+        const currentCart = getLocalCart();
         const removedIds = new Set(
           result.removedItems.map((item: { type: string; id: number }) => 
             item.type === 'COURSE' ? item.id : item.id
           )
         );
         
-        // Filter out removed items from local cart
-        const updatedCart = localCart.filter((item) => {
+        // Filter out removed items from current cart
+        const updatedCart = currentCart.filter((item) => {
           if (item.item_type === 'COURSE' && item.course_id) {
             return !removedIds.has(item.course_id);
           }
@@ -183,10 +257,21 @@ export async function syncCartToServer(): Promise<boolean> {
       
       markCartSynced();
       return true;
+    } else if (response.status === 401) {
+      // User not authenticated - don't mark as synced, but don't treat as error
+      // Cart will sync when user logs in
+      console.log("Cart sync skipped - user not authenticated");
+      return false;
+    } else {
+      // Log error for debugging
+      const errorText = await response.text();
+      console.error("Cart sync failed:", response.status, errorText);
+      // Don't mark as synced on error
+      return false;
     }
-    
-    return false;
-  } catch {
+  } catch (error) {
+    // Log error for debugging
+    console.error("Cart sync error:", error);
     return false;
   }
 }

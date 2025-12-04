@@ -81,7 +81,7 @@ export const fa = {
     relatedProducts: 'محصولات مرتبط',
     viewAllProducts: 'مشاهده همه محصولات',
     whatYouWillLearn: 'آنچه یاد خواهید گرفت',
-    enrollNow: 'همین حالا ثبت‌نام کنید',
+    enrollNow: 'همین حالا خرید کنید',
     signInToView: 'برای مشاهده جزئیات دوره وارد شوید',
     signInToViewDescription: 'یک حساب رایگان ایجاد کنید یا وارد شوید تا برنامه کامل، منابع و ثبت‌نام را مشاهده کنید.',
     additionalResources: 'منابع اضافی پس از ثبت‌نام در دسترس خواهد بود.',

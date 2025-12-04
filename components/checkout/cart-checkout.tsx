@@ -60,15 +60,23 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   } | null>(null);
 
   useEffect(() => {
+    let syncTimeout: NodeJS.Timeout | null = null;
+    
     const fetchCart = async () => {
       const items = getCartItems();
       setCart(items);
       setLoading(false);
       
-      // Sync cart to server if authenticated (background)
-      syncCart().catch(() => {
-        // Silently fail
-      });
+      // Debounce sync to avoid race conditions when multiple updates happen quickly
+      if (syncTimeout) {
+        clearTimeout(syncTimeout);
+      }
+      syncTimeout = setTimeout(() => {
+        // Sync cart to server if authenticated (background)
+        syncCart().catch(() => {
+          // Silently fail
+        });
+      }, 500);
     };
     
     fetchCart();
@@ -78,19 +86,37 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     
     return () => {
       window.removeEventListener("cartUpdated", fetchCart);
+      if (syncTimeout) {
+        clearTimeout(syncTimeout);
+      }
     };
   }, []);
 
-  const handleRemoveItem = (item: CartItem) => {
+  const handleRemoveItem = (item: CartItem, e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid any parent click handlers
+    console.log("handleRemoveItem", item);
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     // Handle legacy items without item_type (assume COURSE if has course_id)
     const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
-    if (itemType === 'PRODUCT' && item.product_id) {
-      removeProductFromCart(item.product_id);
-    } else if (item.course_id) {
-      removeCourseFromCart(item.course_id);
+    console.log("itemType", itemType);
+    let removed = false;
+    if (itemType === 'PRODUCT' && item.product_id !== undefined && item.product_id !== null) {
+      removed = removeProductFromCart(item.product_id);
+    } else if (item.course_id !== undefined && item.course_id !== null) {
+      removed = removeCourseFromCart(item.course_id);
     }
-    setCart(getCartItems());
-    setDiscount(null);
+    
+    if (removed) {
+      // Update cart state immediately from localStorage (remove functions update localStorage synchronously)
+      // The cartUpdated event will also trigger useEffect to refresh, but this ensures immediate UI update
+      const updatedCart = getCartItems();
+      setCart(updatedCart);
+      setDiscount(null);
+    }
   };
 
   const handleApplyVoucher = async () => {
@@ -148,7 +174,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         // Sync cart to server before checkout (ensure server has latest)
         await syncCart();
         
-        const courseIds = cart.map((item: CartItem) => item.course_id);
+        // Filter out undefined course_ids
+        const courseIds = cart
+          .map((item: CartItem) => item.course_id)
+          .filter((id): id is number => typeof id === "number");
         const result = await processCheckout({
           course_ids: courseIds,
           user_id: user.id,
@@ -217,7 +246,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           {t("cart.items")} ({cart.length})
         </h2>
         <div className="space-y-3">
-          {cart.map((item: CartItem) => {
+          {cart.map((item: CartItem, index: number) => {
             // Handle legacy items without item_type (assume COURSE if has course_id)
             const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
             const itemId = itemType === 'PRODUCT' ? item.product_id : item.course_id;
@@ -229,9 +258,15 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
               : (item.course_price || 0);
             const itemTypeLabel = itemType === 'PRODUCT' ? t("products.title") : t("courses.title");
             
+            // Use index in key to ensure uniqueness even if duplicates exist
+            const baseKey = itemType === 'PRODUCT' 
+              ? `product_${item.product_id}` 
+              : `course_${item.course_id}`;
+            const uniqueKey = `${baseKey}_${index}_${item.added_at || Date.now()}`;
+            
             return (
               <div
-                key={itemType === 'PRODUCT' ? `product_${item.product_id}` : `course_${item.course_id}`}
+                key={uniqueKey}
                 className="flex gap-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950"
               >
                 <div className="flex-1">
@@ -248,7 +283,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleRemoveItem(item)}
+                  onClick={(e) => handleRemoveItem(item, e)}
+                  type="button"
                   className="text-red-600 hover:text-red-700 dark:text-red-400"
                   aria-label={t("cart.remove")}
                 >
