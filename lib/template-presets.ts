@@ -1,6 +1,6 @@
 import { UIBlockConfig } from './theme-config';
 
-export type TemplatePreset = 'modern' | 'classic' | 'minimal' | 'courses-first' | 'featured' | 'compact' | 'business';
+export type TemplatePreset = 'modern' | 'classic' | 'minimal' | 'courses-first' | 'featured' | 'compact' | 'academy' | 'student-focused';
 
 export interface TemplatePresetInfo {
   id: TemplatePreset;
@@ -102,7 +102,7 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
   classic: {
     id: 'classic',
     name: 'Classic',
-    description: 'Traditional layout with sidebar and structured content',
+    description: 'Traditional educational layout with structured content and clear navigation',
     blocks: [
       {
         id: 'header',
@@ -134,41 +134,42 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         },
       },
       {
-        id: 'sidebar',
-        type: 'sidebar',
+        id: 'features',
+        type: 'features',
         order: 3,
         isVisible: true,
         config: {
-          position: 'left',
-          showCategories: true,
-          showFilters: true,
-        },
-      },
-      {
-        id: 'features',
-        type: 'features',
-        order: 4,
-        isVisible: true,
-        config: {
           title: 'Our Features',
-          subtitle: '',
-          gridColumns: 2,
+          subtitle: 'What makes our school special',
+          gridColumns: 3,
           showIcons: true,
-          variant: 'list',
+          variant: 'cards',
         },
       },
       {
         id: 'courses',
         type: 'courses',
-        order: 5,
+        order: 4,
         isVisible: true,
         config: {
           title: 'All Courses',
-          subtitle: '',
+          subtitle: 'Explore our course catalog',
           showFilters: true,
-          gridColumns: 2,
-          limit: 8,
-          layout: 'list',
+          gridColumns: 3,
+          limit: 9,
+          layout: 'grid',
+        },
+      },
+      {
+        id: 'testimonials',
+        type: 'testimonials',
+        order: 5,
+        isVisible: true,
+        config: {
+          title: 'Student Reviews',
+          subtitle: 'Hear from our community',
+          layout: 'grid',
+          showAvatars: true,
         },
       },
       {
@@ -177,9 +178,9 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         order: 6,
         isVisible: true,
         config: {
-          showSocialLinks: false,
-          showNewsletter: false,
-          columns: 3,
+          showSocialLinks: true,
+          showNewsletter: true,
+          columns: 4,
         },
       },
     ],
@@ -474,10 +475,10 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
     ],
   },
 
-  business: {
-    id: 'business',
-    name: 'Business',
-    description: 'Professional layout for corporate training schools',
+  academy: {
+    id: 'academy',
+    name: 'Academy',
+    description: 'Professional academic layout perfect for educational institutions',
     blocks: [
       {
         id: 'header',
@@ -498,15 +499,15 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         order: 2,
         isVisible: true,
         config: {
-          title: 'Professional Training Solutions',
-          subtitle: 'Empower your team with expert-led courses',
+          title: 'Excellence in Education',
+          subtitle: 'Join our community of learners and achieve your goals',
           showCTA: true,
-          ctaText: 'View Solutions',
-          ctaSecondary: 'Contact Sales',
+          ctaText: 'Explore Courses',
+          ctaSecondary: 'Learn More',
           backgroundImage: null,
-          overlay: false,
-          alignment: 'left',
-          height: 'medium',
+          overlay: true,
+          alignment: 'center',
+          height: 'large',
         },
       },
       {
@@ -515,8 +516,8 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         order: 3,
         isVisible: true,
         config: {
-          title: 'Enterprise Features',
-          subtitle: 'Built for teams and organizations',
+          title: 'Why Choose Our Academy',
+          subtitle: 'Quality education with expert instructors',
           gridColumns: 3,
           showIcons: true,
           variant: 'cards',
@@ -528,8 +529,8 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         order: 4,
         isVisible: true,
         config: {
-          title: 'Training Programs',
-          subtitle: 'Comprehensive courses for professionals',
+          title: 'Our Courses',
+          subtitle: 'Comprehensive learning programs for all levels',
           showFilters: true,
           gridColumns: 3,
           limit: 6,
@@ -542,11 +543,10 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         order: 5,
         isVisible: true,
         config: {
-          title: 'Client Testimonials',
-          subtitle: 'Trusted by leading companies',
+          title: 'Student Success Stories',
+          subtitle: 'Hear from our graduates',
           layout: 'grid',
           showAvatars: true,
-          corporate: true,
         },
       },
       {
@@ -558,7 +558,94 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
           showSocialLinks: true,
           showNewsletter: true,
           columns: 4,
-          showLegal: true,
+        },
+      },
+    ],
+  },
+
+  'student-focused': {
+    id: 'student-focused',
+    name: 'Student Focused',
+    description: 'Engaging layout designed to inspire and motivate students',
+    blocks: [
+      {
+        id: 'header',
+        type: 'header',
+        order: 1,
+        isVisible: true,
+        config: {
+          showLogo: true,
+          showNavigation: true,
+          navigationStyle: 'horizontal',
+          sticky: true,
+          transparent: true,
+        },
+      },
+      {
+        id: 'hero',
+        type: 'hero',
+        order: 2,
+        isVisible: true,
+        config: {
+          title: 'Start Your Learning Journey',
+          subtitle: 'Discover courses that will transform your future',
+          showCTA: true,
+          ctaText: 'Browse Courses',
+          backgroundImage: null,
+          overlay: true,
+          alignment: 'center',
+          height: 'large',
+        },
+      },
+      {
+        id: 'courses',
+        type: 'courses',
+        order: 3,
+        isVisible: true,
+        config: {
+          title: 'Popular Courses',
+          subtitle: 'Join thousands of students already learning',
+          showFilters: false,
+          gridColumns: 3,
+          limit: 6,
+          layout: 'grid',
+          featured: true,
+        },
+      },
+      {
+        id: 'features',
+        type: 'features',
+        order: 4,
+        isVisible: true,
+        config: {
+          title: 'Learning Benefits',
+          subtitle: 'Everything you need to succeed',
+          gridColumns: 4,
+          showIcons: true,
+          variant: 'icons',
+        },
+      },
+      {
+        id: 'testimonials',
+        type: 'testimonials',
+        order: 5,
+        isVisible: true,
+        config: {
+          title: 'What Students Say',
+          subtitle: 'Real stories from our community',
+          layout: 'carousel',
+          showAvatars: true,
+        },
+      },
+      {
+        id: 'footer',
+        type: 'footer',
+        order: 6,
+        isVisible: true,
+        config: {
+          showSocialLinks: true,
+          showNewsletter: true,
+          columns: 4,
         },
       },
     ],

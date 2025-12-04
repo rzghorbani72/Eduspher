@@ -6,10 +6,22 @@ import { TEMPLATE_PRESETS, type TemplatePreset } from "./template-presets";
 
 export interface ThemeConfig {
   primary_color?: string;
+  primary_color_light?: string;
+  primary_color_dark?: string;
   secondary_color?: string;
+  secondary_color_light?: string;
+  secondary_color_dark?: string;
   accent_color?: string;
   background_color?: string;
-  dark_mode?: boolean;
+  background_color_light?: string;
+  background_color_dark?: string;
+  dark_mode?: boolean | null;
+  background_animation_type?: string;
+  background_animation_speed?: string;
+  background_svg_pattern?: string;
+  element_animation_style?: string;
+  border_radius_style?: string;
+  shadow_style?: string;
   [key: string]: any;
 }
 
@@ -79,14 +91,27 @@ export async function getSchoolThemeAndTemplate() {
       // Errors are already handled by Promise.allSettled, but we can log if needed
     }
 
+    const configs = (themeData as any)?.configs || {};
     return {
       theme: themeData
         ? {
-            primary_color: themeData.primary_color || "#3b82f6",
-            secondary_color: themeData.secondary_color || "#6366f1",
-            accent_color: themeData.accent_color || "#f59e0b",
-            background_color: themeData.background_color || "#f8fafc",
-            dark_mode: themeData.dark_mode || false,
+            primary_color: configs.primary_color || themeData.primary_color || "#3b82f6",
+            primary_color_light: configs.primary_color_light || themeData.primary_color_light || configs.primary_color || themeData.primary_color || "#3b82f6",
+            primary_color_dark: configs.primary_color_dark || themeData.primary_color_dark || configs.primary_color || themeData.primary_color || "#60a5fa",
+            secondary_color: configs.secondary_color || themeData.secondary_color || "#6366f1",
+            secondary_color_light: configs.secondary_color_light || themeData.secondary_color_light || configs.secondary_color || themeData.secondary_color || "#6366f1",
+            secondary_color_dark: configs.secondary_color_dark || themeData.secondary_color_dark || configs.secondary_color || themeData.secondary_color || "#818cf8",
+            accent_color: configs.accent_color || themeData.accent_color || "#f59e0b",
+            background_color: configs.background_color || themeData.background_color || "#f8fafc",
+            background_color_light: configs.background_color_light || themeData.background_color_light || configs.background_color || themeData.background_color || "#f8fafc",
+            background_color_dark: configs.background_color_dark || themeData.background_color_dark || configs.background_color || themeData.background_color || "#0f172a",
+            dark_mode: configs.dark_mode !== undefined ? (configs.dark_mode === null ? null : configs.dark_mode === 'true' || configs.dark_mode === true) : (themeData.dark_mode !== undefined ? themeData.dark_mode : null),
+            background_animation_type: configs.background_animation_type || 'none',
+            background_animation_speed: configs.background_animation_speed || 'medium',
+            background_svg_pattern: configs.background_svg_pattern || '',
+            element_animation_style: configs.element_animation_style || 'subtle',
+            border_radius_style: configs.border_radius_style || 'rounded',
+            shadow_style: configs.shadow_style || 'medium',
           }
         : null,
       template: templateData
@@ -143,13 +168,33 @@ export function generateThemeCSSVariables(theme: ThemeConfig | null): string {
     return "";
   }
 
-  // Use backend colors as-is - no conversion based on dark_mode
-  // The system preference will determine dark/light mode
+  const borderRadiusMap: Record<string, string> = {
+    rounded: '16px',
+    soft: '24px',
+    sharp: '4px',
+  };
+
+  const shadowMap: Record<string, string> = {
+    none: 'none',
+    subtle: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    medium: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    strong: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  };
+
   const vars = [
     `--theme-primary: ${theme.primary_color || "#3b82f6"};`,
+    `--theme-primary-light: ${theme.primary_color_light || theme.primary_color || "#3b82f6"};`,
+    `--theme-primary-dark: ${theme.primary_color_dark || theme.primary_color || "#60a5fa"};`,
     `--theme-secondary: ${theme.secondary_color || "#6366f1"};`,
+    `--theme-secondary-light: ${theme.secondary_color_light || theme.secondary_color || "#6366f1"};`,
+    `--theme-secondary-dark: ${theme.secondary_color_dark || theme.secondary_color || "#818cf8"};`,
     `--theme-accent: ${theme.accent_color || "#f59e0b"};`,
     `--theme-background: ${theme.background_color || "#f8fafc"};`,
+    `--theme-background-light: ${theme.background_color_light || theme.background_color || "#f8fafc"};`,
+    `--theme-background-dark: ${theme.background_color_dark || theme.background_color || "#0f172a"};`,
+    `--theme-border-radius: ${borderRadiusMap[theme.border_radius_style || 'rounded'] || '16px'};`,
+    `--theme-shadow: ${shadowMap[theme.shadow_style || 'medium'] || shadowMap.medium};`,
+    `--theme-element-animation: ${theme.element_animation_style || 'subtle'};`,
   ].join("\n  ");
 
   return `:root {\n  ${vars}\n}`;

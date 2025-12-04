@@ -19,14 +19,14 @@ const baseClasses =
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-sky-600 text-white hover:bg-sky-700 focus-visible:outline-sky-600 dark:bg-sky-500 dark:hover:bg-sky-400 dark:focus-visible:outline-sky-400",
+    "bg-[var(--theme-primary)] text-white hover:opacity-90 focus-visible:outline-[var(--theme-primary)] shadow-lg shadow-[var(--theme-primary)]/30 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40 transition-all",
   secondary:
-    "bg-slate-900 text-slate-50 hover:bg-slate-800 focus-visible:outline-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-300",
+    "bg-[var(--theme-secondary)] text-white hover:opacity-90 focus-visible:outline-[var(--theme-secondary)] shadow-lg shadow-[var(--theme-secondary)]/30 hover:shadow-xl hover:shadow-[var(--theme-secondary)]/40 transition-all dark:bg-[var(--theme-secondary)] dark:text-white",
   outline:
-    "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 focus-visible:outline-slate-200 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50 dark:hover:bg-slate-900",
+    "border-2 border-[var(--theme-primary)] bg-transparent text-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/10 focus-visible:outline-[var(--theme-primary)] transition-all",
   ghost:
-    "bg-transparent text-slate-900 hover:bg-slate-100 focus-visible:outline-slate-200 dark:text-slate-100 dark:hover:bg-slate-900",
-  link: "bg-transparent text-sky-600 underline-offset-4 hover:underline focus-visible:outline-sky-600 dark:text-sky-400",
+    "bg-transparent text-slate-900 hover:bg-slate-100 focus-visible:outline-slate-200 dark:text-slate-100 dark:hover:bg-slate-900 transition-all",
+  link: "bg-transparent text-[var(--theme-primary)] underline-offset-4 hover:underline focus-visible:outline-[var(--theme-primary)] transition-all",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -52,6 +52,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         ref={ref}
         className={cn(baseClasses, variantClasses[variant], sizeClasses[size], className)}
+        data-animation-style="moderate"
         {...buttonProps}
       >
         {children}

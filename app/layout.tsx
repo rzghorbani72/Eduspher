@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { SchoolProvider } from "@/components/providers/school-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { env } from "@/lib/env";
 import { getSchoolContext } from "@/lib/school-context";
@@ -121,6 +122,7 @@ export default async function RootLayout({
       >
         <AuthProvider initialAuthenticated={isAuthenticated}>
           <SchoolProvider initialValue={schoolContext}>
+            <ThemeProvider initialTheme={theme}>
             <I18nProvider initialLanguage={language} countryCode={countryCode || undefined}>
               <div
                 className="flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
@@ -138,6 +140,7 @@ export default async function RootLayout({
                 <SiteFooter />
               </div>
             </I18nProvider>
+            </ThemeProvider>
           </SchoolProvider>
         </AuthProvider>
       </body>

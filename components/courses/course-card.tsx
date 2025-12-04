@@ -26,7 +26,7 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
   const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
 
   return (
-    <Card className="transition-all duration-300 hover:border-[var(--theme-primary)]/30">
+    <Card className="transition-all duration-300 hover:border-[var(--theme-primary)]/30" data-animation-style="moderate">
       <CardMedia src={coverUrl} alt={course.title} />
       <CardContent className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
