@@ -53,7 +53,7 @@ export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const buildPath = useSchoolPath();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -207,7 +207,7 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.amountPaid")}</span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
-                    {formatCurrencyWithSchool(paymentDetails.amount, school)}
+                    {formatCurrencyWithSchool(paymentDetails.amount, school, undefined, language)}
                   </span>
                 </div>
               )}
@@ -358,7 +358,7 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.gatewayFee")}</span>
                   <span className="text-slate-900 dark:text-white">
-                    {formatCurrencyWithSchool(latestResponse.fee_amount, school)}
+                    {formatCurrencyWithSchool(latestResponse.fee_amount, school, undefined, language)}
                   </span>
                 </div>
               )}

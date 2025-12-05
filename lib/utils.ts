@@ -33,6 +33,26 @@ const CURRENCY_SYMBOLS: Record<string, Record<string, string>> = {
 };
 
 /**
+ * Price unit mapping for different languages
+ * Returns the appropriate price unit/symbol based on language
+ */
+const PRICE_UNITS: Record<string, string> = {
+  fa: 'تومان', // Farsi/Persian - Toman
+  ar: 'دولار', // Arabic - Dollar (or could be دينار for some countries)
+  tr: '₺', // Turkish - Turkish Lira symbol
+  en: '$', // English - Dollar sign
+};
+
+/**
+ * Get price unit based on language
+ * @param language - Language code (e.g., 'fa', 'en', 'tr', 'ar')
+ * @returns Price unit string for the given language
+ */
+export const getPriceUnit = (language: string = 'en'): string => {
+  return PRICE_UNITS[language] || PRICE_UNITS['en'];
+};
+
+/**
  * Get localized currency symbol
  * @param currency - Currency code (e.g., 'IRR', 'USD')
  * @param language - Language code (e.g., 'fa', 'en')
@@ -73,13 +93,18 @@ export const formatCurrency = (
   const numericValue = value / divideBy;
 
   // Determine the symbol to use
-  // Priority: 1. Localized symbol for IRR, 2. Custom symbol, 3. Default
+  // Priority: 1. Localized symbol for IRR, 2. Custom symbol, 3. Language-based price unit, 4. Default
   let symbol = currency_symbol;
   
   // For IRR (Iranian Rial/Toman), always use localized symbol
   if (currency?.toUpperCase() === 'IRR') {
     const lang = language || (locale.startsWith('fa') ? 'fa' : locale.startsWith('ar') ? 'ar' : 'en');
     symbol = getLocalizedCurrencySymbol('IRR', lang, currency_symbol);
+  }
+  
+  // If no symbol provided and we have a language, use getPriceUnit for language-specific price unit
+  if (!symbol && language) {
+    symbol = getPriceUnit(language);
   }
 
   // If custom symbol is provided or we have a localized symbol, format manually
