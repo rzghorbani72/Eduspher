@@ -34,8 +34,11 @@ export function AnimatedBackground({
     if (!ctx) return;
 
     const resizeCanvas = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      
+      canvas.width = width;
+      canvas.height = height;
     };
 
     resizeCanvas();
@@ -83,8 +86,12 @@ export function AnimatedBackground({
   return (
     <canvas
       ref={canvasRef}
-      className={`absolute inset-0 -z-10 ${className}`}
-      style={{ opacity: 0.3 }}
+      className={`fixed inset-0 -z-10 pointer-events-none ${className}`}
+      style={{ 
+        width: '100vw', 
+        height: '100vh',
+        display: 'block'
+      }}
     />
   );
 }
@@ -170,7 +177,7 @@ function drawWaves(
     for (let x = 0; x < canvas.width; x += 5) {
       const y =
         canvas.height / 2 +
-        Math.sin((x / 100) + time * speed + i * 2) * (30 + i * 20);
+        Math.sin((x / 100) + time * speed + i * 2) * (50 + i * 30);
       ctx.lineTo(x, y);
     }
 
@@ -178,9 +185,10 @@ function drawWaves(
     ctx.lineTo(0, canvas.height);
     ctx.closePath();
 
+    const opacity = 0.15 - i * 0.03;
     const color = i % 2 === 0 
-      ? `rgba(${r1}, ${g1}, ${b1}, ${0.1 - i * 0.02})`
-      : `rgba(${r2}, ${g2}, ${b2}, ${0.1 - i * 0.02})`;
+      ? `rgba(${r1}, ${g1}, ${b1}, ${opacity})`
+      : `rgba(${r2}, ${g2}, ${b2}, ${opacity})`;
     ctx.fillStyle = color;
     ctx.fill();
   }

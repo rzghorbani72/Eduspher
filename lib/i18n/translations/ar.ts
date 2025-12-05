@@ -448,6 +448,8 @@ export const ar = {
     resetFilters: 'إعادة تعيين المرشحات',
   },
   auth: {
+    login: 'تسجيل الدخول',
+    register: 'التسجيل',
     welcomeBack: 'مرحباً بعودتك',
     welcomeBackDescription: 'تابع مسار التعلم الخاص بك، ومراجعة الموارد المحفوظة، والتواصل مع المرشدين المستعدين لمساعدتك على التقدم بشكل أسرع.',
     newToEduSpher: 'جديد في EduSpher؟',

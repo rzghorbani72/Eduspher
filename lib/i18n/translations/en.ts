@@ -449,6 +449,8 @@ export const en = {
     resetFilters: 'Reset filters',
   },
   auth: {
+    login: 'Login',
+    register: 'Register',
     welcomeBack: 'Welcome back',
     welcomeBackDescription: 'Continue your learning path, review saved resources, and connect with mentors ready to help you level up faster.',
     newToEduSpher: 'New to EduSpher?',

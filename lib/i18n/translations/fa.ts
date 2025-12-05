@@ -449,6 +449,8 @@ export const fa = {
     resetFilters: 'بازنشانی فیلترها',
   },
   auth: {
+    login: 'ورود',
+    register: 'ثبت‌نام',
     welcomeBack: 'خوش آمدید',
     welcomeBackDescription: 'مسیر یادگیری خود را ادامه دهید، منابع ذخیره شده را مرور کنید و با مربیانی که آماده کمک به شما برای پیشرفت سریع‌تر هستند ارتباط برقرار کنید.',
     newToEduSpher: 'جدید در EduSpher هستید؟',

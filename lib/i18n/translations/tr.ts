@@ -448,6 +448,8 @@ export const tr = {
     resetFilters: 'Filtreleri sıfırla',
   },
   auth: {
+    login: 'Giriş Yap',
+    register: 'Kayıt Ol',
     welcomeBack: 'Tekrar hoş geldiniz',
     welcomeBackDescription: 'Öğrenme yolunuzu sürdürün, kaydedilmiş kaynakları gözden geçirin ve daha hızlı ilerlemenize yardımcı olmaya hazır mentorlarla bağlantı kurun.',
     newToEduSpher: 'EduSpher\'a yeni misiniz?',
