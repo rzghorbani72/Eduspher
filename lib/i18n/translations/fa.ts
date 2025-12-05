@@ -282,6 +282,7 @@ export const fa = {
     dontHaveAccount: 'حساب کاربری ندارید؟',
     alreadyHaveAccount: 'قبلاً حساب کاربری دارید؟',
     signIn: 'ورود',
+    signin: 'ورود',
     signUp: 'ثبت‌نام',
     enterEmail: 'ایمیل خود را وارد کنید',
     enterPhone: 'شماره تلفن را وارد کنید',

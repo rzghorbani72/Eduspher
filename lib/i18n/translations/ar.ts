@@ -281,6 +281,7 @@ export const ar = {
     dontHaveAccount: 'ليس لديك حساب؟',
     alreadyHaveAccount: 'لديك حساب بالفعل؟',
     signIn: 'تسجيل الدخول',
+    signin: 'تسجيل الدخول',
     signUp: 'التسجيل',
     enterEmail: 'أدخل بريدك الإلكتروني',
     enterPhone: 'أدخل رقم الهاتف',

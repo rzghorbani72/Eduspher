@@ -282,6 +282,7 @@ export const en = {
     dontHaveAccount: "Don't have an account?",
     alreadyHaveAccount: 'Already have an account?',
     signIn: 'Sign In',
+    signin: 'Sign In',
     signUp: 'Sign Up',
     enterEmail: 'Enter your email',
     enterPhone: 'Enter phone number',

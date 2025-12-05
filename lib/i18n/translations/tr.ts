@@ -281,6 +281,7 @@ export const tr = {
     dontHaveAccount: 'Hesabınız yok mu?',
     alreadyHaveAccount: 'Zaten hesabınız var mı?',
     signIn: 'Giriş Yap',
+    signin: 'Giriş Yap',
     signUp: 'Kayıt Ol',
     enterEmail: 'E-postanızı girin',
     enterPhone: 'Telefon numaranızı girin',
