@@ -51,15 +51,19 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
           {course.is_featured ? <Badge variant="warning">{t("courses.featured")}</Badge> : null}
           {course.is_certificate ? <Badge variant="success">{t("courses.certificate")}</Badge> : null}
         </div>
-        <h3 className="text-lg font-semibold leading-7 text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-slate-100 dark:group-hover:text-[var(--theme-primary)]">
-          {course.title}
-        </h3>
-        {course.short_description ? (
-          <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
-            {truncate(course.short_description, 160)}
-          </p>
-        ) : null}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+        <div className="flex flex-col gap-2 h-[110px]">
+          <h3 className="text-lg font-semibold leading-7 text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-slate-100 dark:group-hover:text-[var(--theme-primary)]">
+            {course.title}
+          </h3>
+          {course.short_description ? (
+            <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
+              {truncate(course.short_description, 160)}
+            </p>
+          ) : null}
+        </div>
+     
+
+        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-slate-400 h-5">
           {course.comments_count !== undefined && course.comments_count > 0 && (
             <div className="flex items-center gap-1.5">
               <MessageSquare className="h-3.5 w-3.5" />

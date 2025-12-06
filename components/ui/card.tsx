@@ -6,7 +6,7 @@ type CardProps = React.HTMLAttributes<HTMLDivElement>;
 export const Card = ({ className, ...props }: CardProps) => (
   <div
     className={cn(
-      "group relative overflow-hidden rounded-theme border border-slate-200 bg-white shadow-theme transition-all duration-300 hover:-translate-y-1 hover:border-[var(--theme-primary)]/30 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950",
+      "group relative overflow-hidden rounded-theme border h-[560px] border-slate-200 bg-white shadow-theme transition-all duration-300 hover:-translate-y-1 hover:border-[var(--theme-primary)]/30 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950",
       className
     )}
     data-animation-style="moderate"
