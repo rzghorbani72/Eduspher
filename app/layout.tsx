@@ -117,11 +117,19 @@ export default async function RootLayout({
   // Always show header and footer in layout for all pages
   const useTemplateLayout = isHomePage && hasTemplateBlocks;
 
+  // Determine data-theme attribute based on dark_mode setting
+  const dataTheme = theme?.dark_mode === false 
+    ? "light" 
+    : theme?.dark_mode === true 
+    ? "dark" 
+    : undefined;
+
   return (
     <html 
       lang={language}
       dir={direction}
       suppressHydrationWarning
+      data-theme={dataTheme}
       // Don't force dark mode - let system preference handle it
       style={{
         colorScheme: "light dark", // Support both, let system decide

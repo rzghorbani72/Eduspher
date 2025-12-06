@@ -82,6 +82,8 @@ export async function getSchoolThemeAndTemplate() {
         getSchoolUITemplate(schoolContext.slug),
       ]);
 
+      console.log('publicThemeData', publicThemeData);
+
       themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
       templateData = publicTemplateData.status === 'fulfilled' ? publicTemplateData.value : null;
     }
@@ -112,13 +114,13 @@ export async function getSchoolThemeAndTemplate() {
             background_color_dark: configs.background_color_dark || themeData.background_color_dark || configs.background_color || themeData.background_color || "#0f172a",
             // Handle dark_mode: can be boolean, string "true"/"false", or null
             dark_mode: configs.dark_mode !== undefined 
-              ? (configs.dark_mode === null || configs.dark_mode === 'null' 
+              ? (configs.dark_mode === null || (typeof configs.dark_mode === 'string' && configs.dark_mode === 'null')
                   ? null 
-                  : configs.dark_mode === true || configs.dark_mode === 'true' || configs.dark_mode === '1')
+                  : configs.dark_mode === true || (typeof configs.dark_mode === 'string' && (configs.dark_mode === 'true' || configs.dark_mode === '1')))
               : (themeData.dark_mode !== undefined 
-                  ? (themeData.dark_mode === null || themeData.dark_mode === 'null'
+                  ? (themeData.dark_mode === null || (typeof themeData.dark_mode === 'string' && themeData.dark_mode === 'null')
                       ? null
-                      : themeData.dark_mode === true || themeData.dark_mode === 'true' || themeData.dark_mode === '1')
+                      : themeData.dark_mode === true || (typeof themeData.dark_mode === 'string' && (themeData.dark_mode === 'true' || themeData.dark_mode === '1')))
                   : null),
             // Animation and style settings from configs
             background_animation_type: configs.background_animation_type || themeData.background_animation_type || 'none',

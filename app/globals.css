@@ -465,6 +465,24 @@ button {
   box-shadow: var(--theme-shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06));
 }
 
+/* Apply theme border radius to Card component instances */
+/* This ensures all cards respect the theme border_radius_style setting */
+/* Targeting common card patterns with border and background */
+.group.relative.overflow-hidden.border[class*="bg-white"],
+.group.relative.overflow-hidden.border[class*="bg-slate"],
+.border.bg-white.dark\:bg-slate-950[class*="shadow"],
+.border.bg-white.dark\:bg-black[class*="shadow"] {
+  border-radius: var(--theme-border-radius, 16px);
+}
+
+/* Apply theme border radius to all select elements */
+select:not([class*="rounded-"]),
+select[class*="rounded-lg"],
+select[class*="rounded-md"],
+select[class*="rounded-sm"] {
+  border-radius: var(--theme-border-radius, 16px) !important;
+}
+
 /* Element animation styles */
 [data-animation-style="subtle"] {
   transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);

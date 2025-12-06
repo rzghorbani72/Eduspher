@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FlyingIcons } from './flying-icons';
 
@@ -24,14 +24,46 @@ interface CreativeBackgroundProps {
 export function CreativeBackground({ theme, schoolIcons = [], className = '' }: CreativeBackgroundProps) {
   if (!theme) return null;
 
-  // Determine if dark mode is active
-  // For server-side, we can't detect system preference, so use theme.dark_mode if set
-  // Client-side ThemeProvider will handle system preference when dark_mode is null
-  const isDark = typeof window !== 'undefined' 
-    ? (theme.dark_mode === true || (theme.dark_mode === null && window.matchMedia('(prefers-color-scheme: dark)').matches))
-    : (theme.dark_mode === true);
+  // Track if component is mounted to prevent hydration mismatches
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    // On server, always use theme.dark_mode value (never system preference)
+    if (typeof window === 'undefined') {
+      return theme.dark_mode === true;
+    }
+    // On client initial render, match server behavior for hydration
+    return theme.dark_mode === true;
+  });
+
+  // Set mounted state after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Watch for dark mode changes after mount
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const updateDarkMode = () => {
+      const newIsDark = theme.dark_mode === true || (theme.dark_mode === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      setIsDark(newIsDark);
+    };
+
+    updateDarkMode();
+    
+    // Listen for system preference changes
+    if (theme.dark_mode === null) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      mediaQuery.addEventListener('change', updateDarkMode);
+      
+      return () => {
+        mediaQuery.removeEventListener('change', updateDarkMode);
+      };
+    }
+  }, [theme.dark_mode, mounted]);
 
   // Get colors - use light/dark variants based on current mode
+  // Use consistent logic for server and initial client render
   const primaryColorRaw = isDark 
     ? (theme.primary_color_dark || theme.primary_color || '#60a5fa')
     : (theme.primary_color_light || theme.primary_color || '#3b82f6');
@@ -40,60 +72,66 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
     : (theme.secondary_color_light || theme.secondary_color || '#6366f1');
   const accentColorRaw = theme.accent_color || '#f59e0b';
 
-  // Resolve colors on client side (handle CSS variables)
-  const [primaryColor, setPrimaryColor] = useState(primaryColorRaw);
-  const [secondaryColor, setSecondaryColor] = useState(secondaryColorRaw);
-  const [accentColor, setAccentColor] = useState(accentColorRaw);
-
-  useEffect(() => {
-    const resolveColor = (color: string, fallback: string): string => {
-      if (typeof window === 'undefined') return fallback;
-      if (color.startsWith('var(')) {
-        const varName = color.match(/var\(([^)]+)\)/)?.[1]?.trim();
-        if (varName) {
-          const computed = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-          return computed || fallback;
-        }
+  // Resolve colors on client side (handle CSS variables) - only after mount
+  const resolveColor = (color: string, fallback: string): string => {
+    // If color is a CSS variable, use fallback on server/initial render to prevent hydration mismatch
+    if (color.startsWith('var(')) {
+      // On server or before mount, use fallback to ensure consistent initial render
+      if (typeof window === 'undefined' || !mounted) {
+        return fallback;
       }
-      if (color.startsWith('rgb')) {
-        const rgbMatch = color.match(/(\d+),\s*(\d+),\s*(\d+)/);
-        if (rgbMatch) {
-          const r = parseInt(rgbMatch[1], 10);
-          const g = parseInt(rgbMatch[2], 10);
-          const b = parseInt(rgbMatch[3], 10);
-          return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-        }
+      // After mount, resolve CSS variables
+      const varName = color.match(/var\(([^)]+)\)/)?.[1]?.trim();
+      if (varName) {
+        const computed = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        return computed || fallback;
       }
-      return color || fallback;
-    };
+      return fallback;
+    }
+    
+    // Convert rgb to hex if needed
+    if (color.startsWith('rgb')) {
+      const rgbMatch = color.match(/(\d+),\s*(\d+),\s*(\d+)/);
+      if (rgbMatch) {
+        const r = parseInt(rgbMatch[1], 10);
+        const g = parseInt(rgbMatch[2], 10);
+        const b = parseInt(rgbMatch[3], 10);
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+      }
+    }
+    
+    // Return color as-is (should be hex format)
+    return color || fallback;
+  };
 
-    setPrimaryColor(resolveColor(primaryColorRaw, '#3b82f6'));
-    setSecondaryColor(resolveColor(secondaryColorRaw, '#6366f1'));
-    setAccentColor(resolveColor(accentColorRaw, '#f59e0b'));
-  }, [primaryColorRaw, secondaryColorRaw, accentColorRaw]);
+  // Compute resolved colors - use mounted state to ensure consistent initial render
+  const primaryColor = useMemo(() => resolveColor(primaryColorRaw, '#3b82f6'), [primaryColorRaw, isDark, mounted]);
+  const secondaryColor = useMemo(() => resolveColor(secondaryColorRaw, '#6366f1'), [secondaryColorRaw, isDark, mounted]);
+  const accentColor = useMemo(() => resolveColor(accentColorRaw, '#f59e0b'), [accentColorRaw, mounted]);
   
   // Animation settings from API response - can be: gradient, blobs, particles, waves, mesh, grid, or none
   // Normalize the animation type (handle both "blob" and "blobs" for compatibility)
   const rawAnimationType = theme.background_animation_type || 'blobs';
   const animationType = rawAnimationType === 'blob' ? 'blobs' : rawAnimationType;
-  const animationSpeed = theme.background_animation_speed || 'medium';
+  const animationSpeed = theme.background_animation_speed || 'slow';
 
   const speedMap: Record<string, number> = {
-    slow: 0.5,
+    slow: 0.05,
     medium: 1,
     fast: 2,
   };
 
-  const speed = speedMap[animationSpeed] || 1;
+  const speed = speedMap[animationSpeed] || 0.05;
 
-  // Duration multipliers based on speed
+  // Duration multipliers based on speed - higher values = slower animation (almost stopping)
+  // Note: Lower duration = faster animation, higher duration = slower animation
   const durationMap: Record<string, number> = {
-    slow: 1.5,
+    slow: 0.6,
     medium: 1,
-    fast: 0.6,
+    fast: 15,
   };
 
-  const baseDuration = durationMap[animationSpeed] || 1;
+  const baseDuration = durationMap[animationSpeed] || 0.6;
 
   // Helper to add opacity to hex color - ensure color is hex format
   const withOpacity = (color: string, opacity: number) => {
@@ -143,13 +181,19 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl"
+            key={`blob-1-${primaryColor}-${secondaryColor}`}
+            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.4)}, ${withOpacity(secondaryColor, 0.5)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '70vw', '20vw', '0vw'],
               y: ['0vh', '60vh', '30vh', '0vh'],
+              background: [
+                `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
+                `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
+                `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
+              ],
             }}
             transition={{
               duration: 20 * baseDuration,
@@ -158,13 +202,19 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl"
+            key={`blob-2-${accentColor}-${primaryColor}`}
+            className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.4)}, ${withOpacity(primaryColor, 0.45)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '-60vw', '-20vw', '0vw'],
               y: ['0vh', '50vh', '80vh', '0vh'],
+              background: [
+                `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
+                `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
+                `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
+              ],
             }}
             transition={{
               duration: 25 * baseDuration,
@@ -173,9 +223,10 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-1/2 w-64 h-64 rounded-full blur-3xl"
+            key={`blob-3-${secondaryColor}-${accentColor}`}
+            className="absolute bottom-0 left-1/2 w-[450px] h-[450px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.35)}, ${withOpacity(accentColor, 0.4)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.75)}, ${withOpacity(accentColor, 0.8)})`,
             }}
             animate={{
               x: ['0vw', '40vw', '-30vw', '0vw'],
@@ -195,9 +246,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl"
+            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.45)}, ${withOpacity(secondaryColor, 0.5)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.7)}, ${withOpacity(secondaryColor, 0.75)})`,
             }}
             animate={{
               x: ['0vw', '80vw', '10vw', '50vw', '0vw'],
@@ -210,9 +261,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl"
+            className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.45)}, ${withOpacity(accentColor, 0.5)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.7)}, ${withOpacity(accentColor, 0.75)})`,
             }}
             animate={{
               x: ['0vw', '-70vw', '-10vw', '-50vw', '0vw'],
@@ -225,9 +276,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-1/2 w-72 h-72 rounded-full blur-3xl"
+            className="absolute bottom-0 left-1/2 w-[450px] h-[450px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.4)}, ${withOpacity(primaryColor, 0.45)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '50vw', '-40vw', '20vw', '0vw'],
@@ -240,9 +291,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute top-1/2 left-0 w-64 h-64 rounded-full blur-3xl"
+            className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.4)}, ${withOpacity(accentColor, 0.45)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '90vw', '30vw', '60vw', '0vw'],
@@ -267,11 +318,11 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             return (
               <motion.div
                 key={i}
-                className="absolute rounded-full blur-2xl"
+                className="absolute rounded-full blur-[100px]"
                 style={{
-                  width: `${64 + i * 16}px`,
-                  height: `${64 + i * 16}px`,
-                  background: `linear-gradient(to bottom right, ${withOpacity(i % 2 === 0 ? primaryColor : secondaryColor, 0.35)}, ${withOpacity(i % 3 === 0 ? accentColor : primaryColor, 0.4)})`,
+                  width: `${120 + i * 30}px`,
+                  height: `${120 + i * 30}px`,
+                  background: `linear-gradient(to bottom right, ${withOpacity(i % 2 === 0 ? primaryColor : secondaryColor, 0.75)}, ${withOpacity(i % 3 === 0 ? accentColor : primaryColor, 0.8)})`,
                   top: `${startY}%`,
                   left: `${startX}%`,
                 }}
@@ -297,9 +348,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl"
+            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.4)}, ${withOpacity(secondaryColor, 0.45)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '70vw', '30vw', '0vw'],
@@ -312,9 +363,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl"
+            className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.4)}, ${withOpacity(accentColor, 0.45)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '-60vw', '-20vw', '0vw'],
@@ -327,9 +378,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 w-72 h-72 rounded-full blur-3xl"
+            className="absolute bottom-0 left-0 w-[450px] h-[450px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.35)}, ${withOpacity(primaryColor, 0.4)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.75)}, ${withOpacity(primaryColor, 0.8)})`,
             }}
             animate={{
               x: ['0vw', '50vw', '10vw', '0vw'],
@@ -342,9 +393,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute bottom-0 right-0 w-64 h-64 rounded-full blur-3xl"
+            className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.35)}, ${withOpacity(secondaryColor, 0.4)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.75)}, ${withOpacity(secondaryColor, 0.8)})`,
             }}
             animate={{
               x: ['0vw', '-50vw', '-10vw', '0vw'],
@@ -369,11 +420,11 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             return (
               <motion.div
                 key={i}
-                className="absolute rounded-full blur-2xl"
+                className="absolute rounded-full blur-[100px]"
                 style={{
-                  width: `${80 + (i % 3) * 20}px`,
-                  height: `${80 + (i % 3) * 20}px`,
-                  background: `linear-gradient(to bottom right, ${withOpacity(i % 2 === 0 ? primaryColor : secondaryColor, 0.3)}, ${withOpacity(i % 3 === 0 ? accentColor : primaryColor, 0.35)})`,
+                  width: `${150 + (i % 3) * 40}px`,
+                  height: `${150 + (i % 3) * 40}px`,
+                  background: `linear-gradient(to bottom right, ${withOpacity(i % 2 === 0 ? primaryColor : secondaryColor, 0.75)}, ${withOpacity(i % 3 === 0 ? accentColor : primaryColor, 0.8)})`,
                   top: `${10 + row * 25}%`,
                   left: `${10 + col * 25}%`,
                 }}
@@ -398,9 +449,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-96 h-96 rounded-full blur-3xl"
+            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.4)}, ${withOpacity(secondaryColor, 0.5)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '75vw', '25vw', '0vw'],
@@ -416,7 +467,7 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
           <motion.div
             className="absolute bottom-0 right-0 w-80 h-80 rounded-full blur-3xl"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.4)}, ${withOpacity(accentColor, 0.45)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
             }}
             animate={{
               x: ['0vw', '-65vw', '-15vw', '0vw'],
@@ -430,9 +481,9 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
             }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full blur-3xl"
+            className="absolute top-1/2 left-1/2 w-[400px] h-[400px] rounded-full blur-[120px]"
             style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.35)}, ${withOpacity(primaryColor, 0.4)})`,
+              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.75)}, ${withOpacity(primaryColor, 0.8)})`,
             }}
             animate={{
               x: ['0vw', '50vw', '-40vw', '20vw', '0vw'],
@@ -470,7 +521,7 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
         <FlyingIcons
           icons={resolvedIcons}
           count={Math.min(8, resolvedIcons.length * 2)}
-          speed={speed * 0.8}
+          speed={speed * 0.02}
           size={50}
         />
       )}

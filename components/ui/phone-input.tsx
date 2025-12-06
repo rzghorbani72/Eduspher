@@ -74,7 +74,7 @@ export const PhoneInput = ({
             onClick={() => !disabled && setIsOpen(!isOpen)}
             disabled={disabled}
             className={cn(
-              "flex h-11 items-center gap-2 rounded-l-lg border border-r-0 border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100",
+              "flex h-11 items-center gap-2 rounded-l-theme border border-r-0 border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100",
               disabled && "opacity-50 cursor-not-allowed",
               isOpen && "ring-2 ring-sky-500"
             )}
@@ -86,7 +86,7 @@ export const PhoneInput = ({
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-auto rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950"
+              className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-auto rounded-theme border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950"
             >
               {COUNTRY_CODES.map((country) => (
                 <button
@@ -119,7 +119,7 @@ export const PhoneInput = ({
             placeholder={placeholder}
             disabled={disabled}
             className={cn(
-              "flex h-11 w-full rounded-r-lg border border-slate-200 bg-white pl-10 pr-4 text-base text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500",
+              "flex h-11 w-full rounded-r-theme border border-slate-200 bg-white pl-10 pr-4 text-base text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500",
               disabled && "opacity-50 cursor-not-allowed"
             )}
           />
