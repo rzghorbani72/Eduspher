@@ -1,22 +1,22 @@
 import Link from "next/link";
 
 import { env } from "@/lib/env";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath } from "@/lib/utils";
-import { getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath } from "@/lib/utils";
+import { getCurrentStore, getStoreBySlug } from "@/lib/api/server";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export const SiteFooter = async () => {
-  const school = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(school.slug, path);
+  const store = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(store.slug, path);
   
-  // Get school language for translations
-  let currentSchool = await getCurrentSchool().catch(() => null);
-  if (!currentSchool && school.slug) {
-    currentSchool = await getSchoolBySlug(school.slug).catch(() => null);
+  // Get store language for translations
+  let currentStore = await getCurrentStore().catch(() => null);
+  if (!currentStore && store.slug) {
+    currentStore = await getStoreBySlug(store.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   
   // Translation function with language
   const translate = (key: string) => t(key, language);
@@ -59,13 +59,13 @@ export const SiteFooter = async () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--theme-primary)] text-white shadow-lg shadow-[var(--theme-primary)]/30">
               <span className="text-lg font-semibold">ES</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-white">{school.name}</p>
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">{store.name}</p>
           </div>
           <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
             {env.siteDescription} {translate("footer.description")}
           </p>
           <p className="text-xs text-slate-400 dark:text-slate-600">
-            &copy; {new Date().getFullYear()} {school.name}. {translate("footer.allRightsReserved")}
+            &copy; {new Date().getFullYear()} {store.name}. {translate("footer.allRightsReserved")}
           </p>
         </div>
         <div className="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-3">

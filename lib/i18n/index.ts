@@ -55,7 +55,7 @@ export function getTranslations(language: LanguageCode = 'en') {
 }
 
 /**
- * Get language from school country code
+ * Get language from store country code
  */
 export function getLanguageFromCountry(countryCode: string | null | undefined): LanguageCode {
   if (!countryCode) return 'en';

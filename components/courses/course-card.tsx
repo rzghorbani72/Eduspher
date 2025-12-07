@@ -4,26 +4,26 @@ import Link from "next/link";
 import { MessageSquare, Star, Users, BookOpen, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";
-import { buildSchoolPath, formatCurrencyWithSchool, resolveAssetUrl, truncate } from "@/lib/utils";
+import { buildStorePath, formatCurrencyWithStore, resolveAssetUrl, truncate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardMedia } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CourseCardProps {
   course: CourseSummary;
-  schoolSlug?: string | null;
-  school?: {
+  storeSlug?: string | null;
+  store?: {
     currency?: string;
     currency_symbol?: string;
     currency_position?: "before" | "after";
   } | null;
 }
 
-export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseCardProps) => {
+export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCardProps) => {
   const { t, language } = useTranslation();
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
   const hasDiscount = course.original_price && course.original_price > course.price;
-  const detailHref = buildSchoolPath(schoolSlug, `/courses/${course.id}`);
+  const detailHref = buildStorePath(storeSlug, `/courses/${course.id}`);
 
   return (
     <Card 
@@ -109,15 +109,15 @@ export const CourseCard = ({ course, schoolSlug = null, school = null }: CourseC
             ) : hasDiscount ? (
               <>
                 <span className="text-slate-500 line-through dark:text-slate-400">
-                  {formatCurrencyWithSchool(course.original_price || 0, school, undefined, language)}
+                  {formatCurrencyWithStore(course.original_price || 0, store, undefined, language)}
                 </span>
                 <span className="text-[var(--theme-primary)]">
-                  {formatCurrencyWithSchool(course.price || 0, school, undefined, language)}
+                  {formatCurrencyWithStore(course.price || 0, store, undefined, language)}
                 </span>
               </>
             ) : (
               <span className="text-[var(--theme-primary)]">
-                {formatCurrencyWithSchool(course.price || 0, school, undefined, language)}
+                {formatCurrencyWithStore(course.price || 0, store, undefined, language)}
               </span>
             )}
           </div>

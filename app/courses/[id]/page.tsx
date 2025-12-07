@@ -10,10 +10,10 @@ import { RelatedProducts } from "@/components/courses/RelatedProducts";
 import { CartButton } from "@/components/cart/cart-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourseById, getCourses, getProducts, getCurrentUser, getSchoolBySlug, getCurrentSchool } from "@/lib/api/server";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getCourseById, getCourses, getProducts, getCurrentUser, getStoreBySlug, getCurrentStore } from "@/lib/api/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath, resolveAssetUrl, formatCurrencyWithStore } from "@/lib/utils";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 type PageParams = Promise<{
@@ -22,7 +22,7 @@ type PageParams = Promise<{
 
 const detailItems = (
   course: Awaited<ReturnType<typeof getCourseById>>,
-  school?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null,
+  store?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null,
   translate?: (key: string) => string,
   language?: string
 ) => {
@@ -35,14 +35,14 @@ const detailItems = (
     ? (
         <div className="flex flex-col items-end gap-1">
           <span className="text-slate-500 line-through dark:text-slate-400">
-            {formatCurrencyWithSchool(course.original_price || 0, school, undefined, language)}
+            {formatCurrencyWithStore(course.original_price || 0, store, undefined, language)}
           </span>
           <span className="text-[var(--theme-primary)] font-semibold">
-            {formatCurrencyWithSchool(course.price, school, undefined, language)}
+            {formatCurrencyWithStore(course.price, store, undefined, language)}
           </span>
         </div>
       )
-    : formatCurrencyWithSchool(course.price, school, undefined, language);
+    : formatCurrencyWithStore(course.price, store, undefined, language);
   return [
     {
       label: t("courses.certificate"),
@@ -67,21 +67,21 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const { id } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt");
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
 
   const [course, user] = await Promise.all([
     getCourseById(id),
     getCurrentUser().catch(() => null),
   ]);
-  const school = user?.currentSchool || null;
+  const store = user?.currentStore || null;
 
-  // Get school language for translations
-  let currentSchool = await getCurrentSchool().catch(() => null);
-  if (!currentSchool && schoolContext.slug) {
-    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let currentStore = await getCurrentStore().catch(() => null);
+  if (!currentStore && storeContext.slug) {
+    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   if (!course) {
@@ -187,7 +187,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(normalizedCourse, school, translate, language).map((item) => (
+                {detailItems(normalizedCourse, store, translate, language).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
@@ -258,8 +258,8 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
       {relatedProducts?.products?.length ? (
         <RelatedProducts
           products={relatedProducts.products}
-          schoolSlug={schoolContext.slug}
-          school={school}
+          storeSlug={storeContext.slug}
+          store={store}
         />
       ) : null}
 
@@ -277,7 +277,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CourseCard course={item} schoolSlug={schoolContext.slug} />
+                  <CourseCard course={item} storeSlug={storeContext.slug} />
                 </div>
               ))}
           </div>

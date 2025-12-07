@@ -4,11 +4,11 @@ import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { OrderSummary } from "@/components/checkout/order-summary";
 import { CartCheckout } from "@/components/checkout/cart-checkout";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourseById, getCurrentUser, getCart, getSchoolBySlug, getCurrentSchool } from "@/lib/api/server";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath, resolveAssetUrl, formatCurrencyWithSchool } from "@/lib/utils";
+import { getCourseById, getCurrentUser, getCart, getStoreBySlug, getCurrentStore } from "@/lib/api/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath, resolveAssetUrl, formatCurrencyWithStore } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 type SearchParams = Promise<{
@@ -25,8 +25,8 @@ export default async function CheckoutPage({
 
   const session = await getSession();
   if (!session || !session.userId || !session.profileId) {
-    const schoolContext = await getSchoolContext();
-    const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+    const storeContext = await getStoreContext();
+    const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
     const redirectUrl = courseId 
       ? `/checkout?course=${courseId}`
       : "/checkout";
@@ -35,18 +35,18 @@ export default async function CheckoutPage({
 
   const user = await getCurrentUser();
   if (!user) {
-    const schoolContext = await getSchoolContext();
-    const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+    const storeContext = await getStoreContext();
+    const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
     redirect(buildPath("/auth/login"));
   }
 
-  // Get school language for translations
-  const schoolContext = await getSchoolContext();
-  let currentSchool = await getCurrentSchool().catch(() => null);
-  if (!currentSchool && schoolContext.slug) {
-    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  const storeContext = await getStoreContext();
+  let currentStore = await getCurrentStore().catch(() => null);
+  if (!currentStore && storeContext.slug) {
+    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   // If no course ID, show cart checkout
@@ -70,7 +70,7 @@ export default async function CheckoutPage({
             session={{
               userId: session.userId!,
               profileId: session.profileId!,
-              schoolId: session.schoolId,
+              storeId: session.storeId,
             }} 
           />
         </div>
@@ -122,7 +122,7 @@ export default async function CheckoutPage({
             session={{
               userId: session.userId!,
               profileId: session.profileId!,
-              schoolId: session.schoolId,
+              storeId: session.storeId,
             }} 
           />
         </div>
@@ -131,7 +131,7 @@ export default async function CheckoutPage({
   }
 
   const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/globe.svg";
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -208,7 +208,7 @@ export default async function CheckoutPage({
             session={{
               userId: session.userId!,
               profileId: session.profileId!,
-              schoolId: session.schoolId,
+              storeId: session.storeId,
             }} 
           />
         </div>

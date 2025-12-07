@@ -1,22 +1,22 @@
 import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath } from "@/lib/utils";
-import { getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath } from "@/lib/utils";
+import { getCurrentStore, getStoreBySlug } from "@/lib/api/server";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export default async function NotFound() {
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
   
-  // Get school language for translations
-  let currentSchool = await getCurrentSchool().catch(() => null);
-  if (!currentSchool && schoolContext.slug) {
-    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let currentStore = await getCurrentStore().catch(() => null);
+  if (!currentStore && storeContext.slug) {
+    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   const translate = (key: string) => t(key, language);
   
   return (

@@ -5,63 +5,63 @@ import {
   getArticles,
   getCategories,
   getCourses,
-  getSchoolsPublic,
+  getStoresPublic,
   getCurrentUser,
-  getCurrentSchool,
-  getSchoolBySlug,
+  getCurrentStore,
+  getStoreBySlug,
 } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
-import { buildOgImageUrl, resolveAssetUrl, truncate, buildSchoolPath } from "@/lib/utils";
+import { buildOgImageUrl, resolveAssetUrl, truncate, buildStorePath } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getSchoolContext } from "@/lib/school-context";
-import { getSchoolThemeAndTemplate } from "@/lib/theme-config";
+import { getStoreContext } from "@/lib/store-context";
+import { getStoreThemeAndTemplate } from "@/lib/theme-config";
 import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export default async function Home() {
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-  const [schools, categories, articles, coursePayload, themeAndTemplate, user, currentSchool] = await Promise.all([
-    getSchoolsPublic().catch(() => []),
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const [stores, categories, articles, coursePayload, themeAndTemplate, user, currentStore] = await Promise.all([
+    getStoresPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
     getCourses({ limit: 3, published: true, is_featured: true} as any).catch(() => null),
-    getSchoolThemeAndTemplate().catch(() => ({ theme: null, template: null })),
+    getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
     getCurrentUser().catch(() => null),
-    getCurrentSchool().catch(() => null),
+    getCurrentStore().catch(() => null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
   const featuredCourses = coursePayload?.courses ?? [];
-  const schoolMatchById = schoolContext.id
-    ? schools.find((school) => school.id === schoolContext.id)
+  const storeMatchById = storeContext.id
+    ? stores.find((store) => store.id === storeContext.id)
     : null;
-  const schoolMatchBySlug = schoolContext.slug
-    ? schools.find((school) => (school as any).slug === schoolContext.slug)
+  const storeMatchBySlug = storeContext.slug
+    ? stores.find((store) => (store as any).slug === storeContext.slug)
     : null;
-  const primarySchool = schoolMatchById ?? schoolMatchBySlug ?? schools[0] ?? null;
-  const schoolDisplayName = primarySchool?.name ?? schoolContext.name;
-  const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
-  const schoolHeroLabel = primarySchool?.domain?.public_address ?? primarySchool?.domain?.private_address ?? "Premier digital campus";
+  const primaryStore = storeMatchById ?? storeMatchBySlug ?? stores[0] ?? null;
+  const storeDisplayName = primaryStore?.name ?? storeContext.name;
+  const storeCurrency = user?.currentStore || (currentStore as any) || null;
+  const storeHeroLabel = primaryStore?.domain?.public_address ?? primaryStore?.domain?.private_address ?? "Premier digital campus";
   const stats = {
-    students: (primarySchool as any)?.student_count ?? null,
-    mentors: (primarySchool as any)?.mentor_count ?? null,
+    students: (primaryStore as any)?.student_count ?? null,
+    mentors: (primaryStore as any)?.mentor_count ?? null,
     courses:
-      (primarySchool as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
-    rating: (primarySchool as any)?.average_rating ?? null,
+      (primaryStore as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
+    rating: (primaryStore as any)?.average_rating ?? null,
   };
 
-  // Get school language for translations
-  let schoolForLang = currentSchool;
-  if (!schoolForLang && schoolContext.slug) {
-    schoolForLang = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let storeForLang = currentStore;
+  if (!storeForLang && storeContext.slug) {
+    storeForLang = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  if (!schoolForLang && primarySchool) {
-    schoolForLang = primarySchool as any;
+  if (!storeForLang && primaryStore) {
+    storeForLang = primaryStore as any;
   }
-  const language = getSchoolLanguage(schoolForLang?.language || null, schoolForLang?.country_code || null);
+  const language = getStoreLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   // If we have a UI template, render blocks dynamically
@@ -88,7 +88,7 @@ export default async function Home() {
     return (
       <BlocksRenderer
         blocks={themeAndTemplate.template.blocks}
-        schoolContext={schoolContext}
+        storeContext={storeContext}
         includeHeaderFooter={false}
       />
     );
@@ -112,7 +112,7 @@ export default async function Home() {
         <div className="space-y-4">
           <Badge variant="soft" className="w-fit">{translate("home.newBadge")}</Badge>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-            {translate("home.heroTitle").replace("{school}", schoolDisplayName)}
+            {translate("home.heroTitle").replace("{store}", storeDisplayName)}
           </h1>
           <p className="max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300">
             {translate("home.heroDescription")}
@@ -150,7 +150,7 @@ export default async function Home() {
         <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 via-white to-emerald-50 p-6 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-wide text-[var(--theme-primary)]">
-              {schoolHeroLabel}
+              {storeHeroLabel}
             </p>
             <p className="text-base font-semibold text-slate-900 dark:text-white">
               {translate("home.personalisedLearningPaths")}
@@ -203,7 +203,7 @@ export default async function Home() {
                 className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <CourseCard course={course} schoolSlug={schoolContext.slug} school={schoolCurrency} />
+                <CourseCard course={course} storeSlug={storeContext.slug} store={storeCurrency} />
               </div>
             ))}
           </div>
@@ -346,7 +346,7 @@ export default async function Home() {
               href={buildPath("/auth/login")}
               className="inline-flex h-11 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-[var(--theme-primary)] shadow-lg shadow-white/20 transition-all hover:scale-105 hover:bg-slate-100"
             >
-              {translate("home.joinSchool").replace("{school}", schoolDisplayName)}
+              {translate("home.joinStore").replace("{store}", storeDisplayName)}
             </Link>
             <Link href={buildPath("/pricing")} className="text-sm font-semibold text-white transition-all hover:translate-x-1 hover:underline">
               {translate("home.viewPricing")} →
@@ -354,7 +354,7 @@ export default async function Home() {
           </div>
         </div>
         <img
-          src={buildOgImageUrl(schoolDisplayName, "Flexible online learning for ambitious students")}
+          src={buildOgImageUrl(storeDisplayName, "Flexible online learning for ambitious students")}
           alt=""
           className="pointer-events-none absolute -right-32 -top-32 hidden h-80 w-80 opacity-10 lg:block"
         />

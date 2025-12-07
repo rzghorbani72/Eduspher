@@ -6,39 +6,39 @@ import { School, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateSchool } from "@/lib/api/client";
+import { updateStore } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
 
-interface EditSchoolNameFormProps {
-  currentSchoolName: string;
+interface EditStoreNameFormProps {
+  currentStoreName: string;
   onSuccess?: () => void;
 }
 
-export const EditSchoolNameForm = ({ 
-  currentSchoolName,
+export const EditStoreNameForm = ({ 
+  currentStoreName,
   onSuccess 
-}: EditSchoolNameFormProps) => {
+}: EditStoreNameFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [schoolName, setSchoolName] = useState(currentSchoolName);
+  const [storeName, setStoreName] = useState(currentStoreName);
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!schoolName.trim()) {
-      setError("School name is required");
+    if (!storeName.trim()) {
+      setError("Store name is required");
       return;
     }
 
-    if (schoolName.trim().length < 1 || schoolName.trim().length > 80) {
-      setError("School name must be between 1 and 80 characters");
+    if (storeName.trim().length < 1 || storeName.trim().length > 80) {
+      setError("Store name must be between 1 and 80 characters");
       return;
     }
 
-    if (schoolName.trim() === currentSchoolName) {
+    if (storeName.trim() === currentStoreName) {
       setIsEditing(false);
       return;
     }
@@ -48,15 +48,15 @@ export const EditSchoolNameForm = ({
     setMessage(null);
 
     try {
-      await updateSchool({ name: schoolName.trim() });
-      setMessage("School name updated successfully");
+      await updateStore({ name: storeName.trim() });
+      setMessage("Store name updated successfully");
       setIsEditing(false);
       onSuccess?.();
       setTimeout(() => {
         router.refresh();
       }, 1500);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to update school name";
+      const errorMessage = err instanceof Error ? err.message : "Failed to update store name";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -72,8 +72,8 @@ export const EditSchoolNameForm = ({
               <School className="h-5 w-5 text-slate-600 dark:text-slate-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-900 dark:text-white">School Name</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{currentSchoolName}</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white">Store Name</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{currentStoreName}</p>
             </div>
           </div>
           <Button
@@ -94,21 +94,21 @@ export const EditSchoolNameForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="school_name">School Name</Label>
+        <Label htmlFor="store_name">Store Name</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <School className="h-5 w-5 text-slate-400" />
           </div>
           <Input
-            id="school_name"
+            id="store_name"
             type="text"
-            value={schoolName}
+            value={storeName}
             onChange={(e) => {
-              setSchoolName(e.target.value);
+              setStoreName(e.target.value);
               setError(null);
             }}
             className={cn("pl-10", error && "border-amber-500 focus:border-amber-500")}
-            placeholder="Enter school name"
+            placeholder="Enter store name"
             maxLength={80}
             autoFocus
           />
@@ -117,7 +117,7 @@ export const EditSchoolNameForm = ({
           <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>
         )}
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          School name must be unique across all schools
+          Store name must be unique across all stores
         </p>
       </div>
 
@@ -133,7 +133,7 @@ export const EditSchoolNameForm = ({
           variant="outline"
           onClick={() => {
             setIsEditing(false);
-            setSchoolName(currentSchoolName);
+            setStoreName(currentStoreName);
             setError(null);
             setMessage(null);
           }}
@@ -144,7 +144,7 @@ export const EditSchoolNameForm = ({
         </Button>
         <Button
           type="submit"
-          disabled={isLoading || !schoolName.trim() || schoolName.trim() === currentSchoolName}
+          disabled={isLoading || !storeName.trim() || storeName.trim() === currentStoreName}
           className="flex-1"
           loading={isLoading}
         >
@@ -154,4 +154,3 @@ export const EditSchoolNameForm = ({
     </form>
   );
 };
-

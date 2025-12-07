@@ -17,11 +17,11 @@ interface CreativeBackgroundProps {
     background_animation_type?: string;
     background_animation_speed?: string;
   } | null;
-  schoolIcons?: string[]; // Array of icon/image URLs from school
+  storeIcons?: string[]; // Array of icon/image URLs from store
   className?: string;
 }
 
-export function CreativeBackground({ theme, schoolIcons = [], className = '' }: CreativeBackgroundProps) {
+export function CreativeBackground({ theme, storeIcons = [], className = '' }: CreativeBackgroundProps) {
   if (!theme) return null;
 
   // Track if component is mounted to prevent hydration mismatches
@@ -173,7 +173,7 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
   };
 
   // Icons should already be resolved URLs from server
-  const resolvedIcons = schoolIcons.filter(Boolean);
+  const resolvedIcons = storeIcons.filter(Boolean);
 
   // Render motion-based animations for different types
   const renderMotionBlobs = () => {
@@ -516,7 +516,7 @@ export function CreativeBackground({ theme, schoolIcons = [], className = '' }: 
         renderMotionBlobs()
       }
 
-      {/* Flying icons from school - always rendered if icons are available */}
+      {/* Flying icons from store - always rendered if icons are available */}
       {resolvedIcons.length > 0 && (
         <FlyingIcons
           icons={resolvedIcons}

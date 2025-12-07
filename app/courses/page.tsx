@@ -3,10 +3,10 @@ import Link from "next/link";
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseFilters } from "@/components/courses/course-filters";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourses, getCategories, getCurrentUser, getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
-import { buildSchoolPath } from "@/lib/utils";
-import { getSchoolContext } from "@/lib/school-context";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getCourses, getCategories, getCurrentUser, getCurrentStore, getStoreBySlug } from "@/lib/api/server";
+import { buildStorePath } from "@/lib/utils";
+import { getStoreContext } from "@/lib/store-context";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 type SearchParams = Promise<{
@@ -41,8 +41,8 @@ const buildQueryString = (params: Record<string, string | number | boolean | und
 };
 
 export default async function CoursesPage({ searchParams }: { searchParams: SearchParams }) {
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
   const params = await searchParams;
   const query = params?.q ?? "";
   const page = parseNumber(params?.page) ?? 1;
@@ -50,7 +50,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const categoryId = parseNumber(params?.category_id);
   const isFree = parseBoolean(params?.is_free);
 
-  const [coursePayload, categories, user, currentSchool] = await Promise.all([
+  const [coursePayload, categories, user, currentStore] = await Promise.all([
     getCourses({
       search: query || undefined,
       page,
@@ -62,20 +62,20 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
     }).catch(() => null),
     getCategories().catch(() => []),
     getCurrentUser().catch(() => null),
-    getCurrentSchool().catch(() => null),
+    getCurrentStore().catch(() => null),
   ]);
 
   // Courses are public - anyone can view them
   const courses = coursePayload?.courses ?? [];
   const pagination = coursePayload?.pagination;
-  const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
+  const storeCurrency = user?.currentStore || (currentStore as any) || null;
 
-  // Get school language for translations
-  let schoolForLang = currentSchool;
-  if (!schoolForLang && schoolContext.slug) {
-    schoolForLang = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let storeForLang = currentStore;
+  if (!storeForLang && storeContext.slug) {
+    storeForLang = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(schoolForLang?.language || null, schoolForLang?.country_code || null);
+  const language = getStoreLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   return (
@@ -114,7 +114,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CourseCard course={course} schoolSlug={schoolContext.slug} school={schoolCurrency} />
+                  <CourseCard course={course} storeSlug={storeContext.slug} store={storeCurrency} />
                 </div>
               ))}
             </div>

@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -60,7 +60,7 @@ interface RegisterFormProps {
 export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -280,8 +280,8 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
         return match ? decodeURIComponent(match[1]) : null;
       };
       
-      const schoolId = getCookieValue(env.schoolIdCookie);
-      const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+      const storeId = getCookieValue(env.storeIdCookie);
+      const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
       
       // Build user data based on primary method
       const userData: any = {
@@ -291,7 +291,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
         confirmed_password: values.confirmed_password,
         bio: values.bio,
         role: "USER",
-        school_id: finalSchoolId,
+        store_id: finalStoreId,
       };
 
       // Add primary method (required) - only one method is shown and verified during registration

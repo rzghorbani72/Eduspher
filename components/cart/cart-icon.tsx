@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 import { useEffect, useState } from "react";
 import { getCartItemCount } from "@/app/actions/cart";
 import { useCartSync } from "@/hooks/use-cart-sync";
@@ -12,7 +12,7 @@ interface CartIconProps {
 }
 
 export function CartIcon({ isAuthenticated = false }: CartIconProps) {
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const [itemCount, setItemCount] = useState(0);
 
   // Sync cart when authenticated

@@ -4,30 +4,30 @@ import { redirect } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getSchoolBySlug, getCurrentSchool, UnauthorizedError } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getStoreBySlug, getCurrentStore, UnauthorizedError } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath, resolveAssetUrl } from "@/lib/utils";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import type { EnrollmentSummary } from "@/lib/api/types";
 import { ChangePasswordForm } from "@/components/account/change-password-form";
 import { AddContactForm } from "@/components/account/add-contact-form";
 import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
-import { EditSchoolNameForm } from "@/components/account/edit-school-name-form";
+import { EditStoreNameForm } from "@/components/account/edit-store-name-form";
 import { ActiveSessions } from "@/components/account/active-sessions";
 
 export default async function AccountPage() {
   const session = await getSession();
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
 
-  // Get school language for translations
-  let currentSchool = await getCurrentSchool().catch(() => null);
-  if (!currentSchool && schoolContext.slug) {
-    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let currentStore = await getCurrentStore().catch(() => null);
+  if (!currentStore && storeContext.slug) {
+    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   if (!session) {
@@ -56,7 +56,7 @@ export default async function AccountPage() {
   }
 
   try {
-    const [userData, profilesData, recommended, enrollmentsData, school] = await Promise.all([
+    const [userData, profilesData, recommended, enrollmentsData, store] = await Promise.all([
       getCurrentUser(),
       getUserProfiles().catch(() => null),
       getCourses({
@@ -66,7 +66,7 @@ export default async function AccountPage() {
       getEnrollments({
         limit: 100,
       }).catch(() => null),
-      schoolContext.slug ? getSchoolBySlug(schoolContext.slug) : null,
+      storeContext.slug ? getStoreBySlug(storeContext.slug) : null,
     ]);
     
     if (userData === null) {
@@ -100,8 +100,8 @@ export default async function AccountPage() {
   const profiles = profilesData ?? [];
 
 
-  const schoolName = userData.currentSchool?.name ?? "—";
-  const schoolDomain = userData.currentSchool?.domain ?? null;
+  const storeName = userData.currentStore?.name ?? "—";
+  const storeDomain = userData.currentStore?.domain ?? null;
 
   const enrollments = enrollmentsData?.enrollments ?? [];
   const activeEnrollments = enrollments.filter((e) => e.status === "ACTIVE");
@@ -121,7 +121,7 @@ export default async function AccountPage() {
   const allRoles = [...new Set(profiles.map((p) => p.role))];
 
   // Determine primary and secondary verification methods
-  const primaryMethod = school?.primary_verification_method || 'phone';
+  const primaryMethod = store?.primary_verification_method || 'phone';
   const secondaryMethod = primaryMethod === 'phone' ? 'email' : 'phone';
   
   // Check if user has secondary method and if it's confirmed
@@ -186,10 +186,10 @@ export default async function AccountPage() {
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-300">
-            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.school")}</p>
-            <p className="text-xl font-semibold text-slate-900 dark:text-white">{schoolName}</p>
+            <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{translate("account.store")}</p>
+            <p className="text-xl font-semibold text-slate-900 dark:text-white">{storeName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {schoolDomain ? `${translate("account.domain")}: ${schoolDomain}` : translate("account.domainUnavailable")}
+              {storeDomain ? `${translate("account.domain")}: ${storeDomain}` : translate("account.domainUnavailable")}
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-350">
@@ -219,11 +219,11 @@ export default async function AccountPage() {
             <ChangePasswordForm profileId={userData.id} />
           </div>
 
-          {/* Edit School Name (Manager only) */}
+          {/* Edit Store Name (Manager only) */}
           {userData.role === 'MANAGER' && (
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{translate("account.schoolName")}</h3>
-              <EditSchoolNameForm currentSchoolName={schoolName} />
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{translate("account.storeName")}</h3>
+              <EditStoreNameForm currentStoreName={storeName} />
             </div>
           )}
 
@@ -239,7 +239,7 @@ export default async function AccountPage() {
               <AddContactForm 
                 method={secondaryMethod}
                 primaryMethod={primaryMethod}
-                defaultCountryCode={school?.country_code || undefined}
+                defaultCountryCode={store?.country_code || undefined}
               />
             </div>
           )}
@@ -311,7 +311,7 @@ export default async function AccountPage() {
                       </Badge>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {translate("account.school")}: {profile.school?.name ?? translate("account.unknown")} • {translate("account.profile")} #{profile.id}
+                      {translate("account.store")}: {profile.store?.name ?? translate("account.unknown")} • {translate("account.profile")} #{profile.id}
                     </p>
                   </div>
                 ))}
@@ -342,7 +342,7 @@ export default async function AccountPage() {
                   className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CourseCard course={enrollment.course} schoolSlug={schoolContext.slug} school={userData.currentSchool || null} />
+                  <CourseCard course={enrollment.course} storeSlug={storeContext.slug} store={userData.currentStore || null} />
                   <div className="absolute top-2 right-2 z-10">
                     <Badge variant={enrollment.status === "COMPLETED" ? "success" : "soft"}>
                       {enrollment.status}

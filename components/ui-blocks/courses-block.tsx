@@ -1,10 +1,10 @@
-import { getCourses, getCurrentUser, getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getCurrentStore, getStoreBySlug } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { buildSchoolPath } from "@/lib/utils";
+import { buildStorePath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 interface CoursesBlockProps {
@@ -19,14 +19,14 @@ interface CoursesBlockProps {
     showViewAll?: boolean;
     featured?: boolean;
   };
-  schoolContext?: {
+  storeContext?: {
     id: number | null;
     slug: string | null;
     name: string | null;
   };
 }
 
-export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockProps) {
+export async function CoursesBlock({ id, config, storeContext }: CoursesBlockProps) {
   const title = config?.title;
   const subtitle = config?.subtitle;
   const limit = config?.limit || 6;
@@ -40,24 +40,24 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
   };
 
-  const [coursePayload, user, currentSchool] = await Promise.all([
+  const [coursePayload, user, currentStore] = await Promise.all([
     getCourses({
       limit,
       published: true,
     }).catch(() => null),
     getCurrentUser().catch(() => null),
-    getCurrentSchool().catch(() => null),
+    getCurrentStore().catch(() => null),
   ]);
 
   const courses = coursePayload?.courses || [];
-  const schoolCurrency = user?.currentSchool || (currentSchool as any) || null;
+  const storeCurrency = user?.currentStore || (currentStore as any) || null;
 
-  // Get school language for translations
-  let schoolForLang = currentSchool;
-  if (!schoolForLang && schoolContext?.slug) {
-    schoolForLang = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let storeForLang = currentStore;
+  if (!storeForLang && storeContext?.slug) {
+    storeForLang = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(schoolForLang?.language || null, schoolForLang?.country_code || null);
+  const language = getStoreLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   if (courses.length === 0) {
@@ -90,7 +90,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
             )}
           >
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} school={schoolCurrency} />
+              <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
             ))}
           </div>
         </div>
@@ -124,7 +124,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
             )}
           >
             {courses.map((course) => (
-              <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} school={schoolCurrency} />
+              <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
             ))}
           </div>
           {showViewAll && (
@@ -135,7 +135,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
                 asChild
                 className="border-slate-300 dark:border-slate-600"
               >
-                <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")}>
+                <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")}>
                   {translate("home.viewAllCourses")}
                 </Link>
               </Button>
@@ -174,7 +174,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
           >
             {courses.map((course) => (
               <div key={course.id} className="transform transition-all hover:scale-105">
-                <CourseCard course={course} schoolSlug={schoolContext?.slug ?? null} school={schoolCurrency} />
+                <CourseCard course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
               </div>
             ))}
           </div>
@@ -204,7 +204,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
           )}
           <div className="space-y-4">
           {courses.map((course) => (
-            <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} />
+            <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
           ))}
         </div>
         {showViewAll && (
@@ -214,7 +214,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
               asChild
               className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105"
               >
-                <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")}>
+                <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")}>
                   {translate("home.viewAllCourses")}
                 </Link>
               </Button>
@@ -251,7 +251,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
           )}
         >
           {courses.map((course) => (
-            <CourseCard key={course.id} course={course} schoolSlug={schoolContext?.slug ?? null} />
+            <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
           ))}
         </div>
         {showViewAll && (
@@ -261,7 +261,7 @@ export async function CoursesBlock({ id, config, schoolContext }: CoursesBlockPr
               asChild
               className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
             >
-              <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")}>
+              <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")}>
                 View All Courses
               </Link>
             </Button>

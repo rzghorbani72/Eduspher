@@ -9,7 +9,7 @@ import { FooterBlock } from "./footer-block";
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
-  schoolContext?: {
+  storeContext?: {
     id: number | null;
     slug: string | null;
     name: string | null;
@@ -17,7 +17,7 @@ interface BlocksRendererProps {
   includeHeaderFooter?: boolean; // Option to include header/footer in blocks renderer
 }
 
-export function BlocksRenderer({ blocks, schoolContext, includeHeaderFooter = false }: BlocksRendererProps) {
+export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = false }: BlocksRendererProps) {
   if (!blocks || blocks.length === 0) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('[BlocksRenderer] No blocks provided');
@@ -62,11 +62,11 @@ export function BlocksRenderer({ blocks, schoolContext, includeHeaderFooter = fa
             case "header":
               return <HeaderBlock key={block.id} id={block.id} config={block.config} />;
             case "hero":
-              return <HeroBlock key={block.id} id={block.id} config={block.config} schoolContext={schoolContext} />;
+              return <HeroBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
             case "features":
               return <FeaturesBlock key={block.id} id={block.id} config={block.config} />;
             case "courses":
-              return <CoursesBlock key={block.id} id={block.id} config={block.config} schoolContext={schoolContext} />;
+              return <CoursesBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
             case "testimonials":
               return <TestimonialsBlock key={block.id} id={block.id} config={block.config} />;
             case "sidebar":

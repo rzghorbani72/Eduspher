@@ -27,8 +27,8 @@ import type {
   CourseSummary,
   ProductListPayload,
   ProductSummary,
-  SchoolDetail,
-  SchoolSummary,
+  StoreDetail,
+  StoreSummary,
   UserProfilesResponse,
   EnrollmentSummary,
   Pagination,
@@ -67,17 +67,17 @@ const buildHeaders = async (
     headers.set("Content-Type", "application/json");
   }
   const cookieStore = await cookies();
-  const headerSchoolId = headerStore?.get?.("x-school-id") ?? null;
-  const headerSchoolSlug = headerStore?.get?.("x-school-slug") ?? null;
-  const cookieSchoolId = cookieStore.get(env.schoolIdCookie)?.value;
-  const cookieSchoolSlug = cookieStore.get(env.schoolSlugCookie)?.value;
-  const resolvedSchoolId = headerSchoolId ?? cookieSchoolId ?? (env.defaultSchoolId ? String(env.defaultSchoolId) : null);
-  const resolvedSchoolSlug = headerSchoolSlug ?? cookieSchoolSlug ?? env.defaultSchoolSlug ?? null;
-  if (resolvedSchoolId && !headers.has("X-School-ID")) {
-    headers.set("X-School-ID", resolvedSchoolId);
+  const headerStoreId = headerStore?.get?.("x-store-id") ?? null;
+  const headerStoreSlug = headerStore?.get?.("x-store-slug") ?? null;
+  const cookieStoreId = cookieStore.get(env.storeIdCookie)?.value;
+  const cookieStoreSlug = cookieStore.get(env.storeSlugCookie)?.value;
+  const resolvedStoreId = headerStoreId ?? cookieStoreId ?? (env.defaultStoreId ? String(env.defaultStoreId) : null);
+  const resolvedStoreSlug = headerStoreSlug ?? cookieStoreSlug ?? env.defaultStoreSlug ?? null;
+  if (resolvedStoreId && !headers.has("X-Store-ID")) {
+    headers.set("X-Store-ID", resolvedStoreId);
   }
-  if (resolvedSchoolSlug && !headers.has("X-School-Slug")) {
-    headers.set("X-School-Slug", resolvedSchoolSlug);
+  if (resolvedStoreSlug && !headers.has("X-Store-Slug")) {
+    headers.set("X-Store-Slug", resolvedStoreSlug);
   }
   const proto = headerStore?.get?.("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
   const host = headerStore?.get?.("host") ?? null;
@@ -122,14 +122,14 @@ const baseFetch = async (
                                          path.includes('/account');
       
       if (isAccountOrProfileEndpoint) {
-        // Get school context to build proper login path
+        // Get store context to build proper login path
         const cookieStore = await cookies();
         const headerStore = await nextHeaders();
-        const cookieSchoolSlug = cookieStore.get(env.schoolSlugCookie)?.value;
-        const headerSchoolSlug = headerStore?.get?.("x-school-slug") ?? null;
-        const schoolSlug = headerSchoolSlug ?? cookieSchoolSlug ?? env.defaultSchoolSlug ?? null;
+        const cookieStoreSlug = cookieStore.get(env.storeSlugCookie)?.value;
+        const headerStoreSlug = headerStore?.get?.("x-store-slug") ?? null;
+        const storeSlug = headerStoreSlug ?? cookieStoreSlug ?? env.defaultStoreSlug ?? null;
         
-        const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
+        const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
         
         throw new UnauthorizedError(`Unauthorized (401): ${response.statusText}`, loginPath);
       }
@@ -188,8 +188,8 @@ const serverFetchRaw = async <T>(
   return response.json() as Promise<T>;
 };
 
-export async function getSchoolsPublic() {
-  const result = await serverFetch<SchoolSummary[]>("/schools/public", {
+export async function getStoresPublic() {
+  const result = await serverFetch<StoreSummary[]>("/stores/public", {
     includeAuth: false,
   });
   return result.data;
@@ -318,9 +318,9 @@ export async function getArticleById(id: string | number) {
   return result;
 }
 
-export async function getCurrentSchool() {
+export async function getCurrentStore() {
   try {
-    const result = await serverFetch<SchoolDetail>("/schools/current");
+    const result = await serverFetch<StoreDetail>("/stores/current");
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
@@ -330,14 +330,14 @@ export async function getCurrentSchool() {
   }
 }
 
-export async function getSchoolBySlug(slug: string): Promise<SchoolSummary | null> {
+export async function getStoreBySlug(slug: string): Promise<StoreSummary | null> {
   try {
-    const result = await serverFetchRaw<{ status: string; data: SchoolSummary[] }>("/schools/public", {
+    const result = await serverFetchRaw<{ status: string; data: StoreSummary[] }>("/stores/public", {
       includeAuth: false,
     });
-    const schools = result.data || [];
-    const school = schools.find((s) => s.slug === slug);
-    return school || null;
+    const stores = result.data || [];
+    const store = stores.find((s) => s.slug === slug);
+    return store || null;
   } catch (error) {
     return null;
   }
@@ -355,13 +355,13 @@ export async function getCurrentUser() {
         has_password: boolean;
         last_login: Date | null;
         login_count: number;
-        schoolId: number;
+        storeId: number;
         role: string;
         email_confirmed: boolean;
         phone_confirmed: boolean;
         isActive: boolean;
         isVerified: boolean;
-        currentSchool: {
+        currentStore: {
           id: number;
           name: string;
           slug: string;
@@ -501,15 +501,15 @@ export async function createEnrollment(data: {
 }
 
 // Theme and UI Template functions
-export async function getSchoolThemeConfig(schoolSlug?: string) {
+export async function getStoreThemeConfig(storeSlug?: string) {
   try {
     // Theme config should always use public endpoint
-    // If no schoolSlug provided, we can't fetch theme (theme is school-specific)
-    if (!schoolSlug) {
+    // If no storeSlug provided, we can't fetch theme (theme is store-specific)
+    if (!storeSlug) {
       return null;
     }
 
-    const path = `/theme/public/${schoolSlug}/config`;
+    const path = `/theme/public/${storeSlug}/config`;
     const result = await serverFetchRaw<{
       message: string;
       status: string;
@@ -578,7 +578,7 @@ export async function getCurrentUITemplate() {
       status: string;
       data: {
         id?: number;
-        school_id?: number;
+        store_id?: number;
         blocks?: Array<{
           id: string;
           type: string;
@@ -612,21 +612,21 @@ export async function getCurrentUITemplate() {
   }
 }
 
-export async function getSchoolUITemplate(schoolSlug?: string) {
+export async function getStoreUITemplate(storeSlug?: string) {
   try {
-    // Only use public endpoint if schoolSlug is provided
+    // Only use public endpoint if storeSlug is provided
     // Otherwise return null to avoid authentication issues
-    if (!schoolSlug) {
+    if (!storeSlug) {
       return null;
     }
 
-    const path = `/ui-template/public/${schoolSlug}`;
+    const path = `/ui-template/public/${storeSlug}`;
     const result = await serverFetchRaw<{
       message: string;
       status: string;
       data: {
         id?: number;
-        school_id?: number;
+        store_id?: number;
         blocks?: Array<{
           id: string;
           type: string;
@@ -659,12 +659,12 @@ export async function getSchoolUITemplate(schoolSlug?: string) {
     if (error instanceof Error) {
       const status = (error as any).status;
       // Only log non-404 errors to avoid noise
-      // 404 means school/template doesn't exist, which is acceptable
+      // 404 means store/template doesn't exist, which is acceptable
       if (status !== 404 && !error.message.includes('404')) {
         // Log with more context in development
         if (process.env.NODE_ENV === 'development') {
           console.error(
-            `Failed to fetch UI template for school "${schoolSlug}":`,
+            `Failed to fetch UI template for store "${storeSlug}":`,
             error.message
           );
         }

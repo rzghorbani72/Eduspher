@@ -157,7 +157,7 @@ export interface ArticleSummary {
   featured_image?: MediaAsset | null;
 }
 
-export interface SchoolSummary {
+export interface StoreSummary {
   id: number;
   name: string;
   slug?: string;
@@ -174,7 +174,7 @@ export interface SchoolSummary {
   cover?: MediaAsset | null;
 }
 
-export interface SchoolDetail extends SchoolSummary {
+export interface StoreDetail extends StoreSummary {
   slug?: string;
   student_count?: number | null;
   mentor_count?: number | null;
@@ -189,7 +189,7 @@ export interface UserProfileSummary {
   has_password: boolean;
   email_confirmed?: boolean;
   phone_confirmed?: boolean;
-  school: {
+  store: {
     id: number;
     name: string;
     slug: string;
@@ -215,13 +215,13 @@ export interface AuthResponse {
   } | null;
   currentProfile: {
     id: number;
-    schoolId: number;
+    storeId: number;
     role: string;
     displayName: string;
     isActive: boolean;
     isVerified: boolean;
   } | null;
-  availableSchools: {
+  availableStores: {
     id: number;
     name: string;
     slug: string;
@@ -231,7 +231,7 @@ export interface AuthResponse {
   }[];
   availableProfiles: {
     id: number;
-    schoolId: number;
+    storeId: number;
     role: string;
     displayName: string;
     isActive: boolean;

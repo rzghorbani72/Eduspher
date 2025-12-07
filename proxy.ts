@@ -41,14 +41,14 @@ async function verifyJWT(token: string): Promise<{ valid: boolean; payload: JWTP
 
 const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? "http://localhost:3000";
 const BACKEND_API_PATH = process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? "/api";
-const DEFAULT_SCHOOL_SLUG = process.env.NEXT_PUBLIC_DEFAULT_SCHOOL_SLUG ?? null;
-const SCHOOL_ID_COOKIE = process.env.NEXT_PUBLIC_SCHOOL_ID_COOKIE ?? "eduspher_school_id";
-const SCHOOL_SLUG_COOKIE = process.env.NEXT_PUBLIC_SCHOOL_SLUG_COOKIE ?? "eduspher_school_slug";
-const SCHOOL_NAME_COOKIE = process.env.NEXT_PUBLIC_SCHOOL_NAME_COOKIE ?? "eduspher_school_name";
-const SCHOOL_HEADER_ID = "x-school-id";
-const SCHOOL_HEADER_SLUG = "x-school-slug";
+const DEFAULT_STORE_SLUG = process.env.NEXT_PUBLIC_DEFAULT_STORE_SLUG ?? null;
+const STORE_ID_COOKIE = process.env.NEXT_PUBLIC_STORE_ID_COOKIE ?? "eduspher_store_id";
+const STORE_SLUG_COOKIE = process.env.NEXT_PUBLIC_STORE_SLUG_COOKIE ?? "eduspher_store_slug";
+const STORE_NAME_COOKIE = process.env.NEXT_PUBLIC_STORE_NAME_COOKIE ?? "eduspher_store_name";
+const STORE_HEADER_ID = "x-store-id";
+const STORE_HEADER_SLUG = "x-store-slug";
 
-type PublicSchool = {
+type PublicStore = {
   id: number;
   name: string;
   slug?: string | null;
@@ -115,8 +115,8 @@ const extractCandidateSlug = (host?: string | null) => {
   return firstPart;
 };
 
-const matchSchool = (
-  schools: PublicSchool[],
+const matchStore = (
+  stores: PublicStore[],
   options: { slug?: string | null; host?: string | null; id?: string | null }
 ) => {
   const targetSlug = options.slug?.toLowerCase();
@@ -124,16 +124,16 @@ const matchSchool = (
   const hostWithoutSubdomain = host?.replace(/^www\./, "");
   const targetId = options.id ? String(options.id) : null;
 
-  return schools.find((school) => {
-    if (targetId && String(school.id) === targetId) {
+  return stores.find((store) => {
+    if (targetId && String(store.id) === targetId) {
       return true;
     }
-    const schoolSlug = school.slug?.toLowerCase();
-    if (targetSlug && schoolSlug === targetSlug) {
+    const storeSlug = store.slug?.toLowerCase();
+    if (targetSlug && storeSlug === targetSlug) {
       return true;
     }
-    const privateAddress = school.domain?.private_address?.toLowerCase();
-    const publicAddress = school.domain?.public_address?.toLowerCase();
+    const privateAddress = store.domain?.private_address?.toLowerCase();
+    const publicAddress = store.domain?.public_address?.toLowerCase();
     if (host && privateAddress && (host === privateAddress || host.startsWith(`${privateAddress}.`))) {
       return true;
     }
@@ -144,9 +144,9 @@ const matchSchool = (
   });
 };
 
-const fetchSchools = async () => {
+const fetchStores = async () => {
   try {
-    const response = await fetch(`${BACKEND_ORIGIN}${BACKEND_API_PATH}/schools/public`, {
+    const response = await fetch(`${BACKEND_ORIGIN}${BACKEND_API_PATH}/stores/public`, {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -154,7 +154,7 @@ const fetchSchools = async () => {
       cache: "no-store",
     });
     if (!response.ok) return null;
-    const payload = (await response.json()) as { data?: PublicSchool[] };
+    const payload = (await response.json()) as { data?: PublicStore[] };
     return payload.data ?? null;
   } catch {
     return null;
@@ -167,35 +167,35 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestUrl = request.nextUrl;
-  const existingId = request.cookies.get(SCHOOL_ID_COOKIE)?.value ?? null;
-  const existingSlug = request.cookies.get(SCHOOL_SLUG_COOKIE)?.value ?? null;
-  const existingNameCookie = request.cookies.get(SCHOOL_NAME_COOKIE)?.value ?? null;
+  const existingId = request.cookies.get(STORE_ID_COOKIE)?.value ?? null;
+  const existingSlug = request.cookies.get(STORE_SLUG_COOKIE)?.value ?? null;
+  const existingNameCookie = request.cookies.get(STORE_NAME_COOKIE)?.value ?? null;
   const decodedExistingName = existingNameCookie ? decodeURIComponent(existingNameCookie) : null;
   const pathnameSegments = requestUrl.pathname.split("/").filter(Boolean);
   const firstSegment = pathnameSegments[0] ?? null;
   const slugFromPath = firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment) ? firstSegment : null;
-  const searchParamSlug = requestUrl.searchParams.get("school");
+  const searchParamSlug = requestUrl.searchParams.get("store");
   const hostHeader = extractHost(request.headers.get("host"));
-  const candidateSlug = searchParamSlug ?? slugFromPath ?? extractCandidateSlug(hostHeader) ?? DEFAULT_SCHOOL_SLUG;
+  const candidateSlug = searchParamSlug ?? slugFromPath ?? extractCandidateSlug(hostHeader) ?? DEFAULT_STORE_SLUG;
   const numericSlugId = slugFromPath && /^\d+$/.test(slugFromPath) ? slugFromPath : null;
 
-  const schools = await fetchSchools();
-  let matchedSchool: PublicSchool | null = null;
+  const stores = await fetchStores();
+  let matchedStore: PublicStore | null = null;
 
-  if (schools) {
-    matchedSchool = matchSchool(schools, {
+  if (stores) {
+    matchedStore = matchStore(stores, {
       slug: candidateSlug,
       host: hostHeader ?? undefined,
       id: numericSlugId ?? existingId,
     }) ?? null;
   }
 
-  if (!matchedSchool && numericSlugId && schools) {
-    matchedSchool = matchSchool(schools, { id: numericSlugId }) ?? null;
+  if (!matchedStore && numericSlugId && stores) {
+    matchedStore = matchStore(stores, { id: numericSlugId }) ?? null;
   }
 
-  if (!matchedSchool && existingId && schools) {
-    matchedSchool = matchSchool(schools, { id: existingId }) ?? null;
+  if (!matchedStore && existingId && stores) {
+    matchedStore = matchStore(stores, { id: existingId }) ?? null;
   }
 
   const requestHeaders = new Headers(request.headers);
@@ -208,63 +208,63 @@ export async function proxy(request: NextRequest) {
   };
 
   const shouldUpdateCookies =
-    matchedSchool &&
-    (String(matchedSchool.id) !== existingId || matchedSchool.slug !== existingSlug);
+    matchedStore &&
+    (String(matchedStore.id) !== existingId || matchedStore.slug !== existingSlug);
 
-  if (matchedSchool && shouldUpdateCookies) {
-    addCookie(SCHOOL_ID_COOKIE, String(matchedSchool.id));
-    if (matchedSchool.slug) {
-      addCookie(SCHOOL_SLUG_COOKIE, matchedSchool.slug);
-      requestHeaders.set(SCHOOL_HEADER_SLUG, matchedSchool.slug);
+  if (matchedStore && shouldUpdateCookies) {
+    addCookie(STORE_ID_COOKIE, String(matchedStore.id));
+    if (matchedStore.slug) {
+      addCookie(STORE_SLUG_COOKIE, matchedStore.slug);
+      requestHeaders.set(STORE_HEADER_SLUG, matchedStore.slug);
     }
-    addCookie(SCHOOL_NAME_COOKIE, encodeURIComponent(matchedSchool.name ?? ""));
-    requestHeaders.set(SCHOOL_HEADER_ID, String(matchedSchool.id));
+    addCookie(STORE_NAME_COOKIE, encodeURIComponent(matchedStore.name ?? ""));
+    requestHeaders.set(STORE_HEADER_ID, String(matchedStore.id));
   } else if (existingId) {
-    requestHeaders.set(SCHOOL_HEADER_ID, existingId);
+    requestHeaders.set(STORE_HEADER_ID, existingId);
     if (existingSlug) {
-      requestHeaders.set(SCHOOL_HEADER_SLUG, existingSlug);
+      requestHeaders.set(STORE_HEADER_SLUG, existingSlug);
     }
-  } else if (DEFAULT_SCHOOL_SLUG && schools) {
-    const fallback = matchSchool(schools, {
-      slug: DEFAULT_SCHOOL_SLUG,
-      id: env.defaultSchoolId ? String(env.defaultSchoolId) : null,
+  } else if (DEFAULT_STORE_SLUG && stores) {
+    const fallback = matchStore(stores, {
+      slug: DEFAULT_STORE_SLUG,
+      id: env.defaultStoreId ? String(env.defaultStoreId) : null,
     });
     if (fallback) {
-      addCookie(SCHOOL_ID_COOKIE, String(fallback.id));
+      addCookie(STORE_ID_COOKIE, String(fallback.id));
       if (fallback.slug) {
-        addCookie(SCHOOL_SLUG_COOKIE, fallback.slug);
-        requestHeaders.set(SCHOOL_HEADER_SLUG, fallback.slug);
+        addCookie(STORE_SLUG_COOKIE, fallback.slug);
+        requestHeaders.set(STORE_HEADER_SLUG, fallback.slug);
       }
-      addCookie(SCHOOL_NAME_COOKIE, encodeURIComponent(fallback.name ?? ""));
-      requestHeaders.set(SCHOOL_HEADER_ID, String(fallback.id));
-      matchedSchool = fallback;
+      addCookie(STORE_NAME_COOKIE, encodeURIComponent(fallback.name ?? ""));
+      requestHeaders.set(STORE_HEADER_ID, String(fallback.id));
+      matchedStore = fallback;
     }
   }
 
-  if (!requestHeaders.has(SCHOOL_HEADER_ID) && numericSlugId) {
-    requestHeaders.set(SCHOOL_HEADER_ID, numericSlugId);
+  if (!requestHeaders.has(STORE_HEADER_ID) && numericSlugId) {
+    requestHeaders.set(STORE_HEADER_ID, numericSlugId);
     if (!existingId) {
-      addCookie(SCHOOL_ID_COOKIE, numericSlugId);
+      addCookie(STORE_ID_COOKIE, numericSlugId);
     }
   }
 
-  if (!requestHeaders.has(SCHOOL_HEADER_SLUG) && slugFromPath) {
-    requestHeaders.set(SCHOOL_HEADER_SLUG, slugFromPath);
+  if (!requestHeaders.has(STORE_HEADER_SLUG) && slugFromPath) {
+    requestHeaders.set(STORE_HEADER_SLUG, slugFromPath);
     if (!existingSlug) {
-      addCookie(SCHOOL_SLUG_COOKIE, slugFromPath);
+      addCookie(STORE_SLUG_COOKIE, slugFromPath);
     }
   }
 
-  if (!cookiesToSet.some((cookie) => cookie.name === SCHOOL_NAME_COOKIE)) {
-    const headerSchoolId = requestHeaders.get(SCHOOL_HEADER_ID);
-    const nameFromList = headerSchoolId && schools
-      ? matchSchool(schools ?? [], { id: headerSchoolId })?.name
+  if (!cookiesToSet.some((cookie) => cookie.name === STORE_NAME_COOKIE)) {
+    const headerStoreId = requestHeaders.get(STORE_HEADER_ID);
+    const nameFromList = headerStoreId && stores
+      ? matchStore(stores ?? [], { id: headerStoreId })?.name
       : null;
-    const matchedName = matchedSchool?.name ?? nameFromList ?? decodedExistingName ?? env.siteName;
-    addCookie(SCHOOL_NAME_COOKIE, encodeURIComponent(matchedName ?? env.siteName));
+    const matchedName = matchedStore?.name ?? nameFromList ?? decodedExistingName ?? env.siteName;
+    addCookie(STORE_NAME_COOKIE, encodeURIComponent(matchedName ?? env.siteName));
   }
 
-  // Determine the actual path (without school slug) for authentication checks
+  // Determine the actual path (without store slug) for authentication checks
   let actualPathname = requestUrl.pathname;
   if (slugFromPath) {
     const cleanedPathSegments = pathnameSegments.slice(1);
@@ -311,7 +311,7 @@ export async function proxy(request: NextRequest) {
 
   // If user is not authenticated and trying to access a protected route, redirect to login
   if (!isAuthenticated && isProtectedRoute && !isPublicRoute) {
-    // Build login URL with school slug if present - use absolute URL
+    // Build login URL with store slug if present - use absolute URL
     const loginPath = slugFromPath ? `/${slugFromPath}/auth/login` : "/auth/login";
     const loginUrl = new URL(loginPath, requestUrl.origin);
     loginUrl.searchParams.set("redirect", requestUrl.pathname + requestUrl.search);
@@ -343,7 +343,7 @@ export async function proxy(request: NextRequest) {
     response.cookies.set(name, value, {
       path: "/",
       sameSite: "lax",
-      httpOnly: false, // School cookies are not httpOnly so they can be read by client
+      httpOnly: false, // Store cookies are not httpOnly so they can be read by client
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24 * 365, // 1 year
     });
@@ -364,7 +364,7 @@ export async function proxy(request: NextRequest) {
   if (searchParamSlug) {
     const cleanedUrl = new URL(requestUrl.pathname, requestUrl.origin);
     cleanedUrl.search = requestUrl.search;
-    cleanedUrl.searchParams.delete("school");
+    cleanedUrl.searchParams.delete("store");
     return NextResponse.redirect(cleanedUrl);
   }
 

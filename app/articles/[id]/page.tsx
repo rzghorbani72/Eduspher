@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getArticleById, getSchoolBySlug, getCurrentSchool } from "@/lib/api/server";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath, resolveAssetUrl } from "@/lib/utils";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getArticleById, getStoreBySlug, getCurrentStore } from "@/lib/api/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath, resolveAssetUrl } from "@/lib/utils";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { sanitizeRichText } from "@/lib/sanitize";
 
@@ -17,22 +17,22 @@ type PageParams = Promise<{
 
 export default async function ArticleDetailPage({ params }: { params: PageParams }) {
   const { id } = await params;
-  const [article, schoolContext] = await Promise.all([
+  const [article, storeContext] = await Promise.all([
     getArticleById(id).catch(() => null),
-    getSchoolContext(),
+    getStoreContext(),
   ]);
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
 
   if (!article) {
     return notFound();
   }
 
-  // Get school language for translations
-  let currentSchool = await getCurrentSchool().catch(() => null);
-  if (!currentSchool && schoolContext.slug) {
-    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // Get store language for translations
+  let currentStore = await getCurrentStore().catch(() => null);
+  if (!currentStore && storeContext.slug) {
+    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getSchoolLanguage(currentSchool?.language || null, currentSchool?.country_code || null);
+  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   const imageUrl = resolveAssetUrl(article.featured_image?.url) ?? "/globe.svg";

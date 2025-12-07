@@ -1,7 +1,7 @@
 import "server-only";
 
-import { getSchoolContext } from "./school-context";
-import { getSchoolThemeConfig, getSchoolUITemplate, getCurrentUITemplate } from "./api/server";
+import { getStoreContext } from "./store-context";
+import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
 import { TEMPLATE_PRESETS, type TemplatePreset } from "./template-presets";
 
 export interface ThemeConfig {
@@ -38,21 +38,21 @@ export interface UITemplateConfig {
   template_preset?: string;
 }
 
-export async function getSchoolThemeAndTemplate() {
+export async function getStoreThemeAndTemplate() {
   try {
-    const schoolContext = await getSchoolContext();
+    const storeContext = await getStoreContext();
 
     // Try to fetch from authenticated endpoint first if user is authenticated
-    // Otherwise fallback to public endpoint with school slug
+    // Otherwise fallback to public endpoint with store slug
     let templateData = null;
     let themeData = null;
 
-    // Theme config is always public - use school slug
+    // Theme config is always public - use store slug
     // Template can use authenticated endpoint if available
-    if (schoolContext.slug) {
+    if (storeContext.slug) {
       // Try authenticated template endpoint first, but always use public theme endpoint
       const [publicThemeData, authTemplateData] = await Promise.allSettled([
-        getSchoolThemeConfig(schoolContext.slug), // Always use public endpoint for theme
+        getStoreThemeConfig(storeContext.slug), // Always use public endpoint for theme
         getCurrentUITemplate(), // Uses /ui-template/current with auth
       ]);
 
@@ -60,16 +60,16 @@ export async function getSchoolThemeAndTemplate() {
       templateData = authTemplateData.status === 'fulfilled' ? authTemplateData.value : null;
 
       // If authenticated template endpoint failed, fallback to public template endpoint
-      if (!templateData && schoolContext.slug) {
+      if (!templateData && storeContext.slug) {
         const publicTemplateResult = await Promise.allSettled([
-          getSchoolUITemplate(schoolContext.slug),
+          getStoreUITemplate(storeContext.slug),
         ]);
         templateData = publicTemplateResult[0].status === 'fulfilled' ? publicTemplateResult[0].value : null;
         
       }
     } else {
       // Not authenticated, use public endpoints
-      if (!schoolContext.slug) {
+      if (!storeContext.slug) {
         return {
           theme: null,
           template: null,
@@ -78,8 +78,8 @@ export async function getSchoolThemeAndTemplate() {
 
       // Fetch theme and template in parallel, but handle errors gracefully
       const [publicThemeData, publicTemplateData] = await Promise.allSettled([
-        getSchoolThemeConfig(schoolContext.slug),
-        getSchoolUITemplate(schoolContext.slug),
+        getStoreThemeConfig(storeContext.slug),
+        getStoreUITemplate(storeContext.slug),
       ]);
 
       console.log('publicThemeData', publicThemeData);

@@ -6,19 +6,19 @@ import "./globals.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AuthProvider } from "@/components/providers/auth-provider";
-import { SchoolProvider } from "@/components/providers/school-provider";
+import { StoreProvider } from "@/components/providers/store-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { env } from "@/lib/env";
-import { getSchoolContext } from "@/lib/school-context";
+import { getStoreContext } from "@/lib/store-context";
 import { getSession } from "@/lib/auth/session";
 import {
-  getSchoolThemeAndTemplate,
+  getStoreThemeAndTemplate,
   generateThemeCSSVariables,
 } from "@/lib/theme-config";
-import { getCurrentSchool, getSchoolBySlug } from "@/lib/api/server";
-import { getSchoolLanguage, getSchoolDirection, isSchoolRTL } from "@/lib/i18n/server";
+import { getCurrentStore, getStoreBySlug } from "@/lib/api/server";
+import { getStoreLanguage, getStoreDirection, isStoreRTL } from "@/lib/i18n/server";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { CreativeBackground } from "@/components/motion/creative-background";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
@@ -57,56 +57,56 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const schoolContext = await getSchoolContext();
+  const storeContext = await getStoreContext();
   const session = await getSession();
   const isAuthenticated = Boolean(session?.userId);
   
-  const { theme, template } = await getSchoolThemeAndTemplate();
+  const { theme, template } = await getStoreThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
   
-  // Get school details for language and country (server-side)
-  // Try to get current school first (requires auth), then fall back to public school by slug
-  let currentSchool = await getCurrentSchool().catch(() => null);
+  // Get store details for language and country (server-side)
+  // Try to get current store first (requires auth), then fall back to public store by slug
+  let currentStore = await getCurrentStore().catch(() => null);
   
-  // If no authenticated school, try to get public school by slug
-  if (!currentSchool && schoolContext.slug) {
-    currentSchool = await getSchoolBySlug(schoolContext.slug).catch(() => null);
+  // If no authenticated store, try to get public store by slug
+  if (!currentStore && storeContext.slug) {
+    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
   }
 
-  // Extract school icons for flying animation
-  const schoolIcons: string[] = [];
-  if (currentSchool) {
+  // Extract store icons for flying animation
+  const storeIcons: string[] = [];
+  if (currentStore) {
     // Get logo if available
-    if ((currentSchool as any).logo?.url) {
-      const logoUrl = resolveAssetUrl((currentSchool as any).logo.url);
-      if (logoUrl) schoolIcons.push(logoUrl);
+    if ((currentStore as any).logo?.url) {
+      const logoUrl = resolveAssetUrl((currentStore as any).logo.url);
+      if (logoUrl) storeIcons.push(logoUrl);
     }
     // Get cover image if available
-    if (currentSchool.cover?.url) {
-      const coverUrl = resolveAssetUrl(currentSchool.cover.url);
-      if (coverUrl) schoolIcons.push(coverUrl);
+    if (currentStore.cover?.url) {
+      const coverUrl = resolveAssetUrl(currentStore.cover.url);
+      if (coverUrl) storeIcons.push(coverUrl);
     }
     // Get other images if available
-    if (currentSchool.images && Array.isArray(currentSchool.images)) {
-      currentSchool.images.slice(0, 5).forEach((img: any) => {
+    if (currentStore.images && Array.isArray(currentStore.images)) {
+      currentStore.images.slice(0, 5).forEach((img: any) => {
         const imgUrl = img.url || img.filename;
         if (imgUrl) {
           const resolvedUrl = resolveAssetUrl(imgUrl);
-          if (resolvedUrl) schoolIcons.push(resolvedUrl);
+          if (resolvedUrl) storeIcons.push(resolvedUrl);
         }
       });
     }
   }
   
   // Filter out empty strings
-  const validSchoolIcons = schoolIcons.filter(Boolean);
+  const validStoreIcons = storeIcons.filter(Boolean);
   
-  // Determine language and direction from school config (server-side)
-  const countryCode = currentSchool?.country_code || null;
-  const schoolLanguage = currentSchool?.language || null;
-  const language = getSchoolLanguage(schoolLanguage, countryCode);
-  const direction = getSchoolDirection(schoolLanguage, countryCode);
-  const rtl = isSchoolRTL(schoolLanguage, countryCode);
+  // Determine language and direction from store config (server-side)
+  const countryCode = currentStore?.country_code || null;
+  const storeLanguage = currentStore?.language || null;
+  const language = getStoreLanguage(storeLanguage, countryCode);
+  const direction = getStoreDirection(storeLanguage, countryCode);
+  const rtl = isStoreRTL(storeLanguage, countryCode);
   
   // Check if we're on the home page
   const headersList = await headers();
@@ -160,7 +160,7 @@ export default async function RootLayout({
         }
       >
         <AuthProvider initialAuthenticated={isAuthenticated}>
-          <SchoolProvider initialValue={schoolContext}>
+          <StoreProvider initialValue={storeContext}>
             <ThemeProvider initialTheme={theme}>
             <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
             <I18nProvider initialLanguage={language} countryCode={countryCode || undefined}>
@@ -169,7 +169,7 @@ export default async function RootLayout({
                   className="relative flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100 overflow-hidden"
                 >
                   {/* Creative animated background with gradients and flying icons */}
-                  <CreativeBackground theme={theme} schoolIcons={validSchoolIcons} />
+                  <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
                   
                   <SiteHeader />
                   <main className="relative flex-1 z-10">
@@ -186,7 +186,7 @@ export default async function RootLayout({
               </ScrollAnimationProvider>
             </I18nProvider>
             </ThemeProvider>
-          </SchoolProvider>
+          </StoreProvider>
         </AuthProvider>
       </body>
     </html>

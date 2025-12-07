@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { buildSchoolPath } from "@/lib/utils";
+import { buildStorePath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface HeroBlockProps {
@@ -16,15 +16,15 @@ interface HeroBlockProps {
     alignment?: "left" | "center" | "right";
     height?: "small" | "medium" | "large";
   };
-  schoolContext?: {
+  storeContext?: {
     id: number | null;
     slug: string | null;
     name: string | null;
   };
 }
 
-export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
-  const title = config?.title || "Welcome to Our School";
+export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
+  const title = config?.title || "Welcome to Our Store";
   const subtitle = config?.subtitle || "Learn something new today";
   const showCTA = config?.showCTA !== false;
   const ctaText = config?.ctaText || "Browse Courses";
@@ -158,7 +158,7 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
                 asChild
                 className="bg-gradient-theme-primary hover:opacity-90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40 relative"
               >
-                <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/courses")} className="text-white">
+                <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")} className="text-white">
                   {ctaText}
                 </Link>
               </Button>
@@ -174,7 +174,7 @@ export function HeroBlock({ id, config, schoolContext }: HeroBlockProps) {
                       : "border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                 >
-                  <Link href={buildSchoolPath(schoolContext?.slug ?? null, "/about")} className="text-white">
+                  <Link href={buildStorePath(storeContext?.slug ?? null, "/about")} className="text-white">
                     {config.ctaSecondary}
                   </Link>
                 </Button>

@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
 
@@ -38,7 +38,7 @@ interface ForgotPasswordFormProps {
 
 export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormProps) => {
   const router = useRouter();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const [step, setStep] = useState<Step>("identifier");
   const [authMethod, setAuthMethod] = useState<"email" | "phone">("email");
   const [isLoading, setIsLoading] = useState(false);

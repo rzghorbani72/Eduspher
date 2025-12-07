@@ -6,7 +6,7 @@ import { decodeJwt } from "jose";
 export type SessionPayload = {
   userId: number | null;
   profileId: number | null;
-  schoolId: number | null;
+  storeId: number | null;
   roles: string[];
 };
 
@@ -22,7 +22,7 @@ export const getSession = async (): Promise<SessionPayload | null> => {
     return {
       userId: profileId, // Use profileId as userId for backward compatibility
       profileId: profileId,
-      schoolId: typeof payload.schoolId === "number" ? payload.schoolId : null,
+      storeId: typeof payload.storeId === "number" ? payload.storeId : null,
       roles: Array.isArray(payload.roles) ? (payload.roles as string[]) : [],
     };
   } catch {

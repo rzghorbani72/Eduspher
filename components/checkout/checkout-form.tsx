@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { processCheckout } from "@/app/actions/checkout";
 import { validateVoucher } from "@/app/actions/voucher";
 import type { CourseSummary } from "@/lib/api/types";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 import { CheckCircle, Loader2, AlertCircle, X } from "lucide-react";
-import { formatCurrencyWithSchool } from "@/lib/utils";
+import { formatCurrencyWithStore } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CheckoutFormProps {
@@ -22,11 +22,11 @@ interface CheckoutFormProps {
     display_name?: string;
     currentProfile?: {
       id: number;
-      schoolId: number;
+      storeId: number;
       role: string;
       displayName: string;
     };
-    currentSchool?: {
+    currentStore?: {
       id: number;
       name: string;
       slug: string;
@@ -38,7 +38,7 @@ interface CheckoutFormProps {
   session: {
     userId: number;
     profileId: number;
-    schoolId: number | null;
+    storeId: number | null;
   };
   onDiscountChange?: (discount: {
     discount_amount: number;
@@ -48,7 +48,7 @@ interface CheckoutFormProps {
 
 export function CheckoutForm({ course, user, session, onDiscountChange }: CheckoutFormProps) {
   const router = useRouter();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const { t, language } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -215,7 +215,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
                     {voucherCode.toUpperCase()}
                   </div>
                   <div className="text-xs text-green-700 dark:text-green-300">
-                    {t("checkout.discountApplied")}: {formatCurrencyWithSchool(discount.discount_amount / 100, user.currentSchool || null, undefined, language)}
+                    {t("checkout.discountApplied")}: {formatCurrencyWithStore(discount.discount_amount / 100, user.currentStore || null, undefined, language)}
                   </div>
                 </div>
                 <button
@@ -274,7 +274,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           ) : course.is_free ? (
             t("checkout.completeEnrollment")
           ) : (
-            `${t("checkout.completePurchase")} - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null, undefined, language)}`
+            `${t("checkout.completePurchase")} - ${formatCurrencyWithStore(finalPrice, user.currentStore || null, undefined, language)}`
           )}
         </Button>
 

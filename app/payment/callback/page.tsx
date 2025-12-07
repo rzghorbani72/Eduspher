@@ -5,12 +5,12 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 
 export default function PaymentCallbackPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const [processing, setProcessing] = useState(true);
   const [result, setResult] = useState<{
     success: boolean;

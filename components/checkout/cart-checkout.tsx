@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle, Loader2, AlertCircle, X, Trash2 } from "lucide-react";
-import { formatCurrencyWithSchool } from "@/lib/utils";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { formatCurrencyWithStore } from "@/lib/utils";
+import { useStorePath } from "@/components/providers/store-provider";
 import { getCartItems, removeCourseFromCart, removeProductFromCart, syncCart, type CartItem } from "@/app/actions/cart";
 import { validateVoucher } from "@/app/actions/voucher";
 import { processCheckout } from "@/app/actions/checkout";
@@ -23,11 +23,11 @@ interface CartCheckoutProps {
     display_name?: string;
     currentProfile?: {
       id: number;
-      schoolId: number;
+      storeId: number;
       role: string;
       displayName: string;
     };
-    currentSchool?: {
+    currentStore?: {
       id: number;
       name: string;
       slug: string;
@@ -39,13 +39,13 @@ interface CartCheckoutProps {
   session: {
     userId: number;
     profileId: number;
-    schoolId: number | null;
+    storeId: number | null;
   };
 }
 
 export function CartCheckout({ user, session }: CartCheckoutProps) {
   const router = useRouter();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const { t, language } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -279,7 +279,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    {formatCurrencyWithSchool(itemPrice, user.currentSchool || null, undefined, language)}
+                    {formatCurrencyWithStore(itemPrice, user.currentStore || null, undefined, language)}
                   </p>
                 </div>
                 <button
@@ -307,7 +307,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 {voucherCode.toUpperCase()}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">
-                {t("checkout.discount")}: {formatCurrencyWithSchool(discountAmount, user.currentSchool || null, undefined, language)}
+                {t("checkout.discount")}: {formatCurrencyWithStore(discountAmount, user.currentStore || null, undefined, language)}
               </div>
             </div>
             <button
@@ -356,14 +356,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         <div className="flex justify-between text-sm">
           <span className="text-slate-600 dark:text-slate-400">{t("checkout.subtotal")}</span>
           <span className="font-medium text-slate-900 dark:text-white">
-            {formatCurrencyWithSchool(totalAmount / 100, user.currentSchool || null, undefined, language)}
+            {formatCurrencyWithStore(totalAmount / 100, user.currentStore || null, undefined, language)}
           </span>
         </div>
         {discount && discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
             <span>{t("checkout.discount")}</span>
             <span className="font-medium">
-              -{formatCurrencyWithSchool(discountAmount, user.currentSchool || null, undefined, language)}
+              -{formatCurrencyWithStore(discountAmount, user.currentStore || null, undefined, language)}
             </span>
           </div>
         )}
@@ -371,7 +371,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           <div className="flex justify-between">
             <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
             <span className="text-xl font-bold text-slate-900 dark:text-white">
-              {formatCurrencyWithSchool(finalPrice, user.currentSchool || null, undefined, language)}
+              {formatCurrencyWithStore(finalPrice, user.currentStore || null, undefined, language)}
             </span>
           </div>
         </div>
@@ -399,7 +399,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             {t("checkout.processing")}
           </>
         ) : (
-          `${t("checkout.completePurchase")} - ${formatCurrencyWithSchool(finalPrice, user.currentSchool || null, undefined, language)}`
+          `${t("checkout.completePurchase")} - ${formatCurrencyWithStore(finalPrice, user.currentStore || null, undefined, language)}`
         )}
       </Button>
     </div>

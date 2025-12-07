@@ -5,7 +5,7 @@ import { ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { addProductToCart, isProductInCart } from "@/app/actions/cart";
 import { useRouter } from "next/navigation";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { ProductSummary } from "@/lib/api/types";
 
@@ -16,7 +16,7 @@ interface ProductCartButtonProps {
 
 export function ProductCartButton({ product, className }: ProductCartButtonProps) {
   const router = useRouter();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const { t } = useTranslation();
   // Initialize to false to match SSR (localStorage not available during SSR)
   const [added, setAdded] = useState(false);

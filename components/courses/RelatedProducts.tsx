@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import { ProductCard } from "@/components/products/product-card";
-import { buildSchoolPath } from "@/lib/utils";
+import { buildStorePath } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { ProductSummary } from "@/lib/api/types";
 
 interface RelatedProductsProps {
   products: ProductSummary[];
-  schoolSlug?: string | null;
-  school?: {
+  storeSlug?: string | null;
+  store?: {
     currency?: string;
     currency_symbol?: string;
     currency_position?: "before" | "after";
   } | null;
 }
 
-export const RelatedProducts = ({ products, schoolSlug, school }: RelatedProductsProps) => {
+export const RelatedProducts = ({ products, storeSlug, store }: RelatedProductsProps) => {
   const { t } = useTranslation();
   
   if (!products || products.length === 0) {
@@ -30,7 +30,7 @@ export const RelatedProducts = ({ products, schoolSlug, school }: RelatedProduct
           {t("courses.relatedProducts")}
         </h2>
         <Link
-          href={buildSchoolPath(schoolSlug, "/products")}
+          href={buildStorePath(storeSlug, "/products")}
           className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
         >
           {t("courses.viewAllProducts")} →
@@ -43,7 +43,7 @@ export const RelatedProducts = ({ products, schoolSlug, school }: RelatedProduct
             className="animate-in fade-in slide-in-from-bottom-4 duration-500"
             style={{ animationDelay: `${index * 100}ms` }}
           >
-            <ProductCard product={product} schoolSlug={schoolSlug} school={school} />
+            <ProductCard product={product} storeSlug={storeSlug} store={store} />
           </div>
         ))}
       </div>

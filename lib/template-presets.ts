@@ -123,7 +123,7 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         order: 2,
         isVisible: true,
         config: {
-          title: 'Welcome to Our School',
+          title: 'Welcome to Our Store',
           subtitle: 'Quality education for everyone',
           showCTA: true,
           ctaText: 'Browse Courses',
@@ -140,7 +140,7 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
         isVisible: true,
         config: {
           title: 'Our Features',
-          subtitle: 'What makes our school special',
+          subtitle: 'What makes our store special',
           gridColumns: 3,
           showIcons: true,
           variant: 'cards',

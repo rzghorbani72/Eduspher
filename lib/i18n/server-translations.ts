@@ -6,16 +6,16 @@
 import "server-only";
 
 import { t as clientT, getTranslations } from "./index";
-import { getSchoolLanguage } from "./server";
+import { getStoreLanguage } from "./server";
 import type { LanguageCode } from "./config";
 
 /**
  * Get translation function for server components
- * Requires school language to be passed or determined
+ * Requires store language to be passed or determined
  */
 export async function getServerTranslation(language?: LanguageCode) {
   // If language is provided, use it
-  // Otherwise, we'd need to fetch school data here
+  // Otherwise, we'd need to fetch store data here
   // For now, we'll use the language parameter
   const lang = language || 'en';
   

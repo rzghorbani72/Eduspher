@@ -33,7 +33,7 @@ export function I18nProvider({
   const direction = config.direction;
   const rtl = isRTL(defaultLanguage);
 
-  // For now, language is static based on school/country
+  // For now, language is static based on store/country
   // In the future, we can add language switching functionality
   const setLanguage = (language: LanguageCode) => {
     // Store in localStorage for persistence

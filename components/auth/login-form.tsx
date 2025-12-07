@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { useSchoolPath } from "@/components/providers/school-provider";
+import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -36,7 +36,7 @@ interface LoginFormProps {
 export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -83,13 +83,13 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           return match ? decodeURIComponent(match[1]) : null;
         };
         
-        const schoolId = getCookieValue(env.schoolIdCookie);
-        const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+        const storeId = getCookieValue(env.storeIdCookie);
+        const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
         
         await postJson("/auth/login", {
           identifier,
           password: values.password,
-          school_id: finalSchoolId,
+          store_id: finalStoreId,
         });
         
         setAuthenticated(true);

@@ -9,7 +9,7 @@ import { Menu, X } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
-import { useSchoolContext, useSchoolPath } from "@/components/providers/school-provider";
+import { useStoreContext, useStorePath } from "@/components/providers/store-provider";
 import { CartIcon } from "@/components/cart/cart-icon";
 import { useTranslation } from "@/lib/i18n/hooks";
 
@@ -21,8 +21,8 @@ interface SiteHeaderClientProps {
 export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: SiteHeaderClientProps) {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
-  const { name: schoolName } = useSchoolContext();
-  const buildPath = useSchoolPath();
+  const { name: storeName } = useStoreContext();
+  const buildPath = useStorePath();
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
             <span className="text-lg font-semibold">ES</span>
           </div>
           <div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-white">{schoolName}</p>
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">{storeName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">{t("common.tagline")}</p>
           </div>
         </Link>

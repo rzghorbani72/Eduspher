@@ -42,13 +42,13 @@ Copy `env.example.txt` to `.env.local` and adjust as needed:
 ```
 NEXT_PUBLIC_BACKEND_ORIGIN=http://localhost:3000
 NEXT_PUBLIC_BACKEND_API_PATH=/api
-NEXT_PUBLIC_DEFAULT_SCHOOL_ID=1
-NEXT_PUBLIC_DEFAULT_SCHOOL_SLUG=child-learn
+NEXT_PUBLIC_DEFAULT_STORE_ID=1
+NEXT_PUBLIC_DEFAULT_STORE_SLUG=child-learn
 NEXT_PUBLIC_SITE_NAME=EduSpher
 NEXT_PUBLIC_SITE_DESCRIPTION=Discover flexible online learning with EduSpher.
-NEXT_PUBLIC_SCHOOL_ID_COOKIE=eduspher_school_id
-NEXT_PUBLIC_SCHOOL_SLUG_COOKIE=eduspher_school_slug
-NEXT_PUBLIC_SCHOOL_NAME_COOKIE=eduspher_school_name
+NEXT_PUBLIC_STORE_ID_COOKIE=eduspher_store_id
+NEXT_PUBLIC_STORE_SLUG_COOKIE=eduspher_store_slug
+NEXT_PUBLIC_STORE_NAME_COOKIE=eduspher_store_name
 ```
 
 ## Getting Started
@@ -67,13 +67,13 @@ Open http://localhost:5000 to view the site. The application connects to the bac
 
 - The frontend uses server-side `fetch` helpers (`lib/api/server.ts`) to include the JWT cookie when retrieving protected resources such as courses.
 - Client-side actions (login, register, logout) proxy directly to the backend via `fetch` with `credentials: "include"`.
-- Middleware resolves the active school based on the request host (private/public domain) and stores the school context in cookies so subsequent API calls carry the correct `school_id`.
+- Middleware resolves the active store based on the request host (private/public domain) and stores the store context in cookies so subsequent API calls carry the correct `store_id`.
 - If the backend responds with 401/403, the UI gracefully prompts users to sign in before accessing gated content.
 
 ## Development Tips
 
 - Run the backend and frontend on separate ports (`localhost:3000` for API, `localhost:5000` for frontend) or update the env variables.
-- Use `NEXT_PUBLIC_DEFAULT_SCHOOL_SLUG` (and/or the cookies) to define which school's configuration should render when a private/public domain cannot be resolved automatically.
+- Use `NEXT_PUBLIC_DEFAULT_STORE_SLUG` (and/or the cookies) to define which store's configuration should render when a private/public domain cannot be resolved automatically.
 - Tailwind v4 uses the `@import "tailwindcss"` entrypoint and `@theme` tokens defined in `app/globals.css`.
 - Use `npm run lint` to run the Next.js/ESLint checks.
 

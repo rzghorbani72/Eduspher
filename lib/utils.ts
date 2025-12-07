@@ -132,16 +132,16 @@ export const formatCurrency = (
 };
 
 /**
- * Format currency using school's currency configuration
+ * Format currency using store's currency configuration
  * @param value - Amount in smallest currency unit
- * @param school - School object with currency configuration
+ * @param store - Store object with currency configuration
  * @param divideBy - Divisor to convert from smallest unit (default: 1 for tomans, 100 for cents)
  * @param language - Language code for localized currency symbols (e.g., 'fa', 'en')
  * @returns Formatted currency string
  */
-export const formatCurrencyWithSchool = (
+export const formatCurrencyWithStore = (
   value: number,
-  school?: {
+  store?: {
     currency?: string;
     currency_symbol?: string;
     currency_position?: "before" | "after";
@@ -151,26 +151,26 @@ export const formatCurrencyWithSchool = (
   divideBy?: number,
   language?: string
 ) => {
-  if (!school) {
+  if (!store) {
     return formatCurrency(value, { divideBy: divideBy || 1 });
   }
 
   // For Toman (IRR), typically no division needed as it's already in the base unit
-  const defaultDivideBy = school.currency === "IRR" ? 1 : 100;
+  const defaultDivideBy = store.currency === "IRR" ? 1 : 100;
 
   // Determine locale based on country code for proper thousand separator
   // Some countries use dots (.), others use commas (,)
   // Default to en-US (commas) if not specified
   let locale = "en-US"; // Default: uses commas for thousands
-  if (school.country_code) {
+  if (store.country_code) {
     // Countries that typically use dots for thousands: DE, IT, ES, FR, etc.
     const dotSeparatorCountries = ["DE", "IT", "ES", "FR", "NL", "BE", "AT", "CH", "PL", "CZ", "SK", "HU", "RO", "BG", "HR", "SI"];
     // Countries that use commas: US, UK, CA, AU, IN, IR, etc.
     const commaSeparatorCountries = ["US", "GB", "CA", "AU", "IN", "IR", "AE", "SA"];
     
-    if (dotSeparatorCountries.includes(school.country_code.toUpperCase())) {
+    if (dotSeparatorCountries.includes(store.country_code.toUpperCase())) {
       locale = "de-DE"; // German locale uses dots for thousands
-    } else if (commaSeparatorCountries.includes(school.country_code.toUpperCase())) {
+    } else if (commaSeparatorCountries.includes(store.country_code.toUpperCase())) {
       locale = "en-US"; // US locale uses commas for thousands
     } else {
       // Default to en-US for unknown countries
@@ -179,9 +179,9 @@ export const formatCurrencyWithSchool = (
   }
 
   // Determine language for currency symbol localization
-  // Priority: 1. Explicit language param, 2. School language, 3. Derive from country code
-  let lang = language || school.language;
-  if (!lang && school.country_code) {
+  // Priority: 1. Explicit language param, 2. Store language, 3. Derive from country code
+  let lang = language || store.language;
+  if (!lang && store.country_code) {
     // Map country codes to languages
     const countryToLanguage: Record<string, string> = {
       'IR': 'fa', // Iran -> Persian
@@ -197,13 +197,13 @@ export const formatCurrencyWithSchool = (
       'CA': 'en',
       'AU': 'en',
     };
-    lang = countryToLanguage[school.country_code.toUpperCase()] || 'en';
+    lang = countryToLanguage[store.country_code.toUpperCase()] || 'en';
   }
 
   return formatCurrency(value, {
-    currency: school.currency || "USD",
-    currency_symbol: school.currency_symbol,
-    currency_position: school.currency_position || "after",
+    currency: store.currency || "USD",
+    currency_symbol: store.currency_symbol,
+    currency_position: store.currency_position || "after",
     divideBy: divideBy ?? defaultDivideBy,
     locale,
     language: lang,
@@ -227,7 +227,7 @@ export const resolveAssetUrl = (path?: string | null) => {
   return `${env.backendOrigin}${normalized}`;
 };
 
-export const buildSchoolPath = (slug: string | null, path: string): string => {
+export const buildStorePath = (slug: string | null, path: string): string => {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   if (!slug) {
     return normalized === "//" ? "/" : normalized;

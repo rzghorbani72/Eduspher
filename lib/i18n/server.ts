@@ -9,16 +9,16 @@ import { getDefaultLanguageForCountry, getLanguageConfig, isRTL, getTextDirectio
 import type { LanguageCode, TextDirection } from "./config";
 
 /**
- * Get language configuration for a school
- * Determines language from school config or falls back to country default
+ * Get language configuration for a store
+ * Determines language from store config or falls back to country default
  */
-export function getSchoolLanguage(
-  schoolLanguage?: string | null,
+export function getStoreLanguage(
+  storeLanguage?: string | null,
   countryCode?: string | null
 ): LanguageCode {
-  // If school has explicit language, use it
-  if (schoolLanguage) {
-    const validLanguage = schoolLanguage.toLowerCase() as LanguageCode;
+  // If store has explicit language, use it
+  if (storeLanguage) {
+    const validLanguage = storeLanguage.toLowerCase() as LanguageCode;
     // Validate it's a supported language
     const supportedLanguages: LanguageCode[] = ['en', 'fa', 'ar', 'tr', 'de', 'fr', 'es', 'it', 'ru', 'zh', 'ja', 'ko', 'hi', 'ur', 'he'];
     if (supportedLanguages.includes(validLanguage)) {
@@ -36,35 +36,35 @@ export function getSchoolLanguage(
 }
 
 /**
- * Get text direction for a school
+ * Get text direction for a store
  */
-export function getSchoolDirection(
-  schoolLanguage?: string | null,
+export function getStoreDirection(
+  storeLanguage?: string | null,
   countryCode?: string | null
 ): TextDirection {
-  const language = getSchoolLanguage(schoolLanguage, countryCode);
+  const language = getStoreLanguage(storeLanguage, countryCode);
   return getTextDirection(language);
 }
 
 /**
- * Check if school uses RTL
+ * Check if store uses RTL
  */
-export function isSchoolRTL(
-  schoolLanguage?: string | null,
+export function isStoreRTL(
+  storeLanguage?: string | null,
   countryCode?: string | null
 ): boolean {
-  const language = getSchoolLanguage(schoolLanguage, countryCode);
+  const language = getStoreLanguage(storeLanguage, countryCode);
   return isRTL(language);
 }
 
 /**
- * Get full language configuration for a school
+ * Get full language configuration for a store
  */
-export function getSchoolLanguageConfig(
-  schoolLanguage?: string | null,
+export function getStoreLanguageConfig(
+  storeLanguage?: string | null,
   countryCode?: string | null
 ) {
-  const language = getSchoolLanguage(schoolLanguage, countryCode);
+  const language = getStoreLanguage(storeLanguage, countryCode);
   return getLanguageConfig(language);
 }
 

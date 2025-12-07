@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath } from "@/lib/utils";
-import { getSchoolBySlug } from "@/lib/api/server";
-import { getSchoolLanguage, getServerTranslations } from "@/lib/i18n/server-translations";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath } from "@/lib/utils";
+import { getStoreBySlug } from "@/lib/api/server";
+import { getStoreLanguage, getServerTranslations } from "@/lib/i18n/server-translations";
 
 export const metadata: Metadata = {
   title: "Reset password",
@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ForgotPasswordPage() {
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-  const school = schoolContext.slug ? await getSchoolBySlug(schoolContext.slug) : null;
-  const defaultCountryCode = school?.country_code || undefined;
-  const language = getSchoolLanguage(school);
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const store = storeContext.slug ? await getStoreBySlug(storeContext.slug) : null;
+  const defaultCountryCode = store?.country_code || undefined;
+  const language = getStoreLanguage(store);
   const t = getServerTranslations(language);
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 lg:flex-row lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">

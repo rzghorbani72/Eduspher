@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { buildSchoolPath } from "@/lib/utils";
+import { buildStorePath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronDown, ChevronRight, Filter, X } from "lucide-react";
@@ -94,7 +94,7 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
                 {categories.map((category) => (
                   <Link
                     key={category.id}
-                    href={buildSchoolPath(null, `/courses?category=${category.slug}`)}
+                    href={buildStorePath(null, `/courses?category=${category.slug}`)}
                     onClick={() => setIsOpen(false)}
                     className={cn(
                       "flex items-center justify-between rounded-lg px-4 py-2.5 text-sm transition-colors",

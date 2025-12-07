@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { RegisterForm } from "@/components/auth/register-form";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath } from "@/lib/utils";
-import { getSchoolBySlug } from "@/lib/api/server";
-import { getSchoolLanguage } from "@/lib/i18n/server";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath } from "@/lib/utils";
+import { getStoreBySlug } from "@/lib/api/server";
+import { getStoreLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export const metadata: Metadata = {
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default async function RegisterPage() {
-  const schoolContext = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(schoolContext.slug, path);
-  const school = schoolContext.slug ? await getSchoolBySlug(schoolContext.slug) : null;
-  const defaultCountryCode = school?.country_code || undefined;
+  const storeContext = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const store = storeContext.slug ? await getStoreBySlug(storeContext.slug) : null;
+  const defaultCountryCode = store?.country_code || undefined;
   
   // Get language for translations
-  const language = getSchoolLanguage(school?.language || null, school?.country_code || null);
+  const language = getStoreLanguage(store?.language || null, store?.country_code || null);
   const translate = (key: string) => t(key, language);
   
   return (
@@ -55,7 +55,7 @@ export default async function RegisterPage() {
       <div className="space-y-5">
         <RegisterForm 
           defaultCountryCode={defaultCountryCode}
-          primaryVerificationMethod={school?.primary_verification_method || 'phone'}
+          primaryVerificationMethod={store?.primary_verification_method || 'phone'}
         />
         <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
           {translate("auth.agreeToTerms")}{" "}

@@ -23,16 +23,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get school ID from cookies
-    const schoolId = cookieStore.get("skillforge_selected_school_id")?.value;
+    // Get store ID from cookies
+    const storeId = cookieStore.get("skillforge_selected_store_id")?.value;
 
-    // Fetch current school from backend
-    const response = await fetch(`${backendApiBaseUrl}/schools/current`, {
+    // Fetch current store from backend
+    const response = await fetch(`${backendApiBaseUrl}/stores/current`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        ...(schoolId && { "X-School-ID": schoolId }),
+        ...(storeId && { "X-Store-ID": storeId }),
       },
       credentials: "include",
     });
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       if (response.status === 404) {
         return NextResponse.json(
-          { success: false, error: "School not found" },
+          { success: false, error: "Store not found" },
           { status: 404 }
         );
       }

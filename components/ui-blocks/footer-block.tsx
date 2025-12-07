@@ -1,8 +1,8 @@
 import { SiteFooter } from "@/components/layout/site-footer";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { getSchoolContext } from "@/lib/school-context";
-import { buildSchoolPath } from "@/lib/utils";
+import { getStoreContext } from "@/lib/store-context";
+import { buildStorePath } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { Mail, Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
 
@@ -57,8 +57,8 @@ const socialLinks = [
 ];
 
 export async function FooterBlock({ id, config }: FooterBlockProps) {
-  const school = await getSchoolContext();
-  const buildPath = (path: string) => buildSchoolPath(school.slug, path);
+  const store = await getStoreContext();
+  const buildPath = (path: string) => buildStorePath(store.slug, path);
   
   const showSocialLinks = config?.showSocialLinks !== false;
   const showNewsletter = config?.showNewsletter !== false;
@@ -78,7 +78,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-lg shadow-sky-600/30">
               <span className="text-lg font-semibold">ES</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-white">{school.name}</p>
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">{store.name}</p>
           </div>
           <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
             {displayLinks.flatMap((section) =>
@@ -94,7 +94,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
             )}
           </div>
           <p className="text-xs text-slate-400 dark:text-slate-600">
-            &copy; {new Date().getFullYear()} {school.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {store.name}. All rights reserved.
           </p>
         </div>
       </footer>
@@ -110,7 +110,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-lg shadow-sky-600/30">
                 <span className="text-lg font-semibold">ES</span>
               </div>
-              <p className="text-lg font-semibold text-slate-900 dark:text-white">{school.name}</p>
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">{store.name}</p>
             </div>
             <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
               {env.siteDescription}
@@ -141,7 +141,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
         <div className="mx-auto w-full max-w-6xl border-t border-slate-200 px-6 py-4 dark:border-slate-800">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-slate-400 dark:text-slate-600">
-              &copy; {new Date().getFullYear()} {school.name}. All rights reserved.
+              &copy; {new Date().getFullYear()} {store.name}. All rights reserved.
             </p>
             {showSocialLinks && (
               <div className="flex items-center gap-4">
@@ -175,7 +175,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white shadow-lg shadow-sky-600/30">
               <span className="text-lg font-semibold">ES</span>
             </div>
-            <p className="text-lg font-semibold text-slate-900 dark:text-white">{school.name}</p>
+            <p className="text-lg font-semibold text-slate-900 dark:text-white">{store.name}</p>
           </div>
           <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
             {env.siteDescription} Grow your skills with curated lessons, guided paths, and
@@ -244,7 +244,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
       <div className="mx-auto w-full max-w-6xl border-t border-slate-200 px-6 py-4 dark:border-slate-800">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-slate-400 dark:text-slate-600">
-            &copy; {new Date().getFullYear()} {school.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {store.name}. All rights reserved.
           </p>
           {showLegal && (
             <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">

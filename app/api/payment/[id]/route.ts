@@ -36,8 +36,8 @@ export async function GET(
       );
     }
 
-    // Get school ID from cookies
-    const schoolId = cookieStore.get("skillforge_selected_school_id")?.value;
+    // Get store ID from cookies
+    const storeId = cookieStore.get("skillforge_selected_store_id")?.value;
 
     // Fetch payment details from backend
     const response = await fetch(`${backendApiBaseUrl}/payments/${paymentId}`, {
@@ -45,7 +45,7 @@ export async function GET(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        ...(schoolId && { "X-School-ID": schoolId }),
+        ...(storeId && { "X-Store-ID": storeId }),
       },
       credentials: "include",
     });

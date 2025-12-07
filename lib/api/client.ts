@@ -67,8 +67,8 @@ async function refreshToken(): Promise<boolean> {
 function redirectToLogin(): void {
   if (typeof window !== "undefined") {
     const currentPath = window.location.pathname + window.location.search;
-    const schoolSlug = getCookieValue(env.schoolSlugCookie);
-    const loginPath = schoolSlug ? `/${schoolSlug}/auth/login` : "/auth/login";
+    const storeSlug = getCookieValue(env.storeSlugCookie);
+    const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
     if (!currentPath.includes('/login')) {
       const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
       window.location.href = redirectUrl;
@@ -162,8 +162,8 @@ export const postJson = async <T>(
     "Content-Type": "application/json",
     Accept: "application/json",
   };
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  const storeId = getCookieValue(env.storeIdCookie);
+  const storeSlug = getCookieValue(env.storeSlugCookie);
     
     // Add CSRF token for protection
     const csrfToken = getCookieValue('csrf-token');
@@ -171,13 +171,13 @@ export const postJson = async <T>(
       headers["X-CSRF-Token"] = csrfToken;
     }
     
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
+  if (storeId) {
+    headers["X-Store-ID"] = storeId;
+  } else if (env.defaultStoreId) {
+    headers["X-Store-ID"] = String(env.defaultStoreId);
   }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
+  if (storeSlug) {
+    headers["X-Store-Slug"] = storeSlug;
   }
   const response = await fetch(`${baseUrl}${path}`, {
     method: "POST",
@@ -233,8 +233,8 @@ const putJson = async <T>(
     "Content-Type": "application/json",
     Accept: "application/json",
   };
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  const storeId = getCookieValue(env.storeIdCookie);
+  const storeSlug = getCookieValue(env.storeSlugCookie);
     
     // Add CSRF token for protection
     const csrfToken = getCookieValue('csrf-token');
@@ -242,13 +242,13 @@ const putJson = async <T>(
       headers["X-CSRF-Token"] = csrfToken;
     }
     
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
+  if (storeId) {
+    headers["X-Store-ID"] = storeId;
+  } else if (env.defaultStoreId) {
+    headers["X-Store-ID"] = String(env.defaultStoreId);
   }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
+  if (storeSlug) {
+    headers["X-Store-Slug"] = storeSlug;
   }
   const response = await fetch(`${baseUrl}${path}`, {
     method: "PUT",
@@ -277,8 +277,8 @@ const patchJson = async <T>(
     "Content-Type": "application/json",
     Accept: "application/json",
   };
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const schoolSlug = getCookieValue(env.schoolSlugCookie);
+  const storeId = getCookieValue(env.storeIdCookie);
+  const storeSlug = getCookieValue(env.storeSlugCookie);
     
     // Add CSRF token for protection
     const csrfToken = getCookieValue('csrf-token');
@@ -286,13 +286,13 @@ const patchJson = async <T>(
       headers["X-CSRF-Token"] = csrfToken;
     }
     
-  if (schoolId) {
-    headers["X-School-ID"] = schoolId;
-  } else if (env.defaultSchoolId) {
-    headers["X-School-ID"] = String(env.defaultSchoolId);
+  if (storeId) {
+    headers["X-Store-ID"] = storeId;
+  } else if (env.defaultStoreId) {
+    headers["X-Store-ID"] = String(env.defaultStoreId);
   }
-  if (schoolSlug) {
-    headers["X-School-Slug"] = schoolSlug;
+  if (storeSlug) {
+    headers["X-Store-Slug"] = storeSlug;
   }
   const response = await fetch(`${baseUrl}${path}`, {
     method: "PATCH",
@@ -319,8 +319,8 @@ const deleteJson = async <T>(
     const headers: HeadersInit = {
       Accept: "application/json",
     };
-    const schoolId = getCookieValue(env.schoolIdCookie);
-    const schoolSlug = getCookieValue(env.schoolSlugCookie);
+    const storeId = getCookieValue(env.storeIdCookie);
+    const storeSlug = getCookieValue(env.storeSlugCookie);
     
     // Add CSRF token for protection
     const csrfToken = getCookieValue('csrf-token');
@@ -328,13 +328,13 @@ const deleteJson = async <T>(
       headers["X-CSRF-Token"] = csrfToken;
     }
     
-    if (schoolId) {
-      headers["X-School-ID"] = schoolId;
-    } else if (env.defaultSchoolId) {
-      headers["X-School-ID"] = String(env.defaultSchoolId);
+    if (storeId) {
+      headers["X-Store-ID"] = storeId;
+    } else if (env.defaultStoreId) {
+      headers["X-Store-ID"] = String(env.defaultStoreId);
     }
-    if (schoolSlug) {
-      headers["X-School-Slug"] = schoolSlug;
+    if (storeSlug) {
+      headers["X-Store-Slug"] = storeSlug;
     }
     const response = await fetch(`${baseUrl}${path}`, {
       method: "DELETE",
@@ -355,17 +355,17 @@ const deleteJson = async <T>(
 export type LoginPayload = {
   identifier: string;
   password: string;
-  school_id?: number;
+  store_id?: number;
   role?: string;
 };
 
 export const login = async (payload: LoginPayload, options?: RequestOptions) => {
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+  const storeId = getCookieValue(env.storeIdCookie);
+  const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
   
   return postJson<AuthResponse>("/auth/login", {
     ...payload,
-    school_id: finalSchoolId,
+    store_id: finalStoreId,
   }, options);
 };
 
@@ -376,7 +376,7 @@ export type RegisterPayload = {
   password: string;
   confirmed_password: string;
   role?: string;
-  school_id?: number;
+  store_id?: number;
   display_name: string;
   bio?: string;
   website?: string;
@@ -384,12 +384,12 @@ export type RegisterPayload = {
 };
 
 export const register = async (payload: RegisterPayload, options?: RequestOptions) => {
-  const schoolId = getCookieValue(env.schoolIdCookie);
-  const finalSchoolId = schoolId ? Number(schoolId) : env.defaultSchoolId;
+  const storeId = getCookieValue(env.storeIdCookie);
+  const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
   
   return postJson<AuthResponse>("/auth/register", {
     role: "USER",
-    school_id: finalSchoolId,
+    store_id: finalStoreId,
     ...payload,
   }, options);
 };
@@ -418,7 +418,7 @@ export type ForgetPasswordPayload = {
   password: string;
   confirmed_password: string;
   otp: string;
-  school_id?: number;
+  store_id?: number;
 };
 
 export const validatePhoneAndEmail = (phone_number?: string, email?: string, options?: RequestOptions) => {
@@ -459,7 +459,7 @@ export const verifyPhoneOtp = (phone_number: string, otp: string, type: string, 
 export const forgetPassword = (payload: ForgetPasswordPayload, options?: RequestOptions) => {
   return postJson<{ message: string; status: string }>("/auth/forget-password", {
     ...payload,
-    school_id: payload.school_id || env.defaultSchoolId,
+    store_id: payload.store_id || env.defaultStoreId,
   }, options);
 };
 
@@ -493,7 +493,7 @@ export const updateProfile = async (
   return response.data;
 };
 
-export const updateSchool = async (
+export const updateStore = async (
   data: { name?: string; description?: string },
   options?: RequestOptions
 ) => {
@@ -505,7 +505,7 @@ export const updateSchool = async (
       name: string;
       description?: string;
     };
-  }>("/schools/current", data, options);
+  }>("/stores/current", data, options);
   return response.data;
 };
 

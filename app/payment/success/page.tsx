@@ -5,8 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, Loader2, Receipt, CreditCard, Calendar, Hash, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useSchoolPath } from "@/components/providers/school-provider";
-import { formatCurrencyWithSchool } from "@/lib/utils";
+import { useStorePath } from "@/components/providers/store-provider";
+import { formatCurrencyWithStore } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface PaymentDetails {
@@ -52,12 +52,12 @@ interface PaymentDetails {
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const buildPath = useSchoolPath();
+  const buildPath = useStorePath();
   const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [school, setSchool] = useState<any>(null);
+  const [store, setStore] = useState<any>(null);
 
   // Bank gateway parameters (common across different gateways)
   const paymentId = searchParams.get("payment_id") || searchParams.get("PaymentId") || searchParams.get("paymentId");
@@ -101,14 +101,14 @@ export default function PaymentSuccessPage() {
         }
       }
 
-      // Fetch school for currency formatting
+      // Fetch store for currency formatting
       try {
-        const schoolResponse = await fetch("/api/school/current", {
+        const storeResponse = await fetch("/api/store/current", {
           credentials: "include",
         });
-        if (schoolResponse.ok) {
-          const schoolData = await schoolResponse.json();
-          setSchool(schoolData.data);
+        if (storeResponse.ok) {
+          const storeData = await storeResponse.json();
+          setStore(storeData.data);
         }
       } catch (err) {
         // Silently fail - currency formatting will use defaults
@@ -207,7 +207,7 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.amountPaid")}</span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
-                    {formatCurrencyWithSchool(paymentDetails.amount, school, undefined, language)}
+                    {formatCurrencyWithStore(paymentDetails.amount, store, undefined, language)}
                   </span>
                 </div>
               )}
@@ -358,7 +358,7 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.gatewayFee")}</span>
                   <span className="text-slate-900 dark:text-white">
-                    {formatCurrencyWithSchool(latestResponse.fee_amount, school, undefined, language)}
+                    {formatCurrencyWithStore(latestResponse.fee_amount, store, undefined, language)}
                   </span>
                 </div>
               )}
