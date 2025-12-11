@@ -19,6 +19,51 @@ const getCookieValue = (name: string) => {
   return match ? decodeURIComponent(match[1]) : null;
 };
 
+/**
+ * Get store ID - ensures it always exists (from cookie or default)
+ * Store ID MUST exist for all API calls
+ */
+const getStoreId = (): string => {
+  const storeId = getCookieValue(env.storeIdCookie);
+  if (storeId) {
+    return storeId;
+  }
+  if (env.defaultStoreId) {
+    return String(env.defaultStoreId);
+  }
+  throw new Error('Store ID is required but not found in cookies or environment variables');
+};
+
+/**
+ * Get store slug (optional)
+ */
+const getStoreSlug = (): string | null => {
+  return getCookieValue(env.storeSlugCookie);
+};
+
+/**
+ * Build headers with required store ID and optional store slug
+ */
+const buildHeaders = (additionalHeaders: HeadersInit = {}): HeadersInit => {
+  const headers: HeadersInit = {
+    ...additionalHeaders,
+    "X-Store-ID": getStoreId(), // Store ID MUST exist
+  };
+
+  const storeSlug = getStoreSlug();
+  if (storeSlug) {
+    headers["X-Store-Slug"] = storeSlug;
+  }
+
+  // Add CSRF token for protection
+  const csrfToken = getCookieValue('csrf-token');
+  if (csrfToken) {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+
+  return headers;
+};
+
 // Token refresh state management
 let isRefreshing = false;
 let refreshPromise: Promise<boolean> | null = null;
@@ -67,7 +112,7 @@ async function refreshToken(): Promise<boolean> {
 function redirectToLogin(): void {
   if (typeof window !== "undefined") {
     const currentPath = window.location.pathname + window.location.search;
-    const storeSlug = getCookieValue(env.storeSlugCookie);
+    const storeSlug = getStoreSlug();
     const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
     if (!currentPath.includes('/login')) {
       const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
@@ -158,37 +203,23 @@ export const postJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  const storeId = getCookieValue(env.storeIdCookie);
-  const storeSlug = getCookieValue(env.storeSlugCookie);
-    
-    // Add CSRF token for protection
-    const csrfToken = getCookieValue('csrf-token');
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-    }
-    
-  if (storeId) {
-    headers["X-Store-ID"] = storeId;
-  } else if (env.defaultStoreId) {
-    headers["X-Store-ID"] = String(env.defaultStoreId);
-  }
-  if (storeSlug) {
-    headers["X-Store-Slug"] = storeSlug;
-  }
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "POST",
-    credentials: "include",
-    headers,
-    body: JSON.stringify(body),
-    signal: options?.signal,
-  });
+    const headers = buildHeaders({
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    });
+
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
     
     // Skip refresh for auth endpoints
-    const isAuthEndpoint = path.includes('/auth/login') || 
+    const isAuthEndpoint = path.includes('/auth/public/login') || 
+                           path.includes('/auth/staff/login') ||
+                           path.includes('/auth/admin/login') ||
                            path.includes('/auth/register') ||
                            path.includes('/auth/refresh');
     
@@ -204,15 +235,16 @@ export const postJson = async <T>(
 
 const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-  const headers: HeadersInit = {
-    Accept: "application/json",
-  };
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "GET",
-    credentials: "include",
-    headers,
-    signal: options?.signal,
-  });
+    const headers = buildHeaders({
+      Accept: "application/json",
+    });
+
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "GET",
+      credentials: "include",
+      headers,
+      signal: options?.signal,
+    });
     return handleResponse<T>(
       response, 
       () => makeRequest(true),
@@ -229,34 +261,18 @@ const putJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  const storeId = getCookieValue(env.storeIdCookie);
-  const storeSlug = getCookieValue(env.storeSlugCookie);
-    
-    // Add CSRF token for protection
-    const csrfToken = getCookieValue('csrf-token');
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-    }
-    
-  if (storeId) {
-    headers["X-Store-ID"] = storeId;
-  } else if (env.defaultStoreId) {
-    headers["X-Store-ID"] = String(env.defaultStoreId);
-  }
-  if (storeSlug) {
-    headers["X-Store-Slug"] = storeSlug;
-  }
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "PUT",
-    credentials: "include",
-    headers,
-    body: JSON.stringify(body),
-    signal: options?.signal,
-  });
+    const headers = buildHeaders({
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    });
+
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "PUT",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
     return handleResponse<T>(
       response, 
       () => makeRequest(true),
@@ -273,34 +289,18 @@ const patchJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  const storeId = getCookieValue(env.storeIdCookie);
-  const storeSlug = getCookieValue(env.storeSlugCookie);
-    
-    // Add CSRF token for protection
-    const csrfToken = getCookieValue('csrf-token');
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-    }
-    
-  if (storeId) {
-    headers["X-Store-ID"] = storeId;
-  } else if (env.defaultStoreId) {
-    headers["X-Store-ID"] = String(env.defaultStoreId);
-  }
-  if (storeSlug) {
-    headers["X-Store-Slug"] = storeSlug;
-  }
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: "PATCH",
-    credentials: "include",
-    headers,
-    body: JSON.stringify(body),
-    signal: options?.signal,
-  });
+    const headers = buildHeaders({
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    });
+
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
     return handleResponse<T>(
       response, 
       () => makeRequest(true),
@@ -316,26 +316,10 @@ const deleteJson = async <T>(
   options?: RequestOptions
 ): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers: HeadersInit = {
+    const headers = buildHeaders({
       Accept: "application/json",
-    };
-    const storeId = getCookieValue(env.storeIdCookie);
-    const storeSlug = getCookieValue(env.storeSlugCookie);
-    
-    // Add CSRF token for protection
-    const csrfToken = getCookieValue('csrf-token');
-    if (csrfToken) {
-      headers["X-CSRF-Token"] = csrfToken;
-    }
-    
-    if (storeId) {
-      headers["X-Store-ID"] = storeId;
-    } else if (env.defaultStoreId) {
-      headers["X-Store-ID"] = String(env.defaultStoreId);
-    }
-    if (storeSlug) {
-      headers["X-Store-Slug"] = storeSlug;
-    }
+    });
+
     const response = await fetch(`${baseUrl}${path}`, {
       method: "DELETE",
       credentials: "include",
@@ -363,7 +347,11 @@ export const login = async (payload: LoginPayload, options?: RequestOptions) => 
   const storeId = getCookieValue(env.storeIdCookie);
   const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
   
-  return postJson<AuthResponse>("/auth/login", {
+  if (!finalStoreId) {
+    throw new Error('Store ID is required for public login');
+  }
+  
+  return postJson<AuthResponse>("/auth/public/login", {
     ...payload,
     store_id: finalStoreId,
   }, options);
