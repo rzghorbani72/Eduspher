@@ -77,19 +77,19 @@ export default async function RootLayout({
   const storeIcons: string[] = [];
   if (currentStore) {
     // Get logo if available
-    if ((currentStore as any).logo?.url) {
-      const logoUrl = resolveAssetUrl((currentStore as any).logo.url);
+    if ((currentStore as any).logo?.publicUrl) {
+      const logoUrl = resolveAssetUrl((currentStore as any).logo.publicUrl);
       if (logoUrl) storeIcons.push(logoUrl);
     }
     // Get cover image if available
-    if (currentStore.cover?.url) {
-      const coverUrl = resolveAssetUrl(currentStore.cover.url);
+    if (currentStore.cover?.publicUrl) {
+      const coverUrl = resolveAssetUrl(currentStore.cover.publicUrl);
       if (coverUrl) storeIcons.push(coverUrl);
     }
     // Get other images if available
     if (currentStore.images && Array.isArray(currentStore.images)) {
       currentStore.images.slice(0, 5).forEach((img: any) => {
-        const imgUrl = img.url || img.filename;
+        const imgUrl = img.publicUrl || img.filename;
         if (imgUrl) {
           const resolvedUrl = resolveAssetUrl(imgUrl);
           if (resolvedUrl) storeIcons.push(resolvedUrl);

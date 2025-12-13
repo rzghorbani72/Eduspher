@@ -21,7 +21,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, storeSlug = null, store = null }: ProductCardProps) => {
   const { t, language } = useTranslation();
-  const coverUrl = resolveAssetUrl(product.cover?.url) ?? "/window.svg";
+  const coverUrl = resolveAssetUrl(product.cover?.publicUrl) ?? "/window.svg";
   const hasDiscount = product.original_price && product.original_price > product.price;
   const detailHref = buildStorePath(storeSlug, `/products/${product.id}`);
   const isPhysical = product.product_type === 'PHYSICAL';

@@ -21,7 +21,7 @@ interface CourseCardProps {
 
 export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCardProps) => {
   const { t, language } = useTranslation();
-  const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/window.svg";
+  const coverUrl = resolveAssetUrl(course.cover?.publicUrl) ?? "/window.svg";
   const hasDiscount = course.original_price && course.original_price > course.price;
   const detailHref = buildStorePath(storeSlug, `/courses/${course.id}`);
 

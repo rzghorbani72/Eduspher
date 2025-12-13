@@ -502,11 +502,6 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
 
     return null;
   };
-  
-  // Debug: Log animation type (remove in production)
-  if (typeof window !== 'undefined' && animationType === 'waves') {
-    console.log('Waves animation rendering:', { animationType, primaryColor, secondaryColor, accentColor, baseDuration });
-  }
 
   return (
     <div className={`fixed inset-0 -z-10 overflow-hidden pointer-events-none ${className}`}>

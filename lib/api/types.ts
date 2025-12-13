@@ -1,6 +1,6 @@
 export interface MediaAsset {
   id: number;
-  url: string;
+  publicUrl: string;
   title?: string | null;
   alt?: string | null;
 }
@@ -27,10 +27,10 @@ export interface LessonSummary {
   duration?: number | null;
   is_free?: boolean;
   order?: number | null;
-  video?: MediaAsset | null;
-  audio?: MediaAsset | null;
-  document?: MediaAsset | null;
-  image?: MediaAsset | null;
+  Video?: MediaAsset | null;
+  Audio?: MediaAsset | null;
+  Document?: MediaAsset | null;
+  Image?: MediaAsset | null;
 }
 
 export interface SeasonSummary {
@@ -38,7 +38,7 @@ export interface SeasonSummary {
   title: string;
   order?: number | null;
   description?: string | null;
-  lessons?: LessonSummary[];
+  Lesson?: LessonSummary[];
 }
 
 export interface CourseSummary {
@@ -61,12 +61,13 @@ export interface CourseSummary {
   duration?: number | null;
   comments_count?: number;
   author?: AuthorSummary | null;
-  category?: CategorySummary | null;
-  cover?: MediaAsset | null;
-  seasons?: SeasonSummary[];
-  video?: MediaAsset | null;
-  audio?: MediaAsset | null;
-  document?: MediaAsset | null;
+  Category?: CategorySummary | null;
+  Image?: MediaAsset | null;
+  Season: Array<SeasonSummary> | null;
+  Video?: MediaAsset | null;
+  Audio?: MediaAsset | null;
+  Profile?: AuthorSummary | null;
+  Document?: MediaAsset | null;
   productCourses?: Array<{
     id: number;
     product_id: number;

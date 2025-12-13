@@ -439,9 +439,9 @@ export default async function AccountPage() {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="flex items-start gap-3">
-                    {enrollment.course.cover?.url && (
+                    {enrollment.course.cover?.publicUrl && (
                       <img
-                        src={resolveAssetUrl(enrollment.course.cover.url) || ""}
+                        src={resolveAssetUrl(enrollment.course.cover.publicUrl) || ""}
                         alt={enrollment.course.title}
                         className="h-16 w-16 rounded-lg object-cover"
                       />

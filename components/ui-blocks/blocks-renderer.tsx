@@ -45,15 +45,6 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
     return null;
   }
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[BlocksRenderer] Rendering blocks:', visibleBlocks.map(b => ({
-      id: b.id,
-      type: b.type,
-      order: b.order,
-      hasConfig: !!b.config
-    })));
-  }
-
   return (
     <>
       {visibleBlocks.map((block) => {

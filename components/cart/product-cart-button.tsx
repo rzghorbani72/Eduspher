@@ -51,7 +51,7 @@ export function ProductCartButton({ product, className }: ProductCartButtonProps
       product_id: product.id,
       product_title: product.title,
       product_price: product.price,
-      product_cover: product.cover?.url,
+      product_cover: product.cover?.publicUrl,
     });
 
     if (success) {

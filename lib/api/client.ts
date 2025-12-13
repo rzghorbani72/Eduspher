@@ -474,7 +474,7 @@ export const updateProfile = async (
       avatar?: {
         id: number;
         filename: string;
-        url: string;
+        publicUrl: string;
       };
     };
   }>(`/profiles/${profileId}`, data, options);

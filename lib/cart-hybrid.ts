@@ -293,7 +293,7 @@ export async function loadCartFromServer(): Promise<CartItem[]> {
             product_id: item.product_id,
             product_title: item.product?.title || item.product_title,
             product_price: item.product?.price || item.product_price,
-            product_cover: item.product?.cover?.url || item.product_cover,
+            product_cover: item.product?.cover?.publicUrl || item.product_cover,
             added_at: item.created_at || new Date().toISOString(),
           };
         } else {
@@ -302,7 +302,7 @@ export async function loadCartFromServer(): Promise<CartItem[]> {
             course_id: item.course_id,
             course_title: item.course?.title || item.course_title,
             course_price: item.course?.price || item.course_price,
-            course_cover: item.course?.cover?.url || item.course_cover,
+            course_cover: item.course?.cover?.publicUrl || item.course_cover,
             added_at: item.created_at || new Date().toISOString(),
           };
         }

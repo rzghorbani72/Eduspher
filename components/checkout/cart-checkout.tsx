@@ -94,7 +94,6 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
 
   const handleRemoveItem = (item: CartItem, e?: React.MouseEvent) => {
     // Prevent event propagation to avoid any parent click handlers
-    console.log("handleRemoveItem", item);
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -102,7 +101,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     
     // Handle legacy items without item_type (assume COURSE if has course_id)
     const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
-    console.log("itemType", itemType);
+
     let removed = false;
     if (itemType === 'PRODUCT' && item.product_id !== undefined && item.product_id !== null) {
       removed = removeProductFromCart(item.product_id);

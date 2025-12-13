@@ -130,7 +130,7 @@ export default async function CheckoutPage({
     );
   }
 
-  const coverUrl = resolveAssetUrl(course.cover?.url) ?? "/globe.svg";
+  const coverUrl = resolveAssetUrl(course.cover?.publicUrl) ?? "/globe.svg";
   const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
 
   return (
@@ -148,7 +148,7 @@ export default async function CheckoutPage({
         <div className="space-y-5">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
             <div className="flex gap-4">
-              {course.cover?.url && (
+              {course.cover?.publicUrl && (
                 <img
                   src={coverUrl}
                   alt={course.title}

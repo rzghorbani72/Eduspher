@@ -67,21 +67,7 @@ export default async function Home() {
   // If we have a UI template, render blocks dynamically
   // Otherwise, use the default static layout
   const hasUITemplate = themeAndTemplate.template?.blocks && themeAndTemplate.template.blocks.length > 0;
-  
-  // Log template status in development
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Home Page] Template status:', {
-      hasTemplate: !!themeAndTemplate.template,
-      blocksCount: themeAndTemplate.template?.blocks?.length || 0,
-      blocks: themeAndTemplate.template?.blocks?.map(b => ({
-        id: b.id,
-        type: b.type,
-        order: b.order,
-        isVisible: b.isVisible
-      }))
-    });
-  }
-  
+    
   // If we have a UI template, render blocks directly without wrapper
   // Blocks handle their own full-width layouts (header, hero, footer)
   if (hasUITemplate && themeAndTemplate.template) {
@@ -288,7 +274,7 @@ export default async function Home() {
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {articles.slice(0, 3).map((article, index) => {
-              const imageUrl = resolveAssetUrl(article.featured_image?.url) ?? "/globe.svg";
+              const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";
               const description = article.excerpt ?? article.description ?? "";
               const publishedDate = article.published_at
                 ? new Date(article.published_at).toLocaleDateString()

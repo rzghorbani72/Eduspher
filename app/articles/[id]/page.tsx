@@ -35,7 +35,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
   const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
   const translate = (key: string) => t(key, language);
 
-  const imageUrl = resolveAssetUrl(article.featured_image?.url) ?? "/globe.svg";
+  const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";
   const publishedDate = article.published_at
     ? new Date(article.published_at).toLocaleDateString()
     : "";

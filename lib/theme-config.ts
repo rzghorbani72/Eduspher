@@ -82,8 +82,6 @@ export async function getStoreThemeAndTemplate() {
         getStoreUITemplate(storeContext.slug),
       ]);
 
-      console.log('publicThemeData', publicThemeData);
-
       themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
       templateData = publicTemplateData.status === 'fulfilled' ? publicTemplateData.value : null;
     }

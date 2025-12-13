@@ -33,7 +33,7 @@ export default async function ArticlesPage() {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {articles.map((article, index) => {
-          const imageUrl = resolveAssetUrl(article.featured_image?.url) ?? "/file.svg";
+          const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? "/file.svg";
           const publishedDate = article.published_at
             ? new Date(article.published_at).toLocaleDateString()
             : "";

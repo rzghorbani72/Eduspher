@@ -26,6 +26,7 @@ const detailItems = (
   translate?: (key: string) => string,
   language?: string
 ) => {
+
   if (!course) return [];
   const t = translate || ((key: string) => key);
   const hasDiscount = course.original_price && course.original_price > course.price;
@@ -112,32 +113,23 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     return notFound();
   }
 
-  const normalizedCourse = {
-    ...course,
-    access_control: undefined,
-    seasons: (course.seasons ?? []).map((season) => ({
-      ...season,
-      lessons: season.lessons ?? [],
-    })),
-  };
-
-  const coverUrl = resolveAssetUrl(normalizedCourse.cover?.url) ?? "/globe.svg";
-  const videoUrl = resolveAssetUrl(normalizedCourse.video?.url);
-  const audioUrl = resolveAssetUrl(normalizedCourse.audio?.url);
-  const documentUrl = resolveAssetUrl(normalizedCourse.document?.url);
+  const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
+  const videoUrl = resolveAssetUrl(course.Video?.publicUrl);
+  const audioUrl = resolveAssetUrl(course.Audio?.publicUrl);
+  const documentUrl = resolveAssetUrl(course.Document?.publicUrl);
 
   const [relatedCourses, relatedProducts] = await Promise.all([
     getCourses({
       published: true,
       limit: 3,
       order_by: "NEWEST",
-      category_id: normalizedCourse.category?.id,
+      category_id: course.Category?.id,
     }).catch(() => null),
     getProducts({
       published: true,
       limit: 3,
       order_by: "NEWEST",
-      course_id: normalizedCourse.id,
+      course_id: course.id,
     }).catch(() => null),
   ]);
 
@@ -152,23 +144,23 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
       <section className="grid gap-6 lg:grid-cols-[1.6fr_1fr] animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="space-y-5">
           <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
-            {normalizedCourse.category ? <Badge variant="soft">{normalizedCourse.category.name}</Badge> : null}
-            {normalizedCourse.is_featured ? <Badge variant="warning">{translate("courses.featured")}</Badge> : null}
-            {normalizedCourse.is_certificate ? <Badge variant="success">{translate("courses.certificate")}</Badge> : null}
+            {course.Category ? <Badge variant="soft">{course.Category.name}</Badge> : null}
+            {course.is_featured ? <Badge variant="warning">{translate("courses.featured")}</Badge> : null}
+            {course.is_certificate ? <Badge variant="success">{translate("courses.certificate")}</Badge> : null}
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-            {normalizedCourse.title}
+            {course.title}
           </h1>
-          {normalizedCourse.short_description ? (
+          {course.short_description ? (
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-              {normalizedCourse.short_description}
+              {course.short_description}
             </p>
           ) : null}
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-250">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">{translate("courses.whatYouWillLearn")}</h2>
-            {normalizedCourse.description ? (
+            {course.description ? (
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                {normalizedCourse.description}
+                {course.description}
               </p>
             ) : (
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
@@ -177,17 +169,17 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             )}
           </div>
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <CourseCurriculum courseTitle={normalizedCourse.title} seasons={normalizedCourse.seasons ?? []} />
+            <CourseCurriculum courseTitle={course.title} seasons={course.Season ?? []} />
           </div>
         </div>
         <aside className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950">
             <div className="relative overflow-hidden">
-              <img src={coverUrl} alt={normalizedCourse.title} className="h-56 w-full object-cover transition-transform duration-500 hover:scale-105" />
+              <img src={coverUrl} alt={course.title} className="h-56 w-full object-cover transition-transform duration-500 hover:scale-105" />
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(normalizedCourse, store, translate, language).map((item) => (
+                {detailItems(course, store, translate, language).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
@@ -206,13 +198,13 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               </div>
               <div className="space-y-3">
                 <Link
-                  href={buildPath(`/checkout?course=${normalizedCourse.id}`)}
+                  href={buildPath(`/checkout?course=${course.id}`)}
                   className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
                 >
                   {translate("courses.enrollNow")}
                 </Link>
-                {!normalizedCourse.is_free && (
-                  <CartButton course={normalizedCourse} />
+                {!course.is_free && (
+                  <CartButton course={course} />
                 )}
               </div>
               <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
@@ -263,14 +255,14 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
         />
       ) : null}
 
-      <CourseQnA courseId={normalizedCourse.id} isLoggedIn={!!user} userRole={user?.role} />
+      <CourseQnA courseId={course.id} isLoggedIn={!!user} userRole={user?.role} />
 
       {relatedCourses?.courses?.length ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
           <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("courses.youMightAlsoLike")}</h2>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {relatedCourses.courses
-              .filter((item) => item.id !== normalizedCourse.id)
+              .filter((item) => item.id !== course.id)
               .map((item, index) => (
                 <div
                   key={item.id}

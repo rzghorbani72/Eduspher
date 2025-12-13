@@ -18,7 +18,7 @@ type LessonWithSeason = LessonSummary & {
 
 const buildLessons = (seasons: SeasonSummary[]): LessonWithSeason[] =>
   seasons.flatMap((season) =>
-    (season.lessons ?? []).map((lesson) => ({
+    (season.Lesson ?? []).map((lesson) => ({
       ...lesson,
       seasonId: season.id,
       seasonTitle: season.title,
@@ -30,15 +30,15 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
   const lessons = useMemo(() => buildLessons(seasons), [seasons]);
 
   const initialLesson = useMemo(() => {
-    return lessons.find((lesson) => lesson.is_free && lesson.video?.url)
-      ?? lessons.find((lesson) => lesson.video?.url)
+    return lessons.find((lesson) => lesson.is_free && (lesson as any).Video?.publicUrl)
+      ?? lessons.find((lesson) => (lesson as any).Video?.publicUrl)
       ?? lessons[0]
       ?? null;
   }, [lessons]);
 
   const [currentLesson, setCurrentLesson] = useState<LessonWithSeason | null>(initialLesson);
 
-  const currentVideoUrl = currentLesson?.video?.url ? resolveAssetUrl(currentLesson.video.url) : null;
+  const currentVideoUrl = (currentLesson as any)?.Video?.publicUrl ? resolveAssetUrl((currentLesson as any).Video.publicUrl) : null;
   const currentSeasonTitle = currentLesson?.seasonTitle ?? (seasons[0]?.title ?? t("courses.coursePreview"));
   const currentTitle = currentLesson?.title ?? courseTitle;
 
@@ -72,7 +72,7 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
             .slice()
             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
             .map((season, seasonIndex) => {
-              const seasonLessons = (season.lessons ?? []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+              const seasonLessons = (season.Lesson ?? []).slice().sort((a: LessonSummary, b: LessonSummary) => (a.order ?? 0) - (b.order ?? 0));
 
               return (
                 <div
@@ -98,9 +98,9 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
 
                   {seasonLessons.length ? (
                     <ul className="divide-y divide-slate-200 dark:divide-slate-800">
-                      {seasonLessons.map((lesson, lessonIndex) => {
+                      {seasonLessons.map((lesson: LessonSummary, lessonIndex: number) => {
                         const isActive = currentLesson?.id === lesson.id;
-                        const hasVideo = Boolean(lesson.video?.url);
+                        const hasVideo = Boolean((lesson as any).Video?.publicUrl);
                         return (
                           <li key={lesson.id}>
                             <button

@@ -143,7 +143,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
     access_control: undefined,
   };
 
-  const coverUrl = resolveAssetUrl(normalizedProduct.cover?.url) ?? "/globe.svg";
+  const coverUrl = resolveAssetUrl(normalizedProduct.cover?.publicUrl) ?? "/globe.svg";
   const isPhysical = normalizedProduct.product_type === 'PHYSICAL';
   const isOutOfStock = isPhysical && normalizedProduct.stock_quantity !== null && normalizedProduct.stock_quantity <= 0;
 
@@ -268,7 +268,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
                   <li key={image.id || index}>
                     <Link 
                       className="group inline-flex items-center font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline" 
-                      href={resolveAssetUrl(image.url) || '#'}
+                      href={resolveAssetUrl(image.publicUrl) || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
