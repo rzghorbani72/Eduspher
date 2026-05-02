@@ -42,11 +42,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     
     // If asChild is true, we don't want to pass disabled/aria-busy to the child component
     // as it might be a Link or other non-button element
-    // Also, we need to exclude asChild from props to prevent it from being passed to DOM
-    const { asChild: _, ...restProps } = props;
     const buttonProps = asChild
-      ? restProps
-      : { ...restProps, disabled: isDisabled, "aria-busy": loading };
+      ? props
+      : { ...props, disabled: isDisabled, "aria-busy": loading };
     
     // When asChild is true, Slot expects exactly one child element
     // So we render differently based on asChild

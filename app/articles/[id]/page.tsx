@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getArticleById, getStoreBySlug, getCurrentStore } from "@/lib/api/server";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath, resolveAssetUrl } from "@/lib/utils";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getArticleById, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { sanitizeRichText } from "@/lib/sanitize";
 
@@ -19,20 +19,20 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
   const { id } = await params;
   const [article, storeContext] = await Promise.all([
     getArticleById(id).catch(() => null),
-    getStoreContext(),
+    getAcademyContext(),
   ]);
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
 
   if (!article) {
     return notFound();
   }
 
   // Get store language for translations
-  let currentStore = await getCurrentStore().catch(() => null);
-  if (!currentStore && storeContext.slug) {
-    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
+  let currentAcademy = await getCurrentAcademy().catch(() => null);
+  if (!currentAcademy && storeContext.slug) {
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";

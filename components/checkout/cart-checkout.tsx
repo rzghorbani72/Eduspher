@@ -5,14 +5,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle, Loader2, AlertCircle, X, Trash2 } from "lucide-react";
-import { formatCurrencyWithStore } from "@/lib/utils";
+import { formatCurrencyWithAcademy } from "@/lib/utils";
 import { useStorePath } from "@/components/providers/store-provider";
-import { getCartItems, removeCourseFromCart, removeProductFromCart, syncCart, type CartItem } from "@/app/actions/cart";
+import { getCartItems, removeCourseFromCart, syncCart, type CartItem } from "@/app/actions/cart";
 import { validateVoucher } from "@/app/actions/voucher";
 import { processCheckout } from "@/app/actions/checkout";
 import { useTransition } from "react";
 import { useTranslation } from "@/lib/i18n/hooks";
-import type { CourseSummary } from "@/lib/api/types";
 
 interface CartCheckoutProps {
   user: {
@@ -23,11 +22,11 @@ interface CartCheckoutProps {
     display_name?: string;
     currentProfile?: {
       id: number;
-      storeId: number;
+      academyId: number;
       role: string;
       displayName: string;
     };
-    currentStore?: {
+    currentAcademy?: {
       id: number;
       name: string;
       slug: string;
@@ -39,7 +38,7 @@ interface CartCheckoutProps {
   session: {
     userId: number;
     profileId: number;
-    storeId: number | null;
+    academyId: number | null;
   };
 }
 
@@ -93,22 +92,13 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   }, []);
 
   const handleRemoveItem = (item: CartItem, e?: React.MouseEvent) => {
-    // Prevent event propagation to avoid any parent click handlers
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
-    
-    // Handle legacy items without item_type (assume COURSE if has course_id)
-    const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
 
-    let removed = false;
-    if (itemType === 'PRODUCT' && item.product_id !== undefined && item.product_id !== null) {
-      removed = removeProductFromCart(item.product_id);
-    } else if (item.course_id !== undefined && item.course_id !== null) {
-      removed = removeCourseFromCart(item.course_id);
-    }
-    
+    const removed = removeCourseFromCart(item.course_id);
+
     if (removed) {
       // Update cart state immediately from localStorage (remove functions update localStorage synchronously)
       // The cartUpdated event will also trigger useEffect to refresh, but this ensures immediate UI update
@@ -125,15 +115,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     setValidatingVoucher(true);
 
     const totalAmount = cart.reduce(
-      (sum: number, item: CartItem) => {
-        // Handle legacy items without item_type (assume COURSE if has course_id)
-        const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
-        const price = itemType === 'PRODUCT' 
-          ? (item.product_price || 0) 
-          : (item.course_price || 0);
-        return sum + (price * 100);
-      },
-      0
+      (sum: number, item: CartItem) => sum + (item.course_price || 0) * 100,
+      0,
     );
 
     try {
@@ -174,9 +157,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         await syncCart();
         
         // Filter out undefined course_ids
-        const courseIds = cart
-          .map((item: CartItem) => item.course_id)
-          .filter((id): id is number => typeof id === "number");
+        const courseIds = cart.map((item: CartItem) => item.course_id);
         const result = await processCheckout({
           course_ids: courseIds,
           user_id: user.id,
@@ -225,15 +206,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   }
 
   const totalAmount = cart.reduce(
-    (sum: number, item: CartItem) => {
-      // Handle legacy items without item_type (assume COURSE if has course_id)
-      const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
-      const price = itemType === 'PRODUCT' 
-        ? (item.product_price || 0) 
-        : (item.course_price || 0);
-      return sum + (price * 100);
-    },
-    0
+    (sum: number, item: CartItem) => sum + (item.course_price || 0) * 100,
+    0,
   );
   const finalPrice = discount ? discount.final_amount / 100 : totalAmount / 100;
   const discountAmount = discount ? discount.discount_amount / 100 : 0;
@@ -246,23 +220,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         </h2>
         <div className="space-y-3">
           {cart.map((item: CartItem, index: number) => {
-            // Handle legacy items without item_type (assume COURSE if has course_id)
-            const itemType = item.item_type || (item.course_id ? 'COURSE' : 'PRODUCT');
-            const itemId = itemType === 'PRODUCT' ? item.product_id : item.course_id;
-            const itemTitle = itemType === 'PRODUCT' 
-              ? (item.product_title || 'Unknown Product')
-              : (item.course_title || 'Unknown Course');
-            const itemPrice = itemType === 'PRODUCT' 
-              ? (item.product_price || 0)
-              : (item.course_price || 0);
-            const itemTypeLabel = itemType === 'PRODUCT' ? t("products.title") : t("courses.title");
-            
-            // Use index in key to ensure uniqueness even if duplicates exist
-            const baseKey = itemType === 'PRODUCT' 
-              ? `product_${item.product_id}` 
-              : `course_${item.course_id}`;
-            const uniqueKey = `${baseKey}_${index}_${item.added_at || Date.now()}`;
-            
+            const uniqueKey = `course_${item.course_id}_${index}_${item.added_at || Date.now()}`;
+            const itemTitle = item.course_title || "Course";
+            const itemPrice = item.course_price || 0;
+
             return (
               <div
                 key={uniqueKey}
@@ -274,11 +235,11 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                       {itemTitle}
                     </h3>
                     <span className="text-xs text-slate-500 dark:text-slate-400">
-                      ({itemTypeLabel})
+                      ({t("courses.title")})
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                    {formatCurrencyWithStore(itemPrice, user.currentStore || null, undefined, language)}
+                    {formatCurrencyWithAcademy(itemPrice, user.currentAcademy || null, undefined, language)}
                   </p>
                 </div>
                 <button
@@ -306,7 +267,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 {voucherCode.toUpperCase()}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">
-                {t("checkout.discount")}: {formatCurrencyWithStore(discountAmount, user.currentStore || null, undefined, language)}
+                {t("checkout.discount")}: {formatCurrencyWithAcademy(discountAmount, user.currentAcademy || null, undefined, language)}
               </div>
             </div>
             <button
@@ -355,14 +316,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         <div className="flex justify-between text-sm">
           <span className="text-slate-600 dark:text-slate-400">{t("checkout.subtotal")}</span>
           <span className="font-medium text-slate-900 dark:text-white">
-            {formatCurrencyWithStore(totalAmount / 100, user.currentStore || null, undefined, language)}
+            {formatCurrencyWithAcademy(totalAmount / 100, user.currentAcademy || null, undefined, language)}
           </span>
         </div>
         {discount && discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
             <span>{t("checkout.discount")}</span>
             <span className="font-medium">
-              -{formatCurrencyWithStore(discountAmount, user.currentStore || null, undefined, language)}
+              -{formatCurrencyWithAcademy(discountAmount, user.currentAcademy || null, undefined, language)}
             </span>
           </div>
         )}
@@ -370,7 +331,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           <div className="flex justify-between">
             <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
             <span className="text-xl font-bold text-slate-900 dark:text-white">
-              {formatCurrencyWithStore(finalPrice, user.currentStore || null, undefined, language)}
+              {formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}
             </span>
           </div>
         </div>
@@ -398,7 +359,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             {t("checkout.processing")}
           </>
         ) : (
-          `${t("checkout.completePurchase")} - ${formatCurrencyWithStore(finalPrice, user.currentStore || null, undefined, language)}`
+          `${t("checkout.completePurchase")} - ${formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}`
         )}
       </Button>
     </div>

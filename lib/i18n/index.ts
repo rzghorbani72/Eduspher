@@ -25,7 +25,8 @@ export type TranslationKey = keyof typeof en;
  */
 export function t(key: string, language: LanguageCode = 'en'): string {
   const keys = key.split('.');
-  let value: any = translations[language] || translations.en;
+  const bundles = translations as unknown as Record<string, typeof en>;
+  let value: unknown = bundles[language] ?? translations.en;
   
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
@@ -51,7 +52,8 @@ export function t(key: string, language: LanguageCode = 'en'): string {
  * Get all translations for a language
  */
 export function getTranslations(language: LanguageCode = 'en') {
-  return translations[language] || translations.en;
+  const bundles = translations as unknown as Record<string, typeof en>;
+  return bundles[language] ?? translations.en;
 }
 
 /**

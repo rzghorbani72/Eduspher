@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { CheckoutForm } from "./checkout-form";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatCurrencyWithStore } from "@/lib/utils";
+import { formatCurrencyWithAcademy } from "@/lib/utils";
 import type { CourseSummary } from "@/lib/api/types";
 
 interface OrderSummaryProps {
@@ -16,11 +16,11 @@ interface OrderSummaryProps {
     display_name?: string;
     currentProfile?: {
       id: number;
-      storeId: number;
+      academyId: number;
       role: string;
       displayName: string;
     };
-    currentStore?: {
+    currentAcademy?: {
       id: number;
       name: string;
       slug: string;
@@ -32,7 +32,7 @@ interface OrderSummaryProps {
   session: {
     userId: number;
     profileId: number;
-    storeId: number | null;
+    academyId: number | null;
   };
   onDiscountChange?: (discount: {
     discount_amount: number;
@@ -65,14 +65,14 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-600 dark:text-slate-300">{t("courses.title")}</span>
           <span className="font-medium text-slate-900 dark:text-white">
-            {formatCurrencyWithStore(course.price, user?.currentStore || null, undefined, language)}
+            {formatCurrencyWithAcademy(course.price, user?.currentAcademy || null, undefined, language)}
           </span>
         </div>
         {course.original_price && course.original_price > course.price && (
           <div className="flex items-center justify-between text-sm">
             <span className="text-slate-600 dark:text-slate-300">{t("courses.originalPrice")}</span>
             <span className="text-slate-500 line-through dark:text-slate-400">
-              {formatCurrencyWithStore(course.original_price, user?.currentStore || null, undefined, language)}
+              {formatCurrencyWithAcademy(course.original_price, user?.currentAcademy || null, undefined, language)}
             </span>
           </div>
         )}
@@ -80,7 +80,7 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
           <div className="flex items-center justify-between text-sm text-green-600 dark:text-green-400">
             <span>{t("checkout.discount")}</span>
             <span className="font-medium">
-              -{formatCurrencyWithStore(discountAmount, user?.currentStore || null, undefined, language)}
+              -{formatCurrencyWithAcademy(discountAmount, user?.currentAcademy || null, undefined, language)}
             </span>
           </div>
         )}
@@ -88,7 +88,7 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
           <div className="flex items-center justify-between">
             <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
             <span className="text-2xl font-bold text-slate-900 dark:text-white">
-              {formatCurrencyWithStore(finalPrice, user?.currentStore || null, undefined, language)}
+              {formatCurrencyWithAcademy(finalPrice, user?.currentAcademy || null, undefined, language)}
             </span>
           </div>
         </div>

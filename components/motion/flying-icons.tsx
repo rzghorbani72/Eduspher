@@ -32,7 +32,7 @@ export function FlyingIcons({
 }: FlyingIconsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [flyingIcons, setFlyingIcons] = useState<FlyingIcon[]>([]);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!containerRef.current || icons.length === 0) return;

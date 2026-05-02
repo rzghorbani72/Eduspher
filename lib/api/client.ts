@@ -20,45 +20,37 @@ const getCookieValue = (name: string) => {
 };
 
 /**
- * Get store ID - ensures it always exists (from cookie or default)
- * Store ID MUST exist for all API calls
+ * Academy ID from cookie or default — required for tenant-scoped API calls.
  */
-const getStoreId = (): string => {
-  const storeId = getCookieValue(env.storeIdCookie);
-  if (storeId) {
-    return storeId;
+const getAcademyId = (): string => {
+  const academyId = getCookieValue(env.academyIdCookie);
+  if (academyId) {
+    return academyId;
   }
-  if (env.defaultStoreId) {
-    return String(env.defaultStoreId);
+  if (env.defaultAcademyId) {
+    return String(env.defaultAcademyId);
   }
-  throw new Error('Store ID is required but not found in cookies or environment variables');
+  throw new Error(
+    "Academy ID is required but not found in cookies or environment variables"
+  );
 };
 
-/**
- * Get store slug (optional)
- */
-const getStoreSlug = (): string | null => {
-  return getCookieValue(env.storeSlugCookie);
+const getAcademySlug = (): string | null => {
+  return getCookieValue(env.academySlugCookie);
 };
 
-/**
- * Build headers with required store ID and optional store slug
- */
 const buildHeaders = (additionalHeaders: HeadersInit = {}): HeadersInit => {
-  const headers: HeadersInit = {
-    ...additionalHeaders,
-    "X-Store-ID": getStoreId(), // Store ID MUST exist
-  };
+  const headers = new Headers(additionalHeaders);
+  headers.set("X-Academy-ID", getAcademyId());
 
-  const storeSlug = getStoreSlug();
-  if (storeSlug) {
-    headers["X-Store-Slug"] = storeSlug;
+  const academySlug = getAcademySlug();
+  if (academySlug) {
+    headers.set("X-Academy-Slug", academySlug);
   }
 
-  // Add CSRF token for protection
-  const csrfToken = getCookieValue('csrf-token');
+  const csrfToken = getCookieValue("csrf-token");
   if (csrfToken) {
-    headers["X-CSRF-Token"] = csrfToken;
+    headers.set("X-CSRF-Token", csrfToken);
   }
 
   return headers;
@@ -112,7 +104,7 @@ async function refreshToken(): Promise<boolean> {
 function redirectToLogin(): void {
   if (typeof window !== "undefined") {
     const currentPath = window.location.pathname + window.location.search;
-    const storeSlug = getStoreSlug();
+    const storeSlug = getAcademySlug();
     const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
     if (!currentPath.includes('/login')) {
       const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
@@ -339,22 +331,26 @@ const deleteJson = async <T>(
 export type LoginPayload = {
   identifier: string;
   password: string;
-  store_id?: number;
+  academy_id?: number;
   role?: string;
 };
 
 export const login = async (payload: LoginPayload, options?: RequestOptions) => {
-  const storeId = getCookieValue(env.storeIdCookie);
-  const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
-  
-  if (!finalStoreId) {
-    throw new Error('Store ID is required for public login');
+  const cookieId = getCookieValue(env.academyIdCookie);
+  const finalAcademyId = cookieId ? Number(cookieId) : env.defaultAcademyId;
+
+  if (!finalAcademyId) {
+    throw new Error("Academy ID is required for public login");
   }
-  
-  return postJson<AuthResponse>("/auth/public/login", {
-    ...payload,
-    store_id: finalStoreId,
-  }, options);
+
+  return postJson<AuthResponse>(
+    "/auth/public/login",
+    {
+      ...payload,
+      academy_id: payload.academy_id ?? finalAcademyId,
+    },
+    options
+  );
 };
 
 export type RegisterPayload = {
@@ -364,7 +360,7 @@ export type RegisterPayload = {
   password: string;
   confirmed_password: string;
   role?: string;
-  store_id?: number;
+  academy_id?: number;
   display_name: string;
   bio?: string;
   website?: string;
@@ -372,12 +368,12 @@ export type RegisterPayload = {
 };
 
 export const register = async (payload: RegisterPayload, options?: RequestOptions) => {
-  const storeId = getCookieValue(env.storeIdCookie);
-  const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
-  
+  const cookieId = getCookieValue(env.academyIdCookie);
+  const finalAcademyId = cookieId ? Number(cookieId) : env.defaultAcademyId;
+
   return postJson<AuthResponse>("/auth/register", {
     role: "USER",
-    store_id: finalStoreId,
+    academy_id: finalAcademyId,
     ...payload,
   }, options);
 };
@@ -406,7 +402,7 @@ export type ForgetPasswordPayload = {
   password: string;
   confirmed_password: string;
   otp: string;
-  store_id?: number;
+  academy_id?: number;
 };
 
 export const validatePhoneAndEmail = (phone_number?: string, email?: string, options?: RequestOptions) => {
@@ -447,7 +443,7 @@ export const verifyPhoneOtp = (phone_number: string, otp: string, type: string, 
 export const forgetPassword = (payload: ForgetPasswordPayload, options?: RequestOptions) => {
   return postJson<{ message: string; status: string }>("/auth/forget-password", {
     ...payload,
-    store_id: payload.store_id || env.defaultStoreId,
+    academy_id: payload.academy_id ?? env.defaultAcademyId,
   }, options);
 };
 
@@ -493,7 +489,7 @@ export const updateStore = async (
       name: string;
       description?: string;
     };
-  }>("/stores/current", data, options);
+  }>("/academies/current", data, options);
   return response.data;
 };
 

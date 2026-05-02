@@ -9,16 +9,14 @@ import { getDefaultLanguageForCountry, getLanguageConfig, isRTL, getTextDirectio
 import type { LanguageCode, TextDirection } from "./config";
 
 /**
- * Get language configuration for a store
- * Determines language from store config or falls back to country default
+ * Resolve UI language from academy settings or country default.
  */
-export function getStoreLanguage(
-  storeLanguage?: string | null,
+export function getAcademyLanguage(
+  academyLanguage?: string | null,
   countryCode?: string | null
 ): LanguageCode {
-  // If store has explicit language, use it
-  if (storeLanguage) {
-    const validLanguage = storeLanguage.toLowerCase() as LanguageCode;
+  if (academyLanguage) {
+    const validLanguage = academyLanguage.toLowerCase() as LanguageCode;
     // Validate it's a supported language
     const supportedLanguages: LanguageCode[] = ['en', 'fa', 'ar', 'tr', 'de', 'fr', 'es', 'it', 'ru', 'zh', 'ja', 'ko', 'hi', 'ur', 'he'];
     if (supportedLanguages.includes(validLanguage)) {
@@ -35,36 +33,27 @@ export function getStoreLanguage(
   return 'en';
 }
 
-/**
- * Get text direction for a store
- */
-export function getStoreDirection(
-  storeLanguage?: string | null,
+export function getAcademyDirection(
+  academyLanguage?: string | null,
   countryCode?: string | null
 ): TextDirection {
-  const language = getStoreLanguage(storeLanguage, countryCode);
+  const language = getAcademyLanguage(academyLanguage, countryCode);
   return getTextDirection(language);
 }
 
-/**
- * Check if store uses RTL
- */
-export function isStoreRTL(
-  storeLanguage?: string | null,
+export function isAcademyRTL(
+  academyLanguage?: string | null,
   countryCode?: string | null
 ): boolean {
-  const language = getStoreLanguage(storeLanguage, countryCode);
+  const language = getAcademyLanguage(academyLanguage, countryCode);
   return isRTL(language);
 }
 
-/**
- * Get full language configuration for a store
- */
-export function getStoreLanguageConfig(
-  storeLanguage?: string | null,
+export function getAcademyLanguageConfig(
+  academyLanguage?: string | null,
   countryCode?: string | null
 ) {
-  const language = getStoreLanguage(storeLanguage, countryCode);
+  const language = getAcademyLanguage(academyLanguage, countryCode);
   return getLanguageConfig(language);
 }
 

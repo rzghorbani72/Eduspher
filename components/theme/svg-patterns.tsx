@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactElement } from 'react';
+
 interface SVGPatternProps {
   patternId: string;
   className?: string;
@@ -9,7 +11,7 @@ interface SVGPatternProps {
 export function SVGPattern({ patternId, className = '', color = 'currentColor' }: SVGPatternProps) {
   if (!patternId) return null;
 
-  const patterns: Record<string, JSX.Element> = {
+  const patterns: Record<string, ReactElement> = {
     'pattern-dots': (
       <pattern id="pattern-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
         <circle cx="2" cy="2" r="1" fill={color} opacity="0.1" />

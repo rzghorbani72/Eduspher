@@ -4,11 +4,11 @@ import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { OrderSummary } from "@/components/checkout/order-summary";
 import { CartCheckout } from "@/components/checkout/cart-checkout";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourseById, getCurrentUser, getCart, getStoreBySlug, getCurrentStore } from "@/lib/api/server";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath, resolveAssetUrl, formatCurrencyWithStore } from "@/lib/utils";
+import { getCourseById, getCurrentUser, getCart, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath, resolveAssetUrl, formatCurrencyWithAcademy } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 type SearchParams = Promise<{
@@ -25,8 +25,8 @@ export default async function CheckoutPage({
 
   const session = await getSession();
   if (!session || !session.userId || !session.profileId) {
-    const storeContext = await getStoreContext();
-    const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+    const storeContext = await getAcademyContext();
+    const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
     const redirectUrl = courseId 
       ? `/checkout?course=${courseId}`
       : "/checkout";
@@ -35,18 +35,18 @@ export default async function CheckoutPage({
 
   const user = await getCurrentUser();
   if (!user) {
-    const storeContext = await getStoreContext();
-    const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+    const storeContext = await getAcademyContext();
+    const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
     redirect(buildPath("/auth/login"));
   }
 
   // Get store language for translations
-  const storeContext = await getStoreContext();
-  let currentStore = await getCurrentStore().catch(() => null);
-  if (!currentStore && storeContext.slug) {
-    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
+  const storeContext = await getAcademyContext();
+  let currentAcademy = await getCurrentAcademy().catch(() => null);
+  if (!currentAcademy && storeContext.slug) {
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   // If no course ID, show cart checkout
@@ -70,7 +70,7 @@ export default async function CheckoutPage({
             session={{
               userId: session.userId!,
               profileId: session.profileId!,
-              storeId: session.storeId,
+              academyId: session.academyId,
             }} 
           />
         </div>
@@ -122,7 +122,7 @@ export default async function CheckoutPage({
             session={{
               userId: session.userId!,
               profileId: session.profileId!,
-              storeId: session.storeId,
+              academyId: session.academyId,
             }} 
           />
         </div>
@@ -130,8 +130,8 @@ export default async function CheckoutPage({
     );
   }
 
-  const coverUrl = resolveAssetUrl(course.cover?.publicUrl) ?? "/globe.svg";
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -148,7 +148,7 @@ export default async function CheckoutPage({
         <div className="space-y-5">
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
             <div className="flex gap-4">
-              {course.cover?.publicUrl && (
+              {course.Image?.publicUrl && (
                 <img
                   src={coverUrl}
                   alt={course.title}
@@ -164,9 +164,9 @@ export default async function CheckoutPage({
                     {course.short_description}
                   </p>
                 )}
-                {course.category && (
+                {course.Category && (
                   <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                    {course.category.name}
+                    {course.Category.name}
                   </p>
                 )}
               </div>
@@ -208,7 +208,7 @@ export default async function CheckoutPage({
             session={{
               userId: session.userId!,
               profileId: session.profileId!,
-              storeId: session.storeId,
+              academyId: session.academyId,
             }} 
           />
         </div>

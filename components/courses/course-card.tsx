@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MessageSquare, Star, Users, BookOpen, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";
-import { buildStorePath, formatCurrencyWithStore, resolveAssetUrl, truncate } from "@/lib/utils";
+import { buildAcademyPath, formatCurrencyWithAcademy, resolveAssetUrl, truncate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardMedia } from "@/components/ui/card";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -21,9 +21,9 @@ interface CourseCardProps {
 
 export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCardProps) => {
   const { t, language } = useTranslation();
-  const coverUrl = resolveAssetUrl(course.cover?.publicUrl) ?? "/window.svg";
+  const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/window.svg";
   const hasDiscount = course.original_price && course.original_price > course.price;
-  const detailHref = buildStorePath(storeSlug, `/courses/${course.id}`);
+  const detailHref = buildAcademyPath(storeSlug, `/courses/${course.id}`);
 
   return (
     <Card 
@@ -47,7 +47,7 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
       <CardMedia src={coverUrl} alt={course.title} className="transition-transform duration-500 group-hover:scale-110" />
       <CardContent className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          {course.category ? <Badge variant="soft">{course.category.name}</Badge> : null}
+          {course.Category ? <Badge variant="soft">{course.Category.name}</Badge> : null}
           {course.is_featured ? <Badge variant="warning">{t("courses.featured")}</Badge> : null}
           {course.is_certificate ? <Badge variant="success">{t("courses.certificate")}</Badge> : null}
         </div>
@@ -109,15 +109,15 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
             ) : hasDiscount ? (
               <>
                 <span className="text-slate-500 line-through dark:text-slate-400">
-                  {formatCurrencyWithStore(course.original_price || 0, store, undefined, language)}
+                  {formatCurrencyWithAcademy(course.original_price || 0, store, undefined, language)}
                 </span>
                 <span className="text-[var(--theme-primary)]">
-                  {formatCurrencyWithStore(course.price || 0, store, undefined, language)}
+                  {formatCurrencyWithAcademy(course.price || 0, store, undefined, language)}
                 </span>
               </>
             ) : (
               <span className="text-[var(--theme-primary)]">
-                {formatCurrencyWithStore(course.price || 0, store, undefined, language)}
+                {formatCurrencyWithAcademy(course.price || 0, store, undefined, language)}
               </span>
             )}
           </div>

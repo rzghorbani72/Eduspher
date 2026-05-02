@@ -22,6 +22,7 @@ export function CourseFilters({
   initialOrderBy = "",
   initialIsFree = false,
 }: CourseFiltersProps) {
+  const categoryList = Array.isArray(categories) ? categories : [];
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -210,7 +211,7 @@ export function CourseFilters({
             className="h-11 w-full rounded-theme border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
           >
             <option value="">{t("courses.allCategories")}</option>
-            {categories.map((category) => (
+            {categoryList.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>

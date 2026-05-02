@@ -26,7 +26,7 @@ export async function validateVoucher(
     const result = await validateDiscount({
       code: request.code,
       amount: request.amount,
-      profile_id: profileId,
+      profile_id: profileId ?? undefined,
     });
 
     return {

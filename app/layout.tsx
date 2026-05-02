@@ -11,14 +11,14 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { env } from "@/lib/env";
-import { getStoreContext } from "@/lib/store-context";
+import { getAcademyContext } from "@/lib/store-context";
 import { getSession } from "@/lib/auth/session";
 import {
   getStoreThemeAndTemplate,
   generateThemeCSSVariables,
 } from "@/lib/theme-config";
-import { getCurrentStore, getStoreBySlug } from "@/lib/api/server";
-import { getStoreLanguage, getStoreDirection, isStoreRTL } from "@/lib/i18n/server";
+import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
+import { getAcademyLanguage, getAcademyDirection, isAcademyRTL } from "@/lib/i18n/server";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { CreativeBackground } from "@/components/motion/creative-background";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
@@ -57,7 +57,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const storeContext = await getStoreContext();
+  const storeContext = await getAcademyContext();
   const session = await getSession();
   const isAuthenticated = Boolean(session?.userId);
   
@@ -66,29 +66,29 @@ export default async function RootLayout({
   
   // Get store details for language and country (server-side)
   // Try to get current store first (requires auth), then fall back to public store by slug
-  let currentStore = await getCurrentStore().catch(() => null);
+  let currentAcademy = await getCurrentAcademy().catch(() => null);
   
   // If no authenticated store, try to get public store by slug
-  if (!currentStore && storeContext.slug) {
-    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
+  if (!currentAcademy && storeContext.slug) {
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
 
   // Extract store icons for flying animation
   const storeIcons: string[] = [];
-  if (currentStore) {
+  if (currentAcademy) {
     // Get logo if available
-    if ((currentStore as any).logo?.publicUrl) {
-      const logoUrl = resolveAssetUrl((currentStore as any).logo.publicUrl);
+    if ((currentAcademy as any).logo?.publicUrl) {
+      const logoUrl = resolveAssetUrl((currentAcademy as any).logo.publicUrl);
       if (logoUrl) storeIcons.push(logoUrl);
     }
     // Get cover image if available
-    if (currentStore.cover?.publicUrl) {
-      const coverUrl = resolveAssetUrl(currentStore.cover.publicUrl);
+    if (currentAcademy.cover?.publicUrl) {
+      const coverUrl = resolveAssetUrl(currentAcademy.cover.publicUrl);
       if (coverUrl) storeIcons.push(coverUrl);
     }
     // Get other images if available
-    if (currentStore.images && Array.isArray(currentStore.images)) {
-      currentStore.images.slice(0, 5).forEach((img: any) => {
+    if (currentAcademy.images && Array.isArray(currentAcademy.images)) {
+      currentAcademy.images.slice(0, 5).forEach((img: any) => {
         const imgUrl = img.publicUrl || img.filename;
         if (imgUrl) {
           const resolvedUrl = resolveAssetUrl(imgUrl);
@@ -102,11 +102,11 @@ export default async function RootLayout({
   const validStoreIcons = storeIcons.filter(Boolean);
   
   // Determine language and direction from store config (server-side)
-  const countryCode = currentStore?.country_code || null;
-  const storeLanguage = currentStore?.language || null;
-  const language = getStoreLanguage(storeLanguage, countryCode);
-  const direction = getStoreDirection(storeLanguage, countryCode);
-  const rtl = isStoreRTL(storeLanguage, countryCode);
+  const countryCode = currentAcademy?.country_code || null;
+  const storeLanguage = currentAcademy?.language || null;
+  const language = getAcademyLanguage(storeLanguage, countryCode);
+  const direction = getAcademyDirection(storeLanguage, countryCode);
+  const rtl = isAcademyRTL(storeLanguage, countryCode);
   
   // Check if we're on the home page
   const headersList = await headers();
@@ -135,15 +135,6 @@ export default async function RootLayout({
         colorScheme: "light dark", // Support both, let system decide
       } as React.CSSProperties}
     >
-      <head>
-        {themeCSS && (
-          <style 
-            dangerouslySetInnerHTML={{ 
-              __html: themeCSS // CSS variables from server - safe as generated internally
-            }} 
-          />
-        )}
-      </head>
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -159,6 +150,12 @@ export default async function RootLayout({
             : undefined
         }
       >
+        {themeCSS ? (
+          <style
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: themeCSS }}
+          />
+        ) : null}
         <AuthProvider initialAuthenticated={isAuthenticated}>
           <StoreProvider initialValue={storeContext}>
             <ThemeProvider initialTheme={theme}>

@@ -11,18 +11,27 @@ const normalizeApiPath = (path: string) => {
   return path;
 };
 
+const defaultAcademyId = Number(process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_ID ?? '1');
+const defaultAcademySlug = process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_SLUG ?? null;
+const academyIdCookie =
+  process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'skillforge_selected_academy_id';
+const academySlugCookie =
+  process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? 'eduspher_academy_slug';
+const academyNameCookie =
+  process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'eduspher_academy_name';
+
 export const env = {
   backendOrigin: normalizeBaseUrl(process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? ''),
   backendApiPath: normalizeApiPath(process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? '/api'),
-  defaultStoreId: Number(process.env.NEXT_PUBLIC_DEFAULT_STORE_ID ?? '1'),
-  defaultStoreSlug: process.env.NEXT_PUBLIC_DEFAULT_STORE_SLUG ?? null,
+  defaultAcademyId,
+  defaultAcademySlug,
+  academyIdCookie,
+  academySlugCookie,
+  academyNameCookie,
   siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? 'EduSpher',
   siteDescription:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
-    'Discover flexible online learning with EduSpher.',
-  storeIdCookie: process.env.NEXT_PUBLIC_STORE_ID_COOKIE ?? 'eduspher_store_id',
-  storeSlugCookie: process.env.NEXT_PUBLIC_STORE_SLUG_COOKIE ?? 'eduspher_store_slug',
-  storeNameCookie: process.env.NEXT_PUBLIC_STORE_NAME_COOKIE ?? 'eduspher_store_name',
+    'Online courses for your institute — one branded site for classes, teachers, and students.',
 };
 
 export const backendApiBaseUrl = `${env.backendOrigin}${env.backendApiPath}`;

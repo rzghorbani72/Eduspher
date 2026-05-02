@@ -9,7 +9,7 @@ import { Menu, X } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
-import { useStoreContext, useStorePath } from "@/components/providers/store-provider";
+import { useAcademyContext, useStorePath } from "@/components/providers/store-provider";
 import { CartIcon } from "@/components/cart/cart-icon";
 import { useTranslation } from "@/lib/i18n/hooks";
 
@@ -21,7 +21,7 @@ interface SiteHeaderClientProps {
 export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: SiteHeaderClientProps) {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
-  const { name: storeName } = useStoreContext();
+  const { name: storeName } = useAcademyContext();
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
@@ -31,7 +31,6 @@ export function SiteHeaderClient({ displayName, isAuthenticated: initialAuth }: 
   const navItems = [
     { href: "/", label: t("navigation.home") },
     { href: "/courses", label: t("navigation.courses") },
-    { href: "/products", label: t("navigation.products") },
     { href: "/articles", label: t("navigation.articles") },
   ];
 

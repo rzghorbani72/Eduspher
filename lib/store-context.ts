@@ -4,7 +4,7 @@ import { cookies, headers as nextHeaders } from "next/headers";
 
 import { env } from "@/lib/env";
 
-export type StoreContext = {
+export type ResolvedAcademy = {
   id: number | null;
   slug: string | null;
   name: string;
@@ -19,28 +19,32 @@ const decodeCookieValue = (value?: string | null) => {
   }
 };
 
-export const getStoreContext = async (): Promise<StoreContext> => {
+export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
   const cookieStore = await cookies();
   const headerStore = await nextHeaders();
 
-  const headerStoreId = headerStore?.get?.("x-store-id") ?? null;
-  const headerStoreSlug = headerStore?.get?.("x-store-slug") ?? null;
-  const cookieStoreId = cookieStore.get(env.storeIdCookie)?.value;
-  const cookieStoreSlug = cookieStore.get(env.storeSlugCookie)?.value;
-  const cookieStoreName = decodeCookieValue(cookieStore.get(env.storeNameCookie)?.value);
+  const headerAcademyId =
+    headerStore?.get?.("x-academy-id") ?? headerStore?.get?.("X-Academy-ID") ?? null;
+  const headerAcademySlug =
+    headerStore?.get?.("x-academy-slug") ?? headerStore?.get?.("X-Academy-Slug") ?? null;
+  const cookieAcademyId = cookieStore.get(env.academyIdCookie)?.value;
+  const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
+  const cookieAcademyName = decodeCookieValue(
+    cookieStore.get(env.academyNameCookie)?.value
+  );
 
   const resolvedId =
-    headerStoreId ??
-    cookieStoreId ??
-    (env.defaultStoreId ? String(env.defaultStoreId) : null);
+    headerAcademyId ??
+    cookieAcademyId ??
+    (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
 
   const resolvedSlug =
-    headerStoreSlug ??
-    cookieStoreSlug ??
-    env.defaultStoreSlug ??
+    headerAcademySlug ??
+    cookieAcademySlug ??
+    env.defaultAcademySlug ??
     null;
 
-  const resolvedName = cookieStoreName ?? env.siteName;
+  const resolvedName = cookieAcademyName ?? env.siteName;
 
   return {
     id: resolvedId ? Number(resolvedId) : null,

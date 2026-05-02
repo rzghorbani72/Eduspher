@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LoginForm } from "@/components/auth/login-form";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath } from "@/lib/utils";
-import { getStoreBySlug } from "@/lib/api/server";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath } from "@/lib/utils";
+import { getAcademyBySlug } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export const metadata: Metadata = {
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-  const storeContext = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
-  const store = storeContext.slug ? await getStoreBySlug(storeContext.slug) : null;
+  const storeContext = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const store = storeContext.slug ? await getAcademyBySlug(storeContext.slug) : null;
   const defaultCountryCode = store?.country_code || undefined;
   
   // Get language for translations
-  const language = getStoreLanguage(store?.language || null, store?.country_code || null);
+  const language = getAcademyLanguage(store?.language || null, store?.country_code || null);
   const translate = (key: string) => t(key, language);
   
   return (

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { backendApiBaseUrl } from "@/lib/env";
+import { backendApiBaseUrl, env } from "@/lib/env";
 
 export async function GET(
   request: NextRequest,
@@ -36,16 +36,14 @@ export async function GET(
       );
     }
 
-    // Get store ID from cookies
-    const storeId = cookieStore.get("skillforge_selected_store_id")?.value;
+    const academyId = cookieStore.get(env.academyIdCookie)?.value;
 
-    // Fetch payment details from backend
     const response = await fetch(`${backendApiBaseUrl}/payments/${paymentId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        ...(storeId && { "X-Store-ID": storeId }),
+        ...(academyId && { "X-Academy-ID": academyId }),
       },
       credentials: "include",
     });

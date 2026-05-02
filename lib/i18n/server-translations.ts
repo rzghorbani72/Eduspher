@@ -6,7 +6,7 @@
 import "server-only";
 
 import { t as clientT, getTranslations } from "./index";
-import { getStoreLanguage } from "./server";
+import { getAcademyLanguage } from "./server";
 import type { LanguageCode } from "./config";
 
 /**

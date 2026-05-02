@@ -16,7 +16,7 @@ export function AnimatedGradient({
   direction = 'diagonal',
 }: AnimatedGradientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!containerRef.current) return;

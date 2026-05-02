@@ -10,43 +10,46 @@ import {
   useState,
 } from "react";
 
-type StoreContextValue = {
+type StoreState = {
   id: number | null;
   slug: string | null;
   name: string;
-  setStore: Dispatch<SetStateAction<StoreContextValue>>;
 };
 
-const StoreContext = createContext<StoreContextValue | undefined>(undefined);
+type AcademyContextValue = StoreState & {
+  setStore: Dispatch<SetStateAction<StoreState>>;
+};
+
+const TenantAcademyContext = createContext<AcademyContextValue | undefined>(undefined);
 
 type StoreProviderProps = PropsWithChildren<{
-  initialValue: Omit<StoreContextValue, "setStore">;
+  initialValue: StoreState;
 }>;
 
 export const StoreProvider = ({ initialValue, children }: StoreProviderProps) => {
-  const [store, setStore] = useState<Omit<StoreContextValue, "setStore">>(initialValue);
+  const [store, setStore] = useState<StoreState>(initialValue);
 
-  const value = useMemo<StoreContextValue>(
+  const value = useMemo<AcademyContextValue>(
     () => ({
       ...store,
       setStore,
     }),
-    [store]
+    [store],
   );
 
-  return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
+  return <TenantAcademyContext.Provider value={value}>{children}</TenantAcademyContext.Provider>;
 };
 
-export const useStoreContext = () => {
-  const context = useContext(StoreContext);
+export const useAcademyContext = () => {
+  const context = useContext(TenantAcademyContext);
   if (!context) {
-    throw new Error("useStoreContext must be used within a StoreProvider");
+    throw new Error("useAcademyContext must be used within a StoreProvider");
   }
   return context;
 };
 
 export const useStorePath = () => {
-  const { slug } = useStoreContext();
+  const { slug } = useAcademyContext();
   return (path: string) => {
     const normalized = path.startsWith("/") ? path : `/${path}`;
     if (!slug) {

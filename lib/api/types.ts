@@ -73,7 +73,6 @@ export interface CourseSummary {
     product_id: number;
     course_id: number;
     relation_type: string;
-    product?: ProductSummary;
   }>;
 }
 
@@ -89,43 +88,6 @@ export interface Pagination {
 
 export interface CourseListPayload {
   courses: CourseSummary[];
-  pagination: Pagination;
-}
-
-export interface ProductSummary {
-  id: number;
-  title: string;
-  short_description?: string | null;
-  description?: string | null;
-  slug: string;
-  price: number;
-  original_price?: number | null;
-  discount_percent?: number | null;
-  product_type: 'DIGITAL' | 'PHYSICAL';
-  stock_quantity?: number | null;
-  sku?: string | null;
-  is_published: boolean;
-  is_featured: boolean;
-  rating?: number;
-  rating_count?: number;
-  sales_count?: number;
-  weight?: number | null;
-  dimensions?: string | null;
-  author?: AuthorSummary | null;
-  category?: CategorySummary | null;
-  cover?: MediaAsset | null;
-  reviews_count?: number;
-  productCourses?: Array<{
-    id: number;
-    product_id: number;
-    course_id: number;
-    relation_type: string;
-    course?: CourseSummary;
-  }>;
-}
-
-export interface ProductListPayload {
-  products: ProductSummary[];
   pagination: Pagination;
 }
 
@@ -190,7 +152,7 @@ export interface UserProfileSummary {
   has_password: boolean;
   email_confirmed?: boolean;
   phone_confirmed?: boolean;
-  store: {
+  Academy: {
     id: number;
     name: string;
     slug: string;
@@ -200,6 +162,18 @@ export interface UserProfileSummary {
 export interface UserProfilesResponse {
   success: boolean;
   profiles: UserProfileSummary[];
+}
+
+export interface AuthAcademyBrief {
+  id: number;
+  name: string;
+  slug: string;
+  domain?: string;
+  role?: string;
+  isActive?: boolean;
+  isVerified?: boolean;
+  currency?: string;
+  currency_symbol?: string;
 }
 
 export interface AuthResponse {
@@ -216,28 +190,32 @@ export interface AuthResponse {
   } | null;
   currentProfile: {
     id: number;
-    storeId: number;
+    academyId: number;
     role: string;
     displayName: string;
     isActive: boolean;
     isVerified: boolean;
   } | null;
-  availableStores: {
+  currentAcademy: {
     id: number;
     name: string;
     slug: string;
     domain: string;
-    currency?: string;
-    currency_symbol?: string;
-  }[];
+    currency: string;
+    currency_symbol: string;
+    currency_position?: string;
+  } | null;
+  availableAcademies: AuthAcademyBrief[];
   availableProfiles: {
     id: number;
-    storeId: number;
+    academyId: number;
     role: string;
     displayName: string;
     isActive: boolean;
     isVerified: boolean;
   }[];
+  permissions?: string[];
+  expires_at?: string | Date;
 }
 
 export interface ProgressSummary {

@@ -9,7 +9,7 @@ import { validateVoucher } from "@/app/actions/voucher";
 import type { CourseSummary } from "@/lib/api/types";
 import { useStorePath } from "@/components/providers/store-provider";
 import { CheckCircle, Loader2, AlertCircle, X } from "lucide-react";
-import { formatCurrencyWithStore } from "@/lib/utils";
+import { formatCurrencyWithAcademy } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CheckoutFormProps {
@@ -22,11 +22,11 @@ interface CheckoutFormProps {
     display_name?: string;
     currentProfile?: {
       id: number;
-      storeId: number;
+      academyId: number;
       role: string;
       displayName: string;
     };
-    currentStore?: {
+    currentAcademy?: {
       id: number;
       name: string;
       slug: string;
@@ -38,7 +38,7 @@ interface CheckoutFormProps {
   session: {
     userId: number;
     profileId: number;
-    storeId: number | null;
+    academyId: number | null;
   };
   onDiscountChange?: (discount: {
     discount_amount: number;
@@ -215,7 +215,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
                     {voucherCode.toUpperCase()}
                   </div>
                   <div className="text-xs text-green-700 dark:text-green-300">
-                    {t("checkout.discountApplied")}: {formatCurrencyWithStore(discount.discount_amount / 100, user.currentStore || null, undefined, language)}
+                    {t("checkout.discountApplied")}: {formatCurrencyWithAcademy(discount.discount_amount / 100, user.currentAcademy || null, undefined, language)}
                   </div>
                 </div>
                 <button
@@ -274,7 +274,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           ) : course.is_free ? (
             t("checkout.completeEnrollment")
           ) : (
-            `${t("checkout.completePurchase")} - ${formatCurrencyWithStore(finalPrice, user.currentStore || null, undefined, language)}`
+            `${t("checkout.completePurchase")} - ${formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}`
           )}
         </Button>
 

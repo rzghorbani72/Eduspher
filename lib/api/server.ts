@@ -25,8 +25,6 @@ import type {
   CategorySummary,
   CourseListPayload,
   CourseSummary,
-  ProductListPayload,
-  ProductSummary,
   StoreDetail,
   StoreSummary,
   UserProfilesResponse,
@@ -67,17 +65,23 @@ const buildHeaders = async (
     headers.set("Content-Type", "application/json");
   }
   const cookieStore = await cookies();
-  const headerStoreId = headerStore?.get?.("x-store-id") ?? null;
-  const headerStoreSlug = headerStore?.get?.("x-store-slug") ?? null;
-  const cookieStoreId = cookieStore.get(env.storeIdCookie)?.value;
-  const cookieStoreSlug = cookieStore.get(env.storeSlugCookie)?.value;
-  const resolvedStoreId = headerStoreId ?? cookieStoreId ?? (env.defaultStoreId ? String(env.defaultStoreId) : null);
-  const resolvedStoreSlug = headerStoreSlug ?? cookieStoreSlug ?? env.defaultStoreSlug ?? null;
-  if (resolvedStoreId && !headers.has("X-Store-ID")) {
-    headers.set("X-Store-ID", resolvedStoreId);
+  const headerAcademyId =
+    headerStore?.get?.("x-academy-id") ?? headerStore?.get?.("X-Academy-ID") ?? null;
+  const headerAcademySlug =
+    headerStore?.get?.("x-academy-slug") ?? headerStore?.get?.("X-Academy-Slug") ?? null;
+  const cookieAcademyId = cookieStore.get(env.academyIdCookie)?.value;
+  const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
+  const resolvedAcademyId =
+    headerAcademyId ??
+    cookieAcademyId ??
+    (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
+  const resolvedAcademySlug =
+    headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
+  if (resolvedAcademyId && !headers.has("X-Academy-ID")) {
+    headers.set("X-Academy-ID", resolvedAcademyId);
   }
-  if (resolvedStoreSlug && !headers.has("X-Store-Slug")) {
-    headers.set("X-Store-Slug", resolvedStoreSlug);
+  if (resolvedAcademySlug && !headers.has("X-Academy-Slug")) {
+    headers.set("X-Academy-Slug", resolvedAcademySlug);
   }
   const proto = headerStore?.get?.("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
   const host = headerStore?.get?.("host") ?? null;
@@ -125,9 +129,10 @@ const baseFetch = async (
         // Get store context to build proper login path
         const cookieStore = await cookies();
         const headerStore = await nextHeaders();
-        const cookieStoreSlug = cookieStore.get(env.storeSlugCookie)?.value;
-        const headerStoreSlug = headerStore?.get?.("x-store-slug") ?? null;
-        const storeSlug = headerStoreSlug ?? cookieStoreSlug ?? env.defaultStoreSlug ?? null;
+        const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
+        const headerAcademySlug = headerStore?.get?.("x-academy-slug") ?? null;
+        const storeSlug =
+          headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
         
         const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
         
@@ -188,18 +193,25 @@ const serverFetchRaw = async <T>(
   return response.json() as Promise<T>;
 };
 
-export async function getStoresPublic() {
-  const result = await serverFetch<StoreSummary[]>("/stores/public", {
+export async function getAcademiesPublic() {
+  const result = await serverFetch<StoreSummary[]>("/academies/public", {
     includeAuth: false,
   });
   return result.data;
 }
 
-export async function getCategories() {
-  const result = await serverFetch<CategorySummary[]>("/categories", {
-    includeAuth: false,
-  });
-  return result.data;
+export async function getCategories(): Promise<CategorySummary[]> {
+  try {
+    const result = await serverFetch<CategorySummary[]>("/categories", {
+      includeAuth: false,
+    });
+    if (!result || result.status !== "ok" || !Array.isArray(result.data)) {
+      return [];
+    }
+    return result.data;
+  } catch {
+    return [];
+  }
 }
 
 export async function getArticles() {
@@ -259,68 +271,16 @@ export async function getCourseById(id: string | number) {
   }
 }
 
-export async function getProducts(params?: {
-  search?: string;
-  title?: string;
-  min_price?: number;
-  max_price?: number;
-  page?: number;
-  limit?: number;
-  order_by?: string;
-  published?: boolean;
-  is_featured?: boolean;
-  product_type?: 'DIGITAL' | 'PHYSICAL';
-  category_id?: number;
-  author_id?: number;
-  course_id?: number;
-}) {
-  try {
-    const result = await serverFetch<ProductListPayload>("/products", {
-      query: {
-        ...params,
-      },
-    });
-    return result.data;
-  } catch (error) {
-    if (error instanceof Error && /401/.test(error.message)) {
-      const fallback = await serverFetch<ProductListPayload>("/products/public", {
-        includeAuth: false,
-        query: {
-          ...params,
-          published: true,
-        },
-      }).catch(() => null);
-      return fallback?.data ?? null;
-    }
-    throw error;
-  }
-}
-
-export async function getProductById(id: string | number) {
-  try {
-    const result = await serverFetch<ProductSummary>(`/products/${id}`);
-    return result;
-  } catch (error) {
-    if (error instanceof Error && (/401|404/.test(error.message))) {
-      const fallback = await serverFetch<ProductSummary>(`/products/public/${id}`, {
-        includeAuth: false,
-      }).catch(() => null);
-      return fallback?.data ?? null;
-    }
-    throw error;
-  }
-}
-
 export async function getArticleById(id: string | number) {
   const result = await serverFetch<ArticleSummary>(`/articles/${id}`, {
     includeAuth: false,
   });
-  return result;
+  return result.data;
 }
 
-export async function getCurrentStore() {
+export async function getCurrentAcademy() {
   try {
-    const result = await serverFetch<StoreDetail>("/stores/current");
+    const result = await serverFetch<StoreDetail>("/academies/current");
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
@@ -330,14 +290,14 @@ export async function getCurrentStore() {
   }
 }
 
-export async function getStoreBySlug(slug: string): Promise<StoreSummary | null> {
+export async function getAcademyBySlug(slug: string): Promise<StoreSummary | null> {
   try {
-    const result = await serverFetchRaw<{ status: string; data: StoreSummary[] }>("/stores/public", {
+    const result = await serverFetchRaw<{ status: string; data: StoreSummary[] }>("/academies/public", {
       includeAuth: false,
     });
-    const stores = result.data || [];
-    const store = stores.find((s) => s.slug === slug);
-    return store || null;
+    const academies = result.data || [];
+    const academy = academies.find((s) => s.slug === slug);
+    return academy || null;
   } catch (error) {
     return null;
   }
@@ -355,13 +315,13 @@ export async function getCurrentUser() {
         has_password: boolean;
         last_login: Date | null;
         login_count: number;
-        storeId: number;
+        academyId: number;
         role: string;
         email_confirmed: boolean;
         phone_confirmed: boolean;
         isActive: boolean;
         isVerified: boolean;
-        currentStore: {
+        currentAcademy: {
           id: number;
           name: string;
           slug: string;
@@ -548,14 +508,14 @@ export async function getStoreThemeConfig(storeSlug?: string) {
     });
     return result.data;
   } catch (error) {
-    // Theme config is not critical - fail gracefully without throwing
-    // Don't log 401/404 errors as they're expected in some cases
     if (error instanceof UnauthorizedError) {
-      // Theme config should never require auth, but if it does, just return null
       return null;
     }
-    if (process.env.NODE_ENV === 'development') {
-      console.error("Failed to fetch theme config:", error);
+    if (process.env.NODE_ENV === 'development' && error instanceof Error) {
+      const status = (error as any).status;
+      if (status !== 404 && !error.message.includes('404')) {
+        console.error('Failed to fetch theme config:', error);
+      }
     }
     return null;
   }
@@ -578,7 +538,7 @@ export async function getCurrentUITemplate() {
       status: string;
       data: {
         id?: number;
-        store_id?: number;
+        academy_id?: number;
         blocks?: Array<{
           id: string;
           type: string;
@@ -626,7 +586,7 @@ export async function getStoreUITemplate(storeSlug?: string) {
       status: string;
       data: {
         id?: number;
-        store_id?: number;
+        academy_id?: number;
         blocks?: Array<{
           id: string;
           type: string;

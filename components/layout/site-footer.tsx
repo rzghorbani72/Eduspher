@@ -1,22 +1,22 @@
 import Link from "next/link";
 
 import { env } from "@/lib/env";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath } from "@/lib/utils";
-import { getCurrentStore, getStoreBySlug } from "@/lib/api/server";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath } from "@/lib/utils";
+import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export const SiteFooter = async () => {
-  const store = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(store.slug, path);
+  const store = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(store.slug, path);
   
   // Get store language for translations
-  let currentStore = await getCurrentStore().catch(() => null);
-  if (!currentStore && store.slug) {
-    currentStore = await getStoreBySlug(store.slug).catch(() => null);
+  let currentAcademy = await getCurrentAcademy().catch(() => null);
+  if (!currentAcademy && store.slug) {
+    currentAcademy = await getAcademyBySlug(store.slug).catch(() => null);
   }
-  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   
   // Translation function with language
   const translate = (key: string) => t(key, language);

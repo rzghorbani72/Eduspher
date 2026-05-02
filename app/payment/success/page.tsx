@@ -6,7 +6,7 @@ import Link from "next/link";
 import { CheckCircle, Loader2, Receipt, CreditCard, Calendar, Hash, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStorePath } from "@/components/providers/store-provider";
-import { formatCurrencyWithStore } from "@/lib/utils";
+import { formatCurrencyWithAcademy } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface PaymentDetails {
@@ -207,7 +207,7 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.amountPaid")}</span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
-                    {formatCurrencyWithStore(paymentDetails.amount, store, undefined, language)}
+                    {formatCurrencyWithAcademy(paymentDetails.amount, store, undefined, language)}
                   </span>
                 </div>
               )}
@@ -358,7 +358,7 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.gatewayFee")}</span>
                   <span className="text-slate-900 dark:text-white">
-                    {formatCurrencyWithStore(latestResponse.fee_amount, store, undefined, language)}
+                    {formatCurrencyWithAcademy(latestResponse.fee_amount, store, undefined, language)}
                   </span>
                 </div>
               )}

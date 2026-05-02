@@ -6,14 +6,13 @@ import { notFound } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseCurriculum } from "@/components/courses/course-curriculum";
 import { CourseQnA } from "@/components/courses/course-qna";
-import { RelatedProducts } from "@/components/courses/RelatedProducts";
 import { CartButton } from "@/components/cart/cart-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourseById, getCourses, getProducts, getCurrentUser, getStoreBySlug, getCurrentStore } from "@/lib/api/server";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath, resolveAssetUrl, formatCurrencyWithStore } from "@/lib/utils";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getCourseById, getCourses, getCurrentUser, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath, resolveAssetUrl, formatCurrencyWithAcademy } from "@/lib/utils";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 type PageParams = Promise<{
@@ -22,7 +21,7 @@ type PageParams = Promise<{
 
 const detailItems = (
   course: Awaited<ReturnType<typeof getCourseById>>,
-  store?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null,
+  academy?: { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" } | null,
   translate?: (key: string) => string,
   language?: string
 ) => {
@@ -36,14 +35,14 @@ const detailItems = (
     ? (
         <div className="flex flex-col items-end gap-1">
           <span className="text-slate-500 line-through dark:text-slate-400">
-            {formatCurrencyWithStore(course.original_price || 0, store, undefined, language)}
+            {formatCurrencyWithAcademy(course.original_price || 0, academy, undefined, language)}
           </span>
           <span className="text-[var(--theme-primary)] font-semibold">
-            {formatCurrencyWithStore(course.price, store, undefined, language)}
+            {formatCurrencyWithAcademy(course.price, academy, undefined, language)}
           </span>
         </div>
       )
-    : formatCurrencyWithStore(course.price, store, undefined, language);
+    : formatCurrencyWithAcademy(course.price, academy, undefined, language);
   return [
     {
       label: t("courses.certificate"),
@@ -59,7 +58,7 @@ const detailItems = (
     },
     {
       label: t("courses.category"),
-      value: course.category?.name ?? t("courses.categoryGeneral"),
+      value: course.Category?.name ?? t("courses.categoryGeneral"),
     },
   ];
 };
@@ -68,21 +67,21 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const { id } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt");
-  const storeContext = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const storeContext = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
 
   const [course, user] = await Promise.all([
     getCourseById(id),
     getCurrentUser().catch(() => null),
   ]);
-  const store = user?.currentStore || null;
+  const userAcademy = user?.currentAcademy || null;
 
   // Get store language for translations
-  let currentStore = await getCurrentStore().catch(() => null);
-  if (!currentStore && storeContext.slug) {
-    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
+  let currentAcademy = await getCurrentAcademy().catch(() => null);
+  if (!currentAcademy && storeContext.slug) {
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   if (!course) {
@@ -118,20 +117,12 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const audioUrl = resolveAssetUrl(course.Audio?.publicUrl);
   const documentUrl = resolveAssetUrl(course.Document?.publicUrl);
 
-  const [relatedCourses, relatedProducts] = await Promise.all([
-    getCourses({
-      published: true,
-      limit: 3,
-      order_by: "NEWEST",
-      category_id: course.Category?.id,
-    }).catch(() => null),
-    getProducts({
-      published: true,
-      limit: 3,
-      order_by: "NEWEST",
-      course_id: course.id,
-    }).catch(() => null),
-  ]);
+  const relatedCourses = await getCourses({
+    published: true,
+    limit: 3,
+    order_by: "NEWEST",
+    category_id: course.Category?.id,
+  }).catch(() => null);
 
   return (
     <div className="relative space-y-6">
@@ -179,7 +170,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             </div>
             <div className="space-y-4 p-5">
               <div className="grid gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {detailItems(course, store, translate, language).map((item) => (
+                {detailItems(course, userAcademy, translate, language).map((item) => (
                   <div key={item.label} className="flex items-center justify-between border-b border-slate-100 pb-2 last:border-0 dark:border-slate-800">
                     <span className="font-medium text-slate-500 dark:text-slate-400">
                       {item.label}
@@ -246,14 +237,6 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
         </aside>
       </section>
 
-
-      {relatedProducts?.products?.length ? (
-        <RelatedProducts
-          products={relatedProducts.products}
-          storeSlug={storeContext.slug}
-          store={store}
-        />
-      ) : null}
 
       <CourseQnA courseId={course.id} isLoggedIn={!!user} userRole={user?.role} />
 

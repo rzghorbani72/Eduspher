@@ -83,13 +83,15 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           return match ? decodeURIComponent(match[1]) : null;
         };
         
-        const storeId = getCookieValue(env.storeIdCookie);
-        const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
-        
+        const academyIdCookie = getCookieValue(env.academyIdCookie);
+        const finalAcademyId = academyIdCookie
+          ? Number(academyIdCookie)
+          : env.defaultAcademyId;
+
         await postJson("/auth/login", {
           identifier,
           password: values.password,
-          store_id: finalStoreId,
+          academy_id: finalAcademyId,
         });
         
         setAuthenticated(true);

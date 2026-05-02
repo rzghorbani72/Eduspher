@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getStoreContext } from "./store-context";
+import { getAcademyContext } from "./store-context";
 import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
 import { TEMPLATE_PRESETS, type TemplatePreset } from "./template-presets";
 
@@ -40,7 +40,7 @@ export interface UITemplateConfig {
 
 export async function getStoreThemeAndTemplate() {
   try {
-    const storeContext = await getStoreContext();
+    const storeContext = await getAcademyContext();
 
     // Try to fetch from authenticated endpoint first if user is authenticated
     // Otherwise fallback to public endpoint with store slug

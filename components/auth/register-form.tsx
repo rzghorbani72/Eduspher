@@ -280,9 +280,11 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
         return match ? decodeURIComponent(match[1]) : null;
       };
       
-      const storeId = getCookieValue(env.storeIdCookie);
-      const finalStoreId = storeId ? Number(storeId) : env.defaultStoreId;
-      
+      const academyIdCookie = getCookieValue(env.academyIdCookie);
+      const finalAcademyId = academyIdCookie
+        ? Number(academyIdCookie)
+        : env.defaultAcademyId;
+
       // Build user data based on primary method
       const userData: any = {
         name: values.name,
@@ -291,7 +293,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
         confirmed_password: values.confirmed_password,
         bio: values.bio,
         role: "USER",
-        store_id: finalStoreId,
+        academy_id: finalAcademyId,
       };
 
       // Add primary method (required) - only one method is shown and verified during registration

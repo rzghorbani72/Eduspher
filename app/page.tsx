@@ -5,63 +5,63 @@ import {
   getArticles,
   getCategories,
   getCourses,
-  getStoresPublic,
+  getAcademiesPublic,
   getCurrentUser,
-  getCurrentStore,
-  getStoreBySlug,
+  getCurrentAcademy,
+  getAcademyBySlug,
 } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
-import { buildOgImageUrl, resolveAssetUrl, truncate, buildStorePath } from "@/lib/utils";
+import { buildOgImageUrl, resolveAssetUrl, truncate, buildAcademyPath } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getStoreContext } from "@/lib/store-context";
+import { getAcademyContext } from "@/lib/store-context";
 import { getStoreThemeAndTemplate } from "@/lib/theme-config";
 import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 export default async function Home() {
-  const storeContext = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
-  const [stores, categories, articles, coursePayload, themeAndTemplate, user, currentStore] = await Promise.all([
-    getStoresPublic().catch(() => []),
+  const storeContext = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const [academies, categories, articles, coursePayload, themeAndTemplate, user, currentAcademy] = await Promise.all([
+    getAcademiesPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
     getCourses({ limit: 3, published: true, is_featured: true} as any).catch(() => null),
     getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
     getCurrentUser().catch(() => null),
-    getCurrentStore().catch(() => null),
+    getCurrentAcademy().catch(() => null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
   const featuredCourses = coursePayload?.courses ?? [];
-  const storeMatchById = storeContext.id
-    ? stores.find((store) => store.id === storeContext.id)
+  const academyMatchById = storeContext.id
+    ? academies.find((a) => a.id === storeContext.id)
     : null;
-  const storeMatchBySlug = storeContext.slug
-    ? stores.find((store) => (store as any).slug === storeContext.slug)
+  const academyMatchBySlug = storeContext.slug
+    ? academies.find((a) => (a as any).slug === storeContext.slug)
     : null;
-  const primaryStore = storeMatchById ?? storeMatchBySlug ?? stores[0] ?? null;
-  const storeDisplayName = primaryStore?.name ?? storeContext.name;
-  const storeCurrency = user?.currentStore || (currentStore as any) || null;
-  const storeHeroLabel = primaryStore?.domain?.public_address ?? primaryStore?.domain?.private_address ?? "Premier digital campus";
+  const primaryAcademy = academyMatchById ?? academyMatchBySlug ?? academies[0] ?? null;
+  const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
+  const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
+  const storeHeroLabel = primaryAcademy?.domain?.public_address ?? primaryAcademy?.domain?.private_address ?? "Premier digital campus";
   const stats = {
-    students: (primaryStore as any)?.student_count ?? null,
-    mentors: (primaryStore as any)?.mentor_count ?? null,
+    students: (primaryAcademy as any)?.student_count ?? null,
+    mentors: (primaryAcademy as any)?.mentor_count ?? null,
     courses:
-      (primaryStore as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
-    rating: (primaryStore as any)?.average_rating ?? null,
+      (primaryAcademy as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
+    rating: (primaryAcademy as any)?.average_rating ?? null,
   };
 
   // Get store language for translations
-  let storeForLang = currentStore;
+  let storeForLang = currentAcademy;
   if (!storeForLang && storeContext.slug) {
-    storeForLang = await getStoreBySlug(storeContext.slug).catch(() => null);
+    storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  if (!storeForLang && primaryStore) {
-    storeForLang = primaryStore as any;
+  if (!storeForLang && primaryAcademy) {
+    storeForLang = primaryAcademy as any;
   }
-  const language = getStoreLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
+  const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   // If we have a UI template, render blocks dynamically

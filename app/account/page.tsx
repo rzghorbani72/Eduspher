@@ -4,11 +4,11 @@ import { redirect } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getStoreBySlug, getCurrentStore, UnauthorizedError } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getUserProfiles, getEnrollments, getAcademyBySlug, getCurrentAcademy, UnauthorizedError } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath, resolveAssetUrl } from "@/lib/utils";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import type { EnrollmentSummary } from "@/lib/api/types";
 import { ChangePasswordForm } from "@/components/account/change-password-form";
@@ -19,15 +19,15 @@ import { ActiveSessions } from "@/components/account/active-sessions";
 
 export default async function AccountPage() {
   const session = await getSession();
-  const storeContext = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const storeContext = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
 
   // Get store language for translations
-  let currentStore = await getCurrentStore().catch(() => null);
-  if (!currentStore && storeContext.slug) {
-    currentStore = await getStoreBySlug(storeContext.slug).catch(() => null);
+  let currentAcademy = await getCurrentAcademy().catch(() => null);
+  if (!currentAcademy && storeContext.slug) {
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getStoreLanguage(currentStore?.language || null, currentStore?.country_code || null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   if (!session) {
@@ -66,7 +66,7 @@ export default async function AccountPage() {
       getEnrollments({
         limit: 100,
       }).catch(() => null),
-      storeContext.slug ? getStoreBySlug(storeContext.slug) : null,
+      storeContext.slug ? getAcademyBySlug(storeContext.slug) : null,
     ]);
     
     if (userData === null) {
@@ -100,8 +100,8 @@ export default async function AccountPage() {
   const profiles = profilesData ?? [];
 
 
-  const storeName = userData.currentStore?.name ?? "—";
-  const storeDomain = userData.currentStore?.domain ?? null;
+  const storeName = userData.currentAcademy?.name ?? "—";
+  const storeDomain = userData.currentAcademy?.domain ?? null;
 
   const enrollments = enrollmentsData?.enrollments ?? [];
   const activeEnrollments = enrollments.filter((e) => e.status === "ACTIVE");
@@ -311,7 +311,7 @@ export default async function AccountPage() {
                       </Badge>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {translate("account.store")}: {profile.store?.name ?? translate("account.unknown")} • {translate("account.profile")} #{profile.id}
+                      {translate("account.store")}: {profile.Academy?.name ?? translate("account.unknown")} • {translate("account.profile")} #{profile.id}
                     </p>
                   </div>
                 ))}
@@ -342,7 +342,7 @@ export default async function AccountPage() {
                   className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CourseCard course={enrollment.course} storeSlug={storeContext.slug} store={userData.currentStore || null} />
+                  <CourseCard course={enrollment.course} storeSlug={storeContext.slug} store={userData.currentAcademy || null} />
                   <div className="absolute top-2 right-2 z-10">
                     <Badge variant={enrollment.status === "COMPLETED" ? "success" : "soft"}>
                       {enrollment.status}
@@ -439,9 +439,9 @@ export default async function AccountPage() {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="flex items-start gap-3">
-                    {enrollment.course.cover?.publicUrl && (
+                    {enrollment.course.Image?.publicUrl && (
                       <img
-                        src={resolveAssetUrl(enrollment.course.cover.publicUrl) || ""}
+                        src={resolveAssetUrl(enrollment.course.Image.publicUrl) || ""}
                         alt={enrollment.course.title}
                         className="h-16 w-16 rounded-lg object-cover"
                       />

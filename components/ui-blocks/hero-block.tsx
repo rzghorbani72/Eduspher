@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { buildStorePath } from "@/lib/utils";
+import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 interface HeroBlockProps {
@@ -158,7 +158,7 @@ export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
                 asChild
                 className="bg-gradient-theme-primary hover:opacity-90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40 relative"
               >
-                <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")} className="text-white">
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">
                   {ctaText}
                 </Link>
               </Button>
@@ -174,7 +174,7 @@ export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
                       : "border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                 >
-                  <Link href={buildStorePath(storeContext?.slug ?? null, "/about")} className="text-white">
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-white">
                     {config.ctaSecondary}
                   </Link>
                 </Button>

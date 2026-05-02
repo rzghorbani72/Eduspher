@@ -143,7 +143,7 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   IR: { countryCode: 'IR', defaultLanguage: 'fa', supportedLanguages: ['fa', 'en'] }, // Iran - Persian
   SA: { countryCode: 'SA', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en'] }, // Saudi Arabia - Arabic
   AE: { countryCode: 'AE', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en'] }, // UAE - Arabic
-  IQ: { countryCode: 'IQ', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en', 'ku'] }, // Iraq - Arabic
+  IQ: { countryCode: 'IQ', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en'] }, // Iraq - Arabic
   SY: { countryCode: 'SY', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en'] }, // Syria - Arabic
   JO: { countryCode: 'JO', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en'] }, // Jordan - Arabic
   LB: { countryCode: 'LB', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en', 'fr'] }, // Lebanon - Arabic

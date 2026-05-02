@@ -6,7 +6,7 @@ import Link from "next/link";
 import { XCircle, Loader2, Receipt, CreditCard, Calendar, Hash, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStorePath } from "@/components/providers/store-provider";
-import { formatCurrencyWithStore } from "@/lib/utils";
+import { formatCurrencyWithAcademy } from "@/lib/utils";
 
 interface PaymentDetails {
   id: number;
@@ -175,7 +175,7 @@ export default function PaymentFailurePage() {
                 <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
                   <span className="text-slate-600 dark:text-slate-400">Amount</span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
-                    {formatCurrencyWithStore(paymentDetails.amount, store)}
+                    {formatCurrencyWithAcademy(paymentDetails.amount, store)}
                   </span>
                 </div>
               )}

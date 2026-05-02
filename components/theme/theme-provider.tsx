@@ -57,7 +57,7 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
             window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
           );
         } else {
-          setIsDark(theme.dark_mode);
+          setIsDark(theme.dark_mode === true);
         }
       };
 

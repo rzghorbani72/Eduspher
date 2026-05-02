@@ -35,7 +35,6 @@ export function addCourseToCart(item: {
   course_cover?: string;
 }): boolean {
   const cartItem: Omit<CartItem, "added_at"> = {
-    item_type: 'COURSE',
     course_id: item.course_id,
     course_title: item.course_title,
     course_price: item.course_price,
@@ -53,47 +52,8 @@ export function addCourseToCart(item: {
   return success;
 }
 
-export function addProductToCart(item: {
-  product_id: number;
-  product_title: string;
-  product_price: number;
-  product_cover?: string;
-}): boolean {
-  const cartItem: Omit<CartItem, "added_at"> = {
-    item_type: 'PRODUCT',
-    product_id: item.product_id,
-    product_title: item.product_title,
-    product_price: item.product_price,
-    product_cover: item.product_cover,
-  };
-  const success = addToLocalCart(cartItem);
-  
-  // Background sync if authenticated (non-blocking)
-  if (success) {
-    syncCartToServer().catch(() => {
-      // Silently fail - cart is still in localStorage
-    });
-  }
-  
-  return success;
-}
-
 export function removeCourseFromCart(course_id: number): boolean {
-  const success = removeFromLocalCart(course_id, 'COURSE');
-  
-  // Sync immediately after removal (don't wait for background)
-  if (success) {
-    syncCartToServer().catch((error) => {
-      // Log error but don't block UI - cart is still in localStorage
-      console.error("Failed to sync cart after removal:", error);
-    });
-  }
-  
-  return success;
-}
-
-export function removeProductFromCart(product_id: number): boolean {
-  const success = removeFromLocalCart(product_id, 'PRODUCT');
+  const success = removeFromLocalCart(course_id);
   
   // Sync immediately after removal (don't wait for background)
   if (success) {
@@ -125,10 +85,6 @@ export function getCartItemCount(): number {
 
 export function isInCart(course_id: number): boolean {
   return getCartItems().some((item) => item.course_id === course_id);
-}
-
-export function isProductInCart(product_id: number): boolean {
-  return getCartItems().some((item) => item.product_id === product_id);
 }
 
 /**

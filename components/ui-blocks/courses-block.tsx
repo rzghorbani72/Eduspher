@@ -1,10 +1,10 @@
-import { getCourses, getCurrentUser, getCurrentStore, getStoreBySlug } from "@/lib/api/server";
+import { getCourses, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { buildStorePath } from "@/lib/utils";
+import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { getStoreLanguage } from "@/lib/i18n/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 
 interface CoursesBlockProps {
@@ -40,24 +40,24 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
   };
 
-  const [coursePayload, user, currentStore] = await Promise.all([
+  const [coursePayload, user, currentAcademy] = await Promise.all([
     getCourses({
       limit,
       published: true,
     }).catch(() => null),
     getCurrentUser().catch(() => null),
-    getCurrentStore().catch(() => null),
+    getCurrentAcademy().catch(() => null),
   ]);
 
   const courses = coursePayload?.courses || [];
-  const storeCurrency = user?.currentStore || (currentStore as any) || null;
+  const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
 
   // Get store language for translations
-  let storeForLang = currentStore;
+  let storeForLang = currentAcademy;
   if (!storeForLang && storeContext?.slug) {
-    storeForLang = await getStoreBySlug(storeContext.slug).catch(() => null);
+    storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getStoreLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
+  const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
   if (courses.length === 0) {
@@ -131,11 +131,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
             <div className="mt-6 text-center">
               <Button
                 variant="outline"
-                size="default"
+                size="md"
                 asChild
                 className="border-slate-300 dark:border-slate-600"
               >
-                <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")}>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
                   {translate("home.viewAllCourses")}
                 </Link>
               </Button>
@@ -214,7 +214,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
               asChild
               className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105"
               >
-                <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")}>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
                   {translate("home.viewAllCourses")}
                 </Link>
               </Button>
@@ -261,7 +261,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
               asChild
               className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
             >
-              <Link href={buildStorePath(storeContext?.slug ?? null, "/courses")}>
+              <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
                 View All Courses
               </Link>
             </Button>

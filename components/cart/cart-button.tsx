@@ -51,7 +51,7 @@ export function CartButton({ course, className }: CartButtonProps) {
       course_id: course.id,
       course_title: course.title,
       course_price: course.price,
-      course_cover: course.cover?.publicUrl,
+      course_cover: course.Image?.publicUrl,
     });
 
     if (success) {

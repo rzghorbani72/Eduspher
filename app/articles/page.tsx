@@ -3,12 +3,12 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { getArticles } from "@/lib/api/server";
-import { buildStorePath, resolveAssetUrl, truncate } from "@/lib/utils";
-import { getStoreContext } from "@/lib/store-context";
+import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
+import { getAcademyContext } from "@/lib/store-context";
 
 export default async function ArticlesPage() {
-  const storeContext = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(storeContext.slug, path);
+  const storeContext = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
   const articles = await getArticles().catch(() => []);
 
   if (!articles.length) {

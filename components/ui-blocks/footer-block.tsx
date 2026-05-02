@@ -1,8 +1,8 @@
 import { SiteFooter } from "@/components/layout/site-footer";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { getStoreContext } from "@/lib/store-context";
-import { buildStorePath } from "@/lib/utils";
+import { getAcademyContext } from "@/lib/store-context";
+import { buildAcademyPath } from "@/lib/utils";
 import { env } from "@/lib/env";
 import { Mail, Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
 
@@ -57,8 +57,8 @@ const socialLinks = [
 ];
 
 export async function FooterBlock({ id, config }: FooterBlockProps) {
-  const store = await getStoreContext();
-  const buildPath = (path: string) => buildStorePath(store.slug, path);
+  const store = await getAcademyContext();
+  const buildPath = (path: string) => buildAcademyPath(store.slug, path);
   
   const showSocialLinks = config?.showSocialLinks !== false;
   const showNewsletter = config?.showNewsletter !== false;

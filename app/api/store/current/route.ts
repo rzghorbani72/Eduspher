@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { backendApiBaseUrl } from "@/lib/env";
+import { backendApiBaseUrl, env } from "@/lib/env";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,16 +23,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get store ID from cookies
-    const storeId = cookieStore.get("skillforge_selected_store_id")?.value;
+    const academyId = cookieStore.get(env.academyIdCookie)?.value;
 
-    // Fetch current store from backend
-    const response = await fetch(`${backendApiBaseUrl}/stores/current`, {
+    const response = await fetch(`${backendApiBaseUrl}/academies/current`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        ...(storeId && { "X-Store-ID": storeId }),
+        ...(academyId && { "X-Academy-ID": academyId }),
       },
       credentials: "include",
     });
@@ -40,7 +38,7 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       if (response.status === 404) {
         return NextResponse.json(
-          { success: false, error: "Store not found" },
+          { success: false, error: "Academy not found" },
           { status: 404 }
         );
       }
