@@ -113,6 +113,12 @@ export const ar = {
     preview: 'معاينة',
     min: 'دقيقة',
     noVideo: 'لا يوجد فيديو',
+    liveSession: 'مباشر',
+    liveSessionTimezone: 'المنطقة الزمنية',
+    liveJoinLiveLesson: 'انضمام للجلسة المباشرة',
+    liveLoginToJoin: 'سجّل الدخول لفتح رابط الاجتماع',
+    liveNoLinkYet: 'يظهر الجدول أو الرابط عند نشره من المدرّس.',
+    livePlayback: 'مشاهدة التسجيل',
   },
   products: {
     title: 'المنتجات',

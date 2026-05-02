@@ -114,6 +114,12 @@ export const fa = {
     preview: 'پیش‌نمایش',
     min: 'دقیقه',
     noVideo: 'بدون ویدیو',
+    liveSession: 'زنده',
+    liveSessionTimezone: 'منطقهٔ زمانی',
+    liveJoinLiveLesson: 'ورود به جلسهٔ زنده',
+    liveLoginToJoin: 'برای باز کردن لینک جلسه وارد شوید',
+    liveNoLinkYet: 'زمان‌بندی یا لینک وقتی مدرس منتشر کند اینجا نمایش داده می‌شود.',
+    livePlayback: 'تماشای ضبط‌شده',
   },
   products: {
     title: 'محصولات',

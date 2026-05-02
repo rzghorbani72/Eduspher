@@ -5,10 +5,14 @@ import { useMemo, useState } from "react";
 import type { LessonSummary, SeasonSummary } from "@/lib/api/types";
 import { cn, resolveAssetUrl } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { LessonLivePanel } from "@/components/courses/lesson-live-panel";
 
 interface CourseCurriculumProps {
   courseTitle: string;
   seasons: SeasonSummary[];
+  isLoggedIn: boolean;
+  loginHref: string;
+  enrollHref: string;
 }
 
 type LessonWithSeason = LessonSummary & {
@@ -25,27 +29,51 @@ const buildLessons = (seasons: SeasonSummary[]): LessonWithSeason[] =>
     }))
   );
 
-export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps) => {
+export const CourseCurriculum = ({
+  courseTitle,
+  seasons,
+  isLoggedIn,
+  loginHref,
+  enrollHref,
+}: CourseCurriculumProps) => {
   const { t } = useTranslation();
   const lessons = useMemo(() => buildLessons(seasons), [seasons]);
 
   const initialLesson = useMemo(() => {
-    return lessons.find((lesson) => lesson.is_free && (lesson as any).Video?.publicUrl)
-      ?? lessons.find((lesson) => (lesson as any).Video?.publicUrl)
-      ?? lessons[0]
-      ?? null;
+    const withVideo = (l: LessonWithSeason) => Boolean((l as any).Video?.publicUrl);
+    const isLive = (l: LessonWithSeason) =>
+      l.lesson_type === "LIVE" || Boolean(l.LiveSession);
+    return (
+      lessons.find((lesson) => lesson.is_free && withVideo(lesson)) ??
+      lessons.find((lesson) => withVideo(lesson)) ??
+      lessons.find((lesson) => isLive(lesson)) ??
+      lessons[0] ??
+      null
+    );
   }, [lessons]);
 
   const [currentLesson, setCurrentLesson] = useState<LessonWithSeason | null>(initialLesson);
 
-  const currentVideoUrl = (currentLesson as any)?.Video?.publicUrl ? resolveAssetUrl((currentLesson as any).Video.publicUrl) : null;
-  const currentSeasonTitle = currentLesson?.seasonTitle ?? (seasons[0]?.title ?? t("courses.coursePreview"));
+  const currentVideoUrl = (currentLesson as any)?.Video?.publicUrl
+    ? resolveAssetUrl((currentLesson as any).Video.publicUrl)
+    : null;
+  const isLiveLesson =
+    currentLesson?.lesson_type === "LIVE" || Boolean(currentLesson?.LiveSession);
+  const currentSeasonTitle =
+    currentLesson?.seasonTitle ?? (seasons[0]?.title ?? t("courses.coursePreview"));
   const currentTitle = currentLesson?.title ?? courseTitle;
 
   return (
     <div className="space-y-5">
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-lg transition-all hover:shadow-xl dark:border-slate-800">
-        {currentVideoUrl ? (
+        {currentLesson && isLiveLesson ? (
+          <LessonLivePanel
+            lesson={currentLesson}
+            isLoggedIn={isLoggedIn}
+            loginHref={loginHref}
+            enrollHref={enrollHref}
+          />
+        ) : currentVideoUrl ? (
           <video key={currentVideoUrl} src={currentVideoUrl} controls className="aspect-video w-full bg-black">
             {t("courses.videoNotSupported")}
           </video>
@@ -101,6 +129,8 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
                       {seasonLessons.map((lesson: LessonSummary, lessonIndex: number) => {
                         const isActive = currentLesson?.id === lesson.id;
                         const hasVideo = Boolean((lesson as any).Video?.publicUrl);
+                        const lessonIsLive =
+                          lesson.lesson_type === "LIVE" || Boolean(lesson.LiveSession);
                         return (
                           <li key={lesson.id}>
                             <button
@@ -135,8 +165,15 @@ export const CourseCurriculum = ({ courseTitle, seasons }: CourseCurriculumProps
                                       {t("courses.preview")}
                                     </span>
                                   ) : null}
+                                  {lessonIsLive ? (
+                                    <span className="rounded-full bg-violet-100 px-2 py-1 font-medium text-violet-800 dark:bg-violet-500/20 dark:text-violet-100">
+                                      {t("courses.liveSession")}
+                                    </span>
+                                  ) : null}
                                   {lesson.duration ? <span>{`${lesson.duration} ${t("courses.min")}`}</span> : null}
-                                  {!hasVideo ? <span>{t("courses.noVideo")}</span> : null}
+                                  {!lessonIsLive && !hasVideo ? (
+                                    <span>{t("courses.noVideo")}</span>
+                                  ) : null}
                                 </div>
                                 {lesson.description ? (
                                   <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">

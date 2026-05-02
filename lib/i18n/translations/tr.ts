@@ -113,6 +113,12 @@ export const tr = {
     preview: 'Önizleme',
     min: 'dakika',
     noVideo: 'Video yok',
+    liveSession: 'Canlı',
+    liveSessionTimezone: 'Saat dilimi',
+    liveJoinLiveLesson: 'Canlı derse katıl',
+    liveLoginToJoin: 'Toplantı bağlantısı için giriş yapın',
+    liveNoLinkYet: 'Program veya bağlantı eğitmen yayınladığında burada görünür.',
+    livePlayback: 'Kaydı izle',
   },
   products: {
     title: 'Ürünler',

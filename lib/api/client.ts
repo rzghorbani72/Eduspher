@@ -493,6 +493,49 @@ export const updateStore = async (
   return response.data;
 };
 
+export type LessonLiveSession = {
+  id: number;
+  lesson_id: number;
+  meeting_url: string | null;
+  playback_url?: string | null;
+  starts_at: string;
+  ends_at?: string | null;
+  duration_minutes?: number | null;
+  timezone: string;
+  recurrence_rule?: string | null;
+  recurrence_until?: string | null;
+  provider_label?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export const getLesson = async (lessonId: number, options?: RequestOptions) => {
+  const raw = await getJson<{
+    status?: string;
+    data?: Record<string, unknown> | null;
+  }>(`/lessons/${lessonId}`, options);
+  if (raw && typeof raw === 'object' && raw.status === 'ok' && raw.data) {
+    return raw.data;
+  }
+  return null;
+};
+
+export const getLessonLiveSession = async (
+  lessonId: number,
+  options?: RequestOptions
+): Promise<LessonLiveSession | null> => {
+  const raw = await getJson<{
+    status?: string;
+    data?: LessonLiveSession | null;
+    message?: string;
+  }>(`/lessons/${lessonId}/live-session`, options);
+  if (raw && typeof raw === 'object' && raw.status === 'ok' && raw.data) {
+    return raw.data;
+  }
+  return null;
+};
+
 export interface CourseQnA {
   id: number;
   course_id: number;

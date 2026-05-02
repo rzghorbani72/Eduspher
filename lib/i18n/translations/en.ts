@@ -114,6 +114,12 @@ export const en = {
     preview: 'Preview',
     min: 'min',
     noVideo: 'No video',
+    liveSession: 'Live',
+    liveSessionTimezone: 'Timezone',
+    liveJoinLiveLesson: 'Join live session',
+    liveLoginToJoin: 'Log in to open the meeting link',
+    liveNoLinkYet: 'Schedule or link will appear when the instructor publishes it.',
+    livePlayback: 'Watch recording',
   },
   products: {
     title: 'Products',

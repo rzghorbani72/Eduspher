@@ -20,6 +20,21 @@ export interface AuthorSummary {
   display_name: string;
 }
 
+export interface LiveSessionSummary {
+  id?: number;
+  lesson_id?: number;
+  meeting_url?: string | null;
+  playback_url?: string | null;
+  starts_at: string;
+  ends_at?: string | null;
+  duration_minutes?: number | null;
+  timezone: string;
+  recurrence_rule?: string | null;
+  recurrence_until?: string | null;
+  provider_label?: string | null;
+  notes?: string | null;
+}
+
 export interface LessonSummary {
   id: number;
   title: string;
@@ -27,6 +42,8 @@ export interface LessonSummary {
   duration?: number | null;
   is_free?: boolean;
   order?: number | null;
+  lesson_type?: string | null;
+  LiveSession?: LiveSessionSummary | null;
   Video?: MediaAsset | null;
   Audio?: MediaAsset | null;
   Document?: MediaAsset | null;

@@ -160,7 +160,13 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             )}
           </div>
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <CourseCurriculum courseTitle={course.title} seasons={course.Season ?? []} />
+            <CourseCurriculum
+              courseTitle={course.title}
+              seasons={course.Season ?? []}
+              isLoggedIn={!!user}
+              loginHref={buildPath("/auth/login")}
+              enrollHref={buildPath(`/checkout?course=${course.id}`)}
+            />
           </div>
         </div>
         <aside className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
