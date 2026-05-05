@@ -74,7 +74,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
         <Label htmlFor="current_password">Current Password</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="h-5 w-5 text-slate-400" />
+            <Lock className="h-5 w-5 text-muted opacity-60" />
           </div>
           <Input
             id="current_password"
@@ -87,7 +87,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
           <button
             type="button"
             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted opacity-60 hover:text-muted"
           >
             {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
@@ -101,7 +101,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
         <Label htmlFor="new_password">New Password</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="h-5 w-5 text-slate-400" />
+            <Lock className="h-5 w-5 text-muted opacity-60" />
           </div>
           <Input
             id="new_password"
@@ -114,7 +114,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
           <button
             type="button"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted opacity-60 hover:text-muted"
           >
             {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>
@@ -128,7 +128,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
         <Label htmlFor="confirm_new_password">Confirm New Password</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="h-5 w-5 text-slate-400" />
+            <Lock className="h-5 w-5 text-muted opacity-60" />
           </div>
           <Input
             id="confirm_new_password"
@@ -141,7 +141,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted opacity-60 hover:text-muted"
           >
             {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
           </button>

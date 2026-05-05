@@ -114,7 +114,7 @@ export default function PaymentCallbackPage() {
               </p>
             </div>
             {transactionId && (
-              <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-4 text-left">
+              <div className="rounded-lg border border-theme bg-surface p-4 text-left">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Transaction ID:</span>
@@ -188,7 +188,7 @@ export default function PaymentCallbackPage() {
             Browse Courses
           </Button>
         </div>
-        <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+        <div className="pt-4 border-t border-theme">
           <p className="text-xs text-slate-500 dark:text-slate-400">
             If you believe this is an error, please{" "}
             <Link

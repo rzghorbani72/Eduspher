@@ -57,7 +57,7 @@ export default async function CheckoutPage({
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             {translate("checkout.title")}
           </h1>
-          <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
+          <p className="text-base leading-7 text-muted">
             {translate("checkout.reviewCart")}
           </p>
         </div>
@@ -108,7 +108,7 @@ export default async function CheckoutPage({
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             {translate("checkout.completeEnrollment")}
           </h1>
-          <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
+          <p className="text-base leading-7 text-muted">
             {translate("checkout.freeCourseEnrollment")}
           </p>
         </div>
@@ -139,14 +139,14 @@ export default async function CheckoutPage({
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
           {translate("checkout.completePurchase")}
         </h1>
-        <p className="text-base leading-7 text-slate-600 dark:text-slate-300">
+        <p className="text-base leading-7 text-muted">
           {translate("checkout.reviewOrder")}
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
         <div className="space-y-5">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+          <div className="rounded-theme border border-theme bg-card p-5 shadow-sm transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
             <div className="flex gap-4">
               {course.Image?.publicUrl && (
                 <img
@@ -160,12 +160,12 @@ export default async function CheckoutPage({
                   {course.title}
                 </h2>
                 {course.short_description && (
-                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                  <p className="mt-1 text-sm text-muted">
                     {course.short_description}
                   </p>
                 )}
                 {course.Category && (
-                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  <p className="mt-2 text-xs text-muted opacity-70">
                     {course.Category.name}
                   </p>
                 )}
@@ -173,11 +173,11 @@ export default async function CheckoutPage({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+          <div className="rounded-theme border border-theme bg-card p-5 shadow-sm transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
               {translate("checkout.whatsIncluded")}
             </h3>
-            <ul className="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
+            <ul className="mt-4 space-y-2.5 text-sm text-muted">
               <li className="flex items-center gap-2">
                 <span className="text-[var(--theme-primary)] font-bold">✓</span>
                 {translate("checkout.lifetimeAccess")}

@@ -154,7 +154,7 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-[var(--theme-primary)]" />
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+          <h3 className="text-lg font-semibold text-[var(--theme-foreground)]">
             {t.title}
           </h3>
         </div>
@@ -163,13 +163,13 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
           size="sm"
           onClick={loadSessions}
           disabled={isLoading}
-          className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          className="text-muted opacity-70 hover:opacity-100"
         >
           <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
         </Button>
       </div>
 
-      <p className="text-sm text-slate-500 dark:text-slate-400">
+      <p className="text-sm text-muted">
         {t.description}
       </p>
 
@@ -192,22 +192,22 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900"
+              className="animate-pulse rounded-xl border border-theme bg-surface p-4"
             >
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-slate-200 dark:bg-slate-700" />
+                <div className="h-10 w-10 rounded-full bg-surface-alt" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-32 rounded bg-slate-200 dark:bg-slate-700" />
-                  <div className="h-3 w-48 rounded bg-slate-200 dark:bg-slate-700" />
+                  <div className="h-4 w-32 rounded bg-surface-alt" />
+                  <div className="h-3 w-48 rounded bg-surface-alt" />
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : sessions.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center dark:border-slate-800 dark:bg-slate-900">
-          <Globe className="mx-auto h-10 w-10 text-slate-400" />
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        <div className="rounded-xl border border-theme bg-surface p-6 text-center">
+          <Globe className="mx-auto h-10 w-10 text-muted opacity-60" />
+          <p className="mt-2 text-sm text-muted">
             {t.noSessions}
           </p>
         </div>
@@ -224,7 +224,7 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
                   "group relative rounded-xl border p-4 transition-all",
                   isCurrent
                     ? "border-[var(--theme-primary)]/30 bg-[var(--theme-primary)]/5 dark:border-[var(--theme-primary)]/30 dark:bg-[var(--theme-primary)]/10"
-                    : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950 dark:hover:border-slate-700"
+                    : "border-theme bg-card hover:border-theme-strong"
                 )}
               >
                 <div className="flex items-start gap-4">
@@ -233,7 +233,7 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
                       "flex h-10 w-10 items-center justify-center rounded-full",
                       isCurrent
                         ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)]"
-                        : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                        : "bg-surface-alt text-muted opacity-70"
                     )}
                   >
                     <DeviceIcon className="h-5 w-5" />
@@ -241,17 +241,17 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-slate-900 dark:text-white truncate">
+                      <p className="font-medium text-[var(--theme-foreground)] truncate">
                         {session.device_info}
                       </p>
                       {isCurrent && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--theme-primary)] px-2 py-0.5 text-xs font-medium text-white">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--theme-primary)] px-2 py-0.5 text-xs font-medium text-[var(--theme-on-primary)]">
                           <CheckCircle2 className="h-3 w-3" />
                           {t.currentSession}
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted opacity-70">
                       <span className="flex items-center gap-1">
                         <Globe className="h-3 w-3" />
                         {session.ip_address || "Unknown IP"}
@@ -291,7 +291,7 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
       )}
 
       {sessions.length > 1 && (
-        <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+        <div className="pt-4 border-t border-theme">
           <Button
             variant="outline"
             onClick={handleLogoutAllDevices}

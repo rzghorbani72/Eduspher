@@ -87,10 +87,10 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
       </div>
       
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--theme-foreground)] sm:text-4xl">
           {translate("pages.courseCatalogue")}
         </h1>
-        <p className="max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
+        <p className="max-w-2xl text-base leading-7 text-muted">
           {translate("pages.courseCatalogueDescription")}
         </p>
       </div>
@@ -129,7 +129,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       is_free: isFree,
                       page: page - 1,
                     })}`}
-                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-theme bg-card px-3 text-sm font-semibold text-foreground transition-all hover:scale-105 hover:bg-surface hover:border-primary/30"
                   >
                     ←
                   </Link>
@@ -153,8 +153,8 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                         href={`${buildPath("/courses")}${href}`}
                         className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition-all ${
                           isActive
-                            ? "bg-[var(--theme-primary)] text-white shadow-lg shadow-[var(--theme-primary)]/30 scale-105"
-                            : "border border-slate-200 bg-white text-slate-600 hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                            ? "bg-[var(--theme-primary)] text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 scale-105"
+                            : "border border-theme bg-card text-foreground hover:scale-105 hover:bg-surface hover:border-primary/30"
                         }`}
                       >
                         {targetPage}
@@ -171,7 +171,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       is_free: isFree,
                       page: page + 1,
                     })}`}
-                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-600 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-theme bg-card px-3 text-sm font-semibold text-foreground transition-all hover:scale-105 hover:bg-surface hover:border-primary/30"
                   >
                     →
                   </Link>
@@ -186,7 +186,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
             action={
               <Link
                 href={buildPath("/courses")}
-                className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+                className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
               >
                 {translate("pages.resetFilters")}
               </Link>

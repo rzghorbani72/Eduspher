@@ -11,40 +11,17 @@ interface FeaturesBlockProps {
   };
 }
 
-const featureIcons = ["🎓", "📚", "🏆", "💡", "🚀", "⭐", "✨", "🎯"];
-
-  const features = [
-    {
-      title: "Expert Instructors",
-      description: "Learn from industry professionals with years of real-world experience",
-      icon: "🎓",
-    },
-    {
-      title: "Flexible Learning",
-      description: "Study at your own pace with lifetime access to course materials",
-      icon: "📚",
-    },
-    {
-      title: "Certificates",
-      description: "Earn recognized certificates to boost your career prospects",
-      icon: "🏆",
-    },
-  {
-    title: "Interactive Content",
-    description: "Engage with hands-on projects and real-world applications",
-    icon: "💡",
-  },
-  {
-    title: "Career Support",
-    description: "Get job placement assistance and career guidance",
-    icon: "🚀",
-  },
-  {
-    title: "Community Access",
-    description: "Join a vibrant community of learners and mentors",
-    icon: "⭐",
-  },
+const features = [
+  { title: "Expert Instructors", description: "Learn from industry professionals with years of real-world experience", icon: "🎓" },
+  { title: "Flexible Learning", description: "Study at your own pace with lifetime access to course materials", icon: "📚" },
+  { title: "Certificates", description: "Earn recognized certificates to boost your career prospects", icon: "🏆" },
+  { title: "Interactive Content", description: "Engage with hands-on projects and real-world applications", icon: "💡" },
+  { title: "Career Support", description: "Get job placement assistance and career guidance", icon: "🚀" },
+  { title: "Community Access", description: "Join a vibrant community of learners and mentors", icon: "⭐" },
 ];
+
+const sectionStyle = { backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' };
+const sectionAltStyle = { backgroundColor: 'var(--theme-surface-alt)', color: 'var(--theme-foreground)' };
 
 export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   const title = config?.title || "Why Choose Us";
@@ -62,45 +39,39 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   const displayFeatures = features.slice(0, gridColumns * 2);
 
+  const SectionTitle = ({ centered = false }: { centered?: boolean }) =>
+    title || subtitle ? (
+      <div className={cn("max-w-2xl mb-8", centered && "mx-auto text-center")}>
+        {title && <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">{title}</h2>}
+        {subtitle && <p className="mt-1 text-base leading-7 opacity-60">{subtitle}</p>}
+      </div>
+    ) : null;
+
+  const IconBubble = ({ icon }: { icon: string }) => (
+    <div
+      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl transition-transform group-hover:scale-110"
+      style={{ backgroundColor: 'var(--theme-primary-subtle)' }}
+    >
+      {icon}
+    </div>
+  );
+
   if (variant === "icons") {
     return (
-      <section id={id || "features"} className="py-8 sm:py-10 bg-white dark:bg-slate-950">
+      <section id={id || "features"} className="py-8 sm:py-10" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {(title || subtitle) && (
-            <div className="mx-auto max-w-2xl text-center mb-8">
-              {title && (
-                <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-                  {title}
-                </h2>
-              )}
-              {subtitle && (
-                <p className="mt-1 text-base leading-7 text-slate-600 dark:text-slate-300">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
-          <div
-            className={cn(
-              "mx-auto grid gap-6",
-              gridColClasses[gridColumns],
-              "lg:max-w-none"
-            )}
-          >
+          <SectionTitle centered />
+          <div className={cn("mx-auto grid gap-6 lg:max-w-none", gridColClasses[gridColumns])}>
             {displayFeatures.map((feature, index) => (
-              <div
-                key={index}
-                className="group flex flex-col items-center text-center"
-              >
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--theme-primary)]/10 to-[var(--theme-primary)]/5 text-4xl transition-all group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[var(--theme-primary)]/20">
+              <div key={index} className="group flex flex-col items-center text-center">
+                <div
+                  className="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl text-4xl transition-all group-hover:scale-110 group-hover:shadow-lg"
+                  style={{ backgroundColor: 'var(--theme-primary-subtle)' }}
+                >
                   {feature.icon}
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                  {feature.description}
-                </p>
+                <h3 className="text-lg font-semibold">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-6 opacity-60">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -111,46 +82,24 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   if (variant === "list") {
     return (
-      <section id={id || "features"} className="py-8 sm:py-10 bg-slate-50/50 dark:bg-slate-900/50">
+      <section id={id || "features"} className="py-8 sm:py-10" style={sectionAltStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {(title || subtitle) && (
-            <div className="mx-auto max-w-2xl mb-8">
-              {title && (
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-                  {title}
-                </h2>
-              )}
-              {subtitle && (
-                <p className="mt-1 text-base leading-7 text-slate-600 dark:text-slate-300">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
-          <div
-            className={cn(
-              "mx-auto grid gap-4",
-              gridColClasses[gridColumns],
-              "lg:max-w-none"
-            )}
-          >
+          <SectionTitle />
+          <div className={cn("mx-auto grid gap-4 lg:max-w-none", gridColClasses[gridColumns])}>
             {displayFeatures.map((feature, index) => (
               <div
                 key={index}
-                className="group flex items-start gap-4 rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-[var(--theme-primary)]/30 hover:shadow-md dark:border-slate-800 dark:bg-slate-950"
+                className="group flex items-start gap-4 rounded-theme border p-6 transition-all hover:shadow-md"
+                style={{
+                  backgroundColor: 'var(--theme-card-bg)',
+                  borderColor: 'var(--theme-border-color)',
+                  color: 'var(--theme-foreground)',
+                }}
               >
-                {showIcons && (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--theme-primary)]/10 to-[var(--theme-primary)]/5 text-2xl transition-transform group-hover:scale-110">
-                    {feature.icon}
-                  </div>
-                )}
+                {showIcons && <IconBubble icon={feature.icon} />}
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                    {feature.description}
-                  </p>
+                  <h3 className="text-lg font-semibold">{feature.title}</h3>
+                  <p className="mt-1 text-sm leading-6 opacity-60">{feature.description}</p>
                 </div>
               </div>
             ))}
@@ -162,49 +111,26 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   // Default: cards variant
   return (
-    <section id={id || "features"} className="py-8 sm:py-10 bg-slate-50/50 dark:bg-slate-900/50">
+    <section id={id || "features"} className="py-8 sm:py-10" style={sectionAltStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {(title || subtitle) && (
-          <div className="mx-auto max-w-2xl text-center mb-8">
-            {title && (
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-            {title}
-          </h2>
-            )}
-          {subtitle && (
-            <p className="mt-1 text-base leading-7 text-slate-600 dark:text-slate-300">
-              {subtitle}
-            </p>
-          )}
-        </div>
-        )}
-        <div
-          className={cn(
-            "mx-auto grid gap-6",
-            gridColClasses[gridColumns],
-            "lg:max-w-none"
-          )}
-        >
+        <SectionTitle centered />
+        <div className={cn("mx-auto grid gap-6 lg:max-w-none", gridColClasses[gridColumns])}>
           {displayFeatures.map((feature, index) => (
             <div
               key={index}
-              className="group relative flex flex-col gap-y-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--theme-primary)]/30 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950"
+              className="group relative flex flex-col gap-y-3 rounded-theme border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+              style={{
+                backgroundColor: 'var(--theme-card-bg)',
+                borderColor: 'var(--theme-border-color)',
+                color: 'var(--theme-foreground)',
+              }}
             >
-              {/* Decorative gradient background */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[var(--theme-primary)]/5 via-transparent to-[var(--theme-accent)]/5 opacity-0 transition-opacity group-hover:opacity-100" />
-              
+              {/* Decorative hover gradient */}
+              <div className="absolute inset-0 rounded-theme bg-gradient-to-br from-[var(--theme-primary)]/5 via-transparent to-[var(--theme-accent)]/5 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />
               <div className="relative">
-                {showIcons && (
-                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--theme-primary)]/10 to-[var(--theme-primary)]/5 text-2xl transition-transform group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[var(--theme-primary)]/20">
-                    {feature.icon}
-                  </div>
-                )}
-                <h3 className="text-lg font-semibold leading-7 text-slate-900 dark:text-white">
-                  {feature.title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                  {feature.description}
-                </p>
+                {showIcons && <div className="mb-3"><IconBubble icon={feature.icon} /></div>}
+                <h3 className="text-lg font-semibold leading-7">{feature.title}</h3>
+                <p className="mt-1.5 text-sm leading-6 opacity-60">{feature.description}</p>
               </div>
             </div>
           ))}
@@ -213,4 +139,3 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
     </section>
   );
 }
-

@@ -46,7 +46,7 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
       <div className="lg:hidden fixed bottom-4 right-4 z-40">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-primary)] text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-110"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-primary)] text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-110"
         >
           {isOpen ? <X className="h-6 w-6" /> : <Filter className="h-6 w-6" />}
         </button>
@@ -63,8 +63,9 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
       {/* Sidebar */}
       <aside
         id={id || "sidebar"}
+        style={{ backgroundColor: 'var(--theme-surface)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
         className={cn(
-          "fixed top-0 z-40 h-full w-80 transform border-r border-slate-200 bg-white transition-transform duration-300 dark:border-slate-800 dark:bg-slate-950 lg:relative lg:z-auto lg:transform-none",
+          "fixed top-0 z-40 h-full w-80 transform border-r transition-transform duration-300 lg:relative lg:z-auto lg:transform-none",
           position === "left" ? "left-0" : "right-0",
           isOpen ? "translate-x-0" : position === "left" ? "-translate-x-full" : "translate-x-full",
           "lg:translate-x-0"
@@ -73,12 +74,12 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
         <div className="flex h-full flex-col overflow-y-auto p-6">
           {/* Close button for mobile */}
           <div className="mb-6 flex items-center justify-between lg:hidden">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
+            <h2 className="text-lg font-semibold">
               Filters & Categories
             </h2>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+              className="rounded-lg p-2 opacity-60 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]"
             >
               <X className="h-5 w-5" />
             </button>
@@ -87,7 +88,7 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
           {/* Categories Section */}
           {showCategories && (
             <div className="mb-8">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-60">
                 Categories
               </h3>
               <nav className="space-y-2">
@@ -100,7 +101,7 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
                       "flex items-center justify-between rounded-lg px-4 py-2.5 text-sm transition-colors",
                       selectedCategory === category.slug
                         ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] font-medium"
-                        : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                        : "opacity-60 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]"
                     )}
                   >
                     <span>{category.name}</span>
@@ -114,13 +115,13 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
           {/* Filters Section */}
           {showFilters && (
             <div>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-60">
                 Filters
               </h3>
               <div className="space-y-6">
                 {filterOptions.map((filter, index) => (
                   <div key={index}>
-                    <button className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+                    <button className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm font-medium opacity-80 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]">
                       <span>{filter.label}</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
@@ -128,7 +129,7 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
                       {filter.options.map((option) => (
                         <label
                           key={option}
-                          className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-900"
+                          className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm opacity-65 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]"
                         >
                           <input
                             type="checkbox"
@@ -146,8 +147,8 @@ export function SidebarBlock({ id, config }: SidebarBlockProps) {
 
           {/* Apply Filters Button */}
           {showFilters && (
-            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-              <button className="w-full rounded-lg bg-[var(--theme-primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:bg-[var(--theme-primary)]/90">
+            <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--theme-border-color)' }}>
+              <button className="w-full rounded-lg bg-[var(--theme-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:bg-[var(--theme-primary)]/90">
                 Apply Filters
               </button>
             </div>

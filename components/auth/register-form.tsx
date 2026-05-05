@@ -345,7 +345,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-5 w-5 text-slate-400" />
+                  <Mail className="h-5 w-5 text-muted opacity-60" />
                 </div>
                 <Input 
                   id="email" 
@@ -527,7 +527,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
               <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-slate-400" />
+                  <Lock className="h-5 w-5 text-muted opacity-60" />
                 </div>
                 <Input 
                   id="password" 
@@ -545,7 +545,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
               <Label htmlFor="confirmed_password">Confirm password</Label>
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-slate-400" />
+                  <Lock className="h-5 w-5 text-muted opacity-60" />
                 </div>
                 <Input
                   id="confirmed_password"

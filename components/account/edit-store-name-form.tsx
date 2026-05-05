@@ -69,11 +69,11 @@ export const EditStoreNameForm = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-              <School className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+              <School className="h-5 w-5 text-muted dark:text-muted opacity-60" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-white">Store Name</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{currentStoreName}</p>
+              <p className="text-sm text-muted opacity-70 dark:text-muted opacity-60">{currentStoreName}</p>
             </div>
           </div>
           <Button
@@ -97,7 +97,7 @@ export const EditStoreNameForm = ({
         <Label htmlFor="store_name">Store Name</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <School className="h-5 w-5 text-slate-400" />
+            <School className="h-5 w-5 text-muted opacity-60" />
           </div>
           <Input
             id="store_name"
@@ -116,7 +116,7 @@ export const EditStoreNameForm = ({
         {error && (
           <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>
         )}
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-muted opacity-70 dark:text-muted opacity-60">
           Store name must be unique across all stores
         </p>
       </div>

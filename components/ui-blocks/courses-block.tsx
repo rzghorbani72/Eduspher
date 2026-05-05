@@ -26,6 +26,12 @@ interface CoursesBlockProps {
   };
 }
 
+const sectionStyle = { backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' };
+const featuredSectionStyle = {
+  background: 'linear-gradient(180deg, var(--theme-surface-alt), var(--theme-background))',
+  color: 'var(--theme-foreground)',
+};
+
 export async function CoursesBlock({ id, config, storeContext }: CoursesBlockProps) {
   const title = config?.title;
   const subtitle = config?.subtitle;
@@ -41,10 +47,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   };
 
   const [coursePayload, user, currentAcademy] = await Promise.all([
-    getCourses({
-      limit,
-      published: true,
-    }).catch(() => null),
+    getCourses({ limit, published: true }).catch(() => null),
     getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
   ]);
@@ -52,7 +55,6 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const courses = coursePayload?.courses || [];
   const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
 
-  // Get store language for translations
   let storeForLang = currentAcademy;
   if (!storeForLang && storeContext?.slug) {
     storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
@@ -60,35 +62,59 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
-  if (courses.length === 0) {
-    return null;
-  }
+  if (courses.length === 0) return null;
 
-  // Minimal layout
+  const SectionHeader = ({ centered = false }: { centered?: boolean }) =>
+    title || subtitle ? (
+      <div className={cn("mb-6", centered && "mx-auto max-w-2xl text-center")}>
+        {title && (
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
+        )}
+        {subtitle && (
+          <p className="mt-1 text-base leading-7 opacity-60">{subtitle}</p>
+        )}
+      </div>
+    ) : null;
+
+  const ViewAllButton = ({ variant = "primary" }: { variant?: "primary" | "outline" }) =>
+    showViewAll ? (
+      <div className="mt-6 text-center">
+        {variant === "outline" ? (
+          <Button
+            variant="outline"
+            size="md"
+            asChild
+            style={{ borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
+          >
+            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
+              {translate("home.viewAllCourses")}
+            </Link>
+          </Button>
+        ) : (
+          <Button
+            size="lg"
+            asChild
+            className="shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            style={{
+              backgroundColor: 'var(--theme-primary)',
+              color: 'var(--theme-on-primary)',
+              boxShadow: '0 4px 14px color-mix(in srgb, var(--theme-primary) 40%, transparent)',
+            }}
+          >
+            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
+              {translate("home.viewAllCourses")}
+            </Link>
+          </Button>
+        )}
+      </div>
+    ) : null;
+
   if (layout === "minimal") {
     return (
-      <section id={id || "courses"} className="py-6 sm:py-8 bg-white dark:bg-slate-950">
+      <section id={id || "courses"} className="py-6 sm:py-8" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {(title || subtitle) && (
-            <div className="mb-6">
-              {title && (
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  {title}
-                </h2>
-              )}
-              {subtitle && (
-                <p className="mt-2 text-base text-slate-600 dark:text-slate-300">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
-          <div
-            className={cn(
-              "grid gap-6",
-              gridColClasses[gridColumns]
-            )}
-          >
+          <SectionHeader />
+          <div className={cn("grid gap-6", gridColClasses[gridColumns])}>
             {courses.map((course) => (
               <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
             ))}
@@ -98,128 +124,51 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     );
   }
 
-  // Compact layout
   if (layout === "compact") {
     return (
-      <section id={id || "courses"} className="py-6 sm:py-8 bg-white dark:bg-slate-950">
+      <section id={id || "courses"} className="py-6 sm:py-8" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {(title || subtitle) && (
-            <div className="mb-6">
-              {title && (
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  {title}
-                </h2>
-              )}
-              {subtitle && (
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
-          <div
-            className={cn(
-              "grid gap-4",
-              gridColClasses[gridColumns]
-            )}
-          >
+          <SectionHeader />
+          <div className={cn("grid gap-4", gridColClasses[gridColumns])}>
             {courses.map((course) => (
               <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
             ))}
           </div>
-          {showViewAll && (
-            <div className="mt-6 text-center">
-              <Button
-                variant="outline"
-                size="md"
-                asChild
-                className="border-slate-300 dark:border-slate-600"
-              >
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
-                  {translate("home.viewAllCourses")}
-                </Link>
-              </Button>
-            </div>
-          )}
+          <ViewAllButton variant="outline" />
         </div>
       </section>
     );
   }
 
-  // Featured layout
   if (layout === "featured") {
-  return (
-      <section id={id || "courses"} className="py-8 sm:py-10 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {(title || subtitle) && (
-            <div className="mx-auto max-w-2xl text-center mb-8">
-          {title && (
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-              {title}
-            </h2>
-          )}
-          {subtitle && (
-            <p className="mt-1 text-base leading-7 text-slate-600 dark:text-slate-300">
-              {subtitle}
-            </p>
-          )}
-        </div>
-          )}
-        <div
-            className={cn(
-              "mx-auto grid gap-6",
-              gridColClasses[gridColumns],
-              "lg:max-w-none"
-            )}
-          >
+    return (
+      <section id={id || "courses"} className="py-8 sm:py-10" style={featuredSectionStyle}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <SectionHeader centered />
+          <div className={cn("mx-auto grid gap-6 lg:max-w-none", gridColClasses[gridColumns])}>
             {courses.map((course) => (
               <div key={course.id} className="transform transition-all hover:scale-105">
                 <CourseCard course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
               </div>
             ))}
           </div>
+          <ViewAllButton />
         </div>
       </section>
     );
   }
 
-  // List layout
   if (layout === "list") {
     return (
-      <section id={id || "courses"} className="py-8 sm:py-10 bg-white dark:bg-slate-950">
+      <section id={id || "courses"} className="py-8 sm:py-10" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          {(title || subtitle) && (
-            <div className="mb-6">
-              {title && (
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  {title}
-                </h2>
-              )}
-              {subtitle && (
-                <p className="mt-1 text-base text-slate-600 dark:text-slate-300">
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
+          <SectionHeader />
           <div className="space-y-4">
-          {courses.map((course) => (
-            <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
-          ))}
-        </div>
-        {showViewAll && (
-          <div className="mt-6 text-center">
-            <Button 
-              size="lg" 
-              asChild
-              className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105"
-              >
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
-                  {translate("home.viewAllCourses")}
-                </Link>
-              </Button>
-            </div>
-          )}
+            {courses.map((course) => (
+              <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
+            ))}
+          </div>
+          <ViewAllButton />
         </div>
       </section>
     );
@@ -227,48 +176,16 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   // Default: grid layout
   return (
-    <section id={id || "courses"} className="py-8 sm:py-10 bg-white dark:bg-slate-950">
+    <section id={id || "courses"} className="py-8 sm:py-10" style={sectionStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {(title || subtitle) && (
-          <div className="mx-auto max-w-2xl text-center mb-8">
-            {title && (
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
-                {title}
-              </h2>
-            )}
-            {subtitle && (
-              <p className="mt-1 text-base leading-7 text-slate-600 dark:text-slate-300">
-                {subtitle}
-              </p>
-            )}
-          </div>
-        )}
-        <div
-          className={cn(
-            "mx-auto grid gap-6",
-            gridColClasses[gridColumns],
-            "lg:max-w-none"
-          )}
-        >
+        <SectionHeader centered />
+        <div className={cn("mx-auto grid gap-6 lg:max-w-none", gridColClasses[gridColumns])}>
           {courses.map((course) => (
             <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
           ))}
         </div>
-        {showViewAll && (
-          <div className="mt-6 text-center">
-            <Button
-              size="lg"
-              asChild
-              className="bg-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/90 text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
-            >
-              <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
-                View All Courses
-              </Link>
-            </Button>
-          </div>
-        )}
+        <ViewAllButton />
       </div>
     </section>
   );
 }
-

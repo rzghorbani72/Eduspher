@@ -174,7 +174,7 @@ export default function PaymentSuccessPage() {
   ) || paymentDetails?.gateway_responses?.[0];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+    <div className="min-h-screen bg-background py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Success Header */}
         <div className="text-center space-y-4 mb-8">
@@ -193,7 +193,7 @@ export default function PaymentSuccessPage() {
 
         {/* Payment Details Card */}
         {paymentDetails && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-6 mb-6">
+          <div className="bg-card rounded-theme shadow-lg border border-theme p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <Receipt className="h-6 w-6 text-sky-600 dark:text-sky-400" />
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -204,7 +204,7 @@ export default function PaymentSuccessPage() {
             <div className="space-y-4">
               {/* Amount */}
               {paymentDetails.amount && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.amountPaid")}</span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
                     {formatCurrencyWithAcademy(paymentDetails.amount, store, undefined, language)}
@@ -214,7 +214,7 @@ export default function PaymentSuccessPage() {
 
               {/* Payment ID */}
               {paymentDetails.id && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     {t("payment.paymentId")}
@@ -227,7 +227,7 @@ export default function PaymentSuccessPage() {
 
               {/* Transaction ID */}
               {(latestResponse?.transaction_id || paymentDetails?.transaction_id || transactionId) && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <CreditCard className="h-4 w-4" />
                     {t("payment.transactionId")}
@@ -240,7 +240,7 @@ export default function PaymentSuccessPage() {
 
               {/* Reference ID */}
               {(latestResponse?.reference_id || paymentDetails?.reference_id || reference) && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     {t("payment.referenceId")}
@@ -253,7 +253,7 @@ export default function PaymentSuccessPage() {
 
               {/* Authorization Code */}
               {authCode && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <CreditCard className="h-4 w-4" />
                     {t("payment.authorizationCode")}
@@ -266,7 +266,7 @@ export default function PaymentSuccessPage() {
 
               {/* RRN */}
               {rrn && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     RRN
@@ -279,7 +279,7 @@ export default function PaymentSuccessPage() {
 
               {/* Host Reference Number */}
               {hostRefNum && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     {t("payment.hostReference")}
@@ -292,7 +292,7 @@ export default function PaymentSuccessPage() {
 
               {/* Gateway */}
               {paymentDetails.gateway && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400">{t("payment.gateway")}</span>
                   <span className="text-slate-900 dark:text-white font-medium">
                     {latestResponse?.gateway?.display_name || latestResponse?.gateway?.name || paymentDetails.gateway}
@@ -318,13 +318,13 @@ export default function PaymentSuccessPage() {
 
         {/* URL Parameters from Bank (if available and different from payment details) */}
         {Object.keys(urlParams).length > 0 && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-6 mb-6">
+          <div className="bg-card rounded-theme shadow-lg border border-theme p-6 mb-6">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
               {t("payment.bankGatewayParameters")}
             </h2>
             <div className="space-y-2">
               {Object.entries(urlParams).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-sm py-2 border-b border-slate-200 dark:border-slate-800 last:border-0">
+                <div key={key} className="flex justify-between text-sm py-2 border-b border-theme last:border-0">
                   <span className="text-slate-600 dark:text-slate-400 font-mono text-xs">
                     {key}
                   </span>
@@ -339,7 +339,7 @@ export default function PaymentSuccessPage() {
 
         {/* Gateway Response Details (if available) */}
         {latestResponse && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-6 mb-6">
+          <div className="bg-card rounded-theme shadow-lg border border-theme p-6 mb-6">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
               {t("payment.gatewayResponseDetails")}
             </h2>
@@ -365,7 +365,7 @@ export default function PaymentSuccessPage() {
 
               {/* Processed Data */}
               {latestResponse.processed_data && Object.keys(latestResponse.processed_data).length > 0 && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <div className="mt-4 pt-4 border-t border-theme">
                   <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     {t("payment.additionalInformation")}
                   </h3>

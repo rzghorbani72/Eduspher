@@ -57,21 +57,21 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
   const discountAmount = discount ? discount.discount_amount / 100 : 0;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+    <div className="rounded-2xl border border-theme bg-card animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
+      <h3 className="text-lg font-semibold text-foreground">
         {t("checkout.orderSummary")}
       </h3>
       <div className="mt-4 space-y-3">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-600 dark:text-slate-300">{t("courses.title")}</span>
-          <span className="font-medium text-slate-900 dark:text-white">
+          <span className="text-muted">{t("courses.title")}</span>
+          <span className="font-medium text-foreground">
             {formatCurrencyWithAcademy(course.price, user?.currentAcademy || null, undefined, language)}
           </span>
         </div>
         {course.original_price && course.original_price > course.price && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-600 dark:text-slate-300">{t("courses.originalPrice")}</span>
-            <span className="text-slate-500 line-through dark:text-slate-400">
+            <span className="text-muted">{t("courses.originalPrice")}</span>
+            <span className="text-muted opacity-60 line-through ">
               {formatCurrencyWithAcademy(course.original_price, user?.currentAcademy || null, undefined, language)}
             </span>
           </div>
@@ -84,10 +84,10 @@ export function OrderSummary({ course, user, session, onDiscountChange }: OrderS
             </span>
           </div>
         )}
-        <div className="border-t border-slate-200 pt-3 dark:border-slate-800">
+        <div className="border-t border-slate-200 pt-3 ">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
-            <span className="text-2xl font-bold text-slate-900 dark:text-white">
+            <span className="font-semibold text-foreground">{t("checkout.total")}</span>
+            <span className="text-2xl font-bold text-foreground">
               {formatCurrencyWithAcademy(finalPrice, user?.currentAcademy || null, undefined, language)}
             </span>
           </div>

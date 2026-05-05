@@ -250,7 +250,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     <div className="space-y-6">
       {step === "identifier" && (
         <div className="space-y-4">
-          <div className="flex gap-2 rounded-lg border border-slate-200 p-1 dark:border-slate-800">
+          <div className="flex gap-2 rounded-lg border border-slate-200 p-1 ">
             <button
               type="button"
               onClick={() => {
@@ -263,7 +263,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "email"
                   ? "bg-sky-600 text-white dark:bg-sky-500"
-                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-900"
+                  : "text-muted hover:bg-surface"
               }`}
             >
               Email
@@ -282,7 +282,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "phone"
                   ? "bg-sky-600 text-white dark:bg-sky-500"
-                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-900"
+                  : "text-muted hover:bg-surface"
               }`}
             >
               Phone
@@ -296,7 +296,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             {authMethod === "email" ? (
               <div className="relative">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-5 w-5 text-slate-400" />
+                  <Mail className="h-5 w-5 text-muted opacity-60" />
                 </div>
                 <Input
                   id="identifier"
@@ -396,7 +396,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             <Label htmlFor="password">New Password</Label>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Lock className="h-5 w-5 text-slate-400" />
+                <Lock className="h-5 w-5 text-muted opacity-60" />
               </div>
               <Input
                 id="password"
@@ -414,7 +414,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             <Label htmlFor="confirmed_password">Confirm Password</Label>
             <div className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Lock className="h-5 w-5 text-slate-400" />
+                <Lock className="h-5 w-5 text-muted opacity-60" />
               </div>
               <Input
                 id="confirmed_password"
@@ -460,7 +460,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
               Password Reset Successfully!
             </h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            <p className="mt-2 text-sm text-muted ">
               Your password has been reset. You can now login with your new password.
             </p>
           </div>

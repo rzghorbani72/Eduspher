@@ -1,51 +1,39 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useThemeConfig } from './theme-provider';
 
 interface ThemeDarkModeApplierProps {
-  darkMode: boolean | null | undefined;
+  darkMode?: boolean | null;
 }
 
-/**
- * Applies the 'dark' class to the HTML element based on theme's dark_mode setting
- * This is required for Tailwind's class-based dark mode to work
- */
-export function ThemeDarkModeApplier({ darkMode }: ThemeDarkModeApplierProps) {
+export function ThemeDarkModeApplier({ darkMode: initialDarkMode }: ThemeDarkModeApplierProps) {
+  const { theme } = useThemeConfig();
+
+  // Use live context value when available, fall back to SSR prop
+  const darkMode = theme !== null ? theme?.dark_mode : initialDarkMode;
+
   useEffect(() => {
-    const htmlElement = document.documentElement;
-    
-    if (darkMode === null) {
-      // Use system preference when dark_mode is null
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const applySystemTheme = () => {
-        if (mediaQuery.matches) {
-          htmlElement.classList.add('dark');
-        } else {
-          htmlElement.classList.remove('dark');
-        }
-      };
-      
-      // Apply immediately
-      applySystemTheme();
-      
-      // Listen for changes
-      if (mediaQuery.addEventListener) {
-        mediaQuery.addEventListener('change', applySystemTheme);
-        return () => mediaQuery.removeEventListener('change', applySystemTheme);
+    const html = document.documentElement;
+
+    const apply = (dark: boolean) => {
+      if (dark) {
+        html.classList.add('dark');
       } else {
-        // Fallback for older browsers
-        mediaQuery.addListener(applySystemTheme);
-        return () => mediaQuery.removeListener(applySystemTheme);
+        html.classList.remove('dark');
       }
-    } else if (darkMode === true) {
-      // Force dark mode
-      htmlElement.classList.add('dark');
+    };
+
+    if (darkMode === null || darkMode === undefined) {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = () => apply(mq.matches);
+      handler();
+      mq.addEventListener('change', handler);
+      return () => mq.removeEventListener('change', handler);
     } else {
-      // Force light mode (darkMode === false)
-      htmlElement.classList.remove('dark');
+      apply(darkMode === true);
     }
   }, [darkMode]);
 
-  return null; // This component doesn't render anything
+  return null;
 }
-

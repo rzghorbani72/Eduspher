@@ -97,7 +97,7 @@ export default async function Home() {
         </div>
         <div className="space-y-4">
           <Badge variant="soft" className="w-fit">{translate("home.newBadge")}</Badge>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: 'var(--theme-foreground)' }}>
             {translate("home.heroTitle").replace("{store}", storeDisplayName)}
           </h1>
           <p className="max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300">
@@ -106,13 +106,14 @@ export default async function Home() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               href={buildPath("/courses")}
-              className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+              className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
             >
               {translate("home.browseCourses")}
             </Link>
             <Link
               href={buildPath("/auth/login")}
-              className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+              className="inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-semibold transition-all hover:scale-105 hover:bg-[var(--theme-surface)]"
+              style={{ borderColor: 'var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
             >
               {translate("home.startForFree")}
             </Link>
@@ -124,21 +125,21 @@ export default async function Home() {
               { label: translate("home.courses"), value: stats.courses ? stats.courses.toLocaleString() : "—" },
               { label: translate("home.avgRating"), value: stats.rating ? `${stats.rating.toFixed(1)}/5` : "—" },
             ].map((stat, index) => (
-              <div key={stat.label} className="rounded-xl border border-slate-200 bg-white p-3 text-center shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${index * 50}ms` }}>
-                <p className="text-xl font-semibold text-slate-900 dark:text-white">{stat.value}</p>
-                <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              <div key={stat.label} className="rounded-theme border p-3 text-center shadow-sm transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${index * 50}ms`, backgroundColor: 'var(--theme-surface)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}>
+                <p className="text-xl font-semibold">{stat.value}</p>
+                <p className="text-xs uppercase tracking-wide opacity-55">
                   {stat.label}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-sky-50 via-white to-emerald-50 p-6 shadow-lg transition-all hover:shadow-xl dark:border-slate-800 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 animate-in fade-in slide-in-from-right-4 duration-500 delay-200">
+        <div className="relative overflow-hidden rounded-theme border p-6 shadow-lg transition-all hover:shadow-xl animate-in fade-in slide-in-from-right-4 duration-500 delay-200" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 10%, var(--theme-background)), color-mix(in srgb, var(--theme-secondary) 6%, var(--theme-background)))', borderColor: 'var(--theme-border-color)' }}>
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-wide text-[var(--theme-primary)]">
               {storeHeroLabel}
             </p>
-            <p className="text-base font-semibold text-slate-900 dark:text-white">
+            <p className="text-base font-semibold text-[var(--theme-foreground)]">
               {translate("home.personalisedLearningPaths")}
             </p>
             <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
@@ -146,15 +147,15 @@ export default async function Home() {
             </p>
           </div>
           <div className="mt-6 grid gap-3">
-            <div className="rounded-xl bg-white/90 p-4 shadow-md shadow-sky-100 transition-all hover:shadow-lg dark:bg-slate-900/80 dark:shadow-slate-900/40">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">{translate("home.guidedProjects")}</p>
-              <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
+            <div className="rounded-theme p-4 shadow-sm transition-all hover:shadow-md" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}>
+              <p className="text-sm font-semibold">{translate("home.guidedProjects")}</p>
+              <p className="text-xs leading-5 opacity-60">
                 {translate("home.guidedProjectsDescription")}
               </p>
             </div>
-            <div className="rounded-xl bg-white/90 p-4 shadow-md shadow-emerald-100 transition-all hover:shadow-lg dark:bg-slate-900/80 dark:shadow-slate-900/40">
-              <p className="text-sm font-semibold text-slate-900 dark:text-white">{translate("home.mentorCheckIns")}</p>
-              <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
+            <div className="rounded-theme p-4 shadow-sm transition-all hover:shadow-md" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}>
+              <p className="text-sm font-semibold">{translate("home.mentorCheckIns")}</p>
+              <p className="text-xs leading-5 opacity-60">
                 {translate("home.mentorCheckInsDescription")}
               </p>
             </div>
@@ -165,7 +166,7 @@ export default async function Home() {
       <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("courses.featuredCourses")}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-[var(--theme-foreground)]">{translate("courses.featuredCourses")}</h2>
             <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
               {hasCatalogAccess
                 ? translate("home.featuredCoursesDescription")
@@ -206,13 +207,14 @@ export default async function Home() {
                 <div className="flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href={buildPath("/auth/login")}
-                    className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+                    className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
                   >
                     {translate("auth.login")}
                   </Link>
                   <Link
                     href={buildPath("/auth/register")}
-                    className="inline-flex h-11 items-center justify-center rounded-full border border-slate-200 px-6 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+                    className="inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-semibold transition-all hover:scale-105 hover:bg-[var(--theme-surface)]"
+                    style={{ borderColor: 'var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
                   >
                     {translate("auth.register")}
                   </Link>
@@ -226,7 +228,7 @@ export default async function Home() {
       {categories.length ? (
         <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("home.topCategories")}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-[var(--theme-foreground)]">{translate("home.topCategories")}</h2>
             <Link
               href={buildPath("/courses?view=categories")}
               className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
@@ -238,18 +240,18 @@ export default async function Home() {
             {categories.slice(0, 6).map((category, index) => (
               <div
                 key={category.id}
-                className="group flex items-center justify-between rounded-xl border border-slate-200 bg-gradient-to-r from-white to-slate-50 px-5 py-4 shadow-sm transition-all hover:-translate-y-1 hover:border-[var(--theme-primary)]/30 hover:shadow-md dark:border-slate-800 dark:from-slate-950 dark:to-slate-900 animate-in fade-in slide-in-from-bottom-2 duration-500"
-                style={{ animationDelay: `${index * 50}ms` }}
+                className="group flex items-center justify-between rounded-theme border px-5 py-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md animate-in fade-in slide-in-from-bottom-2 duration-500"
+                style={{ animationDelay: `${index * 50}ms`, backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
               >
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-semibold uppercase tracking-wide opacity-50">
                     {translate("home.categoryLabel")}
                   </p>
-                  <p className="text-base font-semibold text-slate-900 dark:text-white">
+                  <p className="text-base font-semibold">
                     {category.name}
                   </p>
                   {category.description ? (
-                    <p className="text-xs leading-5 text-slate-500 dark:text-slate-400">
+                    <p className="text-xs leading-5 opacity-55">
                       {truncate(category.description, 80)}
                     </p>
                   ) : null}
@@ -264,7 +266,7 @@ export default async function Home() {
       {articles.length ? (
         <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("home.fromTheJournal")}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-[var(--theme-foreground)]">{translate("home.fromTheJournal")}</h2>
             <Link
               href={buildPath("/articles")}
               className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
@@ -283,8 +285,8 @@ export default async function Home() {
               return (
                 <article
                   key={article.id}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[var(--theme-primary)]/30 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-bottom-4 duration-500"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="group flex flex-col overflow-hidden rounded-theme border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500"
+                  style={{ animationDelay: `${index * 100}ms`, backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <img
@@ -295,13 +297,13 @@ export default async function Home() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                   </div>
                   <div className="flex flex-1 flex-col gap-3 p-5">
-                    <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    <p className="text-xs uppercase tracking-wide opacity-50">
                       {publishedDate}
                     </p>
-                    <h3 className="text-lg font-semibold leading-7 text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-white dark:group-hover:text-[var(--theme-primary)]">
+                    <h3 className="text-lg font-semibold leading-7 transition-colors group-hover:text-[var(--theme-primary)]">
                       {article.title}
                     </h3>
-                    <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
+                    <p className="text-sm leading-6 opacity-60">
                       {truncate(description, 140)}
                     </p>
                     <Link
@@ -318,23 +320,27 @@ export default async function Home() {
         </section>
       ) : null}
 
-      <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--theme-primary)] via-[var(--theme-secondary)] to-[var(--theme-accent)] p-8 text-white shadow-2xl transition-all hover:shadow-3xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600">
+      <section
+        className="overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--theme-primary)] via-[var(--theme-secondary)] to-[var(--theme-accent)] p-8 shadow-2xl transition-all hover:shadow-3xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600"
+        style={{ color: 'var(--theme-on-primary)' }}
+      >
         <div className="relative z-10 max-w-3xl space-y-3">
-          <Badge variant="soft" className="bg-white/20 text-white">{translate("home.readyToBegin")}</Badge>
+          <Badge variant="soft" className="bg-black/10">{translate("home.readyToBegin")}</Badge>
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             {translate("home.createLearningAccount")}
           </h2>
-          <p className="text-sm leading-6 text-white/90">
+          <p className="text-sm leading-6 opacity-80">
             {translate("home.createLearningAccountDescription")}
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={buildPath("/auth/login")}
-              className="inline-flex h-11 items-center justify-center rounded-full bg-white px-6 text-sm font-semibold text-[var(--theme-primary)] shadow-lg shadow-white/20 transition-all hover:scale-105 hover:bg-slate-100"
+              className="inline-flex h-11 items-center justify-center rounded-full px-6 text-sm font-semibold shadow-lg transition-all hover:scale-105 hover:opacity-90"
+              style={{ backgroundColor: 'var(--theme-on-primary)', color: 'var(--theme-primary)' }}
             >
               {translate("home.joinStore").replace("{store}", storeDisplayName)}
             </Link>
-            <Link href={buildPath("/pricing")} className="text-sm font-semibold text-white transition-all hover:translate-x-1 hover:underline">
+            <Link href={buildPath("/pricing")} className="text-sm font-semibold opacity-90 transition-all hover:translate-x-1 hover:underline">
               {translate("home.viewPricing")} →
             </Link>
           </div>

@@ -38,6 +38,16 @@ function formatRange(
   }
 }
 
+const panelStyle = {
+  background:
+    'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 22%, #000), color-mix(in srgb, var(--theme-secondary) 12%, #000))',
+  color: 'var(--theme-on-primary)',
+};
+
+const dividerStyle = {
+  borderColor: 'color-mix(in srgb, var(--theme-on-primary) 15%, transparent)',
+};
+
 export const LessonLivePanel = ({
   lesson,
   isLoggedIn,
@@ -102,8 +112,11 @@ export const LessonLivePanel = ({
 
   if (!live) {
     return (
-      <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 bg-slate-900 px-6 text-center text-slate-200">
-        <span className="text-sm font-medium">
+      <div
+        className="flex aspect-video w-full flex-col items-center justify-center gap-2 px-6 text-center"
+        style={panelStyle}
+      >
+        <span className="text-sm font-medium opacity-70">
           {loadingDetail ? t("common.loading") : t("courses.liveNoLinkYet")}
         </span>
       </div>
@@ -111,33 +124,33 @@ export const LessonLivePanel = ({
   }
 
   const locale = language || "en";
-  const range = formatRange(
-    live.starts_at,
-    live.ends_at,
-    live.timezone,
-    locale
-  );
+  const range = formatRange(live.starts_at, live.ends_at, live.timezone, locale);
 
   return (
-    <div className="flex w-full flex-col gap-4 bg-gradient-to-b from-slate-900 to-slate-950 p-6 text-slate-100">
+    <div className="flex w-full flex-col gap-4 p-6" style={panelStyle}>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300/90">
+        {/* Live indicator */}
+        <div className="mb-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+          style={{ backgroundColor: 'color-mix(in srgb, var(--theme-on-primary) 15%, transparent)' }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
           {t("courses.liveSession")}
-        </p>
-        <h3 className="mt-1 text-lg font-semibold text-white">{lesson.title}</h3>
-        <p className="mt-2 text-sm text-slate-300">{range}</p>
-        <p className="mt-1 text-xs text-slate-400">
+        </div>
+        <h3 className="text-lg font-semibold">{lesson.title}</h3>
+        <p className="mt-1.5 text-sm opacity-70">{range}</p>
+        <p className="mt-0.5 text-xs opacity-50">
           {t("courses.liveSessionTimezone")}: {live.timezone}
         </p>
         {live.provider_label ? (
-          <p className="mt-1 text-xs text-slate-500">{live.provider_label}</p>
+          <p className="mt-0.5 text-xs opacity-40">{live.provider_label}</p>
         ) : null}
       </div>
+
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         {!isLoggedIn ? (
           <Link
             href={loginHref}
-            className="inline-flex h-10 items-center justify-center rounded-full bg-emerald-500 px-5 text-sm font-semibold text-white shadow hover:bg-emerald-400"
+            className="inline-flex h-10 items-center justify-center rounded-full px-5 text-sm font-semibold shadow-lg transition-all hover:scale-105 hover:opacity-90"
+            style={{ backgroundColor: 'var(--theme-on-primary)', color: 'var(--theme-primary)' }}
           >
             {t("courses.liveLoginToJoin")}
           </Link>
@@ -146,31 +159,36 @@ export const LessonLivePanel = ({
             type="button"
             onClick={() => void loadJoinLink()}
             disabled={loadingJoin}
-            className="inline-flex h-10 items-center justify-center rounded-full bg-emerald-500 px-5 text-sm font-semibold text-white shadow hover:bg-emerald-400 disabled:opacity-60"
+            className="inline-flex h-10 items-center justify-center rounded-full px-5 text-sm font-semibold shadow-lg transition-all hover:scale-105 hover:opacity-90 disabled:opacity-50"
+            style={{ backgroundColor: 'var(--theme-on-primary)', color: 'var(--theme-primary)' }}
           >
-            {loadingJoin
-              ? t("common.loading")
-              : t("courses.liveJoinLiveLesson")}
+            {loadingJoin ? t("common.loading") : t("courses.liveJoinLiveLesson")}
           </button>
         )}
         <Link
           href={enrollHref}
-          className="inline-flex h-10 items-center justify-center rounded-full border border-slate-600 px-5 text-sm font-semibold text-slate-200 hover:bg-slate-800"
+          className="inline-flex h-10 items-center justify-center rounded-full border px-5 text-sm font-semibold transition-all hover:scale-105"
+          style={{ borderColor: 'color-mix(in srgb, var(--theme-on-primary) 30%, transparent)', color: 'var(--theme-on-primary)', opacity: 0.85 }}
         >
           {t("courses.enrollNow")}
         </Link>
       </div>
+
       {joinError ? (
-        <p className="text-xs text-amber-300">{joinError}</p>
+        <p className="rounded-lg px-3 py-2 text-xs"
+          style={{ backgroundColor: 'color-mix(in srgb, var(--theme-on-primary) 10%, transparent)' }}>
+          {joinError}
+        </p>
       ) : null}
+
       {live.playback_url ? (
         <a
           href={live.playback_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium text-sky-300 underline hover:text-sky-200"
+          className="text-sm font-medium underline transition-opacity hover:opacity-100 opacity-70"
         >
-          {t("courses.livePlayback")}
+          {t("courses.livePlayback")} →
         </a>
       ) : null}
     </div>

@@ -6,11 +6,13 @@ type CardProps = React.HTMLAttributes<HTMLDivElement>;
 export const Card = ({ className, style, ...props }: CardProps) => (
   <div
     className={cn(
-      "group relative overflow-hidden rounded-theme border h-[560px] border-slate-200 bg-white shadow-theme transition-all duration-300 hover:shadow-xl dark:border-slate-800 dark:bg-slate-950",
+      "group relative overflow-hidden rounded-theme border h-[560px] shadow-theme transition-all duration-300 hover:shadow-xl",
       className
     )}
     style={{
       borderRadius: 'var(--theme-border-radius, 16px)',
+      backgroundColor: 'var(--theme-card-bg)',
+      borderColor: 'var(--theme-border-color)',
       ...style,
     }}
     data-animation-style="moderate"

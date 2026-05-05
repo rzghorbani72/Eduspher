@@ -19,13 +19,13 @@ const baseClasses =
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--theme-primary)] text-white hover:opacity-90 focus-visible:outline-[var(--theme-primary)] shadow-lg shadow-[var(--theme-primary)]/30 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40 transition-all magnetic hover:scale-105 active:scale-95 relative overflow-hidden",
+    "bg-[var(--theme-primary)] text-[var(--theme-on-primary)] hover:opacity-90 focus-visible:outline-[var(--theme-primary)] shadow-lg shadow-[var(--theme-primary)]/30 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40 transition-all magnetic hover:scale-105 active:scale-95 relative overflow-hidden",
   secondary:
-    "bg-[var(--theme-secondary)] text-white hover:opacity-90 focus-visible:outline-[var(--theme-secondary)] shadow-lg shadow-[var(--theme-secondary)]/30 hover:shadow-xl hover:shadow-[var(--theme-secondary)]/40 transition-all dark:bg-[var(--theme-secondary)] dark:text-white magnetic hover:scale-105 active:scale-95 relative overflow-hidden",
+    "bg-[var(--theme-secondary)] text-[var(--theme-on-secondary)] hover:opacity-90 focus-visible:outline-[var(--theme-secondary)] shadow-lg shadow-[var(--theme-secondary)]/30 hover:shadow-xl hover:shadow-[var(--theme-secondary)]/40 transition-all magnetic hover:scale-105 active:scale-95 relative overflow-hidden",
   outline:
     "border-2 border-[var(--theme-primary)] bg-transparent text-[var(--theme-primary)] hover:bg-[var(--theme-primary)]/10 focus-visible:outline-[var(--theme-primary)] transition-all magnetic hover:scale-105 active:scale-95",
   ghost:
-    "bg-transparent text-slate-900 hover:bg-slate-100 focus-visible:outline-slate-200 dark:text-slate-100 dark:hover:bg-slate-900 transition-all magnetic hover:scale-105 active:scale-95",
+    "bg-transparent text-[var(--theme-foreground)] hover:bg-[var(--theme-surface)] focus-visible:outline-[var(--theme-border-strong)] transition-all magnetic hover:scale-105 active:scale-95",
   link: "bg-transparent text-[var(--theme-primary)] underline-offset-4 hover:underline focus-visible:outline-[var(--theme-primary)] transition-all hover:scale-105",
 };
 

@@ -191,21 +191,21 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
       )}
 
       <div className="space-y-3">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
-          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4  ">
+          <div className="text-xs font-medium text-muted opacity-70">
             {t("checkout.enrollingAs")}
           </div>
-          <div className="mt-1 text-sm font-semibold text-slate-900 dark:text-white">
+          <div className="mt-1 text-sm font-semibold text-foreground">
             {user.display_name || user.currentProfile?.displayName || user.name}
           </div>
-          <div className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+          <div className="mt-1 text-xs text-muted">
             {user.email || user.phone_number}
           </div>
         </div>
 
         {!course.is_free && (
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-900 dark:text-white">
+            <label className="text-sm font-medium text-foreground">
               {t("checkout.voucherCode")}
             </label>
             {discount ? (
@@ -278,7 +278,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           )}
         </Button>
 
-        <p className="text-xs text-center text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-center text-muted opacity-70">
           {t("checkout.termsAgreement")}
         </p>
       </div>

@@ -185,7 +185,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-sky-600" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
       </div>
     );
   }
@@ -193,7 +193,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   if (!cart || cart.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-slate-600 dark:text-slate-400">{t("cart.empty")}</p>
+        <p className="text-muted ">{t("cart.empty")}</p>
         <Button
           onClick={() => router.push(buildPath("/courses"))}
           className="mt-4"
@@ -215,7 +215,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+        <h2 className="text-xl font-semibold text-foreground">
           {t("cart.items")} ({cart.length})
         </h2>
         <div className="space-y-3">
@@ -227,18 +227,18 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             return (
               <div
                 key={uniqueKey}
-                className="flex gap-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950"
+                className="flex gap-4 rounded-lg border border-theme bg-card"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-slate-900 dark:text-white">
+                    <h3 className="font-medium text-foreground">
                       {itemTitle}
                     </h3>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                    <span className="text-xs text-muted opacity-70">
                       ({t("courses.title")})
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                  <p className="mt-1 text-sm text-muted ">
                     {formatCurrencyWithAcademy(itemPrice, user.currentAcademy || null, undefined, language)}
                   </p>
                 </div>
@@ -256,8 +256,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         </div>
       </div>
 
-      <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
-        <label className="text-sm font-medium text-slate-900 dark:text-white">
+      <div className="space-y-3 rounded-lg border border-theme bg-card">
+        <label className="text-sm font-medium text-foreground">
           {t("checkout.voucherCode")}
         </label>
         {discount ? (
@@ -312,10 +312,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         )}
       </div>
 
-      <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
+      <div className="space-y-3 rounded-lg border border-theme bg-card">
         <div className="flex justify-between text-sm">
-          <span className="text-slate-600 dark:text-slate-400">{t("checkout.subtotal")}</span>
-          <span className="font-medium text-slate-900 dark:text-white">
+          <span className="text-muted ">{t("checkout.subtotal")}</span>
+          <span className="font-medium text-foreground">
             {formatCurrencyWithAcademy(totalAmount / 100, user.currentAcademy || null, undefined, language)}
           </span>
         </div>
@@ -327,10 +327,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             </span>
           </div>
         )}
-        <div className="border-t border-slate-200 pt-3 dark:border-slate-800">
+        <div className="border-t border-slate-200 pt-3 ">
           <div className="flex justify-between">
-            <span className="font-semibold text-slate-900 dark:text-white">{t("checkout.total")}</span>
-            <span className="text-xl font-bold text-slate-900 dark:text-white">
+            <span className="font-semibold text-foreground">{t("checkout.total")}</span>
+            <span className="text-xl font-bold text-foreground">
               {formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}
             </span>
           </div>

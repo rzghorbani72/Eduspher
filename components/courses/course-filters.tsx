@@ -161,16 +161,23 @@ export function CourseFilters({
     });
   };
 
+  const selectStyle = {
+    backgroundColor: 'var(--theme-surface)',
+    borderColor: 'var(--theme-border-color)',
+    color: 'var(--theme-foreground)',
+  };
+
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+    <div
+      className="rounded-theme border p-5 shadow-sm transition-all hover:shadow-md"
+      style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
+    >
       <form
         className="grid gap-5 md:grid-cols-[2fr_1fr_1fr] md:items-end"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
+        onSubmit={(e) => e.preventDefault()}
       >
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="q">
+          <label className="text-sm font-medium opacity-75" htmlFor="q">
             {t("courses.searchCourses")}
           </label>
           <Input
@@ -181,25 +188,18 @@ export function CourseFilters({
             onChange={(e) => {
               isTypingRef.current = true;
               setQuery(e.target.value);
-              // Reset typing flag after a delay
-              setTimeout(() => {
-                isTypingRef.current = false;
-              }, 600);
+              setTimeout(() => { isTypingRef.current = false; }, 600);
             }}
-            onBlur={() => {
-              // Allow prop sync after blur
-              setTimeout(() => {
-                isTypingRef.current = false;
-              }, 100);
-            }}
+            onBlur={() => { setTimeout(() => { isTypingRef.current = false; }, 100); }}
             placeholder={t("courses.searchPlaceholder")}
             disabled={isPending}
             className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
             autoComplete="off"
+            style={selectStyle}
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="category_id">
+          <label className="text-sm font-medium opacity-75" htmlFor="category_id">
             {t("courses.category")}
           </label>
           <select
@@ -208,18 +208,17 @@ export function CourseFilters({
             value={categoryId}
             onChange={(e) => handleCategoryChange(e.target.value)}
             disabled={isPending}
-            className="h-11 w-full rounded-theme border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            className="h-11 w-full rounded-theme border px-3 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] disabled:opacity-50"
+            style={selectStyle}
           >
             <option value="">{t("courses.allCategories")}</option>
             {categoryList.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
+              <option key={category.id} value={category.id}>{category.name}</option>
             ))}
           </select>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor="order_by">
+          <label className="text-sm font-medium opacity-75" htmlFor="order_by">
             {t("courses.sortBy")}
           </label>
           <select
@@ -228,7 +227,8 @@ export function CourseFilters({
             value={orderBy}
             onChange={(e) => handleOrderByChange(e.target.value)}
             disabled={isPending}
-            className="h-11 w-full rounded-theme border border-slate-200 bg-white px-3 text-sm text-slate-700 transition-all focus-visible:border-[var(--theme-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50"
+            className="h-11 w-full rounded-theme border px-3 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] disabled:opacity-50"
+            style={selectStyle}
           >
             <option value="">{t("courses.newest")}</option>
             <option value="OLDEST">{t("courses.oldest")}</option>
@@ -237,7 +237,7 @@ export function CourseFilters({
             <option value="UPDATED_DESC">{t("courses.recentlyUpdated")}</option>
           </select>
         </div>
-        <div className="md:col-span-3 border-t border-slate-100 pt-4 dark:border-slate-800">
+        <div className="md:col-span-3 border-t pt-4" style={{ borderColor: 'var(--theme-border-color)' }}>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <input
@@ -247,9 +247,10 @@ export function CourseFilters({
                 checked={isFree}
                 onChange={(e) => handleIsFreeChange(e.target.checked)}
                 disabled={isPending}
-                className="h-4 w-4 rounded border-slate-300 text-[var(--theme-primary)] focus:ring-[var(--theme-primary)] disabled:opacity-50 dark:border-slate-600 transition-all"
+                className="h-4 w-4 rounded text-[var(--theme-primary)] focus:ring-[var(--theme-primary)] disabled:opacity-50 transition-all"
+                style={{ borderColor: 'var(--theme-border-strong)', accentColor: 'var(--theme-primary)' }}
               />
-              <label htmlFor="is_free" className="text-sm font-medium text-slate-700 dark:text-slate-200">
+              <label htmlFor="is_free" className="text-sm font-medium opacity-75">
                 {t("courses.freeCoursesOnly")}
               </label>
             </div>
@@ -257,7 +258,8 @@ export function CourseFilters({
               type="button"
               onClick={handleClear}
               disabled={isPending}
-              className="inline-flex h-10 items-center rounded-full border border-slate-200 px-5 text-sm font-semibold text-slate-700 transition-all hover:scale-105 hover:bg-slate-100 hover:border-[var(--theme-primary)]/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-400 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-900"
+              className="inline-flex h-10 items-center rounded-full border px-5 text-sm font-semibold transition-all hover:scale-105 hover:bg-[var(--theme-surface)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] disabled:opacity-50"
+              style={{ borderColor: 'var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
             >
               {t("common.clear")}
             </button>

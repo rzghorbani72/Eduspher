@@ -126,7 +126,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
               loginMethod === "email"
                 ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-900"
+                : "border-slate-200 bg-card  dark:hover:bg-slate-900"
             )}
           >
             <Mail className="h-4 w-4" />
@@ -145,7 +145,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
               loginMethod === "phone"
                 ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-900"
+                : "border-slate-200 bg-card  dark:hover:bg-slate-900"
             )}
           >
             <Phone className="h-4 w-4" />
@@ -155,7 +155,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         {loginMethod === "email" ? (
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-slate-400" />
+              <Mail className="h-5 w-5 text-muted opacity-60" />
             </div>
             <Input
               id="identifier"

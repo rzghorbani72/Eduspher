@@ -187,7 +187,7 @@ export const AddContactForm = ({
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
             {method === "email" ? "Email Added Successfully!" : "Phone Added Successfully!"}
           </h3>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-2 text-sm text-muted dark:text-muted opacity-60">
             Your {method === "email" ? "email address" : "phone number"} has been verified and added to your account.
           </p>
         </div>
@@ -259,7 +259,7 @@ export const AddContactForm = ({
           <Label htmlFor="email">Email Address</Label>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-slate-400" />
+              <Mail className="h-5 w-5 text-muted opacity-60" />
             </div>
             <Input
               id="email"

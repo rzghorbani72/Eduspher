@@ -49,13 +49,13 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
           {article.title}
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-muted opacity-70">
           {publishedDate}
           {article.author ? ` • ${article.author.display_name}` : ""}
         </p>
       </header>
       <div className="overflow-hidden rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200 shadow-lg dark:border-slate-800">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 shadow-lg ">
           <img
             src={imageUrl}
             alt={article.title}
@@ -68,7 +68,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
           <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(article.content) }} />
         </div>
       ) : article.description ? (
-        <p className="text-base leading-7 text-slate-600 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+        <p className="text-base leading-7 text-muted animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           {article.description}
         </p>
       ) : (
@@ -79,7 +79,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
           />
         </div>
       )}
-      <footer className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+      <footer className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 transition-all hover:shadow-md    animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         {translate("articles.wantGuidance")}{" "}
         <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/contact")}>
           {translate("articles.talkToAdvisors")}

@@ -9,6 +9,7 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { StoreProvider } from "@/components/providers/store-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
+import { ThemeLiveUpdater } from "@/components/theme/theme-live-updater";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { env } from "@/lib/env";
 import { getAcademyContext } from "@/lib/store-context";
@@ -138,17 +139,10 @@ export default async function RootLayout({
       <body
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={
-          theme
-            ? {
-                // Use appropriate colors based on dark_mode setting
-                backgroundColor: theme.dark_mode === true
-                  ? (theme.background_color_dark || theme.background_color || "#0f172a")
-                  : (theme.background_color_light || theme.background_color || "#f8fafc"),
-                // CSS variables are set in the <style> tag above via generateThemeCSSVariables
-              } as React.CSSProperties
-            : undefined
-        }
+        style={{
+          backgroundColor: 'var(--theme-background)',
+          color: 'var(--theme-foreground)',
+        } as React.CSSProperties}
       >
         {themeCSS ? (
           <style
@@ -160,10 +154,12 @@ export default async function RootLayout({
           <StoreProvider initialValue={storeContext}>
             <ThemeProvider initialTheme={theme}>
             <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
+            <ThemeLiveUpdater />
             <I18nProvider initialLanguage={language} countryCode={countryCode || undefined}>
               <ScrollAnimationProvider>
                 <div
-                  className="relative flex min-h-screen flex-col transition-colors duration-200 bg-slate-50/70 text-slate-900 dark:bg-slate-900 dark:text-slate-100 overflow-hidden"
+                  className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-hidden"
+                  style={{ backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' }}
                 >
                   {/* Creative animated background with gradients and flying icons */}
                   <CreativeBackground theme={theme} storeIcons={validStoreIcons} />

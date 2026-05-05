@@ -137,7 +137,7 @@ export default function PaymentFailurePage() {
     latestResponse?.error_message || errorMessage || "Payment processing failed";
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
+    <div className="min-h-screen bg-background py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Failure Header */}
         <div className="text-center space-y-4 mb-8">
@@ -161,7 +161,7 @@ export default function PaymentFailurePage() {
 
         {/* Payment Details Card (if available) */}
         {paymentDetails && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-6 mb-6">
+          <div className="bg-card rounded-theme shadow-lg border border-theme p-6 mb-6">
             <div className="flex items-center gap-3 mb-6">
               <Receipt className="h-6 w-6 text-sky-600 dark:text-sky-400" />
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -172,7 +172,7 @@ export default function PaymentFailurePage() {
             <div className="space-y-4">
               {/* Amount */}
               {paymentDetails.amount && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400">Amount</span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
                     {formatCurrencyWithAcademy(paymentDetails.amount, store)}
@@ -182,7 +182,7 @@ export default function PaymentFailurePage() {
 
               {/* Payment ID */}
               {paymentDetails.id && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     Payment ID
@@ -195,7 +195,7 @@ export default function PaymentFailurePage() {
 
               {/* Transaction ID */}
               {(latestResponse?.transaction_id || paymentDetails.transaction_id || transactionId) && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <CreditCard className="h-4 w-4" />
                     Transaction ID
@@ -208,7 +208,7 @@ export default function PaymentFailurePage() {
 
               {/* Reference ID */}
               {(latestResponse?.reference_id || paymentDetails.reference_id || reference) && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     Reference ID
@@ -221,7 +221,7 @@ export default function PaymentFailurePage() {
 
               {/* Gateway */}
               {paymentDetails.gateway && (
-                <div className="flex justify-between items-center py-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400">Payment Gateway</span>
                   <span className="text-slate-900 dark:text-white font-medium">
                     {latestResponse?.gateway?.display_name || latestResponse?.gateway?.name || paymentDetails.gateway}
@@ -247,7 +247,7 @@ export default function PaymentFailurePage() {
 
         {/* Gateway Error Details (if available) */}
         {latestResponse && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-red-200 dark:border-red-900/30 p-6 mb-6">
+          <div className="bg-card rounded-2xl shadow-lg border border-red-200 dark:border-red-900/30 p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
               <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
@@ -275,7 +275,7 @@ export default function PaymentFailurePage() {
               )}
 
               {latestResponse.error_message && (
-                <div className="pt-3 border-t border-slate-200 dark:border-slate-800">
+                <div className="pt-3 border-t border-theme">
                   <span className="text-slate-600 dark:text-slate-400 text-sm">Error Message</span>
                   <p className="mt-1 text-slate-900 dark:text-white">{latestResponse.error_message}</p>
                 </div>
@@ -283,7 +283,7 @@ export default function PaymentFailurePage() {
 
               {/* Processed Data */}
               {latestResponse.processed_data && Object.keys(latestResponse.processed_data).length > 0 && (
-                <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
+                <div className="mt-4 pt-4 border-t border-theme">
                   <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                     Additional Information
                   </h3>
@@ -310,13 +310,13 @@ export default function PaymentFailurePage() {
 
         {/* URL Parameters from Bank (always show if available) */}
         {Object.keys(urlParams).length > 0 && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-6 mb-6">
+          <div className="bg-card rounded-theme shadow-lg border border-theme p-6 mb-6">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
               Bank Gateway Parameters
             </h2>
             <div className="space-y-2">
               {Object.entries(urlParams).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-sm py-2 border-b border-slate-200 dark:border-slate-800 last:border-0">
+                <div key={key} className="flex justify-between text-sm py-2 border-b border-theme last:border-0">
                   <span className="text-slate-600 dark:text-slate-400 font-mono text-xs">
                     {key}
                   </span>
@@ -348,7 +348,7 @@ export default function PaymentFailurePage() {
         </div>
 
         {/* Support Link */}
-        <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800 text-center">
+        <div className="mt-6 pt-6 border-t border-theme text-center">
           <p className="text-sm text-slate-500 dark:text-slate-400">
             If you believe this is an error, please{" "}
             <Link

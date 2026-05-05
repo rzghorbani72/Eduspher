@@ -32,13 +32,14 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
     >
       <div
         className={cn(
-          "w-full border-b transition-all",
-          transparent
-            ? "border-transparent bg-transparent"
-            : "border-slate-200/60 bg-white/90 backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-950/80",
+          "w-full border-b transition-all backdrop-blur-md",
           compact && "py-2",
-          minimal && "border-none bg-transparent"
+          (transparent || minimal) && "border-none bg-transparent"
         )}
+        style={(!transparent && !minimal) ? {
+          backgroundColor: 'color-mix(in srgb, var(--theme-background) 88%, transparent)',
+          borderColor: 'var(--theme-border-color)',
+        } : undefined}
       >
         <SiteHeader />
       </div>

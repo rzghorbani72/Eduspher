@@ -74,7 +74,7 @@ export const PhoneInput = ({
             onClick={() => !disabled && setIsOpen(!isOpen)}
             disabled={disabled}
             className={cn(
-              "flex h-11 items-center gap-2 rounded-l-theme border border-r-0 border-slate-200 bg-white px-3 text-sm text-slate-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100",
+              "flex h-11 items-center gap-2 rounded-l-theme border border-r-0 border-slate-200 bg-card",
               disabled && "opacity-50 cursor-not-allowed",
               isOpen && "ring-2 ring-sky-500"
             )}
@@ -86,7 +86,7 @@ export const PhoneInput = ({
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-auto rounded-theme border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-950"
+              className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-auto rounded-theme border border-theme bg-card"
             >
               {COUNTRY_CODES.map((country) => (
                 <button
@@ -94,13 +94,13 @@ export const PhoneInput = ({
                   type="button"
                   onClick={() => handleCountrySelect(country)}
                   className={cn(
-                    "flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800",
+                    "flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100  dark:hover:bg-slate-800",
                     selectedCountry.code === country.code && "bg-sky-50 dark:bg-sky-950"
                   )}
                 >
                   <span className="text-base">{country.flag}</span>
                   <span className="flex-1">{country.name}</span>
-                  <span className="text-xs text-slate-500">{country.dialCode}</span>
+                  <span className="text-xs text-muted opacity-70">{country.dialCode}</span>
                 </button>
               ))}
             </div>
@@ -108,7 +108,7 @@ export const PhoneInput = ({
         </div>
         <div className="relative flex-1">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Phone className="h-5 w-5 text-slate-400" />
+            <Phone className="h-5 w-5 text-muted opacity-60" />
           </div>
           <input
             id={id}
@@ -119,7 +119,7 @@ export const PhoneInput = ({
             placeholder={placeholder}
             disabled={disabled}
             className={cn(
-              "flex h-11 w-full rounded-r-theme border border-slate-200 bg-white pl-10 pr-4 text-base text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-500",
+              "flex h-11 w-full rounded-r-theme border border-theme bg-card",
               disabled && "opacity-50 cursor-not-allowed"
             )}
           />

@@ -57,16 +57,20 @@ export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
       className={cn(
         "relative overflow-hidden",
         heightClasses[height],
-        hasBackgroundImage
-          ? "bg-cover bg-center bg-no-repeat"
-          : "bg-gradient-to-br from-sky-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+        hasBackgroundImage ? "bg-cover bg-center bg-no-repeat" : ""
       )}
       style={
         hasBackgroundImage
-          ? {
-              backgroundImage: `url(${config.backgroundImage})`,
+          ? { backgroundImage: `url(${config.backgroundImage})` }
+          : {
+              background: [
+                'linear-gradient(135deg,',
+                'color-mix(in srgb, var(--theme-primary) 18%, var(--theme-background)),',
+                'color-mix(in srgb, var(--theme-secondary) 8%, var(--theme-background)),',
+                'color-mix(in srgb, var(--theme-accent) 6%, var(--theme-background))',
+                ')',
+              ].join(' '),
             }
-          : undefined
       }
     >
       {/* Gradient overlay for better text readability */}
@@ -116,7 +120,7 @@ export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
                 : "text-5xl sm:text-6xl md:text-7xl lg:text-8xl",
               hasBackgroundImage && overlay
                 ? "text-white drop-shadow-2xl"
-                : "text-slate-900 dark:text-white"
+                : ""
             )}
           >
             <span className="text-gradient-theme bg-clip-text text-transparent bg-gradient-to-r from-[var(--theme-primary)] via-[var(--theme-secondary)] to-[var(--theme-accent)]">
@@ -134,7 +138,7 @@ export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
                   : "text-lg sm:text-xl md:text-2xl",
                 hasBackgroundImage && overlay
                   ? "text-white/90 drop-shadow-lg"
-                  : "text-slate-600 dark:text-slate-300"
+                  : "opacity-70"
               )}
             >
               {subtitle}

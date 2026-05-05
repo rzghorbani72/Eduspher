@@ -7,12 +7,15 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 }
 
 const badgeVariants: Record<BadgeVariant, string> = {
-  default: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-200",
-  outline:
-    "border border-slate-200 text-slate-600 dark:border-slate-700 dark:text-slate-200",
-  soft: "bg-slate-100 text-slate-700 dark:bg-slate-800/60 dark:text-slate-200",
-  success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200",
-  warning: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-200",
+  // Uses the brand primary color — always contrasts via --theme-primary and its subtle bg
+  default: "bg-primary-subtle text-primary",
+  // Quiet border-only badge using the semantic border token
+  outline: "border border-theme text-muted",
+  // Neutral surface badge, inherits foreground
+  soft: "bg-surface text-foreground opacity-80",
+  // Semantic status colors — intentionally keep their own hue for legibility
+  success: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  warning: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
 };
 
 export const Badge = ({ className, variant = "default", ...props }: BadgeProps) => {
@@ -27,4 +30,3 @@ export const Badge = ({ className, variant = "default", ...props }: BadgeProps) 
     />
   );
 };
-

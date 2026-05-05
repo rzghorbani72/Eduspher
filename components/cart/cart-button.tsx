@@ -70,12 +70,12 @@ export function CartButton({ course, className }: CartButtonProps) {
       >
         {added ? (
           <>
-            <Check className="h-4 w-4 mr-2" />
+            <Check className="mr-2 h-4 w-4 shrink-0 text-current" aria-hidden />
             {t("courses.goToCart")}
           </>
         ) : (
           <>
-            <ShoppingCart className="h-4 w-4 mr-2" />
+            <ShoppingCart className="mr-2 h-4 w-4 shrink-0 text-current" aria-hidden />
             {t("courses.addToCart")}
           </>
         )}

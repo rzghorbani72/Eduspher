@@ -65,7 +65,7 @@ export const CourseCurriculum = ({
 
   return (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-lg transition-all hover:shadow-xl dark:border-slate-800">
+      <div className="overflow-hidden rounded-theme border border-theme bg-card shadow-lg transition-all hover:shadow-xl">
         {currentLesson && isLiveLesson ? (
           <LessonLivePanel
             lesson={currentLesson}
@@ -78,18 +78,31 @@ export const CourseCurriculum = ({
             {t("courses.videoNotSupported")}
           </video>
         ) : (
-          <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 bg-slate-900 text-slate-200">
-            <span className="text-sm font-medium">{t("courses.noPreviewAvailable")}</span>
-            <span className="text-xs text-slate-400">{t("courses.selectLessonToView")}</span>
+          /* No-preview placeholder — branded dark panel */
+          <div
+            className="flex aspect-video w-full flex-col items-center justify-center gap-3"
+            style={{
+              background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 20%, #000), color-mix(in srgb, var(--theme-secondary) 10%, #000))',
+              color: 'var(--theme-on-primary)',
+            }}
+          >
+            <div
+              className="flex h-16 w-16 items-center justify-center rounded-full opacity-60"
+              style={{ backgroundColor: 'color-mix(in srgb, var(--theme-on-primary) 15%, transparent)' }}
+            >
+              <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+            <span className="text-sm font-medium opacity-80">{t("courses.noPreviewAvailable")}</span>
+            <span className="text-xs opacity-50">{t("courses.selectLessonToView")}</span>
           </div>
         )}
-        <div className="space-y-1 border-t border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-950">
-          <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{currentSeasonTitle}</p>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{currentTitle}</h3>
+        <div className="space-y-1 border-t border-theme bg-card p-4">
+          <p className="text-xs uppercase tracking-wide text-muted opacity-60">{currentSeasonTitle}</p>
+          <h3 className="text-lg font-semibold text-foreground">{currentTitle}</h3>
           {currentLesson?.description ? (
-            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              {currentLesson.description}
-            </p>
+            <p className="text-sm leading-relaxed text-muted">{currentLesson.description}</p>
           ) : null}
         </div>
       </div>
@@ -105,18 +118,19 @@ export const CourseCurriculum = ({
               return (
                 <div
                   key={season.id}
-                  className="rounded-xl border border-slate-200 bg-white transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950"
+                  className="rounded-xl border transition-all hover:shadow-md"
+                  style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
                 >
-                  <div className="flex items-start gap-3 border-b border-slate-200 p-4 dark:border-slate-800">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-white shadow-lg shadow-[var(--theme-primary)]/30">
+                  <div className="flex items-start gap-3 border-b p-4" style={{ borderColor: 'var(--theme-border-color)' }}>
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30">
                       {seasonIndex + 1}
                     </span>
                     <div>
-                      <p className="text-base font-semibold text-slate-900 dark:text-white">{season.title}</p>
+                      <p className="text-base font-semibold text-foreground">{season.title}</p>
                       {season.description ? (
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{season.description}</p>
+                        <p className="text-xs text-muted opacity-70">{season.description}</p>
                       ) : null}
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-muted opacity-70">
                         {seasonLessons.length
                           ? `${seasonLessons.length} ${seasonLessons.length > 1 ? t("courses.lessons") : t("courses.lesson")}`
                           : t("courses.lessonsComingSoon")}
@@ -125,7 +139,7 @@ export const CourseCurriculum = ({
                   </div>
 
                   {seasonLessons.length ? (
-                    <ul className="divide-y divide-slate-200 dark:divide-slate-800">
+                    <ul className="divide-y divide-theme">
                       {seasonLessons.map((lesson: LessonSummary, lessonIndex: number) => {
                         const isActive = currentLesson?.id === lesson.id;
                         const hasVideo = Boolean((lesson as any).Video?.publicUrl);
@@ -145,28 +159,28 @@ export const CourseCurriculum = ({
                               className={cn(
                                 "flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-200",
                                 isActive
-                                  ? "bg-[var(--theme-primary)]/10 text-slate-900 dark:bg-[var(--theme-primary)]/10 dark:text-slate-100"
-                                  : "bg-white text-slate-700 hover:bg-slate-50 dark:bg-slate-950 dark:text-slate-300 dark:hover:bg-slate-900"
+                                  ? "bg-primary/10 text-foreground"
+                                  : "hover:bg-[var(--theme-surface)]"
                               )}
                             >
                               <div className={cn(
                                 "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
                                 isActive
-                                  ? "border-[var(--theme-primary)] bg-[var(--theme-primary)] text-white"
-                                  : "border-slate-200 dark:border-slate-700"
+                                  ? "border-[var(--theme-primary)] bg-[var(--theme-primary)] text-[var(--theme-on-primary)]"
+                                  : "border-[var(--theme-border-color)]"
                               )}>
                                 {lessonIndex + 1}
                               </div>
                               <div className="flex flex-1 flex-col gap-1">
                                 <span className="text-sm font-semibold">{lesson.title}</span>
-                                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                <div className="flex flex-wrap items-center gap-2 text-xs text-muted opacity-70">
                                   {lesson.is_free ? (
-                                    <span className="rounded-full bg-emerald-100 px-2 py-1 font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200">
+                                    <span className="rounded-full bg-primary-subtle px-2 py-1 font-medium text-primary">
                                       {t("courses.preview")}
                                     </span>
                                   ) : null}
                                   {lessonIsLive ? (
-                                    <span className="rounded-full bg-violet-100 px-2 py-1 font-medium text-violet-800 dark:bg-violet-500/20 dark:text-violet-100">
+                                    <span className="rounded-full bg-secondary-subtle px-2 py-1 font-medium text-secondary">
                                       {t("courses.liveSession")}
                                     </span>
                                   ) : null}
@@ -176,7 +190,7 @@ export const CourseCurriculum = ({
                                   ) : null}
                                 </div>
                                 {lesson.description ? (
-                                  <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                                  <p className="text-xs leading-relaxed text-muted opacity-70">
                                     {lesson.description}
                                   </p>
                                 ) : null}
@@ -191,7 +205,7 @@ export const CourseCurriculum = ({
               );
             })
         ) : (
-          <p className="rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
+          <p className="rounded-xl border border-theme bg-card p-4 text-muted">
             {t("courses.lessonsComingSoonCheckBack")}
           </p>
         )}

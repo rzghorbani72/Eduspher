@@ -27,11 +27,13 @@ interface ThemeConfig {
 interface ThemeContextType {
   theme: ThemeConfig | null;
   isDark: boolean;
+  updateTheme: (theme: ThemeConfig) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: null,
   isDark: false,
+  updateTheme: () => {},
 });
 
 export function useThemeConfig() {
@@ -83,7 +85,7 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
     : (theme?.secondary_color_light || theme?.secondary_color || '#6366f1');
 
   return (
-    <ThemeContext.Provider value={{ theme, isDark }}>
+    <ThemeContext.Provider value={{ theme, isDark, updateTheme: setTheme }}>
       <div className="relative min-h-screen">
         {animationType !== 'none' && (
           <AnimatedBackground

@@ -10,7 +10,26 @@
   --theme-secondary: #6366f1;
   --theme-accent: #f59e0b;
   --theme-background: #f8fafc;
-  
+  --theme-foreground: #0f172a;
+
+  /* Semantic surface/card/border vars — auto-derived from theme at render time */
+  --theme-surface: color-mix(in srgb, var(--theme-background) 97%, var(--theme-foreground));
+  --theme-surface-alt: color-mix(in srgb, var(--theme-primary) 4%, color-mix(in srgb, var(--theme-background) 94%, var(--theme-foreground)));
+  --theme-card-bg: color-mix(in srgb, var(--theme-primary) 7%, var(--theme-background));
+  --theme-border-color: color-mix(in srgb, var(--theme-foreground) 10%, transparent);
+  --theme-border-strong: color-mix(in srgb, var(--theme-foreground) 18%, transparent);
+  --theme-muted: color-mix(in srgb, var(--theme-foreground) 55%, var(--theme-background));
+
+  /* Accent-surface vars — use these for icon containers, badges, and coloured UI spots */
+  --theme-primary-subtle: color-mix(in srgb, var(--theme-primary) 15%, var(--theme-background));
+  --theme-secondary-subtle: color-mix(in srgb, var(--theme-secondary) 12%, var(--theme-background));
+  --theme-accent-subtle: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-background));
+
+  /* On-color text vars — guaranteed contrast against solid primary/secondary/accent backgrounds */
+  --theme-on-primary: #ffffff;
+  --theme-on-secondary: #ffffff;
+  --theme-on-accent: #0f172a;
+
   /* Base colors - Light mode (default) */
   --background: 255 255 255;
   --foreground: 15 23 42;

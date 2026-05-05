@@ -128,7 +128,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
 
   return (
     <section className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-950">
+      <div className="rounded-2xl border border-theme bg-card">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
           {t("courseQnA.title")}
         </h2>
@@ -149,7 +149,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
           <div>
             <label
               htmlFor="question"
-              className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+              className="block text-sm font-medium text-slate-700  mb-2"
             >
               {t("courseQnA.askQuestion")}
             </label>
@@ -163,7 +163,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
               minLength={10}
               maxLength={2000}
             />
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-xs text-muted opacity-70">
               {t("courseQnA.charactersCount").replace("{count}", question.length.toString())}
             </p>
           </div>
@@ -181,7 +181,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-slate-900 dark:border-slate-100"></div>
           </div>
         ) : displayQnas.length === 0 ? (
-          <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+          <div className="text-center py-8 text-muted opacity-70">
             <p>{t("courseQnA.noQuestionsYet")}</p>
           </div>
         ) : (
@@ -189,7 +189,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
             {displayQnas.map((qna) => (
               <div
                 key={qna.id}
-                className={`border-b border-slate-200 pb-6 last:border-0 dark:border-slate-800 ${
+                className={`border-b border-slate-200 pb-6 last:border-0  ${
                   !qna.is_approved && isModerator ? 'bg-amber-50/50 dark:bg-amber-950/20 rounded-lg p-4 border-amber-200 dark:border-amber-900' : ''
                 }`}
               >
@@ -200,7 +200,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                         <span className="text-sm font-semibold text-slate-900 dark:text-white">
                           {qna.profile?.display_name || 'Anonymous'}
                         </span>
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                        <span className="text-xs text-muted opacity-70">
                           {new Date(qna.created_at).toLocaleDateString()}
                         </span>
                         {isModerator && (
@@ -241,7 +241,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                         </div>
                       )}
                     </div>
-                    <p className="text-slate-700 dark:text-slate-300">{qna.question}</p>
+                    <p className="text-slate-700 ">{qna.question}</p>
                   </div>
                   {qna.answer ? (
                     <div className="ml-4 pl-4 border-l-2 border-[var(--theme-primary)]">
@@ -250,15 +250,15 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
                           {qna.answerer?.display_name || t("courseQnA.instructor")}
                         </span>
                         {qna.answered_at && (
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                          <span className="text-xs text-muted opacity-70">
                             {new Date(qna.answered_at).toLocaleDateString()}
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-600 dark:text-slate-400">{qna.answer}</p>
+                      <p className="text-muted ">{qna.answer}</p>
                     </div>
                   ) : isModerator && (
-                    <div className="ml-4 pl-4 border-l-2 border-slate-300 dark:border-slate-700">
+                    <div className="ml-4 pl-4 border-l-2 border-slate-300 ">
                       {answeringQnaId === qna.id ? (
                         <div className="space-y-3">
                           <Textarea
