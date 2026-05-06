@@ -61,7 +61,7 @@ export function CartIcon({ isAuthenticated = false }: CartIconProps) {
       </span>
       {itemCount > 0 ? (
         <span
-          className="absolute -right-0.5 -top-0.5 flex min-h-[1.25rem] min-w-[1.25rem] items-center justify-center rounded-full border-2 px-1 text-[11px] font-bold shadow-sm"
+          className="absolute -right-0.5 -top-0.5 flex min-h-5 min-w-5 items-center justify-center rounded-full border-2 px-1 text-[11px] font-bold shadow-sm"
           style={{
             borderColor: "var(--theme-background, #f8fafc)",
             backgroundColor: "var(--theme-primary, #2563eb)",
