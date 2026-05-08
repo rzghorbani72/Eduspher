@@ -38,6 +38,7 @@ export function SiteHeaderClient({
     { href: "/", label: t("navigation.home") },
     { href: "/courses", label: t("navigation.courses") },
     { href: "/articles", label: t("navigation.articles") },
+    ...(buildPath("/") === "/" ? [{ href: "/pricing", label: "Pricing" }] : []),
   ];
 
   const toggleMobile = useCallback(() => {

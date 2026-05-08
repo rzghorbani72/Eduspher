@@ -340,9 +340,11 @@ export default async function Home() {
             >
               {translate("home.joinStore").replace("{store}", storeDisplayName)}
             </Link>
-            <Link href={buildPath("/pricing")} className="text-sm font-semibold opacity-90 transition-all hover:translate-x-1 hover:underline">
-              {translate("home.viewPricing")} →
-            </Link>
+            {!storeContext.slug ? (
+              <Link href="/pricing" className="text-sm font-semibold opacity-90 transition-all hover:translate-x-1 hover:underline">
+                {translate("home.viewPricing")} →
+              </Link>
+            ) : null}
           </div>
         </div>
         <img

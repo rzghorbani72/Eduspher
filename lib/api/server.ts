@@ -341,6 +341,26 @@ export async function getCurrentUser() {
   }
 }
 
+export async function getPublicPricingConfig() {
+  try {
+    const result = await serverFetchRaw<{
+      message: string;
+      status: string;
+      data: {
+        title: string;
+        subtitle: string;
+        cta_label: string;
+      };
+    }>('/academies/public/pricing-config', {
+      includeAuth: false,
+    });
+
+    return result.data;
+  } catch {
+    return null;
+  }
+}
+
 export async function getUserProfiles() {
   try {
     const result = await serverFetchRaw<UserProfilesResponse>("/auth/profiles", {
@@ -423,6 +443,42 @@ export async function createPayment(data: {
     }
     throw error;
   }
+}
+
+export async function initiateCheckoutPayment(data: {
+  course_id: number;
+  amount: number;
+  coupon_code?: string;
+  mobile?: string;
+  provider?: "PAYPING" | "SAMAN_SEP";
+}) {
+  const headerStore = await nextHeaders();
+  const proto =
+    headerStore?.get?.("x-forwarded-proto") ??
+    (process.env.NODE_ENV === "development" ? "http" : "https");
+  const host = headerStore?.get?.("host");
+  const fallbackBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl = host ? `${proto}://${host}` : fallbackBaseUrl;
+
+  const payload = {
+    ...data,
+    callback_url: `${baseUrl}/payment/callback`,
+  };
+
+  const result = await serverFetchRaw<{
+    status: string;
+    data: {
+      payment_id: number;
+      amount: number;
+      redirect_url: string;
+    };
+  }>("/payments/checkout", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return result.data;
 }
 
 export async function createEnrollment(data: {

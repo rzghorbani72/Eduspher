@@ -1,54 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/session";
-import { createEnrollment } from "@/lib/api/server";
+import { backendApiBaseUrl, env } from "@/lib/env";
+import { cookies } from "next/headers";
 
+/**
+ * Called by the /payment/callback page after PayPing redirects the user back.
+ * PayPing appends ?refid=<txn_ref>&clientrefid=<payment_id> to the returnUrl.
+ */
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession();
-    if (!session || !session.profileId) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { payment_id, basket_id, transaction_id, reference } = body;
+    const { payment_id, ref_id } = body;
 
-    if (!payment_id || !basket_id) {
+    if (!payment_id || !ref_id) {
       return NextResponse.json(
-        { success: false, error: "Missing required parameters" },
+        { success: false, error: "payment_id and ref_id are required" },
         { status: 400 }
       );
     }
 
-    // In production, verify payment with bank API using transaction_id and reference
-    // For now, we'll just update the payment status and create enrollments
-    
-    // TODO: Call backend API to:
-    // 1. Verify payment with bank using transaction_id
-    // 2. Update payment status to COMPLETED
-    // 3. Get basket items
-    // 4. Create enrollments for all courses in basket
-    // 5. Clear cart
+    const cookieStore = await cookies();
+    const token = cookieStore.get("jwt")?.value;
+    const academyId = cookieStore.get(env.academyIdCookie)?.value;
 
-    // Mock implementation - in production, this would call the backend
-    const mockSuccess = true; // In production, this would be the result from bank verification
+    const backendRes = await fetch(`${backendApiBaseUrl}/payments/verify/payping`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Verify endpoint is @Public on backend — no auth required
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...(academyId && { "X-Academy-ID": academyId }),
+      },
+      body: JSON.stringify({ payment_id: Number(payment_id), ref_id }),
+    });
 
-    if (mockSuccess) {
-      return NextResponse.json({
-        success: true,
-        message: "Payment verified and enrollments created",
-        payment_id,
-        transaction_id,
-        reference,
-      });
-    } else {
+    const data = await backendRes.json();
+
+    if (!backendRes.ok) {
       return NextResponse.json(
-        { success: false, error: "Payment verification failed" },
-        { status: 400 }
+        { success: false, error: data.message || "Verification failed" },
+        { status: backendRes.status }
       );
     }
+
+    const isSuccess = data.status === "ok";
+    return NextResponse.json({
+      success: isSuccess,
+      payment_id: data.data?.payment_id,
+      ref_id: data.data?.ref_id,
+      amount: data.data?.amount,
+      already_paid: data.data?.already_paid,
+      error: isSuccess ? undefined : data.data?.reason,
+    });
   } catch (error) {
     return NextResponse.json(
       {
@@ -59,4 +61,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

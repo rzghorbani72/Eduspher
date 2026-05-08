@@ -1,7 +1,11 @@
 "use server";
 
 import { getSession } from "@/lib/auth/session";
-import { createPayment, createEnrollment, createBasket } from "@/lib/api/server";
+import {
+  createEnrollment,
+  createBasket,
+  initiateCheckoutPayment,
+} from "@/lib/api/server";
 
 interface CheckoutRequest {
   course_id?: number;
@@ -108,7 +112,15 @@ export async function processCheckout(
         };
       }
 
-      // For paid courses, create basket first
+      if (courseIds.length > 1) {
+        return {
+          success: false,
+          error:
+            "Online payment currently supports one paid course per checkout. Please purchase courses one by one.",
+        };
+      }
+
+      // For paid courses, create basket first (kept for voucher/accounting consistency)
       const basket = await createBasket({
         profile_id: request.profile_id,
         course_ids: courseIds,
@@ -122,37 +134,18 @@ export async function processCheckout(
         };
       }
 
-      // Create payment with basket reference
-        const paymentResult = await createPayment({
-        course_id: courseIds[0], // Keep for backward compatibility
-          user_id: request.user_id,
-          profile_id: request.profile_id,
+      // Initiate real gateway checkout via backend (/payments/checkout)
+      const checkoutResult = await initiateCheckoutPayment({
+        course_id: courseIds[0],
         amount: basket.final_amount,
-          payment_method: "ONLINE",
-        status: "PENDING",
         coupon_code: request.voucher_code,
-        });
-
-        if (!paymentResult || !paymentResult.id) {
-          return {
-            success: false,
-            error: "Failed to create payment",
-          };
-        }
-
-      // Call bank API to get redirect URL
-      const bankRedirectUrl = await callBankAPI({
-        amount: basket.final_amount,
-        payment_id: paymentResult.id,
-        basket_id: basket.id,
-        profile_id: request.profile_id,
       });
 
       return {
         success: true,
-        paymentId: paymentResult.id,
+        paymentId: checkoutResult.payment_id,
         basketId: basket.id,
-        bankRedirectUrl,
+        bankRedirectUrl: checkoutResult.redirect_url,
       };
     } catch (apiError) {
       const errorMessage =
@@ -180,38 +173,4 @@ export async function processCheckout(
   }
 }
 
-async function callBankAPI(data: {
-  amount: number;
-  payment_id: number;
-  basket_id: number;
-  profile_id: number;
-}): Promise<string> {
-  // Hardcoded bank API integration
-  // In production, this would call the actual bank gateway API
-  
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const callbackUrl = `${baseUrl}/payment/callback`;
-  
-  // Simulate bank API call - in real implementation, this would be:
-  // const response = await fetch('https://bank-api.example.com/payment', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({
-  //     amount: data.amount,
-  //     callback_url: callbackUrl,
-  //     payment_id: data.payment_id,
-  //   }),
-  // });
-  // const result = await response.json();
-  // return result.redirect_url;
-
-  // For now, return a mock redirect URL that will redirect to our callback
-  const mockBankUrl = new URL(`${baseUrl}/payment/bank-redirect`);
-  mockBankUrl.searchParams.set("payment_id", data.payment_id.toString());
-  mockBankUrl.searchParams.set("basket_id", data.basket_id.toString());
-  mockBankUrl.searchParams.set("amount", data.amount.toString());
-  mockBankUrl.searchParams.set("callback_url", callbackUrl);
-  
-  return mockBankUrl.toString();
-}
 
