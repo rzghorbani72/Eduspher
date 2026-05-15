@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+/** Baked at build time when CI/build-args omit these (same idea as AdminPanel). */
+const PRODUCTION_PUBLIC_DEFAULTS = {
+  BACKEND_ORIGIN: 'https://api-academy.darkub.ir',
+  BACKEND_API_PATH: '/api',
+  APP_URL: 'https://web-academy.darkub.ir',
+} as const;
+
 const SECURITY_HEADERS = [
   {
     key: 'Strict-Transport-Security',
@@ -38,6 +45,17 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  env: {
+    NEXT_PUBLIC_BACKEND_ORIGIN:
+      process.env.NEXT_PUBLIC_BACKEND_ORIGIN ||
+      PRODUCTION_PUBLIC_DEFAULTS.BACKEND_ORIGIN,
+    NEXT_PUBLIC_BACKEND_API_PATH:
+      process.env.NEXT_PUBLIC_BACKEND_API_PATH ||
+      PRODUCTION_PUBLIC_DEFAULTS.BACKEND_API_PATH,
+    NEXT_PUBLIC_APP_URL:
+      process.env.NEXT_PUBLIC_APP_URL ||
+      PRODUCTION_PUBLIC_DEFAULTS.APP_URL,
+  },
   // Security headers
   async headers() {
     return [
