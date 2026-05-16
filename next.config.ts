@@ -4,9 +4,9 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 
 /** Baked at build time when CI/build-args omit these (same idea as AdminPanel). */
 const PRODUCTION_PUBLIC_DEFAULTS = {
-  BACKEND_ORIGIN: 'https://api-academy.darkub.ir',
+  BACKEND_ORIGIN: 'https://api-academy.darkube.ir',
   BACKEND_API_PATH: '/api',
-  APP_URL: 'https://web-academy.darkub.ir',
+  APP_URL: 'https://web-academy.darkube.ir',
 } as const;
 
 const SECURITY_HEADERS = [
