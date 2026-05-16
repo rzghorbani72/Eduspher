@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { MessageSquare, Star, Users, BookOpen, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";

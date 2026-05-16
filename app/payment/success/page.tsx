@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { CheckCircle, Loader2, Receipt, CreditCard, Calendar, Hash, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStorePath } from "@/components/providers/store-provider";

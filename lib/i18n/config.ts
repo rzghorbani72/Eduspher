@@ -5,6 +5,8 @@
 
 export type LanguageCode = 'en' | 'fa' | 'ar' | 'tr' | 'de' | 'fr' | 'es' | 'it' | 'ru' | 'zh' | 'ja' | 'ko' | 'hi' | 'ur' | 'he';
 
+export const DEFAULT_LANGUAGE: LanguageCode = 'fa';
+
 export type TextDirection = 'ltr' | 'rtl';
 
 export interface LanguageConfig {
@@ -173,7 +175,7 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
  */
 export function getDefaultLanguageForCountry(countryCode: string): LanguageCode {
   const mapping = COUNTRY_LANGUAGE_MAP[countryCode.toUpperCase()];
-  return mapping?.defaultLanguage || 'en'; // Default to English
+  return mapping?.defaultLanguage || DEFAULT_LANGUAGE;
 }
 
 /**
@@ -181,7 +183,7 @@ export function getDefaultLanguageForCountry(countryCode: string): LanguageCode 
  */
 export function getLanguageConfig(languageCode: string): LanguageConfig {
   const code = languageCode.toLowerCase() as LanguageCode;
-  return LANGUAGES[code] || LANGUAGES.en; // Fallback to English
+  return LANGUAGES[code] || LANGUAGES[DEFAULT_LANGUAGE];
 }
 
 /**
@@ -205,6 +207,6 @@ export function getTextDirection(languageCode: string): TextDirection {
  */
 export function getSupportedLanguagesForCountry(countryCode: string): LanguageCode[] {
   const mapping = COUNTRY_LANGUAGE_MAP[countryCode.toUpperCase()];
-  return mapping?.supportedLanguages || [mapping?.defaultLanguage || 'en'];
+  return mapping?.supportedLanguages || [mapping?.defaultLanguage || DEFAULT_LANGUAGE];
 }
 

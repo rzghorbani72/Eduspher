@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseFilters } from "@/components/courses/course-filters";

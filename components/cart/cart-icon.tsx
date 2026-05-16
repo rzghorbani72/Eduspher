@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { ShoppingCart } from "lucide-react";
 import { useStorePath } from "@/components/providers/store-provider";
 import { useEffect, useState, type CSSProperties } from "react";

@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 
 import { env } from "@/lib/env";
 import { getAcademyContext } from "@/lib/store-context";

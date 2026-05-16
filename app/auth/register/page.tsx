@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 
 import { RegisterForm } from "@/components/auth/register-form";
 import { getAcademyContext } from "@/lib/store-context";

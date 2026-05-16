@@ -7,7 +7,7 @@ import "server-only";
 
 import { t as clientT, getTranslations } from "./index";
 import { getAcademyLanguage } from "./server";
-import type { LanguageCode } from "./config";
+import { DEFAULT_LANGUAGE, type LanguageCode } from "./config";
 
 /**
  * Get translation function for server components
@@ -30,7 +30,7 @@ export async function getServerTranslation(language?: LanguageCode) {
  * Simple translation function for server components
  * Use this when you already have the language
  */
-export function t(key: string, language: LanguageCode = 'en'): string {
+export function t(key: string, language: LanguageCode = DEFAULT_LANGUAGE): string {
   return clientT(key, language);
 }
 

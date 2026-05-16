@@ -1,6 +1,6 @@
 import { getCourses, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
 import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";

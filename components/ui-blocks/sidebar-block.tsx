@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { ChevronDown, ChevronRight, Filter, X } from "lucide-react";
 
 interface SidebarBlockProps {

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { cookies } from "next/headers";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";

@@ -5,7 +5,7 @@
 
 import "server-only";
 
-import { getDefaultLanguageForCountry, getLanguageConfig, isRTL, getTextDirection } from "./config";
+import { DEFAULT_LANGUAGE, getDefaultLanguageForCountry, getLanguageConfig, isRTL, getTextDirection } from "./config";
 import type { LanguageCode, TextDirection } from "./config";
 
 /**
@@ -29,8 +29,7 @@ export function getAcademyLanguage(
     return getDefaultLanguageForCountry(countryCode);
   }
   
-  // Default to English
-  return 'en';
+  return DEFAULT_LANGUAGE;
 }
 
 export function getAcademyDirection(

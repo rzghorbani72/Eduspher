@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { Mail, Phone, Lock, ArrowLeft, CheckCircle } from "lucide-react";
 
 import { 

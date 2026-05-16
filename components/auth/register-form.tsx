@@ -57,7 +57,7 @@ interface RegisterFormProps {
   primaryVerificationMethod?: 'phone' | 'email';
 }
 
-export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
+export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
   const router = useRouter();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
@@ -97,11 +97,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
   });
 
   const getInitialCountry = () => {
-    if (defaultCountryCode) {
-      const country = getCountryByCode(defaultCountryCode);
-      if (country) return country;
-    }
-    return getDefaultCountry();
+    return getCountryByCode('IR') ?? getDefaultCountry();
   };
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -364,6 +360,7 @@ export const RegisterForm = ({ defaultCountryCode, primaryVerificationMethod = '
               <Label htmlFor="phone_number">Phone number</Label>
               <PhoneInput
                 id="phone_number"
+                lockCountryCode="IR"
                 value={phoneNumber}
                 onChange={(value) => {
                   setPhoneNumber(value);

@@ -3,7 +3,7 @@
  * Provides translation functions and language management
  */
 
-import type { LanguageCode } from './config';
+import { DEFAULT_LANGUAGE, type LanguageCode } from './config';
 import { getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirection } from './config';
 import { en } from './translations/en';
 import { fa } from './translations/fa';
@@ -23,7 +23,7 @@ export type TranslationKey = keyof typeof en;
 /**
  * Get translation for a key
  */
-export function t(key: string, language: LanguageCode = 'en'): string {
+export function t(key: string, language: LanguageCode = DEFAULT_LANGUAGE): string {
   const keys = key.split('.');
   const bundles = translations as unknown as Record<string, typeof en>;
   let value: unknown = bundles[language] ?? translations.en;
@@ -51,7 +51,7 @@ export function t(key: string, language: LanguageCode = 'en'): string {
 /**
  * Get all translations for a language
  */
-export function getTranslations(language: LanguageCode = 'en') {
+export function getTranslations(language: LanguageCode = DEFAULT_LANGUAGE) {
   const bundles = translations as unknown as Record<string, typeof en>;
   return bundles[language] ?? translations.en;
 }
@@ -60,7 +60,7 @@ export function getTranslations(language: LanguageCode = 'en') {
  * Get language from store country code
  */
 export function getLanguageFromCountry(countryCode: string | null | undefined): LanguageCode {
-  if (!countryCode) return 'en';
+  if (!countryCode) return DEFAULT_LANGUAGE;
   return getDefaultLanguageForCountry(countryCode);
 }
 
@@ -73,4 +73,5 @@ export { getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirectio
  * Re-export types
  */
 export type { LanguageCode, TextDirection, LanguageConfig } from './config';
+export { DEFAULT_LANGUAGE } from './config';
 

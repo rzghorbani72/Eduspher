@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
 import { env } from "@/lib/env";

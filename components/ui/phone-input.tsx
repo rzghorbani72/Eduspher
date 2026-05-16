@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Phone, ChevronDown } from "lucide-react";
-import { COUNTRY_CODES, getDefaultCountry, type CountryCode } from "@/lib/country-codes";
+import { COUNTRY_CODES, getCountryByCode, getDefaultCountry, type CountryCode } from "@/lib/country-codes";
 import { cn } from "@/lib/utils";
 
 interface PhoneInputProps {
@@ -15,6 +15,7 @@ interface PhoneInputProps {
   autoComplete?: string;
   placeholder?: string;
   disabled?: boolean;
+  lockCountryCode?: string;
 }
 
 export const PhoneInput = ({
@@ -27,19 +28,31 @@ export const PhoneInput = ({
   autoComplete = "tel",
   placeholder = "Enter phone number",
   disabled = false,
+  lockCountryCode,
 }: PhoneInputProps) => {
+  const lockedCountry = useMemo(
+    () =>
+      lockCountryCode
+        ? getCountryByCode(lockCountryCode) ?? getDefaultCountry()
+        : null,
+    [lockCountryCode]
+  );
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
-    defaultCountry || getDefaultCountry()
+    () => lockedCountry || defaultCountry || getDefaultCountry()
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Update selectedCountry when defaultCountry prop changes
   useEffect(() => {
+    if (lockedCountry) {
+      setSelectedCountry(lockedCountry);
+      return;
+    }
     if (defaultCountry) {
       setSelectedCountry(defaultCountry);
     }
-  }, [defaultCountry]);
+  }, [defaultCountry, lockedCountry]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -55,6 +68,7 @@ export const PhoneInput = ({
   }, []);
 
   const handleCountrySelect = (country: CountryCode) => {
+    if (lockedCountry) return;
     setSelectedCountry(country);
     setIsOpen(false);
     onCountryChange?.(country);
@@ -71,19 +85,21 @@ export const PhoneInput = ({
         <div className="relative">
           <button
             type="button"
-            onClick={() => !disabled && setIsOpen(!isOpen)}
-            disabled={disabled}
+            onClick={() => !disabled && !lockedCountry && setIsOpen(!isOpen)}
+            disabled={disabled || !!lockedCountry}
             className={cn(
               "flex h-11 items-center gap-2 rounded-l-theme border border-r-0 border-slate-200 bg-card",
-              disabled && "opacity-50 cursor-not-allowed",
+              (disabled || lockedCountry) && "opacity-50 cursor-not-allowed",
               isOpen && "ring-2 ring-sky-500"
             )}
           >
             <span className="text-base">{selectedCountry.flag}</span>
             <span className="text-xs">{selectedCountry.dialCode}</span>
-            <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+            {!lockedCountry && (
+              <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+            )}
           </button>
-          {isOpen && (
+          {isOpen && !lockedCountry && (
             <div
               ref={dropdownRef}
               className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-auto rounded-theme border border-theme bg-card"

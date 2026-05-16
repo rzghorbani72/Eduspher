@@ -2,7 +2,7 @@
 
 import { createContext, useContext, ReactNode } from "react";
 import type { LanguageCode, TextDirection, LanguageConfig } from "./config";
-import { getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirection } from "./config";
+import { DEFAULT_LANGUAGE, getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirection } from "./config";
 
 interface I18nContextValue {
   language: LanguageCode;
@@ -27,7 +27,7 @@ export function I18nProvider({
 }: I18nProviderProps) {
   // Determine initial language
   const defaultLanguage = initialLanguage || 
-    (countryCode ? getDefaultLanguageForCountry(countryCode) : 'en');
+    (countryCode ? getDefaultLanguageForCountry(countryCode) : DEFAULT_LANGUAGE);
   
   const config = getLanguageConfig(defaultLanguage);
   const direction = config.direction;
