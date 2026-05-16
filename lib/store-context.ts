@@ -33,16 +33,17 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
     cookieStore.get(env.academyNameCookie)?.value
   );
 
-  const resolvedId =
-    headerAcademyId ??
-    cookieAcademyId ??
-    (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
-
   const resolvedSlug =
     headerAcademySlug ??
     cookieAcademySlug ??
     env.defaultAcademySlug ??
     null;
+
+  const resolvedId = headerAcademyId
+    ? headerAcademyId
+    : resolvedSlug
+      ? null
+      : cookieAcademyId ?? (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
 
   const resolvedName = cookieAcademyName ?? env.siteName;
 

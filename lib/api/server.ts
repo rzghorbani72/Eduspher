@@ -71,26 +71,42 @@ const buildHeaders = async (
     headerStore?.get?.("x-academy-slug") ?? headerStore?.get?.("X-Academy-Slug") ?? null;
   const cookieAcademyId = cookieStore.get(env.academyIdCookie)?.value;
   const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
-  const resolvedAcademyId =
-    headerAcademyId ??
-    cookieAcademyId ??
-    (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
   const resolvedAcademySlug =
     headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
+  const resolvedAcademyId = headerAcademyId
+    ? headerAcademyId
+    : resolvedAcademySlug
+      ? null
+      : cookieAcademyId ?? (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
   if (resolvedAcademyId && !headers.has("X-Academy-ID")) {
     headers.set("X-Academy-ID", resolvedAcademyId);
   }
   if (resolvedAcademySlug && !headers.has("X-Academy-Slug")) {
     headers.set("X-Academy-Slug", resolvedAcademySlug);
   }
-  const proto = headerStore?.get?.("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
-  const host = headerStore?.get?.("host") ?? null;
-  if (host && !headers.has("Referer")) {
-    headers.set("Referer", `${proto}://${host}`);
+  const proto =
+    headerStore?.get?.("x-forwarded-proto") ??
+    (process.env.NODE_ENV === "development" ? "http" : "https");
+  const forwardedHost =
+    headerStore?.get?.("x-forwarded-host") ?? headerStore?.get?.("host") ?? null;
+  const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? null;
+  const isInternalHost = (host: string) => {
+    const hostname = host.split(":")[0];
+    return (
+      /^(10\.|192\.168\.|127\.)/.test(hostname) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
+      hostname.includes(".svc") ||
+      hostname.includes(".cluster.local")
+    );
+  };
+  if (!headers.has("Referer")) {
+    if (forwardedHost && !isInternalHost(forwardedHost)) {
+      headers.set("Referer", `${proto}://${forwardedHost}`);
+    } else if (publicAppUrl) {
+      headers.set("Referer", publicAppUrl);
+    }
   }
-  if (host && !headers.has("Origin")) {
-    headers.set("Origin", `${proto}://${host}`);
-  }
+  // Do not set Origin on server-side fetch — in K8s, Host can be a pod IP and breaks API CORS.
   if (includeAuth) {
     const token = cookieStore.get("jwt")?.value;
     if (token && !headers.has("Authorization")) {

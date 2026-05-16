@@ -183,22 +183,29 @@ export async function proxy(request: NextRequest) {
   const numericSlugId = slugFromPath && /^\d+$/.test(slugFromPath) ? slugFromPath : null;
 
   const stores = await fetchStores();
+  const pathAcademySlug = searchParamSlug ?? slugFromPath;
+  const hasPathAcademy = Boolean(pathAcademySlug);
   let matchedStore: PublicStore | null = null;
 
   if (stores) {
-    matchedStore = matchStore(stores, {
-      slug: candidateSlug,
-      host: hostHeader ?? undefined,
-      id: numericSlugId ?? existingId,
-    }) ?? null;
-  }
-
-  if (!matchedStore && numericSlugId && stores) {
-    matchedStore = matchStore(stores, { id: numericSlugId }) ?? null;
-  }
-
-  if (!matchedStore && existingId && stores) {
-    matchedStore = matchStore(stores, { id: existingId }) ?? null;
+    if (pathAcademySlug) {
+      matchedStore =
+        matchStore(stores, { slug: pathAcademySlug, host: hostHeader ?? undefined }) ?? null;
+    }
+    if (!matchedStore && numericSlugId) {
+      matchedStore = matchStore(stores, { id: numericSlugId }) ?? null;
+    }
+    if (!matchedStore) {
+      matchedStore =
+        matchStore(stores, {
+          slug: candidateSlug,
+          host: hostHeader ?? undefined,
+          id: numericSlugId ?? undefined,
+        }) ?? null;
+    }
+    if (!matchedStore && !hasPathAcademy && existingId) {
+      matchedStore = matchStore(stores, { id: existingId }) ?? null;
+    }
   }
 
   const requestHeaders = new Headers(request.headers);
@@ -210,51 +217,31 @@ export async function proxy(request: NextRequest) {
     }
   };
 
-  const shouldUpdateCookies =
-    matchedStore &&
-    (String(matchedStore.id) !== existingId || matchedStore.slug !== existingSlug);
-
-  if (matchedStore && shouldUpdateCookies) {
-    addCookie(ACADEMY_ID_COOKIE, String(matchedStore.id));
-    if (matchedStore.slug) {
-      addCookie(ACADEMY_SLUG_COOKIE, matchedStore.slug);
-      requestHeaders.set(ACADEMY_HEADER_SLUG, matchedStore.slug);
+  const applyMatchedStore = (store: PublicStore) => {
+    addCookie(ACADEMY_ID_COOKIE, String(store.id));
+    if (store.slug) {
+      addCookie(ACADEMY_SLUG_COOKIE, store.slug);
+      requestHeaders.set(ACADEMY_HEADER_SLUG, store.slug);
     }
-    addCookie(ACADEMY_NAME_COOKIE, encodeURIComponent(matchedStore.name ?? ""));
-    requestHeaders.set(ACADEMY_HEADER_ID, String(matchedStore.id));
-  } else if (existingId) {
+    addCookie(ACADEMY_NAME_COOKIE, encodeURIComponent(store.name ?? ""));
+    requestHeaders.set(ACADEMY_HEADER_ID, String(store.id));
+  };
+
+  if (matchedStore) {
+    applyMatchedStore(matchedStore);
+  } else if (!hasPathAcademy && existingId) {
     requestHeaders.set(ACADEMY_HEADER_ID, existingId);
     if (existingSlug) {
       requestHeaders.set(ACADEMY_HEADER_SLUG, existingSlug);
     }
-  } else if (DEFAULT_ACADEMY_SLUG && stores) {
+  } else if (!hasPathAcademy && DEFAULT_ACADEMY_SLUG && stores) {
     const fallback = matchStore(stores, {
       slug: DEFAULT_ACADEMY_SLUG,
       id: env.defaultAcademyId ? String(env.defaultAcademyId) : null,
     });
     if (fallback) {
-      addCookie(ACADEMY_ID_COOKIE, String(fallback.id));
-      if (fallback.slug) {
-        addCookie(ACADEMY_SLUG_COOKIE, fallback.slug);
-        requestHeaders.set(ACADEMY_HEADER_SLUG, fallback.slug);
-      }
-      addCookie(ACADEMY_NAME_COOKIE, encodeURIComponent(fallback.name ?? ""));
-      requestHeaders.set(ACADEMY_HEADER_ID, String(fallback.id));
+      applyMatchedStore(fallback);
       matchedStore = fallback;
-    }
-  }
-
-  if (!requestHeaders.has(ACADEMY_HEADER_ID) && numericSlugId) {
-    requestHeaders.set(ACADEMY_HEADER_ID, numericSlugId);
-    if (!existingId) {
-      addCookie(ACADEMY_ID_COOKIE, numericSlugId);
-    }
-  }
-
-  if (!requestHeaders.has(ACADEMY_HEADER_SLUG) && slugFromPath) {
-    requestHeaders.set(ACADEMY_HEADER_SLUG, slugFromPath);
-    if (!existingSlug) {
-      addCookie(ACADEMY_SLUG_COOKIE, slugFromPath);
     }
   }
 

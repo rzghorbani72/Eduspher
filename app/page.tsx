@@ -41,7 +41,7 @@ export default async function Home() {
   const academyMatchBySlug = storeContext.slug
     ? academies.find((a) => (a as any).slug === storeContext.slug)
     : null;
-  const primaryAcademy = academyMatchById ?? academyMatchBySlug ?? academies[0] ?? null;
+  const primaryAcademy = academyMatchById ?? academyMatchBySlug ?? null;
   const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
   const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
   const storeHeroLabel = primaryAcademy?.domain?.public_address ?? primaryAcademy?.domain?.private_address ?? "Premier digital campus";
