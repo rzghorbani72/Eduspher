@@ -1,6 +1,6 @@
 "use client";
 
-import { SiteHeader } from "@/components/layout/site-header";
+import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { cn } from "@/lib/utils";
 
 interface HeaderBlockProps {
@@ -41,7 +41,7 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
           borderColor: 'var(--theme-border-color)',
         } : undefined}
       >
-        <SiteHeader />
+        <SiteHeaderShell />
       </div>
     </header>
   );

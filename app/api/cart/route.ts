@@ -18,9 +18,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ items: [] }, { status: 200 });
     }
 
-    return NextResponse.json({
-      items: cart.items || [],
-    });
+    const items =
+      (cart as { CartItem?: typeof cart.items }).CartItem ?? cart.items ?? [];
+    return NextResponse.json({ items });
   } catch (error) {
     return NextResponse.json(
       {

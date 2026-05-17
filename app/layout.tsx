@@ -3,8 +3,10 @@ import { headers } from "next/headers";
 import "./globals.css";
 
 import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
+import { SiteHeaderShell } from "@/components/layout/site-header-shell";
+import { checkAuth, getUserDisplayName } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ShellProvider } from "@/components/providers/shell-provider";
 import { StoreProvider } from "@/components/providers/store-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
@@ -50,6 +52,11 @@ export default async function RootLayout({
   const storeContext = await getAcademyContext();
   const session = await getSession();
   const isAuthenticated = Boolean(session?.userId);
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || "";
+  const isPanelRoot = headersList.get("x-panel-root") === "1";
+  const headerDisplayName =
+    isAuthenticated && !isPanelRoot ? (await getUserDisplayName()).displayName : null;
   
   const { theme, template } = await getStoreThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
@@ -98,14 +105,13 @@ export default async function RootLayout({
   const direction = getAcademyDirection(storeLanguage, countryCode);
   const rtl = isAcademyRTL(storeLanguage, countryCode);
   
-  // Check if we're on the home page
-  const headersList = await headers();
-  const pathname = headersList.get("x-pathname") || "";
   const isHomePage = pathname === "" || pathname === "/";
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
-  // Always show header and footer in layout for all pages
-  const useTemplateLayout = isHomePage && hasTemplateBlocks;
+  const useTemplateLayout = !isPanelRoot && isHomePage && hasTemplateBlocks;
+  const mainClassName = isPanelRoot
+    ? "mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10"
+    : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12";
 
   // Determine data-theme attribute based on dark_mode setting
   const dataTheme = theme?.dark_mode === false 
@@ -140,6 +146,11 @@ export default async function RootLayout({
           />
         ) : null}
         <AuthProvider initialAuthenticated={isAuthenticated}>
+          <ShellProvider
+            isPanelRoot={isPanelRoot}
+            headerDisplayName={headerDisplayName}
+            headerIsAuthenticated={isAuthenticated}
+          >
           <StoreProvider initialValue={storeContext}>
             <ThemeProvider initialTheme={theme}>
             <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
@@ -153,12 +164,12 @@ export default async function RootLayout({
                   {/* Creative animated background with gradients and flying icons */}
                   <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
                   
-                  <SiteHeader />
+                  <SiteHeaderShell />
                   <main className="relative flex-1 z-10">
                     {useTemplateLayout ? (
                       <>{children}</>
                     ) : (
-                      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+                      <div className={mainClassName}>
                         {children}
                       </div>
                     )}
@@ -169,6 +180,7 @@ export default async function RootLayout({
             </I18nProvider>
             </ThemeProvider>
           </StoreProvider>
+          </ShellProvider>
         </AuthProvider>
       </body>
     </html>

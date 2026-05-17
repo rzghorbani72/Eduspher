@@ -185,6 +185,9 @@ export async function proxy(request: NextRequest) {
   const stores = await fetchStores();
   const pathAcademySlug = searchParamSlug ?? slugFromPath;
   const hasPathAcademy = Boolean(pathAcademySlug);
+  const isPanelRoot =
+    !hasPathAcademy &&
+    (requestUrl.pathname === "/" || requestUrl.pathname === "");
   let matchedStore: PublicStore | null = null;
 
   if (stores) {
@@ -203,12 +206,17 @@ export async function proxy(request: NextRequest) {
           id: numericSlugId ?? undefined,
         }) ?? null;
     }
-    if (!matchedStore && !hasPathAcademy && existingId) {
+    if (!matchedStore && !hasPathAcademy && !isPanelRoot && existingId) {
       matchedStore = matchStore(stores, { id: existingId }) ?? null;
     }
   }
 
   const requestHeaders = new Headers(request.headers);
+  if (isPanelRoot) {
+    requestHeaders.set("x-panel-root", "1");
+  } else if (slugFromPath) {
+    requestHeaders.set("x-academy-from-path", "1");
+  }
   const cookiesToSet: Array<{ name: string; value: string }> = [];
   const addCookie = (name: string, value: string) => {
     const existing = cookiesToSet.find((cookie) => cookie.name === name && cookie.value === value);
@@ -229,12 +237,12 @@ export async function proxy(request: NextRequest) {
 
   if (matchedStore) {
     applyMatchedStore(matchedStore);
-  } else if (!hasPathAcademy && existingId) {
+  } else if (!isPanelRoot && !hasPathAcademy && existingId) {
     requestHeaders.set(ACADEMY_HEADER_ID, existingId);
     if (existingSlug) {
       requestHeaders.set(ACADEMY_HEADER_SLUG, existingSlug);
     }
-  } else if (!hasPathAcademy && DEFAULT_ACADEMY_SLUG && stores) {
+  } else if (!isPanelRoot && !hasPathAcademy && DEFAULT_ACADEMY_SLUG && stores) {
     const fallback = matchStore(stores, {
       slug: DEFAULT_ACADEMY_SLUG,
       id: env.defaultAcademyId ? String(env.defaultAcademyId) : null,

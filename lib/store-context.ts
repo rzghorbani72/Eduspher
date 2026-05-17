@@ -23,6 +23,14 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
   const cookieStore = await cookies();
   const headerStore = await nextHeaders();
 
+  if (headerStore.get("x-panel-root") === "1") {
+    return {
+      id: null,
+      slug: null,
+      name: env.siteName,
+    };
+  }
+
   const headerAcademyId =
     headerStore?.get?.("x-academy-id") ?? headerStore?.get?.("X-Academy-ID") ?? null;
   const headerAcademySlug =

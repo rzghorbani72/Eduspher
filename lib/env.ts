@@ -20,9 +20,14 @@ const academySlugCookie =
 const academyNameCookie =
   process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'eduspher_academy_name';
 
+const adminPanelOrigin = normalizeBaseUrl(
+  process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ?? 'http://localhost:4000'
+);
+
 export const env = {
   backendOrigin: normalizeBaseUrl(process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? ''),
   backendApiPath: normalizeApiPath(process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? '/api'),
+  adminPanelOrigin,
   defaultAcademyId,
   defaultAcademySlug,
   academyIdCookie,

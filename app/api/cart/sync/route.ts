@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { syncCart } from "@/lib/api/server";
+import { syncCart, UnauthorizedError } from "@/lib/api/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,6 +31,12 @@ export async function POST(request: NextRequest) {
       removedItems: result.removedItems,
     });
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       {
         success: false,

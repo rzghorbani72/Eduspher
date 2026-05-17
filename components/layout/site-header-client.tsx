@@ -15,15 +15,18 @@ import {
 } from "@/components/providers/store-provider";
 import { CartIcon } from "@/components/cart/cart-icon";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { getAdminPanelUrl } from "@/lib/admin-panel-url";
 
 interface SiteHeaderClientProps {
   displayName: string | null;
   isAuthenticated: boolean;
+  isPanelRoot: boolean;
 }
 
 export function SiteHeaderClient({
   displayName,
   isAuthenticated: initialAuth,
+  isPanelRoot,
 }: SiteHeaderClientProps) {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
@@ -33,13 +36,15 @@ export function SiteHeaderClient({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const adminLoginUrl = getAdminPanelUrl("/login");
 
-  const navItems = [
-    { href: "/", label: t("navigation.home") },
-    { href: "/courses", label: t("navigation.courses") },
-    { href: "/articles", label: t("navigation.articles") },
-    ...(buildPath("/") === "/" ? [{ href: "/pricing", label: "Pricing" }] : []),
-  ];
+  const navItems = isPanelRoot
+    ? [{ href: "/pricing", label: t("footer.pricing") }]
+    : [
+        { href: "/", label: t("navigation.home") },
+        { href: "/courses", label: t("navigation.courses") },
+        { href: "/articles", label: t("navigation.articles") },
+      ];
 
   const toggleMobile = useCallback(() => {
     setMobileOpen((prev) => !prev);
@@ -121,7 +126,18 @@ export function SiteHeaderClient({
           ))}
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          {authStatus ? (
+          {isPanelRoot ? (
+            <a
+              href={adminLoginUrl}
+              className="hidden h-10 items-center rounded-full border px-5 text-sm font-semibold transition-all hover:opacity-90 md:inline-flex"
+              style={{
+                borderColor: "var(--theme-border-strong)",
+                color: "var(--theme-foreground)",
+              }}
+            >
+              {t("panel.managerLogin")}
+            </a>
+          ) : authStatus ? (
             <Link
               href={buildPath("/account")}
               className="flex max-w-[min(100vw-8rem,14rem)] items-center gap-2 rounded-full border py-1 pl-1 pr-3 transition-all hover:opacity-[0.92] md:max-w-none"
@@ -157,7 +173,7 @@ export function SiteHeaderClient({
               {t("auth.login")} / {t("auth.register")}
             </Link>
           )}
-          <CartIcon isAuthenticated={authStatus} />
+          {!isPanelRoot ? <CartIcon isAuthenticated={authStatus} /> : null}
         </div>
         <button
           type="button"
@@ -201,7 +217,19 @@ export function SiteHeaderClient({
               ))}
             </nav>
             <div className="mt-6 flex flex-col gap-3">
-              {authStatus ? (
+              {isPanelRoot ? (
+                <a
+                  href={adminLoginUrl}
+                  onClick={closeMobile}
+                  className="inline-flex w-full items-center justify-center rounded-full border px-5 py-2.5 text-sm font-semibold"
+                  style={{
+                    borderColor: "var(--theme-border-strong)",
+                    color: "var(--theme-foreground)",
+                  }}
+                >
+                  {t("panel.managerLogin")}
+                </a>
+              ) : authStatus ? (
                 <>
                   <Link
                     href={buildPath("/account")}

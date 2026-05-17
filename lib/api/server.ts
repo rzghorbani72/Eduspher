@@ -19,6 +19,15 @@ export class UnauthorizedError extends Error {
     this.redirectTo = redirectTo;
   }
 }
+
+const isUnauthorizedError = (error: unknown): boolean => {
+  if (error instanceof UnauthorizedError) return true;
+  if (error && typeof error === "object" && "status" in error) {
+    return (error as { status?: number }).status === 401;
+  }
+  return error instanceof Error && /401/.test(error.message);
+};
+
 import type {
   ApiEnvelope,
   ArticleSummary,
@@ -808,7 +817,7 @@ export async function getCart() {
     });
     return result.data;
   } catch (error) {
-    if (error instanceof Error && /401/.test(error.message)) {
+    if (isUnauthorizedError(error)) {
       return null;
     }
     throw error;

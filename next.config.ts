@@ -7,6 +7,7 @@ const PRODUCTION_PUBLIC_DEFAULTS = {
   BACKEND_ORIGIN: 'https://api-academy.darkube.ir',
   BACKEND_API_PATH: '/api',
   APP_URL: 'https://web-academy.darkube.ir',
+  ADMIN_PANEL_URL: 'https://panel-academy.darkube.ir',
 } as const;
 
 const SECURITY_HEADERS = [
@@ -55,6 +56,9 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_URL:
       process.env.NEXT_PUBLIC_APP_URL ||
       PRODUCTION_PUBLIC_DEFAULTS.APP_URL,
+    NEXT_PUBLIC_ADMIN_PANEL_URL:
+      process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ||
+      PRODUCTION_PUBLIC_DEFAULTS.ADMIN_PANEL_URL,
   },
   // Security headers
   async headers() {

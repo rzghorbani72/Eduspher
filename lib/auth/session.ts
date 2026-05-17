@@ -16,6 +16,10 @@ export const getSession = async (): Promise<SessionPayload | null> => {
   if (!token) return null;
   try {
     const payload = decodeJwt(token);
+    const isExpired =
+      typeof payload.exp === "number" && payload.exp < Date.now() / 1000;
+    if (isExpired) return null;
+
     // Token contains profileId (primary), use it for both userId and profileId for backward compatibility
     const profileId = typeof payload.profileId === "number" ? payload.profileId : 
                      (typeof payload.userId === "number" ? payload.userId : null);
