@@ -3,6 +3,11 @@ import "server-only";
 import { getAcademyContext } from "./store-context";
 import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
 import { TEMPLATE_PRESETS, type TemplatePreset } from "./template-presets";
+import {
+  buildThemeCssVariables,
+  DEFAULT_PLATFORM_THEME,
+  themeCssVariablesToBlock,
+} from "./theme-apply";
 
 export interface ThemeConfig {
   primary_color?: string;
@@ -178,60 +183,10 @@ export async function getStoreThemeAndTemplate() {
   }
 }
 
-function hexContrast(hex: string): string {
-  const c = hex.replace('#', '');
-  const n = parseInt(c.length === 3 ? c.split('').map(x => x + x).join('') : c, 16);
-  const luminance = (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
-  return luminance > 0.5 ? '#0f172a' : '#f8fafc';
-}
-
 export function generateThemeCSSVariables(theme: ThemeConfig | null): string {
-  if (!theme) {
-    return "";
-  }
-
-  const borderRadiusMap: Record<string, string> = {
-    rounded: '16px',
-    soft: '24px',
-    sharp: '4px',
-  };
-
-  const shadowMap: Record<string, string> = {
-    none: 'none',
-    subtle: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    medium: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    strong: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  };
-
-  const isDark = theme.dark_mode === true;
-
-  const primaryColor = isDark
-    ? (theme.primary_color_dark || theme.primary_color || '#60a5fa')
-    : (theme.primary_color_light || theme.primary_color || '#3b82f6');
-  const secondaryColor = isDark
-    ? (theme.secondary_color_dark || theme.secondary_color || '#818cf8')
-    : (theme.secondary_color_light || theme.secondary_color || '#6366f1');
-  const backgroundColor = isDark
-    ? (theme.background_color_dark || theme.background_color || '#0f172a')
-    : (theme.background_color_light || theme.background_color || '#f8fafc');
-
-  const accentColor = theme.accent_color || '#f59e0b';
-  const foreground = hexContrast(backgroundColor);
-
-  const vars = [
-    `--theme-primary: ${primaryColor};`,
-    `--theme-secondary: ${secondaryColor};`,
-    `--theme-accent: ${accentColor};`,
-    `--theme-background: ${backgroundColor};`,
-    `--theme-foreground: ${foreground};`,
-    `--theme-on-primary: ${hexContrast(primaryColor)};`,
-    `--theme-on-secondary: ${hexContrast(secondaryColor)};`,
-    `--theme-on-accent: ${hexContrast(accentColor)};`,
-    `--theme-border-radius: ${borderRadiusMap[theme.border_radius_style || 'rounded'] || '16px'};`,
-    `--theme-shadow: ${shadowMap[theme.shadow_style || 'medium'] || shadowMap.medium};`,
-    `--theme-element-animation: ${theme.element_animation_style || 'subtle'};`,
-  ].join('\n  ');
-
-  return `:root {\n  ${vars}\n}`;
+  const vars = buildThemeCssVariables(theme ?? DEFAULT_PLATFORM_THEME, {
+    prefersDark: theme?.dark_mode === true,
+  });
+  return themeCssVariablesToBlock(vars);
 }
 

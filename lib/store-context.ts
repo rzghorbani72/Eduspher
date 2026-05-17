@@ -47,11 +47,10 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
     env.defaultAcademySlug ??
     null;
 
-  const resolvedId = headerAcademyId
-    ? headerAcademyId
-    : resolvedSlug
-      ? null
-      : cookieAcademyId ?? (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
+  const resolvedId =
+    headerAcademyId ??
+    cookieAcademyId ??
+    (resolvedSlug ? null : env.defaultAcademyId ? String(env.defaultAcademyId) : null);
 
   const resolvedName = cookieAcademyName ?? env.siteName;
 

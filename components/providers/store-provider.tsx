@@ -6,9 +6,16 @@ import {
   type PropsWithChildren,
   type SetStateAction,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
+
+import {
+  buildAcademyPathFromSlug,
+  slugFromPathname,
+} from "@/lib/academy-path";
 
 type StoreState = {
   id: number | null;
@@ -28,6 +35,10 @@ type StoreProviderProps = PropsWithChildren<{
 
 export const StoreProvider = ({ initialValue, children }: StoreProviderProps) => {
   const [store, setStore] = useState<StoreState>(initialValue);
+
+  useEffect(() => {
+    setStore(initialValue);
+  }, [initialValue.id, initialValue.slug, initialValue.name]);
 
   const value = useMemo<AcademyContextValue>(
     () => ({
@@ -50,14 +61,9 @@ export const useAcademyContext = () => {
 
 export const useStorePath = () => {
   const { slug } = useAcademyContext();
-  return (path: string) => {
-    const normalized = path.startsWith("/") ? path : `/${path}`;
-    if (!slug) {
-      return normalized === "//" ? "/" : normalized;
-    }
-    if (normalized === "/") {
-      return `/${slug}`;
-    }
-    return `/${slug}${normalized}`;
-  };
+  const pathname = usePathname();
+  const pathSlug = slugFromPathname(pathname);
+  const effectiveSlug = slug ?? pathSlug;
+
+  return (path: string) => buildAcademyPathFromSlug(effectiveSlug, path);
 };

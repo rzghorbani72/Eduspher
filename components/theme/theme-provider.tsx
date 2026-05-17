@@ -50,27 +50,32 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    if (theme) {
-      setTheme(theme);
-      
-      const checkDarkMode = () => {
-        if (theme.dark_mode === null) {
-          setIsDark(
-            window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-          );
-        } else {
-          setIsDark(theme.dark_mode === true);
-        }
-      };
+    setTheme(initialTheme);
+  }, [initialTheme]);
 
-      checkDarkMode();
+  useEffect(() => {
+    if (!theme) {
+      setIsDark(false);
+      return;
+    }
 
-      if (theme.dark_mode === null) {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
-        mediaQuery.addEventListener('change', handler);
-        return () => mediaQuery.removeEventListener('change', handler);
+    const checkDarkMode = () => {
+      if (theme.dark_mode === null || theme.dark_mode === undefined) {
+        setIsDark(
+          window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false
+        );
+      } else {
+        setIsDark(theme.dark_mode === true);
       }
+    };
+
+    checkDarkMode();
+
+    if (theme.dark_mode === null || theme.dark_mode === undefined) {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
+      mediaQuery.addEventListener("change", handler);
+      return () => mediaQuery.removeEventListener("change", handler);
     }
   }, [theme]);
 

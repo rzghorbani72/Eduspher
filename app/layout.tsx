@@ -11,7 +11,9 @@ import { StoreProvider } from "@/components/providers/store-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
 import { ThemeLiveUpdater } from "@/components/theme/theme-live-updater";
+import { ThemeStyleSync } from "@/components/theme/theme-style-sync";
 import { I18nProvider } from "@/lib/i18n/provider";
+import { DocumentLangSync } from "@/lib/i18n/document-lang-sync";
 import { env } from "@/lib/env";
 import { getAcademyContext } from "@/lib/store-context";
 import { getSession } from "@/lib/auth/session";
@@ -54,12 +56,17 @@ export default async function RootLayout({
   const isAuthenticated = Boolean(session?.userId);
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "";
-  const isPanelRoot = headersList.get("x-panel-root") === "1";
+  const urlPathname = headersList.get("x-url-pathname") || pathname;
+  const isPanelRoot = urlPathname === "/" || urlPathname === "";
+  const shellKey = isPanelRoot ? "panel" : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}`;
   const headerDisplayName =
     isAuthenticated && !isPanelRoot ? (await getUserDisplayName()).displayName : null;
   
   const { theme, template } = await getStoreThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
+  const themeKey = isPanelRoot
+    ? "panel"
+    : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}-${theme?.primary_color ?? "default"}`;
   
   // Get store details for language and country (server-side)
   // Try to get current store first (requires auth), then fall back to public store by slug
@@ -105,7 +112,10 @@ export default async function RootLayout({
   const direction = getAcademyDirection(storeLanguage, countryCode);
   const rtl = isAcademyRTL(storeLanguage, countryCode);
   
-  const isHomePage = pathname === "" || pathname === "/";
+  const isHomePage =
+    pathname === "" ||
+    pathname === "/" ||
+    pathname.startsWith("/s/");
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
   const useTemplateLayout = !isPanelRoot && isHomePage && hasTemplateBlocks;
@@ -139,23 +149,29 @@ export default async function RootLayout({
           color: 'var(--theme-foreground)',
         } as React.CSSProperties}
       >
-        {themeCSS ? (
-          <style
-            suppressHydrationWarning
-            dangerouslySetInnerHTML={{ __html: themeCSS }}
-          />
-        ) : null}
+        <style
+          id="academy-theme-vars"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: themeCSS }}
+        />
         <AuthProvider initialAuthenticated={isAuthenticated}>
           <ShellProvider
+            key={shellKey}
             isPanelRoot={isPanelRoot}
             headerDisplayName={headerDisplayName}
             headerIsAuthenticated={isAuthenticated}
           >
-          <StoreProvider initialValue={storeContext}>
-            <ThemeProvider initialTheme={theme}>
+          <StoreProvider key={shellKey} initialValue={storeContext}>
+            <ThemeProvider key={themeKey} initialTheme={theme}>
+            <ThemeStyleSync theme={theme} syncKey={themeKey} />
             <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
             <ThemeLiveUpdater />
-            <I18nProvider initialLanguage={language} countryCode={countryCode || undefined}>
+            <I18nProvider
+              key={`i18n-${shellKey}-${language}`}
+              initialLanguage={language}
+              countryCode={countryCode || undefined}
+            >
+              <DocumentLangSync />
               <ScrollAnimationProvider>
                 <div
                   className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-hidden"

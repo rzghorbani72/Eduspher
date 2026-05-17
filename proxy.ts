@@ -4,6 +4,8 @@ import { jwtVerify, decodeJwt, type JWTPayload } from "jose";
 
 import { env } from "./lib/env";
 
+let jwtSecretWarningLogged = false;
+
 /**
  * Verify JWT token signature and decode payload
  * Uses jose library for secure JWT verification in Edge runtime
@@ -14,8 +16,11 @@ async function verifyJWT(token: string): Promise<{ valid: boolean; payload: JWTP
     
     // In development or if no secret, fall back to decode-only with expiry check
     if (!secret) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('⚠️ JWT_SECRET not set - JWT signature verification disabled. Set JWT_SECRET in production!');
+      if (process.env.NODE_ENV === "development" && !jwtSecretWarningLogged) {
+        jwtSecretWarningLogged = true;
+        console.warn(
+          "⚠️ JWT_SECRET not set in edusphere — JWT signature verification disabled. Copy JWT_SECRET from Backend/.env into edusphere/.env.local"
+        );
       }
       const payload = decodeJwt(token);
       // At minimum, check expiration
@@ -198,7 +203,7 @@ export async function proxy(request: NextRequest) {
     if (!matchedStore && numericSlugId) {
       matchedStore = matchStore(stores, { id: numericSlugId }) ?? null;
     }
-    if (!matchedStore) {
+    if (!matchedStore && !isPanelRoot) {
       matchedStore =
         matchStore(stores, {
           slug: candidateSlug,
@@ -212,10 +217,12 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-url-pathname", requestUrl.pathname);
   if (isPanelRoot) {
     requestHeaders.set("x-panel-root", "1");
   } else if (slugFromPath) {
     requestHeaders.set("x-academy-from-path", "1");
+    requestHeaders.set("x-academy-path-slug", slugFromPath);
   }
   const cookiesToSet: Array<{ name: string; value: string }> = [];
   const addCookie = (name: string, value: string) => {
@@ -235,7 +242,7 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set(ACADEMY_HEADER_ID, String(store.id));
   };
 
-  if (matchedStore) {
+  if (matchedStore && !isPanelRoot) {
     applyMatchedStore(matchedStore);
   } else if (!isPanelRoot && !hasPathAcademy && existingId) {
     requestHeaders.set(ACADEMY_HEADER_ID, existingId);
@@ -322,7 +329,9 @@ export async function proxy(request: NextRequest) {
     const cleanedPathname = `/${cleanedPathSegments.join("/")}`.replace(/\/+$/, "");
     const normalizedPath = cleanedPathname === "" ? "/" : cleanedPathname;
     internalUrl = requestUrl.clone();
-    internalUrl.pathname = normalizedPath;
+    // Academy home must not rewrite to "/" — that collides with the platform panel route and breaks client navigation cache.
+    internalUrl.pathname =
+      normalizedPath === "/" ? `/s/${slugFromPath}` : normalizedPath;
   }
 
   const response = internalUrl
@@ -346,6 +355,12 @@ export async function proxy(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 365, // 1 year
     });
   });
+
+  if (isPanelRoot) {
+    for (const name of [ACADEMY_ID_COOKIE, ACADEMY_SLUG_COOKIE, ACADEMY_NAME_COOKIE]) {
+      response.cookies.set(name, "", { path: "/", maxAge: 0 });
+    }
+  }
 
   // Ensure jwt cookie from request is preserved if it exists
   const jwtCookie = request.cookies.get("jwt");

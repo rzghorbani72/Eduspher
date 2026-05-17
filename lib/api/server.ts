@@ -82,11 +82,10 @@ const buildHeaders = async (
   const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
   const resolvedAcademySlug =
     headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
-  const resolvedAcademyId = headerAcademyId
-    ? headerAcademyId
-    : resolvedAcademySlug
-      ? null
-      : cookieAcademyId ?? (env.defaultAcademyId ? String(env.defaultAcademyId) : null);
+  const resolvedAcademyId =
+    headerAcademyId ??
+    cookieAcademyId ??
+    (resolvedAcademySlug ? null : env.defaultAcademyId ? String(env.defaultAcademyId) : null);
   if (resolvedAcademyId && !headers.has("X-Academy-ID")) {
     headers.set("X-Academy-ID", resolvedAcademyId);
   }

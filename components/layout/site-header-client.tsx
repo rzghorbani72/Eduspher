@@ -2,7 +2,8 @@
 
 import Link from "@/components/ui/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
+import { usePathname } from "next/navigation";
 
 import { CircleUser, Menu, X } from "lucide-react";
 
@@ -16,6 +17,7 @@ import {
 import { CartIcon } from "@/components/cart/cart-icon";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { getAdminPanelUrl } from "@/lib/admin-panel-url";
+import { slugFromPathname } from "@/lib/academy-path";
 
 interface SiteHeaderClientProps {
   displayName: string | null;
@@ -30,21 +32,31 @@ export function SiteHeaderClient({
 }: SiteHeaderClientProps) {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
-  const { name: storeName } = useAcademyContext();
+  const { name: storeName, slug: storeSlug } = useAcademyContext();
+  const pathname = usePathname();
+  const pathSlug = slugFromPathname(pathname);
+  const onAcademySite = Boolean(pathSlug ?? storeSlug);
   const buildPath = useStorePath();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const adminLoginUrl = getAdminPanelUrl("/login");
 
-  const navItems = isPanelRoot
-    ? [{ href: "/pricing", label: t("footer.pricing") }]
-    : [
-        { href: "/", label: t("navigation.home") },
-        { href: "/courses", label: t("navigation.courses") },
-        { href: "/articles", label: t("navigation.articles") },
-      ];
+  const showPanelNav = isPanelRoot && !onAcademySite;
+
+  const navItems = useMemo(
+    () =>
+      showPanelNav
+        ? [{ href: "/pricing", label: t("footer.pricing") }]
+        : [
+            { href: "/", label: t("navigation.home") },
+            { href: "/courses", label: t("navigation.courses") },
+            { href: "/articles", label: t("navigation.articles") },
+            { href: "/pricing", label: t("footer.pricing") },
+          ],
+    [showPanelNav, t, language]
+  );
 
   const toggleMobile = useCallback(() => {
     setMobileOpen((prev) => !prev);
@@ -126,7 +138,7 @@ export function SiteHeaderClient({
           ))}
         </nav>
         <div className="flex shrink-0 items-center gap-2">
-          {isPanelRoot ? (
+          {showPanelNav ? (
             <a
               href={adminLoginUrl}
               className="hidden h-10 items-center rounded-full border px-5 text-sm font-semibold transition-all hover:opacity-90 md:inline-flex"
@@ -173,7 +185,7 @@ export function SiteHeaderClient({
               {t("auth.login")} / {t("auth.register")}
             </Link>
           )}
-          {!isPanelRoot ? <CartIcon isAuthenticated={authStatus} /> : null}
+          {!showPanelNav ? <CartIcon isAuthenticated={authStatus} /> : null}
         </div>
         <button
           type="button"
@@ -217,7 +229,7 @@ export function SiteHeaderClient({
               ))}
             </nav>
             <div className="mt-6 flex flex-col gap-3">
-              {isPanelRoot ? (
+              {showPanelNav ? (
                 <a
                   href={adminLoginUrl}
                   onClick={closeMobile}

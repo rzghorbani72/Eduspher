@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { LanguageCode, TextDirection, LanguageConfig } from "./config";
 import { DEFAULT_LANGUAGE, getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirection } from "./config";
 
@@ -20,34 +20,42 @@ interface I18nProviderProps {
   countryCode?: string | null;
 }
 
+function resolveLanguage(
+  initialLanguage?: LanguageCode,
+  countryCode?: string | null
+): LanguageCode {
+  if (initialLanguage) return initialLanguage;
+  if (countryCode) return getDefaultLanguageForCountry(countryCode);
+  return DEFAULT_LANGUAGE;
+}
+
 export function I18nProvider({
   children,
   initialLanguage,
   countryCode,
 }: I18nProviderProps) {
-  // Determine initial language
-  const defaultLanguage = initialLanguage || 
-    (countryCode ? getDefaultLanguageForCountry(countryCode) : DEFAULT_LANGUAGE);
-  
-  const config = getLanguageConfig(defaultLanguage);
-  const direction = config.direction;
-  const rtl = isRTL(defaultLanguage);
+  const resolved = resolveLanguage(initialLanguage, countryCode);
+  const [language, setLanguageState] = useState<LanguageCode>(resolved);
 
-  // For now, language is static based on store/country
-  // In the future, we can add language switching functionality
-  const setLanguage = (language: LanguageCode) => {
-    // Store in localStorage for persistence
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('preferred_language', language);
+  useEffect(() => {
+    setLanguageState(resolveLanguage(initialLanguage, countryCode));
+  }, [initialLanguage, countryCode]);
+
+  const config = useMemo(() => getLanguageConfig(language), [language]);
+  const direction = config.direction;
+  const rtl = isRTL(language);
+
+  const setLanguage = (next: LanguageCode) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("preferred_language", next);
     }
-    // Reload page to apply new language
     window.location.reload();
   };
 
   return (
     <I18nContext.Provider
       value={{
-        language: defaultLanguage,
+        language,
         direction,
         config,
         setLanguage,
