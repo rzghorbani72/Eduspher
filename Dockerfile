@@ -1,15 +1,15 @@
-# Hamravesh mirrors (Iran): npm https://repo.hmirror.ir/npm — avoids ECONNRESET to registry.npmjs.org
-# Override: docker build --build-arg NPM_REGISTRY=https://registry.npmjs.org ...
+# Hamravesh mirror (Iran): https://repo.hmirror.ir/npm
+# Do not use corepack prepare — it fetches pnpm from registry.npmjs.org before mirror applies
 FROM node:22-bookworm-slim AS base
 
-ENV NPM_REGISTRY=https://repo.hmirror.ir/npm/
+ENV NPM_REGISTRY=https://repo.hmirror.ir/npm
+ENV COREPACK_NPM_REGISTRY=${NPM_REGISTRY}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV npm_config_registry=${NPM_REGISTRY}
 ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 
-RUN corepack enable \
-  && corepack prepare pnpm@9 --activate \
-  && npm config set registry "${NPM_REGISTRY}" \
+RUN npm config set registry "${NPM_REGISTRY}" \
+  && npm install -g pnpm@9.15.9 \
   && pnpm config set registry "${NPM_REGISTRY}" \
   && pnpm config set fetch-retries 5 \
   && pnpm config set fetch-retry-mintimeout 20000 \
