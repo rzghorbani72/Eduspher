@@ -157,11 +157,21 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
     try {
       if (authMethod === "email") {
-        await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL);
-        setMessage("OTP sent to your email address");
+        const response = await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL) as any;
+        // TODO: Remove when real SMS/email provider is integrated
+        if (response?.otp) {
+          setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
+        } else {
+          setMessage("OTP sent to your email address");
+        }
       } else {
-        await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE);
-        setMessage("OTP sent to your phone number");
+        const response = await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE) as any;
+        // TODO: Remove when real SMS/email provider is integrated
+        if (response?.otp) {
+          setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
+        } else {
+          setMessage("OTP sent to your phone number");
+        }
       }
       setStep("otp");
     } catch (err) {
@@ -491,7 +501,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
       )}
 
       {message && !error && (
-        <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+        <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
           {message}
         </div>
       )}

@@ -125,9 +125,14 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
 
     try {
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+      const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as any;
       setPhoneOtpSent(true);
-      setMessage("OTP sent to your phone number");
+      // TODO: Remove when real SMS/email provider is integrated
+      if (response?.otp) {
+        setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
+      } else {
+        setMessage("OTP sent to your phone number");
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
       setError(errorMessage);
@@ -176,9 +181,14 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     setMessage(null);
 
     try {
-      await sendEmailOtp(email as string, OtpType.REGISTER_EMAIL_VERIFICATION);
+      const response = await sendEmailOtp(email as string, OtpType.REGISTER_EMAIL_VERIFICATION) as any;
       setEmailOtpSent(true);
-      setMessage("OTP sent to your email address");
+      // TODO: Remove when real SMS/email provider is integrated
+      if (response?.otp) {
+        setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
+      } else {
+        setMessage("OTP sent to your email address");
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
       setError(errorMessage);
@@ -475,7 +485,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
           ) : null}
 
           {message && !error ? (
-            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
               {message}
             </div>
           ) : null}
@@ -575,7 +585,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
           ) : null}
 
           {message && !error ? (
-            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
               {message}
             </div>
           ) : null}

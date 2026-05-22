@@ -100,8 +100,13 @@ export const AddContactForm = ({
           setEmailError(emailError);
           return;
         }
-        await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION);
-        setMessage("OTP sent to your email address");
+        const response = await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION) as any;
+        // TODO: Remove when real SMS/email provider is integrated
+        if (response?.otp) {
+          setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
+        } else {
+          setMessage("OTP sent to your email address");
+        }
         setOtpSent(true);
         setStep("otp");
       } else {
@@ -118,8 +123,13 @@ export const AddContactForm = ({
           setPhoneError(phoneError);
           return;
         }
-        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
-        setMessage("OTP sent to your phone number");
+        const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as any;
+        // TODO: Remove when real SMS/email provider is integrated
+        if (response?.otp) {
+          setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
+        } else {
+          setMessage("OTP sent to your phone number");
+        }
         setOtpSent(true);
         setStep("otp");
       }
@@ -219,7 +229,7 @@ export const AddContactForm = ({
         )}
 
         {message && !error && (
-          <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+          <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
             {message}
           </div>
         )}
