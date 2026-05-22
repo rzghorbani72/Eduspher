@@ -413,14 +413,14 @@ export const validatePhoneAndEmail = (phone_number?: string, email?: string, opt
 };
 
 export const sendEmailOtp = (email: string, type: string, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string }>("/auth/otp/send-email", {
+  return postJson<{ message: string; status: string; otp?: string }>("/auth/otp/send-email", {
     email,
     type,
   }, options);
 };
 
 export const sendPhoneOtp = (phone_number: string, type: string, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string }>("/auth/otp/send-phone", {
+  return postJson<{ message: string; status: string; otp?: string }>("/auth/otp/send-phone", {
     phone_number,
     type,
   }, options);

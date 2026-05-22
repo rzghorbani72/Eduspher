@@ -35,7 +35,7 @@ export const DEFAULT_PLATFORM_THEME: ThemeConfigInput = {
   background_color: "#f8fafc",
   background_color_light: "#f8fafc",
   background_color_dark: "#0f172a",
-  dark_mode: null,
+  dark_mode: false,
   border_radius_style: "rounded",
   shadow_style: "medium",
   element_animation_style: "subtle",

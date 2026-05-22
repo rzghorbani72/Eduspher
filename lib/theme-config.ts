@@ -116,15 +116,15 @@ export async function getStoreThemeAndTemplate() {
             background_color_light: configs.background_color_light || themeData.background_color_light || configs.background_color || themeData.background_color || "#f8fafc",
             background_color_dark: configs.background_color_dark || themeData.background_color_dark || configs.background_color || themeData.background_color || "#0f172a",
             // Handle dark_mode: can be boolean, string "true"/"false", or null
-            dark_mode: configs.dark_mode !== undefined 
+            dark_mode: configs.dark_mode !== undefined
               ? (configs.dark_mode === null || (typeof configs.dark_mode === 'string' && configs.dark_mode === 'null')
-                  ? null 
+                  ? null
                   : configs.dark_mode === true || (typeof configs.dark_mode === 'string' && (configs.dark_mode === 'true' || configs.dark_mode === '1')))
-              : (themeData.dark_mode !== undefined 
+              : (themeData.dark_mode !== undefined
                   ? (themeData.dark_mode === null || (typeof themeData.dark_mode === 'string' && themeData.dark_mode === 'null')
                       ? null
                       : themeData.dark_mode === true || (typeof themeData.dark_mode === 'string' && (themeData.dark_mode === 'true' || themeData.dark_mode === '1')))
-                  : null),
+                  : false),
             // Animation and style settings from configs
             background_animation_type: configs.background_animation_type || themeData.background_animation_type || 'none',
             background_animation_speed: configs.background_animation_speed || themeData.background_animation_speed || 'medium',
