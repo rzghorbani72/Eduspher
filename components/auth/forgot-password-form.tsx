@@ -130,15 +130,12 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     try {
       const phone = authMethod === "phone" ? formData.identifier : undefined;
       const email = authMethod === "email" ? formData.identifier : undefined;
-      
-      const result = await validatePhoneAndEmail(phone, email);
-      if (result.phone_number === "unverified" || result.email === "unverified") {
-        setError("Phone or email is not verified. Please verify your phone or email first.");
-      }
+
+      await validatePhoneAndEmail(phone, email);
       setValidated(true);
-      setMessage("User validated successfully");
+      setMessage("Account found. Send OTP to continue.");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "User not found. Please check your email or phone number.";
+      const errorMessage = err instanceof Error ? err.message : "Account not found. Please check your phone number.";
       setError(errorMessage);
     } finally {
       setIsLoading(false);

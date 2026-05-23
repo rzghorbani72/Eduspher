@@ -52,6 +52,10 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
+  // OTP gate state (for admin-created accounts with unverified phone)
+  const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string } | null>(null);
+  const [otp, setOtp] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -65,6 +69,27 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     },
   });
 
+  async function finishLogin() {
+    setAuthenticated(true);
+    const { loadAndMergeCart } = await import("@/app/actions/cart");
+    loadAndMergeCart().catch(() => {});
+    router.push(buildPath("/courses"));
+    router.refresh();
+  }
+
+  async function submitOtp() {
+    if (!otpGate) return;
+    setError(null);
+    startTransition(async () => {
+      try {
+        await postJson("/auth/confirm-phone", { temp_token: otpGate.tempToken, otp });
+        await finishLogin();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
+      }
+    });
+  }
+
   const onSubmit = handleSubmit((values) => {
     setError(null);
     startTransition(async () => {
@@ -76,34 +101,30 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         } else if (loginMethod === "email" && email) {
           identifier = email;
         }
-        
+
         const getCookieValue = (name: string) => {
           if (typeof document === "undefined") return null;
           const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
           return match ? decodeURIComponent(match[1]) : null;
         };
-        
+
         const academyIdCookie = getCookieValue(env.academyIdCookie);
         const finalAcademyId = academyIdCookie
           ? Number(academyIdCookie)
           : env.defaultAcademyId;
 
-        await postJson("/auth/login", {
+        const result = await postJson<any>("/auth/login", {
           identifier,
           password: values.password,
           academy_id: finalAcademyId,
         });
-        
-        setAuthenticated(true);
-        
-        // Sync cart after login (non-blocking)
-        const { loadAndMergeCart } = await import("@/app/actions/cart");
-        loadAndMergeCart().catch(() => {
-          // Silently fail - cart is still in localStorage
-        });
-        
-        router.push(buildPath("/courses"));
-        router.refresh();
+
+        if (result?.phone_verification_required) {
+          setOtpGate({ tempToken: result.temp_token, maskedPhone: result.phone });
+          return;
+        }
+
+        await finishLogin();
       } catch (err) {
         setAuthenticated(false);
         const message = err instanceof Error ? err.message : t("auth.unableToLogin");
@@ -111,6 +132,40 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
       }
     });
   });
+
+  if (otpGate) {
+    return (
+      <div className="space-y-6">
+        <p className="text-sm text-muted-foreground">
+          Enter the verification code sent to <span className="font-medium">{otpGate.maskedPhone}</span>
+        </p>
+        <Input
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
+          placeholder="Enter OTP"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          autoFocus
+        />
+        {error && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+            {error}
+          </div>
+        )}
+        <Button type="button" className="w-full" loading={pending} onClick={submitOtp} disabled={otp.length < 4}>
+          {pending ? t("auth.signingIn") : "Verify & Sign In"}
+        </Button>
+        <button
+          type="button"
+          className="w-full text-center text-sm text-muted-foreground underline"
+          onClick={() => { setOtpGate(null); setOtp(""); setError(null); }}
+        >
+          Back
+        </button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
