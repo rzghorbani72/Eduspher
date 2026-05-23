@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Phone } from "lucide-react";
+import { Mail, Phone, ArrowLeft } from "lucide-react";
 
-import { postJson } from "@/lib/api/client";
+import { postJson, sendPhoneOtp } from "@/lib/api/client";
 import { env } from "@/lib/env";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { OtpType } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
@@ -53,8 +54,9 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const [email, setEmail] = useState("");
 
   // OTP gate state (for admin-created accounts with unverified phone)
-  const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string } | null>(null);
+  const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string; phone: string } | null>(null);
   const [otp, setOtp] = useState("");
+  const [otpResending, setOtpResending] = useState(false);
 
   const {
     register,
@@ -90,6 +92,19 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     });
   }
 
+  async function resendOtp() {
+    if (!otpGate) return;
+    setOtpResending(true);
+    setError(null);
+    try {
+      await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
+    } finally {
+      setOtpResending(false);
+    }
+  }
+
   const onSubmit = handleSubmit((values) => {
     setError(null);
     startTransition(async () => {
@@ -120,7 +135,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         });
 
         if (result?.phone_verification_required) {
-          setOtpGate({ tempToken: result.temp_token, maskedPhone: result.phone });
+          setOtpGate({ tempToken: result.temp_token, maskedPhone: result.phone, phone: result.full_phone || result.phone });
           return;
         }
 
@@ -136,14 +151,18 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   if (otpGate) {
     return (
       <div className="space-y-6">
-        <p className="text-sm text-muted-foreground">
-          Enter the verification code sent to <span className="font-medium">{otpGate.maskedPhone}</span>
-        </p>
+        <div className="space-y-2">
+          <Label htmlFor="otp">{t("auth.otpVerification")}</Label>
+          <p className="text-sm text-muted-foreground">
+            {t("auth.enterVerificationCode").replace("{phone}", otpGate.maskedPhone)}
+          </p>
+        </div>
         <Input
+          id="otp"
           type="text"
           inputMode="numeric"
           maxLength={6}
-          placeholder="Enter OTP"
+          placeholder={t("auth.otpCodePlaceholder")}
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
           autoFocus
@@ -153,15 +172,33 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
             {error}
           </div>
         )}
-        <Button type="button" className="w-full" loading={pending} onClick={submitOtp} disabled={otp.length < 4}>
-          {pending ? t("auth.signingIn") : "Verify & Sign In"}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => { setOtpGate(null); setOtp(""); setError(null); }}
+            className="flex-1"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t("common.back")}
+          </Button>
+          <Button
+            type="button"
+            className="flex-1"
+            loading={pending}
+            onClick={submitOtp}
+            disabled={otp.length < 4}
+          >
+            {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
+          </Button>
+        </div>
         <button
           type="button"
-          className="w-full text-center text-sm text-muted-foreground underline"
-          onClick={() => { setOtpGate(null); setOtp(""); setError(null); }}
+          className="w-full text-center text-sm text-sky-600 hover:underline dark:text-sky-400"
+          onClick={resendOtp}
+          disabled={otpResending}
         >
-          Back
+          {otpResending ? `${t("auth.resendOtp")}...` : t("auth.resendOtp")}
         </button>
       </div>
     );
