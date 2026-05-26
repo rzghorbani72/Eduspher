@@ -1,6 +1,6 @@
 import { UIBlockConfig } from './theme-config';
 
-export type TemplatePreset = 'modern' | 'classic' | 'minimal' | 'courses-first' | 'featured' | 'compact' | 'academy' | 'student-focused';
+export type TemplatePreset = 'modern' | 'classic' | 'minimal' | 'courses-first' | 'featured' | 'compact' | 'academy' | 'student-focused' | 'kajabi' | 'podia' | 'stan' | 'circle';
 
 export interface TemplatePresetInfo {
   id: TemplatePreset;
@@ -648,6 +648,62 @@ export const TEMPLATE_PRESETS: Record<TemplatePreset, TemplatePresetInfo> = {
           columns: 4,
         },
       },
+    ],
+  },
+
+  kajabi: {
+    id: 'kajabi',
+    name: 'Expert Academy',
+    description: 'Turn your expertise into income — creator-focused with stats, expert profiles, and rich testimonials',
+    blocks: [
+      { id: 'header', type: 'header', order: 1, isVisible: true, config: { showLogo: true, showNavigation: true, sticky: true } },
+      { id: 'hero', type: 'hero', order: 2, isVisible: true, config: { style: 'expert', title: "Turn What You Know Into What You're Known For", subtitle: 'The best online academy platform to build your business.', showCTA: true, ctaText: 'Get Started Free', ctaSecondary: 'View Pricing', alignment: 'center', height: 'large', showExpertPhotos: true } },
+      { id: 'features', type: 'features', order: 3, isVisible: true, config: { style: 'stats', title: 'The numbers speak', showStats: true, stats: [{ value: '100K+', label: 'Active students' }, { value: '$10B+', label: 'Earned by creators' }, { value: '75M+', label: 'Customers served' }], gridColumns: 3, variant: 'cards' } },
+      { id: 'courses', type: 'courses', order: 4, isVisible: true, config: { title: 'Choose Your Path', subtitle: 'Explore coaching, courses, communities, and more', gridColumns: 3, limit: 6, showFilters: true } },
+      { id: 'testimonials', type: 'testimonials', order: 5, isVisible: true, config: { style: 'dark-quote', title: 'Why experts choose us', layout: 'carousel', showAvatars: true } },
+      { id: 'footer', type: 'footer', order: 6, isVisible: true, config: { showSocialLinks: true, showNewsletter: true, columns: 4 } },
+    ],
+  },
+
+  podia: {
+    id: 'podia',
+    name: 'Studio',
+    description: 'All-in-one creator store — website, courses, email, and memberships in one place',
+    blocks: [
+      { id: 'header', type: 'header', order: 1, isVisible: true, config: { showLogo: true, showNavigation: true, sticky: true, minimal: true } },
+      { id: 'hero', type: 'hero', order: 2, isVisible: true, config: { style: 'creator-store', title: 'The all-in-one for teams of one', subtitle: 'Run your website, online store, and email marketing all from one place.', showCTA: true, ctaText: 'Start Your Free Trial', alignment: 'left', height: 'large', showProductCards: true } },
+      { id: 'testimonials', type: 'testimonials', order: 3, isVisible: true, config: { style: 'creator-stories', title: 'Their businesses finally found a home', layout: 'grid', showAvatars: true } },
+      { id: 'features', type: 'features', order: 4, isVisible: true, config: { style: 'benefits', title: 'Everything you need, right out of the box', gridColumns: 3, variant: 'list', showIcons: true } },
+      { id: 'courses', type: 'courses', order: 5, isVisible: true, config: { title: 'Sell anything you can imagine', gridColumns: 3, limit: 6, showFilters: false } },
+      { id: 'footer', type: 'footer', order: 6, isVisible: true, config: { showSocialLinks: true, showNewsletter: false, columns: 4 } },
+    ],
+  },
+
+  stan: {
+    id: 'stan',
+    name: 'Creator',
+    description: 'All-in-one creator store with 0% transaction fees — built for social creators',
+    blocks: [
+      { id: 'header', type: 'header', order: 1, isVisible: true, config: { showLogo: true, showNavigation: true, sticky: false, transparent: true } },
+      { id: 'hero', type: 'hero', order: 2, isVisible: true, config: { style: 'social', title: 'Meet Your All-in-One Creator Store', subtitle: 'Join 100,000+ solo business owners who use this platform.', showCTA: true, ctaText: 'Start Your Trial', ctaSecondary: 'View Demo →', alignment: 'center', height: 'large', gradient: 'purple' } },
+      { id: 'testimonials', type: 'testimonials', order: 3, isVisible: true, config: { style: 'social-proof', title: 'See What People Are Saying', layout: 'grid', showAvatars: true } },
+      { id: 'features', type: 'features', order: 4, isVisible: true, config: { style: 'benefits', title: '0% Transaction Fees, Always', gridColumns: 2, variant: 'list', showIcons: true, zeroCostBadge: true } },
+      { id: 'courses', type: 'courses', order: 5, isVisible: true, config: { title: 'A Simpler Solution', gridColumns: 3, limit: 6, showFilters: false } },
+      { id: 'footer', type: 'footer', order: 6, isVisible: true, config: { showSocialLinks: true, showNewsletter: false, columns: 3, minimal: true } },
+    ],
+  },
+
+  circle: {
+    id: 'circle',
+    name: 'Community',
+    description: 'The community platform for creators — memberships, courses, events, and spaces',
+    blocks: [
+      { id: 'header', type: 'header', order: 1, isVisible: true, config: { showLogo: true, showNavigation: true, sticky: true, dark: true } },
+      { id: 'hero', type: 'hero', order: 2, isVisible: true, config: { style: 'community', title: 'Build Your Online Community', subtitle: 'The all-in-one platform for community-powered businesses.', showCTA: true, ctaText: 'Start for Free', ctaSecondary: 'Watch Demo', alignment: 'center', height: 'large', dark: true } },
+      { id: 'features', type: 'features', order: 3, isVisible: true, config: { style: 'dark', title: 'Everything your community needs', gridColumns: 3, variant: 'cards', showIcons: true, dark: true } },
+      { id: 'courses', type: 'courses', order: 4, isVisible: true, config: { title: 'Courses & Content', gridColumns: 3, limit: 6, showFilters: false } },
+      { id: 'testimonials', type: 'testimonials', order: 5, isVisible: true, config: { style: 'dark-quote', title: 'Loved by community builders', layout: 'carousel', showAvatars: true } },
+      { id: 'footer', type: 'footer', order: 6, isVisible: true, config: { showSocialLinks: true, showNewsletter: true, columns: 4, dark: true } },
     ],
   },
 };
