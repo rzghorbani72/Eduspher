@@ -353,10 +353,11 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Mail className="h-5 w-5 text-muted opacity-60" />
                 </div>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  autoComplete="email" 
+                <Input
+                  id="email"
+                  type="email"
+                  dir="ltr"
+                  autoComplete="email"
                   {...register("email")}
                   className="pl-10"
                 />
@@ -536,10 +537,11 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Lock className="h-5 w-5 text-muted opacity-60" />
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  autoComplete="new-password" 
+                <Input
+                  id="password"
+                  type="password"
+                  dir="ltr"
+                  autoComplete="new-password"
                   {...register("password")}
                   className="pl-10"
                 />
@@ -557,6 +559,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                 <Input
                   id="confirmed_password"
                   type="password"
+                  dir="ltr"
                   autoComplete="new-password"
                   {...register("confirmed_password")}
                   className="pl-10"

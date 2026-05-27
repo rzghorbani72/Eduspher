@@ -252,6 +252,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
             <Input
               id="identifier"
               type="email"
+              dir="ltr"
               autoComplete="email"
               value={email}
               onChange={(e) => {
@@ -291,7 +292,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" autoComplete="current-password" {...register("password")} />
+        <Input id="password" type="password" dir="ltr" autoComplete="current-password" {...register("password")} />
         {errors.password ? (
           <p className="text-sm text-amber-600 dark:text-amber-400">{errors.password.message}</p>
         ) : null}

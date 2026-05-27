@@ -129,6 +129,7 @@ export const PhoneInput = ({
           <input
             id={id}
             type="tel"
+            dir="ltr"
             value={value}
             onChange={handlePhoneChange}
             autoComplete={autoComplete}
