@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber } from "@/lib/phone-utils";
+import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
 
@@ -360,6 +360,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                   autoComplete="email"
                   {...register("email")}
                   className="pl-10"
+                  onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("email").onChange(e); }}
                 />
               </div>
               {errors.email ? (
@@ -388,7 +389,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                   }
                 }}
                 defaultCountry={selectedCountry}
-                placeholder="Enter phone number"
+                placeholder="09121234567"
               />
               {errors.phone_number ? (
                 <p className="text-sm text-amber-600 dark:text-amber-400">
@@ -410,7 +411,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                     placeholder="Enter phone OTP"
                     value={phoneOtp}
                     onChange={(e) => {
-                      setPhoneOtp(e.target.value);
+                      setPhoneOtp(toEnglishDigits(e.target.value));
                       setError(null);
                     }}
                     maxLength={6}
@@ -448,7 +449,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                     placeholder="Enter email OTP"
                     value={emailOtp}
                     onChange={(e) => {
-                      setEmailOtp(e.target.value);
+                      setEmailOtp(toEnglishDigits(e.target.value));
                       setError(null);
                     }}
                     maxLength={6}
@@ -544,6 +545,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                   autoComplete="new-password"
                   {...register("password")}
                   className="pl-10"
+                  onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("password").onChange(e); }}
                 />
               </div>
               {errors.password ? (
@@ -563,6 +565,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                   autoComplete="new-password"
                   {...register("confirmed_password")}
                   className="pl-10"
+                  onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("confirmed_password").onChange(e); }}
                 />
               </div>
               {errors.confirmed_password ? (

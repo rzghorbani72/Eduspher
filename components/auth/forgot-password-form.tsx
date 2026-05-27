@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
+import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
 
 const isValidEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -64,7 +64,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: toEnglishDigits(value) }));
     setError(null);
   };
 
@@ -77,8 +77,9 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   };
 
   const handleEmailChange = (value: string) => {
-    setEmail(value);
-    setFormData((prev) => ({ ...prev, identifier: value }));
+    const v = toEnglishDigits(value);
+    setEmail(v);
+    setFormData((prev) => ({ ...prev, identifier: v }));
     setError(null);
   };
 
@@ -329,7 +330,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
                   }
                 }}
                 defaultCountry={selectedCountry}
-                placeholder="Enter phone number"
+                placeholder="09121234567"
                 autoComplete="tel"
               />
             )}

@@ -1,12 +1,18 @@
 import { CountryCode } from './country-codes';
 
+export function toEnglishDigits(str: string): string {
+  return str
+    .replace(/[۰-۹]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x06f0 + 48))
+    .replace(/[٠-٩]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48));
+}
+
 export const cleanPhoneNumber = (
   phoneNumber: string,
   countryCode: CountryCode
 ): string => {
   if (!phoneNumber) return '';
 
-  let cleaned = phoneNumber.replace(/[^\d+]/g, '');
+  let cleaned = toEnglishDigits(phoneNumber).replace(/[^\d+]/g, '');
 
   if (cleaned.startsWith('+')) {
     cleaned = cleaned.substring(1);

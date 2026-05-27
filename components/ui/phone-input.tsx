@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Phone, ChevronDown } from "lucide-react";
 import { COUNTRY_CODES, getCountryByCode, getDefaultCountry, type CountryCode } from "@/lib/country-codes";
+import { toEnglishDigits } from "@/lib/phone-utils";
 import { cn } from "@/lib/utils";
 
 interface PhoneInputProps {
@@ -26,7 +27,7 @@ export const PhoneInput = ({
   className,
   id,
   autoComplete = "tel",
-  placeholder = "Enter phone number",
+  placeholder = "09121234567",
   disabled = false,
   lockCountryCode,
 }: PhoneInputProps) => {
@@ -75,7 +76,7 @@ export const PhoneInput = ({
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/\D/g, "");
+    const inputValue = toEnglishDigits(e.target.value).replace(/\D/g, "");
     onChange?.(inputValue);
   };
 

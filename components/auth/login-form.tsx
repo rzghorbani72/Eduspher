@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
+import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { OtpType } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -164,7 +164,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           maxLength={6}
           placeholder={t("auth.otpCodePlaceholder")}
           value={otp}
-          onChange={(e) => setOtp(e.target.value)}
+          onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
           autoFocus
         />
         {error && (
@@ -256,8 +256,9 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               autoComplete="email"
               value={email}
               onChange={(e) => {
-                setEmail(e.target.value);
-                setValue("identifier", e.target.value);
+                const v = toEnglishDigits(e.target.value);
+                setEmail(v);
+                setValue("identifier", v);
               }}
               className="pl-10"
               placeholder="Enter your email"
@@ -282,7 +283,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               }
             }}
             defaultCountry={selectedCountry}
-            placeholder="Enter phone number"
+            placeholder="09121234567"
             autoComplete="tel"
           />
         )}
@@ -292,7 +293,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" dir="ltr" autoComplete="current-password" {...register("password")} />
+        <Input id="password" type="password" dir="ltr" autoComplete="current-password" {...register("password")} onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("password").onChange(e); }} />
         {errors.password ? (
           <p className="text-sm text-amber-600 dark:text-amber-400">{errors.password.message}</p>
         ) : null}
