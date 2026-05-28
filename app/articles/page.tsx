@@ -23,10 +23,10 @@ export default async function ArticlesPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: 'var(--theme-foreground)' }}>
           Insights & stories
         </h1>
-        <p className="max-w-2xl text-base leading-7 text-muted">
+        <p className="max-w-2xl text-base leading-7" style={{ color: 'var(--theme-muted)' }}>
           Deep dives on emerging skills, career growth strategies, and behind-the-scenes stories from
           mentors and students at EduSpher.
         </p>
@@ -40,8 +40,12 @@ export default async function ArticlesPage() {
           return (
             <article
               key={article.id}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-card animate-in fade-in slide-in-from-bottom-4 duration-500"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="group flex flex-col overflow-hidden rounded-2xl border animate-in fade-in slide-in-from-bottom-4 duration-500"
+              style={{
+                animationDelay: `${index * 100}ms`,
+                backgroundColor: 'var(--theme-card-bg)',
+                borderColor: 'var(--theme-border-color)',
+              }}
             >
               <div className="relative aspect-[16/9] overflow-hidden">
                 <img
@@ -52,11 +56,11 @@ export default async function ArticlesPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
               <div className="flex flex-1 flex-col gap-3 p-5">
-                <div className="flex items-center justify-between text-xs uppercase tracking-wide text-muted opacity-70">
+                <div className="flex items-center justify-between text-xs uppercase tracking-wide opacity-55" style={{ color: 'var(--theme-foreground)' }}>
                   <span>{publishedDate || "Just published"}</span>
                   {article.author ? <span>{article.author.display_name}</span> : null}
                 </div>
-                <h2 className="text-xl font-semibold leading-7 text-slate-900 transition-colors group-hover:text-[var(--theme-primary)] dark:text-white dark:group-hover:text-[var(--theme-primary)]">
+                <h2 className="text-xl font-semibold leading-7 transition-colors group-hover:text-[var(--theme-primary)]" style={{ color: 'var(--theme-foreground)' }}>
                   {article.title}
                 </h2>
                 <p className="text-sm leading-6 text-muted opacity-70">

@@ -120,8 +120,8 @@
 
 body {
   min-height: 100vh;
-  background-color: rgb(var(--background));
-  color: rgb(var(--foreground));
+  background-color: var(--theme-background, #f8fafc);
+  color: var(--theme-foreground, #0f172a);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -227,22 +227,15 @@ a[class*="bg-slate-900"]:hover {
   border-color: rgb(var(--border));
 }
 
-/* Smooth transitions for theme changes */
-html,
-body,
-* {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
-}
-
-/* Override for elements that shouldn't transition */
+/* Smooth transitions for interactive elements only — NOT applied globally to avoid navigation flash */
 button,
 a,
 input,
 select,
 textarea {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 /* Ensure proper contrast in both modes - only when .dark class is NOT present (system theme) */

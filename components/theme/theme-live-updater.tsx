@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { usePathname } from "next/navigation";
 
 import { useAcademyContext } from "@/components/providers/store-provider";
 import { useThemeConfig } from "./theme-provider";
@@ -29,7 +28,6 @@ async function fetchThemeConfig(slug: string): Promise<ThemeConfigInput | null> 
 export function ThemeLiveUpdater() {
   const { slug } = useAcademyContext();
   const { updateTheme } = useThemeConfig();
-  const pathname = usePathname();
   const syncTheme = useCallback(async () => {
     if (!slug) {
       applyThemeCssVariables(null);
@@ -44,7 +42,7 @@ export function ThemeLiveUpdater() {
 
   useEffect(() => {
     void syncTheme();
-  }, [slug, pathname, syncTheme]);
+  }, [slug, syncTheme]);
 
   useEffect(() => {
     const handleFocus = () => void syncTheme();

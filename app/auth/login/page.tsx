@@ -24,13 +24,16 @@ export default async function LoginPage() {
   const translate = (key: string) => t(key, language);
   
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 rounded-2xl border border-slate-200 bg-card lg:flex-row lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div
+      className="mx-auto flex w-full max-w-5xl flex-col gap-12 rounded-2xl border lg:flex-row lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500"
+      style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)' }}
+    >
       <div className="flex-1 space-y-5">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("auth.welcomeBack")}</h1>
-        <p className="text-base leading-7 text-muted">
+        <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--theme-foreground)' }}>{translate("auth.welcomeBack")}</h1>
+        <p className="text-base leading-7" style={{ color: 'var(--theme-muted)' }}>
           {translate("auth.welcomeBackDescription")}
         </p>
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 transition-all hover:shadow-sm   ">
+        <div className="rounded-xl border px-4 py-3 text-sm transition-all hover:shadow-sm" style={{ borderColor: 'var(--theme-border-color)', backgroundColor: 'var(--theme-surface)', color: 'var(--theme-muted)' }}>
           {translate("auth.newToEduSpher")}{" "}
           <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/auth/register")}>
             {translate("auth.createFreeAccount")}

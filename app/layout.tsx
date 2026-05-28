@@ -118,7 +118,7 @@ export default async function RootLayout({
     pathname.startsWith("/s/");
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
-  const useTemplateLayout = !isPanelRoot && isHomePage && hasTemplateBlocks;
+  const useTemplateLayout = !isPanelRoot && isHomePage;
   const mainClassName = isPanelRoot
     ? "mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10"
     : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12";

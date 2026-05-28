@@ -24,9 +24,12 @@ export default async function RegisterPage() {
   const translate = (key: string) => t(key, language);
   
   return (
-    <div className="mx-auto grid w-full max-w-5xl gap-8 rounded-2xl border border-slate-200 bg-card lg:grid-cols-[1fr_1.2fr] lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div
+      className="mx-auto grid w-full max-w-5xl gap-8 rounded-2xl border lg:grid-cols-[1fr_1.2fr] lg:px-10 lg:py-12 animate-in fade-in slide-in-from-bottom-4 duration-500"
+      style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)' }}
+    >
       <div className="space-y-5">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{translate("auth.joinEduSpher")}</h1>
+        <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--theme-foreground)' }}>{translate("auth.joinEduSpher")}</h1>
         <p className="text-base leading-7 text-muted">
           {translate("auth.joinDescription")}
         </p>

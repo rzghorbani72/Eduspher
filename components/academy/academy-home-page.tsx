@@ -19,57 +19,52 @@ import { getStoreThemeAndTemplate } from "@/lib/theme-config";
 import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
+import { AcademyHomeAnimations } from "./academy-home-animations";
 
 export async function AcademyHomePage() {
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
-  const [academies, categories, articles, coursePayload, themeAndTemplate, user, currentAcademy] = await Promise.all([
-    getAcademiesPublic().catch(() => []),
-    getCategories().catch(() => []),
-    getArticles().catch(() => []),
-    getCourses({ limit: 3, published: true, is_featured: true} as any).catch(() => null),
-    getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
-    getCurrentUser().catch(() => null),
-    getCurrentAcademy().catch(() => null),
-  ]);
+
+  const [academies, categories, articles, coursePayload, themeAndTemplate, user, currentAcademy] =
+    await Promise.all([
+      getAcademiesPublic().catch(() => []),
+      getCategories().catch(() => []),
+      getArticles().catch(() => []),
+      getCourses({ limit: 6, published: true, is_featured: true } as any).catch(() => null),
+      getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
+      getCurrentUser().catch(() => null),
+      getCurrentAcademy().catch(() => null),
+    ]);
 
   const hasCatalogAccess = coursePayload !== null;
   const featuredCourses = coursePayload?.courses ?? [];
-  const academyMatchById = storeContext.id
-    ? academies.find((a) => a.id === storeContext.id)
-    : null;
+  const academyMatchById = storeContext.id ? academies.find((a) => a.id === storeContext.id) : null;
   const academyMatchBySlug = storeContext.slug
     ? academies.find((a) => (a as any).slug === storeContext.slug)
     : null;
   const primaryAcademy = academyMatchById ?? academyMatchBySlug ?? null;
   const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
   const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
-  const storeHeroLabel = primaryAcademy?.domain?.public_address ?? primaryAcademy?.domain?.private_address ?? "Premier digital campus";
   const stats = {
     students: (primaryAcademy as any)?.student_count ?? null,
     mentors: (primaryAcademy as any)?.mentor_count ?? null,
-    courses:
-      (primaryAcademy as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
+    courses: (primaryAcademy as any)?.course_count ?? coursePayload?.pagination?.total ?? null,
     rating: (primaryAcademy as any)?.average_rating ?? null,
   };
 
-  // Get store language for translations
   let storeForLang = currentAcademy;
-  if (!storeForLang && storeContext.slug) {
+  if (!storeForLang && storeContext.slug)
     storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
-  }
-  if (!storeForLang && primaryAcademy) {
-    storeForLang = primaryAcademy as any;
-  }
-  const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
+  if (!storeForLang && primaryAcademy) storeForLang = primaryAcademy as any;
+  const language = getAcademyLanguage(
+    storeForLang?.language || null,
+    storeForLang?.country_code || null
+  );
   const translate = (key: string) => t(key, language);
 
-  // If we have a UI template, render blocks dynamically
-  // Otherwise, use the default static layout
-  const hasUITemplate = themeAndTemplate.template?.blocks && themeAndTemplate.template.blocks.length > 0;
-    
-  // If we have a UI template, render blocks directly without wrapper
-  // Blocks handle their own full-width layouts (header, hero, footer)
+  const hasUITemplate =
+    themeAndTemplate.template?.blocks && themeAndTemplate.template.blocks.length > 0;
+
   if (hasUITemplate && themeAndTemplate.template) {
     return (
       <BlocksRenderer
@@ -80,280 +75,630 @@ export async function AcademyHomePage() {
     );
   }
 
-  // Default static layout
+  // ─────────────────────────────────────────────────────────────────────────────
+  // Static full-width marketing layout
+  // ─────────────────────────────────────────────────────────────────────────────
   return (
-    <div className="space-y-6">
-      <>
-      <section 
-        data-scroll-animate="fadeIn"
-        data-scroll-delay="0"
-        className="relative grid gap-6 lg:grid-cols-[1.25fr_1fr] lg:items-center py-6 sm:py-8 overflow-hidden"
-      >
-        {/* Creative background elements for homepage */}
-        <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          {/* Animated gradient blobs */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-[var(--theme-primary)]/10 to-[var(--theme-secondary)]/10 rounded-full blur-3xl animate-float-slow" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-[var(--theme-secondary)]/10 to-[var(--theme-accent)]/10 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
-        </div>
-        <div className="space-y-4">
-          <Badge variant="soft" className="w-fit">{translate("home.newBadge")}</Badge>
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: 'var(--theme-foreground)' }}>
+    <div className="w-full" style={{ overflowX: 'hidden' }}>
+      <AcademyHomeAnimations />
+
+      {/* ══════════════════════════════════════════════════════════════
+          HERO  –  full-viewport dramatic section
+      ══════════════════════════════════════════════════════════════ */}
+      <section className="relative flex min-h-[92vh] flex-col items-center justify-center overflow-hidden">
+        {/* Layered radial-gradient backdrop */}
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background: [
+              'radial-gradient(ellipse 90% 65% at 50% -5%, color-mix(in srgb, var(--theme-primary) 28%, transparent), transparent)',
+              'radial-gradient(ellipse 55% 45% at 95% 115%, color-mix(in srgb, var(--theme-secondary) 18%, transparent), transparent)',
+              'radial-gradient(ellipse 50% 40% at 5% 105%, color-mix(in srgb, var(--theme-accent) 12%, transparent), transparent)',
+              'var(--theme-background)',
+            ].join(', '),
+          }}
+        />
+
+        {/* Subtle dot-grid overlay */}
+        <div
+          className="absolute inset-0 -z-10 opacity-[0.035]"
+          style={{
+            backgroundImage: [
+              'radial-gradient(circle, var(--theme-foreground) 1px, transparent 1px)',
+            ].join(', '),
+            backgroundSize: '40px 40px',
+          }}
+        />
+
+        {/* Floating blobs */}
+        <div
+          className="pointer-events-none absolute -right-40 top-0 h-[600px] w-[600px] rounded-full opacity-[0.18] blur-3xl"
+          style={{ background: 'var(--theme-primary)' }}
+        />
+        <div
+          className="pointer-events-none absolute -left-40 bottom-0 h-[500px] w-[500px] rounded-full opacity-[0.13] blur-3xl"
+          style={{ background: 'var(--theme-secondary)' }}
+        />
+        <div
+          className="pointer-events-none absolute right-1/4 bottom-10 h-[300px] w-[300px] rounded-full opacity-[0.10] blur-2xl"
+          style={{ background: 'var(--theme-accent)' }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 mx-auto w-full max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
+          <div id="hero-badge" style={{ opacity: 0 }}>
+            <Badge
+              variant="soft"
+              className="mb-8 inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold"
+            >
+              <span
+                className="flex h-2 w-2 rounded-full"
+                style={{ backgroundColor: 'var(--theme-primary)' }}
+              />
+              {translate("home.newBadge")}
+            </Badge>
+          </div>
+
+          <h1
+            id="hero-title"
+            className="mb-7 text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl"
+            style={{
+              opacity: 0,
+              color: 'var(--theme-foreground)',
+              lineHeight: '1.05',
+              letterSpacing: '-0.03em',
+            }}
+          >
             {translate("home.heroTitle").replace("{store}", storeDisplayName)}
           </h1>
-          <p className="max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300">
+
+          <p
+            id="hero-description"
+            className="mx-auto mb-11 max-w-2xl text-lg leading-relaxed sm:text-xl"
+            style={{ opacity: 0, color: 'var(--theme-muted)' }}
+          >
             {translate("home.heroDescription")}
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+
+          <div
+            id="hero-ctas"
+            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
+            style={{ opacity: 0 }}
+          >
             <Link
               href={buildPath("/courses")}
-              className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+              className="group inline-flex h-14 items-center justify-center rounded-full px-9 text-base font-bold shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-[0_16px_48px_color-mix(in_srgb,var(--theme-primary)_50%,transparent)]"
+              style={{
+                backgroundColor: 'var(--theme-primary)',
+                color: 'var(--theme-on-primary)',
+                boxShadow: '0 8px 32px color-mix(in srgb, var(--theme-primary) 38%, transparent)',
+              }}
             >
               {translate("home.browseCourses")}
+              <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1.5">→</span>
             </Link>
             <Link
               href={buildPath("/auth/login")}
-              className="inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-semibold transition-all hover:scale-105 hover:bg-[var(--theme-surface)]"
-              style={{ borderColor: 'var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
+              className="inline-flex h-14 items-center justify-center rounded-full border-2 px-9 text-base font-bold backdrop-blur-md transition-all duration-300 hover:scale-105"
+              style={{
+                borderColor: 'var(--theme-border-strong)',
+                color: 'var(--theme-foreground)',
+                backgroundColor: 'color-mix(in srgb, var(--theme-background) 65%, transparent)',
+              }}
             >
               {translate("home.startForFree")}
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        </div>
+
+        {/* Scroll hint */}
+        <div
+          id="hero-scroll-hint"
+          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
+          style={{ opacity: 0 }}
+        >
+          <span
+            className="text-[10px] font-semibold uppercase tracking-[0.2em]"
+            style={{ color: 'var(--theme-foreground)' }}
+          >
+            scroll
+          </span>
+          <div
+            className="relative h-10 w-px overflow-hidden rounded-full"
+            style={{ backgroundColor: 'color-mix(in srgb, var(--theme-foreground) 15%, transparent)' }}
+          >
+            <div
+              className="absolute inset-x-0 top-0 h-5 animate-bounce rounded-full"
+              style={{ backgroundColor: 'var(--theme-primary)' }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          STATS BAND  –  full-width social-proof strip
+      ══════════════════════════════════════════════════════════════ */}
+      <section
+        id="stats-band"
+        className="w-full py-12"
+        style={{
+          opacity: 0,
+          backgroundColor: 'color-mix(in srgb, var(--theme-primary) 7%, var(--theme-background))',
+          borderTop: '1px solid color-mix(in srgb, var(--theme-primary) 18%, transparent)',
+          borderBottom: '1px solid color-mix(in srgb, var(--theme-primary) 18%, transparent)',
+        }}
+      >
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-y-8 px-4 sm:grid-cols-4 sm:px-6 lg:px-8">
+          {[
+            {
+              label: translate("home.learners"),
+              value: stats.students ? stats.students.toLocaleString() : "—",
+            },
+            {
+              label: translate("home.mentors"),
+              value: stats.mentors ? stats.mentors.toLocaleString() : "—",
+            },
+            {
+              label: translate("home.courses"),
+              value: stats.courses ? stats.courses.toLocaleString() : "—",
+            },
+            {
+              label: translate("home.avgRating"),
+              value: stats.rating ? `${stats.rating.toFixed(1)} / 5` : "—",
+            },
+          ].map((stat) => (
+            <div key={stat.label} data-stat className="flex flex-col items-center gap-1 text-center">
+              <p
+                className="text-4xl font-black tabular-nums sm:text-5xl"
+                style={{ color: 'var(--theme-primary)', letterSpacing: '-0.02em' }}
+              >
+                {stat.value}
+              </p>
+              <p
+                className="text-xs font-semibold uppercase tracking-widest opacity-55"
+                style={{ color: 'var(--theme-foreground)' }}
+              >
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          FEATURED COURSES
+      ══════════════════════════════════════════════════════════════ */}
+      <section className="py-28" style={{ backgroundColor: 'var(--theme-background)' }}>
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Section header */}
+          <div
+            data-gsap="fade-up"
+            className="mb-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+          >
+            <div>
+              <p
+                className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+                style={{ color: 'var(--theme-primary)' }}
+              >
+                {translate("courses.featuredCourses")}
+              </p>
+              <h2
+                className="text-3xl font-black tracking-tight sm:text-4xl"
+                style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
+              >
+                {hasCatalogAccess
+                  ? translate("home.featuredCoursesDescription")
+                  : translate("home.loginToUnlock")}
+              </h2>
+            </div>
+            {hasCatalogAccess ? (
+              <Link
+                href={buildPath("/courses")}
+                className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
+                style={{ color: 'var(--theme-primary)' }}
+              >
+                {translate("home.exploreFullCatalogue")}
+                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </Link>
+            ) : null}
+          </div>
+
+          {/* Courses grid */}
+          {featuredCourses.length ? (
+            <div data-gsap="stagger" className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3">
+              {featuredCourses.map((course) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  storeSlug={storeContext.slug}
+                  store={storeCurrency}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              title={
+                hasCatalogAccess
+                  ? translate("home.noFeaturedCourses")
+                  : translate("home.signInToExplore")
+              }
+              description={
+                hasCatalogAccess
+                  ? translate("home.checkBackSoon")
+                  : translate("home.createAccountToView")
+              }
+              action={
+                !hasCatalogAccess ? (
+                  <div className="flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href={buildPath("/auth/login")}
+                      className="inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-bold"
+                      style={{
+                        backgroundColor: 'var(--theme-primary)',
+                        color: 'var(--theme-on-primary)',
+                      }}
+                    >
+                      {translate("auth.login")}
+                    </Link>
+                    <Link
+                      href={buildPath("/auth/register")}
+                      className="inline-flex h-12 items-center justify-center rounded-full border-2 px-7 text-sm font-bold"
+                      style={{
+                        borderColor: 'var(--theme-border-strong)',
+                        color: 'var(--theme-foreground)',
+                      }}
+                    >
+                      {translate("auth.register")}
+                    </Link>
+                  </div>
+                ) : null
+              }
+            />
+          )}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          VALUE PROPS  –  3-column icon feature strip
+      ══════════════════════════════════════════════════════════════ */}
+      <section
+        className="w-full py-24"
+        style={{
+          backgroundColor: 'color-mix(in srgb, var(--theme-primary) 5%, var(--theme-background))',
+          borderTop: '1px solid color-mix(in srgb, var(--theme-foreground) 6%, transparent)',
+          borderBottom: '1px solid color-mix(in srgb, var(--theme-foreground) 6%, transparent)',
+        }}
+      >
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div data-gsap="fade-up" className="mb-14 text-center">
+            <p
+              className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+              style={{ color: 'var(--theme-primary)' }}
+            >
+              {translate("home.personalisedLearningPaths")}
+            </p>
+            <h2
+              className="text-3xl font-black tracking-tight sm:text-4xl"
+              style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
+            >
+              {translate("home.adaptiveRecommendations")}
+            </h2>
+          </div>
+          <div
+            data-gsap="stagger"
+            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {[
-              { label: translate("home.learners"), value: stats.students ? stats.students.toLocaleString() : "—" },
-              { label: translate("home.mentors"), value: stats.mentors ? stats.mentors.toLocaleString() : "—" },
-              { label: translate("home.courses"), value: stats.courses ? stats.courses.toLocaleString() : "—" },
-              { label: translate("home.avgRating"), value: stats.rating ? `${stats.rating.toFixed(1)}/5` : "—" },
-            ].map((stat, index) => (
-              <div key={stat.label} className="rounded-theme border p-3 text-center shadow-sm transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: `${index * 50}ms`, backgroundColor: 'var(--theme-surface)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}>
-                <p className="text-xl font-semibold">{stat.value}</p>
-                <p className="text-xs uppercase tracking-wide opacity-55">
-                  {stat.label}
+              {
+                icon: '🎯',
+                title: translate("home.guidedProjects"),
+                body: translate("home.guidedProjectsDescription"),
+              },
+              {
+                icon: '👥',
+                title: translate("home.mentorCheckIns"),
+                body: translate("home.mentorCheckInsDescription"),
+              },
+              {
+                icon: '📈',
+                title: translate("home.personalisedLearningPaths"),
+                body: translate("home.adaptiveRecommendations"),
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="group relative overflow-hidden rounded-3xl border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                style={{
+                  backgroundColor: 'var(--theme-card-bg)',
+                  borderColor: 'var(--theme-border-color)',
+                }}
+              >
+                <div
+                  className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  style={{
+                    background:
+                      'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 6%, transparent), transparent)',
+                  }}
+                />
+                <span className="mb-5 block text-4xl">{item.icon}</span>
+                <h3
+                  className="mb-3 text-xl font-bold"
+                  style={{ color: 'var(--theme-foreground)' }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="text-sm leading-relaxed opacity-60"
+                  style={{ color: 'var(--theme-foreground)' }}
+                >
+                  {item.body}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <div className="relative overflow-hidden rounded-theme border p-6 shadow-lg transition-all hover:shadow-xl animate-in fade-in slide-in-from-right-4 duration-500 delay-200" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 10%, var(--theme-background)), color-mix(in srgb, var(--theme-secondary) 6%, var(--theme-background)))', borderColor: 'var(--theme-border-color)' }}>
-          <div className="space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-wide text-[var(--theme-primary)]">
-              {storeHeroLabel}
-            </p>
-            <p className="text-base font-semibold text-[var(--theme-foreground)]">
-              {translate("home.personalisedLearningPaths")}
-            </p>
-            <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
-              {translate("home.adaptiveRecommendations")}
-            </p>
-          </div>
-          <div className="mt-6 grid gap-3">
-            <div className="rounded-theme p-4 shadow-sm transition-all hover:shadow-md" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}>
-              <p className="text-sm font-semibold">{translate("home.guidedProjects")}</p>
-              <p className="text-xs leading-5 opacity-60">
-                {translate("home.guidedProjectsDescription")}
-              </p>
-            </div>
-            <div className="rounded-theme p-4 shadow-sm transition-all hover:shadow-md" style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}>
-              <p className="text-sm font-semibold">{translate("home.mentorCheckIns")}</p>
-              <p className="text-xs leading-5 opacity-60">
-                {translate("home.mentorCheckInsDescription")}
-              </p>
-            </div>
-          </div>
-        </div>
       </section>
 
-      <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-[var(--theme-foreground)]">{translate("courses.featuredCourses")}</h2>
-            <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
-              {hasCatalogAccess
-                ? translate("home.featuredCoursesDescription")
-                : translate("home.loginToUnlock")}
-            </p>
-          </div>
-          {hasCatalogAccess ? (
-            <Link
-              className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
-              href={buildPath("/courses")}
-            >
-              {translate("home.exploreFullCatalogue")} →
-            </Link>
-          ) : null}
-        </div>
-        {featuredCourses.length ? (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            {featuredCourses.map((course, index) => (
-              <div
-                key={course.id}
-                className="animate-in fade-in slide-in-from-bottom-4 duration-500"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CourseCard course={course} storeSlug={storeContext.slug} store={storeCurrency} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            title={hasCatalogAccess ? translate("home.noFeaturedCourses") : translate("home.signInToExplore")}
-            description={
-              hasCatalogAccess
-                ? translate("home.checkBackSoon")
-                : translate("home.createAccountToView")
-            }
-            action={
-              hasCatalogAccess ? null : (
-                <div className="flex flex-wrap items-center justify-center gap-3">
-                  <Link
-                    href={buildPath("/auth/login")}
-                    className="inline-flex h-11 items-center justify-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
-                  >
-                    {translate("auth.login")}
-                  </Link>
-                  <Link
-                    href={buildPath("/auth/register")}
-                    className="inline-flex h-11 items-center justify-center rounded-full border px-6 text-sm font-semibold transition-all hover:scale-105 hover:bg-[var(--theme-surface)]"
-                    style={{ borderColor: 'var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
-                  >
-                    {translate("auth.register")}
-                  </Link>
-                </div>
-              )
-            }
-          />
-        )}
-      </section>
-
+      {/* ══════════════════════════════════════════════════════════════
+          CATEGORIES
+      ══════════════════════════════════════════════════════════════ */}
       {categories.length ? (
-        <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-[var(--theme-foreground)]">{translate("home.topCategories")}</h2>
-            <Link
-              href={buildPath("/courses?view=categories")}
-              className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
+        <section className="py-28" style={{ backgroundColor: 'var(--theme-background)' }}>
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div
+              data-gsap="fade-up"
+              className="mb-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
             >
-              {translate("home.browseByInterest")} →
-            </Link>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.slice(0, 6).map((category, index) => (
-              <div
-                key={category.id}
-                className="group flex items-center justify-between rounded-theme border px-5 py-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md animate-in fade-in slide-in-from-bottom-2 duration-500"
-                style={{ animationDelay: `${index * 50}ms`, backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
-              >
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide opacity-50">
-                    {translate("home.categoryLabel")}
-                  </p>
-                  <p className="text-base font-semibold">
-                    {category.name}
-                  </p>
-                  {category.description ? (
-                    <p className="text-xs leading-5 opacity-55">
-                      {truncate(category.description, 80)}
-                    </p>
-                  ) : null}
-                </div>
-                <span className="text-xl transition-transform group-hover:translate-x-1">→</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {articles.length ? (
-        <section className="space-y-4 py-6 sm:py-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-[var(--theme-foreground)]">{translate("home.fromTheJournal")}</h2>
-            <Link
-              href={buildPath("/articles")}
-              className="text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
-            >
-              {translate("home.readAllInsights")} →
-            </Link>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {articles.slice(0, 3).map((article, index) => {
-              const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";
-              const description = article.excerpt ?? article.description ?? "";
-              const publishedDate = article.published_at
-                ? new Date(article.published_at).toLocaleDateString()
-                : "";
-
-              return (
-                <article
-                  key={article.id}
-                  className="group flex flex-col overflow-hidden rounded-theme border shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500"
-                  style={{ animationDelay: `${index * 100}ms`, backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
+              <div>
+                <p
+                  className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+                  style={{ color: 'var(--theme-primary)' }}
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={imageUrl}
-                      alt={article.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-3 p-5">
-                    <p className="text-xs uppercase tracking-wide opacity-50">
-                      {publishedDate}
-                    </p>
-                    <h3 className="text-lg font-semibold leading-7 transition-colors group-hover:text-[var(--theme-primary)]">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm leading-6 opacity-60">
-                      {truncate(description, 140)}
-                    </p>
-                    <Link
-                      href={buildPath(`/articles/${article.id}`)}
-                      className="mt-auto inline-flex items-center text-sm font-semibold text-[var(--theme-primary)] transition-all hover:translate-x-1 hover:underline"
+                  {translate("home.topCategories")}
+                </p>
+                <h2
+                  className="text-3xl font-black tracking-tight sm:text-4xl"
+                  style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
+                >
+                  {translate("home.browseByInterest")}
+                </h2>
+              </div>
+              <Link
+                href={buildPath("/courses?view=categories")}
+                className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
+                style={{ color: 'var(--theme-primary)' }}
+              >
+                {translate("home.browseByInterest")}
+                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </Link>
+            </div>
+
+            <div
+              data-gsap="stagger"
+              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {categories.slice(0, 6).map((category) => (
+                <Link
+                  key={category.id}
+                  href={buildPath(`/courses?category=${category.id}`)}
+                  className="group relative overflow-hidden rounded-3xl border p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl"
+                  style={{
+                    backgroundColor: 'var(--theme-card-bg)',
+                    borderColor: 'var(--theme-border-color)',
+                    color: 'var(--theme-foreground)',
+                  }}
+                >
+                  {/* Hover shine */}
+                  <div
+                    className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{
+                      background:
+                        'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 9%, transparent), transparent)',
+                    }}
+                  />
+                  <div className="relative z-10 flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.15em] opacity-45">
+                        {translate("home.categoryLabel")}
+                      </p>
+                      <p className="truncate text-lg font-bold">{category.name}</p>
+                      {category.description ? (
+                        <p className="mt-1 text-sm leading-5 opacity-50">
+                          {truncate(category.description, 72)}
+                        </p>
+                      ) : null}
+                    </div>
+                    <span
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-base transition-all duration-300 group-hover:scale-110 group-hover:translate-x-1"
+                      style={{
+                        backgroundColor:
+                          'color-mix(in srgb, var(--theme-primary) 14%, var(--theme-background))',
+                        color: 'var(--theme-primary)',
+                      }}
                     >
-                      {translate("home.readArticle")} →
-                    </Link>
+                      →
+                    </span>
                   </div>
-                </article>
-              );
-            })}
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
 
+      {/* ══════════════════════════════════════════════════════════════
+          ARTICLES  –  magazine layout
+      ══════════════════════════════════════════════════════════════ */}
+      {articles.length ? (
+        <section
+          className="py-28"
+          style={{
+            backgroundColor: 'color-mix(in srgb, var(--theme-foreground) 3%, var(--theme-background))',
+          }}
+        >
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div
+              data-gsap="fade-up"
+              className="mb-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+            >
+              <div>
+                <p
+                  className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+                  style={{ color: 'var(--theme-primary)' }}
+                >
+                  {translate("home.fromTheJournal")}
+                </p>
+                <h2
+                  className="text-3xl font-black tracking-tight sm:text-4xl"
+                  style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
+                >
+                  {translate("home.readAllInsights")}
+                </h2>
+              </div>
+              <Link
+                href={buildPath("/articles")}
+                className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
+                style={{ color: 'var(--theme-primary)' }}
+              >
+                {translate("home.readAllInsights")}
+                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </Link>
+            </div>
+
+            <div data-gsap="stagger" className="grid gap-8 md:grid-cols-3">
+              {articles.slice(0, 3).map((article) => {
+                const imageUrl =
+                  resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";
+                const description = article.excerpt ?? article.description ?? "";
+                const publishedDate = article.published_at
+                  ? new Date(article.published_at).toLocaleDateString()
+                  : "";
+
+                return (
+                  <article
+                    key={article.id}
+                    className="group flex flex-col overflow-hidden rounded-3xl border shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                    style={{
+                      backgroundColor: 'var(--theme-card-bg)',
+                      borderColor: 'var(--theme-border-color)',
+                    }}
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <img
+                        src={imageUrl}
+                        alt={article.title}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                      {publishedDate && (
+                        <div className="absolute bottom-4 left-4">
+                          <span
+                            className="rounded-full px-3 py-1 text-[11px] font-bold text-white backdrop-blur-sm"
+                            style={{
+                              backgroundColor:
+                                'color-mix(in srgb, var(--theme-primary) 85%, transparent)',
+                            }}
+                          >
+                            {publishedDate}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col gap-3 p-7">
+                      <h3
+                        className="text-lg font-bold leading-snug transition-colors duration-200 group-hover:text-[var(--theme-primary)]"
+                        style={{ color: 'var(--theme-foreground)' }}
+                      >
+                        {article.title}
+                      </h3>
+                      <p
+                        className="flex-1 text-sm leading-relaxed opacity-55"
+                        style={{ color: 'var(--theme-foreground)' }}
+                      >
+                        {truncate(description, 120)}
+                      </p>
+                      <Link
+                        href={buildPath(`/articles/${article.id}`)}
+                        className="group/link inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200"
+                        style={{ color: 'var(--theme-primary)' }}
+                      >
+                        {translate("home.readArticle")}
+                        <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ══════════════════════════════════════════════════════════════
+          CTA  –  full-width dramatic gradient close
+      ══════════════════════════════════════════════════════════════ */}
       <section
-        className="overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--theme-primary)] via-[var(--theme-secondary)] to-[var(--theme-accent)] p-8 shadow-2xl transition-all hover:shadow-3xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-600"
-        style={{ color: 'var(--theme-on-primary)' }}
+        data-gsap="scale-in"
+        className="relative w-full overflow-hidden py-32 text-center"
+        style={{
+          background: `linear-gradient(135deg,
+            var(--theme-primary) 0%,
+            color-mix(in srgb, var(--theme-primary) 60%, var(--theme-secondary)) 40%,
+            var(--theme-secondary) 70%,
+            color-mix(in srgb, var(--theme-secondary) 70%, var(--theme-accent)) 100%)`,
+          color: 'var(--theme-on-primary)',
+        }}
       >
-        <div className="relative z-10 max-w-3xl space-y-3">
-          <Badge variant="soft" className="bg-black/10">{translate("home.readyToBegin")}</Badge>
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+        {/* Decorative blobs inside CTA */}
+        <div
+          className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full opacity-25 blur-3xl"
+          style={{ backgroundColor: 'var(--theme-accent)' }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full opacity-20 blur-3xl"
+          style={{ backgroundColor: 'var(--theme-on-primary)' }}
+        />
+
+        <div className="relative z-10 mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+          <Badge
+            variant="soft"
+            className="mb-8 inline-flex bg-white/15 text-[var(--theme-on-primary)]"
+          >
+            {translate("home.readyToBegin")}
+          </Badge>
+
+          <h2
+            className="mb-5 text-4xl font-black tracking-tight sm:text-5xl"
+            style={{ letterSpacing: '-0.03em' }}
+          >
             {translate("home.createLearningAccount")}
           </h2>
-          <p className="text-sm leading-6 opacity-80">
+          <p className="mb-12 text-lg leading-relaxed opacity-85">
             {translate("home.createLearningAccountDescription")}
           </p>
-          <div className="flex flex-wrap items-center gap-3">
+
+          <div className="flex flex-wrap items-center justify-center gap-5">
             <Link
               href={buildPath("/auth/login")}
-              className="inline-flex h-11 items-center justify-center rounded-full px-6 text-sm font-semibold shadow-lg transition-all hover:scale-105 hover:opacity-90"
-              style={{ backgroundColor: 'var(--theme-on-primary)', color: 'var(--theme-primary)' }}
+              className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-black shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
+              style={{
+                backgroundColor: 'var(--theme-on-primary)',
+                color: 'var(--theme-primary)',
+              }}
             >
               {translate("home.joinStore").replace("{store}", storeDisplayName)}
             </Link>
             {!storeContext.slug ? (
-              <Link href="/pricing" className="text-sm font-semibold opacity-90 transition-all hover:translate-x-1 hover:underline">
+              <Link
+                href="/pricing"
+                className="inline-flex items-center gap-1 text-sm font-bold opacity-90 transition-all duration-200 hover:translate-x-1 hover:opacity-100"
+              >
                 {translate("home.viewPricing")} →
               </Link>
             ) : null}
           </div>
         </div>
-        <img
-          src={buildOgImageUrl(storeDisplayName, "Flexible online learning for ambitious students")}
-          alt=""
-          className="pointer-events-none absolute -right-32 -top-32 hidden h-80 w-80 opacity-10 lg:block"
-        />
       </section>
-      </>
     </div>
   );
 }
