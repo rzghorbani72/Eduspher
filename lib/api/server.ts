@@ -505,6 +505,53 @@ export async function initiateCheckoutPayment(data: {
   return result.data;
 }
 
+export async function getAcademyPlansPublic(kind?: "SUBSCRIPTION" | "PACKAGE") {
+  const result = await serverFetchRaw<{
+    status: string;
+    data: Array<{
+      id: string;
+      kind: "SUBSCRIPTION" | "PACKAGE";
+      name: string;
+      description: string | null;
+      price: number;
+      currency: string;
+      duration_days: number | null;
+      AcademyPlanCourse: Array<{ Course: { id: string; title: string } }>;
+    }>;
+  }>(`/academy-plans/public${kind ? `?kind=${kind}` : ""}`, {
+    method: "GET",
+  });
+  return result.data ?? [];
+}
+
+export async function initiateAcademyPlanPayment(data: {
+  academy_plan_id: string;
+  amount: number;
+  coupon_code?: string;
+  mobile?: string;
+}) {
+  const headerStore = await nextHeaders();
+  const proto =
+    headerStore?.get?.("x-forwarded-proto") ??
+    (process.env.NODE_ENV === "development" ? "http" : "https");
+  const host = headerStore?.get?.("host");
+  const fallbackBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+  const baseUrl = host ? `${proto}://${host}` : fallbackBaseUrl;
+
+  const result = await serverFetchRaw<{
+    status: string;
+    data: { payment_id: string; amount: number; redirect_url: string };
+  }>("/payments/checkout", {
+    method: "POST",
+    body: JSON.stringify({
+      ...data,
+      callback_url: `${baseUrl}/payment/callback`,
+    }),
+  });
+
+  return result.data;
+}
+
 export async function createEnrollment(data: {
   course_id: number;
   user_id: number;
