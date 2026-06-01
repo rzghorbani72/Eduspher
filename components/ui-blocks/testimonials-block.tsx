@@ -58,18 +58,19 @@ export function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
 
   if (layout === "carousel") {
     return (
-      <section id={id || "testimonials"} className="py-12 sm:py-16 overflow-hidden bg-(--theme-surface-alt) text-(--theme-foreground)">
+      <section id={id || "testimonials"} className="py-16 sm:py-20 overflow-hidden bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center mb-10 text-(--theme-foreground)">
+          <div className="mx-auto max-w-2xl text-center mb-12 text-(--theme-foreground)">
             <h2
               data-scroll-animate="fadeIn"
               data-scroll-delay="0.05"
-              className="text-2xl font-bold tracking-tight sm:text-3xl"
+              className="text-3xl font-black tracking-tight sm:text-4xl"
+              style={{ letterSpacing: '-0.025em' }}
             >
               {title}
             </h2>
             {subtitle && (
-              <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-1 text-base leading-7 text-(--theme-foreground)/60">
+              <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-3 text-base leading-relaxed text-(--theme-foreground)/60">
                 {subtitle}
               </p>
             )}
@@ -98,18 +99,19 @@ export function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
 
   // grid layout
   return (
-    <section id={id || "testimonials"} className="py-12 sm:py-16 bg-(--theme-surface-alt) text-(--theme-foreground)">
+    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-10 text-(--theme-foreground)">
+        <div className="mx-auto max-w-2xl text-center mb-12 text-(--theme-foreground)">
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-2xl font-bold tracking-tight sm:text-3xl"
+            className="text-3xl font-black tracking-tight sm:text-4xl"
+            style={{ letterSpacing: '-0.025em' }}
           >
             {title}
           </h2>
           {subtitle && (
-            <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-1 text-base leading-7 text-(--theme-foreground)/60">
+            <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-3 text-base leading-relaxed text-(--theme-foreground)/60">
               {subtitle}
             </p>
           )}

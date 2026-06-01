@@ -64,54 +64,71 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   if (courses.length === 0) return null;
 
-  const SectionHeader = ({ centered = false }: { centered?: boolean }) =>
-    title || subtitle ? (
-      <div className={cn("mb-6", centered && "mx-auto max-w-2xl text-center")}>
-        {title && (
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
-        )}
+  // Section header — always shown, with eyebrow label + bold heading
+  const SectionHeader = ({ centered = false }: { centered?: boolean }) => (
+    <div
+      className={cn(
+        "mb-14",
+        centered
+          ? "mx-auto max-w-2xl text-center"
+          : "flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between",
+      )}
+    >
+      <div className={centered ? "" : "max-w-2xl"}>
+        <p
+          className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+          style={{ color: 'var(--theme-primary)' }}
+        >
+          {translate("courses.featuredCourses")}
+        </p>
+        <h2
+          className="text-3xl font-black tracking-tight sm:text-4xl"
+          style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
+        >
+          {title || translate("home.featuredCoursesDescription")}
+        </h2>
         {subtitle && (
-          <p className="mt-1 text-base leading-7 opacity-60">{subtitle}</p>
+          <p className="mt-3 text-base leading-relaxed" style={{ color: 'var(--theme-muted)' }}>
+            {subtitle}
+          </p>
         )}
       </div>
-    ) : null;
+      {!centered && showViewAll && (
+        <Link
+          href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+          className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
+          style={{ color: 'var(--theme-primary)' }}
+        >
+          {translate("home.exploreFullCatalogue")}
+          <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+        </Link>
+      )}
+    </div>
+  );
 
-  const ViewAllButton = ({ variant = "primary" }: { variant?: "primary" | "outline" }) =>
+  const ViewAllButton = () =>
     showViewAll ? (
-      <div className="mt-6 text-center">
-        {variant === "outline" ? (
-          <Button
-            variant="outline"
-            size="md"
-            asChild
-            style={{ borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
-          >
-            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
-              {translate("home.viewAllCourses")}
-            </Link>
-          </Button>
-        ) : (
-          <Button
-            size="lg"
-            asChild
-            className="shadow-lg transition-all hover:scale-105 hover:shadow-xl"
-            style={{
-              backgroundColor: 'var(--theme-primary)',
-              color: 'var(--theme-on-primary)',
-              boxShadow: '0 4px 14px color-mix(in srgb, var(--theme-primary) 40%, transparent)',
-            }}
-          >
-            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
-              {translate("home.viewAllCourses")}
-            </Link>
-          </Button>
-        )}
+      <div className="mt-10 text-center">
+        <Button
+          size="lg"
+          asChild
+          className="shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+          style={{
+            backgroundColor: 'var(--theme-primary)',
+            color: 'var(--theme-on-primary)',
+            boxShadow: '0 4px 14px color-mix(in srgb, var(--theme-primary) 40%, transparent)',
+          }}
+        >
+          <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
+            {translate("home.viewAllCourses")}
+          </Link>
+        </Button>
       </div>
     ) : null;
 
   if (layout === "minimal") {
     return (
-      <section id={id || "courses"} className="py-6 sm:py-8" style={sectionStyle}>
+      <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader />
           <div className={cn("grid gap-6", gridColClasses[gridColumns])}>
@@ -126,15 +143,14 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   if (layout === "compact") {
     return (
-      <section id={id || "courses"} className="py-6 sm:py-8" style={sectionStyle}>
+      <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader />
-          <div className={cn("grid gap-4", gridColClasses[gridColumns])}>
+          <div className={cn("grid gap-5", gridColClasses[gridColumns])}>
             {courses.map((course) => (
               <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
             ))}
           </div>
-          <ViewAllButton variant="outline" />
         </div>
       </section>
     );
@@ -142,12 +158,12 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   if (layout === "featured") {
     return (
-      <section id={id || "courses"} className="py-8 sm:py-10" style={featuredSectionStyle}>
+      <section id={id || "courses"} className="py-16 sm:py-24" style={featuredSectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader centered />
-          <div className={cn("mx-auto grid gap-6 lg:max-w-none", gridColClasses[gridColumns])}>
+          <div className={cn("mx-auto grid gap-7 lg:max-w-none", gridColClasses[gridColumns])}>
             {courses.map((course) => (
-              <div key={course.id} className="transform transition-all hover:scale-105">
+              <div key={course.id} className="transform transition-all hover:scale-[1.02]">
                 <CourseCard course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
               </div>
             ))}
@@ -160,15 +176,14 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   if (layout === "list") {
     return (
-      <section id={id || "courses"} className="py-8 sm:py-10" style={sectionStyle}>
+      <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader />
-          <div className="space-y-4">
+          <div className="space-y-5">
             {courses.map((course) => (
               <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
             ))}
           </div>
-          <ViewAllButton />
         </div>
       </section>
     );
@@ -176,10 +191,10 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   // Default: grid layout
   return (
-    <section id={id || "courses"} className="py-8 sm:py-10" style={sectionStyle}>
+    <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionHeader centered />
-        <div className={cn("mx-auto grid gap-6 lg:max-w-none", gridColClasses[gridColumns])}>
+        <div className={cn("mx-auto grid gap-7 lg:max-w-none", gridColClasses[gridColumns])}>
           {courses.map((course) => (
             <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
           ))}

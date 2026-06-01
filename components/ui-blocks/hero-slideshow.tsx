@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -85,15 +86,29 @@ export function HeroSlideshow({
   return (
     <div className={cn('relative overflow-hidden', heightCls[height], className)}>
       {/* Background layer */}
-      <div
-        className={cn(
-          'absolute inset-0 transition-opacity duration-700 ease-in-out',
-          hasBg ? 'bg-cover bg-center' : `bg-gradient-to-br ${gradient}`,
-          transitioning ? 'opacity-0' : 'opacity-100',
-        )}
-        style={hasBg ? { backgroundImage: `url(${slide.backgroundImage})` } : undefined}
-      />
-      {hasBg && <div className="absolute inset-0 bg-black/45" />}
+      {hasBg ? (
+        <>
+          <div className="absolute inset-0 bg-black" />
+          <img
+            src={slide.backgroundImage!}
+            alt=""
+            aria-hidden="true"
+            className={cn(
+              'absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ease-in-out',
+              transitioning ? 'opacity-0' : 'opacity-100',
+            )}
+          />
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/65 via-black/20 to-transparent" />
+        </>
+      ) : (
+        <div
+          className={cn(
+            'absolute inset-0 bg-linear-to-br transition-opacity duration-700 ease-in-out',
+            gradient,
+            transitioning ? 'opacity-0' : 'opacity-100',
+          )}
+        />
+      )}
 
       {/* Decorative blobs (non-image slides) */}
       {!hasBg && (

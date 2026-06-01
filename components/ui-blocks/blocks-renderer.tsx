@@ -3,9 +3,9 @@ import { HeroBlock } from "./hero-block";
 import { FeaturesBlock } from "./features-block";
 import { CoursesBlock } from "./courses-block";
 import { TestimonialsBlock } from "./testimonials-block";
-import { SidebarBlock } from "./sidebar-block";
 import { HeaderBlock } from "./header-block";
 import { FooterBlock } from "./footer-block";
+import { SidebarBlock } from "./sidebar-block";
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -54,18 +54,19 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
               return <HeaderBlock key={block.id} id={block.id} config={block.config} />;
             case "hero":
               return <HeroBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
+            case "slideshow":
+              return <HeroBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} blockType="slideshow" />;
             case "features":
               return <FeaturesBlock key={block.id} id={block.id} config={block.config} />;
             case "courses":
               return <CoursesBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
             case "testimonials":
               return <TestimonialsBlock key={block.id} id={block.id} config={block.config} />;
-            case "sidebar":
-              return <SidebarBlock key={block.id} id={block.id} config={block.config} />;
             case "footer":
               return <FooterBlock key={block.id} id={block.id} config={block.config} />;
+            case "sidebar":
+              return <SidebarBlock key={block.id} id={block.id} config={block.config} />;
             default:
-              console.warn(`Unknown block type: ${block.type}`);
               return null;
           }
         } catch (error) {

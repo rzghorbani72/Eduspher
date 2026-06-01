@@ -57,29 +57,38 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   const cols = gridColCls[gridColumns] ?? gridColCls[3];
   const items = DEFAULT_FEATURES.slice(0, gridColumns * 2);
 
-  const SectionTitle = ({ centered = false }: { centered?: boolean }) =>
-    title || subtitle ? (
-      <div className={cn("max-w-2xl mb-8", centered && "mx-auto text-center")}>
-        {title && (
-          <h2
-            data-scroll-animate="fadeIn"
-            data-scroll-delay="0.05"
-            className="text-2xl font-bold tracking-tight sm:text-4xl text-(--theme-foreground)"
-          >
-            {title}
-          </h2>
-        )}
-        {subtitle && (
+  const SectionTitle = ({ centered = false }: { centered?: boolean }) => (
+    <div className={cn("max-w-2xl mb-12", centered && "mx-auto text-center")}>
+      {title ? (
+        <>
           <p
             data-scroll-animate="fadeIn"
-            data-scroll-delay="0.15"
-            className="mt-1 text-base leading-7 text-(--theme-foreground)/60"
+            data-scroll-delay="0"
+            className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-(--theme-primary)"
           >
-            {subtitle}
+            {title}
           </p>
-        )}
-      </div>
-    ) : null;
+          <h2
+            data-scroll-animate="fadeIn"
+            data-scroll-delay="0.08"
+            className="text-3xl font-black tracking-tight sm:text-4xl text-(--theme-foreground)"
+            style={{ letterSpacing: '-0.025em' }}
+          >
+            {subtitle || title}
+          </h2>
+        </>
+      ) : subtitle ? (
+        <h2
+          data-scroll-animate="fadeIn"
+          data-scroll-delay="0.05"
+          className="text-3xl font-black tracking-tight sm:text-4xl text-(--theme-foreground)"
+          style={{ letterSpacing: '-0.025em' }}
+        >
+          {subtitle}
+        </h2>
+      ) : null}
+    </div>
+  );
 
   const IconBubble = ({ icon }: { icon: string }) => (
     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl transition-transform group-hover:scale-110 bg-(--theme-primary-subtle)">
@@ -89,7 +98,7 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   if (variant === "icons") {
     return (
-      <section id={id || "features"} className="py-12 sm:py-16 bg-(--theme-background) text-(--theme-foreground)">
+      <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-background) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionTitle centered />
           <div className={cn("mx-auto grid gap-6 lg:max-w-none", cols)}>
@@ -115,7 +124,7 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   if (variant === "list") {
     return (
-      <section id={id || "features"} className="py-12 sm:py-16 bg-(--theme-surface-alt) text-(--theme-foreground)">
+      <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionTitle />
           <div className={cn("mx-auto grid gap-4 lg:max-w-none", cols)}>
@@ -141,7 +150,7 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   // cards variant (default)
   return (
-    <section id={id || "features"} className="py-12 sm:py-16 bg-(--theme-surface-alt) text-(--theme-foreground)">
+    <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionTitle centered />
         <div className={cn("mx-auto grid gap-6 lg:max-w-none", cols)}>

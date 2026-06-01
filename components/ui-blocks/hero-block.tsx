@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { HeroSlideshow, type SlideConfig } from "./hero-slideshow";
+import { HeroIllustration } from "./hero-illustration";
 
 interface HeroBlockProps {
   id?: string;
@@ -13,10 +14,12 @@ interface HeroBlockProps {
     ctaText?: string;
     ctaSecondary?: string;
     backgroundImage?: string | null;
+    illustration?: string | null;
     overlay?: boolean;
     alignment?: "left" | "center" | "right";
     height?: "small" | "medium" | "large";
-    style?: "default" | "expert" | "creator-store" | "social" | "community" | "studio" | "creator" | "expert-academy";
+    speed?: "slow" | "normal" | "fast";
+    style?: "default" | "expert" | "creator-store" | "social" | "community" | "studio" | "creator" | "expert-academy" | "dark-programmer";
     gradient?: "default" | "purple";
     dark?: boolean;
     showExpertPhotos?: boolean;
@@ -29,17 +32,44 @@ interface HeroBlockProps {
     slug: string | null;
     name: string | null;
   };
+  blockType?: "hero" | "slideshow";
 }
 
 const heightCls = { small: "py-8 sm:py-10", medium: "py-12 sm:py-16", large: "py-20 sm:py-28" };
 
-export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
+function speedToMs(speed?: string) {
+  if (speed === "slow") return 5000;
+  if (speed === "fast") return 1500;
+  return 2800;
+}
+
+export function HeroBlock({ id, config, storeContext, blockType }: HeroBlockProps) {
+  // Slideshow block type: always render as full-width image carousel
+  if (blockType === "slideshow") {
+    const slides = (config?.slides as SlideConfig[] | undefined) ?? [];
+    const height = (config?.height ?? "large") as "small" | "medium" | "large";
+    const alignment = (config?.alignment ?? "center") as "left" | "center" | "right";
+    return (
+      <section id={id || "hero"}>
+        <HeroSlideshow
+          slides={slides.length > 0 ? slides : [{}]}
+          alignment={alignment}
+          height={height}
+          storeContext={storeContext}
+          dark
+          interval={speedToMs(config?.speed)}
+        />
+      </section>
+    );
+  }
+
   const style = config?.style ?? "default";
   if (style === "expert" || style === "expert-academy") return <ExpertAcademyHero id={id} config={config} storeContext={storeContext} />;
   if (style === "creator-store" || style === "creator") return <CreatorHero id={id} config={config} storeContext={storeContext} />;
   if (style === "social") return <SocialHero id={id} config={config} storeContext={storeContext} />;
   if (style === "community") return <CommunityHero id={id} config={config} storeContext={storeContext} />;
   if (style === "studio") return <StudioHero id={id} config={config} storeContext={storeContext} />;
+  if (style === "dark-programmer") return <DarkProgrammerHero id={id} config={config} storeContext={storeContext} />;
   return <DefaultHero id={id} config={config} storeContext={storeContext} />;
 }
 
@@ -48,6 +78,7 @@ export function HeroBlock({ id, config, storeContext }: HeroBlockProps) {
 function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
   const alignment = (config?.alignment ?? "center") as "left" | "center" | "right";
   const height    = (config?.height ?? "medium")    as "small" | "medium" | "large";
+  const hasIllustration = config?.illustration !== undefined; // show built-in or uploaded
 
   // If slides array provided, delegate entirely to the carousel
   if (config?.slides && config.slides.length > 1) {
@@ -59,23 +90,70 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
           height={height}
           storeContext={storeContext}
           dark
+          interval={speedToMs(config?.speed)}
         />
       </section>
     );
   }
 
-  // Single-image / gradient default hero
   const title    = config?.title    || "Welcome to Our Store";
   const subtitle = config?.subtitle || "Learn something new today";
   const showCTA  = config?.showCTA  !== false;
   const ctaText  = config?.ctaText  || "Browse Courses";
   const hasBackground = !!config?.backgroundImage;
-  const alignMap = { left: "text-left items-start", center: "text-center items-center", right: "text-right items-end" };
+  const dark = config?.dark === true;
   const titleSz  = height === "small" ? "text-3xl sm:text-4xl md:text-5xl" : height === "medium" ? "text-4xl sm:text-5xl md:text-6xl" : "text-5xl sm:text-6xl md:text-7xl";
   const bgStyle  = hasBackground
     ? { backgroundImage: `url(${config!.backgroundImage})` }
     : { background: "linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 18%, var(--theme-background)), color-mix(in srgb, var(--theme-secondary) 8%, var(--theme-background)), color-mix(in srgb, var(--theme-accent) 6%, var(--theme-background)))" };
 
+  // Split layout when illustration is configured (uploaded or built-in default)
+  if (hasIllustration) {
+    return (
+      <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={bgStyle}>
+        {!hasBackground && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-linear-to-br from-(--theme-primary)/20 to-(--theme-secondary)/20 blur-3xl animate-float-slow" />
+            <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-linear-to-br from-(--theme-secondary)/20 to-(--theme-accent)/20 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
+          </div>
+        )}
+        <div className="relative mx-auto max-w-7xl px-6 lg:px-8 pt-16 pb-4">
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+            {/* Text side */}
+            <div className={cn(alignment === "center" ? "text-center" : "text-left")}>
+              <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz)}>
+                <span className="bg-clip-text text-transparent bg-linear-to-r from-(--theme-primary) via-(--theme-secondary) to-(--theme-accent)">{title}</span>
+              </h1>
+              {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-4 leading-relaxed text-lg sm:text-xl opacity-70">{subtitle}</p>}
+              {showCTA && (
+                <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-8 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
+                  <Button size="lg" asChild className="bg-linear-to-r from-(--theme-primary) to-(--theme-secondary) hover:opacity-90 text-white shadow-lg">
+                    <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
+                  </Button>
+                  {config?.ctaSecondary && (
+                    <Button size="lg" variant="outline" asChild>
+                      <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-white">{config.ctaSecondary}</Link>
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* Illustration side */}
+            <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+              <HeroIllustration
+                illustrationUrl={config?.illustration}
+                style={config?.style}
+                dark={dark}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Centered layout (no illustration configured)
+  const alignMap = { left: "text-left items-start", center: "text-center items-center", right: "text-right items-end" };
   return (
     <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={bgStyle}>
       {!hasBackground && (
@@ -125,40 +203,48 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full bg-rose-100 px-4 py-1.5 text-sm font-medium text-rose-700">
-            <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-            Trusted by 100K+ Creators
-          </div>
-          <h1 data-scroll-animate="fadeIn" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
-            {title}
-          </h1>
-          <p data-scroll-animate="fadeIn" data-scroll-delay="0.2" className="mt-5 text-lg leading-relaxed text-gray-600 sm:text-xl max-w-2xl mx-auto">{subtitle}</p>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+          {/* Text side */}
+          <div>
+            <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full bg-rose-100 px-4 py-1.5 text-sm font-medium text-rose-700">
+              <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+              Trusted by 100K+ Creators
+            </div>
+            <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl md:text-6xl leading-tight">
+              {title}
+            </h1>
+            <p data-scroll-animate="slideLeft" data-scroll-delay="0.2" className="mt-5 text-lg leading-relaxed text-gray-600 max-w-xl">{subtitle}</p>
 
-          <div data-scroll-animate="fadeIn" data-scroll-delay="0.3" className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button size="lg" asChild className="bg-[#e8523a] hover:bg-[#cf4730] text-white shadow-xl shadow-rose-200 font-semibold px-8">
-              <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
-            </Button>
-            {ctaSecondary && (
-              <Button size="lg" variant="outline" asChild className="border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/pricing")} className="text-gray-700">{ctaSecondary}</Link>
+            <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
+              <Button size="lg" asChild className="bg-[#e8523a] hover:bg-[#cf4730] text-white shadow-xl shadow-rose-200 font-semibold px-8">
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
               </Button>
+              {ctaSecondary && (
+                <Button size="lg" variant="outline" asChild className="border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold">
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/pricing")} className="text-gray-700">{ctaSecondary}</Link>
+                </Button>
+              )}
+            </div>
+
+            {config?.showExpertPhotos !== false && (
+              <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-10 flex items-center gap-3">
+                <div className="flex -space-x-3">
+                  {["👩‍🏫", "👨‍💼", "👩‍🎤", "👨‍🎨", "👩‍⚕️"].map((e, i) => (
+                    <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg shadow-md ring-2 ring-white">{e}</div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex gap-0.5">{"★★★★★".split("").map((s, i) => <span key={i} className="text-amber-400 text-sm">{s}</span>)}</div>
+                  <p className="text-xs text-gray-500 mt-0.5">Join 100K+ successful creators</p>
+                </div>
+              </div>
             )}
           </div>
 
-          {config?.showExpertPhotos !== false && (
-            <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-14 flex items-center justify-center gap-3">
-              <div className="flex -space-x-3">
-                {["👩‍🏫", "👨‍💼", "👩‍🎤", "👨‍🎨", "👩‍⚕️"].map((e, i) => (
-                  <div key={i} className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl shadow-md ring-2 ring-white">{e}</div>
-                ))}
-              </div>
-              <div className="text-left">
-                <div className="flex gap-0.5">{"★★★★★".split("").map((s, i) => <span key={i} className="text-amber-400 text-sm">{s}</span>)}</div>
-                <p className="text-xs text-gray-500 mt-0.5">Join 100K+ successful creators</p>
-              </div>
-            </div>
-          )}
+          {/* Illustration side */}
+          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+            <HeroIllustration illustrationUrl={config?.illustration} style="expert" />
+          </div>
         </div>
       </div>
     </section>
@@ -330,18 +416,25 @@ function SocialHero({ id, config, storeContext }: HeroBlockProps) {
   const ctaText = config?.ctaText || "Start Your Trial";
 
   return (
-    <section id={id || "hero"} className="relative overflow-hidden bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 py-24 sm:py-32">
+    <section id={id || "hero"} className="relative overflow-hidden bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 py-20 sm:py-28">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-1/4 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute bottom-10 right-1/4 h-96 w-96 rounded-full bg-purple-300/10 blur-3xl" />
       </div>
-      <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
-        <h1 data-scroll-animate="fadeIn" className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">{title}</h1>
-        <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-5 text-lg leading-relaxed text-purple-100 sm:text-xl">{subtitle}</p>
-        <div data-scroll-animate="fadeIn" data-scroll-delay="0.3" className="mt-8 flex flex-wrap justify-center gap-4">
-          <Button size="lg" asChild className="bg-orange-400 hover:bg-orange-500 text-white font-semibold shadow-xl rounded-full px-8">
-            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
-          </Button>
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+          <div>
+            <h1 data-scroll-animate="slideLeft" className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">{title}</h1>
+            <p data-scroll-animate="slideLeft" data-scroll-delay="0.15" className="mt-5 text-lg leading-relaxed text-purple-100">{subtitle}</p>
+            <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
+              <Button size="lg" asChild className="bg-orange-400 hover:bg-orange-500 text-white font-semibold shadow-xl rounded-full px-8">
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
+              </Button>
+            </div>
+          </div>
+          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+            <HeroIllustration illustrationUrl={config?.illustration} style="social" />
+          </div>
         </div>
       </div>
     </section>
@@ -366,41 +459,102 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <div data-scroll-animate="fadeIn" className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-700/50 bg-indigo-950/50 px-4 py-1.5 text-sm font-medium text-indigo-300 backdrop-blur-sm">
-            <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
-            Now in public beta
-          </div>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+          {/* Text side */}
+          <div>
+            <div data-scroll-animate="fadeIn" className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-700/50 bg-indigo-950/50 px-4 py-1.5 text-sm font-medium text-indigo-300 backdrop-blur-sm">
+              <span className="h-2 w-2 rounded-full bg-indigo-400 animate-pulse" />
+              Now in public beta
+            </div>
 
-          <h1 data-scroll-animate="fadeIn" data-scroll-delay="0.1" className="text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl leading-tight">
-            {title}
-          </h1>
-          <p data-scroll-animate="fadeIn" data-scroll-delay="0.2" className="mt-6 text-lg leading-relaxed text-slate-400 sm:text-xl">{subtitle}</p>
+            <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl leading-tight">
+              {title}
+            </h1>
+            <p data-scroll-animate="slideLeft" data-scroll-delay="0.2" className="mt-6 text-lg leading-relaxed text-slate-400">{subtitle}</p>
 
-          <div data-scroll-animate="fadeIn" data-scroll-delay="0.3" className="mt-10 flex flex-wrap justify-center gap-4">
-            <Button size="lg" asChild className="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold shadow-xl shadow-indigo-900/50 px-8 rounded-xl">
-              <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
-            </Button>
-            {ctaSecondary && (
-              <Button size="lg" variant="outline" asChild className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600 rounded-xl">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-slate-300">{ctaSecondary}</Link>
+            <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-10 flex flex-wrap gap-4">
+              <Button size="lg" asChild className="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold shadow-xl shadow-indigo-900/50 px-8 rounded-xl">
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
               </Button>
-            )}
+              {ctaSecondary && (
+                <Button size="lg" variant="outline" asChild className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600 rounded-xl">
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-slate-300">{ctaSecondary}</Link>
+                </Button>
+              )}
+            </div>
+
+            <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-10 flex items-center gap-3">
+              <div className="flex -space-x-3">
+                {["🧑‍💼", "👩‍🎓", "👨‍🔬", "👩‍🎨", "🧑‍🏫"].map((e, i) => (
+                  <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-lg ring-2 ring-slate-900">{e}</div>
+                ))}
+              </div>
+              <div>
+                <div className="flex items-center gap-1">
+                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-amber-400 text-xs">{s}</span>)}
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">10,000+ active members</p>
+              </div>
+            </div>
           </div>
 
-          {/* Member avatars */}
-          <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-12 flex items-center justify-center gap-3">
-            <div className="flex -space-x-3">
-              {["🧑‍💼", "👩‍🎓", "👨‍🔬", "👩‍🎨", "🧑‍🏫"].map((e, i) => (
-                <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 text-lg ring-2 ring-slate-900">{e}</div>
+          {/* Illustration side */}
+          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+            <HeroIllustration illustrationUrl={config?.illustration} style="community" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Dark Programmer / Rocket ──────────────────────────────────────────────────
+
+function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
+  const title = config?.title || "کدنویسی را جدی بگیر";
+  const subtitle = config?.subtitle || "بیش از ۵۰۰ دوره برنامه‌نویسی با ضمانت کیفیت";
+  const ctaText = config?.ctaText || "شروع یادگیری";
+  const ctaSecondary = config?.ctaSecondary || "مشاهده دوره‌ها";
+
+  return (
+    <section id={id || "hero"} className="relative overflow-hidden bg-[#0a0f1e] py-20 sm:py-28">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -left-20 h-96 w-96 rounded-full bg-green-900/20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{ backgroundImage: "linear-gradient(rgba(34,197,94,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.5) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+          <div>
+            <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-800/60 bg-green-950/50 px-4 py-1.5 text-sm font-medium text-green-400">
+              <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+              ۵۰۰+ دوره تخصصی
+            </div>
+            <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl leading-tight">
+              {title}
+            </h1>
+            <p data-scroll-animate="slideLeft" data-scroll-delay="0.2" className="mt-5 text-lg leading-relaxed text-gray-400">{subtitle}</p>
+            <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
+              <Button size="lg" asChild className="bg-green-500 hover:bg-green-400 text-black font-bold shadow-xl shadow-green-900/50 rounded-full px-8">
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-black">{ctaText}</Link>
+              </Button>
+              {ctaSecondary && (
+                <Button size="lg" variant="outline" asChild className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:border-gray-600 rounded-full">
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-gray-300">{ctaSecondary}</Link>
+                </Button>
+              )}
+            </div>
+            <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-8 flex flex-wrap gap-2">
+              {["✓ ضمانت بازگشت وجه", "✓ پشتیبانی ۲۴/۷", "✓ گواهینامه معتبر"].map((f, i) => (
+                <span key={i} className="rounded-full border border-green-900/60 bg-green-950/40 px-3 py-1 text-xs text-green-400">{f}</span>
               ))}
             </div>
-            <div className="text-left">
-              <div className="flex items-center gap-1">
-                {"★★★★★".split("").map((s, i) => <span key={i} className="text-amber-400 text-xs">{s}</span>)}
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">10,000+ active members</p>
-            </div>
+          </div>
+          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+            <HeroIllustration illustrationUrl={config?.illustration} style="dark-programmer" dark />
           </div>
         </div>
       </div>
