@@ -5,7 +5,7 @@ import { CoursesBlock } from "./courses-block";
 import { TestimonialsBlock } from "./testimonials-block";
 import { HeaderBlock } from "./header-block";
 import { FooterBlock } from "./footer-block";
-import { SidebarBlock } from "./sidebar-block";
+import { SidebarBlockServer } from "./sidebar-block-server";
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -65,7 +65,7 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
             case "footer":
               return <FooterBlock key={block.id} id={block.id} config={block.config} />;
             case "sidebar":
-              return <SidebarBlock key={block.id} id={block.id} config={block.config} />;
+              return <SidebarBlockServer key={block.id} id={block.id} config={block.config} />;
             default:
               return null;
           }

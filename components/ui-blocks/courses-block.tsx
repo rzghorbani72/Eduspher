@@ -1,7 +1,9 @@
 import { getCourses, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
+import { EmptyState } from "@/components/ui/empty-state";
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
+import { BookOpen } from "lucide-react";
 import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
@@ -62,7 +64,30 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
-  if (courses.length === 0) return null;
+  if (courses.length === 0) {
+    return (
+      <section className="py-16 sm:py-24" style={sectionStyle}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <EmptyState
+            icon={<BookOpen size={28} />}
+            title={title || translate("home.noFeaturedCourses")}
+            description={translate("home.checkBackSoon")}
+            action={
+              showViewAll ? (
+                <Link
+                  href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+                  className="inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-bold transition-all duration-200 hover:scale-105"
+                  style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)' }}
+                >
+                  {translate("home.browseCourses")}
+                </Link>
+              ) : null
+            }
+          />
+        </div>
+      </section>
+    );
+  }
 
   // Section header — always shown, with eyebrow label + bold heading
   const SectionHeader = ({ centered = false }: { centered?: boolean }) => (

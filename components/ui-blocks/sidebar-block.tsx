@@ -6,6 +6,12 @@ import { cn } from "@/lib/utils";
 import Link from "@/components/ui/link";
 import { ChevronDown, ChevronRight, Filter, X } from "lucide-react";
 
+interface Category {
+  id: number;
+  name: string;
+  slug?: string;
+}
+
 interface SidebarBlockProps {
   id?: string;
   config?: {
@@ -13,26 +19,15 @@ interface SidebarBlockProps {
     showCategories?: boolean;
     showFilters?: boolean;
   };
+  categories?: Category[];
 }
 
-// This is a client component wrapper that will fetch server data
-// In a real implementation, you might want to pass categories as props from server component
-export function SidebarBlock({ id, config }: SidebarBlockProps) {
+export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps) {
   const position = config?.position || "left";
   const showCategories = config?.showCategories !== false;
   const showFilters = config?.showFilters !== false;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  // Mock categories - in production, fetch from API
-  const categories = [
-    { id: 1, name: "Web Development", slug: "web-development" },
-    { id: 2, name: "Data Science", slug: "data-science" },
-    { id: 3, name: "Design", slug: "design" },
-    { id: 4, name: "Business", slug: "business" },
-    { id: 5, name: "Marketing", slug: "marketing" },
-    { id: 6, name: "Programming", slug: "programming" },
-  ];
 
   const filterOptions = [
     { label: "Price", options: ["Free", "Paid", "All"] },

@@ -130,7 +130,7 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
               {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className={cn("mt-4 leading-relaxed text-lg sm:text-xl", !hasBackground ? "text-white/80" : "opacity-70")}>{subtitle}</p>}
               {showCTA && (
                 <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-8 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
-                  <Button size="lg" asChild className="font-semibold shadow-lg hover:opacity-90" style={!hasBackground ? { backgroundColor: 'white', color: 'var(--theme-primary)' } : { color: 'white' }}>
+                  <Button size="lg" asChild className="font-semibold hover:opacity-90" style={!hasBackground ? { backgroundColor: 'white', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: 'white' }}>
                     <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
                   </Button>
                   {config?.ctaSecondary && (
@@ -174,7 +174,7 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
           {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className={cn("mt-3 leading-relaxed text-lg sm:text-xl", !hasBackground ? "text-white/80" : "opacity-70")}>{subtitle}</p>}
           {showCTA && (
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-6 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
-              <Button size="lg" asChild className="font-semibold shadow-lg hover:opacity-90" style={!hasBackground ? { backgroundColor: 'white', color: 'var(--theme-primary)' } : { color: 'white' }}>
+              <Button size="lg" asChild className="font-semibold hover:opacity-90" style={!hasBackground ? { backgroundColor: 'white', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: 'white' }}>
                 <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
               {config?.ctaSecondary && (
