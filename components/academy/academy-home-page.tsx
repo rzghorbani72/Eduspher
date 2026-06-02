@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "@/components/ui/link";
+import { BookOpen } from "lucide-react";
 
 import {
   getArticles,
@@ -317,6 +318,7 @@ export async function AcademyHomePage() {
             </div>
           ) : (
             <EmptyState
+              icon={<BookOpen size={28} />}
               title={
                 hasCatalogAccess
                   ? translate("home.noFeaturedCourses")
@@ -328,7 +330,18 @@ export async function AcademyHomePage() {
                   : translate("home.createAccountToView")
               }
               action={
-                !hasCatalogAccess ? (
+                hasCatalogAccess ? (
+                  <Link
+                    href={buildPath("/courses")}
+                    className="inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-bold transition-all duration-200 hover:scale-105"
+                    style={{
+                      backgroundColor: 'var(--theme-primary)',
+                      color: 'var(--theme-on-primary)',
+                    }}
+                  >
+                    {translate("home.browseCourses")}
+                  </Link>
+                ) : (
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     <Link
                       href={buildPath("/auth/login")}
@@ -351,7 +364,7 @@ export async function AcademyHomePage() {
                       {translate("auth.register")}
                     </Link>
                   </div>
-                ) : null
+                )
               }
             />
           )}

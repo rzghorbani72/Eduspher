@@ -1,4 +1,5 @@
 import Link from "@/components/ui/link";
+import { BookOpen } from "lucide-react";
 
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseFilters } from "@/components/courses/course-filters";
@@ -181,6 +182,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
           </div>
         ) : (
           <EmptyState
+            icon={<BookOpen size={28} />}
             title={translate("courses.noCoursesFound")}
             description={translate("courses.noCoursesDescription")}
             action={

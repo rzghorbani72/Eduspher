@@ -1,4 +1,7 @@
 import { cn } from "@/lib/utils";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface TestimonialsBlockProps {
   id?: string;
@@ -12,6 +15,7 @@ interface TestimonialsBlockProps {
   };
 }
 
+// Module-level English defaults used by sub-style components (kajabi, podia, stan, circle templates)
 const testimonials = [
   { name: "Sarah Johnson", role: "Software Engineer", company: "Tech Corp", content: "This platform transformed my career. The courses are comprehensive and the instructors are world-class.", avatar: "👩‍💻", revenue: "$12K/mo", rating: 5 },
   { name: "Michael Chen", role: "Product Manager", company: "StartupXYZ", content: "The best investment I've made in my professional development. Highly recommend to anyone serious about learning.", avatar: "👨‍💼", revenue: "$8K/mo", rating: 5 },
@@ -31,7 +35,7 @@ const Stars = ({ count, color = "text-amber-400" }: { count: number; color?: str
   </div>
 );
 
-export function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
+export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
   const blockStyle = config?.style ?? "default";
 
   if (blockStyle === "dark-quote")      return <DarkQuoteTestimonials id={id} config={config} />;
@@ -40,14 +44,27 @@ export function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
   if (blockStyle === "studio")          return <StudioTestimonials id={id} config={config} />;
   if (blockStyle === "creator")         return <CreatorTestimonials id={id} config={config} />;
 
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
+  const localizedTestimonials = [
+    { name: tr("blocks.testimonial1Name"), role: tr("blocks.testimonial1Role"), company: tr("blocks.testimonial1Company"), content: tr("blocks.testimonial1Content"), avatar: "👩‍💻", revenue: "$12K/mo", rating: 5 },
+    { name: tr("blocks.testimonial2Name"), role: tr("blocks.testimonial2Role"), company: tr("blocks.testimonial2Company"), content: tr("blocks.testimonial2Content"), avatar: "👨‍💼", revenue: "$8K/mo", rating: 5 },
+    { name: tr("blocks.testimonial3Name"), role: tr("blocks.testimonial3Role"), company: tr("blocks.testimonial3Company"), content: tr("blocks.testimonial3Content"), avatar: "👩‍🔬", revenue: "$15K/mo", rating: 5 },
+    { name: tr("blocks.testimonial4Name"), role: tr("blocks.testimonial4Role"), company: tr("blocks.testimonial4Company"), content: tr("blocks.testimonial4Content"), avatar: "👨‍🎨", revenue: "$9K/mo", rating: 5 },
+    { name: tr("blocks.testimonial5Name"), role: tr("blocks.testimonial5Role"), company: tr("blocks.testimonial5Company"), content: tr("blocks.testimonial5Content"), avatar: "👩‍💼", revenue: "$20K/mo", rating: 5 },
+    { name: tr("blocks.testimonial6Name"), role: tr("blocks.testimonial6Role"), company: tr("blocks.testimonial6Company"), content: tr("blocks.testimonial6Content"), avatar: "👨‍💻", revenue: "$50K/mo", rating: 5 },
+  ];
+
   const title = config?.title || "What Students Say";
   const subtitle = config?.subtitle || "Hear from our community";
   const layout = config?.layout || "grid";
   const showAvatars = config?.showAvatars !== false;
   const corporate = config?.corporate === true;
   const items = corporate
-    ? testimonials.slice(0, 3).map(t => ({ ...t, role: "VP of Learning", company: "Fortune 500" }))
-    : testimonials;
+    ? localizedTestimonials.slice(0, 3).map(item => ({ ...item, role: "VP of Learning", company: "Fortune 500" }))
+    : localizedTestimonials;
 
   const Avatar = ({ emoji }: { emoji: string }) =>
     showAvatars ? (

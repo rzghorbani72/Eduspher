@@ -1,4 +1,7 @@
 import { cn } from "@/lib/utils";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface Stat { value: string; label: string; }
 
@@ -18,6 +21,7 @@ interface FeaturesBlockProps {
   };
 }
 
+// Module-level English defaults used by sub-style components (kajabi, podia, stan, circle templates)
 const DEFAULT_FEATURES = [
   { title: "Expert Instructors", description: "Learn from industry professionals with years of real-world experience", icon: "🎓" },
   { title: "Flexible Learning", description: "Study at your own pace with lifetime access to course materials", icon: "📚" },
@@ -40,7 +44,7 @@ const gridColCls: Record<number, string> = {
   4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
 };
 
-export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
+export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   const blockStyle = config?.style ?? "default";
 
   if (blockStyle === "stats")    return <StatsFeatures id={id} config={config} />;
@@ -49,13 +53,26 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   if (blockStyle === "studio")   return <StudioFeatures id={id} config={config} />;
   if (blockStyle === "creator")  return <CreatorFeatures id={id} config={config} />;
 
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
+  const localizedFeatures = [
+    { title: tr("blocks.expertInstructors"), description: tr("blocks.expertInstructorsDesc"), icon: "🎓" },
+    { title: tr("blocks.flexibleLearning"), description: tr("blocks.flexibleLearningDesc"), icon: "📚" },
+    { title: tr("blocks.certificates"), description: tr("blocks.certificatesDesc"), icon: "🏆" },
+    { title: tr("blocks.interactiveContent"), description: tr("blocks.interactiveContentDesc"), icon: "💡" },
+    { title: tr("blocks.careerSupport"), description: tr("blocks.careerSupportDesc"), icon: "🚀" },
+    { title: tr("blocks.communityAccess"), description: tr("blocks.communityAccessDesc"), icon: "⭐" },
+  ];
+
   const title = config?.title || "Why Choose Us";
   const subtitle = config?.subtitle || "Discover what makes us special";
   const gridColumns = config?.gridColumns || 3;
   const variant = config?.variant || "cards";
   const showIcons = config?.showIcons !== false;
   const cols = gridColCls[gridColumns] ?? gridColCls[3];
-  const items = DEFAULT_FEATURES.slice(0, gridColumns * 2);
+  const items = localizedFeatures.slice(0, gridColumns * 2);
 
   const SectionTitle = ({ centered = false }: { centered?: boolean }) => (
     <div className={cn("max-w-2xl mb-12", centered && "mx-auto text-center")}>
@@ -98,7 +115,7 @@ export function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   if (variant === "icons") {
     return (
-      <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-background) text-(--theme-foreground)">
+      <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionTitle centered />
           <div className={cn("mx-auto grid gap-6 lg:max-w-none", cols)}>

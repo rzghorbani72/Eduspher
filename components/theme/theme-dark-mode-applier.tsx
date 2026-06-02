@@ -25,11 +25,7 @@ export function ThemeDarkModeApplier({ darkMode: initialDarkMode }: ThemeDarkMod
     };
 
     if (darkMode === null || darkMode === undefined) {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      const handler = () => apply(mq.matches);
-      handler();
-      mq.addEventListener('change', handler);
-      return () => mq.removeEventListener('change', handler);
+      apply(false); // null/unset → light mode (matches preview)
     } else {
       apply(darkMode === true);
     }

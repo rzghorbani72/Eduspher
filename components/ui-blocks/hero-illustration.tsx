@@ -66,13 +66,7 @@ export function HeroIllustration({
     }
   }
 
-  // Fall back to abstract themed illustration based on hero style
-  if (style === "expert" || style === "expert-academy") return <PersonTeaching />;
-  if (style === "creator-store" || style === "creator")  return <PersonLaptop />;
-  if (style === "social")       return <PersonTeam />;
-  if (style === "community")    return <PersonTeam />;
-  if (style === "dark-programmer") return <PersonLaptop dark />;
-  return <PersonLearning />;
+  return null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

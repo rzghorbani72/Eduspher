@@ -1,7 +1,6 @@
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
-import { buildAcademyPath } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { buildAcademyPath, cn, resolveAssetUrl } from "@/lib/utils";
 import { HeroSlideshow, type SlideConfig } from "./hero-slideshow";
 import { HeroIllustration } from "./hero-illustration";
 
@@ -15,6 +14,7 @@ interface HeroBlockProps {
     ctaSecondary?: string;
     backgroundImage?: string | null;
     illustration?: string | null;
+    illustrationPreset?: string | null;
     overlay?: boolean;
     alignment?: "left" | "center" | "right";
     height?: "small" | "medium" | "large";
@@ -78,7 +78,7 @@ export function HeroBlock({ id, config, storeContext, blockType }: HeroBlockProp
 function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
   const alignment = (config?.alignment ?? "center") as "left" | "center" | "right";
   const height    = (config?.height ?? "medium")    as "small" | "medium" | "large";
-  const hasIllustration = config?.illustration !== undefined; // show built-in or uploaded
+  const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   // If slides array provided, delegate entirely to the carousel
   if (config?.slides && config.slides.length > 1) {
@@ -103,36 +103,39 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
   const hasBackground = !!config?.backgroundImage;
   const dark = config?.dark === true;
   const titleSz  = height === "small" ? "text-3xl sm:text-4xl md:text-5xl" : height === "medium" ? "text-4xl sm:text-5xl md:text-6xl" : "text-5xl sm:text-6xl md:text-7xl";
-  const bgStyle  = hasBackground
+  // Vivid primary→secondary gradient — matches AdminPanel preview regardless of dark/light theme
+  const bgStyle = hasBackground
     ? { backgroundImage: `url(${config!.backgroundImage})` }
-    : { background: "linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 18%, var(--theme-background)), color-mix(in srgb, var(--theme-secondary) 8%, var(--theme-background)), color-mix(in srgb, var(--theme-accent) 6%, var(--theme-background)))" };
+    : { background: "linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 65%, color-mix(in srgb, var(--theme-secondary) 55%, var(--theme-accent)) 100%)" };
+
+  const heroContentColor = hasBackground ? undefined : "white";
 
   // Split layout when illustration is configured (uploaded or built-in default)
   if (hasIllustration) {
     return (
-      <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={bgStyle}>
+      <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={{ ...bgStyle, color: heroContentColor }}>
         {!hasBackground && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-linear-to-br from-(--theme-primary)/20 to-(--theme-secondary)/20 blur-3xl animate-float-slow" />
-            <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-linear-to-br from-(--theme-secondary)/20 to-(--theme-accent)/20 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
+            <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-white/10 blur-3xl animate-float-slow" />
+            <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-white/8 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
           </div>
         )}
         <div className="relative mx-auto max-w-7xl px-6 lg:px-8 pt-16 pb-4">
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
             {/* Text side */}
             <div className={cn(alignment === "center" ? "text-center" : "text-left")}>
-              <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz)}>
-                <span className="bg-clip-text text-transparent bg-linear-to-r from-(--theme-primary) via-(--theme-secondary) to-(--theme-accent)">{title}</span>
+              <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz, !hasBackground && "text-white")}>
+                {title}
               </h1>
-              {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-4 leading-relaxed text-lg sm:text-xl opacity-70">{subtitle}</p>}
+              {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className={cn("mt-4 leading-relaxed text-lg sm:text-xl", !hasBackground ? "text-white/80" : "opacity-70")}>{subtitle}</p>}
               {showCTA && (
                 <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-8 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
-                  <Button size="lg" asChild className="bg-linear-to-r from-(--theme-primary) to-(--theme-secondary) hover:opacity-90 text-white shadow-lg">
-                    <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
+                  <Button size="lg" asChild className="font-semibold shadow-lg hover:opacity-90" style={!hasBackground ? { backgroundColor: 'white', color: 'var(--theme-primary)' } : { color: 'white' }}>
+                    <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
                   </Button>
                   {config?.ctaSecondary && (
-                    <Button size="lg" variant="outline" asChild>
-                      <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-white">{config.ctaSecondary}</Link>
+                    <Button size="lg" variant="outline" asChild className={cn(!hasBackground && "border-white/40 text-white hover:bg-white/15")}>
+                      <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}>{config.ctaSecondary}</Link>
                     </Button>
                   )}
                 </div>
@@ -141,7 +144,8 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
             {/* Illustration side */}
             <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
               <HeroIllustration
-                illustrationUrl={config?.illustration}
+                illustrationUrl={resolveAssetUrl(config?.illustration) ?? undefined}
+                illustrationPreset={config?.illustrationPreset ?? undefined}
                 style={config?.style}
                 dark={dark}
               />
@@ -155,27 +159,27 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
   // Centered layout (no illustration configured)
   const alignMap = { left: "text-left items-start", center: "text-center items-center", right: "text-right items-end" };
   return (
-    <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={bgStyle}>
+    <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={{ ...bgStyle, color: heroContentColor }}>
       {!hasBackground && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-linear-to-br from-(--theme-primary)/20 to-(--theme-secondary)/20 blur-3xl animate-float-slow" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-linear-to-br from-(--theme-secondary)/20 to-(--theme-accent)/20 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
+          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-white/10 blur-3xl animate-float-slow" />
+          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-white/8 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
         </div>
       )}
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 mt-14">
         <div className={cn("mx-auto max-w-4xl flex flex-col", alignMap[alignment])}>
-          <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz)}>
-            <span className="bg-clip-text text-transparent bg-linear-to-r from-(--theme-primary) via-(--theme-secondary) to-(--theme-accent)">{title}</span>
+          <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz, !hasBackground && "text-white")}>
+            {title}
           </h1>
-          {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-3 leading-relaxed text-lg sm:text-xl opacity-70">{subtitle}</p>}
+          {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className={cn("mt-3 leading-relaxed text-lg sm:text-xl", !hasBackground ? "text-white/80" : "opacity-70")}>{subtitle}</p>}
           {showCTA && (
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-6 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
-              <Button size="lg" asChild className="bg-linear-to-r from-(--theme-primary) to-(--theme-secondary) hover:opacity-90 text-white shadow-lg">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
+              <Button size="lg" asChild className="font-semibold shadow-lg hover:opacity-90" style={!hasBackground ? { backgroundColor: 'white', color: 'var(--theme-primary)' } : { color: 'white' }}>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
               {config?.ctaSecondary && (
-                <Button size="lg" variant="outline" asChild>
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-white">{config.ctaSecondary}</Link>
+                <Button size="lg" variant="outline" asChild className={cn(!hasBackground && "border-white/40 text-white hover:bg-white/15")}>
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}>{config.ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -193,6 +197,7 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
   const subtitle = config?.subtitle || "The all-in-one platform to build, sell, and scale your expert business.";
   const ctaText = config?.ctaText || "Start Free Today";
   const ctaSecondary = config?.ctaSecondary || "See How It Works";
+  const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
     <section id={id || "hero"} className="relative overflow-hidden bg-[#fdf6f0] py-20 sm:py-28">
@@ -203,7 +208,7 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+        <div className={cn("grid grid-cols-1 items-center gap-12", hasIllustration && "lg:grid-cols-2")}>
           {/* Text side */}
           <div>
             <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full bg-rose-100 px-4 py-1.5 text-sm font-medium text-rose-700">
@@ -241,10 +246,11 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
             )}
           </div>
 
-          {/* Illustration side */}
-          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
-            <HeroIllustration illustrationUrl={config?.illustration} style="expert" />
-          </div>
+          {hasIllustration && (
+            <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+              <HeroIllustration illustrationUrl={resolveAssetUrl(config?.illustration) ?? undefined} illustrationPreset={config?.illustrationPreset ?? undefined} style="expert" />
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -414,6 +420,7 @@ function SocialHero({ id, config, storeContext }: HeroBlockProps) {
   const title = config?.title || "Meet Your All-in-One Creator Store";
   const subtitle = config?.subtitle || "Join 100,000+ solo business owners building their dream business.";
   const ctaText = config?.ctaText || "Start Your Trial";
+  const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
     <section id={id || "hero"} className="relative overflow-hidden bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 py-20 sm:py-28">
@@ -422,19 +429,21 @@ function SocialHero({ id, config, storeContext }: HeroBlockProps) {
         <div className="absolute bottom-10 right-1/4 h-96 w-96 rounded-full bg-purple-300/10 blur-3xl" />
       </div>
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+        <div className={cn("grid grid-cols-1 items-center gap-10", hasIllustration && "lg:grid-cols-2")}>
           <div>
             <h1 data-scroll-animate="slideLeft" className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">{title}</h1>
             <p data-scroll-animate="slideLeft" data-scroll-delay="0.15" className="mt-5 text-lg leading-relaxed text-purple-100">{subtitle}</p>
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-orange-400 hover:bg-orange-500 text-white font-semibold shadow-xl rounded-full px-8">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
             </div>
           </div>
-          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
-            <HeroIllustration illustrationUrl={config?.illustration} style="social" />
-          </div>
+          {hasIllustration && (
+            <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+              <HeroIllustration illustrationUrl={resolveAssetUrl(config?.illustration) ?? undefined} illustrationPreset={config?.illustrationPreset ?? undefined} style="social" />
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -448,6 +457,7 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
   const subtitle = config?.subtitle || "Create spaces for your audience to connect, learn, and grow together.";
   const ctaText = config?.ctaText || "Build Your Community";
   const ctaSecondary = config?.ctaSecondary || "See Examples";
+  const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
     <section id={id || "hero"} className="relative overflow-hidden bg-slate-950 py-24 sm:py-32">
@@ -459,7 +469,7 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+        <div className={cn("grid grid-cols-1 items-center gap-12", hasIllustration && "lg:grid-cols-2")}>
           {/* Text side */}
           <div>
             <div data-scroll-animate="fadeIn" className="mb-6 inline-flex items-center gap-2 rounded-full border border-indigo-700/50 bg-indigo-950/50 px-4 py-1.5 text-sm font-medium text-indigo-300 backdrop-blur-sm">
@@ -474,11 +484,11 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
 
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-10 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold shadow-xl shadow-indigo-900/50 px-8 rounded-xl">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-white">{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="outline" asChild className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600 rounded-xl">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-slate-300">{ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}>{ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -498,10 +508,11 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
             </div>
           </div>
 
-          {/* Illustration side */}
-          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
-            <HeroIllustration illustrationUrl={config?.illustration} style="community" />
-          </div>
+          {hasIllustration && (
+            <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+              <HeroIllustration illustrationUrl={resolveAssetUrl(config?.illustration) ?? undefined} illustrationPreset={config?.illustrationPreset ?? undefined} style="community" />
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -515,6 +526,7 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
   const subtitle = config?.subtitle || "بیش از ۵۰۰ دوره برنامه‌نویسی با ضمانت کیفیت";
   const ctaText = config?.ctaText || "شروع یادگیری";
   const ctaSecondary = config?.ctaSecondary || "مشاهده دوره‌ها";
+  const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
     <section id={id || "hero"} className="relative overflow-hidden bg-[#0a0f1e] py-20 sm:py-28">
@@ -527,7 +539,7 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+        <div className={cn("grid grid-cols-1 items-center gap-12", hasIllustration && "lg:grid-cols-2")}>
           <div>
             <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-800/60 bg-green-950/50 px-4 py-1.5 text-sm font-medium text-green-400">
               <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
@@ -539,11 +551,11 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
             <p data-scroll-animate="slideLeft" data-scroll-delay="0.2" className="mt-5 text-lg leading-relaxed text-gray-400">{subtitle}</p>
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-green-500 hover:bg-green-400 text-black font-bold shadow-xl shadow-green-900/50 rounded-full px-8">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-black">{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="outline" asChild className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:border-gray-600 rounded-full">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-gray-300">{ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -553,9 +565,11 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
               ))}
             </div>
           </div>
-          <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
-            <HeroIllustration illustrationUrl={config?.illustration} style="dark-programmer" dark />
-          </div>
+          {hasIllustration && (
+            <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
+              <HeroIllustration illustrationUrl={resolveAssetUrl(config?.illustration) ?? undefined} illustrationPreset={config?.illustrationPreset ?? undefined} style="dark-programmer" dark />
+            </div>
+          )}
         </div>
       </div>
     </section>
