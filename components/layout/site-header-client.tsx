@@ -52,8 +52,8 @@ export function SiteHeaderClient({
         : [
             { href: "/", label: t("navigation.home") },
             { href: "/courses", label: t("navigation.courses") },
-            { href: "/articles", label: t("navigation.articles") },
-            { href: "/pricing", label: t("footer.pricing") },
+            { href: "/bundles", label: t("navigation.bundles") },
+            { href: "/roadmap", label: t("navigation.roadmap") },
           ],
     [showPanelNav, t, language]
   );

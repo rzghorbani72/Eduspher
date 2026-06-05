@@ -4,8 +4,7 @@ import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";
-import { CourseCurriculum } from "@/components/courses/course-curriculum";
-import { CourseQnA } from "@/components/courses/course-qna";
+import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
 import { CartButton } from "@/components/cart/cart-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
@@ -147,22 +146,9 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               {course.short_description}
             </p>
           ) : null}
-          <div className="rounded-theme border border-theme bg-card p-5 shadow-sm transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500 delay-250">
-            <h2 className="text-lg font-semibold text-foreground">{translate("courses.whatYouWillLearn")}</h2>
-            {course.description ? (
-              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted">
-                {course.description}
-              </p>
-            ) : (
-              <p className="mt-3 text-sm text-muted opacity-70">
-                {translate("courses.detailedCurriculumComingSoon")}
-              </p>
-            )}
-          </div>
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <CourseCurriculum
-              courseTitle={course.title}
-              seasons={course.Season ?? []}
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-250">
+            <CourseDetailTabs
+              course={course}
               isLoggedIn={!!user}
               loginHref={buildPath("/auth/login")}
               enrollHref={buildPath(`/checkout?course=${course.id}`)}
@@ -243,8 +229,6 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
         </aside>
       </section>
 
-
-      <CourseQnA courseId={course.id} isLoggedIn={!!user} userRole={user?.role} />
 
       {relatedCourses?.courses?.length ? (
         <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400">

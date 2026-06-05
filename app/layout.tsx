@@ -120,7 +120,7 @@ export default async function RootLayout({
   
   const useTemplateLayout = !isPanelRoot && isHomePage;
   const mainClassName = isPanelRoot
-    ? "mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10"
+    ? "w-full"
     : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12";
 
   // Determine data-theme attribute based on dark_mode setting
@@ -174,13 +174,13 @@ export default async function RootLayout({
               <DocumentLangSync />
               <ScrollAnimationProvider>
                 <div
-                  className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-hidden"
+                  className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-x-hidden"
                   style={{ backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' }}
                 >
                   {/* Creative animated background with gradients and flying icons */}
                   <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
-                  
-                  <SiteHeaderShell />
+
+                  {!isPanelRoot && <SiteHeaderShell />}
                   <main className="relative flex-1 z-10">
                     {useTemplateLayout ? (
                       <>{children}</>
@@ -190,7 +190,7 @@ export default async function RootLayout({
                       </div>
                     )}
                   </main>
-                  <SiteFooter />
+                  {!isPanelRoot && <SiteFooter />}
                 </div>
               </ScrollAnimationProvider>
             </I18nProvider>

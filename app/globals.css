@@ -4,6 +4,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes lp-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.lp-marquee-strip {
+  animation: lp-marquee 28s linear infinite;
+}
+
+/* Hero mockup course blocks */
+.lp-block-indigo { background: #6366f122; border-left: 2px solid #6366f1; }
+.lp-block-violet { background: #8b5cf622; border-left: 2px solid #8b5cf6; }
+.lp-block-pink   { background: #ec489922; border-left: 2px solid #ec4899; }
+.lp-block-indigo-dot { background: #6366f160; }
+.lp-block-violet-dot { background: #8b5cf660; }
+.lp-block-pink-dot   { background: #ec489960; }
+
 :root {
   /* Theme colors from backend - will be overridden by inline styles */
   --theme-primary: #3b82f6;

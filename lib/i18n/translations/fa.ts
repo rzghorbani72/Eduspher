@@ -44,6 +44,8 @@ export const fa = {
     logout: 'خروج',
     cart: 'سبد خرید',
     checkout: 'تسویه حساب',
+    bundles: 'بسته‌ها',
+    roadmap: 'نقشه راه',
   },
   courses: {
     title: 'دوره‌ها',

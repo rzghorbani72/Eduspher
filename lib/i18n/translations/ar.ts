@@ -44,6 +44,8 @@ export const ar = {
     logout: 'تسجيل الخروج',
     cart: 'السلة',
     checkout: 'الدفع',
+    bundles: 'الباقات',
+    roadmap: 'خارطة الطريق',
   },
   courses: {
     title: 'الدورات',

@@ -44,6 +44,8 @@ export const en = {
     logout: 'Logout',
     cart: 'Cart',
     checkout: 'Checkout',
+    bundles: 'Bundles',
+    roadmap: 'Roadmap',
   },
   courses: {
     title: 'Courses',

@@ -44,6 +44,8 @@ export const tr = {
     logout: 'Çıkış Yap',
     cart: 'Sepet',
     checkout: 'Ödeme',
+    bundles: 'Paketler',
+    roadmap: 'Yol Haritası',
   },
   courses: {
     title: 'Kurslar',
