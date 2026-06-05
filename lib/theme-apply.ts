@@ -58,7 +58,6 @@ export function resolveThemeIsDark(
   prefersDark = false
 ): boolean {
   if (!theme || theme.dark_mode === null || theme.dark_mode === undefined) {
-    // null/unset → always light mode so edusphere matches the AdminPanel preview
     return false;
   }
   return theme.dark_mode === true;

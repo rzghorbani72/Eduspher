@@ -25,9 +25,6 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
     return null;
   }
 
-  // Sort blocks by order to ensure correct rendering sequence
-  // Filter out invisible blocks
-  // If includeHeaderFooter is false, filter out header/footer (they're rendered in layout)
   const visibleBlocks = blocks
     .filter((block) => {
       if (block.isVisible === false) return false;

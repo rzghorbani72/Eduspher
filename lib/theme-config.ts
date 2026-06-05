@@ -2,6 +2,7 @@ import "server-only";
 
 import { getAcademyContext } from "./store-context";
 import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
+import { getPreviewToken } from "./preview-token";
 import { TEMPLATE_PRESETS, type TemplatePreset } from "./template-presets";
 import {
   buildThemeCssVariables,
@@ -27,6 +28,8 @@ export interface ThemeConfig {
   element_animation_style?: string;
   border_radius_style?: string;
   shadow_style?: string;
+  css_variables?: Record<string, string>;
+  css_block?: string;
   [key: string]: any;
 }
 
@@ -46,6 +49,7 @@ export interface UITemplateConfig {
 export async function getStoreThemeAndTemplate() {
   try {
     const storeContext = await getAcademyContext();
+    const previewToken = await getPreviewToken();
 
     // Try to fetch from authenticated endpoint first if user is authenticated
     // Otherwise fallback to public endpoint with store slug
@@ -55,22 +59,28 @@ export async function getStoreThemeAndTemplate() {
     // Theme config is always public - use store slug
     // Template can use authenticated endpoint if available
     if (storeContext.slug) {
-      // Try authenticated template endpoint first, but always use public theme endpoint
-      const [publicThemeData, authTemplateData] = await Promise.allSettled([
-        getStoreThemeConfig(storeContext.slug), // Always use public endpoint for theme
-        getCurrentUITemplate(), // Uses /ui-template/current with auth
-      ]);
-
-      themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
-      templateData = authTemplateData.status === 'fulfilled' ? authTemplateData.value : null;
-
-      // If authenticated template endpoint failed, fallback to public template endpoint
-      if (!templateData && storeContext.slug) {
-        const publicTemplateResult = await Promise.allSettled([
-          getStoreUITemplate(storeContext.slug),
+      if (previewToken) {
+        const [publicThemeData, publicTemplateData] = await Promise.allSettled([
+          getStoreThemeConfig(storeContext.slug, previewToken),
+          getStoreUITemplate(storeContext.slug, previewToken),
         ]);
-        templateData = publicTemplateResult[0].status === 'fulfilled' ? publicTemplateResult[0].value : null;
-        
+        themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
+        templateData = publicTemplateData.status === 'fulfilled' ? publicTemplateData.value : null;
+      } else {
+        const [publicThemeData, authTemplateData] = await Promise.allSettled([
+          getStoreThemeConfig(storeContext.slug),
+          getCurrentUITemplate(),
+        ]);
+
+        themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
+        templateData = authTemplateData.status === 'fulfilled' ? authTemplateData.value : null;
+
+        if (!templateData && storeContext.slug) {
+          const publicTemplateResult = await Promise.allSettled([
+            getStoreUITemplate(storeContext.slug),
+          ]);
+          templateData = publicTemplateResult[0].status === 'fulfilled' ? publicTemplateResult[0].value : null;
+        }
       }
     } else {
       // Not authenticated, use public endpoints
@@ -81,10 +91,9 @@ export async function getStoreThemeAndTemplate() {
         };
       }
 
-      // Fetch theme and template in parallel, but handle errors gracefully
       const [publicThemeData, publicTemplateData] = await Promise.allSettled([
-        getStoreThemeConfig(storeContext.slug),
-        getStoreUITemplate(storeContext.slug),
+        getStoreThemeConfig(storeContext.slug, previewToken),
+        getStoreUITemplate(storeContext.slug, previewToken),
       ]);
 
       themeData = publicThemeData.status === 'fulfilled' ? publicThemeData.value : null;
@@ -132,6 +141,8 @@ export async function getStoreThemeAndTemplate() {
             element_animation_style: configs.element_animation_style || themeData.element_animation_style || 'subtle',
             border_radius_style: configs.border_radius_style || themeData.border_radius_style || 'rounded',
             shadow_style: configs.shadow_style || themeData.shadow_style || 'medium',
+            css_variables: (themeData as { css_variables?: Record<string, string> }).css_variables,
+            css_block: (themeData as { css_block?: string }).css_block,
           }
         : null,
       template: templateData
@@ -184,6 +195,9 @@ export async function getStoreThemeAndTemplate() {
 }
 
 export function generateThemeCSSVariables(theme: ThemeConfig | null): string {
+  if (theme?.css_block) {
+    return theme.css_block;
+  }
   const vars = buildThemeCssVariables(theme ?? DEFAULT_PLATFORM_THEME, {
     prefersDark: theme?.dark_mode === true,
   });

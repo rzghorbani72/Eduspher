@@ -588,7 +588,10 @@ export async function createEnrollment(data: {
 }
 
 // Theme and UI Template functions
-export async function getStoreThemeConfig(storeSlug?: string) {
+export async function getStoreThemeConfig(
+  storeSlug?: string,
+  previewToken?: string,
+) {
   try {
     // Theme config should always use public endpoint
     // If no storeSlug provided, we can't fetch theme (theme is store-specific)
@@ -596,7 +599,9 @@ export async function getStoreThemeConfig(storeSlug?: string) {
       return null;
     }
 
-    const path = `/theme/public/${storeSlug}/config`;
+    const path = previewToken
+      ? `/theme/public/${storeSlug}/config?preview=${encodeURIComponent(previewToken)}`
+      : `/theme/public/${storeSlug}/config`;
     const result = await serverFetchRaw<{
       message: string;
       status: string;
@@ -699,7 +704,10 @@ export async function getCurrentUITemplate() {
   }
 }
 
-export async function getStoreUITemplate(storeSlug?: string) {
+export async function getStoreUITemplate(
+  storeSlug?: string,
+  previewToken?: string,
+) {
   try {
     // Only use public endpoint if storeSlug is provided
     // Otherwise return null to avoid authentication issues
@@ -707,7 +715,9 @@ export async function getStoreUITemplate(storeSlug?: string) {
       return null;
     }
 
-    const path = `/ui-template/public/${storeSlug}`;
+    const path = previewToken
+      ? `/ui-template/public/${storeSlug}?preview=${encodeURIComponent(previewToken)}`
+      : `/ui-template/public/${storeSlug}`;
     const result = await serverFetchRaw<{
       message: string;
       status: string;

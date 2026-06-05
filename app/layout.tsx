@@ -25,6 +25,7 @@ import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage, getAcademyDirection, isAcademyRTL } from "@/lib/i18n/server";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { CreativeBackground } from "@/components/motion/creative-background";
+import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
 import { resolveAssetUrl } from "@/lib/utils";
 
@@ -180,6 +181,7 @@ export default async function RootLayout({
                   {/* Creative animated background with gradients and flying icons */}
                   <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
 
+                  {!isPanelRoot && <PreviewModeBanner />}
                   {!isPanelRoot && <SiteHeaderShell />}
                   <main className="relative flex-1 z-10">
                     {useTemplateLayout ? (
