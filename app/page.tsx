@@ -7,8 +7,7 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const adminLoginUrl = getAdminPanelUrl("/login");
   const adminRegisterUrl = getAdminPanelUrl("/register");
-  const allAcademies = await getAcademiesPublic().catch(() => []);
-  const academies = allAcademies.filter((a) => a.is_active !== false);
+  const academies = await getAcademiesPublic().catch(() => []);
 
   return (
     <PlatformLandingPage

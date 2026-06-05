@@ -13,6 +13,80 @@
   animation: lp-marquee 28s linear infinite;
 }
 
+.lp-proof-strip {
+  animation: lp-marquee 30s linear infinite;
+}
+
+@keyframes lp-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.lp-blink {
+  animation: lp-blink 2s ease-in-out infinite;
+}
+
+/* Landing page nav & buttons */
+.lp-nav-link {
+  color: #625E52; font-size: 14px; text-decoration: none; font-weight: 500; transition: color .2s;
+}
+.lp-nav-link:hover { color: #100F0C; }
+
+.lp-btn-nav {
+  background: #0B1133; color: #FAFAF8; padding: 9px 22px; border-radius: 9px;
+  font-weight: 600; font-size: 14px; border: none; text-decoration: none;
+  transition: all .2s; cursor: pointer; display: inline-block;
+}
+.lp-btn-nav:hover { background: #16214A; transform: translateY(-1px); }
+
+.lp-btn-primary {
+  display: inline-block; background: #0B1133; color: #FAFAF8; padding: 14px 30px;
+  border-radius: 10px; font-weight: 700; font-size: 15px; border: none; cursor: pointer;
+  text-decoration: none; transition: all .22s; letter-spacing: .01em;
+}
+.lp-btn-primary:hover { background: #16214A; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(11,17,51,.22); }
+
+.lp-btn-amber {
+  display: inline-block; background: #CC7A00; color: #fff; padding: 14px 30px;
+  border-radius: 10px; font-weight: 700; font-size: 15px; border: none; cursor: pointer;
+  text-decoration: none; transition: all .22s;
+}
+.lp-btn-amber:hover { background: #E08A00; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(204,122,0,.28); }
+
+.lp-btn-ghost {
+  color: #625E52; font-size: 14px; text-decoration: none; display: inline-flex;
+  align-items: center; gap: 6px; transition: color .2s; font-weight: 500;
+}
+.lp-btn-ghost:hover { color: #100F0C; }
+
+.lp-btn-outline {
+  width: 100%; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 14px;
+  background: transparent; border: 1.5px solid #E5E3DA; color: #100F0C; cursor: pointer;
+  transition: all .2s; display: block; text-align: center; text-decoration: none;
+}
+.lp-btn-outline:hover { background: #F2F1EC; border-color: #CCC9BC; }
+
+.lp-btn-white {
+  width: 100%; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px;
+  background: #FAFAF8; border: none; color: #0B1133; cursor: pointer;
+  transition: all .2s; display: block; text-align: center; text-decoration: none;
+}
+.lp-btn-white:hover { background: #fff; box-shadow: 0 4px 16px rgba(255,255,255,.12); }
+
+/* Landing page section cards */
+.lp-feat-cell { background: #FFFFFF; padding: 36px 30px; transition: background .2s; }
+.lp-feat-cell:hover { background: #F2F1EC; }
+
+.lp-demo-card {
+  background: #FFFFFF; border: 1px solid #E5E3DA; border-radius: 20px; overflow: hidden;
+  cursor: pointer; transition: transform .3s, box-shadow .3s, border-color .3s;
+  box-shadow: 0 2px 16px rgba(0,0,0,.07);
+}
+.lp-demo-card:hover { transform: translateY(-8px); border-color: #CCC9BC; box-shadow: 0 24px 60px rgba(0,0,0,.13); }
+
+.lp-plan { transition: border-color .2s, box-shadow .2s; }
+.lp-plan:not(.lp-plan-hot):hover { border-color: #CCC9BC; box-shadow: 0 8px 32px rgba(0,0,0,.09); }
+
 /* Hero mockup course blocks */
 .lp-block-indigo { background: #6366f122; border-left: 2px solid #6366f1; }
 .lp-block-violet { background: #8b5cf622; border-left: 2px solid #8b5cf6; }
