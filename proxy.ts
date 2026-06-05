@@ -6,6 +6,69 @@ import { env } from "./lib/env";
 
 let jwtSecretWarningLogged = false;
 
+function getAdminFrameAncestors(): string {
+  const adminUrl =
+    process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ||
+    process.env.ADMIN_PANEL_URL ||
+    "http://localhost:4000";
+  try {
+    return new URL(adminUrl).origin;
+  } catch {
+    return "http://localhost:4000";
+  }
+}
+
+function shouldApplyPreviewEmbed(pathname: string): boolean {
+  return pathname === "/" || pathname.startsWith("/s/");
+}
+
+function applyPreviewEmbedRequest(
+  request: NextRequest,
+  requestHeaders: Headers
+): { preview: string | null; embed: boolean } {
+  const preview = request.nextUrl.searchParams.get("preview");
+  const embed = request.nextUrl.searchParams.get("embed") === "1";
+
+  if (preview) {
+    requestHeaders.set("x-preview-token", preview);
+  }
+  if (embed) {
+    requestHeaders.set("x-embed-mode", "1");
+  }
+
+  return { preview, embed };
+}
+
+function applyPreviewEmbedResponse(
+  response: NextResponse,
+  preview: string | null,
+  embed: boolean
+): void {
+  if (preview) {
+    response.cookies.set("preview_token", preview, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 60 * 15,
+      path: "/",
+    });
+  }
+  if (embed) {
+    response.cookies.set("embed_mode", "1", {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 60 * 60,
+      path: "/",
+    });
+  }
+
+  const adminOrigin = getAdminFrameAncestors();
+  const frameAncestors = embed ? `'self' ${adminOrigin}` : "'self'";
+  response.headers.set(
+    "Content-Security-Policy",
+    `frame-ancestors ${frameAncestors}`
+  );
+}
+
 /**
  * Verify JWT token signature and decode payload
  * Uses jose library for secure JWT verification in Edge runtime
@@ -217,6 +280,10 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
+  const applyPreviewEmbed = shouldApplyPreviewEmbed(requestUrl.pathname);
+  const previewEmbed = applyPreviewEmbed
+    ? applyPreviewEmbedRequest(request, requestHeaders)
+    : { preview: null, embed: false };
   requestHeaders.set("x-url-pathname", requestUrl.pathname);
   if (isPanelRoot) {
     requestHeaders.set("x-panel-root", "1");
@@ -311,7 +378,15 @@ export async function proxy(request: NextRequest) {
     const redirectPath = slugFromPath ? `/${slugFromPath}` : "/";
     const redirectUrl = new URL(redirectPath, requestUrl.origin);
     redirectUrl.searchParams.delete("redirect");
-    return NextResponse.redirect(redirectUrl);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    if (applyPreviewEmbed) {
+      applyPreviewEmbedResponse(
+        redirectResponse,
+        previewEmbed.preview,
+        previewEmbed.embed
+      );
+    }
+    return redirectResponse;
   }
 
   // If user is not authenticated and trying to access a protected route, redirect to login
@@ -320,7 +395,15 @@ export async function proxy(request: NextRequest) {
     const loginPath = slugFromPath ? `/${slugFromPath}/auth/login` : "/auth/login";
     const loginUrl = new URL(loginPath, requestUrl.origin);
     loginUrl.searchParams.set("redirect", requestUrl.pathname + requestUrl.search);
-    return NextResponse.redirect(loginUrl);
+    const loginRedirect = NextResponse.redirect(loginUrl);
+    if (applyPreviewEmbed) {
+      applyPreviewEmbedResponse(
+        loginRedirect,
+        previewEmbed.preview,
+        previewEmbed.embed
+      );
+    }
+    return loginRedirect;
   }
 
   let internalUrl: URL | null = null;
@@ -378,12 +461,28 @@ export async function proxy(request: NextRequest) {
     const cleanedUrl = new URL(requestUrl.pathname, requestUrl.origin);
     cleanedUrl.search = requestUrl.search;
     cleanedUrl.searchParams.delete("academy");
-    return NextResponse.redirect(cleanedUrl);
+    const academyRedirect = NextResponse.redirect(cleanedUrl);
+    if (applyPreviewEmbed) {
+      applyPreviewEmbedResponse(
+        academyRedirect,
+        previewEmbed.preview,
+        previewEmbed.embed
+      );
+    }
+    return academyRedirect;
   }
 
   // Add pathname to headers for layout to detect home page
   const actualPath = internalUrl ? internalUrl.pathname : requestUrl.pathname;
   response.headers.set("x-pathname", actualPath);
+
+  if (applyPreviewEmbed) {
+    applyPreviewEmbedResponse(
+      response,
+      previewEmbed.preview,
+      previewEmbed.embed
+    );
+  }
 
   return response;
 }
