@@ -3,7 +3,7 @@ import "server-only";
 import { getAcademyContext } from "./store-context";
 import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
 import { getPreviewToken } from "./preview-token";
-import { TEMPLATE_PRESETS, type TemplatePreset } from "./template-presets";
+import { TEMPLATE_PRESETS } from "./template-presets";
 import {
   buildThemeCssVariables,
   DEFAULT_PLATFORM_THEME,
@@ -150,8 +150,11 @@ export async function getStoreThemeAndTemplate() {
             blocks: (() => {
               if (!Array.isArray(templateData.blocks) || templateData.blocks.length === 0) {
                 // If no blocks but we have a template_preset, use preset blocks
-                if (templateData.template_preset && TEMPLATE_PRESETS[templateData.template_preset as TemplatePreset]) {
-                  return TEMPLATE_PRESETS[templateData.template_preset as TemplatePreset].blocks;
+                if (
+                  templateData.template_preset &&
+                  TEMPLATE_PRESETS[templateData.template_preset]
+                ) {
+                  return TEMPLATE_PRESETS[templateData.template_preset].blocks;
                 }
                 return [];
               }
@@ -175,8 +178,8 @@ export async function getStoreThemeAndTemplate() {
               
               // If no valid blocks but we have a template_preset, use preset blocks as fallback
               if (validBlocks.length === 0 && templateData.template_preset) {
-                if (TEMPLATE_PRESETS[templateData.template_preset as TemplatePreset]) {
-                  return TEMPLATE_PRESETS[templateData.template_preset as TemplatePreset].blocks;
+                if (TEMPLATE_PRESETS[templateData.template_preset]) {
+                  return TEMPLATE_PRESETS[templateData.template_preset].blocks;
                 }
               }
               
