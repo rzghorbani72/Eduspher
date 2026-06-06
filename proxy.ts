@@ -7,18 +7,40 @@ import { env } from "./lib/env";
 let jwtSecretWarningLogged = false;
 
 function getAdminFrameAncestors(): string {
-  const adminUrl =
-    process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ||
-    process.env.ADMIN_PANEL_URL ||
-    "http://localhost:4000";
-  try {
-    return new URL(adminUrl).origin;
-  } catch {
-    return "http://localhost:4000";
+  const origins = new Set<string>(["'self'"]);
+  const candidates = [
+    process.env.NEXT_PUBLIC_ADMIN_PANEL_URL,
+    process.env.ADMIN_PANEL_URL,
+    "http://localhost:4000",
+  ];
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    try {
+      origins.add(new URL(candidate).origin);
+    } catch {
+      // ignore invalid URL values
+    }
   }
+
+  if (process.env.NODE_ENV === "development") {
+    for (const origin of [
+      "http://localhost:4000",
+      "http://127.0.0.1:4000",
+      "http://0.0.0.0:4000",
+    ]) {
+      origins.add(origin);
+    }
+  }
+
+  return Array.from(origins).join(" ");
 }
 
-function shouldApplyPreviewEmbed(pathname: string): boolean {
+function shouldApplyPreviewEmbed(request: NextRequest): boolean {
+  const { pathname, searchParams } = request.nextUrl;
+  if (searchParams.has("preview") || searchParams.get("embed") === "1") {
+    return true;
+  }
   return pathname === "/" || pathname.startsWith("/s/");
 }
 
@@ -61,8 +83,7 @@ function applyPreviewEmbedResponse(
     });
   }
 
-  const adminOrigin = getAdminFrameAncestors();
-  const frameAncestors = embed ? `'self' ${adminOrigin}` : "'self'";
+  const frameAncestors = embed ? getAdminFrameAncestors() : "'self'";
   response.headers.set(
     "Content-Security-Policy",
     `frame-ancestors ${frameAncestors}`
@@ -280,7 +301,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
-  const applyPreviewEmbed = shouldApplyPreviewEmbed(requestUrl.pathname);
+  const applyPreviewEmbed = shouldApplyPreviewEmbed(request);
   const previewEmbed = applyPreviewEmbed
     ? applyPreviewEmbedRequest(request, requestHeaders)
     : { preview: null, embed: false };
