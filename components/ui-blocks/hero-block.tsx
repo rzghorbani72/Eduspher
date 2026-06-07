@@ -531,18 +531,18 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
   return (
     <section id={id || "hero"} className="relative overflow-hidden bg-[#0a0f1e] py-20 sm:py-28">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -left-20 h-96 w-96 rounded-full bg-green-900/20 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-900/20 blur-3xl" />
+        <div className="absolute -top-40 -left-20 h-96 w-96 rounded-full bg-(--theme-primary)/20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-(--theme-accent)/10 blur-3xl" />
         {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{ backgroundImage: "linear-gradient(rgba(34,197,94,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.5) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: "linear-gradient(var(--theme-primary) 1px, transparent 1px), linear-gradient(90deg, var(--theme-primary) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className={cn("grid grid-cols-1 items-center gap-12", hasIllustration && "lg:grid-cols-2")}>
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           <div>
-            <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-800/60 bg-green-950/50 px-4 py-1.5 text-sm font-medium text-green-400">
-              <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+            <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full border border-(--theme-primary)/40 bg-(--theme-primary-subtle) px-4 py-1.5 text-sm font-medium text-(--theme-primary)">
+              <span className="h-2 w-2 rounded-full bg-(--theme-primary) animate-pulse" />
               ۵۰۰+ دوره تخصصی
             </div>
             <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl leading-tight">
@@ -550,7 +550,7 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
             </h1>
             <p data-scroll-animate="slideLeft" data-scroll-delay="0.2" className="mt-5 text-lg leading-relaxed text-gray-400">{subtitle}</p>
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
-              <Button size="lg" asChild className="bg-green-500 hover:bg-green-400 text-black font-bold shadow-xl shadow-green-900/50 rounded-full px-8">
+              <Button size="lg" asChild className="bg-(--theme-primary) text-(--theme-on-primary) font-bold shadow-xl rounded-full px-8 hover:opacity-90">
                 <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
               {ctaSecondary && (
@@ -559,19 +559,100 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
                 </Button>
               )}
             </div>
-            <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-8 flex flex-wrap gap-2">
-              {["✓ ضمانت بازگشت وجه", "✓ پشتیبانی ۲۴/۷", "✓ گواهینامه معتبر"].map((f, i) => (
-                <span key={i} className="rounded-full border border-green-900/60 bg-green-950/40 px-3 py-1 text-xs text-green-400">{f}</span>
-              ))}
+            <div data-scroll-animate="fadeIn" data-scroll-delay="0.45" className="mt-8 flex items-center gap-4">
+              <div className="flex -space-x-3 rtl:space-x-reverse">
+                {["👨‍💻", "👩‍💻", "🧑‍🎓", "👩‍🔬"].map((a, i) => (
+                  <span key={i} className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#0a0f1e] bg-gray-800 text-base">{a}</span>
+                ))}
+              </div>
+              <div>
+                <div className="flex items-center gap-1">
+                  {"★★★★★".split("").map((s, i) => <span key={i} className="text-amber-400 text-sm">{s}</span>)}
+                  <span className="ms-1 text-sm font-semibold text-white">۴.۸</span>
+                </div>
+                <p className="mt-0.5 text-xs text-gray-400">۱۲۰,۰۰۰ دانش‌آموز در سراسر ایران</p>
+              </div>
             </div>
           </div>
-          {hasIllustration && (
+          {hasIllustration ? (
             <div data-scroll-animate="slideRight" className="flex justify-center lg:justify-end">
               <HeroIllustration illustrationUrl={resolveAssetUrl(config?.illustration) ?? undefined} illustrationPreset={config?.illustrationPreset ?? undefined} style="dark-programmer" dark />
             </div>
+          ) : (
+            <DarkProgrammerShowcase storeContext={storeContext} />
           )}
         </div>
       </div>
     </section>
+  );
+}
+
+function DarkProgrammerShowcase({ storeContext }: { storeContext?: HeroBlockProps["storeContext"] }) {
+  return (
+    <div data-scroll-animate="slideRight" className="relative mx-auto w-full max-w-md">
+      {/* Live learners badge */}
+      <div className="absolute -top-4 right-6 z-20 inline-flex items-center gap-2 rounded-full border border-green-700/50 bg-green-950 px-3 py-1.5 text-xs font-medium text-green-400 shadow-lg">
+        <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
+        همین الان ۲۳۴ نفر در حال یادگیری
+      </div>
+
+      {/* Code editor card */}
+      <div className="overflow-hidden rounded-2xl border border-gray-800 bg-[#0d1424] shadow-2xl">
+        <div className="flex items-center gap-2 border-b border-gray-800 px-4 py-3">
+          <span className="h-3 w-3 rounded-full bg-red-500/80" />
+          <span className="h-3 w-3 rounded-full bg-amber-500/80" />
+          <span className="h-3 w-3 rounded-full bg-green-500/80" />
+          <span className="ms-auto text-xs text-gray-500">JavaScript</span>
+        </div>
+        <pre dir="ltr" className="px-5 py-4 text-left font-mono text-[13px] leading-6">
+          <code>
+            <span className="text-purple-400">function</span>{" "}
+            <span className="text-sky-400">calcAverage</span>
+            <span className="text-gray-400">(datasets) {"{"}</span>
+            {"\n"}
+            {"  "}<span className="text-purple-400">let</span>{" "}
+            <span className="text-gray-300">subjectAverage</span>{" "}
+            <span className="text-gray-400">=</span>{" "}
+            <span className="text-amber-400">0</span>
+            <span className="text-gray-400">;</span>
+            {"\n"}
+            {"  "}<span className="text-gray-300">datasets</span>
+            <span className="text-gray-400">.</span>
+            <span className="text-sky-400">forEach</span>
+            <span className="text-gray-400">((dataset) {"=> {"}</span>
+            {"\n"}
+            {"    "}<span className="text-gray-300">subjectAverage</span>{" "}
+            <span className="text-gray-400">+=</span>{" "}
+            <span className="text-sky-400">parseFloat</span>
+            <span className="text-gray-400">(dataset);</span>
+            {"\n"}
+            {"  "}<span className="text-gray-400">{"});"}</span>
+            {"\n"}
+            <span className="text-gray-400">{"}"}</span>
+          </code>
+        </pre>
+      </div>
+
+      {/* Achievement badge */}
+      <div className="absolute -bottom-3 -left-3 z-20 inline-flex items-center gap-2 rounded-xl border border-gray-700 bg-[#0d1424] px-3 py-2 text-xs font-medium text-gray-200 shadow-lg">
+        🏆 React Advanced Patterns
+      </div>
+
+      {/* Sample course card */}
+      <div className="mt-5 rounded-2xl border border-gray-800 bg-[#0d1424] p-4 shadow-xl">
+        <div className="mb-3 h-2 w-16 rounded-full bg-(--theme-primary)" />
+        <p className="text-sm font-semibold text-white">JavaScript: از صفر تا مسلط — دوره جامع ۲۰۲۴</p>
+        <div className="mt-1 flex items-center gap-1">
+          {"★★★★★".split("").map((s, i) => <span key={i} className="text-amber-400 text-xs">{s}</span>)}
+          <span className="ms-1 text-xs text-gray-500">(۲٬۳۹۱)</span>
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-sm font-bold text-white">۱,۳۰۰,۰۰۰ تومان</span>
+          <Button size="sm" asChild className="bg-(--theme-primary) text-(--theme-on-primary) rounded-full hover:opacity-90">
+            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>ثبت‌نام</Link>
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

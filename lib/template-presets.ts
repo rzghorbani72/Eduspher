@@ -81,9 +81,16 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         },
       },
       {
+        id: 'membership',
+        type: 'membership',
+        order: 5,
+        isVisible: true,
+        config: {},
+      },
+      {
         id: 'testimonials',
         type: 'testimonials',
-        order: 5,
+        order: 6,
         isVisible: true,
         config: {
           title: 'نظرات دانش‌آموزان',
@@ -95,7 +102,7 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
       {
         id: 'footer',
         type: 'footer',
-        order: 6,
+        order: 7,
         isVisible: true,
         config: {
           showSocialLinks: true,
