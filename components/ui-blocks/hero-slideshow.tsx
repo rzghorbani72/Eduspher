@@ -14,7 +14,7 @@ export interface SlideConfig {
   ctaText?: string;
   ctaSecondary?: string;
   backgroundImage?: string;
-  /** Tailwind gradient classes, e.g. "from-violet-600 via-purple-600 to-indigo-700" */
+  /** Optional CSS gradient string. Defaults to a theme-derived gradient. */
   gradient?: string;
 }
 
@@ -33,12 +33,12 @@ interface HeroSlideshowProps {
 }
 
 const DEFAULT_GRADIENTS = [
-  'from-indigo-600 via-blue-600 to-cyan-600',
-  'from-violet-600 via-purple-600 to-pink-600',
-  'from-rose-600 via-pink-500 to-orange-500',
+  'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))',
+  'linear-gradient(135deg, var(--theme-secondary), var(--theme-accent))',
+  'linear-gradient(135deg, var(--theme-accent), var(--theme-primary))',
 ];
 
-const heightCls = { small: 'min-h-[320px]', medium: 'min-h-[460px]', large: 'min-h-[580px]' };
+const heightCls = { small: 'min-h-[40vh]', medium: 'min-h-[60vh]', large: 'min-h-[80vh]' };
 const alignCls  = { left: 'text-left items-start', center: 'text-center items-center mx-auto', right: 'text-right items-end' };
 
 export function HeroSlideshow({
@@ -80,15 +80,15 @@ export function HeroSlideshow({
   const gradient = slide.gradient ?? DEFAULT_GRADIENTS[current % DEFAULT_GRADIENTS.length];
   const hasBg = !!slide.backgroundImage;
 
-  const textColor = dark || hasBg ? 'text-white' : 'text-gray-900';
-  const subColor  = dark || hasBg ? 'text-white/70' : 'text-gray-600';
+  const textColor = hasBg ? 'text-white' : 'text-(--theme-on-primary)';
+  const subColor  = hasBg ? 'text-white/70' : 'text-(--theme-on-primary)/80';
 
   return (
     <div className={cn('relative overflow-hidden', heightCls[height], className)}>
       {/* Background layer */}
       {hasBg ? (
         <>
-          <div className="absolute inset-0 bg-black" />
+          <div className="absolute inset-0 bg-(--theme-foreground)" />
           <img
             src={slide.backgroundImage!}
             alt=""
@@ -98,15 +98,15 @@ export function HeroSlideshow({
               transitioning ? 'opacity-0' : 'opacity-100',
             )}
           />
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/65 via-black/20 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-2/3" style={{ background: 'linear-gradient(to top, color-mix(in srgb, var(--theme-foreground) 65%, transparent), transparent)' }} />
         </>
       ) : (
         <div
           className={cn(
-            'absolute inset-0 bg-linear-to-br transition-opacity duration-700 ease-in-out',
-            gradient,
+            'absolute inset-0 transition-opacity duration-700 ease-in-out',
             transitioning ? 'opacity-0' : 'opacity-100',
           )}
+          style={{ background: gradient }}
         />
       )}
 
@@ -164,7 +164,7 @@ export function HeroSlideshow({
               {slide.ctaText && (
                 <Button
                   size="lg"
-                  className="bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-lg"
+                  className="bg-(--theme-background) text-(--theme-foreground) hover:opacity-90 font-semibold shadow-lg"
                   asChild
                 >
                   <Link href={buildAcademyPath(storeContext?.slug ?? null, '/courses')}>

@@ -128,7 +128,7 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
                         >
                           <input
                             type="checkbox"
-                            className="h-4 w-4 rounded border-slate-300 text-[var(--theme-primary)] focus:ring-[var(--theme-primary)]"
+                            className="h-4 w-4 rounded border-(--theme-border-strong) text-[var(--theme-primary)] focus:ring-[var(--theme-primary)]"
                           />
                           <span>{option}</span>
                         </label>

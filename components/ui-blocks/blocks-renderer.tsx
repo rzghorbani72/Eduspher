@@ -44,7 +44,7 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
   }
 
   return (
-    <>
+    <div className="ui-blocks-root">
       {visibleBlocks.map((block) => {
         try {
           switch (block.type) {
@@ -72,12 +72,12 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
         } catch (error) {
           console.error(`Error rendering block ${block.id} (${block.type}):`, error);
           return (
-            <div key={block.id} className="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800">Error rendering block: {block.type}</p>
+            <div key={block.id} className="p-4 bg-(--theme-surface-alt) border border-(--theme-border-color) rounded-lg">
+              <p className="text-(--theme-foreground)">Error rendering block: {block.type}</p>
             </div>
           );
         }
       })}
-    </>
+    </div>
   );
 }

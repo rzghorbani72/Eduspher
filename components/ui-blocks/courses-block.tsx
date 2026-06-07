@@ -141,7 +141,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           style={{
             backgroundColor: 'var(--theme-primary)',
             color: 'var(--theme-on-primary)',
-            boxShadow: '0 4px 14px color-mix(in srgb, var(--theme-primary) 40%, transparent)',
+            boxShadow: 'var(--theme-shadow)',
           }}
         >
           <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>

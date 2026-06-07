@@ -52,7 +52,8 @@ const DEFAULTS = {
 
 const sectionStyle = {
   background:
-    "linear-gradient(135deg, #0b1020 0%, color-mix(in srgb, var(--theme-primary) 55%, #0b1020) 55%, var(--theme-primary) 100%)",
+    "linear-gradient(135deg, var(--theme-background) 0%, color-mix(in srgb, var(--theme-primary) 55%, var(--theme-background)) 55%, var(--theme-primary) 100%)",
+  color: "var(--theme-on-primary)",
 };
 
 export function MembershipBlock({ id, config, storeContext }: MembershipBlockProps) {
@@ -71,7 +72,7 @@ export function MembershipBlock({ id, config, storeContext }: MembershipBlockPro
             {c.titleHighlight && (
               <>
                 <br />
-                <span style={{ color: "var(--theme-primary-light, #60A5FA)" }}>{c.titleHighlight}</span>
+                <span style={{ color: "color-mix(in srgb, var(--theme-on-primary) 75%, var(--theme-accent))" }}>{c.titleHighlight}</span>
               </>
             )}
           </h2>
@@ -81,12 +82,12 @@ export function MembershipBlock({ id, config, storeContext }: MembershipBlockPro
           <ul className="mt-8 flex flex-col gap-3">
             {c.features.map((f, i) => (
               <li key={i} data-scroll-animate="fadeInUp" data-scroll-delay={`${0.06 * i}`} className="flex items-center gap-3 text-sm text-white/80">
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400/20 text-xs text-emerald-300">✓</span>
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--theme-accent)/25 text-xs text-(--theme-on-primary)">✓</span>
                 {f}
               </li>
             ))}
           </ul>
-          <Button size="lg" asChild className="mt-9 rounded-xl bg-white px-8 font-bold text-gray-900 hover:bg-white/90">
+          <Button size="lg" asChild className="mt-9 rounded-xl bg-(--theme-background) px-8 font-bold text-(--theme-foreground) hover:opacity-90">
             <Link href={pricingHref}>{c.ctaText}</Link>
           </Button>
         </div>
@@ -97,7 +98,7 @@ export function MembershipBlock({ id, config, storeContext }: MembershipBlockPro
           <ul className="mb-7 flex flex-col gap-2.5">
             {c.planItems.map((item, i) => (
               <li key={i} className="flex items-center gap-2 text-sm text-white/80">
-                <span className="text-xs font-bold text-emerald-300">✓</span>
+                <span className="text-xs font-bold text-(--theme-accent)">✓</span>
                 {item}
               </li>
             ))}

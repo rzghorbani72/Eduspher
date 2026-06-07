@@ -121,6 +121,13 @@
   --theme-on-secondary: #ffffff;
   --theme-on-accent: #0f172a;
 
+  /* Design-system size tokens — overridden by inline styles from the backend theme */
+  --theme-section-padding-y: 4rem;
+  --theme-container-max-width: 1120px;
+  --theme-heading-size-sm: 1.5rem;
+  --theme-heading-size-md: 2.25rem;
+  --theme-heading-size-lg: 3rem;
+
   /* Base colors - Light mode (default) */
   --background: 255 255 255;
   --foreground: 15 23 42;
@@ -817,4 +824,19 @@ select[class*="rounded-sm"] {
 
 .ripple:active::after {
   animation: ripple 0.6s;
+}
+
+/* ── Design-system size tokens — applied uniformly to every rendered block ─────
+   These let the draft design system (section_spacing, container_width,
+   heading_scale) control all sections regardless of which template they came
+   from, without each block hardcoding sizes. */
+.ui-blocks-root > section {
+  padding-top: var(--theme-section-padding-y);
+  padding-bottom: var(--theme-section-padding-y);
+}
+.ui-blocks-root .max-w-7xl {
+  max-width: var(--theme-container-max-width);
+}
+.ui-blocks-root section h2 {
+  font-size: var(--theme-heading-size-md);
 }

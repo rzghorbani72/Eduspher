@@ -61,7 +61,7 @@ const dividerStyle = { borderColor: 'var(--theme-border-color)' };
 const LogoBadge = () => (
   <div
     className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
-    style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)', boxShadow: 'color-mix(in srgb, var(--theme-primary) 40%, transparent) 0 4px 10px' }}
+    style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)', boxShadow: 'var(--theme-shadow)' }}
   >
     <span className="text-lg font-semibold">ES</span>
   </div>
@@ -179,8 +179,8 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)]/20"
-                  style={{ backgroundColor: 'var(--theme-surface)', border: '1px solid var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
+                  className="flex-1 rounded-lg border border-(--theme-border-strong) px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)]/20"
+                  style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}
                 />
                 <button
                   type="submit"

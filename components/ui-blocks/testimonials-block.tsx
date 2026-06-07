@@ -25,7 +25,7 @@ const testimonials = [
   { name: "James Wilson", role: "CTO", company: "Enterprise Solutions", content: "Our entire team uses this platform for continuous learning. The ROI has been exceptional.", avatar: "👨‍💻", revenue: "$50K/mo", rating: 5 },
 ];
 
-const Stars = ({ count, color = "text-amber-400" }: { count: number; color?: string }) => (
+const Stars = ({ count, color = "text-(--theme-accent)" }: { count: number; color?: string }) => (
   <div className="flex gap-0.5 mb-3">
     {Array.from({ length: count }).map((_, i) => (
       <svg key={i} className={cn("h-4 w-4 fill-current", color)} viewBox="0 0 20 20">
@@ -95,7 +95,7 @@ export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) 
           <div className="relative overflow-hidden">
             <div className="flex gap-6 animate-scroll w-max">
               {[...items, ...items].map((t, i) => (
-                <div key={i} className="min-w-[340px] shrink-0 rounded-2xl border p-6 shadow-sm bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)">
+                <div key={i} className="min-w-80 shrink-0 rounded-2xl border p-6 shadow-sm bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)">
                   <Stars count={t.rating} />
                   <p className="text-sm leading-relaxed mb-4 text-(--theme-foreground)/70">"{t.content}"</p>
                   <div className="flex items-center gap-3">
@@ -165,13 +165,13 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
   const items = testimonials.slice(0, 3);
 
   return (
-    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-slate-950 text-white">
+    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-(--theme-background) text-(--theme-foreground)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-center text-2xl font-bold text-white mb-12 sm:text-3xl"
+            className="text-center text-2xl font-bold text-(--theme-foreground) mb-12 sm:text-3xl"
           >
             {title}
           </h2>
@@ -181,20 +181,20 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
         <div
           data-scroll-animate="scaleUp"
           data-scroll-delay="0.1"
-          className="mx-auto max-w-3xl rounded-2xl bg-slate-900 border border-slate-800 p-10 text-center shadow-2xl mb-8"
+          className="mx-auto max-w-3xl rounded-2xl bg-(--theme-card-bg) border border-(--theme-border-color) p-10 text-center shadow-2xl mb-8"
         >
-          <p className="text-4xl font-bold text-white mb-1">{testimonials[4].revenue}</p>
-          <p className="text-slate-400 text-sm mb-6 uppercase tracking-wide">earned on this platform</p>
-          <blockquote className="text-lg leading-relaxed text-slate-300 italic mb-6">
+          <p className="text-4xl font-bold text-(--theme-foreground) mb-1">{testimonials[4].revenue}</p>
+          <p className="text-(--theme-foreground)/55 text-sm mb-6 uppercase tracking-wide">earned on this platform</p>
+          <blockquote className="text-lg leading-relaxed text-(--theme-foreground)/75 italic mb-6">
             "{testimonials[4].content}"
           </blockquote>
           <div className="flex items-center justify-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-700 text-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--theme-secondary-subtle) text-2xl">
               {testimonials[4].avatar}
             </div>
             <div className="text-left">
-              <p className="font-semibold text-white">{testimonials[4].name}</p>
-              <p className="text-sm text-slate-400">{testimonials[4].role}, {testimonials[4].company}</p>
+              <p className="font-semibold text-(--theme-foreground)">{testimonials[4].name}</p>
+              <p className="text-sm text-(--theme-foreground)/55">{testimonials[4].role}, {testimonials[4].company}</p>
             </div>
           </div>
         </div>
@@ -206,15 +206,15 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate="fadeInUp"
               data-scroll-delay={`${0.15 + 0.08 * i}`}
-              className="rounded-xl border border-slate-800 bg-slate-900/50 p-5"
+              className="rounded-xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-5"
             >
-              <Stars count={t.rating} color="text-amber-400" />
-              <p className="text-sm text-slate-300 leading-relaxed mb-4">"{t.content}"</p>
+              <Stars count={t.rating} />
+              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-4">"{t.content}"</p>
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-700 text-lg">{t.avatar}</div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(--theme-secondary-subtle) text-lg">{t.avatar}</div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{t.name}</p>
-                  <p className="text-xs text-slate-400">{t.role}</p>
+                  <p className="text-sm font-semibold text-(--theme-foreground)">{t.name}</p>
+                  <p className="text-xs text-(--theme-foreground)/55">{t.role}</p>
                 </div>
               </div>
             </div>
@@ -239,18 +239,18 @@ function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
   }));
 
   return (
-    <section id={id || "testimonials"} className="py-14 sm:py-20 bg-white">
+    <section id={id || "testimonials"} className="py-14 sm:py-20 bg-(--theme-background)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-center text-2xl font-bold text-gray-900 mb-3 sm:text-3xl"
+            className="text-center text-2xl font-bold text-(--theme-foreground) mb-3 sm:text-3xl"
           >
-            {title} <span className="text-violet-500">👉</span>
+            {title} <span className="text-(--theme-primary)">👉</span>
           </h2>
         )}
-        <p data-scroll-animate="fadeIn" data-scroll-delay="0.12" className="text-center text-sm text-gray-400 mb-10">
+        <p data-scroll-animate="fadeIn" data-scroll-delay="0.12" className="text-center text-sm text-(--theme-foreground)/55 mb-10">
           Real screenshots. Real results.
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -259,17 +259,17 @@ function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate="fadeInUp"
               data-scroll-delay={`${0.08 * i}`}
-              className="rounded-2xl border border-gray-100 bg-white shadow-md p-4 hover:shadow-lg transition-shadow"
+              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) shadow-md p-4 hover:shadow-lg transition-shadow"
             >
               <div className="flex items-center gap-2 mb-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-lg">{p.avatar}</div>
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-lg">{p.avatar}</div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-800">{p.name}</p>
-                  <p className="text-xs font-bold text-violet-600">{p.revenue}</p>
+                  <p className="text-xs font-semibold text-(--theme-foreground)">{p.name}</p>
+                  <p className="text-xs font-bold text-(--theme-primary)">{p.revenue}</p>
                 </div>
               </div>
-              <Stars count={p.rating} color="text-yellow-400" />
-              <p className="text-xs text-gray-600 leading-relaxed">"{p.content}"</p>
+              <Stars count={p.rating} />
+              <p className="text-xs text-(--theme-foreground)/70 leading-relaxed">"{p.content}"</p>
             </div>
           ))}
         </div>
@@ -286,19 +286,19 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
   const creators = testimonials.slice(0, 2);
 
   return (
-    <section id={id || "testimonials"} className="py-14 sm:py-20 bg-white">
+    <section id={id || "testimonials"} className="py-14 sm:py-20 bg-(--theme-background)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
           <div className="mx-auto max-w-2xl text-center mb-12">
             <h2
               data-scroll-animate="fadeIn"
               data-scroll-delay="0.05"
-              className="text-2xl font-bold text-gray-900 sm:text-3xl"
+              className="text-2xl font-bold text-(--theme-foreground) sm:text-3xl"
             >
               {title}
             </h2>
             {subtitle && (
-              <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-2 text-base text-gray-500">
+              <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-2 text-base text-(--theme-foreground)/60">
                 {subtitle}
               </p>
             )}
@@ -310,20 +310,20 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate={i === 0 ? "slideLeft" : "slideRight"}
               data-scroll-delay="0.1"
-              className="rounded-2xl border border-gray-100 bg-gray-50 p-8 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-8 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-4 mb-5">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-100 text-3xl">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-3xl">
                   {c.avatar}
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900">{c.name}</p>
-                  <p className="text-sm text-gray-500">{c.role}</p>
-                  <p className="text-sm font-semibold text-teal-600">{c.revenue}/month</p>
+                  <p className="font-bold text-(--theme-foreground)">{c.name}</p>
+                  <p className="text-sm text-(--theme-foreground)/60">{c.role}</p>
+                  <p className="text-sm font-semibold text-(--theme-primary)">{c.revenue}/month</p>
                 </div>
               </div>
-              <Stars count={c.rating} color="text-amber-400" />
-              <p className="text-gray-600 leading-relaxed">"{c.content}"</p>
+              <Stars count={c.rating} />
+              <p className="text-(--theme-foreground)/70 leading-relaxed">"{c.content}"</p>
             </div>
           ))}
         </div>
@@ -335,10 +335,10 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate="scaleUp"
               data-scroll-delay={`${0.05 * i}`}
-              className="rounded-xl border border-gray-100 bg-white p-3 text-center shadow-sm"
+              className="rounded-xl border border-(--theme-border-color) bg-(--theme-card-bg) p-3 text-center shadow-sm"
             >
-              <p className="text-lg font-bold text-teal-600">{t.revenue}</p>
-              <p className="text-xs text-gray-500">{t.name}</p>
+              <p className="text-lg font-bold text-(--theme-primary)">{t.revenue}</p>
+              <p className="text-xs text-(--theme-foreground)/60">{t.name}</p>
             </div>
           ))}
         </div>
@@ -354,13 +354,13 @@ function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
   const items = testimonials.slice(0, 3);
 
   return (
-    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-amber-50">
+    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-(--theme-surface-alt)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-xl text-center mb-12">
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-2xl font-bold text-gray-900 sm:text-3xl"
+            className="text-2xl font-bold text-(--theme-foreground) sm:text-3xl"
           >
             {title}
           </h2>
@@ -371,15 +371,15 @@ function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate="fadeInUp"
               data-scroll-delay={`${0.1 * i}`}
-              className="rounded-2xl bg-white border border-amber-100 p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-2xl bg-(--theme-card-bg) border border-(--theme-border-color) p-6 shadow-sm hover:shadow-md transition-shadow"
             >
-              <Stars count={t.rating} color="text-amber-400" />
-              <p className="text-sm text-gray-700 leading-relaxed mb-5">"{t.content}"</p>
+              <Stars count={t.rating} />
+              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-5">"{t.content}"</p>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-xl">{t.avatar}</div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-xl">{t.avatar}</div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">{t.name}</p>
-                  <p className="text-xs text-teal-600 font-medium">{t.revenue}/mo</p>
+                  <p className="font-semibold text-sm text-(--theme-foreground)">{t.name}</p>
+                  <p className="text-xs text-(--theme-primary) font-medium">{t.revenue}/mo</p>
                 </div>
               </div>
             </div>
@@ -397,13 +397,13 @@ function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
   const items = testimonials.slice(0, 4);
 
   return (
-    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-white overflow-hidden">
+    <section id={id || "testimonials"} className="py-16 sm:py-20 bg-(--theme-background) overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-xl text-center mb-12">
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-2xl font-bold text-gray-900 sm:text-3xl"
+            className="text-2xl font-bold text-(--theme-foreground) sm:text-3xl"
           >
             {title}
           </h2>
@@ -415,17 +415,17 @@ function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate={i % 2 === 0 ? "slideLeft" : "slideRight"}
               data-scroll-delay={`${0.08 * i}`}
-              className="rounded-2xl border border-violet-100 bg-violet-50 p-5 shadow-sm"
+              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-5 shadow-sm"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-200 text-xl">{t.avatar}</div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-xl">{t.avatar}</div>
                 <div>
-                  <p className="font-semibold text-sm text-gray-900">{t.name}</p>
-                  <p className="text-xs font-bold text-violet-600">{t.revenue}/mo</p>
+                  <p className="font-semibold text-sm text-(--theme-foreground)">{t.name}</p>
+                  <p className="text-xs font-bold text-(--theme-primary)">{t.revenue}/mo</p>
                 </div>
               </div>
-              <Stars count={t.rating} color="text-violet-400" />
-              <p className="text-sm text-gray-600 leading-relaxed">"{t.content}"</p>
+              <Stars count={t.rating} />
+              <p className="text-sm text-(--theme-foreground)/70 leading-relaxed">"{t.content}"</p>
             </div>
           ))}
         </div>

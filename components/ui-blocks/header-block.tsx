@@ -117,9 +117,9 @@ function KodiyarHeader({ id, sticky }: { id?: string; sticky: boolean }) {
 
         <form
           onSubmit={handleSearch}
-          className="hidden h-[38px] max-w-[280px] flex-1 items-center gap-2 rounded-[10px] border border-(--theme-border-strong) bg-(--theme-surface-alt) px-3.5 md:flex"
+          className="hidden h-10 max-w-xs flex-1 items-center gap-2 rounded-(--theme-border-radius) border border-(--theme-border-strong) bg-(--theme-surface-alt) px-3.5 md:flex"
         >
-          <Search className="h-[15px] w-[15px] text-(--theme-foreground)/40" />
+          <Search className="h-4 w-4 text-(--theme-foreground)/40" />
           <input
             type="text"
             value={query}
@@ -147,7 +147,7 @@ function KodiyarHeader({ id, sticky }: { id?: string; sticky: boolean }) {
               >
                 {t("auth.login")}
               </Link>
-              <Button asChild size="sm" className="rounded-[9px] bg-(--theme-primary) font-bold text-(--theme-on-primary) hover:opacity-90">
+              <Button asChild size="sm" className="rounded-(--theme-border-radius) bg-(--theme-primary) font-bold text-(--theme-on-primary) hover:opacity-90">
                 <Link href={buildPath("/auth/register")}>{t("auth.startFree")}</Link>
               </Button>
             </>
