@@ -13,13 +13,22 @@ interface FeaturesBlockProps {
     gridColumns?: number;
     showIcons?: boolean;
     variant?: "cards" | "list" | "icons";
-    style?: "default" | "stats" | "dark" | "benefits" | "studio" | "creator";
+    style?: "default" | "stats" | "dark" | "benefits" | "studio" | "creator" | "instructors";
     dark?: boolean;
     showStats?: boolean;
     stats?: Stat[];
     zeroCostBadge?: boolean;
   };
 }
+
+const DEFAULT_INSTRUCTORS = [
+  { name: 'علی محمدی', role: 'مهندس ارشد فرانت‌اند در دیجی‌کالا', experience: '۸+ سال', students: '۲,۴۰۰', avatar: '👨‍💻' },
+  { name: 'سارا احمدی', role: 'توسعه‌دهنده بک‌اند در اسنپ', experience: '۶+ سال', students: '۱,۸۰۰', avatar: '👩‍💻' },
+  { name: 'رضا کریمی', role: 'مدرس دوره‌های هوش مصنوعی', experience: '۱۰+ سال', students: '۳,۱۰۰', avatar: '🧑‍🏫' },
+  { name: 'مریم رضایی', role: 'مهندس DevOps در آپارات', experience: '۷+ سال', students: '۲,۰۰۰', avatar: '👩‍🔧' },
+  { name: 'امیر حسینی', role: 'مدیر فنی و مدرس معماری نرم‌افزار', experience: '۱۲+ سال', students: '۴,۵۰۰', avatar: '🧑‍💼' },
+  { name: 'نگار صادقی', role: 'توسعه‌دهنده موبایل در دیوار', experience: '۵+ سال', students: '۱,۵۰۰', avatar: '👩‍🚀' },
+];
 
 // Module-level English defaults used by sub-style components (kajabi, podia, stan, circle templates)
 const DEFAULT_FEATURES = [
@@ -47,8 +56,9 @@ const gridColCls: Record<number, string> = {
 export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   const blockStyle = config?.style ?? "default";
 
-  if (blockStyle === "stats")    return <StatsFeatures id={id} config={config} />;
-  if (blockStyle === "dark")     return <DarkFeatures id={id} config={config} />;
+  if (blockStyle === "stats")       return <StatsFeatures id={id} config={config} />;
+  if (blockStyle === "dark")        return <DarkFeatures id={id} config={config} />;
+  if (blockStyle === "instructors") return <InstructorsFeatures id={id} config={config} />;
   if (blockStyle === "benefits") return <BenefitsFeatures id={id} config={config} />;
   if (blockStyle === "studio")   return <StudioFeatures id={id} config={config} />;
   if (blockStyle === "creator")  return <CreatorFeatures id={id} config={config} />;
@@ -199,13 +209,13 @@ function StatsFeatures({ id, config }: FeaturesBlockProps) {
   const stats = config?.stats ?? DEFAULT_STATS;
 
   return (
-    <section id={id || "features"} className="py-12 sm:py-16 bg-white border-y border-gray-100">
+    <section id={id || "features"} className="py-12 sm:py-16 bg-(--theme-surface-alt) border-y border-(--theme-border-color)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
           <p
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-center text-sm font-semibold uppercase tracking-widest text-rose-500 mb-8"
+            className="text-center text-sm font-semibold uppercase tracking-widest text-(--theme-primary) mb-8"
           >
             {title}
           </p>
@@ -218,8 +228,68 @@ function StatsFeatures({ id, config }: FeaturesBlockProps) {
               data-scroll-delay={`${0.1 * i}`}
               className="flex flex-col items-center text-center"
             >
-              <p className="text-4xl font-bold text-gray-900 sm:text-5xl tabular-nums">{s.value}</p>
-              <p className="mt-1 text-sm text-gray-500">{s.label}</p>
+              <p className="text-4xl font-bold text-(--theme-foreground) sm:text-5xl tabular-nums">{s.value}</p>
+              <p className="mt-1 text-sm text-(--theme-foreground)/60">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Instructors showcase (kodiyar / dark academy templates) ──────────────────
+
+function InstructorsFeatures({ id, config }: FeaturesBlockProps) {
+  const title = config?.title;
+  const subtitle = config?.subtitle;
+  const gridColumns = config?.gridColumns || 3;
+  const cols = gridColCls[gridColumns] ?? gridColCls[3];
+  const items = DEFAULT_INSTRUCTORS.slice(0, gridColumns * 2);
+
+  return (
+    <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-background) text-(--theme-foreground)">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {(title || subtitle) && (
+          <div className="mx-auto max-w-2xl text-center mb-12">
+            {title && (
+              <h2
+                data-scroll-animate="fadeIn"
+                data-scroll-delay="0.05"
+                className="text-2xl font-bold tracking-tight sm:text-4xl text-(--theme-foreground)"
+              >
+                {title}
+              </h2>
+            )}
+            {subtitle && (
+              <p
+                data-scroll-animate="fadeIn"
+                data-scroll-delay="0.15"
+                className="mt-2 text-base text-(--theme-foreground)/60"
+              >
+                {subtitle}
+              </p>
+            )}
+          </div>
+        )}
+        <div className={cn("grid gap-5", cols)}>
+          {items.map((instructor, i) => (
+            <div
+              key={i}
+              data-scroll-animate="fadeInUp"
+              data-scroll-delay={`${0.07 * i}`}
+              className="group flex flex-col items-center gap-3 rounded-2xl border p-6 text-center transition-all hover:-translate-y-1 bg-(--theme-card-bg) border-(--theme-border-color)"
+            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-full text-3xl bg-(--theme-primary-subtle)">
+                {instructor.avatar}
+              </div>
+              <h3 className="text-base font-semibold text-(--theme-foreground)">{instructor.name}</h3>
+              <p className="text-sm leading-6 text-(--theme-foreground)/60">{instructor.role}</p>
+              <div className="flex items-center gap-4 text-xs text-(--theme-foreground)/50">
+                <span>{instructor.experience} سابقه</span>
+                <span className="h-1 w-1 rounded-full bg-(--theme-foreground)/30" />
+                <span>{instructor.students} دانشجو</span>
+              </div>
             </div>
           ))}
         </div>
