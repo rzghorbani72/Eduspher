@@ -1,7 +1,17 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, CircleUser, Menu, X } from "lucide-react";
+
+import Link from "@/components/ui/link";
+import { Button } from "@/components/ui/button";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { cn } from "@/lib/utils";
+import { useAcademyContext, useStorePath } from "@/components/providers/store-provider";
+import { useAuthContext } from "@/components/providers/auth-provider";
+import { CartIcon } from "@/components/cart/cart-icon";
+import { useTranslation } from "@/lib/i18n/hooks";
 
 interface HeaderBlockProps {
   id?: string;
@@ -13,6 +23,7 @@ interface HeaderBlockProps {
     transparent?: boolean;
     compact?: boolean;
     minimal?: boolean;
+    style?: "default" | "kodiyar";
   };
 }
 
@@ -21,6 +32,11 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
   const transparent = config?.transparent === true;
   const compact = config?.compact === true;
   const minimal = config?.minimal === true;
+  const style = config?.style ?? "default";
+
+  if (style === "kodiyar") {
+    return <KodiyarHeader id={id} sticky={sticky} />;
+  }
 
   return (
     <header
@@ -47,3 +63,123 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
   );
 }
 
+// ── Kodiyar — programming-academy header with search + brand nav ─────────────
+
+function KodiyarHeader({ id, sticky }: { id?: string; sticky: boolean }) {
+  const router = useRouter();
+  const { name: academyName } = useAcademyContext();
+  const { isAuthenticated } = useAuthContext();
+  const buildPath = useStorePath();
+  const { t } = useTranslation();
+  const [query, setQuery] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navItems = [
+    { href: "/courses", label: t("navigation.courses") },
+    { href: "/paths", label: t("navigation.roadmap") },
+    { href: "/pricing", label: t("footer.pricing") },
+    { href: "/about", label: t("navigation.aboutUs") },
+  ];
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : "";
+    router.push(buildPath(`/courses${params}`));
+  };
+
+  return (
+    <header
+      id={id || "header"}
+      className={cn(
+        "z-50 w-full border-b border-(--theme-border-color) bg-(--theme-background)/95 backdrop-blur-md transition-all",
+        sticky && "sticky top-0"
+      )}
+    >
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-5 px-4 sm:px-6">
+        <Link href={buildPath("/")} className="flex shrink-0 items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--theme-primary) font-mono text-sm font-black tracking-tighter text-(--theme-on-primary)">
+            {"</>"}
+          </div>
+          <span className="text-lg font-bold text-(--theme-foreground)">{academyName}</span>
+        </Link>
+
+        <nav className="hidden items-center gap-1 lg:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={buildPath(item.href)}
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-(--theme-foreground)/65 transition-colors hover:bg-(--theme-surface-alt) hover:text-(--theme-foreground)"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <form
+          onSubmit={handleSearch}
+          className="hidden h-[38px] max-w-[280px] flex-1 items-center gap-2 rounded-[10px] border border-(--theme-border-strong) bg-(--theme-surface-alt) px-3.5 md:flex"
+        >
+          <Search className="h-[15px] w-[15px] text-(--theme-foreground)/40" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("courses.searchPlaceholder")}
+            className="w-full bg-transparent text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
+          />
+        </form>
+
+        <div className="mr-auto flex shrink-0 items-center gap-2.5">
+          <CartIcon isAuthenticated={isAuthenticated} />
+          {isAuthenticated ? (
+            <Link
+              href={buildPath("/account")}
+              className="hidden h-9 items-center gap-2 rounded-full border border-(--theme-border-strong) px-3 text-sm font-medium text-(--theme-foreground) md:inline-flex"
+            >
+              <CircleUser className="h-5 w-5 text-(--theme-primary)" />
+              {t("account.myCourses")}
+            </Link>
+          ) : (
+            <>
+              <Link
+                href={buildPath("/auth/login")}
+                className="hidden rounded-lg px-3.5 py-2 text-sm font-semibold text-(--theme-foreground)/65 transition-colors hover:bg-(--theme-surface-alt) hover:text-(--theme-foreground) md:inline-block"
+              >
+                {t("auth.login")}
+              </Link>
+              <Button asChild size="sm" className="rounded-[9px] bg-(--theme-primary) font-bold text-(--theme-on-primary) hover:opacity-90">
+                <Link href={buildPath("/auth/register")}>{t("auth.startFree")}</Link>
+              </Button>
+            </>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setMobileOpen((v) => !v)}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--theme-border-strong) text-(--theme-foreground) lg:hidden"
+          aria-label="Toggle navigation"
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="border-t border-(--theme-border-color) px-4 py-4 lg:hidden">
+          <nav className="flex flex-col gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={buildPath(item.href)}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-(--theme-foreground)/70 hover:bg-(--theme-surface-alt) hover:text-(--theme-foreground)"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
+    </header>
+  );
+}

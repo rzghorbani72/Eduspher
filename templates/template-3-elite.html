@@ -1,0 +1,6018 @@
+<!doctype html>
+<html
+  data-src-ver="585060b6"
+  lang="fa"
+  dir="rtl"
+  data-theme="dark"
+  data-om-id="585060b6:0"
+>
+  <head data-om-id="585060b6:1">
+    <style data-omelette-injected>
+      html,
+      body {
+        background: transparent;
+      }
+    </style>
+    <script data-omelette-injected>
+      (() => {
+        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var x = true;
+        var S = 30000;
+        var f = 3000;
+        document.addEventListener("DOMContentLoaded", () => {
+          const H = window.Babel;
+          const G = "om-src-id";
+          if (
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[G])
+          ) {
+            H.registerPlugin(G, ({ types: Y }) => ({
+              visitor: {
+                JSXOpeningElement(U, Q) {
+                  const J = U.node;
+                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  for (let V = 0; V < J.attributes.length; V++) {
+                    const L = J.attributes[V];
+                    if (
+                      L.type === "JSXAttribute" &&
+                      L.name &&
+                      L.name.name === "data-om-id"
+                    )
+                      return;
+                  }
+                  const W =
+                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const Z = J.loc && J.loc.start;
+                  const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
+                  J.attributes.push(
+                    Y.jsxAttribute(
+                      Y.jsxIdentifier("data-om-id"),
+                      Y.stringLiteral(z),
+                    ),
+                  );
+                },
+              },
+            }));
+          }
+          const k = "om-text-extract";
+          let A = false;
+          if (
+            x &&
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[k])
+          ) {
+            const Y = window.React;
+            if (Y && Y.useSyncExternalStore && Y.createElement) {
+              A = true;
+              const U = {};
+              const Q = new Set();
+              let J = 0;
+              window.__omTextO = U;
+              window.__omTextSet = (z) => {
+                for (const V in z) {
+                  const L = z[V];
+                  if (L == null) delete U[V];
+                  else U[V] = L;
+                }
+                J++;
+                Q.forEach((V) => V());
+              };
+              const W = (z) => {
+                Q.add(z);
+                return () => Q.delete(z);
+              };
+              const Z = () => J;
+              window.__OmT = function z(V) {
+                Y.useSyncExternalStore(W, Z, Z);
+                return Y.createElement(
+                  "span",
+                  { "data-om-text": V.i, className: "__om-t" },
+                  V.i in U ? U[V.i] : V.children,
+                );
+              };
+              H.registerPlugin(k, ({ types: z }) => {
+                const V = {
+                  style: 1,
+                  script: 1,
+                  noscript: 1,
+                  textarea: 1,
+                  title: 1,
+                  option: 1,
+                  text: 1,
+                  tspan: 1,
+                  textPath: 1,
+                };
+                const L = {
+                  placeholder: 1,
+                  alt: 1,
+                  title: 1,
+                  label: 1,
+                  "aria-label": 1,
+                  "aria-description": 1,
+                  "aria-placeholder": 1,
+                };
+                const _ = ($, C) =>
+                  z.logicalExpression(
+                    "??",
+                    z.memberExpression(
+                      z.logicalExpression(
+                        "||",
+                        z.memberExpression(
+                          z.identifier("window"),
+                          z.identifier("__omTextO"),
+                        ),
+                        z.objectExpression([]),
+                      ),
+                      z.stringLiteral($),
+                      true,
+                    ),
+                    C,
+                  );
+                const E = ($) =>
+                  ($.file && $.file.opts && $.file.opts.filename) || "?";
+                const B = ($) => ($.file && $.file.code) || "";
+                const b = ($, C) => {
+                  const X = (F) =>
+                    F &&
+                    F.start != null &&
+                    F.end != null &&
+                    (F.type === "StringLiteral" ||
+                      (F.type === "TemplateLiteral" &&
+                        F.expressions.length === 0))
+                      ? [F.start, F.end]
+                      : null;
+                  const N = X(C);
+                  if (N) return N;
+                  if (C && C.type === "Identifier") {
+                    const F = $.scope.getBinding(C.name);
+                    if (
+                      F &&
+                      F.constant &&
+                      F.path.node.type === "VariableDeclarator"
+                    ) {
+                      return X(F.path.node.init);
+                    }
+                  }
+                  return null;
+                };
+                const M = ($, C, X) => {
+                  const N = $.node;
+                  let F = false;
+                  const w = (K, q) => {
+                    F = true;
+                    return z.jsxElement(
+                      z.jsxOpeningElement(
+                        z.jsxIdentifier("__OmT"),
+                        [
+                          z.jsxAttribute(
+                            z.jsxIdentifier("i"),
+                            z.stringLiteral(K),
+                          ),
+                        ],
+                        false,
+                      ),
+                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      [q],
+                      false,
+                    );
+                  };
+                  const D = N.children.map((K) => {
+                    if (K.type === "JSXText") {
+                      if (K.start == null || K.end == null) return K;
+                      const q = X.slice(K.start, K.end);
+                      const R = q.length - q.trimStart().length;
+                      const m = q.length - q.trimEnd().length;
+                      if (R + m >= q.length) return K;
+                      return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
+                    }
+                    if (K.type === "JSXExpressionContainer") {
+                      const q = b($, K.expression);
+                      if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
+                    }
+                    return K;
+                  });
+                  if (F) N.children = D;
+                };
+                return {
+                  visitor: {
+                    JSXOpeningElement($, C) {
+                      const X = $.node;
+                      const N = E(C);
+                      const F = {};
+                      for (let w = 0; w < X.attributes.length; w++) {
+                        const D = X.attributes[w];
+                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        const K = D.name.name;
+                        if (!L[K]) continue;
+                        if (!D.value || D.value.type !== "StringLiteral")
+                          continue;
+                        if (D.value.start == null || D.value.end == null)
+                          continue;
+                        const q = `txt:${N}:${D.value.start}:${D.value.end}`;
+                        F[K] = q;
+                        D.value = z.jsxExpressionContainer(
+                          _(q, z.stringLiteral(D.value.value)),
+                        );
+                      }
+                      if (Object.keys(F).length) {
+                        X.attributes.push(
+                          z.jsxAttribute(
+                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.stringLiteral(JSON.stringify(F)),
+                          ),
+                        );
+                      }
+                    },
+                    JSXElement($, C) {
+                      const X = $.node.openingElement;
+                      const N = X && X.name && X.name.name;
+                      if (N === "__OmT") return;
+                      if (typeof N === "string" && V[N]) return;
+                      M($, E(C), B(C));
+                    },
+                    JSXFragment($, C) {
+                      M($, E(C), B(C));
+                    },
+                  },
+                };
+              });
+            }
+          }
+          const u = A
+            ? ["transform-react-jsx-source", G, k]
+            : ["transform-react-jsx-source", G];
+          document
+            .querySelectorAll(
+              'script[type="text/babel"],script[type="text/jsx"]',
+            )
+            .forEach((Y, U) => {
+              const Q = Y.getAttribute("data-plugins") || "";
+              const J = u.filter((W) => Q.indexOf(W) < 0);
+              if (J.length) {
+                Y.setAttribute(
+                  "data-plugins",
+                  Q ? `${Q},${J.join(",")}` : J.join(","),
+                );
+              }
+              if (!Y.hasAttribute("data-filename")) {
+                Y.setAttribute(
+                  "data-filename",
+                  Y.getAttribute("src") || `inline-${U}`,
+                );
+              }
+            });
+        });
+        var y = window.parent;
+        if (y && y !== window) {
+          const H = (Q, J) => {
+            try {
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+            } catch {}
+          };
+          ["log", "warn", "error"].forEach((Q) => {
+            const J = console[Q];
+            console[Q] = (...W) => {
+              const Z = W.map((z) => {
+                try {
+                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                } catch {
+                  try {
+                    return String(z);
+                  } catch {
+                    return "[unstringifiable]";
+                  }
+                }
+              }).join(" ");
+              H(Q, Z);
+              J.apply(console, W);
+            };
+          });
+          window.addEventListener(
+            "error",
+            (Q) => {
+              const J = Q.target;
+              if (J && J !== window && J.tagName) {
+                const W = J.src || J.href || "";
+                H("resource_error", `${J.tagName} failed to load: ${W}`);
+              } else {
+                H(
+                  "error",
+                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                );
+              }
+            },
+            true,
+          );
+          window.addEventListener("unhandledrejection", (Q) => {
+            const J = Q.reason;
+            const W =
+              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H("error", `Unhandled rejection: ${W}`);
+          });
+          const G = () => {
+            try {
+              y.postMessage(
+                {
+                  type: "omelette:height",
+                  height: document.documentElement.scrollHeight,
+                },
+                "*",
+              );
+            } catch {}
+          };
+          if (document.readyState === "complete") G();
+          else window.addEventListener("load", G);
+          if (window.ResizeObserver)
+            new ResizeObserver(G).observe(document.documentElement);
+          const k = {};
+          let A = 0;
+          window.claude = {
+            complete(Q) {
+              return new Promise((J, W) => {
+                if (!j.length) {
+                  W(new Error("claude.complete: no parent origin"));
+                  return;
+                }
+                const Z = `c${++A}`;
+                const z = () =>
+                  setTimeout(() => {
+                    delete k[Z];
+                    W(new Error(`claude.complete: no data for ${S / 1000}s`));
+                  }, S);
+                const V = z();
+                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                try {
+                  for (const L of j) {
+                    y.postMessage({ __om_api: true, id: Z, body: Q }, L);
+                  }
+                } catch (L) {
+                  clearTimeout(V);
+                  delete k[Z];
+                  W(L);
+                }
+              });
+            },
+          };
+          const u = {};
+          let Y = 0;
+          window.omelette = {
+            writeFile: (Q, J) =>
+              new Promise((W, Z) => {
+                if (!j.length) {
+                  W();
+                  return;
+                }
+                const z = `f${++Y}`;
+                const V = setTimeout(() => {
+                  delete u[z];
+                  W();
+                }, f);
+                u[z] = { resolve: W, reject: Z, t: V };
+                try {
+                  for (const L of j) {
+                    y.postMessage(
+                      {
+                        __om_file: true,
+                        id: z,
+                        op: "write",
+                        path: Q,
+                        content: J,
+                      },
+                      L,
+                    );
+                  }
+                } catch {
+                  clearTimeout(V);
+                  delete u[z];
+                  W();
+                }
+              }),
+          };
+          const U = (Q) => {
+            try {
+              return JSON.stringify(Q);
+            } catch {
+              return JSON.stringify(String(Q));
+            }
+          };
+          window.addEventListener("message", (Q) => {
+            if (j.indexOf(Q.origin) < 0) return;
+            if (Q.source !== y) return;
+            const J = Q.data;
+            if (!J) return;
+            if (J.type === "omelette-preview-refresh") {
+              if (
+                typeof J.token !== "string" ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
+                  J.token,
+                )
+              )
+                return;
+              const z = Math.max(
+                1,
+                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
+              );
+              document.cookie =
+                "__Host-omelette-preview=" +
+                J.token +
+                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                z;
+              return;
+            }
+            if (J.__om_file_r) {
+              const z = u[J.id];
+              if (!z) return;
+              clearTimeout(z.t);
+              delete u[J.id];
+              if (J.ok) z.resolve();
+              else z.reject(new Error(J.error || "write failed"));
+              return;
+            }
+            if (J.__om_api_r) {
+              const z = k[J.id];
+              if (!z) return;
+              if (J.error != null) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.reject(new Error(J.error));
+                return;
+              }
+              if (J.chunk != null) {
+                clearTimeout(z.t);
+                z.t = z.arm();
+                z.text += J.chunk;
+                return;
+              }
+              if (J.done) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.resolve(J.text != null ? J.text : z.text);
+                return;
+              }
+              return;
+            }
+            if (!J.__om_eval) return;
+            const W = J;
+            const Z = (z) => {
+              Q.source.postMessage(
+                { ...z, __om_eval_r: 1, id: W.id },
+                Q.origin,
+              );
+            };
+            try {
+              const z = (0, eval)(W.code);
+              if (z && typeof z.then === "function") {
+                z.then(
+                  (V) => Z({ ok: 1, v: U(V) }),
+                  (V) => Z({ ok: 0, e: String(V) }),
+                );
+              } else {
+                Z({ ok: 1, v: U(z) });
+              }
+            } catch (z) {
+              Z({ ok: 0, e: String(z) });
+            }
+          });
+        }
+      })();
+    </script>
+
+    <meta charset="UTF-8" data-om-id="585060b6:2" />
+    <style>
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 300;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 400;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 500;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 700;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 800;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 900;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+    </style>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      data-om-id="585060b6:3"
+    />
+    <title>منتوریار — نخبگان</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --black: #0a0a0a;
+        --black2: #141414;
+        --black3: #1e1e1e;
+        --gold: oklch(72% 0.14 78);
+        --gold-dark: oklch(58% 0.14 78);
+        --gold-light: oklch(88% 0.08 78);
+        --cream: #f5f0e8;
+        --muted: oklch(50% 0.01 80);
+        --muted-light: oklch(65% 0.01 80);
+        --border: oklch(22% 0.01 80);
+        --border-light: oklch(28% 0.01 80);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        background: var(--black);
+        color: var(--cream);
+        line-height: 1.8;
+        letter-spacing: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 200;
+        padding: 0 48px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: linear-gradient(
+          to bottom,
+          rgba(10, 10, 10, 0.95),
+          transparent
+        );
+        backdrop-filter: blur(2px);
+      }
+      .nav-logo {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--cream);
+        letter-spacing: 0;
+        text-decoration: none;
+      }
+      .nav-logo span {
+        color: var(--gold);
+      }
+      .nav-links {
+        display: flex;
+        gap: 40px;
+      }
+      .nav-links a {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted-light);
+        text-decoration: none;
+        letter-spacing: 0;
+        transition: color 0.25s;
+      }
+      .nav-links a:hover {
+        color: var(--cream);
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .nav-login {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted-light);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-login:hover {
+        color: var(--cream);
+      }
+      .btn-gold {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--black);
+        background: var(--gold);
+        border: none;
+        padding: 11px 24px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-gold:hover {
+        background: var(--gold-light);
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+        padding: 100px 80px 80px;
+      }
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          160deg,
+          #0a0a0a 0%,
+          #1a1510 40%,
+          #0d0b07 100%
+        );
+      }
+      .hero-bg-pattern {
+        position: absolute;
+        inset: 0;
+        background-image:
+          radial-gradient(
+            circle at 30% 30%,
+            oklch(72% 0.14 78 / 0.08) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            oklch(72% 0.14 78 / 0.05) 0%,
+            transparent 50%
+          );
+      }
+      .hero-portrait-grid {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 52%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .portrait-cell {
+        position: relative;
+        overflow: hidden;
+      }
+      .portrait-bg {
+        width: 100%;
+        height: 100%;
+      }
+      .portrait-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to left, var(--black) 0%, transparent 40%);
+      }
+      .portrait-overlay-bottom {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, var(--black) 0%, transparent 40%);
+      }
+      .portrait-label {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2;
+        text-align: right;
+      }
+      .pl-name {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--cream);
+      }
+      .pl-role {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--gold);
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 560px;
+      }
+      .hero-eyebrow {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--gold);
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+      .hero-eyebrow::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+      }
+      .hero h1 {
+        font-size: clamp(52px, 6vw, 84px);
+        font-weight: 600;
+        line-height: 1.1;
+        color: var(--cream);
+        margin-bottom: 28px;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--gold);
+      }
+      .hero p {
+        font-size: 16px;
+        color: var(--muted-light);
+        line-height: 1.85;
+        max-width: 420px;
+        margin-bottom: 48px;
+        font-weight: 300;
+      }
+      .hero-cta {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .btn-hero-gold {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--black);
+        background: var(--gold);
+        border: none;
+        padding: 16px 40px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-hero-gold:hover {
+        background: var(--gold-light);
+        transform: translateY(-1px);
+      }
+      .btn-ghost-cream {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--cream);
+        background: none;
+        border: 1px solid oklch(40% 0.01 80);
+        padding: 15px 40px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-ghost-cream:hover {
+        border-color: var(--cream);
+      }
+      .hero-scroll {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .scroll-line {
+        width: 1px;
+        height: 48px;
+        background: linear-gradient(to bottom, var(--gold), transparent);
+        animation: scrollPulse 2s ease-in-out infinite;
+      }
+      @keyframes scrollPulse {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      .scroll-label {
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .instructors-section {
+        padding: 120px 80px;
+        background: var(--black2);
+      }
+      .inst-header {
+        text-align: center;
+        margin-bottom: 80px;
+      }
+      .section-eyebrow {
+        font-size: 11px;
+        color: var(--gold);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+      .section-eyebrow::before,
+      .section-eyebrow::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+      }
+      .inst-header h2 {
+        font-size: clamp(36px, 5vw, 60px);
+        font-weight: 500;
+        line-height: 1.2;
+        color: var(--cream);
+      }
+      .inst-header h2 em {
+        font-style: italic;
+        color: var(--gold);
+      }
+      .inst-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+      }
+      .inst-card {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        aspect-ratio: 3/4;
+      }
+      .inst-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(10, 10, 10, 0.95) 0%,
+          rgba(10, 10, 10, 0.3) 50%,
+          transparent 100%
+        );
+        transition: background 0.3s;
+      }
+      .inst-card:hover .inst-gradient {
+        background: linear-gradient(
+          to top,
+          rgba(10, 10, 10, 0.98) 0%,
+          rgba(10, 10, 10, 0.5) 60%,
+          rgba(10, 10, 10, 0.1) 100%
+        );
+      }
+      .inst-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 28px;
+        text-align: right;
+      }
+      .inst-specialty {
+        font-size: 10px;
+        color: var(--gold);
+        margin-bottom: 6px;
+        font-weight: 700;
+      }
+      .inst-name {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--cream);
+        margin-bottom: 4px;
+      }
+      .inst-detail {
+        font-size: 13px;
+        color: var(--muted-light);
+        margin-bottom: 16px;
+      }
+      .inst-cta {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gold);
+        opacity: 0;
+        transform: translateY(8px);
+        transition: all 0.3s;
+      }
+      .inst-card:hover .inst-cta {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .featured-course {
+        padding: 120px 80px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+      .fc-label {
+        font-size: 11px;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 28px;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+      .fc-label::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+      }
+      .fc-title {
+        font-size: clamp(32px, 4vw, 52px);
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--cream);
+        margin-bottom: 24px;
+      }
+      .fc-title em {
+        font-style: italic;
+        color: var(--gold);
+      }
+      .fc-description {
+        font-size: 15px;
+        color: var(--muted-light);
+        line-height: 1.9;
+        margin-bottom: 32px;
+        font-weight: 300;
+      }
+      .fc-includes {
+        margin-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .fc-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        flex-direction: row-reverse;
+      }
+      .fc-dash {
+        width: 20px;
+        height: 1px;
+        background: var(--gold);
+        margin-top: 14px;
+        flex-shrink: 0;
+      }
+      .fc-item-text {
+        font-size: 14px;
+        color: var(--muted-light);
+        line-height: 1.6;
+        text-align: right;
+      }
+      .fc-item-text strong {
+        color: var(--cream);
+        font-weight: 500;
+      }
+      .fc-card {
+        background: var(--black2);
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .fc-thumb {
+        height: 280px;
+        background: linear-gradient(
+          145deg,
+          oklch(18% 0.04 78),
+          oklch(12% 0.04 78)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .fc-play {
+        width: 64px;
+        height: 64px;
+        border: 1.5px solid var(--gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: var(--gold);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .fc-play:hover {
+        background: var(--gold);
+        color: var(--black);
+      }
+      .fc-duration {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        font-size: 12px;
+        color: var(--gold);
+        background: rgba(10, 10, 10, 0.8);
+        padding: 4px 12px;
+        border: 1px solid var(--border);
+      }
+      .fc-meta {
+        padding: 28px;
+      }
+      .fc-course-name {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--cream);
+        margin-bottom: 8px;
+      }
+      .fc-instructor-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+      .fc-av {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--black);
+      }
+      .fc-instructor-name {
+        font-size: 14px;
+        color: var(--muted-light);
+      }
+      .fc-instructor-name strong {
+        color: var(--cream);
+        font-weight: 500;
+      }
+      .fc-stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+      }
+      .fc-stat {
+        background: var(--black2);
+        padding: 16px;
+        text-align: center;
+      }
+      .fc-stat-val {
+        font-size: 22px;
+        font-weight: 300;
+        color: var(--gold);
+        font-family: "IRANYekan", Tahoma, sans-serif;
+      }
+      .fc-stat-label {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .fc-visual {
+        position: relative;
+      }
+      .fc-float-badge {
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        background: var(--gold);
+        color: var(--black);
+        padding: 16px 20px;
+        text-align: center;
+      }
+      .fc-fb-val {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 28px;
+        font-weight: 600;
+        line-height: 1;
+      }
+      .fc-fb-label {
+        font-size: 9px;
+        font-weight: 600;
+      }
+
+      .quote-section {
+        padding: 120px 80px;
+        text-align: center;
+        background: var(--black);
+        position: relative;
+        overflow: hidden;
+      }
+      .quote-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at center,
+          oklch(72% 0.14 78 / 0.06) 0%,
+          transparent 70%
+        );
+      }
+      .quote-mark {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 180px;
+        line-height: 0.8;
+        color: oklch(22% 0.04 78);
+        font-weight: 700;
+        margin-bottom: -40px;
+        position: relative;
+      }
+      .quote-text {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: clamp(26px, 3.5vw, 44px);
+        font-weight: 500;
+        font-style: italic;
+        line-height: 1.5;
+        color: var(--cream);
+        max-width: 900px;
+        margin: 0 auto 48px;
+        position: relative;
+      }
+      .quote-text em {
+        color: var(--gold);
+      }
+      .quote-source {
+        font-size: 12px;
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+      .quote-source::before,
+      .quote-source::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--gold-dark);
+      }
+
+      .plans-section {
+        padding: 120px 80px;
+        background: var(--black2);
+      }
+      .plans-header {
+        text-align: center;
+        margin-bottom: 72px;
+      }
+      .plans-header h2 {
+        font-size: clamp(32px, 4vw, 52px);
+        font-weight: 500;
+        color: var(--cream);
+      }
+      .plans-header p {
+        font-size: 16px;
+        color: var(--muted-light);
+        margin-top: 16px;
+        font-weight: 300;
+      }
+      .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .plan-cell {
+        background: var(--black2);
+        padding: 48px 40px;
+      }
+      .plan-cell.featured {
+        background: oklch(14% 0.03 78);
+      }
+      .plan-tier {
+        font-size: 10px;
+        color: var(--gold);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+      }
+      .plan-tier::before {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .plan-price {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 56px;
+        font-weight: 600;
+        color: var(--cream);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .plan-price span {
+        font-size: 20px;
+      }
+      .plan-period {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 36px;
+      }
+      .plan-features {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 40px;
+      }
+      .plan-features li {
+        font-size: 13px;
+        color: var(--muted-light);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 300;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+      .pf-line {
+        width: 16px;
+        height: 1px;
+        background: var(--gold);
+        flex-shrink: 0;
+      }
+      .btn-plan-gold {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        width: 100%;
+        padding: 14px;
+        background: none;
+        border: 1px solid var(--border-light);
+        color: var(--muted-light);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-plan-gold:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .plan-cell.featured .btn-plan-gold {
+        background: var(--gold);
+        border-color: var(--gold);
+        color: var(--black);
+      }
+
+      .testi-section {
+        padding: 120px 80px;
+      }
+      .testi-header {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 80px;
+        margin-bottom: 72px;
+        align-items: end;
+      }
+      .testi-header h2 {
+        font-size: clamp(32px, 4vw, 48px);
+        font-weight: 500;
+        color: var(--cream);
+      }
+      .testi-header p {
+        font-size: 15px;
+        color: var(--muted-light);
+        line-height: 1.9;
+        font-weight: 300;
+      }
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+      }
+      .testi-card {
+        background: var(--black2);
+        padding: 40px;
+      }
+      .testi-stars {
+        color: var(--gold);
+        font-size: 13px;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+      }
+      .testi-card .tq {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 18px;
+        font-style: italic;
+        line-height: 1.7;
+        color: var(--cream);
+        margin-bottom: 28px;
+        font-weight: 400;
+      }
+      .testi-card .ta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+      .testi-card .ta-av {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gold-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--black);
+        flex-shrink: 0;
+      }
+      .testi-card .ta-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--cream);
+      }
+      .testi-card .ta-role {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .cta-section {
+        padding: 120px 80px;
+        text-align: center;
+        background: var(--black);
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          oklch(72% 0.14 78 / 0.06) 50%,
+          transparent
+        );
+      }
+      .cta-inner {
+        position: relative;
+        z-index: 1;
+      }
+      .cta-inner h2 {
+        font-size: clamp(44px, 6vw, 76px);
+        font-weight: 500;
+        line-height: 1.15;
+        color: var(--cream);
+        margin-bottom: 20px;
+      }
+      .cta-inner h2 em {
+        font-style: italic;
+        color: var(--gold);
+      }
+      .cta-inner p {
+        font-size: 16px;
+        color: var(--muted-light);
+        margin-bottom: 48px;
+        font-weight: 300;
+      }
+      .cta-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      footer {
+        background: var(--black2);
+        border-top: 1px solid var(--border);
+        padding: 80px 80px 48px;
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 60px;
+        margin-bottom: 60px;
+      }
+      .footer-brand-name {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--cream);
+        margin-bottom: 16px;
+      }
+      .footer-brand-name em {
+        font-style: italic;
+        color: var(--gold);
+      }
+      .footer-brand-desc {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.85;
+        font-weight: 300;
+        max-width: 260px;
+      }
+      .footer-col h5 {
+        font-size: 10px;
+        color: var(--gold);
+        margin-bottom: 20px;
+        font-weight: 700;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        margin-bottom: 12px;
+        transition: color 0.2s;
+        font-weight: 300;
+      }
+      .footer-col a:hover {
+        color: var(--cream);
+      }
+      .footer-base {
+        border-top: 1px solid var(--border);
+        padding-top: 32px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .portrait-img,
+      .inst-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
+        position: absolute;
+        inset: 0;
+      }
+    </style>
+
+    <style>
+      /* Elite: dark is default, light mode overrides */
+      [data-theme="light"] {
+        --black: #f5f0e8;
+        --black2: #ede9df;
+        --black3: #e0d9ce;
+        --gold: oklch(52% 0.14 78);
+        --gold-dark: oklch(42% 0.14 78);
+        --gold-light: oklch(38% 0.12 78);
+        --cream: #1a1208;
+        --muted: oklch(42% 0.02 60);
+        --muted-light: oklch(32% 0.02 60);
+        --border: oklch(80% 0.03 70);
+        --border-light: oklch(72% 0.03 70);
+      }
+      [data-theme="light"] body {
+        background: #f5f0e8;
+        color: #1a1208;
+      }
+      [data-theme="light"] nav {
+        background: linear-gradient(
+          to bottom,
+          rgba(245, 240, 232, 0.98),
+          transparent
+        );
+      }
+      [data-theme="light"] .nav-logo {
+        color: #1a1208;
+      }
+      [data-theme="light"] .nav-links a {
+        color: oklch(40% 0.02 60);
+      }
+      [data-theme="light"] .nav-links a:hover {
+        color: #1a1208;
+      }
+      [data-theme="light"] .nav-login {
+        color: oklch(40% 0.02 60);
+      }
+      [data-theme="light"] .hero {
+        background: #f5f0e8;
+      }
+      [data-theme="light"] .hero-bg {
+        background: linear-gradient(
+          160deg,
+          #f5f0e8 0%,
+          #ede4d0 40%,
+          #f0e8d8 100%
+        );
+      }
+      [data-theme="light"] .hero h1 {
+        color: #1a1208;
+      }
+      [data-theme="light"] .hero p {
+        color: oklch(40% 0.02 60);
+      }
+      [data-theme="light"] .btn-ghost-cream {
+        color: #1a1208;
+        border-color: oklch(65% 0.03 70);
+      }
+      [data-theme="light"] .instructors-section {
+        background: #ede9df;
+      }
+      [data-theme="light"] .inst-header h2 {
+        color: #1a1208;
+      }
+      [data-theme="light"] .ic1,
+      [data-theme="light"] .ic2,
+      [data-theme="light"] .ic3,
+      [data-theme="light"] .ic4 {
+        filter: brightness(1.05) contrast(1.05);
+      }
+      [data-theme="light"] .inst-name {
+        color: #1a1208;
+      }
+      [data-theme="light"] .inst-detail {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .featured-course {
+        background: #f5f0e8;
+      }
+      [data-theme="light"] .fc-title {
+        color: #1a1208;
+      }
+      [data-theme="light"] .fc-description {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .fc-item-text {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .fc-item-text strong {
+        color: #1a1208;
+      }
+      [data-theme="light"] .fc-card {
+        background: #ede9df;
+        border-color: oklch(78% 0.03 70);
+      }
+      [data-theme="light"] .fc-course-name {
+        color: #1a1208;
+      }
+      [data-theme="light"] .fc-instructor-name {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .fc-instructor-name strong {
+        color: #1a1208;
+      }
+      [data-theme="light"] .fc-stat {
+        background: #ede9df;
+      }
+      [data-theme="light"] .fc-stat-label {
+        color: oklch(45% 0.02 60);
+      }
+      [data-theme="light"] .quote-section {
+        background: #f5f0e8;
+      }
+      [data-theme="light"] .quote-text {
+        color: #1a1208;
+      }
+      [data-theme="light"] .plans-section {
+        background: #ede9df;
+      }
+      [data-theme="light"] .plans-header h2 {
+        color: #1a1208;
+      }
+      [data-theme="light"] .plans-header p {
+        color: oklch(40% 0.02 60);
+      }
+      [data-theme="light"] .plan-cell {
+        background: #ede9df;
+      }
+      [data-theme="light"] .plan-cell.featured {
+        background: oklch(88% 0.06 78);
+      }
+      [data-theme="light"] .plan-price {
+        color: #1a1208;
+      }
+      [data-theme="light"] .plan-period {
+        color: oklch(45% 0.02 60);
+      }
+      [data-theme="light"] .plan-features li {
+        color: oklch(35% 0.02 60);
+      }
+      [data-theme="light"] .btn-plan-gold {
+        color: oklch(35% 0.02 60);
+        border-color: oklch(70% 0.03 70);
+      }
+      [data-theme="light"] .btn-plan-gold:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      [data-theme="light"] .testi-section {
+        background: #f5f0e8;
+      }
+      [data-theme="light"] .testi-header h2 {
+        color: #1a1208;
+      }
+      [data-theme="light"] .testi-header p {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .testi-grid {
+        background: oklch(78% 0.03 70);
+      }
+      [data-theme="light"] .testi-card {
+        background: #ede9df;
+      }
+      [data-theme="light"] .testi-card .tq {
+        color: #1a1208;
+      }
+      [data-theme="light"] .ta-name {
+        color: #1a1208;
+      }
+      [data-theme="light"] .ta-role {
+        color: oklch(45% 0.02 60);
+      }
+      [data-theme="light"] .cta-section {
+        background: #f5f0e8;
+      }
+      [data-theme="light"] .cta-inner h2 {
+        color: #1a1208;
+      }
+      [data-theme="light"] .cta-inner p {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .btn-ghost-cream {
+        color: #1a1208;
+      }
+      [data-theme="light"] footer {
+        background: #ede9df;
+      }
+      [data-theme="light"] .footer-brand-name {
+        color: #1a1208;
+      }
+      [data-theme="light"] .footer-brand-desc {
+        color: oklch(40% 0.02 60);
+      }
+      [data-theme="light"] .footer-col a {
+        color: oklch(38% 0.02 60);
+      }
+      [data-theme="light"] .footer-col a:hover {
+        color: var(--gold);
+      }
+      [data-theme="light"] .footer-base {
+        border-color: oklch(72% 0.03 70);
+        color: oklch(45% 0.02 60);
+      }
+
+      .theme-toggle-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--black2);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .theme-toggle-btn:hover {
+        border-color: var(--gold);
+      }
+    </style>
+  </head>
+  <body data-om-id="585060b6:4">
+    <nav data-om-id="585060b6:5">
+      <a href="#" class="nav-logo" data-om-id="585060b6:6"
+        >منتور<span data-om-id="585060b6:7">یار</span></a
+      >
+      <div class="nav-links" data-om-id="585060b6:8">
+        <a href="#" data-om-id="585060b6:9">کلاس‌ها</a>
+        <a href="#" data-om-id="585060b6:10">مدرسان</a>
+        <a href="#" data-om-id="585060b6:11">مسیرها</a>
+        <a href="#" data-om-id="585060b6:12">عضویت</a>
+      </div>
+      <div class="nav-actions" data-om-id="585060b6:13">
+        <a href="#" class="nav-login" data-om-id="585060b6:14">ورود</a>
+        <button class="btn-gold" data-om-id="585060b6:15">شروع کن</button>
+        <button
+          class="theme-toggle-btn"
+          id="themeBtn3"
+          onclick="toggleT3()"
+          data-om-id="585060b6:16"
+        >
+          ☀️
+        </button>
+      </div>
+    </nav>
+
+    <div class="hero" data-om-id="585060b6:17">
+      <div class="hero-bg" data-om-id="585060b6:18"></div>
+      <div class="hero-bg-pattern" data-om-id="585060b6:19"></div>
+      <div class="hero-portrait-grid" data-om-id="585060b6:20">
+        <div class="portrait-cell" data-om-id="585060b6:21">
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85"
+            class="portrait-img"
+            alt="ارجون مهتا"
+            data-om-id="585060b6:22"
+          />
+          <div class="portrait-overlay" data-om-id="585060b6:23"></div>
+          <div class="portrait-overlay-bottom" data-om-id="585060b6:24"></div>
+          <div class="portrait-label" data-om-id="585060b6:25">
+            <div class="pl-name" data-om-id="585060b6:26">ارجون مهتا</div>
+            <div class="pl-role" data-om-id="585060b6:27">مدیر طراحی</div>
+          </div>
+        </div>
+        <div class="portrait-cell" data-om-id="585060b6:28">
+          <img
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=85"
+            class="portrait-img"
+            alt="یوکی تاناکا"
+            data-om-id="585060b6:29"
+          />
+          <div class="portrait-overlay" data-om-id="585060b6:30"></div>
+          <div class="portrait-overlay-bottom" data-om-id="585060b6:31"></div>
+          <div class="portrait-label" data-om-id="585060b6:32">
+            <div class="pl-name" data-om-id="585060b6:33">یوکی تاناکا</div>
+            <div class="pl-role" data-om-id="585060b6:34">
+              سرمایه‌گذار خطرپذیر
+            </div>
+          </div>
+        </div>
+        <div class="portrait-cell" data-om-id="585060b6:35">
+          <img
+            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&q=85"
+            class="portrait-img"
+            alt="سوفیا ریس"
+            data-om-id="585060b6:36"
+          />
+          <div class="portrait-overlay" data-om-id="585060b6:37"></div>
+          <div class="portrait-overlay-bottom" data-om-id="585060b6:38"></div>
+          <div class="portrait-label" data-om-id="585060b6:39">
+            <div class="pl-name" data-om-id="585060b6:40">سوفیا ریس</div>
+            <div class="pl-role" data-om-id="585060b6:41">
+              نویسنده و استراتژیست
+            </div>
+          </div>
+        </div>
+        <div class="portrait-cell" data-om-id="585060b6:42">
+          <img
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&q=85"
+            class="portrait-img"
+            alt="لیام فاستر"
+            data-om-id="585060b6:43"
+          />
+          <div class="portrait-overlay" data-om-id="585060b6:44"></div>
+          <div class="portrait-overlay-bottom" data-om-id="585060b6:45"></div>
+          <div class="portrait-label" data-om-id="585060b6:46">
+            <div class="pl-name" data-om-id="585060b6:47">لیام فاستر</div>
+            <div class="pl-role" data-om-id="585060b6:48">کارگردان سینما</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-content" data-om-id="585060b6:49">
+        <div class="hero-eyebrow" data-om-id="585060b6:50">
+          از بهترین‌های جهان یاد بگیر
+        </div>
+        <h1 data-om-id="585060b6:51">
+          بهترین نسخه<br data-om-id="585060b6:52" /><em data-om-id="585060b6:53"
+            >خودت</em
+          >
+          باش.
+        </h1>
+        <p data-om-id="585060b6:54">
+          دسترسی نامحدود به هزاران کلاس توسط برترین ذهن‌های دنیا. یک عضویت. هر
+          رشته‌ای.
+        </p>
+        <div class="hero-cta" data-om-id="585060b6:55">
+          <button class="btn-hero-gold" data-om-id="585060b6:56">
+            دسترسی نامحدود
+          </button>
+          <button class="btn-ghost-cream" data-om-id="585060b6:57">
+            مشاهده کلاس‌ها
+          </button>
+        </div>
+      </div>
+      <div class="hero-scroll" data-om-id="585060b6:58">
+        <div class="scroll-line" data-om-id="585060b6:59"></div>
+        <div class="scroll-label" data-om-id="585060b6:60">پایین</div>
+      </div>
+    </div>
+
+    <div class="instructors-section" data-om-id="585060b6:61">
+      <div class="inst-header" data-om-id="585060b6:62">
+        <div class="section-eyebrow" data-om-id="585060b6:63">مدرسان جهانی</div>
+        <h2 data-om-id="585060b6:64">
+          از کسانی یاد بگیر که هنرشان را<br data-om-id="585060b6:65" /><em
+            data-om-id="585060b6:66"
+            >به کمال</em
+          >
+          رسانده‌اند
+        </h2>
+      </div>
+      <div class="inst-grid" data-om-id="585060b6:67">
+        <div class="inst-card" data-om-id="585060b6:68">
+          <img
+            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85"
+            class="inst-img"
+            alt="ارجون مهتا"
+            data-om-id="585060b6:69"
+          />
+          <div class="inst-gradient" data-om-id="585060b6:70"></div>
+          <div class="inst-info" data-om-id="585060b6:71">
+            <div class="inst-specialty" data-om-id="585060b6:72">رهبری</div>
+            <div class="inst-name" data-om-id="585060b6:73">ارجون مهتا</div>
+            <div class="inst-detail" data-om-id="585060b6:74">
+              مدیر سابق طراحی گوگل
+            </div>
+            <div class="inst-cta" data-om-id="585060b6:75">
+              ← مشاهده کلاس‌ها
+            </div>
+          </div>
+        </div>
+        <div class="inst-card" data-om-id="585060b6:76">
+          <img
+            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=85"
+            class="inst-img"
+            alt="یوکی تاناکا"
+            data-om-id="585060b6:77"
+          />
+          <div class="inst-gradient" data-om-id="585060b6:78"></div>
+          <div class="inst-info" data-om-id="585060b6:79">
+            <div class="inst-specialty" data-om-id="585060b6:80">کارآفرینی</div>
+            <div class="inst-name" data-om-id="585060b6:81">یوکی تاناکا</div>
+            <div class="inst-detail" data-om-id="585060b6:82">
+              بنیان‌گذار ۳ استارتاپ یونیکورن
+            </div>
+            <div class="inst-cta" data-om-id="585060b6:83">
+              ← مشاهده کلاس‌ها
+            </div>
+          </div>
+        </div>
+        <div class="inst-card" data-om-id="585060b6:84">
+          <img
+            src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&q=85"
+            class="inst-img"
+            alt="سوفیا ریس"
+            data-om-id="585060b6:85"
+          />
+          <div class="inst-gradient" data-om-id="585060b6:86"></div>
+          <div class="inst-info" data-om-id="585060b6:87">
+            <div class="inst-specialty" data-om-id="585060b6:88">
+              نوشتن و استراتژی
+            </div>
+            <div class="inst-name" data-om-id="585060b6:89">سوفیا ریس</div>
+            <div class="inst-detail" data-om-id="585060b6:90">
+              نویسنده پرفروش نیویورک تایمز
+            </div>
+            <div class="inst-cta" data-om-id="585060b6:91">
+              ← مشاهده کلاس‌ها
+            </div>
+          </div>
+        </div>
+        <div class="inst-card" data-om-id="585060b6:92">
+          <img
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&q=85"
+            class="inst-img"
+            alt="لیام فاستر"
+            data-om-id="585060b6:93"
+          />
+          <div class="inst-gradient" data-om-id="585060b6:94"></div>
+          <div class="inst-info" data-om-id="585060b6:95">
+            <div class="inst-specialty" data-om-id="585060b6:96">
+              سینما و داستان‌گویی
+            </div>
+            <div class="inst-name" data-om-id="585060b6:97">لیام فاستر</div>
+            <div class="inst-detail" data-om-id="585060b6:98">
+              نامزد جایزه اسکار
+            </div>
+            <div class="inst-cta" data-om-id="585060b6:99">
+              ← مشاهده کلاس‌ها
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="featured-course" data-om-id="585060b6:100">
+      <div data-om-id="585060b6:101">
+        <div class="fc-label" data-om-id="585060b6:102">کلاس ویژه</div>
+        <h2 class="fc-title" data-om-id="585060b6:103">
+          تفکر طراحانه و<br data-om-id="585060b6:104" /><em
+            data-om-id="585060b6:105"
+            >رهبری خلاقانه</em
+          >
+        </h2>
+        <p class="fc-description" data-om-id="585060b6:106">
+          در ۲۸ درس، ارجون مهتا اصولی را آشکار می‌کند که محصولات جهانی گوگل،
+          ایربی‌ان‌بی و استرایپ را شکل داده — و نشان می‌دهد چگونه آن‌ها را در
+          کار خود به کار بری.
+        </p>
+        <div class="fc-includes" data-om-id="585060b6:107">
+          <div class="fc-item" data-om-id="585060b6:108">
+            <div class="fc-dash" data-om-id="585060b6:109"></div>
+            <div class="fc-item-text" data-om-id="585060b6:110">
+              <strong data-om-id="585060b6:111">۲۸ درس ویدیویی</strong> در ۶
+              فصل، هر کدام زیر ۱۵ دقیقه
+            </div>
+          </div>
+          <div class="fc-item" data-om-id="585060b6:112">
+            <div class="fc-dash" data-om-id="585060b6:113"></div>
+            <div class="fc-item-text" data-om-id="585060b6:114">
+              <strong data-om-id="585060b6:115">تمرین‌های عملی</strong> و یک
+              چالش طراحی شخصی برای تکمیل
+            </div>
+          </div>
+          <div class="fc-item" data-om-id="585060b6:116">
+            <div class="fc-dash" data-om-id="585060b6:117"></div>
+            <div class="fc-item-text" data-om-id="585060b6:118">
+              <strong data-om-id="585060b6:119">گواهینامه تأییدشده</strong> برای
+              تکمیل دوره
+            </div>
+          </div>
+        </div>
+        <button class="btn-hero-gold" data-om-id="585060b6:120">
+          ← پیش‌نمایش این کلاس
+        </button>
+      </div>
+      <div class="fc-visual" data-om-id="585060b6:121">
+        <div class="fc-card" data-om-id="585060b6:122">
+          <div class="fc-thumb" style="padding: 0" data-om-id="585060b6:123">
+            <img
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=85"
+              alt=""
+              style="
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                position: absolute;
+                inset: 0;
+              "
+              data-om-id="585060b6:124"
+            />
+            <div
+              style="
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+              data-om-id="585060b6:125"
+            >
+              <div class="fc-play" data-om-id="585060b6:126">▶</div>
+            </div>
+            <span class="fc-duration" data-om-id="585060b6:127"
+              >پیش‌نمایش · ۳:۴۲</span
+            >
+          </div>
+          <div class="fc-meta" data-om-id="585060b6:128">
+            <div class="fc-course-name" data-om-id="585060b6:129">
+              تفکر طراحانه و رهبری خلاقانه
+            </div>
+            <div class="fc-instructor-row" data-om-id="585060b6:130">
+              <div
+                class="fc-av"
+                style="overflow: hidden; padding: 0"
+                data-om-id="585060b6:131"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80"
+                  alt=""
+                  style="width: 100%; height: 100%; object-fit: cover"
+                  data-om-id="585060b6:132"
+                />
+              </div>
+              <div class="fc-instructor-name" data-om-id="585060b6:133">
+                تدریس توسط <strong data-om-id="585060b6:134">ارجون مهتا</strong>
+              </div>
+            </div>
+            <div class="fc-stats-row" data-om-id="585060b6:135">
+              <div class="fc-stat" data-om-id="585060b6:136">
+                <div class="fc-stat-val" data-om-id="585060b6:137">۲۸</div>
+                <div class="fc-stat-label" data-om-id="585060b6:138">درس</div>
+              </div>
+              <div class="fc-stat" data-om-id="585060b6:139">
+                <div class="fc-stat-val" data-om-id="585060b6:140">۴.۹</div>
+                <div class="fc-stat-label" data-om-id="585060b6:141">
+                  امتیاز
+                </div>
+              </div>
+              <div class="fc-stat" data-om-id="585060b6:142">
+                <div class="fc-stat-val" data-om-id="585060b6:143">۶h</div>
+                <div class="fc-stat-label" data-om-id="585060b6:144">مدت</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-float-badge" data-om-id="585060b6:145">
+          <div class="fc-fb-val" data-om-id="585060b6:146">۴.۹</div>
+          <div class="fc-fb-label" data-om-id="585060b6:147">
+            میانگین امتیاز
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-section" data-om-id="585060b6:148">
+      <div class="quote-bg" data-om-id="585060b6:149"></div>
+      <div class="quote-mark" data-om-id="585060b6:150">«</div>
+      <div class="quote-text" data-om-id="585060b6:151">
+        فاصله بین جایی که هستی و جایی که می‌خواهی باشی<br
+          data-om-id="585060b6:152"
+        />با <em data-om-id="585060b6:153">دانشی</em> پر می‌شود که هنوز کشف
+        نکرده‌ای.
+      </div>
+      <div class="quote-source" data-om-id="585060b6:154">فلسفه منتوریار</div>
+    </div>
+
+    <div class="plans-section" data-om-id="585060b6:155">
+      <div class="plans-header" data-om-id="585060b6:156">
+        <div class="section-eyebrow" data-om-id="585060b6:157">عضویت</div>
+        <h2 data-om-id="585060b6:158">
+          یک عضویت.<br data-om-id="585060b6:159" />همه کلاس‌ها.
+        </h2>
+        <p data-om-id="585060b6:160">
+          دسترسی نامحدود به کتابخانه کامل — یک نرخ ثابت، هر زمان لغو کن.
+        </p>
+      </div>
+      <div class="plans-grid" data-om-id="585060b6:161">
+        <div class="plan-cell" data-om-id="585060b6:162">
+          <div class="plan-tier" data-om-id="585060b6:163">فردی</div>
+          <div class="plan-price" data-om-id="585060b6:164">
+            <span data-om-id="585060b6:165">$</span>۱۵
+          </div>
+          <div class="plan-period" data-om-id="585060b6:166">
+            ماهانه، پرداخت سالانه
+          </div>
+          <ul class="plan-features" data-om-id="585060b6:167">
+            <li data-om-id="585060b6:168">
+              <div class="pf-line" data-om-id="585060b6:169"></div>
+              دسترسی نامحدود به کلاس‌ها
+            </li>
+            <li data-om-id="585060b6:170">
+              <div class="pf-line" data-om-id="585060b6:171"></div>
+              پیگیری پیشرفت
+            </li>
+            <li data-om-id="585060b6:172">
+              <div class="pf-line" data-om-id="585060b6:173"></div>
+              دانلود آفلاین
+            </li>
+            <li data-om-id="585060b6:174">
+              <div class="pf-line" data-om-id="585060b6:175"></div>
+              دسترسی به جامعه
+            </li>
+          </ul>
+          <button class="btn-plan-gold" data-om-id="585060b6:176">
+            شروع کن
+          </button>
+        </div>
+        <div class="plan-cell featured" data-om-id="585060b6:177">
+          <div class="plan-tier" data-om-id="585060b6:178">حرفه‌ای</div>
+          <div class="plan-price" data-om-id="585060b6:179">
+            <span data-om-id="585060b6:180">$</span>۲۹
+          </div>
+          <div class="plan-period" data-om-id="585060b6:181">
+            ماهانه، پرداخت سالانه
+          </div>
+          <ul class="plan-features" data-om-id="585060b6:182">
+            <li data-om-id="585060b6:183">
+              <div class="pf-line" data-om-id="585060b6:184"></div>
+              همه امکانات فردی
+            </li>
+            <li data-om-id="585060b6:185">
+              <div class="pf-line" data-om-id="585060b6:186"></div>
+              جلسات مربیگری زنده
+            </li>
+            <li data-om-id="585060b6:187">
+              <div class="pf-line" data-om-id="585060b6:188"></div>
+              گواهینامه تأییدشده
+            </li>
+            <li data-om-id="585060b6:189">
+              <div class="pf-line" data-om-id="585060b6:190"></div>
+              پشتیبانی اولویت‌دار
+            </li>
+            <li data-om-id="585060b6:191">
+              <div class="pf-line" data-om-id="585060b6:192"></div>
+              دسترسی زودهنگام
+            </li>
+          </ul>
+          <button class="btn-plan-gold" data-om-id="585060b6:193">
+            آزمایش رایگان
+          </button>
+        </div>
+        <div class="plan-cell" data-om-id="585060b6:194">
+          <div class="plan-tier" data-om-id="585060b6:195">تیمی</div>
+          <div class="plan-price" data-om-id="585060b6:196">
+            <span data-om-id="585060b6:197">$</span>۴۹
+          </div>
+          <div class="plan-period" data-om-id="585060b6:198">
+            به ازای هر نفر / ماه
+          </div>
+          <ul class="plan-features" data-om-id="585060b6:199">
+            <li data-om-id="585060b6:200">
+              <div class="pf-line" data-om-id="585060b6:201"></div>
+              همه امکانات حرفه‌ای
+            </li>
+            <li data-om-id="585060b6:202">
+              <div class="pf-line" data-om-id="585060b6:203"></div>
+              آنالیتیکس تیمی
+            </li>
+            <li data-om-id="585060b6:204">
+              <div class="pf-line" data-om-id="585060b6:205"></div>
+              مسیرهای سفارشی
+            </li>
+            <li data-om-id="585060b6:206">
+              <div class="pf-line" data-om-id="585060b6:207"></div>
+              مدیر اختصاصی
+            </li>
+          </ul>
+          <button class="btn-plan-gold" data-om-id="585060b6:208">
+            تماس با فروش
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="testi-section" data-om-id="585060b6:209">
+      <div class="testi-header" data-om-id="585060b6:210">
+        <h2 data-om-id="585060b6:211">سخن اعضای ما</h2>
+        <p data-om-id="585060b6:212">
+          بیش از ۲۰۰٬۰۰۰ عضو حرفه، حرفه‌شان، و تفکرشان را با آموزش‌های جهانی
+          منتوریار متحول کرده‌اند.
+        </p>
+      </div>
+      <div class="testi-grid" data-om-id="585060b6:213">
+        <div class="testi-card" data-om-id="585060b6:214">
+          <div class="testi-stars" data-om-id="585060b6:215">★ ★ ★ ★ ★</div>
+          <div class="tq" data-om-id="585060b6:216">
+            «منتوریار مثل یک پلتفرم دوره آنلاین معمولی نیست. مثل این است که
+            روبه‌روی باهوش‌ترین آدم اتاق نشسته‌ای و به تفکرش گوش می‌دهی.»
+          </div>
+          <div class="ta" data-om-id="585060b6:217">
+            <div class="ta-av" data-om-id="585060b6:218">نو</div>
+            <div data-om-id="585060b6:219">
+              <div class="ta-name" data-om-id="585060b6:220">نینا ولکوف</div>
+              <div class="ta-role" data-om-id="585060b6:221">مدیر خلاقیت</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card" data-om-id="585060b6:222">
+          <div class="testi-stars" data-om-id="585060b6:223">★ ★ ★ ★ ★</div>
+          <div class="tq" data-om-id="585060b6:224">
+            «در پلتفرم‌های آموزشی زیادی سرمایه‌گذاری کرده‌ام. هیچ‌کدام با عمق و
+            کیفیت مدرسان منتوریار قابل مقایسه نیستند.»
+          </div>
+          <div class="ta" data-om-id="585060b6:225">
+            <div class="ta-av" data-om-id="585060b6:226">کن</div>
+            <div data-om-id="585060b6:227">
+              <div class="ta-name" data-om-id="585060b6:228">کنجی اوتا</div>
+              <div class="ta-role" data-om-id="585060b6:229">
+                بنیان‌گذار استارتاپ
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card" data-om-id="585060b6:230">
+          <div class="testi-stars" data-om-id="585060b6:231">★ ★ ★ ★ ★</div>
+          <div class="tq" data-om-id="585060b6:232">
+            «سینماتوگرافی هر کلاس خیره‌کننده است. بلافاصله نشان می‌دهد که از کسی
+            یاد می‌گیری که در بالاترین سطح حرفه‌اش است.»
+          </div>
+          <div class="ta" data-om-id="585060b6:233">
+            <div class="ta-av" data-om-id="585060b6:234">اما</div>
+            <div data-om-id="585060b6:235">
+              <div class="ta-name" data-om-id="585060b6:236">آمارا ویلیامز</div>
+              <div class="ta-role" data-om-id="585060b6:237">
+                استراتژیست برند
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section" data-om-id="585060b6:238">
+      <div class="cta-bg" data-om-id="585060b6:239"></div>
+      <div class="cta-inner" data-om-id="585060b6:240">
+        <div class="section-eyebrow" data-om-id="585060b6:241">
+          سفرت از همین‌جا شروع می‌شود
+        </div>
+        <h2 data-om-id="585060b6:242">
+          از بهترین‌ها یاد بگیر.<br data-om-id="585060b6:243" />بهترین نسخه
+          <em data-om-id="585060b6:244">خودت</em> باش.
+        </h2>
+        <p data-om-id="585060b6:245">
+          به بیش از ۲۰۰٬۰۰۰ عضو در سراسر جهان بپیوند با یک عضویت، همه کلاس‌ها،
+          برای همیشه.
+        </p>
+        <div class="cta-actions" data-om-id="585060b6:246">
+          <button class="btn-hero-gold" data-om-id="585060b6:247">
+            ← دسترسی نامحدود
+          </button>
+          <button class="btn-ghost-cream" data-om-id="585060b6:248">
+            مشاهده همه کلاس‌ها
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer data-om-id="585060b6:249">
+      <div class="footer-top" data-om-id="585060b6:250">
+        <div data-om-id="585060b6:251">
+          <div class="footer-brand-name" data-om-id="585060b6:252">
+            منتور<em data-om-id="585060b6:253">یار</em>
+          </div>
+          <div class="footer-brand-desc" data-om-id="585060b6:254">
+            برترین مدرسان جهان. یک عضویت نامحدود. بدون محدودیت یاد بگیر.
+          </div>
+        </div>
+        <div class="footer-col" data-om-id="585060b6:255">
+          <h5 data-om-id="585060b6:256">یادگیری</h5>
+          <a href="#" data-om-id="585060b6:257">همه کلاس‌ها</a
+          ><a href="#" data-om-id="585060b6:258">مدرسان</a
+          ><a href="#" data-om-id="585060b6:259">مسیرها</a
+          ><a href="#" data-om-id="585060b6:260">گواهینامه‌ها</a>
+        </div>
+        <div class="footer-col" data-om-id="585060b6:261">
+          <h5 data-om-id="585060b6:262">شرکت</h5>
+          <a href="#" data-om-id="585060b6:263">درباره ما</a
+          ><a href="#" data-om-id="585060b6:264">اخبار</a
+          ><a href="#" data-om-id="585060b6:265">استخدام</a
+          ><a href="#" data-om-id="585060b6:266">مطبوعات</a>
+        </div>
+        <div class="footer-col" data-om-id="585060b6:267">
+          <h5 data-om-id="585060b6:268">پشتیبانی</h5>
+          <a href="#" data-om-id="585060b6:269">مرکز راهنمایی</a
+          ><a href="#" data-om-id="585060b6:270">حریم خصوصی</a
+          ><a href="#" data-om-id="585060b6:271">شرایط</a
+          ><a href="#" data-om-id="585060b6:272">تماس</a>
+        </div>
+      </div>
+      <div class="footer-base" data-om-id="585060b6:273">
+        <span data-om-id="585060b6:274">© ۱۴۰۵ منتوریار</span
+        ><span data-om-id="585060b6:275">SSL امن</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var saved = localStorage.getItem("mentoryar-theme-t3") || "dark";
+        document.documentElement.setAttribute("data-theme", saved);
+        var btn = document.getElementById("themeBtn3");
+        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+      })();
+      function toggleT3() {
+        var html = document.documentElement;
+        var isDark = html.getAttribute("data-theme") === "dark";
+        var next = isDark ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        document.getElementById("themeBtn3").textContent =
+          next === "dark" ? "☀️" : "🌙";
+        localStorage.setItem("mentoryar-theme-t3", next);
+      }
+    </script>
+  </body>
+</html>
+<script type="application/json" id="__om_srcmap">
+  {
+    "gen": "585060b6",
+    "entries": [
+      {
+        "id": "585060b6:0",
+        "tag": "html",
+        "openStart": 16,
+        "attrEnd": 59,
+        "openEnd": 60,
+        "closeStart": 36920,
+        "closeEnd": 36927,
+        "textRuns": [
+          [60, 61],
+          [22239, 22240],
+          [36919, 36920]
+        ],
+        "parentId": null,
+        "childIds": ["585060b6:1", "585060b6:4"]
+      },
+      {
+        "id": "585060b6:1",
+        "tag": "head",
+        "openStart": 61,
+        "attrEnd": 66,
+        "openEnd": 67,
+        "closeStart": 22232,
+        "closeEnd": 22239,
+        "textRuns": [
+          [67, 68],
+          [90, 91],
+          [1325, 1326],
+          [1396, 1397],
+          [1445, 1447],
+          [17687, 17691],
+          [22231, 22232]
+        ],
+        "parentId": "585060b6:0",
+        "childIds": ["585060b6:2", "585060b6:3"]
+      },
+      {
+        "id": "585060b6:2",
+        "tag": "meta",
+        "openStart": 68,
+        "attrEnd": 89,
+        "openEnd": 90,
+        "closeEnd": 90,
+        "textRuns": [],
+        "parentId": "585060b6:1",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:3",
+        "tag": "meta",
+        "openStart": 1326,
+        "attrEnd": 1395,
+        "openEnd": 1396,
+        "closeEnd": 1396,
+        "textRuns": [],
+        "parentId": "585060b6:1",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:4",
+        "tag": "body",
+        "openStart": 22240,
+        "attrEnd": 22245,
+        "openEnd": 22246,
+        "closeStart": 36912,
+        "closeEnd": 36919,
+        "textRuns": [
+          [22246, 22248],
+          [22718, 22720],
+          [25137, 25139],
+          [27389, 27391],
+          [30116, 30118],
+          [30484, 30486],
+          [32807, 32809],
+          [34681, 34683],
+          [35335, 35337],
+          [36281, 36283],
+          [36911, 36912]
+        ],
+        "parentId": "585060b6:0",
+        "childIds": [
+          "585060b6:5",
+          "585060b6:17",
+          "585060b6:61",
+          "585060b6:100",
+          "585060b6:148",
+          "585060b6:155",
+          "585060b6:209",
+          "585060b6:238",
+          "585060b6:249"
+        ]
+      },
+      {
+        "id": "585060b6:5",
+        "tag": "nav",
+        "openStart": 22248,
+        "attrEnd": 22252,
+        "openEnd": 22253,
+        "closeStart": 22712,
+        "closeEnd": 22718,
+        "textRuns": [
+          [22253, 22256],
+          [22318, 22321],
+          [22486, 22489],
+          [22711, 22712]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:6", "585060b6:8", "585060b6:13"]
+      },
+      {
+        "id": "585060b6:6",
+        "tag": "a",
+        "openStart": 22256,
+        "attrEnd": 22284,
+        "openEnd": 22285,
+        "closeStart": 22314,
+        "closeEnd": 22318,
+        "textRuns": [[22285, 22295]],
+        "parentId": "585060b6:5",
+        "childIds": ["585060b6:7"]
+      },
+      {
+        "id": "585060b6:7",
+        "tag": "span",
+        "openStart": 22295,
+        "attrEnd": 22300,
+        "openEnd": 22301,
+        "closeStart": 22307,
+        "closeEnd": 22314,
+        "textRuns": [[22301, 22307]],
+        "parentId": "585060b6:6",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:8",
+        "tag": "div",
+        "openStart": 22321,
+        "attrEnd": 22343,
+        "openEnd": 22344,
+        "closeStart": 22480,
+        "closeEnd": 22486,
+        "textRuns": [
+          [22344, 22349],
+          [22380, 22385],
+          [22413, 22418],
+          [22446, 22451],
+          [22477, 22480]
+        ],
+        "parentId": "585060b6:5",
+        "childIds": ["585060b6:9", "585060b6:10", "585060b6:11", "585060b6:12"]
+      },
+      {
+        "id": "585060b6:9",
+        "tag": "a",
+        "openStart": 22349,
+        "attrEnd": 22360,
+        "openEnd": 22361,
+        "closeStart": 22376,
+        "closeEnd": 22380,
+        "textRuns": [[22361, 22376]],
+        "parentId": "585060b6:8",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:10",
+        "tag": "a",
+        "openStart": 22385,
+        "attrEnd": 22396,
+        "openEnd": 22397,
+        "closeStart": 22409,
+        "closeEnd": 22413,
+        "textRuns": [[22397, 22409]],
+        "parentId": "585060b6:8",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:11",
+        "tag": "a",
+        "openStart": 22418,
+        "attrEnd": 22429,
+        "openEnd": 22430,
+        "closeStart": 22442,
+        "closeEnd": 22446,
+        "textRuns": [[22430, 22442]],
+        "parentId": "585060b6:8",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:12",
+        "tag": "a",
+        "openStart": 22451,
+        "attrEnd": 22462,
+        "openEnd": 22463,
+        "closeStart": 22473,
+        "closeEnd": 22477,
+        "textRuns": [[22463, 22473]],
+        "parentId": "585060b6:8",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:13",
+        "tag": "div",
+        "openStart": 22489,
+        "attrEnd": 22513,
+        "openEnd": 22514,
+        "closeStart": 22705,
+        "closeEnd": 22711,
+        "textRuns": [
+          [22514, 22519],
+          [22561, 22566],
+          [22613, 22618],
+          [22702, 22705]
+        ],
+        "parentId": "585060b6:5",
+        "childIds": ["585060b6:14", "585060b6:15", "585060b6:16"]
+      },
+      {
+        "id": "585060b6:14",
+        "tag": "a",
+        "openStart": 22519,
+        "attrEnd": 22548,
+        "openEnd": 22549,
+        "closeStart": 22557,
+        "closeEnd": 22561,
+        "textRuns": [[22549, 22557]],
+        "parentId": "585060b6:13",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:15",
+        "tag": "button",
+        "openStart": 22566,
+        "attrEnd": 22590,
+        "openEnd": 22591,
+        "closeStart": 22604,
+        "closeEnd": 22613,
+        "textRuns": [[22591, 22604]],
+        "parentId": "585060b6:13",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:16",
+        "tag": "button",
+        "openStart": 22618,
+        "attrEnd": 22686,
+        "openEnd": 22687,
+        "closeStart": 22693,
+        "closeEnd": 22702,
+        "textRuns": [[22687, 22693]],
+        "parentId": "585060b6:13",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:17",
+        "tag": "div",
+        "openStart": 22720,
+        "attrEnd": 22737,
+        "openEnd": 22738,
+        "closeStart": 25131,
+        "closeEnd": 25137,
+        "textRuns": [
+          [22738, 22741],
+          [22768, 22771],
+          [22806, 22809],
+          [24492, 24496],
+          [25023, 25026],
+          [25130, 25131]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": [
+          "585060b6:18",
+          "585060b6:19",
+          "585060b6:20",
+          "585060b6:49",
+          "585060b6:58"
+        ]
+      },
+      {
+        "id": "585060b6:18",
+        "tag": "div",
+        "openStart": 22741,
+        "attrEnd": 22761,
+        "openEnd": 22762,
+        "closeStart": 22762,
+        "closeEnd": 22768,
+        "textRuns": [],
+        "parentId": "585060b6:17",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:19",
+        "tag": "div",
+        "openStart": 22771,
+        "attrEnd": 22799,
+        "openEnd": 22800,
+        "closeStart": 22800,
+        "closeEnd": 22806,
+        "textRuns": [],
+        "parentId": "585060b6:17",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:20",
+        "tag": "div",
+        "openStart": 22809,
+        "attrEnd": 22840,
+        "openEnd": 22841,
+        "closeStart": 24486,
+        "closeEnd": 24492,
+        "textRuns": [
+          [22841, 22846],
+          [23240, 23245],
+          [23662, 23667],
+          [24076, 24081],
+          [24483, 24486]
+        ],
+        "parentId": "585060b6:17",
+        "childIds": ["585060b6:21", "585060b6:28", "585060b6:35", "585060b6:42"]
+      },
+      {
+        "id": "585060b6:21",
+        "tag": "div",
+        "openStart": 22846,
+        "attrEnd": 22872,
+        "openEnd": 22873,
+        "closeStart": 23234,
+        "closeEnd": 23240,
+        "textRuns": [
+          [22873, 22880],
+          [23010, 23017],
+          [23096, 23103],
+          [23229, 23234]
+        ],
+        "parentId": "585060b6:20",
+        "childIds": ["585060b6:22", "585060b6:23", "585060b6:24", "585060b6:25"]
+      },
+      {
+        "id": "585060b6:22",
+        "tag": "img",
+        "openStart": 22880,
+        "attrEnd": 23009,
+        "openEnd": 23010,
+        "closeEnd": 23010,
+        "textRuns": [],
+        "parentId": "585060b6:21",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:23",
+        "tag": "div",
+        "openStart": 23017,
+        "attrEnd": 23046,
+        "openEnd": 23047,
+        "closeStart": 23047,
+        "closeEnd": 23053,
+        "textRuns": [],
+        "parentId": "585060b6:21",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:24",
+        "tag": "div",
+        "openStart": 23053,
+        "attrEnd": 23089,
+        "openEnd": 23090,
+        "closeStart": 23090,
+        "closeEnd": 23096,
+        "textRuns": [],
+        "parentId": "585060b6:21",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:25",
+        "tag": "div",
+        "openStart": 23103,
+        "attrEnd": 23130,
+        "openEnd": 23131,
+        "closeStart": 23223,
+        "closeEnd": 23229,
+        "textRuns": [],
+        "parentId": "585060b6:21",
+        "childIds": ["585060b6:26", "585060b6:27"]
+      },
+      {
+        "id": "585060b6:26",
+        "tag": "div",
+        "openStart": 23131,
+        "attrEnd": 23151,
+        "openEnd": 23152,
+        "closeStart": 23171,
+        "closeEnd": 23177,
+        "textRuns": [[23152, 23171]],
+        "parentId": "585060b6:25",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:27",
+        "tag": "div",
+        "openStart": 23177,
+        "attrEnd": 23197,
+        "openEnd": 23198,
+        "closeStart": 23217,
+        "closeEnd": 23223,
+        "textRuns": [[23198, 23217]],
+        "parentId": "585060b6:25",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:28",
+        "tag": "div",
+        "openStart": 23245,
+        "attrEnd": 23271,
+        "openEnd": 23272,
+        "closeStart": 23656,
+        "closeEnd": 23662,
+        "textRuns": [
+          [23272, 23279],
+          [23411, 23418],
+          [23497, 23504],
+          [23651, 23656]
+        ],
+        "parentId": "585060b6:20",
+        "childIds": ["585060b6:29", "585060b6:30", "585060b6:31", "585060b6:32"]
+      },
+      {
+        "id": "585060b6:29",
+        "tag": "img",
+        "openStart": 23279,
+        "attrEnd": 23410,
+        "openEnd": 23411,
+        "closeEnd": 23411,
+        "textRuns": [],
+        "parentId": "585060b6:28",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:30",
+        "tag": "div",
+        "openStart": 23418,
+        "attrEnd": 23447,
+        "openEnd": 23448,
+        "closeStart": 23448,
+        "closeEnd": 23454,
+        "textRuns": [],
+        "parentId": "585060b6:28",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:31",
+        "tag": "div",
+        "openStart": 23454,
+        "attrEnd": 23490,
+        "openEnd": 23491,
+        "closeStart": 23491,
+        "closeEnd": 23497,
+        "textRuns": [],
+        "parentId": "585060b6:28",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:32",
+        "tag": "div",
+        "openStart": 23504,
+        "attrEnd": 23531,
+        "openEnd": 23532,
+        "closeStart": 23645,
+        "closeEnd": 23651,
+        "textRuns": [],
+        "parentId": "585060b6:28",
+        "childIds": ["585060b6:33", "585060b6:34"]
+      },
+      {
+        "id": "585060b6:33",
+        "tag": "div",
+        "openStart": 23532,
+        "attrEnd": 23552,
+        "openEnd": 23553,
+        "closeStart": 23574,
+        "closeEnd": 23580,
+        "textRuns": [[23553, 23574]],
+        "parentId": "585060b6:32",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:34",
+        "tag": "div",
+        "openStart": 23580,
+        "attrEnd": 23600,
+        "openEnd": 23601,
+        "closeStart": 23639,
+        "closeEnd": 23645,
+        "textRuns": [[23601, 23639]],
+        "parentId": "585060b6:32",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:35",
+        "tag": "div",
+        "openStart": 23667,
+        "attrEnd": 23693,
+        "openEnd": 23694,
+        "closeStart": 24070,
+        "closeEnd": 24076,
+        "textRuns": [
+          [23694, 23701],
+          [23829, 23836],
+          [23915, 23922],
+          [24065, 24070]
+        ],
+        "parentId": "585060b6:20",
+        "childIds": ["585060b6:36", "585060b6:37", "585060b6:38", "585060b6:39"]
+      },
+      {
+        "id": "585060b6:36",
+        "tag": "img",
+        "openStart": 23701,
+        "attrEnd": 23828,
+        "openEnd": 23829,
+        "closeEnd": 23829,
+        "textRuns": [],
+        "parentId": "585060b6:35",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:37",
+        "tag": "div",
+        "openStart": 23836,
+        "attrEnd": 23865,
+        "openEnd": 23866,
+        "closeStart": 23866,
+        "closeEnd": 23872,
+        "textRuns": [],
+        "parentId": "585060b6:35",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:38",
+        "tag": "div",
+        "openStart": 23872,
+        "attrEnd": 23908,
+        "openEnd": 23909,
+        "closeStart": 23909,
+        "closeEnd": 23915,
+        "textRuns": [],
+        "parentId": "585060b6:35",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:39",
+        "tag": "div",
+        "openStart": 23922,
+        "attrEnd": 23949,
+        "openEnd": 23950,
+        "closeStart": 24059,
+        "closeEnd": 24065,
+        "textRuns": [],
+        "parentId": "585060b6:35",
+        "childIds": ["585060b6:40", "585060b6:41"]
+      },
+      {
+        "id": "585060b6:40",
+        "tag": "div",
+        "openStart": 23950,
+        "attrEnd": 23970,
+        "openEnd": 23971,
+        "closeStart": 23988,
+        "closeEnd": 23994,
+        "textRuns": [[23971, 23988]],
+        "parentId": "585060b6:39",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:41",
+        "tag": "div",
+        "openStart": 23994,
+        "attrEnd": 24014,
+        "openEnd": 24015,
+        "closeStart": 24053,
+        "closeEnd": 24059,
+        "textRuns": [[24015, 24053]],
+        "parentId": "585060b6:39",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:42",
+        "tag": "div",
+        "openStart": 24081,
+        "attrEnd": 24107,
+        "openEnd": 24108,
+        "closeStart": 24477,
+        "closeEnd": 24483,
+        "textRuns": [
+          [24108, 24115],
+          [24245, 24252],
+          [24331, 24338],
+          [24472, 24477]
+        ],
+        "parentId": "585060b6:20",
+        "childIds": ["585060b6:43", "585060b6:44", "585060b6:45", "585060b6:46"]
+      },
+      {
+        "id": "585060b6:43",
+        "tag": "img",
+        "openStart": 24115,
+        "attrEnd": 24244,
+        "openEnd": 24245,
+        "closeEnd": 24245,
+        "textRuns": [],
+        "parentId": "585060b6:42",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:44",
+        "tag": "div",
+        "openStart": 24252,
+        "attrEnd": 24281,
+        "openEnd": 24282,
+        "closeStart": 24282,
+        "closeEnd": 24288,
+        "textRuns": [],
+        "parentId": "585060b6:42",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:45",
+        "tag": "div",
+        "openStart": 24288,
+        "attrEnd": 24324,
+        "openEnd": 24325,
+        "closeStart": 24325,
+        "closeEnd": 24331,
+        "textRuns": [],
+        "parentId": "585060b6:42",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:46",
+        "tag": "div",
+        "openStart": 24338,
+        "attrEnd": 24365,
+        "openEnd": 24366,
+        "closeStart": 24466,
+        "closeEnd": 24472,
+        "textRuns": [],
+        "parentId": "585060b6:42",
+        "childIds": ["585060b6:47", "585060b6:48"]
+      },
+      {
+        "id": "585060b6:47",
+        "tag": "div",
+        "openStart": 24366,
+        "attrEnd": 24386,
+        "openEnd": 24387,
+        "closeStart": 24406,
+        "closeEnd": 24412,
+        "textRuns": [[24387, 24406]],
+        "parentId": "585060b6:46",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:48",
+        "tag": "div",
+        "openStart": 24412,
+        "attrEnd": 24432,
+        "openEnd": 24433,
+        "closeStart": 24460,
+        "closeEnd": 24466,
+        "textRuns": [[24433, 24460]],
+        "parentId": "585060b6:46",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:49",
+        "tag": "div",
+        "openStart": 24496,
+        "attrEnd": 24521,
+        "openEnd": 24522,
+        "closeStart": 25017,
+        "closeEnd": 25023,
+        "textRuns": [
+          [24522, 24527],
+          [24610, 24615],
+          [24674, 24679],
+          [24827, 24832],
+          [25014, 25017]
+        ],
+        "parentId": "585060b6:17",
+        "childIds": ["585060b6:50", "585060b6:51", "585060b6:54", "585060b6:55"]
+      },
+      {
+        "id": "585060b6:50",
+        "tag": "div",
+        "openStart": 24527,
+        "attrEnd": 24552,
+        "openEnd": 24553,
+        "closeStart": 24604,
+        "closeEnd": 24610,
+        "textRuns": [[24553, 24604]],
+        "parentId": "585060b6:49",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:51",
+        "tag": "h1",
+        "openStart": 24615,
+        "attrEnd": 24618,
+        "openEnd": 24619,
+        "closeStart": 24669,
+        "closeEnd": 24674,
+        "textRuns": [
+          [24619, 24640],
+          [24661, 24669]
+        ],
+        "parentId": "585060b6:49",
+        "childIds": ["585060b6:52", "585060b6:53"]
+      },
+      {
+        "id": "585060b6:52",
+        "tag": "br",
+        "openStart": 24640,
+        "attrEnd": 24643,
+        "openEnd": 24644,
+        "closeEnd": 24644,
+        "textRuns": [],
+        "parentId": "585060b6:51",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:53",
+        "tag": "em",
+        "openStart": 24644,
+        "attrEnd": 24647,
+        "openEnd": 24648,
+        "closeStart": 24656,
+        "closeEnd": 24661,
+        "textRuns": [[24648, 24656]],
+        "parentId": "585060b6:51",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:54",
+        "tag": "p",
+        "openStart": 24679,
+        "attrEnd": 24681,
+        "openEnd": 24682,
+        "closeStart": 24823,
+        "closeEnd": 24827,
+        "textRuns": [[24682, 24823]],
+        "parentId": "585060b6:49",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:55",
+        "tag": "div",
+        "openStart": 24832,
+        "attrEnd": 24853,
+        "openEnd": 24854,
+        "closeStart": 25008,
+        "closeEnd": 25014,
+        "textRuns": [
+          [24854, 24861],
+          [24927, 24934],
+          [25003, 25008]
+        ],
+        "parentId": "585060b6:49",
+        "childIds": ["585060b6:56", "585060b6:57"]
+      },
+      {
+        "id": "585060b6:56",
+        "tag": "button",
+        "openStart": 24861,
+        "attrEnd": 24890,
+        "openEnd": 24891,
+        "closeStart": 24918,
+        "closeEnd": 24927,
+        "textRuns": [[24891, 24918]],
+        "parentId": "585060b6:55",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:57",
+        "tag": "button",
+        "openStart": 24934,
+        "attrEnd": 24965,
+        "openEnd": 24966,
+        "closeStart": 24994,
+        "closeEnd": 25003,
+        "textRuns": [[24966, 24994]],
+        "parentId": "585060b6:55",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:58",
+        "tag": "div",
+        "openStart": 25026,
+        "attrEnd": 25050,
+        "openEnd": 25051,
+        "closeStart": 25124,
+        "closeEnd": 25130,
+        "textRuns": [],
+        "parentId": "585060b6:17",
+        "childIds": ["585060b6:59", "585060b6:60"]
+      },
+      {
+        "id": "585060b6:59",
+        "tag": "div",
+        "openStart": 25051,
+        "attrEnd": 25075,
+        "openEnd": 25076,
+        "closeStart": 25076,
+        "closeEnd": 25082,
+        "textRuns": [],
+        "parentId": "585060b6:58",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:60",
+        "tag": "div",
+        "openStart": 25082,
+        "attrEnd": 25107,
+        "openEnd": 25108,
+        "closeStart": 25118,
+        "closeEnd": 25124,
+        "textRuns": [[25108, 25118]],
+        "parentId": "585060b6:58",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:61",
+        "tag": "div",
+        "openStart": 25139,
+        "attrEnd": 25171,
+        "openEnd": 25172,
+        "closeStart": 27383,
+        "closeEnd": 27389,
+        "textRuns": [
+          [25172, 25175],
+          [25388, 25391],
+          [27382, 27383]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:62", "585060b6:67"]
+      },
+      {
+        "id": "585060b6:62",
+        "tag": "div",
+        "openStart": 25175,
+        "attrEnd": 25199,
+        "openEnd": 25200,
+        "closeStart": 25382,
+        "closeEnd": 25388,
+        "textRuns": [
+          [25200, 25205],
+          [25263, 25268],
+          [25379, 25382]
+        ],
+        "parentId": "585060b6:61",
+        "childIds": ["585060b6:63", "585060b6:64"]
+      },
+      {
+        "id": "585060b6:63",
+        "tag": "div",
+        "openStart": 25205,
+        "attrEnd": 25233,
+        "openEnd": 25234,
+        "closeStart": 25257,
+        "closeEnd": 25263,
+        "textRuns": [[25234, 25257]],
+        "parentId": "585060b6:62",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:64",
+        "tag": "h2",
+        "openStart": 25268,
+        "attrEnd": 25271,
+        "openEnd": 25272,
+        "closeStart": 25374,
+        "closeEnd": 25379,
+        "textRuns": [
+          [25272, 25326],
+          [25352, 25374]
+        ],
+        "parentId": "585060b6:62",
+        "childIds": ["585060b6:65", "585060b6:66"]
+      },
+      {
+        "id": "585060b6:65",
+        "tag": "br",
+        "openStart": 25326,
+        "attrEnd": 25329,
+        "openEnd": 25330,
+        "closeEnd": 25330,
+        "textRuns": [],
+        "parentId": "585060b6:64",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:66",
+        "tag": "em",
+        "openStart": 25330,
+        "attrEnd": 25333,
+        "openEnd": 25334,
+        "closeStart": 25347,
+        "closeEnd": 25352,
+        "textRuns": [[25334, 25347]],
+        "parentId": "585060b6:64",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:67",
+        "tag": "div",
+        "openStart": 25391,
+        "attrEnd": 25413,
+        "openEnd": 25414,
+        "closeStart": 27376,
+        "closeEnd": 27382,
+        "textRuns": [
+          [25414, 25419],
+          [25882, 25887],
+          [26383, 26388],
+          [26883, 26888],
+          [27373, 27376]
+        ],
+        "parentId": "585060b6:61",
+        "childIds": ["585060b6:68", "585060b6:76", "585060b6:84", "585060b6:92"]
+      },
+      {
+        "id": "585060b6:68",
+        "tag": "div",
+        "openStart": 25419,
+        "attrEnd": 25441,
+        "openEnd": 25442,
+        "closeStart": 25876,
+        "closeEnd": 25882,
+        "textRuns": [
+          [25442, 25449],
+          [25575, 25582],
+          [25615, 25622],
+          [25871, 25876]
+        ],
+        "parentId": "585060b6:67",
+        "childIds": ["585060b6:69", "585060b6:70", "585060b6:71"]
+      },
+      {
+        "id": "585060b6:69",
+        "tag": "img",
+        "openStart": 25449,
+        "attrEnd": 25574,
+        "openEnd": 25575,
+        "closeEnd": 25575,
+        "textRuns": [],
+        "parentId": "585060b6:68",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:70",
+        "tag": "div",
+        "openStart": 25582,
+        "attrEnd": 25608,
+        "openEnd": 25609,
+        "closeStart": 25609,
+        "closeEnd": 25615,
+        "textRuns": [],
+        "parentId": "585060b6:68",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:71",
+        "tag": "div",
+        "openStart": 25622,
+        "attrEnd": 25644,
+        "openEnd": 25645,
+        "closeStart": 25865,
+        "closeEnd": 25871,
+        "textRuns": [],
+        "parentId": "585060b6:68",
+        "childIds": ["585060b6:72", "585060b6:73", "585060b6:74", "585060b6:75"]
+      },
+      {
+        "id": "585060b6:72",
+        "tag": "div",
+        "openStart": 25645,
+        "attrEnd": 25672,
+        "openEnd": 25673,
+        "closeStart": 25683,
+        "closeEnd": 25689,
+        "textRuns": [[25673, 25683]],
+        "parentId": "585060b6:71",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:73",
+        "tag": "div",
+        "openStart": 25689,
+        "attrEnd": 25711,
+        "openEnd": 25712,
+        "closeStart": 25731,
+        "closeEnd": 25737,
+        "textRuns": [[25712, 25731]],
+        "parentId": "585060b6:71",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:74",
+        "tag": "div",
+        "openStart": 25737,
+        "attrEnd": 25761,
+        "openEnd": 25762,
+        "closeStart": 25799,
+        "closeEnd": 25805,
+        "textRuns": [[25762, 25799]],
+        "parentId": "585060b6:71",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:75",
+        "tag": "div",
+        "openStart": 25805,
+        "attrEnd": 25826,
+        "openEnd": 25827,
+        "closeStart": 25859,
+        "closeEnd": 25865,
+        "textRuns": [[25827, 25859]],
+        "parentId": "585060b6:71",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:76",
+        "tag": "div",
+        "openStart": 25887,
+        "attrEnd": 25909,
+        "openEnd": 25910,
+        "closeStart": 26377,
+        "closeEnd": 26383,
+        "textRuns": [
+          [25910, 25917],
+          [26045, 26052],
+          [26085, 26092],
+          [26372, 26377]
+        ],
+        "parentId": "585060b6:67",
+        "childIds": ["585060b6:77", "585060b6:78", "585060b6:79"]
+      },
+      {
+        "id": "585060b6:77",
+        "tag": "img",
+        "openStart": 25917,
+        "attrEnd": 26044,
+        "openEnd": 26045,
+        "closeEnd": 26045,
+        "textRuns": [],
+        "parentId": "585060b6:76",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:78",
+        "tag": "div",
+        "openStart": 26052,
+        "attrEnd": 26078,
+        "openEnd": 26079,
+        "closeStart": 26079,
+        "closeEnd": 26085,
+        "textRuns": [],
+        "parentId": "585060b6:76",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:79",
+        "tag": "div",
+        "openStart": 26092,
+        "attrEnd": 26114,
+        "openEnd": 26115,
+        "closeStart": 26366,
+        "closeEnd": 26372,
+        "textRuns": [],
+        "parentId": "585060b6:76",
+        "childIds": ["585060b6:80", "585060b6:81", "585060b6:82", "585060b6:83"]
+      },
+      {
+        "id": "585060b6:80",
+        "tag": "div",
+        "openStart": 26115,
+        "attrEnd": 26142,
+        "openEnd": 26143,
+        "closeStart": 26161,
+        "closeEnd": 26167,
+        "textRuns": [[26143, 26161]],
+        "parentId": "585060b6:79",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:81",
+        "tag": "div",
+        "openStart": 26167,
+        "attrEnd": 26189,
+        "openEnd": 26190,
+        "closeStart": 26211,
+        "closeEnd": 26217,
+        "textRuns": [[26190, 26211]],
+        "parentId": "585060b6:79",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:82",
+        "tag": "div",
+        "openStart": 26217,
+        "attrEnd": 26241,
+        "openEnd": 26242,
+        "closeStart": 26300,
+        "closeEnd": 26306,
+        "textRuns": [[26242, 26300]],
+        "parentId": "585060b6:79",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:83",
+        "tag": "div",
+        "openStart": 26306,
+        "attrEnd": 26327,
+        "openEnd": 26328,
+        "closeStart": 26360,
+        "closeEnd": 26366,
+        "textRuns": [[26328, 26360]],
+        "parentId": "585060b6:79",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:84",
+        "tag": "div",
+        "openStart": 26388,
+        "attrEnd": 26410,
+        "openEnd": 26411,
+        "closeStart": 26877,
+        "closeEnd": 26883,
+        "textRuns": [
+          [26411, 26418],
+          [26542, 26549],
+          [26582, 26589],
+          [26872, 26877]
+        ],
+        "parentId": "585060b6:67",
+        "childIds": ["585060b6:85", "585060b6:86", "585060b6:87"]
+      },
+      {
+        "id": "585060b6:85",
+        "tag": "img",
+        "openStart": 26418,
+        "attrEnd": 26541,
+        "openEnd": 26542,
+        "closeEnd": 26542,
+        "textRuns": [],
+        "parentId": "585060b6:84",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:86",
+        "tag": "div",
+        "openStart": 26549,
+        "attrEnd": 26575,
+        "openEnd": 26576,
+        "closeStart": 26576,
+        "closeEnd": 26582,
+        "textRuns": [],
+        "parentId": "585060b6:84",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:87",
+        "tag": "div",
+        "openStart": 26589,
+        "attrEnd": 26611,
+        "openEnd": 26612,
+        "closeStart": 26866,
+        "closeEnd": 26872,
+        "textRuns": [],
+        "parentId": "585060b6:84",
+        "childIds": ["585060b6:88", "585060b6:89", "585060b6:90", "585060b6:91"]
+      },
+      {
+        "id": "585060b6:88",
+        "tag": "div",
+        "openStart": 26612,
+        "attrEnd": 26639,
+        "openEnd": 26640,
+        "closeStart": 26670,
+        "closeEnd": 26676,
+        "textRuns": [[26640, 26670]],
+        "parentId": "585060b6:87",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:89",
+        "tag": "div",
+        "openStart": 26676,
+        "attrEnd": 26698,
+        "openEnd": 26699,
+        "closeStart": 26716,
+        "closeEnd": 26722,
+        "textRuns": [[26699, 26716]],
+        "parentId": "585060b6:87",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:90",
+        "tag": "div",
+        "openStart": 26722,
+        "attrEnd": 26746,
+        "openEnd": 26747,
+        "closeStart": 26800,
+        "closeEnd": 26806,
+        "textRuns": [[26747, 26800]],
+        "parentId": "585060b6:87",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:91",
+        "tag": "div",
+        "openStart": 26806,
+        "attrEnd": 26827,
+        "openEnd": 26828,
+        "closeStart": 26860,
+        "closeEnd": 26866,
+        "textRuns": [[26828, 26860]],
+        "parentId": "585060b6:87",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:92",
+        "tag": "div",
+        "openStart": 26888,
+        "attrEnd": 26910,
+        "openEnd": 26911,
+        "closeStart": 27367,
+        "closeEnd": 27373,
+        "textRuns": [
+          [26911, 26918],
+          [27044, 27051],
+          [27084, 27091],
+          [27362, 27367]
+        ],
+        "parentId": "585060b6:67",
+        "childIds": ["585060b6:93", "585060b6:94", "585060b6:95"]
+      },
+      {
+        "id": "585060b6:93",
+        "tag": "img",
+        "openStart": 26918,
+        "attrEnd": 27043,
+        "openEnd": 27044,
+        "closeEnd": 27044,
+        "textRuns": [],
+        "parentId": "585060b6:92",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:94",
+        "tag": "div",
+        "openStart": 27051,
+        "attrEnd": 27077,
+        "openEnd": 27078,
+        "closeStart": 27078,
+        "closeEnd": 27084,
+        "textRuns": [],
+        "parentId": "585060b6:92",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:95",
+        "tag": "div",
+        "openStart": 27091,
+        "attrEnd": 27113,
+        "openEnd": 27114,
+        "closeStart": 27356,
+        "closeEnd": 27362,
+        "textRuns": [],
+        "parentId": "585060b6:92",
+        "childIds": ["585060b6:96", "585060b6:97", "585060b6:98", "585060b6:99"]
+      },
+      {
+        "id": "585060b6:96",
+        "tag": "div",
+        "openStart": 27114,
+        "attrEnd": 27141,
+        "openEnd": 27142,
+        "closeStart": 27179,
+        "closeEnd": 27185,
+        "textRuns": [[27142, 27179]],
+        "parentId": "585060b6:95",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:97",
+        "tag": "div",
+        "openStart": 27185,
+        "attrEnd": 27207,
+        "openEnd": 27208,
+        "closeStart": 27227,
+        "closeEnd": 27233,
+        "textRuns": [[27208, 27227]],
+        "parentId": "585060b6:95",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:98",
+        "tag": "div",
+        "openStart": 27233,
+        "attrEnd": 27257,
+        "openEnd": 27258,
+        "closeStart": 27290,
+        "closeEnd": 27296,
+        "textRuns": [[27258, 27290]],
+        "parentId": "585060b6:95",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:99",
+        "tag": "div",
+        "openStart": 27296,
+        "attrEnd": 27317,
+        "openEnd": 27318,
+        "closeStart": 27350,
+        "closeEnd": 27356,
+        "textRuns": [[27318, 27350]],
+        "parentId": "585060b6:95",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:100",
+        "tag": "div",
+        "openStart": 27391,
+        "attrEnd": 27419,
+        "openEnd": 27420,
+        "closeStart": 30110,
+        "closeEnd": 30116,
+        "textRuns": [
+          [27420, 27423],
+          [28582, 28585],
+          [30109, 30110]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:101", "585060b6:121"]
+      },
+      {
+        "id": "585060b6:101",
+        "tag": "div",
+        "openStart": 27423,
+        "attrEnd": 27427,
+        "openEnd": 27428,
+        "closeStart": 28576,
+        "closeEnd": 28582,
+        "textRuns": [
+          [27428, 27433],
+          [27478, 27483],
+          [27573, 27578],
+          [27890, 27895],
+          [28490, 28495],
+          [28573, 28576]
+        ],
+        "parentId": "585060b6:100",
+        "childIds": [
+          "585060b6:102",
+          "585060b6:103",
+          "585060b6:106",
+          "585060b6:107",
+          "585060b6:120"
+        ]
+      },
+      {
+        "id": "585060b6:102",
+        "tag": "div",
+        "openStart": 27433,
+        "attrEnd": 27454,
+        "openEnd": 27455,
+        "closeStart": 27472,
+        "closeEnd": 27478,
+        "textRuns": [[27455, 27472]],
+        "parentId": "585060b6:101",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:103",
+        "tag": "h2",
+        "openStart": 27483,
+        "attrEnd": 27503,
+        "openEnd": 27504,
+        "closeStart": 27568,
+        "closeEnd": 27573,
+        "textRuns": [[27504, 27530]],
+        "parentId": "585060b6:101",
+        "childIds": ["585060b6:104", "585060b6:105"]
+      },
+      {
+        "id": "585060b6:104",
+        "tag": "br",
+        "openStart": 27530,
+        "attrEnd": 27533,
+        "openEnd": 27534,
+        "closeEnd": 27534,
+        "textRuns": [],
+        "parentId": "585060b6:103",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:105",
+        "tag": "em",
+        "openStart": 27534,
+        "attrEnd": 27537,
+        "openEnd": 27538,
+        "closeStart": 27563,
+        "closeEnd": 27568,
+        "textRuns": [[27538, 27563]],
+        "parentId": "585060b6:103",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:106",
+        "tag": "p",
+        "openStart": 27578,
+        "attrEnd": 27603,
+        "openEnd": 27604,
+        "closeStart": 27886,
+        "closeEnd": 27890,
+        "textRuns": [[27604, 27886]],
+        "parentId": "585060b6:101",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:107",
+        "tag": "div",
+        "openStart": 27895,
+        "attrEnd": 27919,
+        "openEnd": 27920,
+        "closeStart": 28484,
+        "closeEnd": 28490,
+        "textRuns": [
+          [27920, 27927],
+          [28110, 28117],
+          [28305, 28312],
+          [28479, 28484]
+        ],
+        "parentId": "585060b6:101",
+        "childIds": ["585060b6:108", "585060b6:112", "585060b6:116"]
+      },
+      {
+        "id": "585060b6:108",
+        "tag": "div",
+        "openStart": 27927,
+        "attrEnd": 27947,
+        "openEnd": 27948,
+        "closeStart": 28104,
+        "closeEnd": 28110,
+        "textRuns": [],
+        "parentId": "585060b6:107",
+        "childIds": ["585060b6:109", "585060b6:110"]
+      },
+      {
+        "id": "585060b6:109",
+        "tag": "div",
+        "openStart": 27948,
+        "attrEnd": 27968,
+        "openEnd": 27969,
+        "closeStart": 27969,
+        "closeEnd": 27975,
+        "textRuns": [],
+        "parentId": "585060b6:108",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:110",
+        "tag": "div",
+        "openStart": 27975,
+        "attrEnd": 28000,
+        "openEnd": 28001,
+        "closeStart": 28098,
+        "closeEnd": 28104,
+        "textRuns": [[28044, 28098]],
+        "parentId": "585060b6:108",
+        "childIds": ["585060b6:111"]
+      },
+      {
+        "id": "585060b6:111",
+        "tag": "strong",
+        "openStart": 28001,
+        "attrEnd": 28008,
+        "openEnd": 28009,
+        "closeStart": 28035,
+        "closeEnd": 28044,
+        "textRuns": [[28009, 28035]],
+        "parentId": "585060b6:110",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:112",
+        "tag": "div",
+        "openStart": 28117,
+        "attrEnd": 28137,
+        "openEnd": 28138,
+        "closeStart": 28299,
+        "closeEnd": 28305,
+        "textRuns": [],
+        "parentId": "585060b6:107",
+        "childIds": ["585060b6:113", "585060b6:114"]
+      },
+      {
+        "id": "585060b6:113",
+        "tag": "div",
+        "openStart": 28138,
+        "attrEnd": 28158,
+        "openEnd": 28159,
+        "closeStart": 28159,
+        "closeEnd": 28165,
+        "textRuns": [],
+        "parentId": "585060b6:112",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:114",
+        "tag": "div",
+        "openStart": 28165,
+        "attrEnd": 28190,
+        "openEnd": 28191,
+        "closeStart": 28293,
+        "closeEnd": 28299,
+        "textRuns": [[28236, 28293]],
+        "parentId": "585060b6:112",
+        "childIds": ["585060b6:115"]
+      },
+      {
+        "id": "585060b6:115",
+        "tag": "strong",
+        "openStart": 28191,
+        "attrEnd": 28198,
+        "openEnd": 28199,
+        "closeStart": 28227,
+        "closeEnd": 28236,
+        "textRuns": [[28199, 28227]],
+        "parentId": "585060b6:114",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:116",
+        "tag": "div",
+        "openStart": 28312,
+        "attrEnd": 28332,
+        "openEnd": 28333,
+        "closeStart": 28473,
+        "closeEnd": 28479,
+        "textRuns": [],
+        "parentId": "585060b6:107",
+        "childIds": ["585060b6:117", "585060b6:118"]
+      },
+      {
+        "id": "585060b6:117",
+        "tag": "div",
+        "openStart": 28333,
+        "attrEnd": 28353,
+        "openEnd": 28354,
+        "closeStart": 28354,
+        "closeEnd": 28360,
+        "textRuns": [],
+        "parentId": "585060b6:116",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:118",
+        "tag": "div",
+        "openStart": 28360,
+        "attrEnd": 28385,
+        "openEnd": 28386,
+        "closeStart": 28467,
+        "closeEnd": 28473,
+        "textRuns": [[28438, 28467]],
+        "parentId": "585060b6:116",
+        "childIds": ["585060b6:119"]
+      },
+      {
+        "id": "585060b6:119",
+        "tag": "strong",
+        "openStart": 28386,
+        "attrEnd": 28393,
+        "openEnd": 28394,
+        "closeStart": 28429,
+        "closeEnd": 28438,
+        "textRuns": [[28394, 28429]],
+        "parentId": "585060b6:118",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:120",
+        "tag": "button",
+        "openStart": 28495,
+        "attrEnd": 28524,
+        "openEnd": 28525,
+        "closeStart": 28564,
+        "closeEnd": 28573,
+        "textRuns": [[28525, 28564]],
+        "parentId": "585060b6:101",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:121",
+        "tag": "div",
+        "openStart": 28585,
+        "attrEnd": 28607,
+        "openEnd": 28608,
+        "closeStart": 30103,
+        "closeEnd": 30109,
+        "textRuns": [
+          [28608, 28613],
+          [29969, 29974],
+          [30100, 30103]
+        ],
+        "parentId": "585060b6:100",
+        "childIds": ["585060b6:122", "585060b6:145"]
+      },
+      {
+        "id": "585060b6:122",
+        "tag": "div",
+        "openStart": 28613,
+        "attrEnd": 28633,
+        "openEnd": 28634,
+        "closeStart": 29963,
+        "closeEnd": 29969,
+        "textRuns": [
+          [28634, 28641],
+          [29092, 29099],
+          [29958, 29963]
+        ],
+        "parentId": "585060b6:121",
+        "childIds": ["585060b6:123", "585060b6:128"]
+      },
+      {
+        "id": "585060b6:123",
+        "tag": "div",
+        "openStart": 28641,
+        "attrEnd": 28681,
+        "openEnd": 28682,
+        "closeStart": 29086,
+        "closeEnd": 29092,
+        "styleAttr": [28670, 28680],
+        "textRuns": [
+          [28682, 28691],
+          [28867, 28876],
+          [29007, 29016],
+          [29079, 29086]
+        ],
+        "parentId": "585060b6:122",
+        "childIds": ["585060b6:124", "585060b6:125", "585060b6:127"]
+      },
+      {
+        "id": "585060b6:124",
+        "tag": "img",
+        "openStart": 28691,
+        "attrEnd": 28866,
+        "openEnd": 28867,
+        "closeEnd": 28867,
+        "styleAttr": [28785, 28865],
+        "textRuns": [],
+        "parentId": "585060b6:123",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:125",
+        "tag": "div",
+        "openStart": 28876,
+        "attrEnd": 28970,
+        "openEnd": 28971,
+        "closeStart": 29001,
+        "closeEnd": 29007,
+        "styleAttr": [28888, 28969],
+        "textRuns": [],
+        "parentId": "585060b6:123",
+        "childIds": ["585060b6:126"]
+      },
+      {
+        "id": "585060b6:126",
+        "tag": "div",
+        "openStart": 28971,
+        "attrEnd": 28991,
+        "openEnd": 28992,
+        "closeStart": 28995,
+        "closeEnd": 29001,
+        "textRuns": [[28992, 28995]],
+        "parentId": "585060b6:125",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:127",
+        "tag": "span",
+        "openStart": 29016,
+        "attrEnd": 29041,
+        "openEnd": 29042,
+        "closeStart": 29072,
+        "closeEnd": 29079,
+        "textRuns": [[29042, 29072]],
+        "parentId": "585060b6:123",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:128",
+        "tag": "div",
+        "openStart": 29099,
+        "attrEnd": 29119,
+        "openEnd": 29120,
+        "closeStart": 29952,
+        "closeEnd": 29958,
+        "textRuns": [
+          [29120, 29129],
+          [29215, 29224],
+          [29553, 29562],
+          [29945, 29952]
+        ],
+        "parentId": "585060b6:122",
+        "childIds": ["585060b6:129", "585060b6:130", "585060b6:135"]
+      },
+      {
+        "id": "585060b6:129",
+        "tag": "div",
+        "openStart": 29129,
+        "attrEnd": 29156,
+        "openEnd": 29157,
+        "closeStart": 29209,
+        "closeEnd": 29215,
+        "textRuns": [[29157, 29209]],
+        "parentId": "585060b6:128",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:130",
+        "tag": "div",
+        "openStart": 29224,
+        "attrEnd": 29254,
+        "openEnd": 29255,
+        "closeStart": 29547,
+        "closeEnd": 29553,
+        "textRuns": [],
+        "parentId": "585060b6:128",
+        "childIds": ["585060b6:131", "585060b6:133"]
+      },
+      {
+        "id": "585060b6:131",
+        "tag": "div",
+        "openStart": 29255,
+        "attrEnd": 29308,
+        "openEnd": 29309,
+        "closeStart": 29447,
+        "closeEnd": 29453,
+        "styleAttr": [29281, 29307],
+        "textRuns": [],
+        "parentId": "585060b6:130",
+        "childIds": ["585060b6:132"]
+      },
+      {
+        "id": "585060b6:132",
+        "tag": "img",
+        "openStart": 29309,
+        "attrEnd": 29446,
+        "openEnd": 29447,
+        "closeEnd": 29447,
+        "styleAttr": [29405, 29445],
+        "textRuns": [],
+        "parentId": "585060b6:131",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:133",
+        "tag": "div",
+        "openStart": 29453,
+        "attrEnd": 29484,
+        "openEnd": 29485,
+        "closeStart": 29541,
+        "closeEnd": 29547,
+        "textRuns": [[29485, 29505]],
+        "parentId": "585060b6:130",
+        "childIds": ["585060b6:134"]
+      },
+      {
+        "id": "585060b6:134",
+        "tag": "strong",
+        "openStart": 29505,
+        "attrEnd": 29512,
+        "openEnd": 29513,
+        "closeStart": 29532,
+        "closeEnd": 29541,
+        "textRuns": [[29513, 29532]],
+        "parentId": "585060b6:133",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:135",
+        "tag": "div",
+        "openStart": 29562,
+        "attrEnd": 29587,
+        "openEnd": 29588,
+        "closeStart": 29939,
+        "closeEnd": 29945,
+        "textRuns": [
+          [29588, 29599],
+          [29700, 29711],
+          [29819, 29830],
+          [29930, 29939]
+        ],
+        "parentId": "585060b6:128",
+        "childIds": ["585060b6:136", "585060b6:139", "585060b6:142"]
+      },
+      {
+        "id": "585060b6:136",
+        "tag": "div",
+        "openStart": 29599,
+        "attrEnd": 29619,
+        "openEnd": 29620,
+        "closeStart": 29694,
+        "closeEnd": 29700,
+        "textRuns": [],
+        "parentId": "585060b6:135",
+        "childIds": ["585060b6:137", "585060b6:138"]
+      },
+      {
+        "id": "585060b6:137",
+        "tag": "div",
+        "openStart": 29620,
+        "attrEnd": 29644,
+        "openEnd": 29645,
+        "closeStart": 29649,
+        "closeEnd": 29655,
+        "textRuns": [[29645, 29649]],
+        "parentId": "585060b6:136",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:138",
+        "tag": "div",
+        "openStart": 29655,
+        "attrEnd": 29681,
+        "openEnd": 29682,
+        "closeStart": 29688,
+        "closeEnd": 29694,
+        "textRuns": [[29682, 29688]],
+        "parentId": "585060b6:136",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:139",
+        "tag": "div",
+        "openStart": 29711,
+        "attrEnd": 29731,
+        "openEnd": 29732,
+        "closeStart": 29813,
+        "closeEnd": 29819,
+        "textRuns": [],
+        "parentId": "585060b6:135",
+        "childIds": ["585060b6:140", "585060b6:141"]
+      },
+      {
+        "id": "585060b6:140",
+        "tag": "div",
+        "openStart": 29732,
+        "attrEnd": 29756,
+        "openEnd": 29757,
+        "closeStart": 29762,
+        "closeEnd": 29768,
+        "textRuns": [[29757, 29762]],
+        "parentId": "585060b6:139",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:141",
+        "tag": "div",
+        "openStart": 29768,
+        "attrEnd": 29794,
+        "openEnd": 29795,
+        "closeStart": 29807,
+        "closeEnd": 29813,
+        "textRuns": [[29795, 29807]],
+        "parentId": "585060b6:139",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:142",
+        "tag": "div",
+        "openStart": 29830,
+        "attrEnd": 29850,
+        "openEnd": 29851,
+        "closeStart": 29924,
+        "closeEnd": 29930,
+        "textRuns": [],
+        "parentId": "585060b6:135",
+        "childIds": ["585060b6:143", "585060b6:144"]
+      },
+      {
+        "id": "585060b6:143",
+        "tag": "div",
+        "openStart": 29851,
+        "attrEnd": 29875,
+        "openEnd": 29876,
+        "closeStart": 29879,
+        "closeEnd": 29885,
+        "textRuns": [[29876, 29879]],
+        "parentId": "585060b6:142",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:144",
+        "tag": "div",
+        "openStart": 29885,
+        "attrEnd": 29911,
+        "openEnd": 29912,
+        "closeStart": 29918,
+        "closeEnd": 29924,
+        "textRuns": [[29912, 29918]],
+        "parentId": "585060b6:142",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:145",
+        "tag": "div",
+        "openStart": 29974,
+        "attrEnd": 30001,
+        "openEnd": 30002,
+        "closeStart": 30094,
+        "closeEnd": 30100,
+        "textRuns": [],
+        "parentId": "585060b6:121",
+        "childIds": ["585060b6:146", "585060b6:147"]
+      },
+      {
+        "id": "585060b6:146",
+        "tag": "div",
+        "openStart": 30002,
+        "attrEnd": 30024,
+        "openEnd": 30025,
+        "closeStart": 30030,
+        "closeEnd": 30036,
+        "textRuns": [[30025, 30030]],
+        "parentId": "585060b6:145",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:147",
+        "tag": "div",
+        "openStart": 30036,
+        "attrEnd": 30060,
+        "openEnd": 30061,
+        "closeStart": 30088,
+        "closeEnd": 30094,
+        "textRuns": [[30061, 30088]],
+        "parentId": "585060b6:145",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:148",
+        "tag": "div",
+        "openStart": 30118,
+        "attrEnd": 30144,
+        "openEnd": 30145,
+        "closeStart": 30478,
+        "closeEnd": 30484,
+        "textRuns": [
+          [30145, 30148],
+          [30176, 30179],
+          [30211, 30214],
+          [30415, 30418],
+          [30477, 30478]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": [
+          "585060b6:149",
+          "585060b6:150",
+          "585060b6:151",
+          "585060b6:154"
+        ]
+      },
+      {
+        "id": "585060b6:149",
+        "tag": "div",
+        "openStart": 30148,
+        "attrEnd": 30169,
+        "openEnd": 30170,
+        "closeStart": 30170,
+        "closeEnd": 30176,
+        "textRuns": [],
+        "parentId": "585060b6:148",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:150",
+        "tag": "div",
+        "openStart": 30179,
+        "attrEnd": 30202,
+        "openEnd": 30203,
+        "closeStart": 30205,
+        "closeEnd": 30211,
+        "textRuns": [[30203, 30205]],
+        "parentId": "585060b6:148",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:151",
+        "tag": "div",
+        "openStart": 30214,
+        "attrEnd": 30237,
+        "openEnd": 30238,
+        "closeStart": 30409,
+        "closeEnd": 30415,
+        "textRuns": [
+          [30238, 30322],
+          [30326, 30331],
+          [30350, 30409]
+        ],
+        "parentId": "585060b6:148",
+        "childIds": ["585060b6:152", "585060b6:153"]
+      },
+      {
+        "id": "585060b6:152",
+        "tag": "br",
+        "openStart": 30322,
+        "attrEnd": 30325,
+        "openEnd": 30326,
+        "closeEnd": 30326,
+        "textRuns": [],
+        "parentId": "585060b6:151",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:153",
+        "tag": "em",
+        "openStart": 30331,
+        "attrEnd": 30334,
+        "openEnd": 30335,
+        "closeStart": 30345,
+        "closeEnd": 30350,
+        "textRuns": [[30335, 30345]],
+        "parentId": "585060b6:151",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:154",
+        "tag": "div",
+        "openStart": 30418,
+        "attrEnd": 30443,
+        "openEnd": 30444,
+        "closeStart": 30471,
+        "closeEnd": 30477,
+        "textRuns": [[30444, 30471]],
+        "parentId": "585060b6:148",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:155",
+        "tag": "div",
+        "openStart": 30486,
+        "attrEnd": 30512,
+        "openEnd": 30513,
+        "closeStart": 32801,
+        "closeEnd": 32807,
+        "textRuns": [
+          [30513, 30516],
+          [30782, 30785],
+          [32800, 32801]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:156", "585060b6:161"]
+      },
+      {
+        "id": "585060b6:156",
+        "tag": "div",
+        "openStart": 30516,
+        "attrEnd": 30541,
+        "openEnd": 30542,
+        "closeStart": 30776,
+        "closeEnd": 30782,
+        "textRuns": [
+          [30542, 30547],
+          [30592, 30597],
+          [30649, 30654],
+          [30773, 30776]
+        ],
+        "parentId": "585060b6:155",
+        "childIds": ["585060b6:157", "585060b6:158", "585060b6:160"]
+      },
+      {
+        "id": "585060b6:157",
+        "tag": "div",
+        "openStart": 30547,
+        "attrEnd": 30575,
+        "openEnd": 30576,
+        "closeStart": 30586,
+        "closeEnd": 30592,
+        "textRuns": [[30576, 30586]],
+        "parentId": "585060b6:156",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:158",
+        "tag": "h2",
+        "openStart": 30597,
+        "attrEnd": 30600,
+        "openEnd": 30601,
+        "closeStart": 30644,
+        "closeEnd": 30649,
+        "textRuns": [
+          [30601, 30617],
+          [30621, 30644]
+        ],
+        "parentId": "585060b6:156",
+        "childIds": ["585060b6:159"]
+      },
+      {
+        "id": "585060b6:159",
+        "tag": "br",
+        "openStart": 30617,
+        "attrEnd": 30620,
+        "openEnd": 30621,
+        "closeEnd": 30621,
+        "textRuns": [],
+        "parentId": "585060b6:158",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:160",
+        "tag": "p",
+        "openStart": 30654,
+        "attrEnd": 30656,
+        "openEnd": 30657,
+        "closeStart": 30769,
+        "closeEnd": 30773,
+        "textRuns": [[30657, 30769]],
+        "parentId": "585060b6:156",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:161",
+        "tag": "div",
+        "openStart": 30785,
+        "attrEnd": 30808,
+        "openEnd": 30809,
+        "closeStart": 32794,
+        "closeEnd": 32800,
+        "textRuns": [
+          [30809, 30814],
+          [31435, 31440],
+          [32174, 32179],
+          [32791, 32794]
+        ],
+        "parentId": "585060b6:155",
+        "childIds": ["585060b6:162", "585060b6:177", "585060b6:194"]
+      },
+      {
+        "id": "585060b6:162",
+        "tag": "div",
+        "openStart": 30814,
+        "attrEnd": 30836,
+        "openEnd": 30837,
+        "closeStart": 31429,
+        "closeEnd": 31435,
+        "textRuns": [
+          [30837, 30844],
+          [30881, 30888],
+          [30936, 30943],
+          [31014, 31021],
+          [31365, 31372],
+          [31424, 31429]
+        ],
+        "parentId": "585060b6:161",
+        "childIds": [
+          "585060b6:163",
+          "585060b6:164",
+          "585060b6:166",
+          "585060b6:167",
+          "585060b6:176"
+        ]
+      },
+      {
+        "id": "585060b6:163",
+        "tag": "div",
+        "openStart": 30844,
+        "attrEnd": 30866,
+        "openEnd": 30867,
+        "closeStart": 30875,
+        "closeEnd": 30881,
+        "textRuns": [[30867, 30875]],
+        "parentId": "585060b6:162",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:164",
+        "tag": "div",
+        "openStart": 30888,
+        "attrEnd": 30911,
+        "openEnd": 30912,
+        "closeStart": 30930,
+        "closeEnd": 30936,
+        "textRuns": [[30926, 30930]],
+        "parentId": "585060b6:162",
+        "childIds": ["585060b6:165"]
+      },
+      {
+        "id": "585060b6:165",
+        "tag": "span",
+        "openStart": 30912,
+        "attrEnd": 30917,
+        "openEnd": 30918,
+        "closeStart": 30919,
+        "closeEnd": 30926,
+        "textRuns": [[30918, 30919]],
+        "parentId": "585060b6:164",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:166",
+        "tag": "div",
+        "openStart": 30943,
+        "attrEnd": 30967,
+        "openEnd": 30968,
+        "closeStart": 31008,
+        "closeEnd": 31014,
+        "textRuns": [[30968, 31008]],
+        "parentId": "585060b6:162",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:167",
+        "tag": "ul",
+        "openStart": 31021,
+        "attrEnd": 31046,
+        "openEnd": 31047,
+        "closeStart": 31360,
+        "closeEnd": 31365,
+        "textRuns": [
+          [31047, 31056],
+          [31140, 31149],
+          [31210, 31219],
+          [31280, 31289],
+          [31353, 31360]
+        ],
+        "parentId": "585060b6:162",
+        "childIds": [
+          "585060b6:168",
+          "585060b6:170",
+          "585060b6:172",
+          "585060b6:174"
+        ]
+      },
+      {
+        "id": "585060b6:168",
+        "tag": "li",
+        "openStart": 31056,
+        "attrEnd": 31059,
+        "openEnd": 31060,
+        "closeStart": 31135,
+        "closeEnd": 31140,
+        "textRuns": [[31087, 31135]],
+        "parentId": "585060b6:167",
+        "childIds": ["585060b6:169"]
+      },
+      {
+        "id": "585060b6:169",
+        "tag": "div",
+        "openStart": 31060,
+        "attrEnd": 31080,
+        "openEnd": 31081,
+        "closeStart": 31081,
+        "closeEnd": 31087,
+        "textRuns": [],
+        "parentId": "585060b6:168",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:170",
+        "tag": "li",
+        "openStart": 31149,
+        "attrEnd": 31152,
+        "openEnd": 31153,
+        "closeStart": 31205,
+        "closeEnd": 31210,
+        "textRuns": [[31180, 31205]],
+        "parentId": "585060b6:167",
+        "childIds": ["585060b6:171"]
+      },
+      {
+        "id": "585060b6:171",
+        "tag": "div",
+        "openStart": 31153,
+        "attrEnd": 31173,
+        "openEnd": 31174,
+        "closeStart": 31174,
+        "closeEnd": 31180,
+        "textRuns": [],
+        "parentId": "585060b6:170",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:172",
+        "tag": "li",
+        "openStart": 31219,
+        "attrEnd": 31222,
+        "openEnd": 31223,
+        "closeStart": 31275,
+        "closeEnd": 31280,
+        "textRuns": [[31250, 31275]],
+        "parentId": "585060b6:167",
+        "childIds": ["585060b6:173"]
+      },
+      {
+        "id": "585060b6:173",
+        "tag": "div",
+        "openStart": 31223,
+        "attrEnd": 31243,
+        "openEnd": 31244,
+        "closeStart": 31244,
+        "closeEnd": 31250,
+        "textRuns": [],
+        "parentId": "585060b6:172",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:174",
+        "tag": "li",
+        "openStart": 31289,
+        "attrEnd": 31292,
+        "openEnd": 31293,
+        "closeStart": 31348,
+        "closeEnd": 31353,
+        "textRuns": [[31320, 31348]],
+        "parentId": "585060b6:167",
+        "childIds": ["585060b6:175"]
+      },
+      {
+        "id": "585060b6:175",
+        "tag": "div",
+        "openStart": 31293,
+        "attrEnd": 31313,
+        "openEnd": 31314,
+        "closeStart": 31314,
+        "closeEnd": 31320,
+        "textRuns": [],
+        "parentId": "585060b6:174",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:176",
+        "tag": "button",
+        "openStart": 31372,
+        "attrEnd": 31401,
+        "openEnd": 31402,
+        "closeStart": 31415,
+        "closeEnd": 31424,
+        "textRuns": [[31402, 31415]],
+        "parentId": "585060b6:162",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:177",
+        "tag": "div",
+        "openStart": 31440,
+        "attrEnd": 31471,
+        "openEnd": 31472,
+        "closeStart": 32168,
+        "closeEnd": 32174,
+        "textRuns": [
+          [31472, 31479],
+          [31523, 31530],
+          [31578, 31585],
+          [31656, 31663],
+          [32092, 32099],
+          [32163, 32168]
+        ],
+        "parentId": "585060b6:161",
+        "childIds": [
+          "585060b6:178",
+          "585060b6:179",
+          "585060b6:181",
+          "585060b6:182",
+          "585060b6:193"
+        ]
+      },
+      {
+        "id": "585060b6:178",
+        "tag": "div",
+        "openStart": 31479,
+        "attrEnd": 31501,
+        "openEnd": 31502,
+        "closeStart": 31517,
+        "closeEnd": 31523,
+        "textRuns": [[31502, 31517]],
+        "parentId": "585060b6:177",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:179",
+        "tag": "div",
+        "openStart": 31530,
+        "attrEnd": 31553,
+        "openEnd": 31554,
+        "closeStart": 31572,
+        "closeEnd": 31578,
+        "textRuns": [[31568, 31572]],
+        "parentId": "585060b6:177",
+        "childIds": ["585060b6:180"]
+      },
+      {
+        "id": "585060b6:180",
+        "tag": "span",
+        "openStart": 31554,
+        "attrEnd": 31559,
+        "openEnd": 31560,
+        "closeStart": 31561,
+        "closeEnd": 31568,
+        "textRuns": [[31560, 31561]],
+        "parentId": "585060b6:179",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:181",
+        "tag": "div",
+        "openStart": 31585,
+        "attrEnd": 31609,
+        "openEnd": 31610,
+        "closeStart": 31650,
+        "closeEnd": 31656,
+        "textRuns": [[31610, 31650]],
+        "parentId": "585060b6:177",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:182",
+        "tag": "ul",
+        "openStart": 31663,
+        "attrEnd": 31688,
+        "openEnd": 31689,
+        "closeStart": 32087,
+        "closeEnd": 32092,
+        "textRuns": [
+          [31689, 31698],
+          [31764, 31773],
+          [31843, 31852],
+          [31923, 31932],
+          [32006, 32015],
+          [32080, 32087]
+        ],
+        "parentId": "585060b6:177",
+        "childIds": [
+          "585060b6:183",
+          "585060b6:185",
+          "585060b6:187",
+          "585060b6:189",
+          "585060b6:191"
+        ]
+      },
+      {
+        "id": "585060b6:183",
+        "tag": "li",
+        "openStart": 31698,
+        "attrEnd": 31701,
+        "openEnd": 31702,
+        "closeStart": 31759,
+        "closeEnd": 31764,
+        "textRuns": [[31729, 31759]],
+        "parentId": "585060b6:182",
+        "childIds": ["585060b6:184"]
+      },
+      {
+        "id": "585060b6:184",
+        "tag": "div",
+        "openStart": 31702,
+        "attrEnd": 31722,
+        "openEnd": 31723,
+        "closeStart": 31723,
+        "closeEnd": 31729,
+        "textRuns": [],
+        "parentId": "585060b6:183",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:185",
+        "tag": "li",
+        "openStart": 31773,
+        "attrEnd": 31776,
+        "openEnd": 31777,
+        "closeStart": 31838,
+        "closeEnd": 31843,
+        "textRuns": [[31804, 31838]],
+        "parentId": "585060b6:182",
+        "childIds": ["585060b6:186"]
+      },
+      {
+        "id": "585060b6:186",
+        "tag": "div",
+        "openStart": 31777,
+        "attrEnd": 31797,
+        "openEnd": 31798,
+        "closeStart": 31798,
+        "closeEnd": 31804,
+        "textRuns": [],
+        "parentId": "585060b6:185",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:187",
+        "tag": "li",
+        "openStart": 31852,
+        "attrEnd": 31855,
+        "openEnd": 31856,
+        "closeStart": 31918,
+        "closeEnd": 31923,
+        "textRuns": [[31883, 31918]],
+        "parentId": "585060b6:182",
+        "childIds": ["585060b6:188"]
+      },
+      {
+        "id": "585060b6:188",
+        "tag": "div",
+        "openStart": 31856,
+        "attrEnd": 31876,
+        "openEnd": 31877,
+        "closeStart": 31877,
+        "closeEnd": 31883,
+        "textRuns": [],
+        "parentId": "585060b6:187",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:189",
+        "tag": "li",
+        "openStart": 31932,
+        "attrEnd": 31935,
+        "openEnd": 31936,
+        "closeStart": 32001,
+        "closeEnd": 32006,
+        "textRuns": [[31963, 32001]],
+        "parentId": "585060b6:182",
+        "childIds": ["585060b6:190"]
+      },
+      {
+        "id": "585060b6:190",
+        "tag": "div",
+        "openStart": 31936,
+        "attrEnd": 31956,
+        "openEnd": 31957,
+        "closeStart": 31957,
+        "closeEnd": 31963,
+        "textRuns": [],
+        "parentId": "585060b6:189",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:191",
+        "tag": "li",
+        "openStart": 32015,
+        "attrEnd": 32018,
+        "openEnd": 32019,
+        "closeStart": 32075,
+        "closeEnd": 32080,
+        "textRuns": [[32046, 32075]],
+        "parentId": "585060b6:182",
+        "childIds": ["585060b6:192"]
+      },
+      {
+        "id": "585060b6:192",
+        "tag": "div",
+        "openStart": 32019,
+        "attrEnd": 32039,
+        "openEnd": 32040,
+        "closeStart": 32040,
+        "closeEnd": 32046,
+        "textRuns": [],
+        "parentId": "585060b6:191",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:193",
+        "tag": "button",
+        "openStart": 32099,
+        "attrEnd": 32128,
+        "openEnd": 32129,
+        "closeStart": 32154,
+        "closeEnd": 32163,
+        "textRuns": [[32129, 32154]],
+        "parentId": "585060b6:177",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:194",
+        "tag": "div",
+        "openStart": 32179,
+        "attrEnd": 32201,
+        "openEnd": 32202,
+        "closeStart": 32785,
+        "closeEnd": 32791,
+        "textRuns": [
+          [32202, 32209],
+          [32246, 32253],
+          [32301, 32308],
+          [32373, 32380],
+          [32712, 32719],
+          [32780, 32785]
+        ],
+        "parentId": "585060b6:161",
+        "childIds": [
+          "585060b6:195",
+          "585060b6:196",
+          "585060b6:198",
+          "585060b6:199",
+          "585060b6:208"
+        ]
+      },
+      {
+        "id": "585060b6:195",
+        "tag": "div",
+        "openStart": 32209,
+        "attrEnd": 32231,
+        "openEnd": 32232,
+        "closeStart": 32240,
+        "closeEnd": 32246,
+        "textRuns": [[32232, 32240]],
+        "parentId": "585060b6:194",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:196",
+        "tag": "div",
+        "openStart": 32253,
+        "attrEnd": 32276,
+        "openEnd": 32277,
+        "closeStart": 32295,
+        "closeEnd": 32301,
+        "textRuns": [[32291, 32295]],
+        "parentId": "585060b6:194",
+        "childIds": ["585060b6:197"]
+      },
+      {
+        "id": "585060b6:197",
+        "tag": "span",
+        "openStart": 32277,
+        "attrEnd": 32282,
+        "openEnd": 32283,
+        "closeStart": 32284,
+        "closeEnd": 32291,
+        "textRuns": [[32283, 32284]],
+        "parentId": "585060b6:196",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:198",
+        "tag": "div",
+        "openStart": 32308,
+        "attrEnd": 32332,
+        "openEnd": 32333,
+        "closeStart": 32367,
+        "closeEnd": 32373,
+        "textRuns": [[32333, 32367]],
+        "parentId": "585060b6:194",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:199",
+        "tag": "ul",
+        "openStart": 32380,
+        "attrEnd": 32405,
+        "openEnd": 32406,
+        "closeStart": 32707,
+        "closeEnd": 32712,
+        "textRuns": [
+          [32406, 32415],
+          [32488, 32497],
+          [32560, 32569],
+          [32632, 32641],
+          [32700, 32707]
+        ],
+        "parentId": "585060b6:194",
+        "childIds": [
+          "585060b6:200",
+          "585060b6:202",
+          "585060b6:204",
+          "585060b6:206"
+        ]
+      },
+      {
+        "id": "585060b6:200",
+        "tag": "li",
+        "openStart": 32415,
+        "attrEnd": 32418,
+        "openEnd": 32419,
+        "closeStart": 32483,
+        "closeEnd": 32488,
+        "textRuns": [[32446, 32483]],
+        "parentId": "585060b6:199",
+        "childIds": ["585060b6:201"]
+      },
+      {
+        "id": "585060b6:201",
+        "tag": "div",
+        "openStart": 32419,
+        "attrEnd": 32439,
+        "openEnd": 32440,
+        "closeStart": 32440,
+        "closeEnd": 32446,
+        "textRuns": [],
+        "parentId": "585060b6:200",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:202",
+        "tag": "li",
+        "openStart": 32497,
+        "attrEnd": 32500,
+        "openEnd": 32501,
+        "closeStart": 32555,
+        "closeEnd": 32560,
+        "textRuns": [[32528, 32555]],
+        "parentId": "585060b6:199",
+        "childIds": ["585060b6:203"]
+      },
+      {
+        "id": "585060b6:203",
+        "tag": "div",
+        "openStart": 32501,
+        "attrEnd": 32521,
+        "openEnd": 32522,
+        "closeStart": 32522,
+        "closeEnd": 32528,
+        "textRuns": [],
+        "parentId": "585060b6:202",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:204",
+        "tag": "li",
+        "openStart": 32569,
+        "attrEnd": 32572,
+        "openEnd": 32573,
+        "closeStart": 32627,
+        "closeEnd": 32632,
+        "textRuns": [[32600, 32627]],
+        "parentId": "585060b6:199",
+        "childIds": ["585060b6:205"]
+      },
+      {
+        "id": "585060b6:205",
+        "tag": "div",
+        "openStart": 32573,
+        "attrEnd": 32593,
+        "openEnd": 32594,
+        "closeStart": 32594,
+        "closeEnd": 32600,
+        "textRuns": [],
+        "parentId": "585060b6:204",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:206",
+        "tag": "li",
+        "openStart": 32641,
+        "attrEnd": 32644,
+        "openEnd": 32645,
+        "closeStart": 32695,
+        "closeEnd": 32700,
+        "textRuns": [[32672, 32695]],
+        "parentId": "585060b6:199",
+        "childIds": ["585060b6:207"]
+      },
+      {
+        "id": "585060b6:207",
+        "tag": "div",
+        "openStart": 32645,
+        "attrEnd": 32665,
+        "openEnd": 32666,
+        "closeStart": 32666,
+        "closeEnd": 32672,
+        "textRuns": [],
+        "parentId": "585060b6:206",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:208",
+        "tag": "button",
+        "openStart": 32719,
+        "attrEnd": 32748,
+        "openEnd": 32749,
+        "closeStart": 32771,
+        "closeEnd": 32780,
+        "textRuns": [[32749, 32771]],
+        "parentId": "585060b6:194",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:209",
+        "tag": "div",
+        "openStart": 32809,
+        "attrEnd": 32835,
+        "openEnd": 32836,
+        "closeStart": 34675,
+        "closeEnd": 34681,
+        "textRuns": [
+          [32836, 32839],
+          [33092, 33095],
+          [34674, 34675]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:210", "585060b6:213"]
+      },
+      {
+        "id": "585060b6:210",
+        "tag": "div",
+        "openStart": 32839,
+        "attrEnd": 32864,
+        "openEnd": 32865,
+        "closeStart": 33086,
+        "closeEnd": 33092,
+        "textRuns": [
+          [32865, 32870],
+          [32901, 32906],
+          [33083, 33086]
+        ],
+        "parentId": "585060b6:209",
+        "childIds": ["585060b6:211", "585060b6:212"]
+      },
+      {
+        "id": "585060b6:211",
+        "tag": "h2",
+        "openStart": 32870,
+        "attrEnd": 32873,
+        "openEnd": 32874,
+        "closeStart": 32896,
+        "closeEnd": 32901,
+        "textRuns": [[32874, 32896]],
+        "parentId": "585060b6:210",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:212",
+        "tag": "p",
+        "openStart": 32906,
+        "attrEnd": 32908,
+        "openEnd": 32909,
+        "closeStart": 33079,
+        "closeEnd": 33083,
+        "textRuns": [[32909, 33079]],
+        "parentId": "585060b6:210",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:213",
+        "tag": "div",
+        "openStart": 33095,
+        "attrEnd": 33118,
+        "openEnd": 33119,
+        "closeStart": 34668,
+        "closeEnd": 34674,
+        "textRuns": [
+          [33119, 33124],
+          [33639, 33644],
+          [34150, 34155],
+          [34665, 34668]
+        ],
+        "parentId": "585060b6:209",
+        "childIds": ["585060b6:214", "585060b6:222", "585060b6:230"]
+      },
+      {
+        "id": "585060b6:214",
+        "tag": "div",
+        "openStart": 33124,
+        "attrEnd": 33147,
+        "openEnd": 33148,
+        "closeStart": 33633,
+        "closeEnd": 33639,
+        "textRuns": [
+          [33148, 33155],
+          [33205, 33212],
+          [33465, 33472],
+          [33628, 33633]
+        ],
+        "parentId": "585060b6:213",
+        "childIds": ["585060b6:215", "585060b6:216", "585060b6:217"]
+      },
+      {
+        "id": "585060b6:215",
+        "tag": "div",
+        "openStart": 33155,
+        "attrEnd": 33179,
+        "openEnd": 33180,
+        "closeStart": 33199,
+        "closeEnd": 33205,
+        "textRuns": [[33180, 33199]],
+        "parentId": "585060b6:214",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:216",
+        "tag": "div",
+        "openStart": 33212,
+        "attrEnd": 33227,
+        "openEnd": 33228,
+        "closeStart": 33459,
+        "closeEnd": 33465,
+        "textRuns": [[33228, 33459]],
+        "parentId": "585060b6:214",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:217",
+        "tag": "div",
+        "openStart": 33472,
+        "attrEnd": 33487,
+        "openEnd": 33488,
+        "closeStart": 33622,
+        "closeEnd": 33628,
+        "textRuns": [],
+        "parentId": "585060b6:214",
+        "childIds": ["585060b6:218", "585060b6:219"]
+      },
+      {
+        "id": "585060b6:218",
+        "tag": "div",
+        "openStart": 33488,
+        "attrEnd": 33506,
+        "openEnd": 33507,
+        "closeStart": 33511,
+        "closeEnd": 33517,
+        "textRuns": [[33507, 33511]],
+        "parentId": "585060b6:217",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:219",
+        "tag": "div",
+        "openStart": 33517,
+        "attrEnd": 33521,
+        "openEnd": 33522,
+        "closeStart": 33616,
+        "closeEnd": 33622,
+        "textRuns": [],
+        "parentId": "585060b6:217",
+        "childIds": ["585060b6:220", "585060b6:221"]
+      },
+      {
+        "id": "585060b6:220",
+        "tag": "div",
+        "openStart": 33522,
+        "attrEnd": 33542,
+        "openEnd": 33543,
+        "closeStart": 33562,
+        "closeEnd": 33568,
+        "textRuns": [[33543, 33562]],
+        "parentId": "585060b6:219",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:221",
+        "tag": "div",
+        "openStart": 33568,
+        "attrEnd": 33588,
+        "openEnd": 33589,
+        "closeStart": 33610,
+        "closeEnd": 33616,
+        "textRuns": [[33589, 33610]],
+        "parentId": "585060b6:219",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:222",
+        "tag": "div",
+        "openStart": 33644,
+        "attrEnd": 33667,
+        "openEnd": 33668,
+        "closeStart": 34144,
+        "closeEnd": 34150,
+        "textRuns": [
+          [33668, 33675],
+          [33725, 33732],
+          [33961, 33968],
+          [34139, 34144]
+        ],
+        "parentId": "585060b6:213",
+        "childIds": ["585060b6:223", "585060b6:224", "585060b6:225"]
+      },
+      {
+        "id": "585060b6:223",
+        "tag": "div",
+        "openStart": 33675,
+        "attrEnd": 33699,
+        "openEnd": 33700,
+        "closeStart": 33719,
+        "closeEnd": 33725,
+        "textRuns": [[33700, 33719]],
+        "parentId": "585060b6:222",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:224",
+        "tag": "div",
+        "openStart": 33732,
+        "attrEnd": 33747,
+        "openEnd": 33748,
+        "closeStart": 33955,
+        "closeEnd": 33961,
+        "textRuns": [[33748, 33955]],
+        "parentId": "585060b6:222",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:225",
+        "tag": "div",
+        "openStart": 33968,
+        "attrEnd": 33983,
+        "openEnd": 33984,
+        "closeStart": 34133,
+        "closeEnd": 34139,
+        "textRuns": [],
+        "parentId": "585060b6:222",
+        "childIds": ["585060b6:226", "585060b6:227"]
+      },
+      {
+        "id": "585060b6:226",
+        "tag": "div",
+        "openStart": 33984,
+        "attrEnd": 34002,
+        "openEnd": 34003,
+        "closeStart": 34007,
+        "closeEnd": 34013,
+        "textRuns": [[34003, 34007]],
+        "parentId": "585060b6:225",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:227",
+        "tag": "div",
+        "openStart": 34013,
+        "attrEnd": 34017,
+        "openEnd": 34018,
+        "closeStart": 34127,
+        "closeEnd": 34133,
+        "textRuns": [],
+        "parentId": "585060b6:225",
+        "childIds": ["585060b6:228", "585060b6:229"]
+      },
+      {
+        "id": "585060b6:228",
+        "tag": "div",
+        "openStart": 34018,
+        "attrEnd": 34038,
+        "openEnd": 34039,
+        "closeStart": 34056,
+        "closeEnd": 34062,
+        "textRuns": [[34039, 34056]],
+        "parentId": "585060b6:227",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:229",
+        "tag": "div",
+        "openStart": 34062,
+        "attrEnd": 34082,
+        "openEnd": 34083,
+        "closeStart": 34121,
+        "closeEnd": 34127,
+        "textRuns": [[34083, 34121]],
+        "parentId": "585060b6:227",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:230",
+        "tag": "div",
+        "openStart": 34155,
+        "attrEnd": 34178,
+        "openEnd": 34179,
+        "closeStart": 34659,
+        "closeEnd": 34665,
+        "textRuns": [
+          [34179, 34186],
+          [34236, 34243],
+          [34475, 34482],
+          [34654, 34659]
+        ],
+        "parentId": "585060b6:213",
+        "childIds": ["585060b6:231", "585060b6:232", "585060b6:233"]
+      },
+      {
+        "id": "585060b6:231",
+        "tag": "div",
+        "openStart": 34186,
+        "attrEnd": 34210,
+        "openEnd": 34211,
+        "closeStart": 34230,
+        "closeEnd": 34236,
+        "textRuns": [[34211, 34230]],
+        "parentId": "585060b6:230",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:232",
+        "tag": "div",
+        "openStart": 34243,
+        "attrEnd": 34258,
+        "openEnd": 34259,
+        "closeStart": 34469,
+        "closeEnd": 34475,
+        "textRuns": [[34259, 34469]],
+        "parentId": "585060b6:230",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:233",
+        "tag": "div",
+        "openStart": 34482,
+        "attrEnd": 34497,
+        "openEnd": 34498,
+        "closeStart": 34648,
+        "closeEnd": 34654,
+        "textRuns": [],
+        "parentId": "585060b6:230",
+        "childIds": ["585060b6:234", "585060b6:235"]
+      },
+      {
+        "id": "585060b6:234",
+        "tag": "div",
+        "openStart": 34498,
+        "attrEnd": 34516,
+        "openEnd": 34517,
+        "closeStart": 34523,
+        "closeEnd": 34529,
+        "textRuns": [[34517, 34523]],
+        "parentId": "585060b6:233",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:235",
+        "tag": "div",
+        "openStart": 34529,
+        "attrEnd": 34533,
+        "openEnd": 34534,
+        "closeStart": 34642,
+        "closeEnd": 34648,
+        "textRuns": [],
+        "parentId": "585060b6:233",
+        "childIds": ["585060b6:236", "585060b6:237"]
+      },
+      {
+        "id": "585060b6:236",
+        "tag": "div",
+        "openStart": 34534,
+        "attrEnd": 34554,
+        "openEnd": 34555,
+        "closeStart": 34580,
+        "closeEnd": 34586,
+        "textRuns": [[34555, 34580]],
+        "parentId": "585060b6:235",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:237",
+        "tag": "div",
+        "openStart": 34586,
+        "attrEnd": 34606,
+        "openEnd": 34607,
+        "closeStart": 34636,
+        "closeEnd": 34642,
+        "textRuns": [[34607, 34636]],
+        "parentId": "585060b6:235",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:238",
+        "tag": "div",
+        "openStart": 34683,
+        "attrEnd": 34707,
+        "openEnd": 34708,
+        "closeStart": 35329,
+        "closeEnd": 35335,
+        "textRuns": [
+          [34708, 34711],
+          [34737, 34740],
+          [35328, 35329]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:239", "585060b6:240"]
+      },
+      {
+        "id": "585060b6:239",
+        "tag": "div",
+        "openStart": 34711,
+        "attrEnd": 34730,
+        "openEnd": 34731,
+        "closeStart": 34731,
+        "closeEnd": 34737,
+        "textRuns": [],
+        "parentId": "585060b6:238",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:240",
+        "tag": "div",
+        "openStart": 34740,
+        "attrEnd": 34762,
+        "openEnd": 34763,
+        "closeStart": 35322,
+        "closeEnd": 35328,
+        "textRuns": [
+          [34763, 34768],
+          [34855, 34860],
+          [34961, 34966],
+          [35118, 35123],
+          [35319, 35322]
+        ],
+        "parentId": "585060b6:238",
+        "childIds": [
+          "585060b6:241",
+          "585060b6:242",
+          "585060b6:245",
+          "585060b6:246"
+        ]
+      },
+      {
+        "id": "585060b6:241",
+        "tag": "div",
+        "openStart": 34768,
+        "attrEnd": 34796,
+        "openEnd": 34797,
+        "closeStart": 34849,
+        "closeEnd": 34855,
+        "textRuns": [[34797, 34849]],
+        "parentId": "585060b6:240",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:242",
+        "tag": "h2",
+        "openStart": 34860,
+        "attrEnd": 34863,
+        "openEnd": 34864,
+        "closeStart": 34956,
+        "closeEnd": 34961,
+        "textRuns": [
+          [34864, 34905],
+          [34909, 34931],
+          [34948, 34956]
+        ],
+        "parentId": "585060b6:240",
+        "childIds": ["585060b6:243", "585060b6:244"]
+      },
+      {
+        "id": "585060b6:243",
+        "tag": "br",
+        "openStart": 34905,
+        "attrEnd": 34908,
+        "openEnd": 34909,
+        "closeEnd": 34909,
+        "textRuns": [],
+        "parentId": "585060b6:242",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:244",
+        "tag": "em",
+        "openStart": 34931,
+        "attrEnd": 34934,
+        "openEnd": 34935,
+        "closeStart": 34943,
+        "closeEnd": 34948,
+        "textRuns": [[34935, 34943]],
+        "parentId": "585060b6:242",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:245",
+        "tag": "p",
+        "openStart": 34966,
+        "attrEnd": 34968,
+        "openEnd": 34969,
+        "closeStart": 35114,
+        "closeEnd": 35118,
+        "textRuns": [[34969, 35114]],
+        "parentId": "585060b6:240",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:246",
+        "tag": "div",
+        "openStart": 35123,
+        "attrEnd": 35147,
+        "openEnd": 35148,
+        "closeStart": 35313,
+        "closeEnd": 35319,
+        "textRuns": [
+          [35148, 35155],
+          [35225, 35232],
+          [35308, 35313]
+        ],
+        "parentId": "585060b6:240",
+        "childIds": ["585060b6:247", "585060b6:248"]
+      },
+      {
+        "id": "585060b6:247",
+        "tag": "button",
+        "openStart": 35155,
+        "attrEnd": 35184,
+        "openEnd": 35185,
+        "closeStart": 35216,
+        "closeEnd": 35225,
+        "textRuns": [[35185, 35216]],
+        "parentId": "585060b6:246",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:248",
+        "tag": "button",
+        "openStart": 35232,
+        "attrEnd": 35263,
+        "openEnd": 35264,
+        "closeStart": 35299,
+        "closeEnd": 35308,
+        "textRuns": [[35264, 35299]],
+        "parentId": "585060b6:246",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:249",
+        "tag": "footer",
+        "openStart": 35337,
+        "attrEnd": 35344,
+        "openEnd": 35345,
+        "closeStart": 36272,
+        "closeEnd": 36281,
+        "textRuns": [
+          [35345, 35348],
+          [36173, 36176],
+          [36271, 36272]
+        ],
+        "parentId": "585060b6:4",
+        "childIds": ["585060b6:250", "585060b6:273"]
+      },
+      {
+        "id": "585060b6:250",
+        "tag": "div",
+        "openStart": 35348,
+        "attrEnd": 35371,
+        "openEnd": 35372,
+        "closeStart": 36167,
+        "closeEnd": 36173,
+        "textRuns": [
+          [35372, 35377],
+          [35614, 35619],
+          [35807, 35812],
+          [35978, 35983],
+          [36164, 36167]
+        ],
+        "parentId": "585060b6:249",
+        "childIds": [
+          "585060b6:251",
+          "585060b6:255",
+          "585060b6:261",
+          "585060b6:267"
+        ]
+      },
+      {
+        "id": "585060b6:251",
+        "tag": "div",
+        "openStart": 35377,
+        "attrEnd": 35381,
+        "openEnd": 35382,
+        "closeStart": 35608,
+        "closeEnd": 35614,
+        "textRuns": [
+          [35382, 35389],
+          [35451, 35458],
+          [35603, 35608]
+        ],
+        "parentId": "585060b6:250",
+        "childIds": ["585060b6:252", "585060b6:254"]
+      },
+      {
+        "id": "585060b6:252",
+        "tag": "div",
+        "openStart": 35389,
+        "attrEnd": 35419,
+        "openEnd": 35420,
+        "closeStart": 35445,
+        "closeEnd": 35451,
+        "textRuns": [[35420, 35430]],
+        "parentId": "585060b6:251",
+        "childIds": ["585060b6:253"]
+      },
+      {
+        "id": "585060b6:253",
+        "tag": "em",
+        "openStart": 35430,
+        "attrEnd": 35433,
+        "openEnd": 35434,
+        "closeStart": 35440,
+        "closeEnd": 35445,
+        "textRuns": [[35434, 35440]],
+        "parentId": "585060b6:252",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:254",
+        "tag": "div",
+        "openStart": 35458,
+        "attrEnd": 35488,
+        "openEnd": 35489,
+        "closeStart": 35597,
+        "closeEnd": 35603,
+        "textRuns": [[35489, 35597]],
+        "parentId": "585060b6:251",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:255",
+        "tag": "div",
+        "openStart": 35619,
+        "attrEnd": 35642,
+        "openEnd": 35643,
+        "closeStart": 35801,
+        "closeEnd": 35807,
+        "textRuns": [],
+        "parentId": "585060b6:250",
+        "childIds": [
+          "585060b6:256",
+          "585060b6:257",
+          "585060b6:258",
+          "585060b6:259",
+          "585060b6:260"
+        ]
+      },
+      {
+        "id": "585060b6:256",
+        "tag": "h5",
+        "openStart": 35643,
+        "attrEnd": 35646,
+        "openEnd": 35647,
+        "closeStart": 35661,
+        "closeEnd": 35666,
+        "textRuns": [[35647, 35661]],
+        "parentId": "585060b6:255",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:257",
+        "tag": "a",
+        "openStart": 35666,
+        "attrEnd": 35677,
+        "openEnd": 35678,
+        "closeStart": 35700,
+        "closeEnd": 35704,
+        "textRuns": [[35678, 35700]],
+        "parentId": "585060b6:255",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:258",
+        "tag": "a",
+        "openStart": 35704,
+        "attrEnd": 35715,
+        "openEnd": 35716,
+        "closeStart": 35728,
+        "closeEnd": 35732,
+        "textRuns": [[35716, 35728]],
+        "parentId": "585060b6:255",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:259",
+        "tag": "a",
+        "openStart": 35732,
+        "attrEnd": 35743,
+        "openEnd": 35744,
+        "closeStart": 35756,
+        "closeEnd": 35760,
+        "textRuns": [[35744, 35756]],
+        "parentId": "585060b6:255",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:260",
+        "tag": "a",
+        "openStart": 35760,
+        "attrEnd": 35771,
+        "openEnd": 35772,
+        "closeStart": 35797,
+        "closeEnd": 35801,
+        "textRuns": [[35772, 35797]],
+        "parentId": "585060b6:255",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:261",
+        "tag": "div",
+        "openStart": 35812,
+        "attrEnd": 35835,
+        "openEnd": 35836,
+        "closeStart": 35972,
+        "closeEnd": 35978,
+        "textRuns": [],
+        "parentId": "585060b6:250",
+        "childIds": [
+          "585060b6:262",
+          "585060b6:263",
+          "585060b6:264",
+          "585060b6:265",
+          "585060b6:266"
+        ]
+      },
+      {
+        "id": "585060b6:262",
+        "tag": "h5",
+        "openStart": 35836,
+        "attrEnd": 35839,
+        "openEnd": 35840,
+        "closeStart": 35848,
+        "closeEnd": 35853,
+        "textRuns": [[35840, 35848]],
+        "parentId": "585060b6:261",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:263",
+        "tag": "a",
+        "openStart": 35853,
+        "attrEnd": 35864,
+        "openEnd": 35865,
+        "closeStart": 35882,
+        "closeEnd": 35886,
+        "textRuns": [[35865, 35882]],
+        "parentId": "585060b6:261",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:264",
+        "tag": "a",
+        "openStart": 35886,
+        "attrEnd": 35897,
+        "openEnd": 35898,
+        "closeStart": 35908,
+        "closeEnd": 35912,
+        "textRuns": [[35898, 35908]],
+        "parentId": "585060b6:261",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:265",
+        "tag": "a",
+        "openStart": 35912,
+        "attrEnd": 35923,
+        "openEnd": 35924,
+        "closeStart": 35938,
+        "closeEnd": 35942,
+        "textRuns": [[35924, 35938]],
+        "parentId": "585060b6:261",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:266",
+        "tag": "a",
+        "openStart": 35942,
+        "attrEnd": 35953,
+        "openEnd": 35954,
+        "closeStart": 35968,
+        "closeEnd": 35972,
+        "textRuns": [[35954, 35968]],
+        "parentId": "585060b6:261",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:267",
+        "tag": "div",
+        "openStart": 35983,
+        "attrEnd": 36006,
+        "openEnd": 36007,
+        "closeStart": 36158,
+        "closeEnd": 36164,
+        "textRuns": [],
+        "parentId": "585060b6:250",
+        "childIds": [
+          "585060b6:268",
+          "585060b6:269",
+          "585060b6:270",
+          "585060b6:271",
+          "585060b6:272"
+        ]
+      },
+      {
+        "id": "585060b6:268",
+        "tag": "h5",
+        "openStart": 36007,
+        "attrEnd": 36010,
+        "openEnd": 36011,
+        "closeStart": 36027,
+        "closeEnd": 36032,
+        "textRuns": [[36011, 36027]],
+        "parentId": "585060b6:267",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:269",
+        "tag": "a",
+        "openStart": 36032,
+        "attrEnd": 36043,
+        "openEnd": 36044,
+        "closeStart": 36069,
+        "closeEnd": 36073,
+        "textRuns": [[36044, 36069]],
+        "parentId": "585060b6:267",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:270",
+        "tag": "a",
+        "openStart": 36073,
+        "attrEnd": 36084,
+        "openEnd": 36085,
+        "closeStart": 36104,
+        "closeEnd": 36108,
+        "textRuns": [[36085, 36104]],
+        "parentId": "585060b6:267",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:271",
+        "tag": "a",
+        "openStart": 36108,
+        "attrEnd": 36119,
+        "openEnd": 36120,
+        "closeStart": 36130,
+        "closeEnd": 36134,
+        "textRuns": [[36120, 36130]],
+        "parentId": "585060b6:267",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:272",
+        "tag": "a",
+        "openStart": 36134,
+        "attrEnd": 36145,
+        "openEnd": 36146,
+        "closeStart": 36154,
+        "closeEnd": 36158,
+        "textRuns": [[36146, 36154]],
+        "parentId": "585060b6:267",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:273",
+        "tag": "div",
+        "openStart": 36176,
+        "attrEnd": 36200,
+        "openEnd": 36201,
+        "closeStart": 36265,
+        "closeEnd": 36271,
+        "textRuns": [],
+        "parentId": "585060b6:249",
+        "childIds": ["585060b6:274", "585060b6:275"]
+      },
+      {
+        "id": "585060b6:274",
+        "tag": "span",
+        "openStart": 36201,
+        "attrEnd": 36206,
+        "openEnd": 36207,
+        "closeStart": 36235,
+        "closeEnd": 36242,
+        "textRuns": [[36207, 36235]],
+        "parentId": "585060b6:273",
+        "childIds": []
+      },
+      {
+        "id": "585060b6:275",
+        "tag": "span",
+        "openStart": 36242,
+        "attrEnd": 36247,
+        "openEnd": 36248,
+        "closeStart": 36258,
+        "closeEnd": 36265,
+        "textRuns": [[36248, 36258]],
+        "parentId": "585060b6:273",
+        "childIds": []
+      }
+    ],
+    "literals": [
+      [36341, 36359],
+      [36366, 36370],
+      [36414, 36424],
+      [36472, 36481],
+      [36524, 36528],
+      [36533, 36539],
+      [36544, 36548],
+      [36652, 36662],
+      [36670, 36674],
+      [36700, 36705],
+      [36710, 36714],
+      [36738, 36748],
+      [36785, 36794],
+      [36821, 36825],
+      [36830, 36836],
+      [36841, 36845],
+      [36872, 36890]
+    ]
+  }
+</script>

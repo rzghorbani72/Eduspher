@@ -1,0 +1,2201 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="light">
+  <head>
+    <style data-omelette-injected>
+      html,
+      body {
+        background: transparent;
+      }
+    </style>
+    <script data-omelette-injected>
+      (() => {
+        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var x = true;
+        var S = 30000;
+        var f = 3000;
+        document.addEventListener("DOMContentLoaded", () => {
+          const H = window.Babel;
+          const G = "om-src-id";
+          if (
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[G])
+          ) {
+            H.registerPlugin(G, ({ types: Y }) => ({
+              visitor: {
+                JSXOpeningElement(U, Q) {
+                  const J = U.node;
+                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  for (let V = 0; V < J.attributes.length; V++) {
+                    const L = J.attributes[V];
+                    if (
+                      L.type === "JSXAttribute" &&
+                      L.name &&
+                      L.name.name === "data-om-id"
+                    )
+                      return;
+                  }
+                  const W =
+                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const Z = J.loc && J.loc.start;
+                  const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
+                  J.attributes.push(
+                    Y.jsxAttribute(
+                      Y.jsxIdentifier("data-om-id"),
+                      Y.stringLiteral(z),
+                    ),
+                  );
+                },
+              },
+            }));
+          }
+          const k = "om-text-extract";
+          let A = false;
+          if (
+            x &&
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[k])
+          ) {
+            const Y = window.React;
+            if (Y && Y.useSyncExternalStore && Y.createElement) {
+              A = true;
+              const U = {};
+              const Q = new Set();
+              let J = 0;
+              window.__omTextO = U;
+              window.__omTextSet = (z) => {
+                for (const V in z) {
+                  const L = z[V];
+                  if (L == null) delete U[V];
+                  else U[V] = L;
+                }
+                J++;
+                Q.forEach((V) => V());
+              };
+              const W = (z) => {
+                Q.add(z);
+                return () => Q.delete(z);
+              };
+              const Z = () => J;
+              window.__OmT = function z(V) {
+                Y.useSyncExternalStore(W, Z, Z);
+                return Y.createElement(
+                  "span",
+                  { "data-om-text": V.i, className: "__om-t" },
+                  V.i in U ? U[V.i] : V.children,
+                );
+              };
+              H.registerPlugin(k, ({ types: z }) => {
+                const V = {
+                  style: 1,
+                  script: 1,
+                  noscript: 1,
+                  textarea: 1,
+                  title: 1,
+                  option: 1,
+                  text: 1,
+                  tspan: 1,
+                  textPath: 1,
+                };
+                const L = {
+                  placeholder: 1,
+                  alt: 1,
+                  title: 1,
+                  label: 1,
+                  "aria-label": 1,
+                  "aria-description": 1,
+                  "aria-placeholder": 1,
+                };
+                const _ = ($, C) =>
+                  z.logicalExpression(
+                    "??",
+                    z.memberExpression(
+                      z.logicalExpression(
+                        "||",
+                        z.memberExpression(
+                          z.identifier("window"),
+                          z.identifier("__omTextO"),
+                        ),
+                        z.objectExpression([]),
+                      ),
+                      z.stringLiteral($),
+                      true,
+                    ),
+                    C,
+                  );
+                const E = ($) =>
+                  ($.file && $.file.opts && $.file.opts.filename) || "?";
+                const B = ($) => ($.file && $.file.code) || "";
+                const b = ($, C) => {
+                  const X = (F) =>
+                    F &&
+                    F.start != null &&
+                    F.end != null &&
+                    (F.type === "StringLiteral" ||
+                      (F.type === "TemplateLiteral" &&
+                        F.expressions.length === 0))
+                      ? [F.start, F.end]
+                      : null;
+                  const N = X(C);
+                  if (N) return N;
+                  if (C && C.type === "Identifier") {
+                    const F = $.scope.getBinding(C.name);
+                    if (
+                      F &&
+                      F.constant &&
+                      F.path.node.type === "VariableDeclarator"
+                    ) {
+                      return X(F.path.node.init);
+                    }
+                  }
+                  return null;
+                };
+                const M = ($, C, X) => {
+                  const N = $.node;
+                  let F = false;
+                  const w = (K, q) => {
+                    F = true;
+                    return z.jsxElement(
+                      z.jsxOpeningElement(
+                        z.jsxIdentifier("__OmT"),
+                        [
+                          z.jsxAttribute(
+                            z.jsxIdentifier("i"),
+                            z.stringLiteral(K),
+                          ),
+                        ],
+                        false,
+                      ),
+                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      [q],
+                      false,
+                    );
+                  };
+                  const D = N.children.map((K) => {
+                    if (K.type === "JSXText") {
+                      if (K.start == null || K.end == null) return K;
+                      const q = X.slice(K.start, K.end);
+                      const R = q.length - q.trimStart().length;
+                      const m = q.length - q.trimEnd().length;
+                      if (R + m >= q.length) return K;
+                      return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
+                    }
+                    if (K.type === "JSXExpressionContainer") {
+                      const q = b($, K.expression);
+                      if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
+                    }
+                    return K;
+                  });
+                  if (F) N.children = D;
+                };
+                return {
+                  visitor: {
+                    JSXOpeningElement($, C) {
+                      const X = $.node;
+                      const N = E(C);
+                      const F = {};
+                      for (let w = 0; w < X.attributes.length; w++) {
+                        const D = X.attributes[w];
+                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        const K = D.name.name;
+                        if (!L[K]) continue;
+                        if (!D.value || D.value.type !== "StringLiteral")
+                          continue;
+                        if (D.value.start == null || D.value.end == null)
+                          continue;
+                        const q = `txt:${N}:${D.value.start}:${D.value.end}`;
+                        F[K] = q;
+                        D.value = z.jsxExpressionContainer(
+                          _(q, z.stringLiteral(D.value.value)),
+                        );
+                      }
+                      if (Object.keys(F).length) {
+                        X.attributes.push(
+                          z.jsxAttribute(
+                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.stringLiteral(JSON.stringify(F)),
+                          ),
+                        );
+                      }
+                    },
+                    JSXElement($, C) {
+                      const X = $.node.openingElement;
+                      const N = X && X.name && X.name.name;
+                      if (N === "__OmT") return;
+                      if (typeof N === "string" && V[N]) return;
+                      M($, E(C), B(C));
+                    },
+                    JSXFragment($, C) {
+                      M($, E(C), B(C));
+                    },
+                  },
+                };
+              });
+            }
+          }
+          const u = A
+            ? ["transform-react-jsx-source", G, k]
+            : ["transform-react-jsx-source", G];
+          document
+            .querySelectorAll(
+              'script[type="text/babel"],script[type="text/jsx"]',
+            )
+            .forEach((Y, U) => {
+              const Q = Y.getAttribute("data-plugins") || "";
+              const J = u.filter((W) => Q.indexOf(W) < 0);
+              if (J.length) {
+                Y.setAttribute(
+                  "data-plugins",
+                  Q ? `${Q},${J.join(",")}` : J.join(","),
+                );
+              }
+              if (!Y.hasAttribute("data-filename")) {
+                Y.setAttribute(
+                  "data-filename",
+                  Y.getAttribute("src") || `inline-${U}`,
+                );
+              }
+            });
+        });
+        var y = window.parent;
+        if (y && y !== window) {
+          const H = (Q, J) => {
+            try {
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+            } catch {}
+          };
+          ["log", "warn", "error"].forEach((Q) => {
+            const J = console[Q];
+            console[Q] = (...W) => {
+              const Z = W.map((z) => {
+                try {
+                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                } catch {
+                  try {
+                    return String(z);
+                  } catch {
+                    return "[unstringifiable]";
+                  }
+                }
+              }).join(" ");
+              H(Q, Z);
+              J.apply(console, W);
+            };
+          });
+          window.addEventListener(
+            "error",
+            (Q) => {
+              const J = Q.target;
+              if (J && J !== window && J.tagName) {
+                const W = J.src || J.href || "";
+                H("resource_error", `${J.tagName} failed to load: ${W}`);
+              } else {
+                H(
+                  "error",
+                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                );
+              }
+            },
+            true,
+          );
+          window.addEventListener("unhandledrejection", (Q) => {
+            const J = Q.reason;
+            const W =
+              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H("error", `Unhandled rejection: ${W}`);
+          });
+          const G = () => {
+            try {
+              y.postMessage(
+                {
+                  type: "omelette:height",
+                  height: document.documentElement.scrollHeight,
+                },
+                "*",
+              );
+            } catch {}
+          };
+          if (document.readyState === "complete") G();
+          else window.addEventListener("load", G);
+          if (window.ResizeObserver)
+            new ResizeObserver(G).observe(document.documentElement);
+          const k = {};
+          let A = 0;
+          window.claude = {
+            complete(Q) {
+              return new Promise((J, W) => {
+                if (!j.length) {
+                  W(new Error("claude.complete: no parent origin"));
+                  return;
+                }
+                const Z = `c${++A}`;
+                const z = () =>
+                  setTimeout(() => {
+                    delete k[Z];
+                    W(new Error(`claude.complete: no data for ${S / 1000}s`));
+                  }, S);
+                const V = z();
+                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                try {
+                  for (const L of j) {
+                    y.postMessage({ __om_api: true, id: Z, body: Q }, L);
+                  }
+                } catch (L) {
+                  clearTimeout(V);
+                  delete k[Z];
+                  W(L);
+                }
+              });
+            },
+          };
+          const u = {};
+          let Y = 0;
+          window.omelette = {
+            writeFile: (Q, J) =>
+              new Promise((W, Z) => {
+                if (!j.length) {
+                  W();
+                  return;
+                }
+                const z = `f${++Y}`;
+                const V = setTimeout(() => {
+                  delete u[z];
+                  W();
+                }, f);
+                u[z] = { resolve: W, reject: Z, t: V };
+                try {
+                  for (const L of j) {
+                    y.postMessage(
+                      {
+                        __om_file: true,
+                        id: z,
+                        op: "write",
+                        path: Q,
+                        content: J,
+                      },
+                      L,
+                    );
+                  }
+                } catch {
+                  clearTimeout(V);
+                  delete u[z];
+                  W();
+                }
+              }),
+          };
+          const U = (Q) => {
+            try {
+              return JSON.stringify(Q);
+            } catch {
+              return JSON.stringify(String(Q));
+            }
+          };
+          window.addEventListener("message", (Q) => {
+            if (j.indexOf(Q.origin) < 0) return;
+            if (Q.source !== y) return;
+            const J = Q.data;
+            if (!J) return;
+            if (J.type === "omelette-preview-refresh") {
+              if (
+                typeof J.token !== "string" ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
+                  J.token,
+                )
+              )
+                return;
+              const z = Math.max(
+                1,
+                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
+              );
+              document.cookie =
+                "__Host-omelette-preview=" +
+                J.token +
+                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                z;
+              return;
+            }
+            if (J.__om_file_r) {
+              const z = u[J.id];
+              if (!z) return;
+              clearTimeout(z.t);
+              delete u[J.id];
+              if (J.ok) z.resolve();
+              else z.reject(new Error(J.error || "write failed"));
+              return;
+            }
+            if (J.__om_api_r) {
+              const z = k[J.id];
+              if (!z) return;
+              if (J.error != null) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.reject(new Error(J.error));
+                return;
+              }
+              if (J.chunk != null) {
+                clearTimeout(z.t);
+                z.t = z.arm();
+                z.text += J.chunk;
+                return;
+              }
+              if (J.done) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.resolve(J.text != null ? J.text : z.text);
+                return;
+              }
+              return;
+            }
+            if (!J.__om_eval) return;
+            const W = J;
+            const Z = (z) => {
+              Q.source.postMessage(
+                { ...z, __om_eval_r: 1, id: W.id },
+                Q.origin,
+              );
+            };
+            try {
+              const z = (0, eval)(W.code);
+              if (z && typeof z.then === "function") {
+                z.then(
+                  (V) => Z({ ok: 1, v: U(V) }),
+                  (V) => Z({ ok: 0, e: String(V) }),
+                );
+              } else {
+                Z({ ok: 1, v: U(z) });
+              }
+            } catch (z) {
+              Z({ ok: 0, e: String(z) });
+            }
+          });
+        }
+      })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 400;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 500;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 700;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 800;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 900;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>منتوریار — فلو</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --mint: oklch(68% 0.14 168);
+        --mint-light: oklch(96% 0.04 168);
+        --mint-mid: oklch(82% 0.1 168);
+        --navy: oklch(22% 0.04 250);
+        --navy-mid: oklch(38% 0.04 250);
+        --muted: oklch(58% 0.02 250);
+        --border: oklch(91% 0.01 250);
+        --bg: #fafbfc;
+        --white: #ffffff;
+        --card-radius: 16px;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        background: var(--bg);
+        color: var(--navy);
+        line-height: 1.8;
+        letter-spacing: 0;
+      }
+
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(250, 251, 252, 0.88);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 48px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-logo {
+        font-weight: 800;
+        font-size: 20px;
+        color: var(--navy);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-logo-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--mint);
+        border-radius: 50%;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+      .nav-links a {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--navy);
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .btn-ghost {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--navy);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: background 0.2s;
+      }
+      .btn-ghost:hover {
+        background: var(--border);
+      }
+      .btn-primary {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--navy);
+        border: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 100px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px oklch(22% 0.04 250 / 0.2);
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 40px 48px 48px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--mint-light);
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 100px;
+        margin-bottom: 24px;
+      }
+      .hero-tag span {
+        width: 6px;
+        height: 6px;
+        background: var(--mint);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      .hero h1 {
+        font-size: clamp(40px, 4.5vw, 62px);
+        font-weight: 900;
+        line-height: 1.25;
+        color: var(--navy);
+        margin-bottom: 20px;
+        text-wrap: balance;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--mint);
+      }
+      .hero p {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 440px;
+        margin-bottom: 36px;
+        font-weight: 400;
+        line-height: 1.9;
+      }
+      .hero-cta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .btn-hero {
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--mint);
+        border: none;
+        cursor: pointer;
+        padding: 14px 28px;
+        border-radius: 100px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-hero:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px oklch(68% 0.14 168 / 0.35);
+      }
+      .hero-link {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--navy);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .hero-link::before {
+        content: "←";
+        transition: transform 0.2s;
+      }
+      .hero-link:hover::before {
+        transform: translateX(-4px);
+      }
+      .hero-trust {
+        margin-top: 48px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .avatars {
+        display: flex;
+      }
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid var(--white);
+        margin-right: -8px;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
+      .avatar:first-child {
+        margin-right: 0;
+      }
+      .trust-text {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      .trust-text strong {
+        color: var(--navy);
+      }
+      .stars-row {
+        display: flex;
+        gap: 2px;
+        margin-bottom: 2px;
+      }
+      .star {
+        color: #f59e0b;
+        font-size: 12px;
+      }
+
+      .hero-visual {
+        position: relative;
+        height: 520px;
+      }
+      .hero-card-main {
+        position: absolute;
+        top: 40px;
+        left: 20px;
+        right: 20px;
+        background: var(--white);
+        border-radius: var(--card-radius);
+        padding: 24px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border);
+      }
+      .course-thumb {
+        width: 100%;
+        height: 160px;
+        border-radius: 10px;
+        background: linear-gradient(
+          135deg,
+          oklch(68% 0.14 168),
+          oklch(55% 0.18 230)
+        );
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .course-thumb-2 {
+        background: linear-gradient(
+          135deg,
+          oklch(72% 0.18 50),
+          oklch(68% 0.2 20)
+        );
+      }
+      .course-thumb-3 {
+        background: linear-gradient(
+          135deg,
+          oklch(70% 0.18 260),
+          oklch(62% 0.2 290)
+        );
+      }
+      .thumb-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      .course-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .course-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--mint);
+        background: var(--mint-light);
+        padding: 3px 10px;
+        border-radius: 100px;
+      }
+      .course-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 6px;
+      }
+      .course-instructor {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+      .progress-wrap {
+        background: var(--border);
+        border-radius: 100px;
+        height: 4px;
+        margin-bottom: 6px;
+        overflow: hidden;
+      }
+      .progress-bar {
+        height: 100%;
+        background: var(--mint);
+        border-radius: 100px;
+      }
+      .progress-text {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+      .card-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .mini-card {
+        flex: 1;
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid var(--border);
+      }
+      .mini-card .mc-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .mini-card .mc-val {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+
+      .floating-badge {
+        position: absolute;
+        background: var(--white);
+        border-radius: 12px;
+        padding: 12px 16px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-top {
+        top: 0;
+        left: 0;
+      }
+      .badge-bottom {
+        bottom: 20px;
+        right: 0;
+      }
+      .badge-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .badge-icon.green {
+        background: var(--mint-light);
+      }
+      .badge-icon.amber {
+        background: oklch(98% 0.04 75);
+      }
+      .badge-info .bi-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .badge-info .bi-val {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+
+      .marquee-section {
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 0;
+        overflow: hidden;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 48px;
+        animation: marquee 22s linear infinite;
+        width: max-content;
+        align-items: center;
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(-50%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+      .marquee-item {
+        font-size: 15px;
+        font-weight: 700;
+        color: oklch(82% 0.01 250);
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .marquee-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: oklch(82% 0.01 250);
+      }
+
+      .section {
+        padding: 60px 48px;
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .section-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--mint);
+        margin-bottom: 12px;
+      }
+      .section-title {
+        font-size: clamp(28px, 3.5vw, 44px);
+        font-weight: 800;
+        color: var(--navy);
+        margin-bottom: 16px;
+        text-wrap: balance;
+        line-height: 1.3;
+      }
+      .section-sub {
+        font-size: 15px;
+        color: var(--muted);
+        max-width: 520px;
+        line-height: 1.85;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 36px;
+      }
+      .feature-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        padding: 32px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.06);
+      }
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--mint-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .feature-card h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 8px;
+      }
+      .feature-card p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .courses-section {
+        background: var(--white);
+        padding: 60px 0;
+      }
+      .courses-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 48px;
+      }
+      .courses-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 40px;
+      }
+      .filter-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+      }
+      .pill {
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 18px;
+        border-radius: 100px;
+        border: 1.5px solid var(--border);
+        background: none;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .pill.active,
+      .pill:hover {
+        border-color: var(--mint);
+        color: var(--mint);
+        background: var(--mint-light);
+      }
+      .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .course-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+      }
+      .course-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+      }
+      .course-thumb-wrap {
+        height: 180px;
+        position: relative;
+        overflow: hidden;
+      }
+      .course-thumb-wrap .course-thumb {
+        height: 100%;
+        border-radius: 0;
+        margin: 0;
+      }
+      .course-thumb-wrap .duration {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        background: rgba(0, 0, 0, 0.65);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 100px;
+        backdrop-filter: blur(4px);
+      }
+      .course-body {
+        padding: 20px;
+      }
+      .course-body .course-tag {
+        margin-bottom: 10px;
+        display: inline-block;
+      }
+      .course-body .course-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .course-body .course-instructor {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+      .course-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .rating .st {
+        font-size: 11px;
+        color: #f59e0b;
+      }
+      .rating .ct {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .course-students {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .stats-section {
+        background: var(--navy);
+        padding: 52px 48px;
+      }
+      .stats-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+        text-align: center;
+      }
+      .stat-item .num {
+        font-size: 48px;
+        font-weight: 900;
+        color: var(--mint);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .stat-item .label {
+        font-size: 14px;
+        color: oklch(75% 0.02 250);
+        font-weight: 500;
+      }
+
+      .testimonials {
+        padding: 60px 48px;
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 36px;
+      }
+      .testi-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        padding: 28px;
+      }
+      .testi-stars {
+        display: flex;
+        gap: 3px;
+        margin-bottom: 16px;
+      }
+      .testi-stars span {
+        color: #f59e0b;
+        font-size: 14px;
+      }
+      .testi-quote {
+        font-size: 14px;
+        color: var(--navy);
+        line-height: 1.85;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+      .testi-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .testi-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .testi-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .testi-role {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .pricing-section {
+        background: var(--mint-light);
+        padding: 60px 48px;
+      }
+      .pricing-inner {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 36px;
+      }
+      .price-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--card-radius);
+        padding: 32px;
+      }
+      .price-card.featured {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: white;
+        position: relative;
+        transform: scale(1.04);
+      }
+      .price-badge {
+        position: absolute;
+        top: -12px;
+        right: 50%;
+        transform: translateX(50%);
+        background: var(--mint);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 16px;
+        border-radius: 100px;
+        white-space: nowrap;
+      }
+      .price-tier {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+      .price-card.featured .price-tier {
+        color: oklch(70% 0.1 168);
+      }
+      .price-amount {
+        font-size: 48px;
+        font-weight: 900;
+        color: var(--navy);
+        line-height: 1;
+      }
+      .price-card.featured .price-amount {
+        color: #fff;
+      }
+      .price-period {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+      .price-card.featured .price-period {
+        color: oklch(70% 0.05 250);
+      }
+      .price-features {
+        list-style: none;
+        margin-bottom: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .price-features li {
+        font-size: 13px;
+        color: var(--navy);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .price-card.featured .price-features li {
+        color: oklch(85% 0.02 250);
+      }
+      .pf-check {
+        color: var(--mint);
+        font-weight: 700;
+      }
+      .btn-plan {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        width: 100%;
+        padding: 13px;
+        border-radius: 10px;
+        border: 2px solid var(--navy);
+        color: var(--navy);
+        background: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-plan:hover {
+        background: var(--navy);
+        color: #fff;
+      }
+      .price-card.featured .btn-plan {
+        background: var(--mint);
+        border-color: var(--mint);
+        color: #fff;
+      }
+
+      .cta-section {
+        padding: 60px 48px;
+        background: var(--white);
+      }
+      .cta-inner {
+        max-width: 640px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .cta-inner h2 {
+        font-size: clamp(32px, 4vw, 48px);
+        font-weight: 800;
+        color: var(--navy);
+        margin-bottom: 16px;
+        text-wrap: balance;
+        line-height: 1.3;
+      }
+      .cta-inner p {
+        font-size: 15px;
+        color: var(--muted);
+        margin-bottom: 36px;
+        line-height: 1.85;
+      }
+      .cta-btns {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      footer {
+        background: var(--navy);
+        padding: 64px 48px 40px;
+      }
+      .footer-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 48px;
+        margin-bottom: 48px;
+      }
+      .footer-brand p {
+        font-size: 13px;
+        color: oklch(55% 0.03 250);
+        line-height: 1.85;
+        margin-top: 12px;
+        max-width: 280px;
+      }
+      .footer-col h4 {
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 16px;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 13px;
+        color: oklch(55% 0.03 250);
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: var(--mint);
+      }
+      .footer-bottom {
+        border-top: 1px solid oklch(30% 0.03 250);
+        padding-top: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .footer-bottom p {
+        font-size: 13px;
+        color: oklch(45% 0.03 250);
+      }
+      .footer-logo {
+        font-weight: 800;
+        font-size: 18px;
+        color: #fff;
+      }
+
+      .av1 {
+        background: oklch(68% 0.14 168);
+      }
+      .av2 {
+        background: oklch(62% 0.18 280);
+      }
+      .av3 {
+        background: oklch(65% 0.18 40);
+      }
+      .av4 {
+        background: oklch(68% 0.16 210);
+      }
+      .av5 {
+        background: oklch(62% 0.2 310);
+      }
+      .tag-design {
+        color: oklch(56% 0.18 280);
+        background: oklch(96% 0.04 280);
+      }
+      .tag-business {
+        color: oklch(60% 0.16 40);
+        background: oklch(97% 0.04 40);
+      }
+      .tag-tech {
+        color: oklch(50% 0.18 230);
+        background: oklch(96% 0.04 230);
+      }
+    </style>
+
+    <style>
+      /* Gradient-only thumbnails — no external images */
+    </style>
+
+    <style>
+      /* ── DARK MODE VARS ── */
+      [data-theme="dark"] {
+        --mint: oklch(68% 0.14 168);
+        --mint-light: oklch(20% 0.06 168);
+        --mint-mid: oklch(40% 0.1 168);
+        --navy: #e2e8f0;
+        --navy-mid: #cbd5e1;
+        --muted: #94a3b8;
+        --border: #1e293b;
+        --bg: #0f172a;
+        --white: #1e293b;
+      }
+      [data-theme="dark"] body {
+        background: #0f172a;
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] nav {
+        background: rgba(15, 23, 42, 0.92);
+        border-color: #1e293b;
+      }
+      [data-theme="dark"] .nav-logo {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .nav-links a {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .nav-links a:hover {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .btn-ghost {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .btn-ghost:hover {
+        background: #1e293b;
+      }
+      [data-theme="dark"] .hero-card-main {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .mini-card {
+        background: #0f172a;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .mini-card .mc-val {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .floating-badge {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .badge-info .bi-val {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .marquee-section {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .feature-card {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .feature-card h3 {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .feature-card p {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .courses-section {
+        background: #0f172a;
+      }
+      [data-theme="dark"] .section-title {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .section-sub {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .course-card {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .course-body .course-title {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .course-body .course-instructor {
+        color: #64748b;
+      }
+      [data-theme="dark"] .rating {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .testi-card {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .testi-quote {
+        color: #cbd5e1;
+      }
+      [data-theme="dark"] .testi-name {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .pricing-section {
+        background: oklch(15% 0.06 168);
+      }
+      [data-theme="dark"] .price-card {
+        background: #1e293b;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .price-amount {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .price-features li {
+        color: #cbd5e1;
+      }
+      [data-theme="dark"] .btn-plan {
+        color: #e2e8f0;
+        border-color: #334155;
+      }
+      [data-theme="dark"] .btn-plan:hover {
+        background: #334155;
+        color: #fff;
+      }
+      [data-theme="dark"] .price-card.featured {
+        background: oklch(22% 0.04 250);
+        border-color: oklch(30% 0.05 250);
+      }
+      [data-theme="dark"] .cta-section {
+        background: #1e293b;
+      }
+      [data-theme="dark"] .cta-inner h2 {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .cta-inner p {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .trust-text {
+        color: #94a3b8;
+      }
+      [data-theme="dark"] .trust-text strong {
+        color: #e2e8f0;
+      }
+      [data-theme="dark"] .hero-sub-text {
+        color: #94a3b8;
+      }
+
+      /* Theme toggle button */
+      .theme-toggle-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--bg);
+        border: 1.5px solid var(--border);
+        cursor: pointer;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+      }
+      .theme-toggle-btn:hover {
+        background: var(--mint-light);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="#" class="nav-logo"
+        ><span class="nav-logo-dot"></span>منتوریار</a
+      >
+      <div class="nav-links">
+        <a href="#">دوره‌ها</a>
+        <a href="#">مربیان</a>
+        <a href="#">مسیرها</a>
+        <a href="#">جامعه</a>
+        <a href="#">قیمت‌گذاری</a>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-ghost">ورود</button>
+        <button class="btn-primary">← شروع یادگیری</button>
+        <button class="theme-toggle-btn" id="themeBtn1" onclick="toggleT1()">
+          🌙
+        </button>
+      </div>
+    </nav>
+
+    <div style="max-width: 1240px; margin: 0 auto">
+      <div class="hero">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <span></span>جدید — مسیرهای راهنمایی راه‌اندازی شد
+          </div>
+          <h1>دانش را کشف کن.<br /><em>هر مهارتی</em><br />را فتح کن.</h1>
+          <p>
+            با راهنمایی متخصصان و پروژه‌های عملی، در سرعت خودت یاد بگیر و
+            حرفه‌ات را شتاب بده.
+          </p>
+          <div class="hero-cta">
+            <button class="btn-hero">شروع رایگان</button>
+            <a href="#" class="hero-link">مرور دوره‌ها</a>
+          </div>
+          <div class="hero-trust">
+            <div class="avatars">
+              <div class="avatar av1">آ</div>
+              <div class="avatar av2">س</div>
+              <div class="avatar av3">م</div>
+              <div class="avatar av4">ر</div>
+              <div class="avatar av5">ج</div>
+            </div>
+            <div>
+              <div class="stars-row">
+                <span class="star">★</span><span class="star">★</span
+                ><span class="star">★</span><span class="star">★</span
+                ><span class="star">★</span>
+              </div>
+              <div class="trust-text">
+                مورد اعتماد <strong>۱۲٬۴۰۰+</strong> یادگیرنده
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-card-main">
+            <div class="course-thumb">
+              <span class="thumb-label">طراحی UX/UI</span>
+            </div>
+            <div class="course-meta">
+              <span class="course-tag">طراحی</span>
+            </div>
+            <div class="course-title">
+              فیگما پیشرفته: از وایرفریم تا پروتوتایپ
+            </div>
+            <div class="course-instructor">توسط سارا چن · ۹ درس</div>
+            <div class="progress-wrap">
+              <div class="progress-bar" style="width: 68%"></div>
+            </div>
+            <div class="progress-text">۶۸٪ تکمیل شده · ۴ درس مانده</div>
+            <div class="card-row">
+              <div class="mini-card">
+                <div class="mc-label">رشته</div>
+                <div class="mc-val">🔥 ۱۴</div>
+              </div>
+              <div class="mini-card">
+                <div class="mc-label">XP امروز</div>
+                <div class="mc-val">۳۲۰</div>
+              </div>
+              <div class="mini-card">
+                <div class="mc-label">رتبه</div>
+                <div class="mc-val">#۴۲</div>
+              </div>
+            </div>
+          </div>
+          <div class="floating-badge badge-top">
+            <div class="badge-icon green">🎓</div>
+            <div class="badge-info">
+              <div class="bi-label">گواهینامه دریافت شد</div>
+              <div class="bi-val">مبانی UX</div>
+            </div>
+          </div>
+          <div class="floating-badge badge-bottom">
+            <div class="badge-icon amber">⚡</div>
+            <div class="badge-info">
+              <div class="bi-label">تازه پیوست</div>
+              <div class="bi-val">۳ یادگیرنده امروز</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="marquee-section">
+      <div class="marquee-track">
+        <div class="marquee-item">فیگما <span class="marquee-dot"></span></div>
+        <div class="marquee-item">
+          طراحی محصول <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          ری‌اکت و تایپ‌اسکریپت <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          استراتژی برند <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          موشن دیزاین <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          تحلیل داده <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">رهبری <span class="marquee-dot"></span></div>
+        <div class="marquee-item">
+          ابزارهای نو-کد <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          استراتژی محتوا <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">پایتون <span class="marquee-dot"></span></div>
+        <div class="marquee-item">فیگما <span class="marquee-dot"></span></div>
+        <div class="marquee-item">
+          طراحی محصول <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          ری‌اکت و تایپ‌اسکریپت <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          استراتژی برند <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          موشن دیزاین <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          تحلیل داده <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">رهبری <span class="marquee-dot"></span></div>
+        <div class="marquee-item">
+          ابزارهای نو-کد <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">
+          استراتژی محتوا <span class="marquee-dot"></span>
+        </div>
+        <div class="marquee-item">پایتون <span class="marquee-dot"></span></div>
+      </div>
+    </div>
+
+    <section>
+      <div class="section">
+        <div class="section-label">چرا منتوریار</div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 0;
+          "
+        >
+          <div class="section-title" style="margin-bottom: 0">
+            همه آنچه برای رشد مهارت‌هایت نیاز داری
+          </div>
+          <div class="section-sub">
+            مسیرهای یادگیری ساختارمند، مربیان متخصص، و جامعه‌ای که در هر قدم
+            مسئولیت‌پذیرت نگه می‌دارد.
+          </div>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📐</div>
+            <h3>تمرکز بر عمل</h3>
+            <p>
+              هر دوره شامل پروژه‌های واقعی و تمرین‌هایی است که یادگیری را به
+              مهارت‌های پایدار تبدیل می‌کند.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⏱</div>
+            <h3>با سرعت خودت یاد بگیر</h3>
+            <p>
+              دروس کوچک متناسب با برنامه‌ات. دقیقاً از همان‌جا که ماندی ادامه
+              بده، از هر دستگاهی.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🏅</div>
+            <h3>گواهینامه کسب کن</h3>
+            <p>
+              با گواهینامه‌های تأییدشده برای هر دوره تکمیل‌شده، مستقیم به
+              لینکدین اضافه کن.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🧑‍🏫</div>
+            <h3>مربیان متخصص</h3>
+            <p>
+              از متخصصانی یاد بگیر که در شرکت‌های برتر کار می‌کنند و تجربه
+              میدانی دارند.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🗺</div>
+            <h3>مسیرهای ساختارمند</h3>
+            <p>
+              مسیرهای یادگیری طراحی‌شده که تو را از صفر تا آماده‌ی کار می‌رسانند
+              بدون سردرگمی.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>جامعه فعال</h3>
+            <p>
+              به جامعه ۱۲٬۰۰۰+ یادگیرنده بپیوند. کارت را به اشتراک بذار، بازخورد
+              بگیر، رشد کن.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="courses-section">
+      <div class="courses-inner">
+        <div class="courses-header">
+          <div>
+            <div class="section-label">کتابخانه دوره‌ها</div>
+            <div class="section-title" style="margin-bottom: 0">
+              آموزش هوشمندتر UX/UI
+            </div>
+          </div>
+          <a
+            href="#"
+            style="
+              font-size: 14px;
+              font-weight: 600;
+              color: var(--mint);
+              text-decoration: none;
+            "
+            >← مشاهده همه</a
+          >
+        </div>
+        <div class="filter-pills" style="margin-bottom: 32px">
+          <button class="pill active">همه دوره‌ها</button>
+          <button class="pill">طراحی</button>
+          <button class="pill">توسعه</button>
+          <button class="pill">کسب‌وکار</button>
+          <button class="pill">بازاریابی</button>
+          <button class="pill">داده</button>
+        </div>
+        <div class="courses-grid">
+          <div class="course-card">
+            <div class="course-thumb-wrap">
+              <div
+                class="course-thumb"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    oklch(68% 0.14 168),
+                    oklch(55% 0.18 230)
+                  );
+                "
+              >
+                <span class="thumb-label">فیگما</span>
+              </div>
+              <span class="duration">۴ ساعت ۳۲ دقیقه</span>
+            </div>
+            <div class="course-body">
+              <span class="course-tag">طراحی</span>
+              <div class="course-title">فیگما: مبانی متخصص</div>
+              <div class="course-instructor">سارا چن · ۱۱ درس · ۳ واحد</div>
+              <div class="course-footer">
+                <div class="rating">
+                  <span class="st">★★★★★</span><span>۴.۹</span
+                  ><span class="ct">(۳۴۲)</span>
+                </div>
+                <div class="course-students">۲.۱هزار ثبت‌نام</div>
+              </div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="course-thumb-wrap">
+              <div class="course-thumb course-thumb-2">
+                <span class="thumb-label">ری‌اکت</span>
+              </div>
+              <span class="duration">۶ ساعت ۱۰ دقیقه</span>
+            </div>
+            <div class="course-body">
+              <span class="course-tag tag-tech">تکنولوژی</span>
+              <div class="course-title">ری‌اکت و تایپ‌اسکریپت کامل</div>
+              <div class="course-instructor">الکس کیم · ۱۳ درس · ۴ واحد</div>
+              <div class="course-footer">
+                <div class="rating">
+                  <span class="st">★★★★★</span><span>۴.۸</span
+                  ><span class="ct">(۱۹۸)</span>
+                </div>
+                <div class="course-students">۱.۸هزار ثبت‌نام</div>
+              </div>
+            </div>
+          </div>
+          <div class="course-card">
+            <div class="course-thumb-wrap">
+              <div class="course-thumb course-thumb-3">
+                <span class="thumb-label">برند</span>
+              </div>
+              <span class="duration">۳ ساعت ۴۸ دقیقه</span>
+            </div>
+            <div class="course-body">
+              <span class="course-tag tag-business">کسب‌وکار</span>
+              <div class="course-title">استراتژی برند از پایه</div>
+              <div class="course-instructor">میا تورز · ۹ درس · ۳ واحد</div>
+              <div class="course-footer">
+                <div class="rating">
+                  <span class="st">★★★★★</span><span>۴.۷</span
+                  ><span class="ct">(۸۷)</span>
+                </div>
+                <div class="course-students">۹۴۰ ثبت‌نام</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <div class="stats-inner">
+        <div class="stat-item">
+          <div class="num">۱۲هزار+</div>
+          <div class="label">یادگیرنده فعال</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">۹۴٪</div>
+          <div class="label">نرخ تکمیل</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">۳۲۰+</div>
+          <div class="label">مربی متخصص</div>
+        </div>
+        <div class="stat-item">
+          <div class="num">۴.۹★</div>
+          <div class="label">میانگین امتیاز</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonials">
+      <div class="section-label">نظر یادگیرندگان</div>
+      <div class="section-title">مورد اعتماد هزاران طراح</div>
+      <div class="testimonials-grid">
+        <div class="testi-card">
+          <div class="testi-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span
+            ><span>★</span>
+          </div>
+          <div class="testi-quote">
+            «دوره‌های منتوریار به من کمک کرد اولین نقش UX خودم را در ۴ ماه پیدا
+            کنم. پروژه‌های عملی همه چیز را متفاوت کردند.»
+          </div>
+          <div class="testi-author">
+            <div class="testi-avatar av1">جو</div>
+            <div>
+              <div class="testi-name">جواد ویلسون</div>
+              <div class="testi-role">طراح UX در استرایپ</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span
+            ><span>★</span>
+          </div>
+          <div class="testi-quote">
+            «۳ دوره را در یک ماه تمام کردم. مسیرهای ساختارمند تمرکزم را حفظ
+            کردند و مربیان فوق‌العاده پاسخگو بودند.»
+          </div>
+          <div class="testi-author">
+            <div class="testi-avatar av3">اِ</div>
+            <div>
+              <div class="testi-name">الهام مارتینز</div>
+              <div class="testi-role">طراح محصول</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">
+            <span>★</span><span>★</span><span>★</span><span>★</span
+            ><span>★</span>
+          </div>
+          <div class="testi-quote">
+            «گواهینامه‌ای که از منتوریار گرفتم، رزومه‌ام را از فیلتر کارگزین رد
+            کرد. واقعاً ارزشش را دارد.»
+          </div>
+          <div class="testi-author">
+            <div class="testi-avatar av2">دا</div>
+            <div>
+              <div class="testi-name">داوود لی</div>
+              <div class="testi-role">سرپرست طراحی در فیگما</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pricing-section">
+      <div class="pricing-inner">
+        <div style="text-align: center">
+          <div class="section-label" style="text-align: center">قیمت‌گذاری</div>
+          <div class="section-title" style="text-align: center">
+            ساده و شفاف
+          </div>
+          <div class="section-sub" style="margin: 0 auto">
+            طرحی متناسب با اهداف یادگیری خودت انتخاب کن. هر زمان ارتقا یا لغو
+            کن.
+          </div>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-card">
+            <div class="price-tier">رایگان</div>
+            <div class="price-amount">$۰</div>
+            <div class="price-period">برای همیشه رایگان</div>
+            <ul class="price-features">
+              <li><span class="pf-check">✓</span> ۵ دوره رایگان</li>
+              <li><span class="pf-check">✓</span> دسترسی به جامعه</li>
+              <li><span class="pf-check">✓</span> پیگیری پیشرفت</li>
+            </ul>
+            <button class="btn-plan">شروع کن</button>
+          </div>
+          <div class="price-card featured">
+            <div class="price-badge">محبوب‌ترین</div>
+            <div class="price-tier">حرفه‌ای</div>
+            <div class="price-amount">$۱۹</div>
+            <div class="price-period">ماهانه</div>
+            <ul class="price-features">
+              <li>
+                <span class="pf-check" style="color: var(--mint)">✓</span>
+                دوره‌های نامحدود
+              </li>
+              <li>
+                <span class="pf-check" style="color: var(--mint)">✓</span>
+                دسترسی به مربی
+              </li>
+              <li>
+                <span class="pf-check" style="color: var(--mint)">✓</span>
+                گواهینامه‌ها
+              </li>
+              <li>
+                <span class="pf-check" style="color: var(--mint)">✓</span>
+                مسیرهای یادگیری
+              </li>
+            </ul>
+            <button class="btn-plan">آزمایش رایگان</button>
+          </div>
+          <div class="price-card">
+            <div class="price-tier">تیمی</div>
+            <div class="price-amount">$۴۹</div>
+            <div class="price-period">به ازای هر نفر / ماهانه</div>
+            <ul class="price-features">
+              <li><span class="pf-check">✓</span> همه امکانات حرفه‌ای</li>
+              <li><span class="pf-check">✓</span> داشبورد تیمی</li>
+              <li><span class="pf-check">✓</span> پشتیبانی اولویت‌دار</li>
+            </ul>
+            <button class="btn-plan">تماس با فروش</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <div class="cta-inner">
+        <div class="section-label" style="text-align: center">
+          همین امروز شروع کن
+        </div>
+        <h2>یادگیری را شروع کن. رشد کن.</h2>
+        <p>
+          به ۱۲٬۰۰۰+ یادگیرنده‌ای بپیوند که با دوره‌های متخصص‌محور منتوریار
+          مهارت‌های واقعی می‌سازند.
+        </p>
+        <div class="cta-btns">
+          <button class="btn-hero">رایگان بپیوند</button>
+          <button
+            class="btn-ghost"
+            style="
+              border: 1.5px solid var(--border);
+              border-radius: 100px;
+              padding: 13px 24px;
+            "
+          >
+            مرور دوره‌ها
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <div class="footer-logo">منتوریار</div>
+            <p>
+              ارتقای مهارت با دوره‌های متخصص‌محور برای همه سطوح. یاد بگیر، رشد
+              کن.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>پلتفرم</h4>
+            <a href="#">دوره‌ها</a><a href="#">مربیان</a><a href="#">مسیرها</a
+            ><a href="#">قیمت‌گذاری</a>
+          </div>
+          <div class="footer-col">
+            <h4>شرکت</h4>
+            <a href="#">درباره ما</a><a href="#">وبلاگ</a><a href="#">استخدام</a
+            ><a href="#">مطبوعات</a>
+          </div>
+          <div class="footer-col">
+            <h4>قانونی</h4>
+            <a href="#">حریم خصوصی</a><a href="#">شرایط استفاده</a
+            ><a href="#">کوکی‌ها</a><a href="#">پشتیبانی</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© ۱۴۰۵ منتوریار. تمام حقوق محفوظ است.</p>
+          <p>ساخته شده با عشق برای یادگیرندگان</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.querySelectorAll(".pill").forEach((p) => {
+        p.addEventListener("click", () => {
+          document
+            .querySelectorAll(".pill")
+            .forEach((x) => x.classList.remove("active"));
+          p.classList.add("active");
+        });
+      });
+    </script>
+
+    <script>
+      (function () {
+        var saved = localStorage.getItem("mentoryar-theme-t1") || "light";
+        document.documentElement.setAttribute("data-theme", saved);
+        var btn = document.getElementById("themeBtn1");
+        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+      })();
+      function toggleT1() {
+        var html = document.documentElement;
+        var isDark = html.getAttribute("data-theme") === "dark";
+        var next = isDark ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        document.getElementById("themeBtn1").textContent =
+          next === "dark" ? "☀️" : "🌙";
+        localStorage.setItem("mentoryar-theme-t1", next);
+      }
+    </script>
+  </body>
+</html>

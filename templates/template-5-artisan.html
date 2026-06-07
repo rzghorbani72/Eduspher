@@ -1,0 +1,6153 @@
+<!doctype html>
+<html
+  data-src-ver="e6d6f80b"
+  lang="fa"
+  dir="rtl"
+  data-theme="light"
+  data-om-id="e6d6f80b:0"
+>
+  <head data-om-id="e6d6f80b:1">
+    <style data-omelette-injected>
+      html,
+      body {
+        background: transparent;
+      }
+    </style>
+    <script data-omelette-injected>
+      (() => {
+        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var x = true;
+        var S = 30000;
+        var f = 3000;
+        document.addEventListener("DOMContentLoaded", () => {
+          const H = window.Babel;
+          const G = "om-src-id";
+          if (
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[G])
+          ) {
+            H.registerPlugin(G, ({ types: Y }) => ({
+              visitor: {
+                JSXOpeningElement(U, Q) {
+                  const J = U.node;
+                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  for (let V = 0; V < J.attributes.length; V++) {
+                    const L = J.attributes[V];
+                    if (
+                      L.type === "JSXAttribute" &&
+                      L.name &&
+                      L.name.name === "data-om-id"
+                    )
+                      return;
+                  }
+                  const W =
+                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const Z = J.loc && J.loc.start;
+                  const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
+                  J.attributes.push(
+                    Y.jsxAttribute(
+                      Y.jsxIdentifier("data-om-id"),
+                      Y.stringLiteral(z),
+                    ),
+                  );
+                },
+              },
+            }));
+          }
+          const k = "om-text-extract";
+          let A = false;
+          if (
+            x &&
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[k])
+          ) {
+            const Y = window.React;
+            if (Y && Y.useSyncExternalStore && Y.createElement) {
+              A = true;
+              const U = {};
+              const Q = new Set();
+              let J = 0;
+              window.__omTextO = U;
+              window.__omTextSet = (z) => {
+                for (const V in z) {
+                  const L = z[V];
+                  if (L == null) delete U[V];
+                  else U[V] = L;
+                }
+                J++;
+                Q.forEach((V) => V());
+              };
+              const W = (z) => {
+                Q.add(z);
+                return () => Q.delete(z);
+              };
+              const Z = () => J;
+              window.__OmT = function z(V) {
+                Y.useSyncExternalStore(W, Z, Z);
+                return Y.createElement(
+                  "span",
+                  { "data-om-text": V.i, className: "__om-t" },
+                  V.i in U ? U[V.i] : V.children,
+                );
+              };
+              H.registerPlugin(k, ({ types: z }) => {
+                const V = {
+                  style: 1,
+                  script: 1,
+                  noscript: 1,
+                  textarea: 1,
+                  title: 1,
+                  option: 1,
+                  text: 1,
+                  tspan: 1,
+                  textPath: 1,
+                };
+                const L = {
+                  placeholder: 1,
+                  alt: 1,
+                  title: 1,
+                  label: 1,
+                  "aria-label": 1,
+                  "aria-description": 1,
+                  "aria-placeholder": 1,
+                };
+                const _ = ($, C) =>
+                  z.logicalExpression(
+                    "??",
+                    z.memberExpression(
+                      z.logicalExpression(
+                        "||",
+                        z.memberExpression(
+                          z.identifier("window"),
+                          z.identifier("__omTextO"),
+                        ),
+                        z.objectExpression([]),
+                      ),
+                      z.stringLiteral($),
+                      true,
+                    ),
+                    C,
+                  );
+                const E = ($) =>
+                  ($.file && $.file.opts && $.file.opts.filename) || "?";
+                const B = ($) => ($.file && $.file.code) || "";
+                const b = ($, C) => {
+                  const X = (F) =>
+                    F &&
+                    F.start != null &&
+                    F.end != null &&
+                    (F.type === "StringLiteral" ||
+                      (F.type === "TemplateLiteral" &&
+                        F.expressions.length === 0))
+                      ? [F.start, F.end]
+                      : null;
+                  const N = X(C);
+                  if (N) return N;
+                  if (C && C.type === "Identifier") {
+                    const F = $.scope.getBinding(C.name);
+                    if (
+                      F &&
+                      F.constant &&
+                      F.path.node.type === "VariableDeclarator"
+                    ) {
+                      return X(F.path.node.init);
+                    }
+                  }
+                  return null;
+                };
+                const M = ($, C, X) => {
+                  const N = $.node;
+                  let F = false;
+                  const w = (K, q) => {
+                    F = true;
+                    return z.jsxElement(
+                      z.jsxOpeningElement(
+                        z.jsxIdentifier("__OmT"),
+                        [
+                          z.jsxAttribute(
+                            z.jsxIdentifier("i"),
+                            z.stringLiteral(K),
+                          ),
+                        ],
+                        false,
+                      ),
+                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      [q],
+                      false,
+                    );
+                  };
+                  const D = N.children.map((K) => {
+                    if (K.type === "JSXText") {
+                      if (K.start == null || K.end == null) return K;
+                      const q = X.slice(K.start, K.end);
+                      const R = q.length - q.trimStart().length;
+                      const m = q.length - q.trimEnd().length;
+                      if (R + m >= q.length) return K;
+                      return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
+                    }
+                    if (K.type === "JSXExpressionContainer") {
+                      const q = b($, K.expression);
+                      if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
+                    }
+                    return K;
+                  });
+                  if (F) N.children = D;
+                };
+                return {
+                  visitor: {
+                    JSXOpeningElement($, C) {
+                      const X = $.node;
+                      const N = E(C);
+                      const F = {};
+                      for (let w = 0; w < X.attributes.length; w++) {
+                        const D = X.attributes[w];
+                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        const K = D.name.name;
+                        if (!L[K]) continue;
+                        if (!D.value || D.value.type !== "StringLiteral")
+                          continue;
+                        if (D.value.start == null || D.value.end == null)
+                          continue;
+                        const q = `txt:${N}:${D.value.start}:${D.value.end}`;
+                        F[K] = q;
+                        D.value = z.jsxExpressionContainer(
+                          _(q, z.stringLiteral(D.value.value)),
+                        );
+                      }
+                      if (Object.keys(F).length) {
+                        X.attributes.push(
+                          z.jsxAttribute(
+                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.stringLiteral(JSON.stringify(F)),
+                          ),
+                        );
+                      }
+                    },
+                    JSXElement($, C) {
+                      const X = $.node.openingElement;
+                      const N = X && X.name && X.name.name;
+                      if (N === "__OmT") return;
+                      if (typeof N === "string" && V[N]) return;
+                      M($, E(C), B(C));
+                    },
+                    JSXFragment($, C) {
+                      M($, E(C), B(C));
+                    },
+                  },
+                };
+              });
+            }
+          }
+          const u = A
+            ? ["transform-react-jsx-source", G, k]
+            : ["transform-react-jsx-source", G];
+          document
+            .querySelectorAll(
+              'script[type="text/babel"],script[type="text/jsx"]',
+            )
+            .forEach((Y, U) => {
+              const Q = Y.getAttribute("data-plugins") || "";
+              const J = u.filter((W) => Q.indexOf(W) < 0);
+              if (J.length) {
+                Y.setAttribute(
+                  "data-plugins",
+                  Q ? `${Q},${J.join(",")}` : J.join(","),
+                );
+              }
+              if (!Y.hasAttribute("data-filename")) {
+                Y.setAttribute(
+                  "data-filename",
+                  Y.getAttribute("src") || `inline-${U}`,
+                );
+              }
+            });
+        });
+        var y = window.parent;
+        if (y && y !== window) {
+          const H = (Q, J) => {
+            try {
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+            } catch {}
+          };
+          ["log", "warn", "error"].forEach((Q) => {
+            const J = console[Q];
+            console[Q] = (...W) => {
+              const Z = W.map((z) => {
+                try {
+                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                } catch {
+                  try {
+                    return String(z);
+                  } catch {
+                    return "[unstringifiable]";
+                  }
+                }
+              }).join(" ");
+              H(Q, Z);
+              J.apply(console, W);
+            };
+          });
+          window.addEventListener(
+            "error",
+            (Q) => {
+              const J = Q.target;
+              if (J && J !== window && J.tagName) {
+                const W = J.src || J.href || "";
+                H("resource_error", `${J.tagName} failed to load: ${W}`);
+              } else {
+                H(
+                  "error",
+                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                );
+              }
+            },
+            true,
+          );
+          window.addEventListener("unhandledrejection", (Q) => {
+            const J = Q.reason;
+            const W =
+              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H("error", `Unhandled rejection: ${W}`);
+          });
+          const G = () => {
+            try {
+              y.postMessage(
+                {
+                  type: "omelette:height",
+                  height: document.documentElement.scrollHeight,
+                },
+                "*",
+              );
+            } catch {}
+          };
+          if (document.readyState === "complete") G();
+          else window.addEventListener("load", G);
+          if (window.ResizeObserver)
+            new ResizeObserver(G).observe(document.documentElement);
+          const k = {};
+          let A = 0;
+          window.claude = {
+            complete(Q) {
+              return new Promise((J, W) => {
+                if (!j.length) {
+                  W(new Error("claude.complete: no parent origin"));
+                  return;
+                }
+                const Z = `c${++A}`;
+                const z = () =>
+                  setTimeout(() => {
+                    delete k[Z];
+                    W(new Error(`claude.complete: no data for ${S / 1000}s`));
+                  }, S);
+                const V = z();
+                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                try {
+                  for (const L of j) {
+                    y.postMessage({ __om_api: true, id: Z, body: Q }, L);
+                  }
+                } catch (L) {
+                  clearTimeout(V);
+                  delete k[Z];
+                  W(L);
+                }
+              });
+            },
+          };
+          const u = {};
+          let Y = 0;
+          window.omelette = {
+            writeFile: (Q, J) =>
+              new Promise((W, Z) => {
+                if (!j.length) {
+                  W();
+                  return;
+                }
+                const z = `f${++Y}`;
+                const V = setTimeout(() => {
+                  delete u[z];
+                  W();
+                }, f);
+                u[z] = { resolve: W, reject: Z, t: V };
+                try {
+                  for (const L of j) {
+                    y.postMessage(
+                      {
+                        __om_file: true,
+                        id: z,
+                        op: "write",
+                        path: Q,
+                        content: J,
+                      },
+                      L,
+                    );
+                  }
+                } catch {
+                  clearTimeout(V);
+                  delete u[z];
+                  W();
+                }
+              }),
+          };
+          const U = (Q) => {
+            try {
+              return JSON.stringify(Q);
+            } catch {
+              return JSON.stringify(String(Q));
+            }
+          };
+          window.addEventListener("message", (Q) => {
+            if (j.indexOf(Q.origin) < 0) return;
+            if (Q.source !== y) return;
+            const J = Q.data;
+            if (!J) return;
+            if (J.type === "omelette-preview-refresh") {
+              if (
+                typeof J.token !== "string" ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
+                  J.token,
+                )
+              )
+                return;
+              const z = Math.max(
+                1,
+                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
+              );
+              document.cookie =
+                "__Host-omelette-preview=" +
+                J.token +
+                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                z;
+              return;
+            }
+            if (J.__om_file_r) {
+              const z = u[J.id];
+              if (!z) return;
+              clearTimeout(z.t);
+              delete u[J.id];
+              if (J.ok) z.resolve();
+              else z.reject(new Error(J.error || "write failed"));
+              return;
+            }
+            if (J.__om_api_r) {
+              const z = k[J.id];
+              if (!z) return;
+              if (J.error != null) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.reject(new Error(J.error));
+                return;
+              }
+              if (J.chunk != null) {
+                clearTimeout(z.t);
+                z.t = z.arm();
+                z.text += J.chunk;
+                return;
+              }
+              if (J.done) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.resolve(J.text != null ? J.text : z.text);
+                return;
+              }
+              return;
+            }
+            if (!J.__om_eval) return;
+            const W = J;
+            const Z = (z) => {
+              Q.source.postMessage(
+                { ...z, __om_eval_r: 1, id: W.id },
+                Q.origin,
+              );
+            };
+            try {
+              const z = (0, eval)(W.code);
+              if (z && typeof z.then === "function") {
+                z.then(
+                  (V) => Z({ ok: 1, v: U(V) }),
+                  (V) => Z({ ok: 0, e: String(V) }),
+                );
+              } else {
+                Z({ ok: 1, v: U(z) });
+              }
+            } catch (z) {
+              Z({ ok: 0, e: String(z) });
+            }
+          });
+        }
+      })();
+    </script>
+
+    <meta charset="UTF-8" data-om-id="e6d6f80b:2" />
+    <style>
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 300;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 400;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 500;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 700;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 800;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 900;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+    </style>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      data-om-id="e6d6f80b:3"
+    />
+    <title>منتوریار — هنرمند</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --cream: #f7f4ee;
+        --cream-dark: #ede9df;
+        --terra: oklch(58% 0.14 35);
+        --terra-light: oklch(94% 0.04 35);
+        --terra-dark: oklch(46% 0.14 35);
+        --amber: oklch(70% 0.14 70);
+        --charcoal: #1a1a1a;
+        --char-mid: #3d3d3d;
+        --muted: #7a7066;
+        --border: #ddd8cf;
+        --border-dark: #c8c0b4;
+        --white: #ffffff;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        background: var(--cream);
+        color: var(--charcoal);
+        line-height: 1.8;
+        letter-spacing: 0;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+      }
+
+      nav {
+        background: var(--charcoal);
+        padding: 0 48px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 200;
+      }
+      .nav-logo {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--cream);
+        text-decoration: none;
+        font-style: italic;
+      }
+      .nav-logo span {
+        color: var(--terra);
+        font-style: normal;
+      }
+      .nav-links {
+        display: flex;
+        gap: 36px;
+      }
+      .nav-links a {
+        font-size: 13px;
+        font-weight: 500;
+        color: oklch(65% 0.02 50);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--cream);
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .nav-login {
+        font-size: 13px;
+        color: oklch(60% 0.02 50);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-login:hover {
+        color: var(--cream);
+      }
+      .btn-terra {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--terra);
+        border: none;
+        padding: 10px 24px;
+        cursor: pointer;
+      }
+      .btn-terra:hover {
+        background: var(--terra-dark);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 88vh;
+      }
+      .hero-left {
+        background: var(--charcoal);
+        padding: 80px 64px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-left::after {
+        content: "";
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        border: 1px solid oklch(28% 0.03 50);
+      }
+      .hero-left::before {
+        content: "";
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 1px solid oklch(28% 0.03 50);
+      }
+      .hero-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--terra);
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .hero-eyebrow::before {
+        content: "";
+        width: 32px;
+        height: 1px;
+        background: var(--terra);
+      }
+      .hero h1 {
+        font-size: clamp(44px, 5vw, 68px);
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--cream);
+        margin-bottom: 28px;
+      }
+      .hero h1 em {
+        font-style: italic;
+        color: var(--terra);
+      }
+      .hero-desc {
+        font-size: 15px;
+        color: oklch(65% 0.02 50);
+        line-height: 1.95;
+        margin-bottom: 44px;
+        max-width: 420px;
+        font-weight: 300;
+      }
+      .hero-cta-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 56px;
+      }
+      .btn-hero-terra {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--terra);
+        border: none;
+        padding: 16px 36px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-hero-terra:hover {
+        background: var(--terra-dark);
+        transform: translateY(-1px);
+      }
+      .btn-hero-outline {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--cream);
+        background: none;
+        border: 1px solid oklch(35% 0.02 50);
+        padding: 15px 36px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+      .btn-hero-outline:hover {
+        border-color: oklch(55% 0.02 50);
+      }
+      .hero-trust {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .trust-avatars {
+        display: flex;
+      }
+      .trust-av {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid var(--charcoal);
+        margin-left: -10px;
+        overflow: hidden;
+      }
+      .trust-av:first-child {
+        margin-left: 0;
+      }
+      .trust-copy {
+        font-size: 13px;
+        color: oklch(60% 0.02 50);
+      }
+      .trust-copy strong {
+        color: var(--cream);
+        font-weight: 600;
+      }
+      .hero-right {
+        background: var(--cream-dark);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-course-tile {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .tile-bg {
+        width: 100%;
+        height: 100%;
+        min-height: 220px;
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+      }
+      .tile-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(26, 26, 26, 0.82) 0%,
+          transparent 55%
+        );
+        transition: opacity 0.3s;
+      }
+      .hero-course-tile:hover .tile-overlay {
+        opacity: 0.92;
+      }
+      .tile-info {
+        position: relative;
+        z-index: 2;
+        text-align: right;
+        width: 100%;
+      }
+      .tile-cat {
+        font-size: 10px;
+        color: var(--terra);
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .tile-name {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--cream);
+        line-height: 1.4;
+      }
+      .tile-teacher {
+        font-size: 12px;
+        color: oklch(70% 0.02 50);
+        margin-top: 4px;
+      }
+
+      .cats-section {
+        background: var(--charcoal);
+        padding: 0 48px;
+      }
+      .cats-inner {
+        display: flex;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .cats-inner::-webkit-scrollbar {
+        display: none;
+      }
+      .cat-tab {
+        padding: 18px 28px;
+        font-size: 13px;
+        font-weight: 600;
+        color: oklch(50% 0.02 50);
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+        transition:
+          color 0.2s,
+          border-color 0.2s;
+        flex-shrink: 0;
+      }
+      .cat-tab:hover {
+        color: var(--cream);
+      }
+      .cat-tab.active {
+        color: var(--terra);
+        border-color: var(--terra);
+      }
+
+      .courses-section {
+        padding: 88px 48px;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 48px;
+      }
+      .section-eyebrow {
+        font-size: 11px;
+        color: var(--terra);
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .section-eyebrow::before {
+        content: "";
+        width: 24px;
+        height: 1px;
+        background: var(--terra);
+      }
+      .section-title-art {
+        font-size: clamp(26px, 3vw, 40px);
+        font-weight: 700;
+        color: var(--charcoal);
+        line-height: 1.2;
+      }
+      .section-title-art em {
+        font-style: italic;
+        color: var(--terra);
+      }
+      .browse-link {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--terra);
+        text-decoration: none;
+      }
+      .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+      }
+      .course-card {
+        background: var(--white);
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+      .course-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 56px rgba(26, 26, 26, 0.12);
+      }
+      .course-thumb-art {
+        height: 220px;
+        position: relative;
+        overflow: hidden;
+      }
+      .ct-bg {
+        width: 100%;
+        height: 100%;
+      }
+      .ct-hover {
+        position: absolute;
+        inset: 0;
+        background: rgba(26, 26, 26, 0.2);
+        opacity: 0;
+        transition: opacity 0.25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .course-card:hover .ct-hover {
+        opacity: 1;
+      }
+      .play-circle-terra {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--terra);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 18px;
+      }
+      .course-card-body {
+        padding: 24px;
+      }
+      .course-cat-tag {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--terra);
+        margin-bottom: 8px;
+      }
+      .course-card-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--charcoal);
+        line-height: 1.35;
+        margin-bottom: 8px;
+      }
+      .course-card-instructor {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+      .course-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+      .cr-score {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--charcoal);
+      }
+      .cr-stars {
+        font-size: 13px;
+        color: var(--amber);
+      }
+      .cr-count {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .mc {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        background: var(--cream);
+        padding: 4px 10px;
+        border: 1px solid var(--border);
+      }
+
+      .spotlight-section {
+        background: var(--cream-dark);
+        padding: 88px 48px;
+      }
+      .spotlight-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .spotlight-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+        margin-top: 56px;
+      }
+      .creator-portrait {
+        width: 100%;
+        aspect-ratio: 4/5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .portrait-frame {
+        position: absolute;
+        inset: 20px;
+        border: 1px solid var(--border-dark);
+        z-index: 0;
+      }
+      .creator-initial {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 120px;
+        font-weight: 700;
+        font-style: italic;
+        color: oklch(75% 0.08 35);
+        z-index: 1;
+        line-height: 1;
+      }
+      .creator-badge {
+        position: absolute;
+        bottom: 32px;
+        right: -20px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        padding: 16px 20px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        z-index: 2;
+      }
+      .cb-icon {
+        font-size: 24px;
+      }
+      .cb-val {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--charcoal);
+      }
+      .cb-label {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .si-eyebrow {
+        font-size: 11px;
+        color: var(--terra);
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .si-eyebrow::before {
+        content: "";
+        width: 24px;
+        height: 1px;
+        background: var(--terra);
+      }
+      .creator-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 36px;
+        padding: 28px;
+        background: var(--white);
+        border: 1px solid var(--border);
+      }
+      .cs-val {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--charcoal);
+      }
+      .cs-label {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .quote-block {
+        padding: 24px 28px 24px 0;
+        border-right: 3px solid var(--terra);
+        border-left: none;
+        background: var(--terra-light);
+        margin-bottom: 32px;
+        padding-right: 28px;
+      }
+      .quote-block p {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 16px;
+        font-style: italic;
+        color: var(--char-mid);
+        line-height: 1.8;
+      }
+      .quote-block cite {
+        font-size: 13px;
+        color: var(--terra);
+        font-style: normal;
+        font-weight: 700;
+        margin-top: 8px;
+        display: block;
+      }
+
+      .why-section {
+        padding: 88px 48px;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .why-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+        margin-top: 56px;
+      }
+      .why-card {
+        padding: 32px;
+        border: 1px solid var(--border);
+        background: var(--white);
+        transition: border-color 0.2s;
+      }
+      .why-card:hover {
+        border-color: var(--terra);
+      }
+      .why-num {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 48px;
+        font-weight: 700;
+        font-style: italic;
+        color: var(--border-dark);
+        line-height: 1;
+        margin-bottom: 16px;
+      }
+      .why-card h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--charcoal);
+        margin-bottom: 10px;
+      }
+      .why-card p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.85;
+        font-weight: 300;
+      }
+
+      .stats-bar {
+        background: var(--terra);
+        padding: 56px 48px;
+      }
+      .stats-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+      }
+      .stat-box {
+        text-align: center;
+      }
+      .sb-val {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 50px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .sb-label {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.78);
+        font-weight: 500;
+      }
+
+      .testi-section {
+        background: var(--cream-dark);
+        padding: 88px 48px;
+      }
+      .testi-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 56px;
+      }
+      .testi-card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        padding: 36px;
+      }
+      .testi-stars {
+        color: var(--amber);
+        font-size: 15px;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+      }
+      .testi-q {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 17px;
+        font-style: italic;
+        line-height: 1.7;
+        color: var(--charcoal);
+        margin-bottom: 28px;
+        font-weight: 500;
+      }
+      .testi-who {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+      }
+      .testi-av {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .testi-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--charcoal);
+      }
+      .testi-role {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .cta-section {
+        padding: 88px 48px;
+        background: var(--charcoal);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-section::before {
+        content: "";
+        position: absolute;
+        top: -120px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        border: 1px solid oklch(28% 0.03 50);
+      }
+      .cta-inner {
+        position: relative;
+        z-index: 1;
+      }
+      .cta-eyebrow {
+        font-size: 11px;
+        color: var(--terra);
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+      }
+      .cta-eyebrow::before,
+      .cta-eyebrow::after {
+        content: "";
+        width: 24px;
+        height: 1px;
+        background: var(--terra);
+      }
+      .cta-section h2 {
+        font-size: clamp(36px, 5vw, 64px);
+        font-weight: 700;
+        color: var(--cream);
+        line-height: 1.15;
+        margin-bottom: 20px;
+      }
+      .cta-section h2 em {
+        font-style: italic;
+        color: var(--terra);
+      }
+      .cta-section p {
+        font-size: 15px;
+        color: oklch(60% 0.02 50);
+        margin-bottom: 44px;
+        font-weight: 300;
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.9;
+      }
+      .cta-btns {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+      }
+
+      footer {
+        background: #111;
+        padding: 72px 48px 40px;
+      }
+      .footer-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 56px;
+        margin-bottom: 56px;
+      }
+      .footer-brand-name {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--cream);
+        font-style: italic;
+        margin-bottom: 16px;
+      }
+      .footer-brand-name span {
+        color: var(--terra);
+        font-style: normal;
+      }
+      .footer-brand p {
+        font-size: 13px;
+        color: oklch(45% 0.02 50);
+        line-height: 1.85;
+        font-weight: 300;
+        max-width: 280px;
+      }
+      .footer-col h5 {
+        font-size: 11px;
+        color: oklch(55% 0.02 50);
+        margin-bottom: 20px;
+        font-weight: 700;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 13px;
+        color: oklch(42% 0.02 50);
+        text-decoration: none;
+        margin-bottom: 12px;
+        font-weight: 300;
+        transition: color 0.2s;
+      }
+      .footer-col a:hover {
+        color: var(--terra);
+      }
+      .footer-base {
+        border-top: 1px solid oklch(20% 0.02 50);
+        padding-top: 28px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: oklch(38% 0.02 50);
+        font-weight: 300;
+      }
+
+      .art1 {
+        background: linear-gradient(
+          145deg,
+          oklch(68% 0.14 35),
+          oklch(58% 0.14 55)
+        );
+      }
+      .art2 {
+        background: linear-gradient(
+          145deg,
+          oklch(62% 0.18 250),
+          oklch(52% 0.2 275)
+        );
+      }
+      .art3 {
+        background: linear-gradient(
+          145deg,
+          oklch(70% 0.16 80),
+          oklch(62% 0.18 60)
+        );
+      }
+      .art4 {
+        background: linear-gradient(
+          145deg,
+          oklch(65% 0.16 158),
+          oklch(55% 0.18 180)
+        );
+      }
+      .art6 {
+        background: linear-gradient(
+          145deg,
+          oklch(68% 0.14 60),
+          oklch(60% 0.16 40)
+        );
+      }
+      .av-t {
+        background: var(--terra);
+      }
+      .av-a {
+        background: var(--amber);
+      }
+      .av-c {
+        background: oklch(55% 0.18 250);
+      }
+    </style>
+
+    <style>
+      .trust-av img,
+      .testi-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    </style>
+
+    <style>
+      [data-theme="dark"] {
+        --cream: #1a120a;
+        --cream-dark: #221810;
+        --terra: oklch(62% 0.14 35);
+        --terra-light: oklch(18% 0.06 35);
+        --terra-dark: oklch(50% 0.14 35);
+        --amber: oklch(70% 0.14 70);
+        --charcoal: #f1ede6;
+        --char-mid: #d4cfc8;
+        --muted: #9a8f84;
+        --border: #2a2018;
+        --border-dark: #3a2e22;
+        --white: #221810;
+      }
+      [data-theme="dark"] body {
+        background: #1a120a;
+        color: #f1ede6;
+      }
+      [data-theme="dark"] nav {
+        background: #100c06;
+      }
+      [data-theme="dark"] .nav-logo {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .nav-links a {
+        color: oklch(55% 0.02 50);
+      }
+      [data-theme="dark"] .nav-links a:hover {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .nav-login {
+        color: oklch(50% 0.02 50);
+      }
+      [data-theme="dark"] .hero-left {
+        background: #100c06;
+      }
+      [data-theme="dark"] .hero-left::after,
+      [data-theme="dark"] .hero-left::before {
+        border-color: oklch(22% 0.03 50);
+      }
+      [data-theme="dark"] .hero h1 {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .hero-desc {
+        color: oklch(55% 0.02 50);
+      }
+      [data-theme="dark"] .btn-hero-outline {
+        color: #f1ede6;
+        border-color: oklch(30% 0.02 50);
+      }
+      [data-theme="dark"] .trust-copy {
+        color: oklch(55% 0.02 50);
+      }
+      [data-theme="dark"] .trust-copy strong {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .hero-right {
+        background: #221810;
+      }
+      [data-theme="dark"] .cats-section {
+        background: #100c06;
+      }
+      [data-theme="dark"] .cat-tab {
+        color: oklch(42% 0.02 50);
+      }
+      [data-theme="dark"] .cat-tab:hover {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .course-card {
+        background: #221810;
+      }
+      [data-theme="dark"] .course-card:hover {
+        box-shadow: 0 24px 56px rgba(0, 0, 0, 0.4);
+      }
+      [data-theme="dark"] .course-card-title {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .course-card-instructor {
+        color: #9a8f84;
+      }
+      [data-theme="dark"] .course-card-footer {
+        border-color: #2a2018;
+      }
+      [data-theme="dark"] .cr-score {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .mc {
+        background: #1a120a;
+        border-color: #2a2018;
+        color: #9a8f84;
+      }
+      [data-theme="dark"] .spotlight-section {
+        background: #221810;
+      }
+      [data-theme="dark"] .creator-stats {
+        background: #2a2018;
+        border-color: #3a2e22;
+      }
+      [data-theme="dark"] .cs-val {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .cs-label {
+        color: #9a8f84;
+      }
+      [data-theme="dark"] .quote-block {
+        background: oklch(18% 0.06 35);
+      }
+      [data-theme="dark"] .quote-block p {
+        color: #d4cfc8;
+      }
+      [data-theme="dark"] .why-card {
+        background: #221810;
+        border-color: #2a2018;
+      }
+      [data-theme="dark"] .why-card h3 {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .why-card p {
+        color: #9a8f84;
+      }
+      [data-theme="dark"] .why-num {
+        color: #3a2e22;
+      }
+      [data-theme="dark"] .testi-section {
+        background: #221810;
+      }
+      [data-theme="dark"] .testi-card {
+        background: #2a2018;
+        border-color: #3a2e22;
+      }
+      [data-theme="dark"] .testi-q {
+        color: #d4cfc8;
+      }
+      [data-theme="dark"] .testi-who {
+        border-color: #3a2e22;
+      }
+      [data-theme="dark"] .testi-name {
+        color: #f1ede6;
+      }
+      [data-theme="dark"] .testi-role {
+        color: #9a8f84;
+      }
+      [data-theme="dark"] .section-title-art {
+        color: #f1ede6;
+      }
+
+      .theme-toggle-btn {
+        width: 34px;
+        height: 34px;
+        background: oklch(25% 0.03 50);
+        border: 1px solid oklch(30% 0.03 50);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: border-color 0.2s;
+      }
+      .theme-toggle-btn:hover {
+        border-color: var(--terra);
+      }
+      [data-theme="light"] .theme-toggle-btn {
+        background: oklch(88% 0.02 50);
+        border-color: oklch(75% 0.03 50);
+      }
+    </style>
+  </head>
+  <body data-om-id="e6d6f80b:4">
+    <nav data-om-id="e6d6f80b:5">
+      <a href="#" class="nav-logo" data-om-id="e6d6f80b:6"
+        >منتور<span data-om-id="e6d6f80b:7">یار</span></a
+      >
+      <div class="nav-links" data-om-id="e6d6f80b:8">
+        <a href="#" data-om-id="e6d6f80b:9">دوره‌ها</a>
+        <a href="#" data-om-id="e6d6f80b:10">مدرسان</a>
+        <a href="#" data-om-id="e6d6f80b:11">جامعه</a>
+        <a href="#" data-om-id="e6d6f80b:12">سازمانی</a>
+      </div>
+      <div class="nav-actions" data-om-id="e6d6f80b:13">
+        <a href="#" class="nav-login" data-om-id="e6d6f80b:14">ورود</a>
+        <button class="btn-terra" data-om-id="e6d6f80b:15">شروع یادگیری</button>
+        <button
+          class="theme-toggle-btn"
+          id="themeBtn5"
+          onclick="toggleT5()"
+          data-om-id="e6d6f80b:16"
+        >
+          🌙
+        </button>
+      </div>
+    </nav>
+
+    <div class="hero" data-om-id="e6d6f80b:17">
+      <div class="hero-left" data-om-id="e6d6f80b:18">
+        <div class="hero-eyebrow" data-om-id="e6d6f80b:19">
+          دوره‌های خلاقانه آنلاین
+        </div>
+        <h1 data-om-id="e6d6f80b:20">
+          هنرت را بساز،<br data-om-id="e6d6f80b:21" />مهارتت را<br
+            data-om-id="e6d6f80b:22"
+          /><em data-om-id="e6d6f80b:23">کامل کن</em>.
+        </h1>
+        <p class="hero-desc" data-om-id="e6d6f80b:24">
+          هزاران دوره توسط هنرمندان، طراحان و خلاقان فعال. در سرعت خودت یاد بگیر
+          و یک تمرین واقعی توسعه بده.
+        </p>
+        <div class="hero-cta-row" data-om-id="e6d6f80b:25">
+          <button class="btn-hero-terra" data-om-id="e6d6f80b:26">
+            شروع رایگان
+          </button>
+          <button class="btn-hero-outline" data-om-id="e6d6f80b:27">
+            مرور دوره‌ها
+          </button>
+        </div>
+        <div class="hero-trust" data-om-id="e6d6f80b:28">
+          <div class="trust-avatars" data-om-id="e6d6f80b:29">
+            <div class="trust-av" data-om-id="e6d6f80b:30">
+              <img
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=72&q=80"
+                alt=""
+                data-om-id="e6d6f80b:31"
+              />
+            </div>
+            <div class="trust-av" data-om-id="e6d6f80b:32">
+              <img
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=72&q=80"
+                alt=""
+                data-om-id="e6d6f80b:33"
+              />
+            </div>
+            <div class="trust-av" data-om-id="e6d6f80b:34">
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=72&q=80"
+                alt=""
+                data-om-id="e6d6f80b:35"
+              />
+            </div>
+            <div class="trust-av" data-om-id="e6d6f80b:36">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=72&q=80"
+                alt=""
+                data-om-id="e6d6f80b:37"
+              />
+            </div>
+          </div>
+          <div class="trust-copy" data-om-id="e6d6f80b:38">
+            به <strong data-om-id="e6d6f80b:39">۲.۴ میلیون+</strong> یادگیرنده
+            خلاق پیوستند
+          </div>
+        </div>
+      </div>
+      <div class="hero-right" data-om-id="e6d6f80b:40">
+        <div class="hero-course-tile" data-om-id="e6d6f80b:41">
+          <div
+            class="tile-bg"
+            style="
+              min-height: 260px;
+              align-items: flex-end;
+              padding: 24px;
+              position: relative;
+              background-image: url(&quot;https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=600&q=80&quot;);
+              background-size: cover;
+              background-position: center;
+            "
+            data-om-id="e6d6f80b:42"
+          >
+            <div class="tile-overlay" data-om-id="e6d6f80b:43"></div>
+            <div class="tile-info" data-om-id="e6d6f80b:44">
+              <div class="tile-cat" data-om-id="e6d6f80b:45">تصویرسازی</div>
+              <div class="tile-name" data-om-id="e6d6f80b:46">
+                مقدمه‌ای بر تصویرسازی دیجیتال
+              </div>
+              <div class="tile-teacher" data-om-id="e6d6f80b:47">النا مورا</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-course-tile" data-om-id="e6d6f80b:48">
+          <div
+            class="tile-bg"
+            style="
+              min-height: 260px;
+              align-items: flex-end;
+              padding: 24px;
+              position: relative;
+              background-image: url(&quot;https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=600&q=80&quot;);
+              background-size: cover;
+              background-position: center;
+            "
+            data-om-id="e6d6f80b:49"
+          >
+            <div class="tile-overlay" data-om-id="e6d6f80b:50"></div>
+            <div class="tile-info" data-om-id="e6d6f80b:51">
+              <div class="tile-cat" data-om-id="e6d6f80b:52">تایپوگرافی</div>
+              <div class="tile-name" data-om-id="e6d6f80b:53">
+                خط‌نویسی دستی برای مبتدیان
+              </div>
+              <div class="tile-teacher" data-om-id="e6d6f80b:54">
+                مارکوس رید
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-course-tile" data-om-id="e6d6f80b:55">
+          <div
+            class="tile-bg"
+            style="
+              min-height: 260px;
+              align-items: flex-end;
+              padding: 24px;
+              position: relative;
+              background-image: url(&quot;https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80&quot;);
+              background-size: cover;
+              background-position: center;
+            "
+            data-om-id="e6d6f80b:56"
+          >
+            <div class="tile-overlay" data-om-id="e6d6f80b:57"></div>
+            <div class="tile-info" data-om-id="e6d6f80b:58">
+              <div class="tile-cat" data-om-id="e6d6f80b:59">نقاشی</div>
+              <div class="tile-name" data-om-id="e6d6f80b:60">
+                آبرنگ — منظره و نور
+              </div>
+              <div class="tile-teacher" data-om-id="e6d6f80b:61">
+                سوکی ناکامورا
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-course-tile" data-om-id="e6d6f80b:62">
+          <div
+            class="tile-bg"
+            style="
+              min-height: 260px;
+              align-items: flex-end;
+              padding: 24px;
+              position: relative;
+              background-image: url(&quot;https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&q=80&quot;);
+              background-size: cover;
+              background-position: center;
+            "
+            data-om-id="e6d6f80b:63"
+          >
+            <div class="tile-overlay" data-om-id="e6d6f80b:64"></div>
+            <div class="tile-info" data-om-id="e6d6f80b:65">
+              <div class="tile-cat" data-om-id="e6d6f80b:66">طراحی برند</div>
+              <div class="tile-name" data-om-id="e6d6f80b:67">
+                سیستم هویت بصری
+              </div>
+              <div class="tile-teacher" data-om-id="e6d6f80b:68">پیر آلار</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cats-section" data-om-id="e6d6f80b:69">
+      <div class="cats-inner" data-om-id="e6d6f80b:70">
+        <div class="cat-tab active" data-om-id="e6d6f80b:71">تصویرسازی</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:72">طراحی گرافیک</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:73">عکاسی</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:74">۳بعدی و انیمیشن</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:75">صنایع دستی</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:76">تایپوگرافی</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:77">برند و بازاریابی</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:78">فیلم و ویدیو</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:79">موسیقی</div>
+        <div class="cat-tab" data-om-id="e6d6f80b:80">نوشتن</div>
+      </div>
+    </div>
+
+    <div class="courses-section" data-om-id="e6d6f80b:81">
+      <div class="section-head" data-om-id="e6d6f80b:82">
+        <div data-om-id="e6d6f80b:83">
+          <div class="section-eyebrow" data-om-id="e6d6f80b:84">
+            دوره‌های ویژه
+          </div>
+          <div class="section-title-art" data-om-id="e6d6f80b:85">
+            انتخاب‌شده توسط<br data-om-id="e6d6f80b:86" /><em
+              data-om-id="e6d6f80b:87"
+              >تیم سردبیری ما</em
+            >
+          </div>
+        </div>
+        <a href="#" class="browse-link" data-om-id="e6d6f80b:88"
+          >← مشاهده همه دوره‌ها</a
+        >
+      </div>
+      <div class="courses-grid" data-om-id="e6d6f80b:89">
+        <div class="course-card" data-om-id="e6d6f80b:90">
+          <div class="course-thumb-art" data-om-id="e6d6f80b:91">
+            <div
+              class="ct-bg"
+              style="
+                height: 100%;
+                background-image: url(&quot;https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=700&q=80&quot;);
+                background-size: cover;
+                background-position: center;
+              "
+              data-om-id="e6d6f80b:92"
+            ></div>
+            <div class="ct-hover" data-om-id="e6d6f80b:93">
+              <div class="play-circle-terra" data-om-id="e6d6f80b:94">▶</div>
+            </div>
+          </div>
+          <div class="course-card-body" data-om-id="e6d6f80b:95">
+            <div class="course-cat-tag" data-om-id="e6d6f80b:96">تصویرسازی</div>
+            <h3 class="course-card-title" data-om-id="e6d6f80b:97">
+              مقدمه‌ای بر تصویرسازی دیجیتال با پروکریت
+            </h3>
+            <div class="course-card-instructor" data-om-id="e6d6f80b:98">
+              النا مورا · ۲۴ درس
+            </div>
+            <div class="course-card-footer" data-om-id="e6d6f80b:99">
+              <div
+                class="course-rating"
+                style="display: flex; align-items: center; gap: 6px"
+                data-om-id="e6d6f80b:100"
+              >
+                <span class="cr-score" data-om-id="e6d6f80b:101">۴.۹</span
+                ><span class="cr-stars" data-om-id="e6d6f80b:102">★★★★★</span
+                ><span class="cr-count" data-om-id="e6d6f80b:103">(۱٬۸۴۰)</span>
+              </div>
+              <div style="display: flex; gap: 8px" data-om-id="e6d6f80b:104">
+                <span class="mc" data-om-id="e6d6f80b:105">۴ ساعت</span
+                ><span class="mc" data-om-id="e6d6f80b:106">مبتدی</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="course-card" data-om-id="e6d6f80b:107">
+          <div class="course-thumb-art" data-om-id="e6d6f80b:108">
+            <div
+              class="ct-bg"
+              style="
+                height: 100%;
+                background-image: url(&quot;https://images.unsplash.com/photo-1558655146-d09347e92766?w=700&q=80&quot;);
+                background-size: cover;
+                background-position: center;
+              "
+              data-om-id="e6d6f80b:109"
+            ></div>
+            <div class="ct-hover" data-om-id="e6d6f80b:110">
+              <div class="play-circle-terra" data-om-id="e6d6f80b:111">▶</div>
+            </div>
+          </div>
+          <div class="course-card-body" data-om-id="e6d6f80b:112">
+            <div class="course-cat-tag" data-om-id="e6d6f80b:113">برندینگ</div>
+            <h3 class="course-card-title" data-om-id="e6d6f80b:114">
+              طراحی هویت برند: ساخت یک سیستم از صفر
+            </h3>
+            <div class="course-card-instructor" data-om-id="e6d6f80b:115">
+              پیر آلار · ۳۲ درس
+            </div>
+            <div class="course-card-footer" data-om-id="e6d6f80b:116">
+              <div
+                class="course-rating"
+                style="display: flex; align-items: center; gap: 6px"
+                data-om-id="e6d6f80b:117"
+              >
+                <span class="cr-score" data-om-id="e6d6f80b:118">۴.۸</span
+                ><span class="cr-stars" data-om-id="e6d6f80b:119">★★★★★</span
+                ><span class="cr-count" data-om-id="e6d6f80b:120">(۹۲۲)</span>
+              </div>
+              <div style="display: flex; gap: 8px" data-om-id="e6d6f80b:121">
+                <span class="mc" data-om-id="e6d6f80b:122">۶ ساعت</span
+                ><span class="mc" data-om-id="e6d6f80b:123">متوسط</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="course-card" data-om-id="e6d6f80b:124">
+          <div class="course-thumb-art" data-om-id="e6d6f80b:125">
+            <div
+              class="ct-bg"
+              style="
+                height: 100%;
+                background-image: url(&quot;https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=700&q=80&quot;);
+                background-size: cover;
+                background-position: center;
+              "
+              data-om-id="e6d6f80b:126"
+            ></div>
+            <div class="ct-hover" data-om-id="e6d6f80b:127">
+              <div class="play-circle-terra" data-om-id="e6d6f80b:128">▶</div>
+            </div>
+          </div>
+          <div class="course-card-body" data-om-id="e6d6f80b:129">
+            <div class="course-cat-tag" data-om-id="e6d6f80b:130">نقاشی</div>
+            <h3 class="course-card-title" data-om-id="e6d6f80b:131">
+              آبرنگ بیانی: منظره‌ها و نور
+            </h3>
+            <div class="course-card-instructor" data-om-id="e6d6f80b:132">
+              سوکی ناکامورا · ۱۸ درس
+            </div>
+            <div class="course-card-footer" data-om-id="e6d6f80b:133">
+              <div
+                class="course-rating"
+                style="display: flex; align-items: center; gap: 6px"
+                data-om-id="e6d6f80b:134"
+              >
+                <span class="cr-score" data-om-id="e6d6f80b:135">۴.۹</span
+                ><span class="cr-stars" data-om-id="e6d6f80b:136">★★★★★</span
+                ><span class="cr-count" data-om-id="e6d6f80b:137">(۲٬۱۳۰)</span>
+              </div>
+              <div style="display: flex; gap: 8px" data-om-id="e6d6f80b:138">
+                <span class="mc" data-om-id="e6d6f80b:139">۳.۵ ساعت</span
+                ><span class="mc" data-om-id="e6d6f80b:140">همه سطوح</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spotlight-section" data-om-id="e6d6f80b:141">
+      <div class="spotlight-inner" data-om-id="e6d6f80b:142">
+        <div class="section-eyebrow" data-om-id="e6d6f80b:143">معرفی خالق</div>
+        <div class="section-title-art" data-om-id="e6d6f80b:144">
+          از <em data-om-id="e6d6f80b:145">هنرمندان فعال</em> یاد بگیر
+        </div>
+        <div class="spotlight-grid" data-om-id="e6d6f80b:146">
+          <div style="position: relative" data-om-id="e6d6f80b:147">
+            <div
+              class="creator-portrait"
+              style="background: none"
+              data-om-id="e6d6f80b:148"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=85"
+                style="
+                  position: absolute;
+                  inset: 0;
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                  object-position: center top;
+                  z-index: 0;
+                  display: block;
+                "
+                alt="النا مورا"
+                data-om-id="e6d6f80b:149"
+              />
+              <div
+                class="portrait-frame"
+                style="z-index: 1"
+                data-om-id="e6d6f80b:150"
+              ></div>
+            </div>
+            <div class="creator-badge" data-om-id="e6d6f80b:151">
+              <div class="cb-icon" data-om-id="e6d6f80b:152">🎨</div>
+              <div data-om-id="e6d6f80b:153">
+                <div class="cb-val" data-om-id="e6d6f80b:154">۴.۹</div>
+                <div class="cb-label" data-om-id="e6d6f80b:155">
+                  امتیاز دوره
+                </div>
+              </div>
+            </div>
+          </div>
+          <div data-om-id="e6d6f80b:156">
+            <div class="si-eyebrow" data-om-id="e6d6f80b:157">خالق ویژه</div>
+            <h2
+              style="
+                font-size: clamp(28px, 3.5vw, 44px);
+                font-weight: 700;
+                color: var(--charcoal);
+                line-height: 1.2;
+                margin-bottom: 20px;
+              "
+              data-om-id="e6d6f80b:158"
+            >
+              النا مورا،<br data-om-id="e6d6f80b:159" /><em
+                style="font-style: italic; color: var(--terra)"
+                data-om-id="e6d6f80b:160"
+                >تصویرساز</em
+              >
+            </h2>
+            <p
+              style="
+                font-size: 14px;
+                color: var(--muted);
+                line-height: 1.95;
+                margin-bottom: 32px;
+                font-weight: 300;
+              "
+              data-om-id="e6d6f80b:161"
+            >
+              النا که در تهران مستقر است، ۱۲ سال به عنوان تصویرساز فریلنسر برای
+              مشتریان نشریاتی، آژانس‌ها و برندهای جهانی کار کرده. او کل فرآیند
+              خلاقانه‌اش را در هر درس می‌آورد.
+            </p>
+            <div class="creator-stats" data-om-id="e6d6f80b:162">
+              <div data-om-id="e6d6f80b:163">
+                <div class="cs-val" data-om-id="e6d6f80b:164">۱۸هزار</div>
+                <div class="cs-label" data-om-id="e6d6f80b:165">دانشجو</div>
+              </div>
+              <div data-om-id="e6d6f80b:166">
+                <div class="cs-val" data-om-id="e6d6f80b:167">۴</div>
+                <div class="cs-label" data-om-id="e6d6f80b:168">دوره</div>
+              </div>
+              <div data-om-id="e6d6f80b:169">
+                <div class="cs-val" data-om-id="e6d6f80b:170">۴.۹★</div>
+                <div class="cs-label" data-om-id="e6d6f80b:171">
+                  میانگین امتیاز
+                </div>
+              </div>
+              <div data-om-id="e6d6f80b:172">
+                <div class="cs-val" data-om-id="e6d6f80b:173">۱۲ سال</div>
+                <div class="cs-label" data-om-id="e6d6f80b:174">تجربه</div>
+              </div>
+            </div>
+            <div class="quote-block" data-om-id="e6d6f80b:175">
+              <p data-om-id="e6d6f80b:176">
+                «من به همان شیوه‌ای تدریس می‌کنم که آرزو داشتم به من یاد داده
+                می‌شد — با صداقت درباره فرآیند، شکست، و آنچه واقعاً یک اثر هنری
+                را زنده می‌کند.»
+              </p>
+              <cite data-om-id="e6d6f80b:177">— النا مورا</cite>
+            </div>
+            <button class="btn-hero-terra" data-om-id="e6d6f80b:178">
+              ← مشاهده دوره‌های او
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="why-section" data-om-id="e6d6f80b:179">
+      <div data-om-id="e6d6f80b:180">
+        <div class="section-eyebrow" data-om-id="e6d6f80b:181">
+          چرا منتوریار
+        </div>
+        <div class="section-title-art" data-om-id="e6d6f80b:182">
+          یک تجربه یادگیری<br data-om-id="e6d6f80b:183" /><em
+            data-om-id="e6d6f80b:184"
+            >متفاوت</em
+          >
+        </div>
+      </div>
+      <div class="why-grid" data-om-id="e6d6f80b:185">
+        <div class="why-card" data-om-id="e6d6f80b:186">
+          <div class="why-num" data-om-id="e6d6f80b:187">۰۱</div>
+          <h3 data-om-id="e6d6f80b:188">تدریس توسط متخصصان واقعی</h3>
+          <p data-om-id="e6d6f80b:189">
+            هر مدرس یک متخصص فعال است — نه یک سازنده محتوای بی‌تجربه.
+          </p>
+        </div>
+        <div class="why-card" data-om-id="e6d6f80b:190">
+          <div class="why-num" data-om-id="e6d6f80b:191">۰۲</div>
+          <h3 data-om-id="e6d6f80b:192">یادگیری مبتنی بر پروژه</h3>
+          <p data-om-id="e6d6f80b:193">
+            هر دوره با یک پروژه نهایی به پایان می‌رسد که در جامعه به اشتراک
+            می‌گذاری.
+          </p>
+        </div>
+        <div class="why-card" data-om-id="e6d6f80b:194">
+          <div class="why-num" data-om-id="e6d6f80b:195">۰۳</div>
+          <h3 data-om-id="e6d6f80b:196">سرعت تو، برنامه تو</h3>
+          <p data-om-id="e6d6f80b:197">
+            دروس کوتاه و متمرکز. از هر دستگاهی تماشا کن، هر زمان ادامه بده.
+          </p>
+        </div>
+        <div class="why-card" data-om-id="e6d6f80b:198">
+          <div class="why-num" data-om-id="e6d6f80b:199">۰۴</div>
+          <h3 data-om-id="e6d6f80b:200">جامعه خلاق جهانی</h3>
+          <p data-om-id="e6d6f80b:201">
+            به ۲.۴ میلیون+ دانشجو در ۱۹۰ کشور بپیوند که با هم کار به اشتراک
+            می‌گذارند.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-bar" data-om-id="e6d6f80b:202">
+      <div class="stats-inner" data-om-id="e6d6f80b:203">
+        <div class="stat-box" data-om-id="e6d6f80b:204">
+          <div class="sb-val" data-om-id="e6d6f80b:205">۲.۴M+</div>
+          <div class="sb-label" data-om-id="e6d6f80b:206">یادگیرنده</div>
+        </div>
+        <div class="stat-box" data-om-id="e6d6f80b:207">
+          <div class="sb-val" data-om-id="e6d6f80b:208">۹٬۸۰۰+</div>
+          <div class="sb-label" data-om-id="e6d6f80b:209">دوره</div>
+        </div>
+        <div class="stat-box" data-om-id="e6d6f80b:210">
+          <div class="sb-val" data-om-id="e6d6f80b:211">۳٬۲۰۰+</div>
+          <div class="sb-label" data-om-id="e6d6f80b:212">مدرس</div>
+        </div>
+        <div class="stat-box" data-om-id="e6d6f80b:213">
+          <div class="sb-val" data-om-id="e6d6f80b:214">۱۹۰</div>
+          <div class="sb-label" data-om-id="e6d6f80b:215">کشور</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testi-section" data-om-id="e6d6f80b:216">
+      <div class="testi-inner" data-om-id="e6d6f80b:217">
+        <div class="section-eyebrow" data-om-id="e6d6f80b:218">
+          داستان‌های دانشجویان
+        </div>
+        <div class="section-title-art" data-om-id="e6d6f80b:219">
+          جامعه ما چه می‌گوید
+        </div>
+        <div class="testi-grid" data-om-id="e6d6f80b:220">
+          <div class="testi-card" data-om-id="e6d6f80b:221">
+            <div class="testi-stars" data-om-id="e6d6f80b:222">★★★★★</div>
+            <div class="testi-q" data-om-id="e6d6f80b:223">
+              «منتوریار رابطه‌ام با یادگیری را متحول کرد. مدرسان هنرمندان
+              واقعی‌اند که دانش واقعی به اشتراک می‌گذارند.»
+            </div>
+            <div class="testi-who" data-om-id="e6d6f80b:224">
+              <div class="testi-av" data-om-id="e6d6f80b:225">
+                <img
+                  src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=88&q=80"
+                  alt="نادیا"
+                  data-om-id="e6d6f80b:226"
+                />
+              </div>
+              <div data-om-id="e6d6f80b:227">
+                <div class="testi-name" data-om-id="e6d6f80b:228">
+                  نادیا وایت
+                </div>
+                <div class="testi-role" data-om-id="e6d6f80b:229">
+                  تصویرساز، برلین
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card" data-om-id="e6d6f80b:230">
+            <div class="testi-stars" data-om-id="e6d6f80b:231">★★★★★</div>
+            <div class="testi-q" data-om-id="e6d6f80b:232">
+              «دوره تصویرسازی النا را گرفتم و کاملاً روال کارم با پروکریت متحول
+              شد. الان مشتری‌های نشریاتی می‌گیرم.»
+            </div>
+            <div class="testi-who" data-om-id="e6d6f80b:233">
+              <div class="testi-av" data-om-id="e6d6f80b:234">
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=88&q=80"
+                  alt="کنجی"
+                  data-om-id="e6d6f80b:235"
+                />
+              </div>
+              <div data-om-id="e6d6f80b:236">
+                <div class="testi-name" data-om-id="e6d6f80b:237">
+                  کنجی موریتا
+                </div>
+                <div class="testi-role" data-om-id="e6d6f80b:238">
+                  تصویرساز فریلنسر
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card" data-om-id="e6d6f80b:239">
+            <div class="testi-stars" data-om-id="e6d6f80b:240">★★★★★</div>
+            <div class="testi-q" data-om-id="e6d6f80b:241">
+              «جامعه منتوریار آن را از بقیه متمایز می‌کند. اشتراک‌گذاری کار و
+              گرفتن بازخورد، رشدم را شتاب داد.»
+            </div>
+            <div class="testi-who" data-om-id="e6d6f80b:242">
+              <div class="testi-av" data-om-id="e6d6f80b:243">
+                <img
+                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&q=80"
+                  alt="سوریا"
+                  data-om-id="e6d6f80b:244"
+                />
+              </div>
+              <div data-om-id="e6d6f80b:245">
+                <div class="testi-name" data-om-id="e6d6f80b:246">
+                  سوریا رستمی
+                </div>
+                <div class="testi-role" data-om-id="e6d6f80b:247">
+                  طراح گرافیک، تهران
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section" data-om-id="e6d6f80b:248">
+      <div class="cta-inner" data-om-id="e6d6f80b:249">
+        <div class="cta-eyebrow" data-om-id="e6d6f80b:250">
+          تمرینت را شروع کن
+        </div>
+        <h2 data-om-id="e6d6f80b:251">
+          شروع به ساختن<br data-om-id="e6d6f80b:252" />چیزی
+          <em data-om-id="e6d6f80b:253">زیبا</em> کن.
+        </h2>
+        <p data-om-id="e6d6f80b:254">
+          به ۲.۴ میلیون یادگیرنده بپیوند که با دوره‌های متخصص‌محور منتوریار
+          تمرین خلاقانه‌شان را رشد می‌دهند.
+        </p>
+        <div class="cta-btns" data-om-id="e6d6f80b:255">
+          <button class="btn-hero-terra" data-om-id="e6d6f80b:256">
+            ← شروع رایگان
+          </button>
+          <button class="btn-hero-outline" data-om-id="e6d6f80b:257">
+            مشاهده همه دوره‌ها
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer data-om-id="e6d6f80b:258">
+      <div class="footer-inner" data-om-id="e6d6f80b:259">
+        <div class="footer-grid" data-om-id="e6d6f80b:260">
+          <div class="footer-brand" data-om-id="e6d6f80b:261">
+            <div class="footer-brand-name" data-om-id="e6d6f80b:262">
+              منتور<span data-om-id="e6d6f80b:263">یار</span>
+            </div>
+            <p data-om-id="e6d6f80b:264">
+              دوره‌های خلاقانه آنلاین توسط هنرمندان فعال. برای یادگیرندگانی که
+              حرفه‌شان را جدی می‌گیرند.
+            </p>
+          </div>
+          <div class="footer-col" data-om-id="e6d6f80b:265">
+            <h5 data-om-id="e6d6f80b:266">یادگیری</h5>
+            <a href="#" data-om-id="e6d6f80b:267">همه دوره‌ها</a
+            ><a href="#" data-om-id="e6d6f80b:268">دسته‌بندی‌ها</a
+            ><a href="#" data-om-id="e6d6f80b:269">مدرسان</a
+            ><a href="#" data-om-id="e6d6f80b:270">جامعه</a>
+          </div>
+          <div class="footer-col" data-om-id="e6d6f80b:271">
+            <h5 data-om-id="e6d6f80b:272">تدریس</h5>
+            <a href="#" data-om-id="e6d6f80b:273">مدرس شو</a
+            ><a href="#" data-om-id="e6d6f80b:274">برنامه خالقان</a
+            ><a href="#" data-om-id="e6d6f80b:275">منابع</a>
+          </div>
+          <div class="footer-col" data-om-id="e6d6f80b:276">
+            <h5 data-om-id="e6d6f80b:277">شرکت</h5>
+            <a href="#" data-om-id="e6d6f80b:278">درباره ما</a
+            ><a href="#" data-om-id="e6d6f80b:279">وبلاگ</a
+            ><a href="#" data-om-id="e6d6f80b:280">استخدام</a
+            ><a href="#" data-om-id="e6d6f80b:281">مطبوعات</a>
+          </div>
+        </div>
+        <div class="footer-base" data-om-id="e6d6f80b:282">
+          <span data-om-id="e6d6f80b:283"
+            >© ۱۴۰۵ منتوریار. تمام حقوق محفوظ است.</span
+          >
+          <span data-om-id="e6d6f80b:284"
+            >ساخته شده با محبت · تهران و فراتر از آن</span
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.querySelectorAll(".cat-tab").forEach((t) => {
+        t.addEventListener("click", () => {
+          document
+            .querySelectorAll(".cat-tab")
+            .forEach((x) => x.classList.remove("active"));
+          t.classList.add("active");
+        });
+      });
+    </script>
+
+    <script>
+      (function () {
+        var saved = localStorage.getItem("mentoryar-theme-t5") || "light";
+        document.documentElement.setAttribute("data-theme", saved);
+        var btn = document.getElementById("themeBtn5");
+        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+      })();
+      function toggleT5() {
+        var html = document.documentElement;
+        var isDark = html.getAttribute("data-theme") === "dark";
+        var next = isDark ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        document.getElementById("themeBtn5").textContent =
+          next === "dark" ? "☀️" : "🌙";
+        localStorage.setItem("mentoryar-theme-t5", next);
+      }
+    </script>
+  </body>
+</html>
+<script type="application/json" id="__om_srcmap">
+  {
+    "gen": "e6d6f80b",
+    "entries": [
+      {
+        "id": "e6d6f80b:0",
+        "tag": "html",
+        "openStart": 16,
+        "attrEnd": 60,
+        "openEnd": 61,
+        "closeStart": 36644,
+        "closeEnd": 36651,
+        "textRuns": [
+          [61, 62],
+          [19691, 19692],
+          [36643, 36644]
+        ],
+        "parentId": null,
+        "childIds": ["e6d6f80b:1", "e6d6f80b:4"]
+      },
+      {
+        "id": "e6d6f80b:1",
+        "tag": "head",
+        "openStart": 62,
+        "attrEnd": 67,
+        "openEnd": 68,
+        "closeStart": 19684,
+        "closeEnd": 19691,
+        "textRuns": [
+          [68, 69],
+          [91, 92],
+          [1326, 1327],
+          [1397, 1398],
+          [1446, 1448],
+          [16221, 16223],
+          [16332, 16334],
+          [19683, 19684]
+        ],
+        "parentId": "e6d6f80b:0",
+        "childIds": ["e6d6f80b:2", "e6d6f80b:3"]
+      },
+      {
+        "id": "e6d6f80b:2",
+        "tag": "meta",
+        "openStart": 69,
+        "attrEnd": 90,
+        "openEnd": 91,
+        "closeEnd": 91,
+        "textRuns": [],
+        "parentId": "e6d6f80b:1",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:3",
+        "tag": "meta",
+        "openStart": 1327,
+        "attrEnd": 1396,
+        "openEnd": 1397,
+        "closeEnd": 1397,
+        "textRuns": [],
+        "parentId": "e6d6f80b:1",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:4",
+        "tag": "body",
+        "openStart": 19692,
+        "attrEnd": 19697,
+        "openEnd": 19698,
+        "closeStart": 36636,
+        "closeEnd": 36643,
+        "textRuns": [
+          [19698, 19700],
+          [20181, 20183],
+          [23769, 23771],
+          [24359, 24361],
+          [27855, 27857],
+          [30326, 30328],
+          [31521, 31523],
+          [32015, 32017],
+          [34012, 34014],
+          [34614, 34616],
+          [35754, 35756],
+          [36004, 36006],
+          [36635, 36636]
+        ],
+        "parentId": "e6d6f80b:0",
+        "childIds": [
+          "e6d6f80b:5",
+          "e6d6f80b:17",
+          "e6d6f80b:69",
+          "e6d6f80b:81",
+          "e6d6f80b:141",
+          "e6d6f80b:179",
+          "e6d6f80b:202",
+          "e6d6f80b:216",
+          "e6d6f80b:248",
+          "e6d6f80b:258"
+        ]
+      },
+      {
+        "id": "e6d6f80b:5",
+        "tag": "nav",
+        "openStart": 19700,
+        "attrEnd": 19704,
+        "openEnd": 19705,
+        "closeStart": 20175,
+        "closeEnd": 20181,
+        "textRuns": [
+          [19705, 19708],
+          [19770, 19773],
+          [19940, 19943],
+          [20174, 20175]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:6", "e6d6f80b:8", "e6d6f80b:13"]
+      },
+      {
+        "id": "e6d6f80b:6",
+        "tag": "a",
+        "openStart": 19708,
+        "attrEnd": 19736,
+        "openEnd": 19737,
+        "closeStart": 19766,
+        "closeEnd": 19770,
+        "textRuns": [[19737, 19747]],
+        "parentId": "e6d6f80b:5",
+        "childIds": ["e6d6f80b:7"]
+      },
+      {
+        "id": "e6d6f80b:7",
+        "tag": "span",
+        "openStart": 19747,
+        "attrEnd": 19752,
+        "openEnd": 19753,
+        "closeStart": 19759,
+        "closeEnd": 19766,
+        "textRuns": [[19753, 19759]],
+        "parentId": "e6d6f80b:6",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:8",
+        "tag": "div",
+        "openStart": 19773,
+        "attrEnd": 19795,
+        "openEnd": 19796,
+        "closeStart": 19934,
+        "closeEnd": 19940,
+        "textRuns": [
+          [19796, 19801],
+          [19832, 19837],
+          [19865, 19870],
+          [19896, 19901],
+          [19931, 19934]
+        ],
+        "parentId": "e6d6f80b:5",
+        "childIds": ["e6d6f80b:9", "e6d6f80b:10", "e6d6f80b:11", "e6d6f80b:12"]
+      },
+      {
+        "id": "e6d6f80b:9",
+        "tag": "a",
+        "openStart": 19801,
+        "attrEnd": 19812,
+        "openEnd": 19813,
+        "closeStart": 19828,
+        "closeEnd": 19832,
+        "textRuns": [[19813, 19828]],
+        "parentId": "e6d6f80b:8",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:10",
+        "tag": "a",
+        "openStart": 19837,
+        "attrEnd": 19848,
+        "openEnd": 19849,
+        "closeStart": 19861,
+        "closeEnd": 19865,
+        "textRuns": [[19849, 19861]],
+        "parentId": "e6d6f80b:8",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:11",
+        "tag": "a",
+        "openStart": 19870,
+        "attrEnd": 19881,
+        "openEnd": 19882,
+        "closeStart": 19892,
+        "closeEnd": 19896,
+        "textRuns": [[19882, 19892]],
+        "parentId": "e6d6f80b:8",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:12",
+        "tag": "a",
+        "openStart": 19901,
+        "attrEnd": 19912,
+        "openEnd": 19913,
+        "closeStart": 19927,
+        "closeEnd": 19931,
+        "textRuns": [[19913, 19927]],
+        "parentId": "e6d6f80b:8",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:13",
+        "tag": "div",
+        "openStart": 19943,
+        "attrEnd": 19967,
+        "openEnd": 19968,
+        "closeStart": 20168,
+        "closeEnd": 20174,
+        "textRuns": [
+          [19968, 19973],
+          [20015, 20020],
+          [20078, 20083],
+          [20165, 20168]
+        ],
+        "parentId": "e6d6f80b:5",
+        "childIds": ["e6d6f80b:14", "e6d6f80b:15", "e6d6f80b:16"]
+      },
+      {
+        "id": "e6d6f80b:14",
+        "tag": "a",
+        "openStart": 19973,
+        "attrEnd": 20002,
+        "openEnd": 20003,
+        "closeStart": 20011,
+        "closeEnd": 20015,
+        "textRuns": [[20003, 20011]],
+        "parentId": "e6d6f80b:13",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:15",
+        "tag": "button",
+        "openStart": 20020,
+        "attrEnd": 20045,
+        "openEnd": 20046,
+        "closeStart": 20069,
+        "closeEnd": 20078,
+        "textRuns": [[20046, 20069]],
+        "parentId": "e6d6f80b:13",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:16",
+        "tag": "button",
+        "openStart": 20083,
+        "attrEnd": 20151,
+        "openEnd": 20152,
+        "closeStart": 20156,
+        "closeEnd": 20165,
+        "textRuns": [[20152, 20156]],
+        "parentId": "e6d6f80b:13",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:17",
+        "tag": "div",
+        "openStart": 20183,
+        "attrEnd": 20200,
+        "openEnd": 20201,
+        "closeStart": 23763,
+        "closeEnd": 23769,
+        "textRuns": [
+          [20201, 20204],
+          [21505, 21508],
+          [23762, 23763]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:18", "e6d6f80b:40"]
+      },
+      {
+        "id": "e6d6f80b:18",
+        "tag": "div",
+        "openStart": 20204,
+        "attrEnd": 20226,
+        "openEnd": 20227,
+        "closeStart": 21499,
+        "closeEnd": 21505,
+        "textRuns": [
+          [20227, 20232],
+          [20309, 20314],
+          [20395, 20400],
+          [20601, 20606],
+          [20784, 20789],
+          [21496, 21499]
+        ],
+        "parentId": "e6d6f80b:17",
+        "childIds": [
+          "e6d6f80b:19",
+          "e6d6f80b:20",
+          "e6d6f80b:24",
+          "e6d6f80b:25",
+          "e6d6f80b:28"
+        ]
+      },
+      {
+        "id": "e6d6f80b:19",
+        "tag": "div",
+        "openStart": 20232,
+        "attrEnd": 20257,
+        "openEnd": 20258,
+        "closeStart": 20303,
+        "closeEnd": 20309,
+        "textRuns": [[20258, 20303]],
+        "parentId": "e6d6f80b:18",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:20",
+        "tag": "h1",
+        "openStart": 20314,
+        "attrEnd": 20317,
+        "openEnd": 20318,
+        "closeStart": 20390,
+        "closeEnd": 20395,
+        "textRuns": [
+          [20318, 20342],
+          [20346, 20363],
+          [20389, 20390]
+        ],
+        "parentId": "e6d6f80b:18",
+        "childIds": ["e6d6f80b:21", "e6d6f80b:22", "e6d6f80b:23"]
+      },
+      {
+        "id": "e6d6f80b:21",
+        "tag": "br",
+        "openStart": 20342,
+        "attrEnd": 20345,
+        "openEnd": 20346,
+        "closeEnd": 20346,
+        "textRuns": [],
+        "parentId": "e6d6f80b:20",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:22",
+        "tag": "br",
+        "openStart": 20363,
+        "attrEnd": 20366,
+        "openEnd": 20367,
+        "closeEnd": 20367,
+        "textRuns": [],
+        "parentId": "e6d6f80b:20",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:23",
+        "tag": "em",
+        "openStart": 20367,
+        "attrEnd": 20370,
+        "openEnd": 20371,
+        "closeStart": 20384,
+        "closeEnd": 20389,
+        "textRuns": [[20371, 20384]],
+        "parentId": "e6d6f80b:20",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:24",
+        "tag": "p",
+        "openStart": 20400,
+        "attrEnd": 20420,
+        "openEnd": 20421,
+        "closeStart": 20597,
+        "closeEnd": 20601,
+        "textRuns": [[20421, 20597]],
+        "parentId": "e6d6f80b:18",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:25",
+        "tag": "div",
+        "openStart": 20606,
+        "attrEnd": 20631,
+        "openEnd": 20632,
+        "closeStart": 20778,
+        "closeEnd": 20784,
+        "textRuns": [
+          [20632, 20639],
+          [20700, 20707],
+          [20773, 20778]
+        ],
+        "parentId": "e6d6f80b:18",
+        "childIds": ["e6d6f80b:26", "e6d6f80b:27"]
+      },
+      {
+        "id": "e6d6f80b:26",
+        "tag": "button",
+        "openStart": 20639,
+        "attrEnd": 20669,
+        "openEnd": 20670,
+        "closeStart": 20691,
+        "closeEnd": 20700,
+        "textRuns": [[20670, 20691]],
+        "parentId": "e6d6f80b:25",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:27",
+        "tag": "button",
+        "openStart": 20707,
+        "attrEnd": 20739,
+        "openEnd": 20740,
+        "closeStart": 20764,
+        "closeEnd": 20773,
+        "textRuns": [[20740, 20764]],
+        "parentId": "e6d6f80b:25",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:28",
+        "tag": "div",
+        "openStart": 20789,
+        "attrEnd": 20812,
+        "openEnd": 20813,
+        "closeStart": 21490,
+        "closeEnd": 21496,
+        "textRuns": [
+          [20813, 20820],
+          [21364, 21371],
+          [21485, 21490]
+        ],
+        "parentId": "e6d6f80b:18",
+        "childIds": ["e6d6f80b:29", "e6d6f80b:38"]
+      },
+      {
+        "id": "e6d6f80b:29",
+        "tag": "div",
+        "openStart": 20820,
+        "attrEnd": 20846,
+        "openEnd": 20847,
+        "closeStart": 21358,
+        "closeEnd": 21364,
+        "textRuns": [
+          [20847, 20856],
+          [20973, 20982],
+          [21099, 21108],
+          [21225, 21234],
+          [21351, 21358]
+        ],
+        "parentId": "e6d6f80b:28",
+        "childIds": ["e6d6f80b:30", "e6d6f80b:32", "e6d6f80b:34", "e6d6f80b:36"]
+      },
+      {
+        "id": "e6d6f80b:30",
+        "tag": "div",
+        "openStart": 20856,
+        "attrEnd": 20877,
+        "openEnd": 20878,
+        "closeStart": 20967,
+        "closeEnd": 20973,
+        "textRuns": [],
+        "parentId": "e6d6f80b:29",
+        "childIds": ["e6d6f80b:31"]
+      },
+      {
+        "id": "e6d6f80b:31",
+        "tag": "img",
+        "openStart": 20878,
+        "attrEnd": 20966,
+        "openEnd": 20967,
+        "closeEnd": 20967,
+        "textRuns": [],
+        "parentId": "e6d6f80b:30",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:32",
+        "tag": "div",
+        "openStart": 20982,
+        "attrEnd": 21003,
+        "openEnd": 21004,
+        "closeStart": 21093,
+        "closeEnd": 21099,
+        "textRuns": [],
+        "parentId": "e6d6f80b:29",
+        "childIds": ["e6d6f80b:33"]
+      },
+      {
+        "id": "e6d6f80b:33",
+        "tag": "img",
+        "openStart": 21004,
+        "attrEnd": 21092,
+        "openEnd": 21093,
+        "closeEnd": 21093,
+        "textRuns": [],
+        "parentId": "e6d6f80b:32",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:34",
+        "tag": "div",
+        "openStart": 21108,
+        "attrEnd": 21129,
+        "openEnd": 21130,
+        "closeStart": 21219,
+        "closeEnd": 21225,
+        "textRuns": [],
+        "parentId": "e6d6f80b:29",
+        "childIds": ["e6d6f80b:35"]
+      },
+      {
+        "id": "e6d6f80b:35",
+        "tag": "img",
+        "openStart": 21130,
+        "attrEnd": 21218,
+        "openEnd": 21219,
+        "closeEnd": 21219,
+        "textRuns": [],
+        "parentId": "e6d6f80b:34",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:36",
+        "tag": "div",
+        "openStart": 21234,
+        "attrEnd": 21255,
+        "openEnd": 21256,
+        "closeStart": 21345,
+        "closeEnd": 21351,
+        "textRuns": [],
+        "parentId": "e6d6f80b:29",
+        "childIds": ["e6d6f80b:37"]
+      },
+      {
+        "id": "e6d6f80b:37",
+        "tag": "img",
+        "openStart": 21256,
+        "attrEnd": 21344,
+        "openEnd": 21345,
+        "closeEnd": 21345,
+        "textRuns": [],
+        "parentId": "e6d6f80b:36",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:38",
+        "tag": "div",
+        "openStart": 21371,
+        "attrEnd": 21394,
+        "openEnd": 21395,
+        "closeStart": 21479,
+        "closeEnd": 21485,
+        "textRuns": [
+          [21395, 21400],
+          [21436, 21479]
+        ],
+        "parentId": "e6d6f80b:28",
+        "childIds": ["e6d6f80b:39"]
+      },
+      {
+        "id": "e6d6f80b:39",
+        "tag": "strong",
+        "openStart": 21400,
+        "attrEnd": 21407,
+        "openEnd": 21408,
+        "closeStart": 21427,
+        "closeEnd": 21436,
+        "textRuns": [[21408, 21427]],
+        "parentId": "e6d6f80b:38",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:40",
+        "tag": "div",
+        "openStart": 21508,
+        "attrEnd": 21531,
+        "openEnd": 21532,
+        "closeStart": 23756,
+        "closeEnd": 23762,
+        "textRuns": [
+          [21532, 21537],
+          [22101, 22106],
+          [22668, 22673],
+          [23216, 23221],
+          [23753, 23756]
+        ],
+        "parentId": "e6d6f80b:17",
+        "childIds": ["e6d6f80b:41", "e6d6f80b:48", "e6d6f80b:55", "e6d6f80b:62"]
+      },
+      {
+        "id": "e6d6f80b:41",
+        "tag": "div",
+        "openStart": 21537,
+        "attrEnd": 21566,
+        "openEnd": 21567,
+        "closeStart": 22095,
+        "closeEnd": 22101,
+        "textRuns": [
+          [21567, 21574],
+          [22090, 22095]
+        ],
+        "parentId": "e6d6f80b:40",
+        "childIds": ["e6d6f80b:42"]
+      },
+      {
+        "id": "e6d6f80b:42",
+        "tag": "div",
+        "openStart": 21574,
+        "attrEnd": 21817,
+        "openEnd": 21818,
+        "closeStart": 22084,
+        "closeEnd": 22090,
+        "styleAttr": [21602, 21816],
+        "textRuns": [
+          [21818, 21827],
+          [21859, 21868],
+          [22077, 22084]
+        ],
+        "parentId": "e6d6f80b:41",
+        "childIds": ["e6d6f80b:43", "e6d6f80b:44"]
+      },
+      {
+        "id": "e6d6f80b:43",
+        "tag": "div",
+        "openStart": 21827,
+        "attrEnd": 21852,
+        "openEnd": 21853,
+        "closeStart": 21853,
+        "closeEnd": 21859,
+        "textRuns": [],
+        "parentId": "e6d6f80b:42",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:44",
+        "tag": "div",
+        "openStart": 21868,
+        "attrEnd": 21890,
+        "openEnd": 21891,
+        "closeStart": 22071,
+        "closeEnd": 22077,
+        "textRuns": [],
+        "parentId": "e6d6f80b:42",
+        "childIds": ["e6d6f80b:45", "e6d6f80b:46", "e6d6f80b:47"]
+      },
+      {
+        "id": "e6d6f80b:45",
+        "tag": "div",
+        "openStart": 21891,
+        "attrEnd": 21912,
+        "openEnd": 21913,
+        "closeStart": 21931,
+        "closeEnd": 21937,
+        "textRuns": [[21913, 21931]],
+        "parentId": "e6d6f80b:44",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:46",
+        "tag": "div",
+        "openStart": 21937,
+        "attrEnd": 21959,
+        "openEnd": 21960,
+        "closeStart": 22016,
+        "closeEnd": 22022,
+        "textRuns": [[21960, 22016]],
+        "parentId": "e6d6f80b:44",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:47",
+        "tag": "div",
+        "openStart": 22022,
+        "attrEnd": 22047,
+        "openEnd": 22048,
+        "closeStart": 22065,
+        "closeEnd": 22071,
+        "textRuns": [[22048, 22065]],
+        "parentId": "e6d6f80b:44",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:48",
+        "tag": "div",
+        "openStart": 22106,
+        "attrEnd": 22135,
+        "openEnd": 22136,
+        "closeStart": 22662,
+        "closeEnd": 22668,
+        "textRuns": [
+          [22136, 22143],
+          [22657, 22662]
+        ],
+        "parentId": "e6d6f80b:40",
+        "childIds": ["e6d6f80b:49"]
+      },
+      {
+        "id": "e6d6f80b:49",
+        "tag": "div",
+        "openStart": 22143,
+        "attrEnd": 22386,
+        "openEnd": 22387,
+        "closeStart": 22651,
+        "closeEnd": 22657,
+        "styleAttr": [22171, 22385],
+        "textRuns": [
+          [22387, 22396],
+          [22428, 22437],
+          [22644, 22651]
+        ],
+        "parentId": "e6d6f80b:48",
+        "childIds": ["e6d6f80b:50", "e6d6f80b:51"]
+      },
+      {
+        "id": "e6d6f80b:50",
+        "tag": "div",
+        "openStart": 22396,
+        "attrEnd": 22421,
+        "openEnd": 22422,
+        "closeStart": 22422,
+        "closeEnd": 22428,
+        "textRuns": [],
+        "parentId": "e6d6f80b:49",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:51",
+        "tag": "div",
+        "openStart": 22437,
+        "attrEnd": 22459,
+        "openEnd": 22460,
+        "closeStart": 22638,
+        "closeEnd": 22644,
+        "textRuns": [],
+        "parentId": "e6d6f80b:49",
+        "childIds": ["e6d6f80b:52", "e6d6f80b:53", "e6d6f80b:54"]
+      },
+      {
+        "id": "e6d6f80b:52",
+        "tag": "div",
+        "openStart": 22460,
+        "attrEnd": 22481,
+        "openEnd": 22482,
+        "closeStart": 22502,
+        "closeEnd": 22508,
+        "textRuns": [[22482, 22502]],
+        "parentId": "e6d6f80b:51",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:53",
+        "tag": "div",
+        "openStart": 22508,
+        "attrEnd": 22530,
+        "openEnd": 22531,
+        "closeStart": 22581,
+        "closeEnd": 22587,
+        "textRuns": [[22531, 22581]],
+        "parentId": "e6d6f80b:51",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:54",
+        "tag": "div",
+        "openStart": 22587,
+        "attrEnd": 22612,
+        "openEnd": 22613,
+        "closeStart": 22632,
+        "closeEnd": 22638,
+        "textRuns": [[22613, 22632]],
+        "parentId": "e6d6f80b:51",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:55",
+        "tag": "div",
+        "openStart": 22673,
+        "attrEnd": 22702,
+        "openEnd": 22703,
+        "closeStart": 23210,
+        "closeEnd": 23216,
+        "textRuns": [
+          [22703, 22710],
+          [23205, 23210]
+        ],
+        "parentId": "e6d6f80b:40",
+        "childIds": ["e6d6f80b:56"]
+      },
+      {
+        "id": "e6d6f80b:56",
+        "tag": "div",
+        "openStart": 22710,
+        "attrEnd": 22953,
+        "openEnd": 22954,
+        "closeStart": 23199,
+        "closeEnd": 23205,
+        "styleAttr": [22738, 22952],
+        "textRuns": [
+          [22954, 22963],
+          [22995, 23004],
+          [23192, 23199]
+        ],
+        "parentId": "e6d6f80b:55",
+        "childIds": ["e6d6f80b:57", "e6d6f80b:58"]
+      },
+      {
+        "id": "e6d6f80b:57",
+        "tag": "div",
+        "openStart": 22963,
+        "attrEnd": 22988,
+        "openEnd": 22989,
+        "closeStart": 22989,
+        "closeEnd": 22995,
+        "textRuns": [],
+        "parentId": "e6d6f80b:56",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:58",
+        "tag": "div",
+        "openStart": 23004,
+        "attrEnd": 23026,
+        "openEnd": 23027,
+        "closeStart": 23186,
+        "closeEnd": 23192,
+        "textRuns": [],
+        "parentId": "e6d6f80b:56",
+        "childIds": ["e6d6f80b:59", "e6d6f80b:60", "e6d6f80b:61"]
+      },
+      {
+        "id": "e6d6f80b:59",
+        "tag": "div",
+        "openStart": 23027,
+        "attrEnd": 23048,
+        "openEnd": 23049,
+        "closeStart": 23059,
+        "closeEnd": 23065,
+        "textRuns": [[23049, 23059]],
+        "parentId": "e6d6f80b:58",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:60",
+        "tag": "div",
+        "openStart": 23065,
+        "attrEnd": 23087,
+        "openEnd": 23088,
+        "closeStart": 23123,
+        "closeEnd": 23129,
+        "textRuns": [[23088, 23123]],
+        "parentId": "e6d6f80b:58",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:61",
+        "tag": "div",
+        "openStart": 23129,
+        "attrEnd": 23154,
+        "openEnd": 23155,
+        "closeStart": 23180,
+        "closeEnd": 23186,
+        "textRuns": [[23155, 23180]],
+        "parentId": "e6d6f80b:58",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:62",
+        "tag": "div",
+        "openStart": 23221,
+        "attrEnd": 23250,
+        "openEnd": 23251,
+        "closeStart": 23747,
+        "closeEnd": 23753,
+        "textRuns": [
+          [23251, 23258],
+          [23742, 23747]
+        ],
+        "parentId": "e6d6f80b:40",
+        "childIds": ["e6d6f80b:63"]
+      },
+      {
+        "id": "e6d6f80b:63",
+        "tag": "div",
+        "openStart": 23258,
+        "attrEnd": 23498,
+        "openEnd": 23499,
+        "closeStart": 23736,
+        "closeEnd": 23742,
+        "styleAttr": [23286, 23497],
+        "textRuns": [
+          [23499, 23508],
+          [23540, 23549],
+          [23729, 23736]
+        ],
+        "parentId": "e6d6f80b:62",
+        "childIds": ["e6d6f80b:64", "e6d6f80b:65"]
+      },
+      {
+        "id": "e6d6f80b:64",
+        "tag": "div",
+        "openStart": 23508,
+        "attrEnd": 23533,
+        "openEnd": 23534,
+        "closeStart": 23534,
+        "closeEnd": 23540,
+        "textRuns": [],
+        "parentId": "e6d6f80b:63",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:65",
+        "tag": "div",
+        "openStart": 23549,
+        "attrEnd": 23571,
+        "openEnd": 23572,
+        "closeStart": 23723,
+        "closeEnd": 23729,
+        "textRuns": [],
+        "parentId": "e6d6f80b:63",
+        "childIds": ["e6d6f80b:66", "e6d6f80b:67", "e6d6f80b:68"]
+      },
+      {
+        "id": "e6d6f80b:66",
+        "tag": "div",
+        "openStart": 23572,
+        "attrEnd": 23593,
+        "openEnd": 23594,
+        "closeStart": 23613,
+        "closeEnd": 23619,
+        "textRuns": [[23594, 23613]],
+        "parentId": "e6d6f80b:65",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:67",
+        "tag": "div",
+        "openStart": 23619,
+        "attrEnd": 23641,
+        "openEnd": 23642,
+        "closeStart": 23670,
+        "closeEnd": 23676,
+        "textRuns": [[23642, 23670]],
+        "parentId": "e6d6f80b:65",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:68",
+        "tag": "div",
+        "openStart": 23676,
+        "attrEnd": 23701,
+        "openEnd": 23702,
+        "closeStart": 23717,
+        "closeEnd": 23723,
+        "textRuns": [[23702, 23717]],
+        "parentId": "e6d6f80b:65",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:69",
+        "tag": "div",
+        "openStart": 23771,
+        "attrEnd": 23796,
+        "openEnd": 23797,
+        "closeStart": 24353,
+        "closeEnd": 24359,
+        "textRuns": [
+          [23797, 23800],
+          [24352, 24353]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:70"]
+      },
+      {
+        "id": "e6d6f80b:70",
+        "tag": "div",
+        "openStart": 23800,
+        "attrEnd": 23823,
+        "openEnd": 23824,
+        "closeStart": 24346,
+        "closeEnd": 24352,
+        "textRuns": [
+          [23824, 23829],
+          [23881, 23886],
+          [23936, 23941],
+          [23978, 23983],
+          [24038, 24043],
+          [24089, 24094],
+          [24141, 24146],
+          [24203, 24208],
+          [24257, 24262],
+          [24301, 24306],
+          [24343, 24346]
+        ],
+        "parentId": "e6d6f80b:69",
+        "childIds": [
+          "e6d6f80b:71",
+          "e6d6f80b:72",
+          "e6d6f80b:73",
+          "e6d6f80b:74",
+          "e6d6f80b:75",
+          "e6d6f80b:76",
+          "e6d6f80b:77",
+          "e6d6f80b:78",
+          "e6d6f80b:79",
+          "e6d6f80b:80"
+        ]
+      },
+      {
+        "id": "e6d6f80b:71",
+        "tag": "div",
+        "openStart": 23829,
+        "attrEnd": 23856,
+        "openEnd": 23857,
+        "closeStart": 23875,
+        "closeEnd": 23881,
+        "textRuns": [[23857, 23875]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:72",
+        "tag": "div",
+        "openStart": 23886,
+        "attrEnd": 23906,
+        "openEnd": 23907,
+        "closeStart": 23930,
+        "closeEnd": 23936,
+        "textRuns": [[23907, 23930]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:73",
+        "tag": "div",
+        "openStart": 23941,
+        "attrEnd": 23961,
+        "openEnd": 23962,
+        "closeStart": 23972,
+        "closeEnd": 23978,
+        "textRuns": [[23962, 23972]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:74",
+        "tag": "div",
+        "openStart": 23983,
+        "attrEnd": 24003,
+        "openEnd": 24004,
+        "closeStart": 24032,
+        "closeEnd": 24038,
+        "textRuns": [[24004, 24032]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:75",
+        "tag": "div",
+        "openStart": 24043,
+        "attrEnd": 24063,
+        "openEnd": 24064,
+        "closeStart": 24083,
+        "closeEnd": 24089,
+        "textRuns": [[24064, 24083]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:76",
+        "tag": "div",
+        "openStart": 24094,
+        "attrEnd": 24114,
+        "openEnd": 24115,
+        "closeStart": 24135,
+        "closeEnd": 24141,
+        "textRuns": [[24115, 24135]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:77",
+        "tag": "div",
+        "openStart": 24146,
+        "attrEnd": 24166,
+        "openEnd": 24167,
+        "closeStart": 24197,
+        "closeEnd": 24203,
+        "textRuns": [[24167, 24197]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:78",
+        "tag": "div",
+        "openStart": 24208,
+        "attrEnd": 24228,
+        "openEnd": 24229,
+        "closeStart": 24251,
+        "closeEnd": 24257,
+        "textRuns": [[24229, 24251]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:79",
+        "tag": "div",
+        "openStart": 24262,
+        "attrEnd": 24282,
+        "openEnd": 24283,
+        "closeStart": 24295,
+        "closeEnd": 24301,
+        "textRuns": [[24283, 24295]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:80",
+        "tag": "div",
+        "openStart": 24306,
+        "attrEnd": 24326,
+        "openEnd": 24327,
+        "closeStart": 24337,
+        "closeEnd": 24343,
+        "textRuns": [[24327, 24337]],
+        "parentId": "e6d6f80b:70",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:81",
+        "tag": "div",
+        "openStart": 24361,
+        "attrEnd": 24389,
+        "openEnd": 24390,
+        "closeStart": 27849,
+        "closeEnd": 27855,
+        "textRuns": [
+          [24390, 24393],
+          [24710, 24713],
+          [27848, 27849]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:82", "e6d6f80b:89"]
+      },
+      {
+        "id": "e6d6f80b:82",
+        "tag": "div",
+        "openStart": 24393,
+        "attrEnd": 24418,
+        "openEnd": 24419,
+        "closeStart": 24704,
+        "closeEnd": 24710,
+        "textRuns": [
+          [24419, 24424],
+          [24621, 24626],
+          [24701, 24704]
+        ],
+        "parentId": "e6d6f80b:81",
+        "childIds": ["e6d6f80b:83", "e6d6f80b:88"]
+      },
+      {
+        "id": "e6d6f80b:83",
+        "tag": "div",
+        "openStart": 24424,
+        "attrEnd": 24428,
+        "openEnd": 24429,
+        "closeStart": 24615,
+        "closeEnd": 24621,
+        "textRuns": [
+          [24429, 24436],
+          [24497, 24504],
+          [24610, 24615]
+        ],
+        "parentId": "e6d6f80b:82",
+        "childIds": ["e6d6f80b:84", "e6d6f80b:85"]
+      },
+      {
+        "id": "e6d6f80b:84",
+        "tag": "div",
+        "openStart": 24436,
+        "attrEnd": 24464,
+        "openEnd": 24465,
+        "closeStart": 24491,
+        "closeEnd": 24497,
+        "textRuns": [[24465, 24491]],
+        "parentId": "e6d6f80b:83",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:85",
+        "tag": "div",
+        "openStart": 24504,
+        "attrEnd": 24534,
+        "openEnd": 24535,
+        "closeStart": 24604,
+        "closeEnd": 24610,
+        "textRuns": [[24535, 24565]],
+        "parentId": "e6d6f80b:83",
+        "childIds": ["e6d6f80b:86", "e6d6f80b:87"]
+      },
+      {
+        "id": "e6d6f80b:86",
+        "tag": "br",
+        "openStart": 24565,
+        "attrEnd": 24568,
+        "openEnd": 24569,
+        "closeEnd": 24569,
+        "textRuns": [],
+        "parentId": "e6d6f80b:85",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:87",
+        "tag": "em",
+        "openStart": 24569,
+        "attrEnd": 24572,
+        "openEnd": 24573,
+        "closeStart": 24599,
+        "closeEnd": 24604,
+        "textRuns": [[24573, 24599]],
+        "parentId": "e6d6f80b:85",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:88",
+        "tag": "a",
+        "openStart": 24626,
+        "attrEnd": 24657,
+        "openEnd": 24658,
+        "closeStart": 24697,
+        "closeEnd": 24701,
+        "textRuns": [[24658, 24697]],
+        "parentId": "e6d6f80b:82",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:89",
+        "tag": "div",
+        "openStart": 24713,
+        "attrEnd": 24738,
+        "openEnd": 24739,
+        "closeStart": 27842,
+        "closeEnd": 27848,
+        "textRuns": [
+          [24739, 24744],
+          [25786, 25791],
+          [26810, 26815],
+          [27839, 27842]
+        ],
+        "parentId": "e6d6f80b:81",
+        "childIds": ["e6d6f80b:90", "e6d6f80b:107", "e6d6f80b:124"]
+      },
+      {
+        "id": "e6d6f80b:90",
+        "tag": "div",
+        "openStart": 24744,
+        "attrEnd": 24768,
+        "openEnd": 24769,
+        "closeStart": 25780,
+        "closeEnd": 25786,
+        "textRuns": [
+          [24769, 24776],
+          [25071, 25078],
+          [25775, 25780]
+        ],
+        "parentId": "e6d6f80b:89",
+        "childIds": ["e6d6f80b:91", "e6d6f80b:95"]
+      },
+      {
+        "id": "e6d6f80b:91",
+        "tag": "div",
+        "openStart": 24776,
+        "attrEnd": 24805,
+        "openEnd": 24806,
+        "closeStart": 25065,
+        "closeEnd": 25071,
+        "textRuns": [],
+        "parentId": "e6d6f80b:90",
+        "childIds": ["e6d6f80b:92", "e6d6f80b:93"]
+      },
+      {
+        "id": "e6d6f80b:92",
+        "tag": "div",
+        "openStart": 24806,
+        "attrEnd": 24990,
+        "openEnd": 24991,
+        "closeStart": 24991,
+        "closeEnd": 24997,
+        "styleAttr": [24832, 24989],
+        "textRuns": [],
+        "parentId": "e6d6f80b:91",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:93",
+        "tag": "div",
+        "openStart": 24997,
+        "attrEnd": 25018,
+        "openEnd": 25019,
+        "closeStart": 25059,
+        "closeEnd": 25065,
+        "textRuns": [],
+        "parentId": "e6d6f80b:91",
+        "childIds": ["e6d6f80b:94"]
+      },
+      {
+        "id": "e6d6f80b:94",
+        "tag": "div",
+        "openStart": 25019,
+        "attrEnd": 25049,
+        "openEnd": 25050,
+        "closeStart": 25053,
+        "closeEnd": 25059,
+        "textRuns": [[25050, 25053]],
+        "parentId": "e6d6f80b:93",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:95",
+        "tag": "div",
+        "openStart": 25078,
+        "attrEnd": 25107,
+        "openEnd": 25108,
+        "closeStart": 25769,
+        "closeEnd": 25775,
+        "textRuns": [
+          [25108, 25117],
+          [25169, 25178],
+          [25289, 25298],
+          [25372, 25381],
+          [25762, 25769]
+        ],
+        "parentId": "e6d6f80b:90",
+        "childIds": ["e6d6f80b:96", "e6d6f80b:97", "e6d6f80b:98", "e6d6f80b:99"]
+      },
+      {
+        "id": "e6d6f80b:96",
+        "tag": "div",
+        "openStart": 25117,
+        "attrEnd": 25144,
+        "openEnd": 25145,
+        "closeStart": 25163,
+        "closeEnd": 25169,
+        "textRuns": [[25145, 25163]],
+        "parentId": "e6d6f80b:95",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:97",
+        "tag": "h3",
+        "openStart": 25178,
+        "attrEnd": 25207,
+        "openEnd": 25208,
+        "closeStart": 25284,
+        "closeEnd": 25289,
+        "textRuns": [[25208, 25284]],
+        "parentId": "e6d6f80b:95",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:98",
+        "tag": "div",
+        "openStart": 25298,
+        "attrEnd": 25333,
+        "openEnd": 25334,
+        "closeStart": 25366,
+        "closeEnd": 25372,
+        "textRuns": [[25334, 25366]],
+        "parentId": "e6d6f80b:95",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:99",
+        "tag": "div",
+        "openStart": 25381,
+        "attrEnd": 25412,
+        "openEnd": 25413,
+        "closeStart": 25756,
+        "closeEnd": 25762,
+        "textRuns": [
+          [25413, 25424],
+          [25627, 25638],
+          [25747, 25756]
+        ],
+        "parentId": "e6d6f80b:95",
+        "childIds": ["e6d6f80b:100", "e6d6f80b:104"]
+      },
+      {
+        "id": "e6d6f80b:100",
+        "tag": "div",
+        "openStart": 25424,
+        "attrEnd": 25498,
+        "openEnd": 25499,
+        "closeStart": 25621,
+        "closeEnd": 25627,
+        "styleAttr": [25458, 25497],
+        "textRuns": [],
+        "parentId": "e6d6f80b:99",
+        "childIds": ["e6d6f80b:101", "e6d6f80b:102", "e6d6f80b:103"]
+      },
+      {
+        "id": "e6d6f80b:101",
+        "tag": "span",
+        "openStart": 25499,
+        "attrEnd": 25521,
+        "openEnd": 25522,
+        "closeStart": 25527,
+        "closeEnd": 25534,
+        "textRuns": [[25522, 25527]],
+        "parentId": "e6d6f80b:100",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:102",
+        "tag": "span",
+        "openStart": 25534,
+        "attrEnd": 25556,
+        "openEnd": 25557,
+        "closeStart": 25572,
+        "closeEnd": 25579,
+        "textRuns": [[25557, 25572]],
+        "parentId": "e6d6f80b:100",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:103",
+        "tag": "span",
+        "openStart": 25579,
+        "attrEnd": 25601,
+        "openEnd": 25602,
+        "closeStart": 25614,
+        "closeEnd": 25621,
+        "textRuns": [[25602, 25614]],
+        "parentId": "e6d6f80b:100",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:104",
+        "tag": "div",
+        "openStart": 25638,
+        "attrEnd": 25671,
+        "openEnd": 25672,
+        "closeStart": 25741,
+        "closeEnd": 25747,
+        "styleAttr": [25650, 25670],
+        "textRuns": [],
+        "parentId": "e6d6f80b:99",
+        "childIds": ["e6d6f80b:105", "e6d6f80b:106"]
+      },
+      {
+        "id": "e6d6f80b:105",
+        "tag": "span",
+        "openStart": 25672,
+        "attrEnd": 25688,
+        "openEnd": 25689,
+        "closeStart": 25700,
+        "closeEnd": 25707,
+        "textRuns": [[25689, 25700]],
+        "parentId": "e6d6f80b:104",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:106",
+        "tag": "span",
+        "openStart": 25707,
+        "attrEnd": 25723,
+        "openEnd": 25724,
+        "closeStart": 25734,
+        "closeEnd": 25741,
+        "textRuns": [[25724, 25734]],
+        "parentId": "e6d6f80b:104",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:107",
+        "tag": "div",
+        "openStart": 25791,
+        "attrEnd": 25815,
+        "openEnd": 25816,
+        "closeStart": 26804,
+        "closeEnd": 26810,
+        "textRuns": [
+          [25816, 25823],
+          [26115, 26122],
+          [26799, 26804]
+        ],
+        "parentId": "e6d6f80b:89",
+        "childIds": ["e6d6f80b:108", "e6d6f80b:112"]
+      },
+      {
+        "id": "e6d6f80b:108",
+        "tag": "div",
+        "openStart": 25823,
+        "attrEnd": 25852,
+        "openEnd": 25853,
+        "closeStart": 26109,
+        "closeEnd": 26115,
+        "textRuns": [],
+        "parentId": "e6d6f80b:107",
+        "childIds": ["e6d6f80b:109", "e6d6f80b:110"]
+      },
+      {
+        "id": "e6d6f80b:109",
+        "tag": "div",
+        "openStart": 25853,
+        "attrEnd": 26034,
+        "openEnd": 26035,
+        "closeStart": 26035,
+        "closeEnd": 26041,
+        "styleAttr": [25879, 26033],
+        "textRuns": [],
+        "parentId": "e6d6f80b:108",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:110",
+        "tag": "div",
+        "openStart": 26041,
+        "attrEnd": 26062,
+        "openEnd": 26063,
+        "closeStart": 26103,
+        "closeEnd": 26109,
+        "textRuns": [],
+        "parentId": "e6d6f80b:108",
+        "childIds": ["e6d6f80b:111"]
+      },
+      {
+        "id": "e6d6f80b:111",
+        "tag": "div",
+        "openStart": 26063,
+        "attrEnd": 26093,
+        "openEnd": 26094,
+        "closeStart": 26097,
+        "closeEnd": 26103,
+        "textRuns": [[26094, 26097]],
+        "parentId": "e6d6f80b:110",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:112",
+        "tag": "div",
+        "openStart": 26122,
+        "attrEnd": 26151,
+        "openEnd": 26152,
+        "closeStart": 26793,
+        "closeEnd": 26799,
+        "textRuns": [
+          [26152, 26161],
+          [26209, 26218],
+          [26319, 26328],
+          [26400, 26409],
+          [26786, 26793]
+        ],
+        "parentId": "e6d6f80b:107",
+        "childIds": [
+          "e6d6f80b:113",
+          "e6d6f80b:114",
+          "e6d6f80b:115",
+          "e6d6f80b:116"
+        ]
+      },
+      {
+        "id": "e6d6f80b:113",
+        "tag": "div",
+        "openStart": 26161,
+        "attrEnd": 26188,
+        "openEnd": 26189,
+        "closeStart": 26203,
+        "closeEnd": 26209,
+        "textRuns": [[26189, 26203]],
+        "parentId": "e6d6f80b:112",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:114",
+        "tag": "h3",
+        "openStart": 26218,
+        "attrEnd": 26247,
+        "openEnd": 26248,
+        "closeStart": 26314,
+        "closeEnd": 26319,
+        "textRuns": [[26248, 26314]],
+        "parentId": "e6d6f80b:112",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:115",
+        "tag": "div",
+        "openStart": 26328,
+        "attrEnd": 26363,
+        "openEnd": 26364,
+        "closeStart": 26394,
+        "closeEnd": 26400,
+        "textRuns": [[26364, 26394]],
+        "parentId": "e6d6f80b:112",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:116",
+        "tag": "div",
+        "openStart": 26409,
+        "attrEnd": 26440,
+        "openEnd": 26441,
+        "closeStart": 26780,
+        "closeEnd": 26786,
+        "textRuns": [
+          [26441, 26452],
+          [26651, 26662],
+          [26771, 26780]
+        ],
+        "parentId": "e6d6f80b:112",
+        "childIds": ["e6d6f80b:117", "e6d6f80b:121"]
+      },
+      {
+        "id": "e6d6f80b:117",
+        "tag": "div",
+        "openStart": 26452,
+        "attrEnd": 26526,
+        "openEnd": 26527,
+        "closeStart": 26645,
+        "closeEnd": 26651,
+        "styleAttr": [26486, 26525],
+        "textRuns": [],
+        "parentId": "e6d6f80b:116",
+        "childIds": ["e6d6f80b:118", "e6d6f80b:119", "e6d6f80b:120"]
+      },
+      {
+        "id": "e6d6f80b:118",
+        "tag": "span",
+        "openStart": 26527,
+        "attrEnd": 26549,
+        "openEnd": 26550,
+        "closeStart": 26555,
+        "closeEnd": 26562,
+        "textRuns": [[26550, 26555]],
+        "parentId": "e6d6f80b:117",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:119",
+        "tag": "span",
+        "openStart": 26562,
+        "attrEnd": 26584,
+        "openEnd": 26585,
+        "closeStart": 26600,
+        "closeEnd": 26607,
+        "textRuns": [[26585, 26600]],
+        "parentId": "e6d6f80b:117",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:120",
+        "tag": "span",
+        "openStart": 26607,
+        "attrEnd": 26629,
+        "openEnd": 26630,
+        "closeStart": 26638,
+        "closeEnd": 26645,
+        "textRuns": [[26630, 26638]],
+        "parentId": "e6d6f80b:117",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:121",
+        "tag": "div",
+        "openStart": 26662,
+        "attrEnd": 26695,
+        "openEnd": 26696,
+        "closeStart": 26765,
+        "closeEnd": 26771,
+        "styleAttr": [26674, 26694],
+        "textRuns": [],
+        "parentId": "e6d6f80b:116",
+        "childIds": ["e6d6f80b:122", "e6d6f80b:123"]
+      },
+      {
+        "id": "e6d6f80b:122",
+        "tag": "span",
+        "openStart": 26696,
+        "attrEnd": 26712,
+        "openEnd": 26713,
+        "closeStart": 26724,
+        "closeEnd": 26731,
+        "textRuns": [[26713, 26724]],
+        "parentId": "e6d6f80b:121",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:123",
+        "tag": "span",
+        "openStart": 26731,
+        "attrEnd": 26747,
+        "openEnd": 26748,
+        "closeStart": 26758,
+        "closeEnd": 26765,
+        "textRuns": [[26748, 26758]],
+        "parentId": "e6d6f80b:121",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:124",
+        "tag": "div",
+        "openStart": 26815,
+        "attrEnd": 26839,
+        "openEnd": 26840,
+        "closeStart": 27833,
+        "closeEnd": 27839,
+        "textRuns": [
+          [26840, 26847],
+          [27142, 27149],
+          [27828, 27833]
+        ],
+        "parentId": "e6d6f80b:89",
+        "childIds": ["e6d6f80b:125", "e6d6f80b:129"]
+      },
+      {
+        "id": "e6d6f80b:125",
+        "tag": "div",
+        "openStart": 26847,
+        "attrEnd": 26876,
+        "openEnd": 26877,
+        "closeStart": 27136,
+        "closeEnd": 27142,
+        "textRuns": [],
+        "parentId": "e6d6f80b:124",
+        "childIds": ["e6d6f80b:126", "e6d6f80b:127"]
+      },
+      {
+        "id": "e6d6f80b:126",
+        "tag": "div",
+        "openStart": 26877,
+        "attrEnd": 27061,
+        "openEnd": 27062,
+        "closeStart": 27062,
+        "closeEnd": 27068,
+        "styleAttr": [26903, 27060],
+        "textRuns": [],
+        "parentId": "e6d6f80b:125",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:127",
+        "tag": "div",
+        "openStart": 27068,
+        "attrEnd": 27089,
+        "openEnd": 27090,
+        "closeStart": 27130,
+        "closeEnd": 27136,
+        "textRuns": [],
+        "parentId": "e6d6f80b:125",
+        "childIds": ["e6d6f80b:128"]
+      },
+      {
+        "id": "e6d6f80b:128",
+        "tag": "div",
+        "openStart": 27090,
+        "attrEnd": 27120,
+        "openEnd": 27121,
+        "closeStart": 27124,
+        "closeEnd": 27130,
+        "textRuns": [[27121, 27124]],
+        "parentId": "e6d6f80b:127",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:129",
+        "tag": "div",
+        "openStart": 27149,
+        "attrEnd": 27178,
+        "openEnd": 27179,
+        "closeStart": 27822,
+        "closeEnd": 27828,
+        "textRuns": [
+          [27179, 27188],
+          [27232, 27241],
+          [27326, 27335],
+          [27417, 27426],
+          [27815, 27822]
+        ],
+        "parentId": "e6d6f80b:124",
+        "childIds": [
+          "e6d6f80b:130",
+          "e6d6f80b:131",
+          "e6d6f80b:132",
+          "e6d6f80b:133"
+        ]
+      },
+      {
+        "id": "e6d6f80b:130",
+        "tag": "div",
+        "openStart": 27188,
+        "attrEnd": 27215,
+        "openEnd": 27216,
+        "closeStart": 27226,
+        "closeEnd": 27232,
+        "textRuns": [[27216, 27226]],
+        "parentId": "e6d6f80b:129",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:131",
+        "tag": "h3",
+        "openStart": 27241,
+        "attrEnd": 27270,
+        "openEnd": 27271,
+        "closeStart": 27321,
+        "closeEnd": 27326,
+        "textRuns": [[27271, 27321]],
+        "parentId": "e6d6f80b:129",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:132",
+        "tag": "div",
+        "openStart": 27335,
+        "attrEnd": 27370,
+        "openEnd": 27371,
+        "closeStart": 27411,
+        "closeEnd": 27417,
+        "textRuns": [[27371, 27411]],
+        "parentId": "e6d6f80b:129",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:133",
+        "tag": "div",
+        "openStart": 27426,
+        "attrEnd": 27457,
+        "openEnd": 27458,
+        "closeStart": 27809,
+        "closeEnd": 27815,
+        "textRuns": [
+          [27458, 27469],
+          [27672, 27683],
+          [27800, 27809]
+        ],
+        "parentId": "e6d6f80b:129",
+        "childIds": ["e6d6f80b:134", "e6d6f80b:138"]
+      },
+      {
+        "id": "e6d6f80b:134",
+        "tag": "div",
+        "openStart": 27469,
+        "attrEnd": 27543,
+        "openEnd": 27544,
+        "closeStart": 27666,
+        "closeEnd": 27672,
+        "styleAttr": [27503, 27542],
+        "textRuns": [],
+        "parentId": "e6d6f80b:133",
+        "childIds": ["e6d6f80b:135", "e6d6f80b:136", "e6d6f80b:137"]
+      },
+      {
+        "id": "e6d6f80b:135",
+        "tag": "span",
+        "openStart": 27544,
+        "attrEnd": 27566,
+        "openEnd": 27567,
+        "closeStart": 27572,
+        "closeEnd": 27579,
+        "textRuns": [[27567, 27572]],
+        "parentId": "e6d6f80b:134",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:136",
+        "tag": "span",
+        "openStart": 27579,
+        "attrEnd": 27601,
+        "openEnd": 27602,
+        "closeStart": 27617,
+        "closeEnd": 27624,
+        "textRuns": [[27602, 27617]],
+        "parentId": "e6d6f80b:134",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:137",
+        "tag": "span",
+        "openStart": 27624,
+        "attrEnd": 27646,
+        "openEnd": 27647,
+        "closeStart": 27659,
+        "closeEnd": 27666,
+        "textRuns": [[27647, 27659]],
+        "parentId": "e6d6f80b:134",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:138",
+        "tag": "div",
+        "openStart": 27683,
+        "attrEnd": 27716,
+        "openEnd": 27717,
+        "closeStart": 27794,
+        "closeEnd": 27800,
+        "styleAttr": [27695, 27715],
+        "textRuns": [],
+        "parentId": "e6d6f80b:133",
+        "childIds": ["e6d6f80b:139", "e6d6f80b:140"]
+      },
+      {
+        "id": "e6d6f80b:139",
+        "tag": "span",
+        "openStart": 27717,
+        "attrEnd": 27733,
+        "openEnd": 27734,
+        "closeStart": 27748,
+        "closeEnd": 27755,
+        "textRuns": [[27734, 27748]],
+        "parentId": "e6d6f80b:138",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:140",
+        "tag": "span",
+        "openStart": 27755,
+        "attrEnd": 27771,
+        "openEnd": 27772,
+        "closeStart": 27787,
+        "closeEnd": 27794,
+        "textRuns": [[27772, 27787]],
+        "parentId": "e6d6f80b:138",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:141",
+        "tag": "div",
+        "openStart": 27857,
+        "attrEnd": 27887,
+        "openEnd": 27888,
+        "closeStart": 30320,
+        "closeEnd": 30326,
+        "textRuns": [
+          [27888, 27891],
+          [30319, 30320]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:142"]
+      },
+      {
+        "id": "e6d6f80b:142",
+        "tag": "div",
+        "openStart": 27891,
+        "attrEnd": 27919,
+        "openEnd": 27920,
+        "closeStart": 30313,
+        "closeEnd": 30319,
+        "textRuns": [
+          [27920, 27925],
+          [27979, 27984],
+          [28076, 28081],
+          [30310, 30313]
+        ],
+        "parentId": "e6d6f80b:141",
+        "childIds": ["e6d6f80b:143", "e6d6f80b:144", "e6d6f80b:146"]
+      },
+      {
+        "id": "e6d6f80b:143",
+        "tag": "div",
+        "openStart": 27925,
+        "attrEnd": 27953,
+        "openEnd": 27954,
+        "closeStart": 27973,
+        "closeEnd": 27979,
+        "textRuns": [[27954, 27973]],
+        "parentId": "e6d6f80b:142",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:144",
+        "tag": "div",
+        "openStart": 27984,
+        "attrEnd": 28014,
+        "openEnd": 28015,
+        "closeStart": 28070,
+        "closeEnd": 28076,
+        "textRuns": [
+          [28015, 28020],
+          [28054, 28070]
+        ],
+        "parentId": "e6d6f80b:142",
+        "childIds": ["e6d6f80b:145"]
+      },
+      {
+        "id": "e6d6f80b:145",
+        "tag": "em",
+        "openStart": 28020,
+        "attrEnd": 28023,
+        "openEnd": 28024,
+        "closeStart": 28049,
+        "closeEnd": 28054,
+        "textRuns": [[28024, 28049]],
+        "parentId": "e6d6f80b:144",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:146",
+        "tag": "div",
+        "openStart": 28081,
+        "attrEnd": 28108,
+        "openEnd": 28109,
+        "closeStart": 30304,
+        "closeEnd": 30310,
+        "textRuns": [
+          [28109, 28116],
+          [28680, 28687],
+          [30299, 30304]
+        ],
+        "parentId": "e6d6f80b:142",
+        "childIds": ["e6d6f80b:147", "e6d6f80b:156"]
+      },
+      {
+        "id": "e6d6f80b:147",
+        "tag": "div",
+        "openStart": 28116,
+        "attrEnd": 28146,
+        "openEnd": 28147,
+        "closeStart": 28674,
+        "closeEnd": 28680,
+        "styleAttr": [28128, 28145],
+        "textRuns": [
+          [28147, 28156],
+          [28503, 28512],
+          [28667, 28674]
+        ],
+        "parentId": "e6d6f80b:146",
+        "childIds": ["e6d6f80b:148", "e6d6f80b:151"]
+      },
+      {
+        "id": "e6d6f80b:148",
+        "tag": "div",
+        "openStart": 28156,
+        "attrEnd": 28210,
+        "openEnd": 28211,
+        "closeStart": 28497,
+        "closeEnd": 28503,
+        "styleAttr": [28193, 28209],
+        "textRuns": [],
+        "parentId": "e6d6f80b:147",
+        "childIds": ["e6d6f80b:149", "e6d6f80b:150"]
+      },
+      {
+        "id": "e6d6f80b:149",
+        "tag": "img",
+        "openStart": 28211,
+        "attrEnd": 28443,
+        "openEnd": 28444,
+        "closeEnd": 28444,
+        "styleAttr": [28301, 28418],
+        "textRuns": [],
+        "parentId": "e6d6f80b:148",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:150",
+        "tag": "div",
+        "openStart": 28444,
+        "attrEnd": 28490,
+        "openEnd": 28491,
+        "closeStart": 28491,
+        "closeEnd": 28497,
+        "styleAttr": [28479, 28489],
+        "textRuns": [],
+        "parentId": "e6d6f80b:148",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:151",
+        "tag": "div",
+        "openStart": 28512,
+        "attrEnd": 28538,
+        "openEnd": 28539,
+        "closeStart": 28661,
+        "closeEnd": 28667,
+        "textRuns": [],
+        "parentId": "e6d6f80b:147",
+        "childIds": ["e6d6f80b:152", "e6d6f80b:153"]
+      },
+      {
+        "id": "e6d6f80b:152",
+        "tag": "div",
+        "openStart": 28539,
+        "attrEnd": 28559,
+        "openEnd": 28560,
+        "closeStart": 28564,
+        "closeEnd": 28570,
+        "textRuns": [[28560, 28564]],
+        "parentId": "e6d6f80b:151",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:153",
+        "tag": "div",
+        "openStart": 28570,
+        "attrEnd": 28574,
+        "openEnd": 28575,
+        "closeStart": 28655,
+        "closeEnd": 28661,
+        "textRuns": [],
+        "parentId": "e6d6f80b:151",
+        "childIds": ["e6d6f80b:154", "e6d6f80b:155"]
+      },
+      {
+        "id": "e6d6f80b:154",
+        "tag": "div",
+        "openStart": 28575,
+        "attrEnd": 28594,
+        "openEnd": 28595,
+        "closeStart": 28600,
+        "closeEnd": 28606,
+        "textRuns": [[28595, 28600]],
+        "parentId": "e6d6f80b:153",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:155",
+        "tag": "div",
+        "openStart": 28606,
+        "attrEnd": 28627,
+        "openEnd": 28628,
+        "closeStart": 28649,
+        "closeEnd": 28655,
+        "textRuns": [[28628, 28649]],
+        "parentId": "e6d6f80b:153",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:156",
+        "tag": "div",
+        "openStart": 28687,
+        "attrEnd": 28691,
+        "openEnd": 28692,
+        "closeStart": 30293,
+        "closeEnd": 30299,
+        "textRuns": [
+          [28692, 28701],
+          [28748, 28757],
+          [28973, 28982],
+          [29381, 29390],
+          [29826, 29835],
+          [30198, 30207],
+          [30286, 30293]
+        ],
+        "parentId": "e6d6f80b:146",
+        "childIds": [
+          "e6d6f80b:157",
+          "e6d6f80b:158",
+          "e6d6f80b:161",
+          "e6d6f80b:162",
+          "e6d6f80b:175",
+          "e6d6f80b:178"
+        ]
+      },
+      {
+        "id": "e6d6f80b:157",
+        "tag": "div",
+        "openStart": 28701,
+        "attrEnd": 28724,
+        "openEnd": 28725,
+        "closeStart": 28742,
+        "closeEnd": 28748,
+        "textRuns": [[28725, 28742]],
+        "parentId": "e6d6f80b:156",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:158",
+        "tag": "h2",
+        "openStart": 28757,
+        "attrEnd": 28874,
+        "openEnd": 28875,
+        "closeStart": 28968,
+        "closeEnd": 28973,
+        "styleAttr": [28768, 28873],
+        "textRuns": [[28875, 28894]],
+        "parentId": "e6d6f80b:156",
+        "childIds": ["e6d6f80b:159", "e6d6f80b:160"]
+      },
+      {
+        "id": "e6d6f80b:159",
+        "tag": "br",
+        "openStart": 28894,
+        "attrEnd": 28897,
+        "openEnd": 28898,
+        "closeEnd": 28898,
+        "textRuns": [],
+        "parentId": "e6d6f80b:158",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:160",
+        "tag": "em",
+        "openStart": 28898,
+        "attrEnd": 28946,
+        "openEnd": 28947,
+        "closeStart": 28963,
+        "closeEnd": 28968,
+        "styleAttr": [28909, 28945],
+        "textRuns": [[28947, 28963]],
+        "parentId": "e6d6f80b:158",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:161",
+        "tag": "p",
+        "openStart": 28982,
+        "attrEnd": 29078,
+        "openEnd": 29079,
+        "closeStart": 29377,
+        "closeEnd": 29381,
+        "styleAttr": [28992, 29077],
+        "textRuns": [[29079, 29377]],
+        "parentId": "e6d6f80b:156",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:162",
+        "tag": "div",
+        "openStart": 29390,
+        "attrEnd": 29416,
+        "openEnd": 29417,
+        "closeStart": 29820,
+        "closeEnd": 29826,
+        "textRuns": [
+          [29417, 29428],
+          [29517, 29528],
+          [29603, 29614],
+          [29714, 29725],
+          [29811, 29820]
+        ],
+        "parentId": "e6d6f80b:156",
+        "childIds": [
+          "e6d6f80b:163",
+          "e6d6f80b:166",
+          "e6d6f80b:169",
+          "e6d6f80b:172"
+        ]
+      },
+      {
+        "id": "e6d6f80b:163",
+        "tag": "div",
+        "openStart": 29428,
+        "attrEnd": 29432,
+        "openEnd": 29433,
+        "closeStart": 29511,
+        "closeEnd": 29517,
+        "textRuns": [],
+        "parentId": "e6d6f80b:162",
+        "childIds": ["e6d6f80b:164", "e6d6f80b:165"]
+      },
+      {
+        "id": "e6d6f80b:164",
+        "tag": "div",
+        "openStart": 29433,
+        "attrEnd": 29452,
+        "openEnd": 29453,
+        "closeStart": 29465,
+        "closeEnd": 29471,
+        "textRuns": [[29453, 29465]],
+        "parentId": "e6d6f80b:163",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:165",
+        "tag": "div",
+        "openStart": 29471,
+        "attrEnd": 29492,
+        "openEnd": 29493,
+        "closeStart": 29505,
+        "closeEnd": 29511,
+        "textRuns": [[29493, 29505]],
+        "parentId": "e6d6f80b:163",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:166",
+        "tag": "div",
+        "openStart": 29528,
+        "attrEnd": 29532,
+        "openEnd": 29533,
+        "closeStart": 29597,
+        "closeEnd": 29603,
+        "textRuns": [],
+        "parentId": "e6d6f80b:162",
+        "childIds": ["e6d6f80b:167", "e6d6f80b:168"]
+      },
+      {
+        "id": "e6d6f80b:167",
+        "tag": "div",
+        "openStart": 29533,
+        "attrEnd": 29552,
+        "openEnd": 29553,
+        "closeStart": 29555,
+        "closeEnd": 29561,
+        "textRuns": [[29553, 29555]],
+        "parentId": "e6d6f80b:166",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:168",
+        "tag": "div",
+        "openStart": 29561,
+        "attrEnd": 29582,
+        "openEnd": 29583,
+        "closeStart": 29591,
+        "closeEnd": 29597,
+        "textRuns": [[29583, 29591]],
+        "parentId": "e6d6f80b:166",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:169",
+        "tag": "div",
+        "openStart": 29614,
+        "attrEnd": 29618,
+        "openEnd": 29619,
+        "closeStart": 29708,
+        "closeEnd": 29714,
+        "textRuns": [],
+        "parentId": "e6d6f80b:162",
+        "childIds": ["e6d6f80b:170", "e6d6f80b:171"]
+      },
+      {
+        "id": "e6d6f80b:170",
+        "tag": "div",
+        "openStart": 29619,
+        "attrEnd": 29638,
+        "openEnd": 29639,
+        "closeStart": 29647,
+        "closeEnd": 29653,
+        "textRuns": [[29639, 29647]],
+        "parentId": "e6d6f80b:169",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:171",
+        "tag": "div",
+        "openStart": 29653,
+        "attrEnd": 29674,
+        "openEnd": 29675,
+        "closeStart": 29702,
+        "closeEnd": 29708,
+        "textRuns": [[29675, 29702]],
+        "parentId": "e6d6f80b:169",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:172",
+        "tag": "div",
+        "openStart": 29725,
+        "attrEnd": 29729,
+        "openEnd": 29730,
+        "closeStart": 29805,
+        "closeEnd": 29811,
+        "textRuns": [],
+        "parentId": "e6d6f80b:162",
+        "childIds": ["e6d6f80b:173", "e6d6f80b:174"]
+      },
+      {
+        "id": "e6d6f80b:173",
+        "tag": "div",
+        "openStart": 29730,
+        "attrEnd": 29749,
+        "openEnd": 29750,
+        "closeStart": 29761,
+        "closeEnd": 29767,
+        "textRuns": [[29750, 29761]],
+        "parentId": "e6d6f80b:172",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:174",
+        "tag": "div",
+        "openStart": 29767,
+        "attrEnd": 29788,
+        "openEnd": 29789,
+        "closeStart": 29799,
+        "closeEnd": 29805,
+        "textRuns": [[29789, 29799]],
+        "parentId": "e6d6f80b:172",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:175",
+        "tag": "div",
+        "openStart": 29835,
+        "attrEnd": 29859,
+        "openEnd": 29860,
+        "closeStart": 30192,
+        "closeEnd": 30198,
+        "textRuns": [
+          [29860, 29871],
+          [30138, 30149],
+          [30183, 30192]
+        ],
+        "parentId": "e6d6f80b:156",
+        "childIds": ["e6d6f80b:176", "e6d6f80b:177"]
+      },
+      {
+        "id": "e6d6f80b:176",
+        "tag": "p",
+        "openStart": 29871,
+        "attrEnd": 29873,
+        "openEnd": 29874,
+        "closeStart": 30134,
+        "closeEnd": 30138,
+        "textRuns": [[29874, 30134]],
+        "parentId": "e6d6f80b:175",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:177",
+        "tag": "cite",
+        "openStart": 30149,
+        "attrEnd": 30154,
+        "openEnd": 30155,
+        "closeStart": 30176,
+        "closeEnd": 30183,
+        "textRuns": [[30155, 30176]],
+        "parentId": "e6d6f80b:175",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:178",
+        "tag": "button",
+        "openStart": 30207,
+        "attrEnd": 30237,
+        "openEnd": 30238,
+        "closeStart": 30277,
+        "closeEnd": 30286,
+        "textRuns": [[30238, 30277]],
+        "parentId": "e6d6f80b:156",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:179",
+        "tag": "div",
+        "openStart": 30328,
+        "attrEnd": 30352,
+        "openEnd": 30353,
+        "closeStart": 31515,
+        "closeEnd": 31521,
+        "textRuns": [
+          [30353, 30356],
+          [30530, 30533],
+          [31514, 31515]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:180", "e6d6f80b:185"]
+      },
+      {
+        "id": "e6d6f80b:180",
+        "tag": "div",
+        "openStart": 30356,
+        "attrEnd": 30360,
+        "openEnd": 30361,
+        "closeStart": 30524,
+        "closeEnd": 30530,
+        "textRuns": [
+          [30361, 30366],
+          [30424, 30429],
+          [30521, 30524]
+        ],
+        "parentId": "e6d6f80b:179",
+        "childIds": ["e6d6f80b:181", "e6d6f80b:182"]
+      },
+      {
+        "id": "e6d6f80b:181",
+        "tag": "div",
+        "openStart": 30366,
+        "attrEnd": 30394,
+        "openEnd": 30395,
+        "closeStart": 30418,
+        "closeEnd": 30424,
+        "textRuns": [[30395, 30418]],
+        "parentId": "e6d6f80b:180",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:182",
+        "tag": "div",
+        "openStart": 30429,
+        "attrEnd": 30459,
+        "openEnd": 30460,
+        "closeStart": 30515,
+        "closeEnd": 30521,
+        "textRuns": [[30460, 30490]],
+        "parentId": "e6d6f80b:180",
+        "childIds": ["e6d6f80b:183", "e6d6f80b:184"]
+      },
+      {
+        "id": "e6d6f80b:183",
+        "tag": "br",
+        "openStart": 30490,
+        "attrEnd": 30493,
+        "openEnd": 30494,
+        "closeEnd": 30494,
+        "textRuns": [],
+        "parentId": "e6d6f80b:182",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:184",
+        "tag": "em",
+        "openStart": 30494,
+        "attrEnd": 30497,
+        "openEnd": 30498,
+        "closeStart": 30510,
+        "closeEnd": 30515,
+        "textRuns": [[30498, 30510]],
+        "parentId": "e6d6f80b:182",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:185",
+        "tag": "div",
+        "openStart": 30533,
+        "attrEnd": 30554,
+        "openEnd": 30555,
+        "closeStart": 31508,
+        "closeEnd": 31514,
+        "textRuns": [
+          [30555, 30560],
+          [30784, 30789],
+          [31038, 31043],
+          [31263, 31268],
+          [31505, 31508]
+        ],
+        "parentId": "e6d6f80b:179",
+        "childIds": [
+          "e6d6f80b:186",
+          "e6d6f80b:190",
+          "e6d6f80b:194",
+          "e6d6f80b:198"
+        ]
+      },
+      {
+        "id": "e6d6f80b:186",
+        "tag": "div",
+        "openStart": 30560,
+        "attrEnd": 30581,
+        "openEnd": 30582,
+        "closeStart": 30778,
+        "closeEnd": 30784,
+        "textRuns": [],
+        "parentId": "e6d6f80b:185",
+        "childIds": ["e6d6f80b:187", "e6d6f80b:188", "e6d6f80b:189"]
+      },
+      {
+        "id": "e6d6f80b:187",
+        "tag": "div",
+        "openStart": 30582,
+        "attrEnd": 30602,
+        "openEnd": 30603,
+        "closeStart": 30607,
+        "closeEnd": 30613,
+        "textRuns": [[30603, 30607]],
+        "parentId": "e6d6f80b:186",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:188",
+        "tag": "h3",
+        "openStart": 30613,
+        "attrEnd": 30616,
+        "openEnd": 30617,
+        "closeStart": 30662,
+        "closeEnd": 30667,
+        "textRuns": [[30617, 30662]],
+        "parentId": "e6d6f80b:186",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:189",
+        "tag": "p",
+        "openStart": 30667,
+        "attrEnd": 30669,
+        "openEnd": 30670,
+        "closeStart": 30774,
+        "closeEnd": 30778,
+        "textRuns": [[30670, 30774]],
+        "parentId": "e6d6f80b:186",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:190",
+        "tag": "div",
+        "openStart": 30789,
+        "attrEnd": 30810,
+        "openEnd": 30811,
+        "closeStart": 31032,
+        "closeEnd": 31038,
+        "textRuns": [],
+        "parentId": "e6d6f80b:185",
+        "childIds": ["e6d6f80b:191", "e6d6f80b:192", "e6d6f80b:193"]
+      },
+      {
+        "id": "e6d6f80b:191",
+        "tag": "div",
+        "openStart": 30811,
+        "attrEnd": 30831,
+        "openEnd": 30832,
+        "closeStart": 30836,
+        "closeEnd": 30842,
+        "textRuns": [[30832, 30836]],
+        "parentId": "e6d6f80b:190",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:192",
+        "tag": "h3",
+        "openStart": 30842,
+        "attrEnd": 30845,
+        "openEnd": 30846,
+        "closeStart": 30887,
+        "closeEnd": 30892,
+        "textRuns": [[30846, 30887]],
+        "parentId": "e6d6f80b:190",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:193",
+        "tag": "p",
+        "openStart": 30892,
+        "attrEnd": 30894,
+        "openEnd": 30895,
+        "closeStart": 31028,
+        "closeEnd": 31032,
+        "textRuns": [[30895, 31028]],
+        "parentId": "e6d6f80b:190",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:194",
+        "tag": "div",
+        "openStart": 31043,
+        "attrEnd": 31064,
+        "openEnd": 31065,
+        "closeStart": 31257,
+        "closeEnd": 31263,
+        "textRuns": [],
+        "parentId": "e6d6f80b:185",
+        "childIds": ["e6d6f80b:195", "e6d6f80b:196", "e6d6f80b:197"]
+      },
+      {
+        "id": "e6d6f80b:195",
+        "tag": "div",
+        "openStart": 31065,
+        "attrEnd": 31085,
+        "openEnd": 31086,
+        "closeStart": 31090,
+        "closeEnd": 31096,
+        "textRuns": [[31086, 31090]],
+        "parentId": "e6d6f80b:194",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:196",
+        "tag": "h3",
+        "openStart": 31096,
+        "attrEnd": 31099,
+        "openEnd": 31100,
+        "closeStart": 31133,
+        "closeEnd": 31138,
+        "textRuns": [[31100, 31133]],
+        "parentId": "e6d6f80b:194",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:197",
+        "tag": "p",
+        "openStart": 31138,
+        "attrEnd": 31140,
+        "openEnd": 31141,
+        "closeStart": 31253,
+        "closeEnd": 31257,
+        "textRuns": [[31141, 31253]],
+        "parentId": "e6d6f80b:194",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:198",
+        "tag": "div",
+        "openStart": 31268,
+        "attrEnd": 31289,
+        "openEnd": 31290,
+        "closeStart": 31499,
+        "closeEnd": 31505,
+        "textRuns": [],
+        "parentId": "e6d6f80b:185",
+        "childIds": ["e6d6f80b:199", "e6d6f80b:200", "e6d6f80b:201"]
+      },
+      {
+        "id": "e6d6f80b:199",
+        "tag": "div",
+        "openStart": 31290,
+        "attrEnd": 31310,
+        "openEnd": 31311,
+        "closeStart": 31315,
+        "closeEnd": 31321,
+        "textRuns": [[31311, 31315]],
+        "parentId": "e6d6f80b:198",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:200",
+        "tag": "h3",
+        "openStart": 31321,
+        "attrEnd": 31324,
+        "openEnd": 31325,
+        "closeStart": 31355,
+        "closeEnd": 31360,
+        "textRuns": [[31325, 31355]],
+        "parentId": "e6d6f80b:198",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:201",
+        "tag": "p",
+        "openStart": 31360,
+        "attrEnd": 31362,
+        "openEnd": 31363,
+        "closeStart": 31495,
+        "closeEnd": 31499,
+        "textRuns": [[31363, 31495]],
+        "parentId": "e6d6f80b:198",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:202",
+        "tag": "div",
+        "openStart": 31523,
+        "attrEnd": 31545,
+        "openEnd": 31546,
+        "closeStart": 32009,
+        "closeEnd": 32015,
+        "textRuns": [
+          [31546, 31549],
+          [32008, 32009]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:203"]
+      },
+      {
+        "id": "e6d6f80b:203",
+        "tag": "div",
+        "openStart": 31549,
+        "attrEnd": 31573,
+        "openEnd": 31574,
+        "closeStart": 32002,
+        "closeEnd": 32008,
+        "textRuns": [
+          [31574, 31579],
+          [31686, 31691],
+          [31792, 31797],
+          [31898, 31903],
+          [31999, 32002]
+        ],
+        "parentId": "e6d6f80b:202",
+        "childIds": [
+          "e6d6f80b:204",
+          "e6d6f80b:207",
+          "e6d6f80b:210",
+          "e6d6f80b:213"
+        ]
+      },
+      {
+        "id": "e6d6f80b:204",
+        "tag": "div",
+        "openStart": 31579,
+        "attrEnd": 31600,
+        "openEnd": 31601,
+        "closeStart": 31680,
+        "closeEnd": 31686,
+        "textRuns": [],
+        "parentId": "e6d6f80b:203",
+        "childIds": ["e6d6f80b:205", "e6d6f80b:206"]
+      },
+      {
+        "id": "e6d6f80b:205",
+        "tag": "div",
+        "openStart": 31601,
+        "attrEnd": 31620,
+        "openEnd": 31621,
+        "closeStart": 31628,
+        "closeEnd": 31634,
+        "textRuns": [[31621, 31628]],
+        "parentId": "e6d6f80b:204",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:206",
+        "tag": "div",
+        "openStart": 31634,
+        "attrEnd": 31655,
+        "openEnd": 31656,
+        "closeStart": 31674,
+        "closeEnd": 31680,
+        "textRuns": [[31656, 31674]],
+        "parentId": "e6d6f80b:204",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:207",
+        "tag": "div",
+        "openStart": 31691,
+        "attrEnd": 31712,
+        "openEnd": 31713,
+        "closeStart": 31786,
+        "closeEnd": 31792,
+        "textRuns": [],
+        "parentId": "e6d6f80b:203",
+        "childIds": ["e6d6f80b:208", "e6d6f80b:209"]
+      },
+      {
+        "id": "e6d6f80b:208",
+        "tag": "div",
+        "openStart": 31713,
+        "attrEnd": 31732,
+        "openEnd": 31733,
+        "closeStart": 31744,
+        "closeEnd": 31750,
+        "textRuns": [[31733, 31744]],
+        "parentId": "e6d6f80b:207",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:209",
+        "tag": "div",
+        "openStart": 31750,
+        "attrEnd": 31771,
+        "openEnd": 31772,
+        "closeStart": 31780,
+        "closeEnd": 31786,
+        "textRuns": [[31772, 31780]],
+        "parentId": "e6d6f80b:207",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:210",
+        "tag": "div",
+        "openStart": 31797,
+        "attrEnd": 31818,
+        "openEnd": 31819,
+        "closeStart": 31892,
+        "closeEnd": 31898,
+        "textRuns": [],
+        "parentId": "e6d6f80b:203",
+        "childIds": ["e6d6f80b:211", "e6d6f80b:212"]
+      },
+      {
+        "id": "e6d6f80b:211",
+        "tag": "div",
+        "openStart": 31819,
+        "attrEnd": 31838,
+        "openEnd": 31839,
+        "closeStart": 31850,
+        "closeEnd": 31856,
+        "textRuns": [[31839, 31850]],
+        "parentId": "e6d6f80b:210",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:212",
+        "tag": "div",
+        "openStart": 31856,
+        "attrEnd": 31877,
+        "openEnd": 31878,
+        "closeStart": 31886,
+        "closeEnd": 31892,
+        "textRuns": [[31878, 31886]],
+        "parentId": "e6d6f80b:210",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:213",
+        "tag": "div",
+        "openStart": 31903,
+        "attrEnd": 31924,
+        "openEnd": 31925,
+        "closeStart": 31993,
+        "closeEnd": 31999,
+        "textRuns": [],
+        "parentId": "e6d6f80b:203",
+        "childIds": ["e6d6f80b:214", "e6d6f80b:215"]
+      },
+      {
+        "id": "e6d6f80b:214",
+        "tag": "div",
+        "openStart": 31925,
+        "attrEnd": 31944,
+        "openEnd": 31945,
+        "closeStart": 31951,
+        "closeEnd": 31957,
+        "textRuns": [[31945, 31951]],
+        "parentId": "e6d6f80b:213",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:215",
+        "tag": "div",
+        "openStart": 31957,
+        "attrEnd": 31978,
+        "openEnd": 31979,
+        "closeStart": 31987,
+        "closeEnd": 31993,
+        "textRuns": [[31979, 31987]],
+        "parentId": "e6d6f80b:213",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:216",
+        "tag": "div",
+        "openStart": 32017,
+        "attrEnd": 32043,
+        "openEnd": 32044,
+        "closeStart": 34006,
+        "closeEnd": 34012,
+        "textRuns": [
+          [32044, 32047],
+          [34005, 34006]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:217"]
+      },
+      {
+        "id": "e6d6f80b:217",
+        "tag": "div",
+        "openStart": 32047,
+        "attrEnd": 32071,
+        "openEnd": 32072,
+        "closeStart": 33999,
+        "closeEnd": 34005,
+        "textRuns": [
+          [32072, 32077],
+          [32152, 32157],
+          [32230, 32235],
+          [33996, 33999]
+        ],
+        "parentId": "e6d6f80b:216",
+        "childIds": ["e6d6f80b:218", "e6d6f80b:219", "e6d6f80b:220"]
+      },
+      {
+        "id": "e6d6f80b:218",
+        "tag": "div",
+        "openStart": 32077,
+        "attrEnd": 32105,
+        "openEnd": 32106,
+        "closeStart": 32146,
+        "closeEnd": 32152,
+        "textRuns": [[32106, 32146]],
+        "parentId": "e6d6f80b:217",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:219",
+        "tag": "div",
+        "openStart": 32157,
+        "attrEnd": 32187,
+        "openEnd": 32188,
+        "closeStart": 32224,
+        "closeEnd": 32230,
+        "textRuns": [[32188, 32224]],
+        "parentId": "e6d6f80b:217",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:220",
+        "tag": "div",
+        "openStart": 32235,
+        "attrEnd": 32258,
+        "openEnd": 32259,
+        "closeStart": 33990,
+        "closeEnd": 33996,
+        "textRuns": [
+          [32259, 32266],
+          [32840, 32847],
+          [33415, 33422],
+          [33985, 33990]
+        ],
+        "parentId": "e6d6f80b:217",
+        "childIds": ["e6d6f80b:221", "e6d6f80b:230", "e6d6f80b:239"]
+      },
+      {
+        "id": "e6d6f80b:221",
+        "tag": "div",
+        "openStart": 32266,
+        "attrEnd": 32289,
+        "openEnd": 32290,
+        "closeStart": 32834,
+        "closeEnd": 32840,
+        "textRuns": [],
+        "parentId": "e6d6f80b:220",
+        "childIds": ["e6d6f80b:222", "e6d6f80b:223", "e6d6f80b:224"]
+      },
+      {
+        "id": "e6d6f80b:222",
+        "tag": "div",
+        "openStart": 32290,
+        "attrEnd": 32314,
+        "openEnd": 32315,
+        "closeStart": 32330,
+        "closeEnd": 32336,
+        "textRuns": [[32315, 32330]],
+        "parentId": "e6d6f80b:221",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:223",
+        "tag": "div",
+        "openStart": 32336,
+        "attrEnd": 32356,
+        "openEnd": 32357,
+        "closeStart": 32553,
+        "closeEnd": 32559,
+        "textRuns": [[32357, 32553]],
+        "parentId": "e6d6f80b:221",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:224",
+        "tag": "div",
+        "openStart": 32559,
+        "attrEnd": 32581,
+        "openEnd": 32582,
+        "closeStart": 32828,
+        "closeEnd": 32834,
+        "textRuns": [],
+        "parentId": "e6d6f80b:221",
+        "childIds": ["e6d6f80b:225", "e6d6f80b:227"]
+      },
+      {
+        "id": "e6d6f80b:225",
+        "tag": "div",
+        "openStart": 32582,
+        "attrEnd": 32603,
+        "openEnd": 32604,
+        "closeStart": 32703,
+        "closeEnd": 32709,
+        "textRuns": [],
+        "parentId": "e6d6f80b:224",
+        "childIds": ["e6d6f80b:226"]
+      },
+      {
+        "id": "e6d6f80b:226",
+        "tag": "img",
+        "openStart": 32604,
+        "attrEnd": 32702,
+        "openEnd": 32703,
+        "closeEnd": 32703,
+        "textRuns": [],
+        "parentId": "e6d6f80b:225",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:227",
+        "tag": "div",
+        "openStart": 32709,
+        "attrEnd": 32713,
+        "openEnd": 32714,
+        "closeStart": 32822,
+        "closeEnd": 32828,
+        "textRuns": [],
+        "parentId": "e6d6f80b:224",
+        "childIds": ["e6d6f80b:228", "e6d6f80b:229"]
+      },
+      {
+        "id": "e6d6f80b:228",
+        "tag": "div",
+        "openStart": 32714,
+        "attrEnd": 32737,
+        "openEnd": 32738,
+        "closeStart": 32757,
+        "closeEnd": 32763,
+        "textRuns": [[32738, 32757]],
+        "parentId": "e6d6f80b:227",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:229",
+        "tag": "div",
+        "openStart": 32763,
+        "attrEnd": 32786,
+        "openEnd": 32787,
+        "closeStart": 32816,
+        "closeEnd": 32822,
+        "textRuns": [[32787, 32816]],
+        "parentId": "e6d6f80b:227",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:230",
+        "tag": "div",
+        "openStart": 32847,
+        "attrEnd": 32870,
+        "openEnd": 32871,
+        "closeStart": 33409,
+        "closeEnd": 33415,
+        "textRuns": [],
+        "parentId": "e6d6f80b:220",
+        "childIds": ["e6d6f80b:231", "e6d6f80b:232", "e6d6f80b:233"]
+      },
+      {
+        "id": "e6d6f80b:231",
+        "tag": "div",
+        "openStart": 32871,
+        "attrEnd": 32895,
+        "openEnd": 32896,
+        "closeStart": 32911,
+        "closeEnd": 32917,
+        "textRuns": [[32896, 32911]],
+        "parentId": "e6d6f80b:230",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:232",
+        "tag": "div",
+        "openStart": 32917,
+        "attrEnd": 32937,
+        "openEnd": 32938,
+        "closeStart": 33126,
+        "closeEnd": 33132,
+        "textRuns": [[32938, 33126]],
+        "parentId": "e6d6f80b:230",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:233",
+        "tag": "div",
+        "openStart": 33132,
+        "attrEnd": 33154,
+        "openEnd": 33155,
+        "closeStart": 33403,
+        "closeEnd": 33409,
+        "textRuns": [],
+        "parentId": "e6d6f80b:230",
+        "childIds": ["e6d6f80b:234", "e6d6f80b:236"]
+      },
+      {
+        "id": "e6d6f80b:234",
+        "tag": "div",
+        "openStart": 33155,
+        "attrEnd": 33176,
+        "openEnd": 33177,
+        "closeStart": 33274,
+        "closeEnd": 33280,
+        "textRuns": [],
+        "parentId": "e6d6f80b:233",
+        "childIds": ["e6d6f80b:235"]
+      },
+      {
+        "id": "e6d6f80b:235",
+        "tag": "img",
+        "openStart": 33177,
+        "attrEnd": 33273,
+        "openEnd": 33274,
+        "closeEnd": 33274,
+        "textRuns": [],
+        "parentId": "e6d6f80b:234",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:236",
+        "tag": "div",
+        "openStart": 33280,
+        "attrEnd": 33284,
+        "openEnd": 33285,
+        "closeStart": 33397,
+        "closeEnd": 33403,
+        "textRuns": [],
+        "parentId": "e6d6f80b:233",
+        "childIds": ["e6d6f80b:237", "e6d6f80b:238"]
+      },
+      {
+        "id": "e6d6f80b:237",
+        "tag": "div",
+        "openStart": 33285,
+        "attrEnd": 33308,
+        "openEnd": 33309,
+        "closeStart": 33330,
+        "closeEnd": 33336,
+        "textRuns": [[33309, 33330]],
+        "parentId": "e6d6f80b:236",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:238",
+        "tag": "div",
+        "openStart": 33336,
+        "attrEnd": 33359,
+        "openEnd": 33360,
+        "closeStart": 33391,
+        "closeEnd": 33397,
+        "textRuns": [[33360, 33391]],
+        "parentId": "e6d6f80b:236",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:239",
+        "tag": "div",
+        "openStart": 33422,
+        "attrEnd": 33445,
+        "openEnd": 33446,
+        "closeStart": 33979,
+        "closeEnd": 33985,
+        "textRuns": [],
+        "parentId": "e6d6f80b:220",
+        "childIds": ["e6d6f80b:240", "e6d6f80b:241", "e6d6f80b:242"]
+      },
+      {
+        "id": "e6d6f80b:240",
+        "tag": "div",
+        "openStart": 33446,
+        "attrEnd": 33470,
+        "openEnd": 33471,
+        "closeStart": 33486,
+        "closeEnd": 33492,
+        "textRuns": [[33471, 33486]],
+        "parentId": "e6d6f80b:239",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:241",
+        "tag": "div",
+        "openStart": 33492,
+        "attrEnd": 33512,
+        "openEnd": 33513,
+        "closeStart": 33691,
+        "closeEnd": 33697,
+        "textRuns": [[33513, 33691]],
+        "parentId": "e6d6f80b:239",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:242",
+        "tag": "div",
+        "openStart": 33697,
+        "attrEnd": 33719,
+        "openEnd": 33720,
+        "closeStart": 33973,
+        "closeEnd": 33979,
+        "textRuns": [],
+        "parentId": "e6d6f80b:239",
+        "childIds": ["e6d6f80b:243", "e6d6f80b:245"]
+      },
+      {
+        "id": "e6d6f80b:243",
+        "tag": "div",
+        "openStart": 33720,
+        "attrEnd": 33741,
+        "openEnd": 33742,
+        "closeStart": 33841,
+        "closeEnd": 33847,
+        "textRuns": [],
+        "parentId": "e6d6f80b:242",
+        "childIds": ["e6d6f80b:244"]
+      },
+      {
+        "id": "e6d6f80b:244",
+        "tag": "img",
+        "openStart": 33742,
+        "attrEnd": 33840,
+        "openEnd": 33841,
+        "closeEnd": 33841,
+        "textRuns": [],
+        "parentId": "e6d6f80b:243",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:245",
+        "tag": "div",
+        "openStart": 33847,
+        "attrEnd": 33851,
+        "openEnd": 33852,
+        "closeStart": 33967,
+        "closeEnd": 33973,
+        "textRuns": [],
+        "parentId": "e6d6f80b:242",
+        "childIds": ["e6d6f80b:246", "e6d6f80b:247"]
+      },
+      {
+        "id": "e6d6f80b:246",
+        "tag": "div",
+        "openStart": 33852,
+        "attrEnd": 33875,
+        "openEnd": 33876,
+        "closeStart": 33897,
+        "closeEnd": 33903,
+        "textRuns": [[33876, 33897]],
+        "parentId": "e6d6f80b:245",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:247",
+        "tag": "div",
+        "openStart": 33903,
+        "attrEnd": 33926,
+        "openEnd": 33927,
+        "closeStart": 33961,
+        "closeEnd": 33967,
+        "textRuns": [[33927, 33961]],
+        "parentId": "e6d6f80b:245",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:248",
+        "tag": "div",
+        "openStart": 34014,
+        "attrEnd": 34038,
+        "openEnd": 34039,
+        "closeStart": 34608,
+        "closeEnd": 34614,
+        "textRuns": [
+          [34039, 34042],
+          [34607, 34608]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:249"]
+      },
+      {
+        "id": "e6d6f80b:249",
+        "tag": "div",
+        "openStart": 34042,
+        "attrEnd": 34064,
+        "openEnd": 34065,
+        "closeStart": 34601,
+        "closeEnd": 34607,
+        "textRuns": [
+          [34065, 34070],
+          [34132, 34137],
+          [34206, 34211],
+          [34404, 34409],
+          [34598, 34601]
+        ],
+        "parentId": "e6d6f80b:248",
+        "childIds": [
+          "e6d6f80b:250",
+          "e6d6f80b:251",
+          "e6d6f80b:254",
+          "e6d6f80b:255"
+        ]
+      },
+      {
+        "id": "e6d6f80b:250",
+        "tag": "div",
+        "openStart": 34070,
+        "attrEnd": 34094,
+        "openEnd": 34095,
+        "closeStart": 34126,
+        "closeEnd": 34132,
+        "textRuns": [[34095, 34126]],
+        "parentId": "e6d6f80b:249",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:251",
+        "tag": "h2",
+        "openStart": 34137,
+        "attrEnd": 34140,
+        "openEnd": 34141,
+        "closeStart": 34201,
+        "closeEnd": 34206,
+        "textRuns": [
+          [34141, 34165],
+          [34169, 34178],
+          [34195, 34201]
+        ],
+        "parentId": "e6d6f80b:249",
+        "childIds": ["e6d6f80b:252", "e6d6f80b:253"]
+      },
+      {
+        "id": "e6d6f80b:252",
+        "tag": "br",
+        "openStart": 34165,
+        "attrEnd": 34168,
+        "openEnd": 34169,
+        "closeEnd": 34169,
+        "textRuns": [],
+        "parentId": "e6d6f80b:251",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:253",
+        "tag": "em",
+        "openStart": 34178,
+        "attrEnd": 34181,
+        "openEnd": 34182,
+        "closeStart": 34190,
+        "closeEnd": 34195,
+        "textRuns": [[34182, 34190]],
+        "parentId": "e6d6f80b:251",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:254",
+        "tag": "p",
+        "openStart": 34211,
+        "attrEnd": 34213,
+        "openEnd": 34214,
+        "closeStart": 34400,
+        "closeEnd": 34404,
+        "textRuns": [[34214, 34400]],
+        "parentId": "e6d6f80b:249",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:255",
+        "tag": "div",
+        "openStart": 34409,
+        "attrEnd": 34430,
+        "openEnd": 34431,
+        "closeStart": 34592,
+        "closeEnd": 34598,
+        "textRuns": [
+          [34431, 34438],
+          [34503, 34510],
+          [34587, 34592]
+        ],
+        "parentId": "e6d6f80b:249",
+        "childIds": ["e6d6f80b:256", "e6d6f80b:257"]
+      },
+      {
+        "id": "e6d6f80b:256",
+        "tag": "button",
+        "openStart": 34438,
+        "attrEnd": 34468,
+        "openEnd": 34469,
+        "closeStart": 34494,
+        "closeEnd": 34503,
+        "textRuns": [[34469, 34494]],
+        "parentId": "e6d6f80b:255",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:257",
+        "tag": "button",
+        "openStart": 34510,
+        "attrEnd": 34542,
+        "openEnd": 34543,
+        "closeStart": 34578,
+        "closeEnd": 34587,
+        "textRuns": [[34543, 34578]],
+        "parentId": "e6d6f80b:255",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:258",
+        "tag": "footer",
+        "openStart": 34616,
+        "attrEnd": 34623,
+        "openEnd": 34624,
+        "closeStart": 35745,
+        "closeEnd": 35754,
+        "textRuns": [
+          [34624, 34627],
+          [35744, 35745]
+        ],
+        "parentId": "e6d6f80b:4",
+        "childIds": ["e6d6f80b:259"]
+      },
+      {
+        "id": "e6d6f80b:259",
+        "tag": "div",
+        "openStart": 34627,
+        "attrEnd": 34652,
+        "openEnd": 34653,
+        "closeStart": 35738,
+        "closeEnd": 35744,
+        "textRuns": [
+          [34653, 34658],
+          [35519, 35524],
+          [35735, 35738]
+        ],
+        "parentId": "e6d6f80b:258",
+        "childIds": ["e6d6f80b:260", "e6d6f80b:282"]
+      },
+      {
+        "id": "e6d6f80b:260",
+        "tag": "div",
+        "openStart": 34658,
+        "attrEnd": 34682,
+        "openEnd": 34683,
+        "closeStart": 35513,
+        "closeEnd": 35519,
+        "textRuns": [
+          [34683, 34690],
+          [34989, 34996],
+          [35183, 35190],
+          [35335, 35342],
+          [35508, 35513]
+        ],
+        "parentId": "e6d6f80b:259",
+        "childIds": [
+          "e6d6f80b:261",
+          "e6d6f80b:265",
+          "e6d6f80b:271",
+          "e6d6f80b:276"
+        ]
+      },
+      {
+        "id": "e6d6f80b:261",
+        "tag": "div",
+        "openStart": 34690,
+        "attrEnd": 34715,
+        "openEnd": 34716,
+        "closeStart": 34983,
+        "closeEnd": 34989,
+        "textRuns": [
+          [34716, 34725],
+          [34791, 34800],
+          [34976, 34983]
+        ],
+        "parentId": "e6d6f80b:260",
+        "childIds": ["e6d6f80b:262", "e6d6f80b:264"]
+      },
+      {
+        "id": "e6d6f80b:262",
+        "tag": "div",
+        "openStart": 34725,
+        "attrEnd": 34755,
+        "openEnd": 34756,
+        "closeStart": 34785,
+        "closeEnd": 34791,
+        "textRuns": [[34756, 34766]],
+        "parentId": "e6d6f80b:261",
+        "childIds": ["e6d6f80b:263"]
+      },
+      {
+        "id": "e6d6f80b:263",
+        "tag": "span",
+        "openStart": 34766,
+        "attrEnd": 34771,
+        "openEnd": 34772,
+        "closeStart": 34778,
+        "closeEnd": 34785,
+        "textRuns": [[34772, 34778]],
+        "parentId": "e6d6f80b:262",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:264",
+        "tag": "p",
+        "openStart": 34800,
+        "attrEnd": 34802,
+        "openEnd": 34803,
+        "closeStart": 34972,
+        "closeEnd": 34976,
+        "textRuns": [[34803, 34972]],
+        "parentId": "e6d6f80b:261",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:265",
+        "tag": "div",
+        "openStart": 34996,
+        "attrEnd": 35019,
+        "openEnd": 35020,
+        "closeStart": 35177,
+        "closeEnd": 35183,
+        "textRuns": [],
+        "parentId": "e6d6f80b:260",
+        "childIds": [
+          "e6d6f80b:266",
+          "e6d6f80b:267",
+          "e6d6f80b:268",
+          "e6d6f80b:269",
+          "e6d6f80b:270"
+        ]
+      },
+      {
+        "id": "e6d6f80b:266",
+        "tag": "h5",
+        "openStart": 35020,
+        "attrEnd": 35023,
+        "openEnd": 35024,
+        "closeStart": 35038,
+        "closeEnd": 35043,
+        "textRuns": [[35024, 35038]],
+        "parentId": "e6d6f80b:265",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:267",
+        "tag": "a",
+        "openStart": 35043,
+        "attrEnd": 35054,
+        "openEnd": 35055,
+        "closeStart": 35077,
+        "closeEnd": 35081,
+        "textRuns": [[35055, 35077]],
+        "parentId": "e6d6f80b:265",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:268",
+        "tag": "a",
+        "openStart": 35081,
+        "attrEnd": 35092,
+        "openEnd": 35093,
+        "closeStart": 35119,
+        "closeEnd": 35123,
+        "textRuns": [[35093, 35119]],
+        "parentId": "e6d6f80b:265",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:269",
+        "tag": "a",
+        "openStart": 35123,
+        "attrEnd": 35134,
+        "openEnd": 35135,
+        "closeStart": 35147,
+        "closeEnd": 35151,
+        "textRuns": [[35135, 35147]],
+        "parentId": "e6d6f80b:265",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:270",
+        "tag": "a",
+        "openStart": 35151,
+        "attrEnd": 35162,
+        "openEnd": 35163,
+        "closeStart": 35173,
+        "closeEnd": 35177,
+        "textRuns": [[35163, 35173]],
+        "parentId": "e6d6f80b:265",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:271",
+        "tag": "div",
+        "openStart": 35190,
+        "attrEnd": 35213,
+        "openEnd": 35214,
+        "closeStart": 35329,
+        "closeEnd": 35335,
+        "textRuns": [],
+        "parentId": "e6d6f80b:260",
+        "childIds": [
+          "e6d6f80b:272",
+          "e6d6f80b:273",
+          "e6d6f80b:274",
+          "e6d6f80b:275"
+        ]
+      },
+      {
+        "id": "e6d6f80b:272",
+        "tag": "h5",
+        "openStart": 35214,
+        "attrEnd": 35217,
+        "openEnd": 35218,
+        "closeStart": 35228,
+        "closeEnd": 35233,
+        "textRuns": [[35218, 35228]],
+        "parentId": "e6d6f80b:271",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:273",
+        "tag": "a",
+        "openStart": 35233,
+        "attrEnd": 35244,
+        "openEnd": 35245,
+        "closeStart": 35258,
+        "closeEnd": 35262,
+        "textRuns": [[35245, 35258]],
+        "parentId": "e6d6f80b:271",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:274",
+        "tag": "a",
+        "openStart": 35262,
+        "attrEnd": 35273,
+        "openEnd": 35274,
+        "closeStart": 35299,
+        "closeEnd": 35303,
+        "textRuns": [[35274, 35299]],
+        "parentId": "e6d6f80b:271",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:275",
+        "tag": "a",
+        "openStart": 35303,
+        "attrEnd": 35314,
+        "openEnd": 35315,
+        "closeStart": 35325,
+        "closeEnd": 35329,
+        "textRuns": [[35315, 35325]],
+        "parentId": "e6d6f80b:271",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:276",
+        "tag": "div",
+        "openStart": 35342,
+        "attrEnd": 35365,
+        "openEnd": 35366,
+        "closeStart": 35502,
+        "closeEnd": 35508,
+        "textRuns": [],
+        "parentId": "e6d6f80b:260",
+        "childIds": [
+          "e6d6f80b:277",
+          "e6d6f80b:278",
+          "e6d6f80b:279",
+          "e6d6f80b:280",
+          "e6d6f80b:281"
+        ]
+      },
+      {
+        "id": "e6d6f80b:277",
+        "tag": "h5",
+        "openStart": 35366,
+        "attrEnd": 35369,
+        "openEnd": 35370,
+        "closeStart": 35378,
+        "closeEnd": 35383,
+        "textRuns": [[35370, 35378]],
+        "parentId": "e6d6f80b:276",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:278",
+        "tag": "a",
+        "openStart": 35383,
+        "attrEnd": 35394,
+        "openEnd": 35395,
+        "closeStart": 35412,
+        "closeEnd": 35416,
+        "textRuns": [[35395, 35412]],
+        "parentId": "e6d6f80b:276",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:279",
+        "tag": "a",
+        "openStart": 35416,
+        "attrEnd": 35427,
+        "openEnd": 35428,
+        "closeStart": 35438,
+        "closeEnd": 35442,
+        "textRuns": [[35428, 35438]],
+        "parentId": "e6d6f80b:276",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:280",
+        "tag": "a",
+        "openStart": 35442,
+        "attrEnd": 35453,
+        "openEnd": 35454,
+        "closeStart": 35468,
+        "closeEnd": 35472,
+        "textRuns": [[35454, 35468]],
+        "parentId": "e6d6f80b:276",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:281",
+        "tag": "a",
+        "openStart": 35472,
+        "attrEnd": 35483,
+        "openEnd": 35484,
+        "closeStart": 35498,
+        "closeEnd": 35502,
+        "textRuns": [[35484, 35498]],
+        "parentId": "e6d6f80b:276",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:282",
+        "tag": "div",
+        "openStart": 35524,
+        "attrEnd": 35548,
+        "openEnd": 35549,
+        "closeStart": 35729,
+        "closeEnd": 35735,
+        "textRuns": [
+          [35549, 35556],
+          [35635, 35642],
+          [35724, 35729]
+        ],
+        "parentId": "e6d6f80b:259",
+        "childIds": ["e6d6f80b:283", "e6d6f80b:284"]
+      },
+      {
+        "id": "e6d6f80b:283",
+        "tag": "span",
+        "openStart": 35556,
+        "attrEnd": 35561,
+        "openEnd": 35562,
+        "closeStart": 35628,
+        "closeEnd": 35635,
+        "textRuns": [[35562, 35628]],
+        "parentId": "e6d6f80b:282",
+        "childIds": []
+      },
+      {
+        "id": "e6d6f80b:284",
+        "tag": "span",
+        "openStart": 35642,
+        "attrEnd": 35647,
+        "openEnd": 35648,
+        "closeStart": 35717,
+        "closeEnd": 35724,
+        "textRuns": [[35648, 35717]],
+        "parentId": "e6d6f80b:282",
+        "childIds": []
+      }
+    ],
+    "literals": [
+      [35794, 35802],
+      [35844, 35849],
+      [35893, 35901],
+      [35937, 35943],
+      [35971, 35977],
+      [36064, 36082],
+      [36089, 36094],
+      [36138, 36148],
+      [36196, 36205],
+      [36248, 36252],
+      [36257, 36263],
+      [36268, 36272],
+      [36376, 36386],
+      [36394, 36398],
+      [36424, 36429],
+      [36434, 36438],
+      [36462, 36472],
+      [36509, 36518],
+      [36545, 36549],
+      [36554, 36560],
+      [36565, 36569],
+      [36596, 36614]
+    ]
+  }
+</script>

@@ -1,0 +1,2283 @@
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="light">
+  <head>
+    <style data-omelette-injected>
+      html,
+      body {
+        background: transparent;
+      }
+    </style>
+    <script data-omelette-injected>
+      (() => {
+        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var x = true;
+        var S = 30000;
+        var f = 3000;
+        document.addEventListener("DOMContentLoaded", () => {
+          const H = window.Babel;
+          const G = "om-src-id";
+          if (
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[G])
+          ) {
+            H.registerPlugin(G, ({ types: Y }) => ({
+              visitor: {
+                JSXOpeningElement(U, Q) {
+                  const J = U.node;
+                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  for (let V = 0; V < J.attributes.length; V++) {
+                    const L = J.attributes[V];
+                    if (
+                      L.type === "JSXAttribute" &&
+                      L.name &&
+                      L.name.name === "data-om-id"
+                    )
+                      return;
+                  }
+                  const W =
+                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const Z = J.loc && J.loc.start;
+                  const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
+                  J.attributes.push(
+                    Y.jsxAttribute(
+                      Y.jsxIdentifier("data-om-id"),
+                      Y.stringLiteral(z),
+                    ),
+                  );
+                },
+              },
+            }));
+          }
+          const k = "om-text-extract";
+          let A = false;
+          if (
+            x &&
+            H &&
+            H.registerPlugin &&
+            !(H.availablePlugins && H.availablePlugins[k])
+          ) {
+            const Y = window.React;
+            if (Y && Y.useSyncExternalStore && Y.createElement) {
+              A = true;
+              const U = {};
+              const Q = new Set();
+              let J = 0;
+              window.__omTextO = U;
+              window.__omTextSet = (z) => {
+                for (const V in z) {
+                  const L = z[V];
+                  if (L == null) delete U[V];
+                  else U[V] = L;
+                }
+                J++;
+                Q.forEach((V) => V());
+              };
+              const W = (z) => {
+                Q.add(z);
+                return () => Q.delete(z);
+              };
+              const Z = () => J;
+              window.__OmT = function z(V) {
+                Y.useSyncExternalStore(W, Z, Z);
+                return Y.createElement(
+                  "span",
+                  { "data-om-text": V.i, className: "__om-t" },
+                  V.i in U ? U[V.i] : V.children,
+                );
+              };
+              H.registerPlugin(k, ({ types: z }) => {
+                const V = {
+                  style: 1,
+                  script: 1,
+                  noscript: 1,
+                  textarea: 1,
+                  title: 1,
+                  option: 1,
+                  text: 1,
+                  tspan: 1,
+                  textPath: 1,
+                };
+                const L = {
+                  placeholder: 1,
+                  alt: 1,
+                  title: 1,
+                  label: 1,
+                  "aria-label": 1,
+                  "aria-description": 1,
+                  "aria-placeholder": 1,
+                };
+                const _ = ($, C) =>
+                  z.logicalExpression(
+                    "??",
+                    z.memberExpression(
+                      z.logicalExpression(
+                        "||",
+                        z.memberExpression(
+                          z.identifier("window"),
+                          z.identifier("__omTextO"),
+                        ),
+                        z.objectExpression([]),
+                      ),
+                      z.stringLiteral($),
+                      true,
+                    ),
+                    C,
+                  );
+                const E = ($) =>
+                  ($.file && $.file.opts && $.file.opts.filename) || "?";
+                const B = ($) => ($.file && $.file.code) || "";
+                const b = ($, C) => {
+                  const X = (F) =>
+                    F &&
+                    F.start != null &&
+                    F.end != null &&
+                    (F.type === "StringLiteral" ||
+                      (F.type === "TemplateLiteral" &&
+                        F.expressions.length === 0))
+                      ? [F.start, F.end]
+                      : null;
+                  const N = X(C);
+                  if (N) return N;
+                  if (C && C.type === "Identifier") {
+                    const F = $.scope.getBinding(C.name);
+                    if (
+                      F &&
+                      F.constant &&
+                      F.path.node.type === "VariableDeclarator"
+                    ) {
+                      return X(F.path.node.init);
+                    }
+                  }
+                  return null;
+                };
+                const M = ($, C, X) => {
+                  const N = $.node;
+                  let F = false;
+                  const w = (K, q) => {
+                    F = true;
+                    return z.jsxElement(
+                      z.jsxOpeningElement(
+                        z.jsxIdentifier("__OmT"),
+                        [
+                          z.jsxAttribute(
+                            z.jsxIdentifier("i"),
+                            z.stringLiteral(K),
+                          ),
+                        ],
+                        false,
+                      ),
+                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      [q],
+                      false,
+                    );
+                  };
+                  const D = N.children.map((K) => {
+                    if (K.type === "JSXText") {
+                      if (K.start == null || K.end == null) return K;
+                      const q = X.slice(K.start, K.end);
+                      const R = q.length - q.trimStart().length;
+                      const m = q.length - q.trimEnd().length;
+                      if (R + m >= q.length) return K;
+                      return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
+                    }
+                    if (K.type === "JSXExpressionContainer") {
+                      const q = b($, K.expression);
+                      if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
+                    }
+                    return K;
+                  });
+                  if (F) N.children = D;
+                };
+                return {
+                  visitor: {
+                    JSXOpeningElement($, C) {
+                      const X = $.node;
+                      const N = E(C);
+                      const F = {};
+                      for (let w = 0; w < X.attributes.length; w++) {
+                        const D = X.attributes[w];
+                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        const K = D.name.name;
+                        if (!L[K]) continue;
+                        if (!D.value || D.value.type !== "StringLiteral")
+                          continue;
+                        if (D.value.start == null || D.value.end == null)
+                          continue;
+                        const q = `txt:${N}:${D.value.start}:${D.value.end}`;
+                        F[K] = q;
+                        D.value = z.jsxExpressionContainer(
+                          _(q, z.stringLiteral(D.value.value)),
+                        );
+                      }
+                      if (Object.keys(F).length) {
+                        X.attributes.push(
+                          z.jsxAttribute(
+                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.stringLiteral(JSON.stringify(F)),
+                          ),
+                        );
+                      }
+                    },
+                    JSXElement($, C) {
+                      const X = $.node.openingElement;
+                      const N = X && X.name && X.name.name;
+                      if (N === "__OmT") return;
+                      if (typeof N === "string" && V[N]) return;
+                      M($, E(C), B(C));
+                    },
+                    JSXFragment($, C) {
+                      M($, E(C), B(C));
+                    },
+                  },
+                };
+              });
+            }
+          }
+          const u = A
+            ? ["transform-react-jsx-source", G, k]
+            : ["transform-react-jsx-source", G];
+          document
+            .querySelectorAll(
+              'script[type="text/babel"],script[type="text/jsx"]',
+            )
+            .forEach((Y, U) => {
+              const Q = Y.getAttribute("data-plugins") || "";
+              const J = u.filter((W) => Q.indexOf(W) < 0);
+              if (J.length) {
+                Y.setAttribute(
+                  "data-plugins",
+                  Q ? `${Q},${J.join(",")}` : J.join(","),
+                );
+              }
+              if (!Y.hasAttribute("data-filename")) {
+                Y.setAttribute(
+                  "data-filename",
+                  Y.getAttribute("src") || `inline-${U}`,
+                );
+              }
+            });
+        });
+        var y = window.parent;
+        if (y && y !== window) {
+          const H = (Q, J) => {
+            try {
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+            } catch {}
+          };
+          ["log", "warn", "error"].forEach((Q) => {
+            const J = console[Q];
+            console[Q] = (...W) => {
+              const Z = W.map((z) => {
+                try {
+                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                } catch {
+                  try {
+                    return String(z);
+                  } catch {
+                    return "[unstringifiable]";
+                  }
+                }
+              }).join(" ");
+              H(Q, Z);
+              J.apply(console, W);
+            };
+          });
+          window.addEventListener(
+            "error",
+            (Q) => {
+              const J = Q.target;
+              if (J && J !== window && J.tagName) {
+                const W = J.src || J.href || "";
+                H("resource_error", `${J.tagName} failed to load: ${W}`);
+              } else {
+                H(
+                  "error",
+                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                );
+              }
+            },
+            true,
+          );
+          window.addEventListener("unhandledrejection", (Q) => {
+            const J = Q.reason;
+            const W =
+              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H("error", `Unhandled rejection: ${W}`);
+          });
+          const G = () => {
+            try {
+              y.postMessage(
+                {
+                  type: "omelette:height",
+                  height: document.documentElement.scrollHeight,
+                },
+                "*",
+              );
+            } catch {}
+          };
+          if (document.readyState === "complete") G();
+          else window.addEventListener("load", G);
+          if (window.ResizeObserver)
+            new ResizeObserver(G).observe(document.documentElement);
+          const k = {};
+          let A = 0;
+          window.claude = {
+            complete(Q) {
+              return new Promise((J, W) => {
+                if (!j.length) {
+                  W(new Error("claude.complete: no parent origin"));
+                  return;
+                }
+                const Z = `c${++A}`;
+                const z = () =>
+                  setTimeout(() => {
+                    delete k[Z];
+                    W(new Error(`claude.complete: no data for ${S / 1000}s`));
+                  }, S);
+                const V = z();
+                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                try {
+                  for (const L of j) {
+                    y.postMessage({ __om_api: true, id: Z, body: Q }, L);
+                  }
+                } catch (L) {
+                  clearTimeout(V);
+                  delete k[Z];
+                  W(L);
+                }
+              });
+            },
+          };
+          const u = {};
+          let Y = 0;
+          window.omelette = {
+            writeFile: (Q, J) =>
+              new Promise((W, Z) => {
+                if (!j.length) {
+                  W();
+                  return;
+                }
+                const z = `f${++Y}`;
+                const V = setTimeout(() => {
+                  delete u[z];
+                  W();
+                }, f);
+                u[z] = { resolve: W, reject: Z, t: V };
+                try {
+                  for (const L of j) {
+                    y.postMessage(
+                      {
+                        __om_file: true,
+                        id: z,
+                        op: "write",
+                        path: Q,
+                        content: J,
+                      },
+                      L,
+                    );
+                  }
+                } catch {
+                  clearTimeout(V);
+                  delete u[z];
+                  W();
+                }
+              }),
+          };
+          const U = (Q) => {
+            try {
+              return JSON.stringify(Q);
+            } catch {
+              return JSON.stringify(String(Q));
+            }
+          };
+          window.addEventListener("message", (Q) => {
+            if (j.indexOf(Q.origin) < 0) return;
+            if (Q.source !== y) return;
+            const J = Q.data;
+            if (!J) return;
+            if (J.type === "omelette-preview-refresh") {
+              if (
+                typeof J.token !== "string" ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
+                  J.token,
+                )
+              )
+                return;
+              const z = Math.max(
+                1,
+                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
+              );
+              document.cookie =
+                "__Host-omelette-preview=" +
+                J.token +
+                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                z;
+              return;
+            }
+            if (J.__om_file_r) {
+              const z = u[J.id];
+              if (!z) return;
+              clearTimeout(z.t);
+              delete u[J.id];
+              if (J.ok) z.resolve();
+              else z.reject(new Error(J.error || "write failed"));
+              return;
+            }
+            if (J.__om_api_r) {
+              const z = k[J.id];
+              if (!z) return;
+              if (J.error != null) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.reject(new Error(J.error));
+                return;
+              }
+              if (J.chunk != null) {
+                clearTimeout(z.t);
+                z.t = z.arm();
+                z.text += J.chunk;
+                return;
+              }
+              if (J.done) {
+                clearTimeout(z.t);
+                delete k[J.id];
+                z.resolve(J.text != null ? J.text : z.text);
+                return;
+              }
+              return;
+            }
+            if (!J.__om_eval) return;
+            const W = J;
+            const Z = (z) => {
+              Q.source.postMessage(
+                { ...z, __om_eval_r: 1, id: W.id },
+                Q.origin,
+              );
+            };
+            try {
+              const z = (0, eval)(W.code);
+              if (z && typeof z.then === "function") {
+                z.then(
+                  (V) => Z({ ok: 1, v: U(V) }),
+                  (V) => Z({ ok: 0, e: String(V) }),
+                );
+              } else {
+                Z({ ok: 1, v: U(z) });
+              }
+            } catch (z) {
+              Z({ ok: 0, e: String(z) });
+            }
+          });
+        }
+      })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>کدیار — یادگیری برنامه‌نویسی حرفه‌ای</title>
+    <style>
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 400;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
+          format("woff2");
+      }
+      @font-face {
+        font-family: "IRANYekan";
+        font-weight: 700;
+        font-display: swap;
+        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
+          format("woff2");
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --blue: #3b82f6;
+        --blue-dark: #2563eb;
+        --blue-light: #eff6ff;
+        --green: #10b981;
+        --star: #f59e0b;
+        --red: #ef4444;
+      }
+
+      /* LIGHT */
+      [data-theme="light"] {
+        --bg: #fff;
+        --bg2: #f8fafc;
+        --bg3: #f1f5f9;
+        --surface: #fff;
+        --surface2: #f8fafc;
+        --text: #0f172a;
+        --text2: #334155;
+        --text3: #64748b;
+        --text4: #94a3b8;
+        --border: #e2e8f0;
+        --border2: #cbd5e1;
+        --nav-bg: rgba(255, 255, 255, 0.95);
+        --card-bg: #fff;
+        --card-bdr: #e2e8f0;
+        --tag-bg: #eff6ff;
+        --tag-fg: #2563eb;
+        --code-bg: #1e293b;
+        --pill-bg: #f1f5f9;
+        --pill-active: #0f172a;
+        --pill-active-fg: #fff;
+        --pass-bg: linear-gradient(
+          135deg,
+          #0f172a 0%,
+          #1e3a8a 50%,
+          #1d4ed8 100%
+        );
+      }
+
+      /* DARK */
+      [data-theme="dark"] {
+        --bg: #0f1117;
+        --bg2: #161b27;
+        --bg3: #1e2535;
+        --surface: #171e2f;
+        --surface2: #1e2535;
+        --text: #eef1f8;
+        --text2: #a8b2cc;
+        --text3: #64748b;
+        --text4: #475569;
+        --border: rgba(255, 255, 255, 0.08);
+        --border2: rgba(255, 255, 255, 0.14);
+        --nav-bg: rgba(15, 17, 23, 0.95);
+        --card-bg: #171e2f;
+        --card-bdr: rgba(255, 255, 255, 0.08);
+        --tag-bg: rgba(59, 130, 246, 0.14);
+        --tag-fg: #93c5fd;
+        --code-bg: #060d1a;
+        --pill-bg: #1e2535;
+        --pill-active: #3b82f6;
+        --pill-active-fg: #fff;
+        --pass-bg: linear-gradient(
+          135deg,
+          #06091a 0%,
+          #0f2050 50%,
+          #1a38a0 100%
+        );
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "IRANYekan", Tahoma, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.75;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+
+      /* NAV */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        height: 64px;
+        padding: 0 36px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background: var(--nav-bg);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        transition: background 0.3s;
+      }
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+      .nav-logo-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: monospace;
+        font-size: 14px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -1px;
+      }
+      .nav-logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .nav-links a {
+        font-size: 13.5px;
+        font-weight: 500;
+        color: var(--text3);
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition:
+          background 0.15s,
+          color 0.15s;
+      }
+      .nav-links a:hover {
+        background: var(--bg3);
+        color: var(--text);
+      }
+      .nav-search {
+        flex: 1;
+        max-width: 280px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg3);
+        border: 1.5px solid var(--border2);
+        border-radius: 10px;
+        padding: 0 13px;
+        height: 38px;
+        transition: border-color 0.2s;
+      }
+      .nav-search:focus-within {
+        border-color: var(--blue);
+      }
+      .nav-search input {
+        flex: 1;
+        font-family: inherit;
+        font-size: 13.5px;
+        color: var(--text);
+        background: none;
+        border: none;
+        outline: none;
+      }
+      .nav-search input::placeholder {
+        color: var(--text4);
+      }
+      .nav-end {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: auto;
+        flex-shrink: 0;
+      }
+      .theme-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: var(--bg3);
+        border: 1px solid var(--border2);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+        transition: background 0.2s;
+        color: var(--text);
+      }
+      .theme-btn:hover {
+        background: var(--bg2);
+      }
+      .btn-ghost-nav {
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text3);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition:
+          color 0.15s,
+          background 0.15s;
+      }
+      .btn-ghost-nav:hover {
+        color: var(--text);
+        background: var(--bg3);
+      }
+      .btn-nav-cta {
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--blue);
+        border: none;
+        cursor: pointer;
+        padding: 9px 20px;
+        border-radius: 9px;
+        transition:
+          background 0.15s,
+          transform 0.15s;
+      }
+      .btn-nav-cta:hover {
+        background: var(--blue-dark);
+        transform: translateY(-1px);
+      }
+
+      /* HERO */
+      .hero {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 80px 36px 72px;
+        display: grid;
+        grid-template-columns: 1fr 460px;
+        gap: 60px;
+        align-items: center;
+      }
+      .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--tag-bg);
+        color: var(--tag-fg);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 5px 14px;
+        margin-bottom: 22px;
+        letter-spacing: 0.04em;
+      }
+      .hero-pill-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.8;
+        animation: dot 2s infinite;
+      }
+      @keyframes dot {
+        0%,
+        100% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.25;
+        }
+      }
+      .hero h1 {
+        font-size: clamp(36px, 4vw, 56px);
+        font-weight: 700;
+        line-height: 1.18;
+        color: var(--text);
+        margin-bottom: 18px;
+        letter-spacing: -0.02em;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--blue);
+      }
+      .hero p {
+        font-size: 16px;
+        color: var(--text2);
+        line-height: 1.85;
+        max-width: 450px;
+        margin-bottom: 34px;
+      }
+      .hero-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 44px;
+      }
+      .btn-hero-p {
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--blue);
+        border: none;
+        cursor: pointer;
+        padding: 14px 28px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition:
+          background 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-hero-p:hover {
+        background: var(--blue-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(59, 130, 246, 0.35);
+      }
+      .btn-hero-s {
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text);
+        background: var(--bg3);
+        border: 1.5px solid var(--border2);
+        cursor: pointer;
+        padding: 13px 26px;
+        border-radius: 10px;
+        transition:
+          border-color 0.15s,
+          color 0.15s;
+      }
+      .btn-hero-s:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+      .hero-trust {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .trust-avs {
+        display: flex;
+      }
+      .trust-av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 2.5px solid var(--bg);
+        margin-right: -9px;
+        overflow: hidden;
+      }
+      .trust-av:first-child {
+        margin-right: 0;
+      }
+      .trust-av img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .trust-label {
+        font-size: 13px;
+        color: var(--text3);
+      }
+      .trust-label strong {
+        color: var(--text);
+        font-weight: 700;
+        display: block;
+      }
+      .trust-stars {
+        color: var(--star);
+        font-size: 13px;
+      }
+      .hero-sep {
+        width: 1px;
+        height: 28px;
+        background: var(--border);
+      }
+
+      /* Hero visual */
+      .hero-vis {
+        position: relative;
+        padding-bottom: 32px;
+      }
+      .hero-main-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-bdr);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 24px 72px rgba(0, 0, 0, 0.15);
+        transition:
+          background 0.3s,
+          border-color 0.3s;
+      }
+      .hero-main-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+      }
+      .hero-main-card-body {
+        padding: 18px 20px 20px;
+      }
+      .hmc-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .hmc-meta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .hmc-tag {
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--tag-bg);
+        color: var(--tag-fg);
+        padding: 3px 10px;
+        border-radius: 6px;
+      }
+      .hmc-dur {
+        font-size: 12px;
+        color: var(--text3);
+      }
+      .hmc-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .hmc-price {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .hmc-rating {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: var(--text3);
+      }
+      .hmc-stars {
+        color: var(--star);
+      }
+      .hmc-enroll {
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--blue);
+        border: none;
+        cursor: pointer;
+        padding: 9px 18px;
+        border-radius: 8px;
+      }
+
+      /* floating cards */
+      .hero-float {
+        position: absolute;
+        bottom: -10px;
+        left: -20px;
+        background: var(--surface);
+        border: 1px solid var(--card-bdr);
+        border-radius: 12px;
+        padding: 12px 16px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+        transition:
+          background 0.3s,
+          border-color 0.3s;
+      }
+      .hero-float-icon {
+        font-size: 22px;
+      }
+      .hero-float-label {
+        font-size: 11px;
+        color: var(--text3);
+      }
+      .hero-float-val {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .hero-float2 {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--green);
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+        font-size: 13px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+      .f2-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.7);
+        animation: dot 2s infinite;
+      }
+
+      /* TOPICS */
+      .topics-bar {
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg2);
+      }
+      .topics-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 36px;
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .topics-inner::-webkit-scrollbar {
+        display: none;
+      }
+      .t-tab {
+        flex-shrink: 0;
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text3);
+        background: none;
+        border: none;
+        border-bottom: 2.5px solid transparent;
+        padding: 16px 18px;
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .t-tab:hover {
+        color: var(--text);
+      }
+      .t-tab.active {
+        color: var(--blue);
+        border-bottom-color: var(--blue);
+      }
+
+      /* COURSES */
+      .courses-sec {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 72px 36px;
+      }
+      .sec-hdr {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .sec-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--blue);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .sec-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .see-all {
+        font-family: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--blue);
+        background: none;
+        border: none;
+        cursor: pointer;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .see-all:hover {
+        text-decoration: underline;
+      }
+      .course-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+      }
+
+      .c-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-bdr);
+        border-radius: 14px;
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s,
+          border-color 0.2s;
+      }
+      .c-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+        border-color: var(--border2);
+      }
+      .c-thumb {
+        height: 168px;
+        overflow: hidden;
+        position: relative;
+      }
+      .c-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s;
+        display: block;
+      }
+      .c-card:hover .c-thumb img {
+        transform: scale(1.06);
+      }
+      .c-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.55) 0%,
+          transparent 55%
+        );
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 10px 12px;
+      }
+      .c-dur {
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 4px 9px;
+        border-radius: 100px;
+        backdrop-filter: blur(6px);
+      }
+      .c-lvl {
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 4px 9px;
+        border-radius: 100px;
+      }
+      .lvl-bg {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .lvl-im {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .lvl-adv {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      [data-theme="dark"] .lvl-bg {
+        background: #064e3b;
+        color: #6ee7b7;
+      }
+      [data-theme="dark"] .lvl-im {
+        background: #451a03;
+        color: #fcd34d;
+      }
+      [data-theme="dark"] .lvl-adv {
+        background: #450a0a;
+        color: #fca5a5;
+      }
+
+      .c-body {
+        padding: 16px 18px 18px;
+      }
+      .c-topic {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--tag-bg);
+        color: var(--tag-fg);
+        padding: 3px 10px;
+        border-radius: 100px;
+        margin-bottom: 10px;
+      }
+      .c-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 5px;
+        line-height: 1.45;
+      }
+      .c-inst {
+        font-size: 12px;
+        color: var(--text3);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .c-inst img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .c-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+      .c-rating {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .c-stars {
+        color: var(--star);
+        font-size: 12px;
+      }
+      .c-cnt {
+        font-size: 11.5px;
+        color: var(--text4);
+        font-weight: 400;
+      }
+      .c-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--blue);
+      }
+      .c-badge-new {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        background: #d1fae5;
+        color: #065f46;
+        padding: 2px 8px;
+        border-radius: 100px;
+      }
+      .c-badge-hot {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        background: #fef3c7;
+        color: #92400e;
+        padding: 2px 8px;
+        border-radius: 100px;
+      }
+      [data-theme="dark"] .c-badge-new {
+        background: #064e3b;
+        color: #6ee7b7;
+      }
+      [data-theme="dark"] .c-badge-hot {
+        background: #451a03;
+        color: #fcd34d;
+      }
+
+      /* STATS */
+      .stats-bar {
+        background: var(--blue);
+        padding: 0;
+      }
+      .stats-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        border-inline-end: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .s-item {
+        padding: 40px 24px;
+        text-align: center;
+        border-inline-start: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .s-num {
+        font-size: 36px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+      }
+      .s-lbl {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.65);
+        margin-top: 6px;
+      }
+
+      /* INSTRUCTOR */
+      .inst-sec {
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        padding: 80px 36px;
+      }
+      .inst-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 64px;
+        align-items: center;
+      }
+      .inst-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--blue);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 14px;
+      }
+      .inst-title {
+        font-size: 34px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.25;
+        margin-bottom: 16px;
+      }
+      .inst-desc {
+        font-size: 16px;
+        color: var(--text2);
+        line-height: 1.85;
+        margin-bottom: 28px;
+      }
+      .inst-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+      .inst-stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px 18px;
+      }
+      .inst-stat-num {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--blue);
+        margin-bottom: 4px;
+      }
+      .inst-stat-lbl {
+        font-size: 12px;
+        color: var(--text3);
+      }
+      .btn-inst {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--blue);
+        border: none;
+        cursor: pointer;
+        padding: 13px 26px;
+        border-radius: 10px;
+        transition: background 0.15s;
+      }
+      .btn-inst:hover {
+        background: var(--blue-dark);
+      }
+      .inst-photo {
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--border);
+      }
+      .inst-photo img {
+        width: 100%;
+        aspect-ratio: 3/4;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* PASS (membership) */
+      .pass-sec {
+        background: var(--pass-bg);
+        padding: 80px 36px;
+      }
+      .pass-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 60px;
+        align-items: center;
+      }
+      .pass-tag {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 14px;
+      }
+      .pass-title {
+        font-size: 38px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1.2;
+        margin-bottom: 16px;
+      }
+      .pass-title em {
+        font-style: normal;
+        color: #60a5fa;
+      }
+      .pass-desc {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.85;
+        margin-bottom: 28px;
+      }
+      .pass-feats {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 36px;
+      }
+      .pass-feat {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .pass-feat-check {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(99, 216, 130, 0.2);
+        color: #4ade80;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+      .btn-pass {
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+        background: #fff;
+        border: none;
+        cursor: pointer;
+        padding: 14px 30px;
+        border-radius: 10px;
+        transition: transform 0.15s;
+      }
+      .btn-pass:hover {
+        transform: translateY(-2px);
+      }
+      .pass-card {
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 28px;
+        color: #fff;
+      }
+      .pass-card-price {
+        font-size: 48px;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+      }
+      .pass-card-period {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 24px;
+      }
+      .pass-card-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 28px;
+      }
+      .pass-card-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .pass-card-item::before {
+        content: "✓";
+        color: #4ade80;
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .btn-pass-card {
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        background: var(--blue);
+        border: none;
+        cursor: pointer;
+        padding: 13px 24px;
+        border-radius: 10px;
+        width: 100%;
+        transition: background 0.15s;
+      }
+      .btn-pass-card:hover {
+        background: var(--blue-dark);
+      }
+      .pass-guarantee {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        text-align: center;
+        margin-top: 12px;
+      }
+
+      /* TESTIMONIALS */
+      .testi-sec {
+        padding: 80px 36px;
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+      .testi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .testi-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-bdr);
+        border-radius: 14px;
+        padding: 24px;
+        transition:
+          background 0.3s,
+          border-color 0.3s;
+      }
+      .testi-quote {
+        font-size: 14px;
+        color: var(--text2);
+        line-height: 1.8;
+        margin-bottom: 18px;
+      }
+      .testi-footer {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .testi-av {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .testi-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .testi-role {
+        font-size: 12px;
+        color: var(--text3);
+      }
+      .testi-stars {
+        color: var(--star);
+        font-size: 12px;
+        margin-bottom: 12px;
+      }
+
+      /* FOOTER */
+      footer {
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        padding: 64px 36px 36px;
+      }
+      .footer-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+      .footer-top {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 48px;
+      }
+      .footer-brand {
+        max-width: 280px;
+      }
+      .footer-logo {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 16px;
+      }
+      .footer-desc {
+        font-size: 14px;
+        color: var(--text3);
+        line-height: 1.8;
+        margin-bottom: 20px;
+      }
+      .footer-social {
+        display: flex;
+        gap: 10px;
+      }
+      .soc-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .soc-btn:hover {
+        background: var(--border);
+      }
+      .footer-col h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .footer-col a {
+        display: block;
+        font-size: 13.5px;
+        color: var(--text3);
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: color 0.15s;
+      }
+      .footer-col a:hover {
+        color: var(--text);
+      }
+      .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-copy {
+        font-size: 13px;
+        color: var(--text3);
+      }
+      .footer-copy a {
+        color: var(--blue);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a class="nav-logo" href="#">
+        <div class="nav-logo-icon">&lt;/&gt;</div>
+        <span class="nav-logo-text">کدیار</span>
+      </a>
+      <div class="nav-links">
+        <a href="#">دوره‌ها</a>
+        <a href="#">مسیرهای یادگیری</a>
+        <a href="#">مدرسان</a>
+        <a href="#">اشتراک</a>
+        <a href="#">درباره ما</a>
+      </div>
+      <div class="nav-search">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          style="color: var(--text3)"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" placeholder="جستجوی دوره یا موضوع..." />
+      </div>
+      <div class="nav-end">
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+          🌙
+        </button>
+        <button class="btn-ghost-nav">ورود</button>
+        <button class="btn-nav-cta">شروع رایگان</button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <div class="hero-pill">
+          <span class="hero-pill-dot"></span> بیش از ۵۰۰ دوره تخصصی
+        </div>
+        <h1>
+          برنامه‌نویسی را از<br />
+          <em>متخصص‌های واقعی</em><br />
+          یاد بگیر
+        </h1>
+        <p>
+          دوره‌های جامع و پروژه‌محور برای توسعه‌دهندگان جدی. از مبتدی تا
+          حرفه‌ای، مسیر یادگیری خود را انتخاب کن.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-hero-p">شروع یادگیری ←</button>
+          <button class="btn-hero-s">مشاهده دوره‌ها</button>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-avs">
+            <div class="trust-av">
+              <img src="https://i.pravatar.cc/64?img=1" alt="" />
+            </div>
+            <div class="trust-av">
+              <img src="https://i.pravatar.cc/64?img=5" alt="" />
+            </div>
+            <div class="trust-av">
+              <img src="https://i.pravatar.cc/64?img=9" alt="" />
+            </div>
+            <div class="trust-av">
+              <img src="https://i.pravatar.cc/64?img=12" alt="" />
+            </div>
+          </div>
+          <div>
+            <div class="trust-stars">★★★★★</div>
+            <div class="trust-label">
+              <strong>+۱۲۰,۰۰۰ دانش‌آموز</strong> از سراسر ایران
+            </div>
+          </div>
+          <div class="hero-sep"></div>
+          <div class="trust-label">
+            <strong>۴.۸ / ۵</strong>
+            میانگین امتیاز دوره‌ها
+          </div>
+        </div>
+      </div>
+      <div class="hero-vis">
+        <div class="hero-float2">
+          <span class="f2-dot"></span> هم‌اکنون ۲۳۴ نفر در حال یادگیری
+        </div>
+        <div class="hero-main-card">
+          <img
+            src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&q=80"
+            alt="JavaScript Course"
+          />
+          <div class="hero-main-card-body">
+            <div class="hmc-meta">
+              <div class="hmc-tag">JavaScript</div>
+              <div class="hmc-dur">⏱ ۴۸ ساعت آموزش</div>
+            </div>
+            <div class="hmc-title">
+              JavaScript: از صفر تا مسلط — دوره جامع ۲۰۲۴
+            </div>
+            <div class="hmc-footer">
+              <div class="hmc-price">۱,۲۰۰,۰۰۰ تومان</div>
+              <div class="hmc-rating">
+                <span class="hmc-stars">★★★★★</span> ۴.۹ (۳,۲۴۱)
+              </div>
+              <button class="hmc-enroll">ثبت‌نام</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-float">
+          <div class="hero-float-icon">🏆</div>
+          <div>
+            <div class="hero-float-label">دوره پرفروش</div>
+            <div class="hero-float-val">React Advanced Patterns</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOPICS -->
+    <div class="topics-bar">
+      <div class="topics-inner">
+        <button class="t-tab active">همه دوره‌ها</button>
+        <button class="t-tab">JavaScript</button>
+        <button class="t-tab">Python</button>
+        <button class="t-tab">React & Next.js</button>
+        <button class="t-tab">Node.js</button>
+        <button class="t-tab">Docker & DevOps</button>
+        <button class="t-tab">پایگاه‌داده</button>
+        <button class="t-tab">هوش مصنوعی</button>
+        <button class="t-tab">امنیت</button>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <section class="courses-sec">
+      <div class="sec-hdr">
+        <div>
+          <div class="sec-tag">پرطرفدارترین دوره‌ها</div>
+          <div class="sec-title">با بهترین دوره‌ها یادگیری را شروع کن</div>
+        </div>
+        <button class="see-all">مشاهده همه ←</button>
+      </div>
+      <div class="course-grid">
+        <!-- Card 1 -->
+        <div class="c-card">
+          <div class="c-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&q=80"
+              alt="Python"
+            />
+            <div class="c-overlay">
+              <div class="c-dur">⏱ ۳۲ ساعت</div>
+              <div class="c-lvl lvl-bg">مبتدی</div>
+            </div>
+          </div>
+          <div class="c-body">
+            <div class="c-topic">🐍 Python</div>
+            <div class="c-title">Python برای همه — از صفر تا ساخت پروژه</div>
+            <div class="c-inst">
+              <img src="https://i.pravatar.cc/40?img=3" alt="" /> علی محمدی
+            </div>
+            <div class="c-foot">
+              <div class="c-rating">
+                <span class="c-stars">★★★★★</span> ۴.۸
+                <span class="c-cnt">(۲,۱۰۴)</span>
+              </div>
+              <div><span class="c-badge-new">جدید</span></div>
+              <div class="c-price">۸۵۰,۰۰۰ ت</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="c-card">
+          <div class="c-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&q=80"
+              alt="React"
+            />
+            <div class="c-overlay">
+              <div class="c-dur">⏱ ۵۵ ساعت</div>
+              <div class="c-lvl lvl-im">متوسط</div>
+            </div>
+          </div>
+          <div class="c-body">
+            <div class="c-topic">⚛️ React</div>
+            <div class="c-title">
+              React 18 + Next.js 14 — دوره کامل و پروژه‌محور
+            </div>
+            <div class="c-inst">
+              <img src="https://i.pravatar.cc/40?img=7" alt="" /> سارا احمدی
+            </div>
+            <div class="c-foot">
+              <div class="c-rating">
+                <span class="c-stars">★★★★★</span> ۴.۹
+                <span class="c-cnt">(۵,۷۲۳)</span>
+              </div>
+              <div><span class="c-badge-hot">پرفروش</span></div>
+              <div class="c-price">۱,۴۰۰,۰۰۰ ت</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="c-card">
+          <div class="c-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?w=600&q=80"
+              alt="Node.js"
+            />
+            <div class="c-overlay">
+              <div class="c-dur">⏱ ۴۲ ساعت</div>
+              <div class="c-lvl lvl-im">متوسط</div>
+            </div>
+          </div>
+          <div class="c-body">
+            <div class="c-topic">🟢 Node.js</div>
+            <div class="c-title">
+              Node.js و Express — ساخت API و سرویس‌های حرفه‌ای
+            </div>
+            <div class="c-inst">
+              <img src="https://i.pravatar.cc/40?img=11" alt="" /> رضا کریمی
+            </div>
+            <div class="c-foot">
+              <div class="c-rating">
+                <span class="c-stars">★★★★☆</span> ۴.۷
+                <span class="c-cnt">(۱,۸۳۶)</span>
+              </div>
+              <div></div>
+              <div class="c-price">۱,۱۵۰,۰۰۰ ت</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="c-card">
+          <div class="c-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=600&q=80"
+              alt="Docker"
+            />
+            <div class="c-overlay">
+              <div class="c-dur">⏱ ۲۸ ساعت</div>
+              <div class="c-lvl lvl-adv">پیشرفته</div>
+            </div>
+          </div>
+          <div class="c-body">
+            <div class="c-topic">🐋 Docker</div>
+            <div class="c-title">
+              Docker و Kubernetes — استقرار حرفه‌ای اپلیکیشن
+            </div>
+            <div class="c-inst">
+              <img src="https://i.pravatar.cc/40?img=14" alt="" /> مهسا صادقی
+            </div>
+            <div class="c-foot">
+              <div class="c-rating">
+                <span class="c-stars">★★★★★</span> ۴.۸
+                <span class="c-cnt">(۹۴۱)</span>
+              </div>
+              <div><span class="c-badge-new">جدید</span></div>
+              <div class="c-price">۱,۳۵۰,۰۰۰ ت</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="c-card">
+          <div class="c-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&q=80"
+              alt="AI"
+            />
+            <div class="c-overlay">
+              <div class="c-dur">⏱ ۳۸ ساعت</div>
+              <div class="c-lvl lvl-im">متوسط</div>
+            </div>
+          </div>
+          <div class="c-body">
+            <div class="c-topic">🤖 هوش مصنوعی</div>
+            <div class="c-title">
+              Machine Learning با Python — عملی و پروژه‌محور
+            </div>
+            <div class="c-inst">
+              <img src="https://i.pravatar.cc/40?img=18" alt="" /> کاوه ناصری
+            </div>
+            <div class="c-foot">
+              <div class="c-rating">
+                <span class="c-stars">★★★★★</span> ۴.۹
+                <span class="c-cnt">(۳,۴۰۱)</span>
+              </div>
+              <div><span class="c-badge-hot">پرفروش</span></div>
+              <div class="c-price">۱,۶۰۰,۰۰۰ ت</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="c-card">
+          <div class="c-thumb">
+            <img
+              src="https://images.unsplash.com/photo-1544256718-3bcf237f3974?w=600&q=80"
+              alt="SQL"
+            />
+            <div class="c-overlay">
+              <div class="c-dur">⏱ ۲۴ ساعت</div>
+              <div class="c-lvl lvl-bg">مبتدی</div>
+            </div>
+          </div>
+          <div class="c-body">
+            <div class="c-topic">🗄️ پایگاه‌داده</div>
+            <div class="c-title">SQL و PostgreSQL — از صفر تا مدیریت پروژه</div>
+            <div class="c-inst">
+              <img src="https://i.pravatar.cc/40?img=21" alt="" /> نیلوفر رستمی
+            </div>
+            <div class="c-foot">
+              <div class="c-rating">
+                <span class="c-stars">★★★★☆</span> ۴.۶
+                <span class="c-cnt">(۷۶۸)</span>
+              </div>
+              <div></div>
+              <div class="c-price">۷۵۰,۰۰۰ ت</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stats-inner">
+        <div class="s-item">
+          <div class="s-num">۵۰۰+</div>
+          <div class="s-lbl">دوره تخصصی</div>
+        </div>
+        <div class="s-item">
+          <div class="s-num">۱۲۰K</div>
+          <div class="s-lbl">دانش‌آموز فعال</div>
+        </div>
+        <div class="s-item">
+          <div class="s-num">۸۵</div>
+          <div class="s-lbl">مدرس حرفه‌ای</div>
+        </div>
+        <div class="s-item">
+          <div class="s-num">۴.۸★</div>
+          <div class="s-lbl">میانگین امتیاز</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTRUCTOR -->
+    <section class="inst-sec">
+      <div class="inst-inner">
+        <div>
+          <div class="inst-tag">مدرسان برتر</div>
+          <div class="inst-title">از متخصصان واقعی صنعت یاد بگیر</div>
+          <div class="inst-desc">
+            مدرسان ما حرفه‌ای‌های فعال در شرکت‌های بزرگ هستند که تجربه عملی را
+            با آموزش ساده ترکیب کرده‌اند.
+          </div>
+          <div class="inst-stats">
+            <div class="inst-stat">
+              <div class="inst-stat-num">۸+ سال</div>
+              <div class="inst-stat-lbl">میانگین سابقه کاری</div>
+            </div>
+            <div class="inst-stat">
+              <div class="inst-stat-num">۹۴٪</div>
+              <div class="inst-stat-lbl">نرخ رضایت دانش‌آموزان</div>
+            </div>
+            <div class="inst-stat">
+              <div class="inst-stat-num">۸۵ نفر</div>
+              <div class="inst-stat-lbl">مدرس فعال</div>
+            </div>
+            <div class="inst-stat">
+              <div class="inst-stat-num">۲۴/۷</div>
+              <div class="inst-stat-lbl">پشتیبانی آنلاین</div>
+            </div>
+          </div>
+          <button class="btn-inst">مشاهده همه مدرسان ←</button>
+        </div>
+        <div class="inst-photo">
+          <img
+            src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=400&q=80"
+            alt="Instructor"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- PASS / MEMBERSHIP -->
+    <section class="pass-sec">
+      <div class="pass-inner">
+        <div>
+          <div class="pass-tag">اشتراک ویژه</div>
+          <div class="pass-title">
+            دسترسی نامحدود به<br /><em>تمام دوره‌ها</em>
+          </div>
+          <div class="pass-desc">
+            با یک اشتراک مقرون‌به‌صرفه، به تمام ۵۰۰+ دوره دسترسی داشته باشید و
+            با سرعت دلخواه یاد بگیرید.
+          </div>
+          <div class="pass-feats">
+            <div class="pass-feat">
+              <div class="pass-feat-check">✓</div>
+              دسترسی به تمام دوره‌های موجود و آینده
+            </div>
+            <div class="pass-feat">
+              <div class="pass-feat-check">✓</div>
+              دانلود ویدیوها برای مشاهده آفلاین
+            </div>
+            <div class="pass-feat">
+              <div class="pass-feat-check">✓</div>
+              پشتیبانی ۲۴ ساعته و انجمن اختصاصی
+            </div>
+            <div class="pass-feat">
+              <div class="pass-feat-check">✓</div>
+              گواهینامه معتبر پس از اتمام دوره
+            </div>
+          </div>
+          <button class="btn-pass">همین امروز شروع کن</button>
+        </div>
+        <div class="pass-card">
+          <div class="pass-card-price">۱۸۰,۰۰۰</div>
+          <div class="pass-card-period">تومان / ماهانه</div>
+          <div class="pass-card-items">
+            <div class="pass-card-item">دسترسی کامل به ۵۰۰+ دوره</div>
+            <div class="pass-card-item">گواهینامه رسمی برای هر دوره</div>
+            <div class="pass-card-item">پروژه‌های عملی و مربی اختصاصی</div>
+            <div class="pass-card-item">انجمن اختصاصی و کدریویو</div>
+            <div class="pass-card-item">بدون تبلیغات</div>
+          </div>
+          <button class="btn-pass-card">شروع رایگان ۷ روزه</button>
+          <div class="pass-guarantee">
+            بدون نیاز به کارت بانکی • لغو هر زمان
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testi-sec">
+      <div class="sec-hdr" style="margin-bottom: 36px">
+        <div>
+          <div class="sec-tag">نظرات دانش‌آموزان</div>
+          <div class="sec-title">آنچه هم‌دوره‌ای‌ها می‌گویند</div>
+        </div>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">
+            «دوره JavaScript کدیار کامل‌ترین چیزی بود که دیدم. پس از اتمام دوره
+            توانستم اولین کارم را پیدا کنم. روش تدریس عالی و مثال‌ها کاملاً
+            کاربردی بود.»
+          </div>
+          <div class="testi-footer">
+            <img
+              class="testi-av"
+              src="https://i.pravatar.cc/80?img=25"
+              alt=""
+            />
+            <div>
+              <div class="testi-name">امیرحسین رضایی</div>
+              <div class="testi-role">Front-end Developer</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">
+            «پس از سال‌ها جستجو برای یک منبع آموزشی فارسی با کیفیت، بالاخره
+            کدیار را پیدا کردم. دوره Docker را که تمام کردم، کاملاً اعتماد به
+            نفس داشتم.»
+          </div>
+          <div class="testi-footer">
+            <img
+              class="testi-av"
+              src="https://i.pravatar.cc/80?img=30"
+              alt=""
+            />
+            <div>
+              <div class="testi-name">زهرا موسوی</div>
+              <div class="testi-role">DevOps Engineer</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">★★★★★</div>
+          <div class="testi-quote">
+            «اشتراک ماهانه کدیار بهترین سرمایه‌گذاری شغلی‌ام بود. توی یک سال سه
+            دوره کامل کردم و حقوقم دو برابر شد.»
+          </div>
+          <div class="testi-footer">
+            <img
+              class="testi-av"
+              src="https://i.pravatar.cc/80?img=35"
+              alt=""
+            />
+            <div>
+              <div class="testi-name">محمد طاهری</div>
+              <div class="testi-role">Full-stack Developer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <div
+                class="nav-logo-icon"
+                style="width: 30px; height: 30px; font-size: 13px"
+              >
+                &lt;/&gt;
+              </div>
+              <span
+                style="font-size: 18px; font-weight: 700; color: var(--text)"
+                >کدیار</span
+              >
+            </div>
+            <div class="footer-desc">
+              بهترین پلتفرم آموزش برنامه‌نویسی به زبان فارسی. دوره‌های جامع،
+              مدرسان حرفه‌ای، گواهینامه معتبر.
+            </div>
+            <div class="footer-social">
+              <div class="soc-btn">📸</div>
+              <div class="soc-btn">💼</div>
+              <div class="soc-btn">🐦</div>
+              <div class="soc-btn">📺</div>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>دوره‌ها</h4>
+            <a href="#">JavaScript</a>
+            <a href="#">Python</a>
+            <a href="#">React</a>
+            <a href="#">Node.js</a>
+            <a href="#">Docker</a>
+          </div>
+          <div class="footer-col">
+            <h4>شرکت</h4>
+            <a href="#">درباره ما</a>
+            <a href="#">مدرسان</a>
+            <a href="#">وبلاگ</a>
+            <a href="#">شغل</a>
+            <a href="#">تماس</a>
+          </div>
+          <div class="footer-col">
+            <h4>پشتیبانی</h4>
+            <a href="#">سوالات متداول</a>
+            <a href="#">تیکت پشتیبانی</a>
+            <a href="#">سیاست حریم خصوصی</a>
+            <a href="#">شرایط استفاده</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div class="footer-copy">
+            © ۱۴۰۳ کدیار — ساخته شده با ❤️ برای جامعه توسعه‌دهندگان ایران
+          </div>
+          <div class="footer-copy">طراحی توسط <a href="#">منتوریار</a></div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Tab switching
+      document.querySelectorAll(".t-tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".t-tab")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      // Theme toggle
+      function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute("data-theme") === "dark";
+        html.setAttribute("data-theme", isDark ? "light" : "dark");
+        document.getElementById("themeBtn").textContent = isDark ? "🌙" : "☀️";
+        localStorage.setItem("codyar-theme", isDark ? "light" : "dark");
+      }
+
+      // Restore theme
+      const saved = localStorage.getItem("codyar-theme");
+      if (saved) {
+        document.documentElement.setAttribute("data-theme", saved);
+        document.getElementById("themeBtn").textContent =
+          saved === "dark" ? "☀️" : "🌙";
+      }
+    </script>
+  </body>
+</html>
