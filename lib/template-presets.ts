@@ -136,6 +136,23 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
       },
     ],
   },
+  creative: {
+    id: 'creative',
+    name: 'استودیوی خلاق',
+    description: 'قالب استودیوی خلاق با طراحی سبز و حالت تاریک برای جامعه‌های هنری',
+    blocks: [
+      { id: 'header', type: 'header', order: 0, isVisible: true, config: { sticky: true, showNavigation: true, style: 'creative' } },
+      { id: 'hero', type: 'hero', order: 1, isVisible: true, config: { style: 'creative' } },
+      { id: 'categories', type: 'categories', order: 2, isVisible: true, config: {} },
+      { id: 'courses', type: 'course-grid', order: 3, isVisible: true, config: { style: 'creative' } },
+      { id: 'projects', type: 'projects', order: 4, isVisible: true, config: {} },
+      { id: 'pillars', type: 'features', order: 5, isVisible: true, config: { style: 'creative-pillars' } },
+      { id: 'teachers', type: 'features', order: 6, isVisible: true, config: { style: 'creative-teachers' } },
+      { id: 'testimonials', type: 'testimonials', order: 7, isVisible: true, config: { style: 'creative' } },
+      { id: 'cta', type: 'cta', order: 8, isVisible: true, config: { style: 'creative' } },
+      { id: 'footer', type: 'footer', order: 9, isVisible: true, config: { style: 'creative' } },
+    ],
+  },
 };
 
 export function getTemplatePreset(presetId: string): TemplatePresetInfo | null {

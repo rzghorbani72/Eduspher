@@ -15,14 +15,16 @@ interface FeaturesBlockProps {
     gridColumns?: number;
     showIcons?: boolean;
     variant?: "cards" | "list" | "icons";
-    style?: "default" | "stats" | "dark" | "benefits" | "studio" | "creator" | "instructors" | "flow-cards" | "flow-stats";
+    style?: "default" | "stats" | "dark" | "benefits" | "studio" | "creator" | "instructors" | "flow-cards" | "flow-stats" | "creative-pillars" | "creative-teachers";
     dark?: boolean;
     showStats?: boolean;
     stats?: Stat[];
     zeroCostBadge?: boolean;
     label?: string;
-    /** flow-cards: the "why" feature grid items. */
+    /** flow-cards / creative-pillars: the feature grid items. */
     items?: { icon?: string; title?: string; description?: string }[];
+    /** creative-teachers: instructor cards. */
+    teachers?: { name: string; field: string; rating: string; students: string }[];
   };
 }
 
@@ -70,6 +72,8 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
 
   if (blockStyle === "flow-cards")  return <FlowCardsFeatures id={id} config={config} />;
   if (blockStyle === "flow-stats")  return <FlowStatsFeatures id={id} config={config} />;
+  if (blockStyle === "creative-pillars")  return <CreativePillarsFeatures id={id} config={config} />;
+  if (blockStyle === "creative-teachers") return <CreativeTeachersFeatures id={id} config={config} />;
   if (blockStyle === "stats")       return <StatsFeatures id={id} config={config} />;
   if (blockStyle === "dark")        return <DarkFeatures id={id} config={config} />;
   if (blockStyle === "instructors") return <InstructorsFeatures id={id} config={config} />;
@@ -627,6 +631,105 @@ function FlowStatsFeatures({ id, config }: FeaturesBlockProps) {
             <div className="text-[14px] font-medium text-(--theme-on-secondary)/70">{s.label}</div>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+// ── Creative (استودیوی خلاق) — 3 pillar cards with tinted icon ────────────────
+
+const CREATIVE_PILLAR_ICON_TONES = [
+  "bg-(--theme-primary-subtle)",
+  "bg-(--theme-secondary-subtle)",
+  "bg-(--theme-accent-subtle)",
+];
+
+const CREATIVE_PILLARS = [
+  { icon: "🌟", title: "انگیزه بگیر", description: "موضوعات پرطرفدار را کشف کن، از مدرسان جواب بگیر، و قبیله خلاقانه خودت را پیدا کن." },
+  { icon: "🤝", title: "ارتباط بساز", description: "همتایان و مدرسان را دنبال کن، دیدگاه‌ها را تبادل کن، و از سفر یادگیری همدیگر حمایت کن." },
+  { icon: "🚀", title: "بساز و رشد کن", description: "ایده‌های جدید برای پروژه کشف کن، کارت را به اشتراک بذار، و بازخورد واقعی از متخصصان بگیر." },
+];
+
+function CreativePillarsFeatures({ id, config }: FeaturesBlockProps) {
+  const title = config?.title || "همه چیز برای رشد خلاقانه";
+  const items = config?.items?.length ? config.items : CREATIVE_PILLARS;
+
+  return (
+    <section id={id || "features"} className="bg-(--theme-background) py-[80px]">
+      <div className="mx-auto max-w-[1200px] px-[40px]">
+        <div className="text-center text-[22px] font-black text-(--theme-foreground)">{title}</div>
+        <div className="mt-[48px] grid gap-[32px] md:grid-cols-3">
+          {items.map((item, i) => (
+            <div
+              key={i}
+              className="rounded-[20px] border-2 border-(--theme-border-color) bg-(--theme-surface) p-[36px] px-[32px] text-center transition-all hover:-translate-y-1 hover:border-(--theme-primary)"
+            >
+              <div className={cn("mx-auto mb-[20px] flex h-[72px] w-[72px] items-center justify-center rounded-[20px] text-[32px]", CREATIVE_PILLAR_ICON_TONES[i % CREATIVE_PILLAR_ICON_TONES.length])}>
+                {item.icon}
+              </div>
+              <h3 className="mb-[10px] text-[17px] font-black text-(--theme-foreground)">{item.title}</h3>
+              <p className="text-[13px] leading-[1.8] text-(--theme-muted)">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Creative (استودیوی خلاق) — 4 instructor cards on navy ─────────────────────
+
+const CREATIVE_TEACHER_TONES = [
+  "bg-(--theme-primary) text-(--theme-on-primary)",
+  "bg-(--theme-accent) text-(--theme-on-accent)",
+  "bg-(--theme-primary) text-(--theme-on-primary)",
+  "bg-(--theme-accent) text-(--theme-on-accent)",
+];
+
+const CREATIVE_TEACHERS = [
+  { name: "لیسا باردوت", field: "تصویرساز", rating: "۴.۹★", students: "۲۸هزار" },
+  { name: "دانیل اسکات", field: "طراح دیجیتال", rating: "۴.۸★", students: "۴۲هزار" },
+  { name: "آرون درپلین", field: "طراح گرافیک", rating: "۴.۹★", students: "۵۶هزار" },
+  { name: "ایمونی لاروسا", field: "هنرمند موشن", rating: "۴.۸★", students: "۱۹هزار" },
+];
+
+function CreativeTeachersFeatures({ id, config }: FeaturesBlockProps) {
+  const title = config?.title || "از متخصصان خلاق یاد بگیر";
+  const subtitle =
+    config?.subtitle || "رهبران صنعت که مشتاقانه ابزارها، تکنیک‌ها و تجربیاتشان را با شما به اشتراک می‌گذارند.";
+  const teachers = config?.teachers?.length ? config.teachers : CREATIVE_TEACHERS;
+
+  return (
+    <section id={id || "teachers"} className="bg-(--theme-secondary) py-[80px] text-(--theme-on-secondary)">
+      <div className="mx-auto max-w-[1200px] px-[40px]">
+        <div className="mb-[56px] text-center">
+          <h2 className="mb-[12px] text-[36px] font-black text-(--theme-on-secondary)">{title}</h2>
+          <p className="mx-auto max-w-[460px] text-[15px] text-(--theme-on-secondary)/65">{subtitle}</p>
+        </div>
+        <div className="grid gap-[20px] sm:grid-cols-2 lg:grid-cols-4">
+          {teachers.map((teacher, i) => (
+            <div
+              key={i}
+              className="rounded-[20px] border-[1.5px] border-(--theme-on-secondary)/15 bg-(--theme-on-secondary)/[0.06] p-[28px] text-center transition-all hover:-translate-y-1 hover:border-(--theme-primary)"
+            >
+              <div className={cn("mx-auto mb-[16px] flex h-[80px] w-[80px] items-center justify-center rounded-full text-[28px] font-black", CREATIVE_TEACHER_TONES[i % CREATIVE_TEACHER_TONES.length])}>
+                {teacher.name.charAt(0)}
+              </div>
+              <div className="mb-[4px] text-[15px] font-black text-(--theme-on-secondary)">{teacher.name}</div>
+              <div className="mb-[14px] text-[13px] font-bold text-(--theme-primary)">{teacher.field}</div>
+              <div className="flex justify-center gap-[20px]">
+                <div>
+                  <div className="text-[17px] font-black text-(--theme-on-secondary)">{teacher.rating}</div>
+                  <div className="text-[10px] font-bold text-(--theme-on-secondary)/55">امتیاز</div>
+                </div>
+                <div>
+                  <div className="text-[17px] font-black text-(--theme-on-secondary)">{teacher.students}</div>
+                  <div className="text-[10px] font-bold text-(--theme-on-secondary)/55">دانشجو</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

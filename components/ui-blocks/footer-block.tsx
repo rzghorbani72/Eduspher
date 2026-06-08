@@ -14,6 +14,7 @@ interface FooterBlockProps {
     minimal?: boolean;
     compact?: boolean;
     showLegal?: boolean;
+    style?: "default" | "creative";
   };
 }
 
@@ -87,6 +88,10 @@ const Copyright = ({ name }: { name: string }) => (
 export async function FooterBlock({ id, config }: FooterBlockProps) {
   const store = await getAcademyContext();
   const buildPath = (path: string) => buildAcademyPath(store.slug, path);
+
+  if (config?.style === "creative") {
+    return <CreativeFooter id={id} name={store.name ?? "منتوریار"} buildPath={buildPath} />;
+  }
 
   const showSocialLinks = config?.showSocialLinks !== false;
   const showNewsletter = config?.showNewsletter !== false;
@@ -220,6 +225,72 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
               <Link href={buildPath("/legal/cookies")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">Cookie Policy</Link>
             </div>
           )}
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ── Creative (استودیوی خلاق) — navy footer with brand + link columns ──────────
+
+const CREATIVE_FOOTER_COLS = [
+  {
+    title: "یادگیری",
+    items: [
+      { label: "همه کلاس‌ها", href: "/courses" },
+      { label: "دسته‌بندی‌ها", href: "/courses" },
+      { label: "مدرسان", href: "/about" },
+      { label: "جامعه", href: "/about" },
+    ],
+  },
+  {
+    title: "تدریس",
+    items: [
+      { label: "مدرس شو", href: "/about" },
+      { label: "راهنمای مدرسان", href: "/about" },
+      { label: "پرداخت‌ها", href: "/pricing" },
+    ],
+  },
+  {
+    title: "شرکت",
+    items: [
+      { label: "درباره ما", href: "/about" },
+      { label: "وبلاگ", href: "/articles" },
+      { label: "استخدام", href: "/about" },
+      { label: "مطبوعات", href: "/about" },
+    ],
+  },
+];
+
+function CreativeFooter({ id, name, buildPath }: { id?: string; name: string; buildPath: (path: string) => string }) {
+  return (
+    <footer id={id || "footer"} className="bg-(--theme-secondary) px-[40px] pb-[32px] pt-[64px] text-(--theme-on-secondary)">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="mb-[48px] grid gap-[48px] md:grid-cols-[2fr_1fr_1fr_1fr]">
+          <div>
+            <div className="mb-[12px] text-[22px] font-black text-(--theme-on-secondary)">{name}</div>
+            <p className="max-w-[280px] text-[13px] leading-[1.8] text-(--theme-on-secondary)/55">
+              جامعه یادگیری خلاق که هر کسی می‌تواند کلاس بگیرد، کار به اشتراک بذارد، و با هم رشد کند.
+            </p>
+          </div>
+          {CREATIVE_FOOTER_COLS.map((col) => (
+            <div key={col.title}>
+              <h5 className="mb-[16px] text-[11px] font-black text-(--theme-on-secondary)">{col.title}</h5>
+              {col.items.map((item) => (
+                <Link
+                  key={item.label}
+                  href={buildPath(item.href)}
+                  className="mb-[10px] block text-[13px] font-semibold text-(--theme-on-secondary)/55 transition-colors hover:text-(--theme-primary)"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-2 border-t-[1.5px] border-(--theme-on-secondary)/15 pt-[24px] text-[13px] font-semibold text-(--theme-on-secondary)/45 sm:flex-row sm:justify-between">
+          <span>© ۱۴۰۵ {name}</span>
+          <span className="text-(--theme-primary)">👩‍🎨 ساخته شده برای خلاقان، توسط خلاقان</span>
         </div>
       </div>
     </footer>

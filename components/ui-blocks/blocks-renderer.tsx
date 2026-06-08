@@ -11,6 +11,8 @@ import { MarqueeBlock } from "./marquee-block";
 import { CourseGridBlock } from "./course-grid-block";
 import { PricingBlock } from "./pricing-block";
 import { CtaBlock } from "./cta-block";
+import { CategoriesBlock } from "./categories-block";
+import { ProjectsBlock } from "./projects-block";
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -76,6 +78,10 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
               return <PricingBlock key={block.id} id={block.id} config={block.config} />;
             case "cta":
               return <CtaBlock key={block.id} id={block.id} config={block.config} />;
+            case "categories":
+              return <CategoriesBlock key={block.id} id={block.id} config={block.config} />;
+            case "projects":
+              return <ProjectsBlock key={block.id} id={block.id} config={block.config} />;
             case "sidebar":
               return <SidebarBlockServer key={block.id} id={block.id} config={block.config} />;
             default:

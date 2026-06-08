@@ -6,10 +6,13 @@ interface CtaBlockProps {
     subtitle?: string;
     ctaText?: string;
     ctaSecondary?: string;
+    style?: "default" | "creative";
   };
 }
 
 export function CtaBlock({ id, config }: CtaBlockProps) {
+  if (config?.style === "creative") return <CreativeCta id={id} config={config} />;
+
   const label = config?.label || "همین امروز شروع کن";
   const title = config?.title || "یادگیری را شروع کن. رشد کن.";
   const subtitle =
@@ -41,6 +44,27 @@ export function CtaBlock({ id, config }: CtaBlockProps) {
           </button>
         </div>
       </div>
+    </section>
+  );
+}
+
+// ── Creative (استودیوی خلاق) — green band with navy button ────────────────────
+
+function CreativeCta({ id, config }: CtaBlockProps) {
+  const title = config?.title || "همین امروز شروع به ساختن کن.";
+  const subtitle = config?.subtitle || "دسترسی نامحدود به ۳۰٬۰۰۰+ کلاس. ۷ روز رایگان، هر زمان لغو کن.";
+  const ctaText = config?.ctaText || "← آزمایش رایگان";
+
+  return (
+    <section id={id || "cta"} className="bg-(--theme-primary) px-[40px] py-[80px] text-center">
+      <h2 className="mb-[16px] text-[40px] font-black text-(--theme-secondary)">{title}</h2>
+      <p className="mb-[36px] text-[16px] text-(--theme-secondary)/75">{subtitle}</p>
+      <button
+        type="button"
+        className="rounded-(--theme-border-radius) bg-(--theme-secondary) px-[40px] py-[16px] text-[15px] font-black text-(--theme-on-secondary) transition-opacity hover:opacity-90"
+      >
+        {ctaText}
+      </button>
     </section>
   );
 }
