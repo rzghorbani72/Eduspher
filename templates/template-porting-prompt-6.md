@@ -10,12 +10,12 @@
 
 ## Target template (fill this in)
 
-- **Source file:** `edusphere/templates/template-<N>-<name>.html`
+- **Source file:** `edusphere/templates/template-6-code.html`
   (e.g. `template-6-code.html`, `template-1-flow.html`, `template-2-marketplace.html`)
-- **Preset id:** `<name>` — the `<name>` part of the file, kebab-case
+- **Preset id:** `code` — the `<name>` part of the file, kebab-case
   (e.g. `code`, `flow`, `marketplace`).
 - **Screenshots:** ask the user for labeled source PNGs, light + dark, full-page
-  (e.g. `template-<N>-<name>-light.png`, `template-<N>-<name>-dark.png`).
+  (e.g. `template-6-code-light.png`, `template-6-code-dark.png`).
 
 Throughout this document, `template-N-<name>` / `<presetId>` are placeholders — substitute
 the values above. Wherever you see `<name>` / `<presetId>`, use your target's preset id.
@@ -29,7 +29,7 @@ Senior fullstack engineer in this monorepo (Next.js storefront `edusphere/`, Nes
 minimal changes, theme-variable-driven styling, RTL/Persian-first
 (`dir="rtl"`, `lang="fa"`, IRANYekan).
 
-Convert the target static mockup `edusphere/templates/template-<N>-<name>.html` into a
+Convert the target static mockup `edusphere/templates/template-6-code.html` into a
 **pixel-perfect, production-ready preset** rendered through the existing block-catalog
 system — NOT a live data page. All content (titles, instructors, ratings, stats,
 testimonials, pricing) is **static seed data embedded in the components' defaults /
@@ -122,7 +122,7 @@ function oklchToSrgb(L, C, hDeg) {
    section needs its own faithful variant**. Reuse an existing variant ONLY when both
    its structure AND content model genuinely match. New section kinds → new block types.
 4. **Screenshots for verification.** The user attaches labeled source PNGs (light+dark,
-   full-page, e.g. `template-<N>-<name>-light.png`). Ask for them; compare side by side.
+   full-page, e.g. `template-6-code-light.png`). Ask for them; compare side by side.
 
 ---
 
@@ -198,24 +198,6 @@ function oklchToSrgb(L, C, hDeg) {
 7. **STOP and ask the user to sign off** before the next template.
 
 ---
-
-## Template catalog & status
-
-Each entry: `template-<N>-<name>` → preset id `<name>`. Re-read each source for its exact
-`:root` + `[data-theme="dark"]` palette, decompose the ordered sections, then port.
-
-- **template-6-code** ("کدیار") → preset `code` — ✅ reference implementation, fully ported.
-- **template-1-flow** ("فلو") → preset `flow`.
-- **template-2-marketplace** ("بازار") → preset `marketplace` — orange / dark `#1c1d1f` /
-  purple; topbar promo bar, category grid, picsum thumbnails + avatars → owner image slots
-  (default `null`).
-- **template-3-elite** → preset `elite`.
-- **template-4-creative** → preset `creative`.
-- **template-5-artisan** → preset `artisan`.
-
-(Update this list as templates are ported. To port a new one, add a
-`template-<N>-<name>.html` source and follow the recipe — nothing else in this prompt
-changes.)
 
 **Start by telling the user which template you'll port (the Target template above), ask
 for its light+dark screenshots, then follow the recipe. One template, then stop.**
