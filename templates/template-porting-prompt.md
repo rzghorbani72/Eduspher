@@ -1,24 +1,29 @@
 # Porting Prompt — Convert a Static Template into a Pixel-Perfect Preset
 
 > Paste this whole file as the opening message of a **new chat**, then fill in the
-> **Target template** line below. It reproduces the exact pipeline already used to ship
-> **template-6-code** (preset id `code`) so any new template is done identically.
-> **Do ONE template per session, end-to-end, then STOP for the user's visual sign-off
-> before starting the next.**
+> **Target template** section below with the template you want to port next. It
+> reproduces the exact pipeline already used to ship **template-1-flow** (preset id
+> `flow`) so any remaining template is done identically. **Do ONE template per session,
+> end-to-end, then STOP for the user's visual sign-off before starting the next.**
 
 ---
 
 ## Target template (fill this in)
 
-- **Source file:** `edusphere/templates/template-<N>-<name>.html`
-  (e.g. `template-6-code.html`, `template-1-flow.html`, `template-2-marketplace.html`)
-- **Preset id:** `<name>` — the `<name>` part of the file, kebab-case
-  (e.g. `code`, `flow`, `marketplace`).
-- **Screenshots:** ask the user for labeled source PNGs, light + dark, full-page
-  (e.g. `template-<N>-<name>-light.png`, `template-<N>-<name>-dark.png`).
+Templates live in `edusphere/templates/` as matched pairs:
+`template-[number]-[name].html` + `template-[number]-[name]-light.png` /
+`template-[number]-[name]-dark.png` (full-page screenshots of the source design).
 
-Throughout this document, `template-N-<name>` / `<presetId>` are placeholders — substitute
-the values above. Wherever you see `<name>` / `<presetId>`, use your target's preset id.
+- **Source file:** `edusphere/templates/template-N-<name>.html`
+  (pick the next one in `edusphere/templates/` that has no shipped preset yet —
+  e.g. `template-2-marketplace.html`, `template-6-code.html`)
+- **Preset id:** `<presetId>` — the `<name>` part of the filename, kebab-case
+  (e.g. `marketplace`, `code`)
+- **Screenshots:** ask the user for `template-N-<name>-light.png` and
+  `template-N-<name>-dark.png` (full-page, light + dark) if not already attached
+
+Throughout this document, `template-N-<name>` and `<presetId>` are placeholders —
+substitute the values you filled in above everywhere they appear.
 
 ---
 
@@ -29,7 +34,7 @@ Senior fullstack engineer in this monorepo (Next.js storefront `edusphere/`, Nes
 minimal changes, theme-variable-driven styling, RTL/Persian-first
 (`dir="rtl"`, `lang="fa"`, IRANYekan).
 
-Convert the target static mockup `edusphere/templates/template-<N>-<name>.html` into a
+Convert the target static mockup `edusphere/templates/template-N-<name>.html` into a
 **pixel-perfect, production-ready preset** rendered through the existing block-catalog
 system — NOT a live data page. All content (titles, instructors, ratings, stats,
 testimonials, pricing) is **static seed data embedded in the components' defaults /
@@ -41,26 +46,28 @@ regardless of backend state.
 
 ## ⭐ Reference implementation — STUDY THIS FIRST
 
-Template-6-code is already fully ported as preset **`code`**. Read these before doing
+Template-1-flow is already fully ported as preset **`flow`**. Read these before doing
 anything; mimic the same wiring for your target preset:
 
 - **Palette registry (per-preset light+dark):** `AdminPanel/lib/design-systems.ts`
-  → `DESIGN_SYSTEMS.code` + `buildThemePayload()`.
+  → `DESIGN_SYSTEMS.flow` + `buildThemePayload()`.
 - **Preset (ordered blocks):** registered in BOTH
   `Backend/src/ui-template/templates/template-presets.ts` AND
   `edusphere/lib/template-presets.ts` (the two MUST stay identical).
 - **Section components:** `edusphere/components/ui-blocks/`
-  - `CodeHero` variant in `hero-block.tsx` (`style: "code"`)
-  - `code-cards` + `code-stats` variants in `features-block.tsx`
-  - `code` variant in `testimonials-block.tsx`
-  - new block types `marquee-block.tsx`, `course-grid-block.tsx`,
+  - `FlowHero` variant in `hero-block.tsx` (`style: "flow"`)
+  - `flow-cards` + `flow-stats` variants in `features-block.tsx`
+  - `flow` variant in `testimonials-block.tsx`
+  - block types `marquee-block.tsx`, `course-grid-block.tsx`,
     `pricing-block.tsx`, `cta-block.tsx`
   - all registered in `blocks-renderer.tsx`
 - **Catalog labels:** `Backend/src/ui-template/section-catalog.ts` (`BLOCK_LABELS`).
 - **Gallery thumbnail:** `AdminPanel/components/ui-template/template-preview.tsx`
   (`BLOCK_STYLE` map).
 
-For your target, mirror each of these touch-points, swapping `code` for `<presetId>`.
+For your target, mirror each of these touch-points, swapping `flow` for `<presetId>`
+and authoring fresh, faithful variants/components for your template's sections (see
+"Decisions already made", point 3).
 
 ---
 
@@ -107,6 +114,7 @@ function oklchToSrgb(L, C, hDeg) {
   };
   return "#" + f(r) + f(g) + f(bl);
 }
+// oklchToSrgb(0.68, 0.14, 168) === "#00b388"  (template-1 mint)
 ```
 
 ---
@@ -122,7 +130,7 @@ function oklchToSrgb(L, C, hDeg) {
    section needs its own faithful variant**. Reuse an existing variant ONLY when both
    its structure AND content model genuinely match. New section kinds → new block types.
 4. **Screenshots for verification.** The user attaches labeled source PNGs (light+dark,
-   full-page, e.g. `template-<N>-<name>-light.png`). Ask for them; compare side by side.
+   full-page, e.g. `template-N-<name>-light.png`). Ask for them; compare side by side.
 
 ---
 
@@ -180,8 +188,26 @@ function oklchToSrgb(L, C, hDeg) {
   exact, propose adding explicit `surface`/`border` baseline tokens to the theme builder.
 - **"Featured" dark card inversion:** a card painted with `--theme-secondary` flips light
   in dark mode; if the source hand-overrides it to stay dark, special-case it.
-- **Header/footer:** template-6 reuses the default header/footer components. If a
+- **Header/footer:** template-1 reuses the default header/footer components. If a
   template needs a pixel-exact nav/footer, author bespoke variants.
+
+---
+
+## Notes carried over from prior sessions (use if your target matches)
+
+- **template-2-marketplace** ("بازار") — orange / dark `#1c1d1f` / purple; topbar promo
+  bar, category grid, picsum thumbnails + avatars → owner image slots (default `null`).
+- **template-3-elite**, **template-4-creative**, **template-5-artisan** — re-read each
+  for exact `:root` + `[data-theme="dark"]` palettes; decompose and port from scratch,
+  no shortcuts assumed.
+- **template-6-code** ("کدیار") — a `kodiyar` preset already exists as a layout but is
+  NOT a faithful pixel port; its `DESIGN_SYSTEMS.kodiyar` palette needs the full source
+  light/dark baseline (blue `#3b82f6` / green `#10b981`, full `--bg/--surface/--text`
+  sets) brought up to template-1 fidelity. Decide whether to fix `kodiyar` in place or
+  ship a new faithful `code` preset alongside it — confirm with the user.
+
+(Update or remove entries here as templates get ported, so this list stays current for
+the next session.)
 
 ---
 
@@ -199,23 +225,6 @@ function oklchToSrgb(L, C, hDeg) {
 
 ---
 
-## Template catalog & status
-
-Each entry: `template-<N>-<name>` → preset id `<name>`. Re-read each source for its exact
-`:root` + `[data-theme="dark"]` palette, decompose the ordered sections, then port.
-
-- **template-6-code** ("کدیار") → preset `code` — ✅ reference implementation, fully ported.
-- **template-1-flow** ("فلو") → preset `flow`.
-- **template-2-marketplace** ("بازار") → preset `marketplace` — orange / dark `#1c1d1f` /
-  purple; topbar promo bar, category grid, picsum thumbnails + avatars → owner image slots
-  (default `null`).
-- **template-3-elite** → preset `elite`.
-- **template-4-creative** → preset `creative`.
-- **template-5-artisan** → preset `artisan`.
-
-(Update this list as templates are ported. To port a new one, add a
-`template-<N>-<name>.html` source and follow the recipe — nothing else in this prompt
-changes.)
-
-**Start by telling the user which template you'll port (the Target template above), ask
-for its light+dark screenshots, then follow the recipe. One template, then stop.**
+**Start by confirming the Target template above (or picking the next unported
+`template-N-*.html` if the user hasn't named one), ask for its light+dark screenshots,
+then follow the recipe. One template, then stop.**

@@ -1,24 +1,27 @@
-# Porting Prompt — Convert a Static Template into a Pixel-Perfect Preset
+# Porting Prompt — Convert template-6-code into a Pixel-Perfect Preset
 
-> Paste this whole file as the opening message of a **new chat**, then fill in the
-> **Target template** line below. It reproduces the exact pipeline already used to ship
-> **template-6-code** (preset id `code`) so any new template is done identically.
-> **Do ONE template per session, end-to-end, then STOP for the user's visual sign-off
-> before starting the next.**
+> Paste this whole file as the opening message of a **new chat**. It reproduces the
+> exact pipeline already used to ship **template-1-flow** (preset id `flow`) so
+> **template-6-code** is done identically. **Build it fully, end-to-end, then STOP for
+> the user's visual sign-off.**
 
 ---
 
-## Target template (fill this in)
+## Target template
 
 - **Source file:** `edusphere/templates/template-6-code.html`
-  (e.g. `template-6-code.html`, `template-1-flow.html`, `template-2-marketplace.html`)
-- **Preset id:** `code` — the `<name>` part of the file, kebab-case
-  (e.g. `code`, `flow`, `marketplace`).
-- **Screenshots:** ask the user for labeled source PNGs, light + dark, full-page
-  (e.g. `template-6-code-light.png`, `template-6-code-dark.png`).
+- **Preset id:** `code` ("کدیار")
+- **Screenshots:** ask the user for `template-6-code-light.png` and
+  `template-6-code-dark.png` (full-page, light + dark) if not already attached
 
-Throughout this document, `template-N-<name>` / `<presetId>` are placeholders — substitute
-the values above. Wherever you see `<name>` / `<presetId>`, use your target's preset id.
+> ⚠️ **Important — `code` is NOT shipped yet.** A `kodiyar` preset already exists
+> (`DESIGN_SYSTEMS.kodiyar` in `AdminPanel/lib/design-systems.ts`,
+> `template-presets.ts`) but per the user it is **not a faithful pixel port** — its
+> palette is missing the full source light/dark baseline (blue `#3b82f6` / green
+> `#10b981`, full `--bg/--surface/--text` sets). Before building, **ask the user**
+> whether to (a) bring `kodiyar` up to template-1 fidelity in place, or (b) ship a new,
+> separate `code` preset alongside it. Don't assume — this decides whether you're
+> editing or adding `DESIGN_SYSTEMS[...]` and the preset's `blocks[]`.
 
 ---
 
@@ -29,38 +32,40 @@ Senior fullstack engineer in this monorepo (Next.js storefront `edusphere/`, Nes
 minimal changes, theme-variable-driven styling, RTL/Persian-first
 (`dir="rtl"`, `lang="fa"`, IRANYekan).
 
-Convert the target static mockup `edusphere/templates/template-6-code.html` into a
-**pixel-perfect, production-ready preset** rendered through the existing block-catalog
-system — NOT a live data page. All content (titles, instructors, ratings, stats,
-testimonials, pricing) is **static seed data embedded in the components' defaults /
-preset config, copied verbatim from the source HTML**. No fetch/API in preset
-components. The preset is the gallery-preview representation and must render identically
-regardless of backend state.
+Convert `edusphere/templates/template-6-code.html` into a **pixel-perfect,
+production-ready preset** rendered through the existing block-catalog system — NOT a
+live data page. All content (titles, instructors, ratings, stats, testimonials,
+pricing) is **static seed data embedded in the components' defaults / preset config,
+copied verbatim from the source HTML**. No fetch/API in preset components. The preset
+is the gallery-preview representation and must render identically regardless of
+backend state.
 
 ---
 
 ## ⭐ Reference implementation — STUDY THIS FIRST
 
-Template-6-code is already fully ported as preset **`code`**. Read these before doing
-anything; mimic the same wiring for your target preset:
+Template-1-flow is already fully ported as preset **`flow`**. Read these before doing
+anything; mimic them exactly, swapping `flow` for `code`:
 
 - **Palette registry (per-preset light+dark):** `AdminPanel/lib/design-systems.ts`
-  → `DESIGN_SYSTEMS.code` + `buildThemePayload()`.
+  → `DESIGN_SYSTEMS.flow` + `buildThemePayload()`.
 - **Preset (ordered blocks):** registered in BOTH
   `Backend/src/ui-template/templates/template-presets.ts` AND
   `edusphere/lib/template-presets.ts` (the two MUST stay identical).
 - **Section components:** `edusphere/components/ui-blocks/`
-  - `CodeHero` variant in `hero-block.tsx` (`style: "code"`)
-  - `code-cards` + `code-stats` variants in `features-block.tsx`
-  - `code` variant in `testimonials-block.tsx`
-  - new block types `marquee-block.tsx`, `course-grid-block.tsx`,
+  - `FlowHero` variant in `hero-block.tsx` (`style: "flow"`)
+  - `flow-cards` + `flow-stats` variants in `features-block.tsx`
+  - `flow` variant in `testimonials-block.tsx`
+  - block types `marquee-block.tsx`, `course-grid-block.tsx`,
     `pricing-block.tsx`, `cta-block.tsx`
   - all registered in `blocks-renderer.tsx`
 - **Catalog labels:** `Backend/src/ui-template/section-catalog.ts` (`BLOCK_LABELS`).
 - **Gallery thumbnail:** `AdminPanel/components/ui-template/template-preview.tsx`
   (`BLOCK_STYLE` map).
 
-For your target, mirror each of these touch-points, swapping `code` for `<presetId>`.
+For `code`, mirror each of these touch-points with bespoke `Code*`/`code-*` variants and
+content faithful to template-6's source HTML — **don't assume any `code`-named
+component exists yet; it doesn't.**
 
 ---
 
@@ -107,41 +112,47 @@ function oklchToSrgb(L, C, hDeg) {
   };
   return "#" + f(r) + f(g) + f(bl);
 }
+// oklchToSrgb(0.68, 0.14, 168) === "#00b388"  (template-1 mint)
 ```
 
 ---
 
-## Decisions already made by the user — apply to EVERY template
+## Decisions already made by the user — apply here too
 
-1. **Full explicit baseline.** Use the exact source light **and** dark values. Never
-   single-primary derivation.
-2. **One template per session, then sign-off.** Build it fully, verify, then STOP and
-   ask the user to compare against screenshots before the next.
+1. **Full explicit baseline.** Use the exact source light **and** dark values from
+   template-6-code's `:root` and `[data-theme="dark"]`. Never single-primary derivation.
+2. **Build fully, then sign-off.** Build it end-to-end, verify, then STOP and ask the
+   user to compare against screenshots.
 3. **Bespoke config-driven variant per section.** Existing generic variants
    hardcode their content and map palette roles differently, so in practice **each
    section needs its own faithful variant**. Reuse an existing variant ONLY when both
-   its structure AND content model genuinely match. New section kinds → new block types.
+   its structure AND content model genuinely match (check `kodiyar`'s components first —
+   they may be reusable scaffolding even if the palette isn't faithful). New section
+   kinds → new block types.
 4. **Screenshots for verification.** The user attaches labeled source PNGs (light+dark,
    full-page, e.g. `template-6-code-light.png`). Ask for them; compare side by side.
 
 ---
 
-## Per-template recipe (repeat exactly)
+## Recipe (repeat exactly)
 
 1. **Read the source HTML fully.** Capture the `:root` (light) and `[data-theme="dark"]`
    palette blocks; list the ordered body sections (nav, hero, promo/topbar, features,
    courses, stats, instructors, testimonials, pricing, cta, footer, …).
-2. **Register the palette** in `AdminPanel/lib/design-systems.ts` as
-   `DESIGN_SYSTEMS[<presetId>]` (hex; convert oklch). Map source role-vars consistently,
-   e.g. brand→`primary`, dark-navy→`secondary`. Note: a "navy" value is used BOTH as
-   text (→ `--theme-foreground`) and as dark section backgrounds (→ `--theme-secondary`
-   with `--theme-on-secondary` text), and it **flips** in dark mode — design your role
-   mapping so both light and dark render faithfully.
-3. **Per section:** reuse a matching variant, else author a new config-driven variant
-   (content from config with verbatim source defaults), styled ONLY via `--theme-*`.
-   New section kinds → new block type: add to `blocks-renderer.tsx`, `BLOCK_LABELS`
-   (`section-catalog.ts`), and the gallery `BLOCK_STYLE` thumbnail map.
-4. **Embed seed content verbatim** (exact Persian strings + numerals).
+2. **Register/fix the palette** in `AdminPanel/lib/design-systems.ts` as
+   `DESIGN_SYSTEMS.code` (hex; convert oklch) — per the decision above, either replacing
+   `kodiyar`'s palette in place or adding `code` alongside it. Map source role-vars
+   consistently, e.g. brand→`primary`, dark-navy→`secondary`. Note: a "navy" value is
+   used BOTH as text (→ `--theme-foreground`) and as dark section backgrounds
+   (→ `--theme-secondary` with `--theme-on-secondary` text), and it **flips** in dark
+   mode — design your role mapping so both light and dark render faithfully.
+3. **Per section:** reuse a matching variant (check `kodiyar`'s first), else author a
+   new config-driven variant (content from config with verbatim source defaults), styled
+   ONLY via `--theme-*`. New section kinds → new block type: add to
+   `blocks-renderer.tsx`, `BLOCK_LABELS` (`section-catalog.ts`), and the gallery
+   `BLOCK_STYLE` thumbnail map.
+4. **Embed seed content verbatim** (exact Persian strings + numerals) from
+   template-6-code.html.
 5. **Register the preset** in BOTH `Backend/.../template-presets.ts` and
    `edusphere/lib/template-presets.ts` — identical ordered `blocks[]`.
 6. **Light + dark** come only from theme-var flipping (the `_dark` baseline). No
@@ -169,35 +180,37 @@ function oklchToSrgb(L, C, hDeg) {
 - **Don't break customization:** keep every color/radius/shadow on `--theme-*` so the
   live customizer applies. Don't add tokenless theme fetches (the live updater already
   forwards `?preview=`). The light/dark "both" toggle (`ThemeToggleButton`) already
-  exists — new templates only need faithful `_dark` baselines.
+  exists — `code` only needs a faithful `_dark` baseline.
 
 ---
 
-## Known fidelity deltas — decide per template
+## Known fidelity deltas — decide for this template
 
 - **Surface derivation:** `--theme-surface`/`card-bg` come from `color-mix`, so they may
-  differ slightly from a source's exact `--white`/surface. If a template's cards must be
-  exact, propose adding explicit `surface`/`border` baseline tokens to the theme builder.
+  differ slightly from a source's exact `--white`/surface. Template-6's "کد" panels and
+  cards likely need exact surfaces — if so, propose adding explicit `surface`/`border`
+  baseline tokens to the theme builder.
 - **"Featured" dark card inversion:** a card painted with `--theme-secondary` flips light
   in dark mode; if the source hand-overrides it to stay dark, special-case it.
-- **Header/footer:** template-6 reuses the default header/footer components. If a
-  template needs a pixel-exact nav/footer, author bespoke variants.
+- **Header/footer:** template-1 reuses the default header/footer components. Check
+  whether template-6's nav/footer is pixel-distinctive enough to need bespoke variants.
 
 ---
 
-## Verification (run per template, before sign-off)
+## Verification (run before sign-off)
 
 1. `cd Backend && npx tsc --noEmit` · `cd edusphere && npx tsc --noEmit` ·
    `cd AdminPanel && npx tsc --noEmit` → all zero errors.
 2. `grep -nE '#[0-9a-fA-F]{3,6}|oklch|rgb\('` new component files → no brand literals.
 3. Apply the preset in the UI-template gallery; compare the preview (light AND dark)
-   against the user's source PNG: hero + one content grid + footer — no visible diff.
-4. Spot-check 5 random seed values verbatim against the HTML.
+   against `template-6-code-light.png` / `template-6-code-dark.png`: hero + one content
+   grid + footer — no visible diff.
+4. Spot-check 5 random seed values verbatim against `template-6-code.html`.
 5. Confirm no network requests fire during the preset render (devtools).
 6. RTL check: text alignment, arrow direction, margin mirroring.
-7. **STOP and ask the user to sign off** before the next template.
+7. **STOP and ask the user to sign off.**
 
 ---
 
-**Start by telling the user which template you'll port (the Target template above), ask
-for its light+dark screenshots, then follow the recipe. One template, then stop.**
+**Start by asking the user the `kodiyar`-vs-new-`code`-preset question above and for the
+light+dark screenshots, then follow the recipe.**
