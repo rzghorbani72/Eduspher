@@ -28,47 +28,31 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
       { id: 'footer', type: 'footer', order: 9, isVisible: true, config: { showSocialLinks: true, showNewsletter: false, columns: 4 } },
     ],
   },
-  kodiyar: {
-    id: 'kodiyar',
+  code: {
+    id: 'code',
     name: 'کدیار',
-    description: 'قالب آموزش برنامه‌نویسی حرفه‌ای با طراحی تاریک و مدرن',
+    description: 'قالب آموزش برنامه‌نویسی حرفه‌ای با طراحی آبی و حالت تاریک',
     blocks: [
       {
         id: 'header',
         type: 'header',
         order: 0,
         isVisible: true,
-        config: { sticky: true, showNavigation: true },
+        config: { sticky: true, showNavigation: true, style: 'code' },
       },
       {
         id: 'hero',
         type: 'hero',
         order: 1,
         isVisible: true,
-        config: {
-          style: 'dark-programmer',
-          title: 'برنامه‌نویسی را از متخصص‌های واقعی یاد بگیر',
-          subtitle:
-            'دوره‌های جامع و پروژه‌محور برای توسعه‌دهندگان جدی. از مبتدی تا حرفه‌ای، مسیر یادگیری خود را انتخاب کن.',
-          showCTA: true,
-          ctaText: 'شروع یادگیری',
-          ctaSecondary: 'مشاهده دوره‌ها',
-          height: 'large',
-        },
+        config: { style: 'code' },
       },
       {
         id: 'courses',
-        type: 'courses',
+        type: 'course-grid',
         order: 2,
         isVisible: true,
-        config: {
-          title: 'پرطرفدارترین دوره‌ها',
-          subtitle: 'با بهترین دوره‌ها یادگیری را شروع کن',
-          gridColumns: 3,
-          limit: 6,
-          layout: 'grid',
-          showViewAll: true,
-        },
+        config: { style: 'code' },
       },
       {
         id: 'features-stats',
@@ -93,7 +77,8 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         config: {
           style: 'instructors',
           title: 'از متخصصان واقعی صنعت یاد بگیر',
-          subtitle: 'مدرسان برتر — حرفه‌ای‌های فعال در شرکت‌های بزرگ',
+          subtitle:
+            'مدرسان ما حرفه‌ای‌های فعال در شرکت‌های بزرگ هستند که تجربه عملی را با آموزش ساده ترکیب کرده‌اند.',
           gridColumns: 3,
         },
       },
@@ -110,10 +95,32 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         order: 6,
         isVisible: true,
         config: {
-          title: 'نظرات دانش‌آموزان',
-          subtitle: 'آنچه هم‌دوره‌ای‌ها می‌گویند',
-          layout: 'grid',
-          style: 'default',
+          style: 'code',
+          label: 'نظرات دانش‌آموزان',
+          title: 'آنچه هم‌دوره‌ای‌ها می‌گویند',
+          items: [
+            {
+              quote:
+                '«دوره JavaScript کدیار کامل‌ترین چیزی بود که دیدم. پس از اتمام دوره توانستم اولین کارم را پیدا کنم. روش تدریس عالی و مثال‌ها کاملاً کاربردی بود.»',
+              name: 'امیرحسین رضایی',
+              role: 'Front-end Developer',
+              initials: 'ام',
+            },
+            {
+              quote:
+                '«پس از سال‌ها جستجو برای یک منبع آموزشی فارسی با کیفیت، بالاخره کدیار را پیدا کردم. دوره Docker را که تمام کردم، کاملاً اعتماد به نفس داشتم.»',
+              name: 'زهرا موسوی',
+              role: 'DevOps Engineer',
+              initials: 'ز',
+            },
+            {
+              quote:
+                '«اشتراک ماهانه کدیار بهترین سرمایه‌گذاری شغلی‌ام بود. توی یک سال سه دوره کامل کردم و حقوقم دو برابر شد.»',
+              name: 'محمد طاهری',
+              role: 'Full-stack Developer',
+              initials: 'م',
+            },
+          ],
         },
       },
       {

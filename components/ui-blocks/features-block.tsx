@@ -252,7 +252,7 @@ function StatsFeatures({ id, config }: FeaturesBlockProps) {
   );
 }
 
-// ── Instructors showcase (kodiyar / dark academy templates) ──────────────────
+// ── Instructors showcase (code / dark academy templates) ─────────────────────
 
 function InstructorsFeatures({ id, config }: FeaturesBlockProps) {
   const title = config?.title || "از متخصصان واقعی صنعت یاد بگیر";

@@ -23,7 +23,7 @@ interface HeaderBlockProps {
     transparent?: boolean;
     compact?: boolean;
     minimal?: boolean;
-    style?: "default" | "kodiyar";
+    style?: "default" | "code";
   };
 }
 
@@ -34,8 +34,8 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
   const minimal = config?.minimal === true;
   const style = config?.style ?? "default";
 
-  if (style === "kodiyar") {
-    return <KodiyarHeader id={id} sticky={sticky} />;
+  if (style === "code") {
+    return <CodeHeader id={id} sticky={sticky} />;
   }
 
   return (
@@ -63,9 +63,9 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
   );
 }
 
-// ── Kodiyar — programming-academy header with search + brand nav ─────────────
+// ── Code — programming-academy header with search + brand nav ────────────────
 
-function KodiyarHeader({ id, sticky }: { id?: string; sticky: boolean }) {
+function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
   const router = useRouter();
   const { name: academyName } = useAcademyContext();
   const { isAuthenticated } = useAuthContext();

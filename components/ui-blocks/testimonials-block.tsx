@@ -11,7 +11,7 @@ interface TestimonialsBlockProps {
     layout?: "grid" | "carousel";
     showAvatars?: boolean;
     corporate?: boolean;
-    style?: "default" | "dark-quote" | "social-proof" | "creator-stories" | "studio" | "creator" | "flow";
+    style?: "default" | "dark-quote" | "social-proof" | "creator-stories" | "studio" | "creator" | "flow" | "code";
     label?: string;
     /** flow: testimonial cards. */
     items?: { quote?: string; name?: string; role?: string; initials?: string }[];
@@ -41,7 +41,7 @@ const Stars = ({ count, color = "text-(--theme-accent)" }: { count: number; colo
 export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
   const blockStyle = config?.style ?? "default";
 
-  if (blockStyle === "flow")            return <FlowTestimonials id={id} config={config} />;
+  if (blockStyle === "flow" || blockStyle === "code") return <FlowTestimonials id={id} config={config} />;
   if (blockStyle === "dark-quote")      return <DarkQuoteTestimonials id={id} config={config} />;
   if (blockStyle === "social-proof")    return <SocialProofTestimonials id={id} config={config} />;
   if (blockStyle === "creator-stories") return <CreatorStoriesTestimonials id={id} config={config} />;
