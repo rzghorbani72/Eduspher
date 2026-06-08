@@ -11,6 +11,23 @@ export interface TemplatePresetInfo {
 }
 
 export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
+  flow: {
+    id: 'flow',
+    name: 'منتوریار فلو',
+    description: 'قالب یادگیری مسیرمحور با طراحی مینیمال و کارت پیشرفت دوره',
+    blocks: [
+      { id: 'header', type: 'header', order: 0, isVisible: true, config: { sticky: true, showNavigation: true } },
+      { id: 'hero', type: 'hero', order: 1, isVisible: true, config: { style: 'flow' } },
+      { id: 'marquee', type: 'marquee', order: 2, isVisible: true, config: {} },
+      { id: 'features-why', type: 'features', order: 3, isVisible: true, config: { style: 'flow-cards' } },
+      { id: 'courses', type: 'course-grid', order: 4, isVisible: true, config: {} },
+      { id: 'features-stats', type: 'features', order: 5, isVisible: true, config: { style: 'flow-stats' } },
+      { id: 'testimonials', type: 'testimonials', order: 6, isVisible: true, config: { style: 'flow' } },
+      { id: 'pricing', type: 'pricing', order: 7, isVisible: true, config: {} },
+      { id: 'cta', type: 'cta', order: 8, isVisible: true, config: {} },
+      { id: 'footer', type: 'footer', order: 9, isVisible: true, config: { showSocialLinks: true, showNewsletter: false, columns: 4 } },
+    ],
+  },
   kodiyar: {
     id: 'kodiyar',
     name: 'کدیار',

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useThemeConfig } from './theme-provider';
+import { readThemeModeOverride, THEME_MODE_EVENT } from '@/lib/theme-mode';
 
 interface ThemeDarkModeApplierProps {
   darkMode?: boolean | null;
@@ -15,20 +16,19 @@ export function ThemeDarkModeApplier({ darkMode: initialDarkMode }: ThemeDarkMod
 
   useEffect(() => {
     const html = document.documentElement;
+    const isBoth = darkMode === null || darkMode === undefined;
 
-    const apply = (dark: boolean) => {
-      if (dark) {
-        html.classList.add('dark');
-      } else {
-        html.classList.remove('dark');
-      }
+    const apply = () => {
+      // "both" → follow the visitor's toggle choice (defaults to light).
+      const dark = isBoth ? readThemeModeOverride() === 'dark' : darkMode === true;
+      html.classList.toggle('dark', dark);
     };
 
-    if (darkMode === null || darkMode === undefined) {
-      apply(false); // null/unset → light mode (matches preview)
-    } else {
-      apply(darkMode === true);
-    }
+    apply();
+    if (!isBoth) return;
+
+    window.addEventListener(THEME_MODE_EVENT, apply);
+    return () => window.removeEventListener(THEME_MODE_EVENT, apply);
   }, [darkMode]);
 
   return null;

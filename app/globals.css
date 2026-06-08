@@ -17,6 +17,15 @@
   animation: lp-marquee 30s linear infinite;
 }
 
+@keyframes flow-marquee {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.flow-marquee-track {
+  animation: flow-marquee 22s linear infinite;
+}
+
 @keyframes lp-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }

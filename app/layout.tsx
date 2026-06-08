@@ -11,6 +11,7 @@ import { StoreProvider } from "@/components/providers/store-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
 import { ThemeLiveUpdater } from "@/components/theme/theme-live-updater";
+import { ThemeToggleButton } from "@/components/theme/theme-toggle-button";
 import { ThemeStyleSync } from "@/components/theme/theme-style-sync";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { DocumentLangSync } from "@/lib/i18n/document-lang-sync";
@@ -167,6 +168,7 @@ export default async function RootLayout({
             <ThemeStyleSync theme={theme} syncKey={themeKey} />
             <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
             <ThemeLiveUpdater />
+            <ThemeToggleButton />
             <I18nProvider
               key={`i18n-${shellKey}-${language}`}
               initialLanguage={language}
