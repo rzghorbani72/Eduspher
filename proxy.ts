@@ -36,12 +36,12 @@ function getAdminFrameAncestors(): string {
   return Array.from(origins).join(" ");
 }
 
-function shouldApplyPreviewEmbed(request: NextRequest): boolean {
+function shouldApplyPreviewEmbed(request: NextRequest, isAcademyHome: boolean): boolean {
   const { pathname, searchParams } = request.nextUrl;
   if (searchParams.has("preview") || searchParams.get("embed") === "1") {
     return true;
   }
-  return pathname === "/" || pathname.startsWith("/s/");
+  return pathname === "/" || isAcademyHome;
 }
 
 function applyPreviewEmbedRequest(
@@ -178,6 +178,15 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "favicon.ico",
   "robots.txt",
   "sitemap.xml",
+  // Top-level platform routes — must not be shadowed by an academy slug route
+  "account",
+  "articles",
+  "bundles",
+  "checkout",
+  "courses",
+  "payment",
+  "pricing",
+  "roadmap",
 ]);
 
 // Define protected routes that require authentication
@@ -266,6 +275,7 @@ export async function proxy(request: NextRequest) {
   const pathnameSegments = requestUrl.pathname.split("/").filter(Boolean);
   const firstSegment = pathnameSegments[0] ?? null;
   const slugFromPath = firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment) ? firstSegment : null;
+  const isAcademyHomePath = Boolean(slugFromPath) && pathnameSegments.length === 1;
   const searchParamSlug = requestUrl.searchParams.get("academy");
   const hostHeader = extractHost(request.headers.get("host"));
   const candidateSlug = searchParamSlug ?? slugFromPath ?? extractCandidateSlug(hostHeader) ?? DEFAULT_ACADEMY_SLUG;
@@ -301,7 +311,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
-  const applyPreviewEmbed = shouldApplyPreviewEmbed(request);
+  const applyPreviewEmbed = shouldApplyPreviewEmbed(request, isAcademyHomePath);
   const previewEmbed = applyPreviewEmbed
     ? applyPreviewEmbedRequest(request, requestHeaders)
     : { preview: null, embed: false };
@@ -311,6 +321,9 @@ export async function proxy(request: NextRequest) {
   } else if (slugFromPath) {
     requestHeaders.set("x-academy-from-path", "1");
     requestHeaders.set("x-academy-path-slug", slugFromPath);
+    if (isAcademyHomePath) {
+      requestHeaders.set("x-academy-home", "1");
+    }
   }
   const cookiesToSet: Array<{ name: string; value: string }> = [];
   const addCookie = (name: string, value: string) => {
@@ -428,14 +441,14 @@ export async function proxy(request: NextRequest) {
   }
 
   let internalUrl: URL | null = null;
-  if (slugFromPath) {
+  if (slugFromPath && !isAcademyHomePath) {
+    // Academy home (e.g. "/my-academy") is served directly by app/[slug]/page.tsx — no rewrite needed.
+    // Nested paths (e.g. "/my-academy/courses") are stripped down to the shared platform route.
     const cleanedPathSegments = pathnameSegments.slice(1);
     const cleanedPathname = `/${cleanedPathSegments.join("/")}`.replace(/\/+$/, "");
     const normalizedPath = cleanedPathname === "" ? "/" : cleanedPathname;
     internalUrl = requestUrl.clone();
-    // Academy home must not rewrite to "/" — that collides with the platform panel route and breaks client navigation cache.
-    internalUrl.pathname =
-      normalizedPath === "/" ? `/s/${slugFromPath}` : normalizedPath;
+    internalUrl.pathname = normalizedPath;
   }
 
   const response = internalUrl

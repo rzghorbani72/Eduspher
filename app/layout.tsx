@@ -114,10 +114,8 @@ export default async function RootLayout({
   const direction = getAcademyDirection(storeLanguage, countryCode);
   const rtl = isAcademyRTL(storeLanguage, countryCode);
   
-  const isHomePage =
-    pathname === "" ||
-    pathname === "/" ||
-    pathname.startsWith("/s/");
+  const isAcademyHome = headersList.get("x-academy-home") === "1";
+  const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
   const useTemplateLayout = !isPanelRoot && isHomePage;
