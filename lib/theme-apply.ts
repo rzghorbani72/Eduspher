@@ -41,16 +41,26 @@ export const DEFAULT_PLATFORM_THEME: ThemeConfigInput = {
   element_animation_style: "subtle",
 };
 
-export function hexContrast(hex: string): string {
+function relativeLuminance(hex: string): number {
   const c = hex.replace("#", "");
   const n = parseInt(
     c.length === 3 ? c.split("").map((x) => x + x).join("") : c,
     16
   );
-  const luminance =
+  return (
     (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) /
-    255;
-  return luminance > 0.5 ? "#0f172a" : "#f8fafc";
+    255
+  );
+}
+
+export function hexContrast(hex: string): string {
+  return relativeLuminance(hex) > 0.5 ? "#0f172a" : "#f8fafc";
+}
+
+// Button text prefers white — only switches to dark when the button background
+// is itself white-like (near-white), where white text would be unreadable.
+export function buttonTextContrast(hex: string): string {
+  return relativeLuminance(hex) > 0.8 ? "#0f172a" : "#f8fafc";
 }
 
 export function resolveThemeIsDark(
@@ -88,9 +98,9 @@ export function buildThemeCssVariables(
     "--theme-accent": accent,
     "--theme-background": background,
     "--theme-foreground": foreground,
-    "--theme-on-primary": hexContrast(primary),
-    "--theme-on-secondary": hexContrast(secondary),
-    "--theme-on-accent": hexContrast(accent),
+    "--theme-on-primary": buttonTextContrast(primary),
+    "--theme-on-secondary": buttonTextContrast(secondary),
+    "--theme-on-accent": buttonTextContrast(accent),
     "--theme-surface": `color-mix(in srgb, ${background} 97%, ${foreground})`,
     "--theme-surface-alt": `color-mix(in srgb, ${primary} 4%, color-mix(in srgb, ${background} 94%, ${foreground}))`,
     "--theme-card-bg": `color-mix(in srgb, ${primary} 7%, ${background})`,

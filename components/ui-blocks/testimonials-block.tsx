@@ -440,7 +440,11 @@ function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
 
 // ── Flow (منتوریار) — three-card grid ────────────────────────────────────────
 
-const FLOW_AVATAR_TONES = ["bg-(--theme-primary)", "bg-(--theme-secondary)", "bg-(--theme-accent)"];
+const FLOW_AVATAR_TONES = [
+  "bg-(--theme-primary) text-(--theme-on-primary)",
+  "bg-(--theme-secondary) text-(--theme-on-secondary)",
+  "bg-(--theme-accent) text-(--theme-on-accent)",
+];
 
 const FLOW_ITEMS = [
   {
@@ -494,7 +498,7 @@ function FlowTestimonials({ id, config }: TestimonialsBlockProps) {
             <div className="flex items-center gap-[12px]">
               <div
                 className={cn(
-                  "flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-full text-[14px] font-bold text-white",
+                  "flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-full text-[14px] font-bold",
                   FLOW_AVATAR_TONES[i % FLOW_AVATAR_TONES.length],
                 )}
               >

@@ -675,11 +675,11 @@ function DarkProgrammerShowcase({ storeContext }: { storeContext?: HeroBlockProp
 // ── Flow (منتوریار) — course-progress hero card ──────────────────────────────
 
 const FLOW_AVATAR_TONES = [
-  "bg-(--theme-primary)",
-  "bg-(--theme-secondary)",
-  "bg-(--theme-accent)",
-  "bg-(--theme-primary)",
-  "bg-(--theme-accent)",
+  "bg-(--theme-primary) text-(--theme-on-primary)",
+  "bg-(--theme-secondary) text-(--theme-on-secondary)",
+  "bg-(--theme-accent) text-(--theme-on-accent)",
+  "bg-(--theme-primary) text-(--theme-on-primary)",
+  "bg-(--theme-accent) text-(--theme-on-accent)",
 ];
 
 function FlowHero({ id, config, storeContext }: HeroBlockProps) {
@@ -748,7 +748,7 @@ function FlowHero({ id, config, storeContext }: HeroBlockProps) {
                 <span
                   key={i}
                   className={cn(
-                    "-ms-2 flex h-[32px] w-[32px] items-center justify-center rounded-full border-2 border-(--theme-surface) text-[11px] font-bold text-white first:ms-0",
+                    "-ms-2 flex h-[32px] w-[32px] items-center justify-center rounded-full border-2 border-(--theme-surface) text-[11px] font-bold first:ms-0",
                     FLOW_AVATAR_TONES[i % FLOW_AVATAR_TONES.length],
                   )}
                 >

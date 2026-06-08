@@ -128,7 +128,7 @@
   /* On-color text vars — guaranteed contrast against solid primary/secondary/accent backgrounds */
   --theme-on-primary: #ffffff;
   --theme-on-secondary: #ffffff;
-  --theme-on-accent: #0f172a;
+  --theme-on-accent: #ffffff;
 
   /* Design-system size tokens — overridden by inline styles from the backend theme */
   --theme-section-padding-y: 4rem;
@@ -232,14 +232,19 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-a {
-  color: var(--theme-primary);
-  text-decoration: none;
-  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* Layered so Tailwind utility classes (e.g. text-(--theme-on-primary) on
+   buttons) can override this default link color via the cascade — an
+   unlayered rule here would otherwise beat utilities regardless of specificity. */
+@layer base {
+  a {
+    color: var(--theme-primary);
+    text-decoration: none;
+    transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-a:hover {
-  color: var(--theme-secondary);
+  a:hover {
+    color: var(--theme-secondary);
+  }
 }
 
 /* Ensure links inside buttons are white */
