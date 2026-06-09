@@ -1,13 +1,13 @@
 import { getCourses, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
-import { EmptyState } from "@/components/ui/empty-state";
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
-import { BookOpen } from "lucide-react";
 import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
+import { SlotGrid, PlaceholderCard } from "./slot-grid";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 
 interface CoursesBlockProps {
   id?: string;
@@ -20,6 +20,8 @@ interface CoursesBlockProps {
     layout?: "grid" | "list" | "minimal" | "featured" | "compact";
     showViewAll?: boolean;
     featured?: boolean;
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
   storeContext?: {
     id: number | null;
@@ -34,6 +36,9 @@ const featuredSectionStyle = {
   color: 'var(--theme-foreground)',
 };
 
+const basisFor = (cols: number): string =>
+  cols >= 4 ? "260px" : cols === 2 ? "440px" : "320px";
+
 export async function CoursesBlock({ id, config, storeContext }: CoursesBlockProps) {
   const title = config?.title;
   const subtitle = config?.subtitle;
@@ -41,12 +46,6 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const gridColumns = config?.gridColumns || 3;
   const layout = config?.layout || "grid";
   const showViewAll = config?.showViewAll !== false;
-
-  const gridColClasses: Record<number, string> = {
-    2: "grid-cols-1 md:grid-cols-2",
-    3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
-    4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
-  };
 
   const [coursePayload, user, currentAcademy] = await Promise.all([
     getCourses({ limit, published: true }).catch(() => null),
@@ -63,31 +62,18 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   }
   const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
+  const tx = (key: string, fallback: string) => config?.text?.[key] ?? fallback;
 
-  if (courses.length === 0) {
-    return (
-      <section className="py-16 sm:py-24" style={sectionStyle}>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <EmptyState
-            icon={<BookOpen size={28} />}
-            title={title || translate("home.noFeaturedCourses")}
-            description={translate("home.checkBackSoon")}
-            action={
-              showViewAll ? (
-                <Link
-                  href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
-                  className="inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-bold transition-all duration-200 hover:scale-105"
-                  style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)' }}
-                >
-                  {translate("home.browseCourses")}
-                </Link>
-              ) : null
-            }
-          />
-        </div>
-      </section>
-    );
-  }
+  // Slot model — fixed container of `limit` slots. Live courses fill in order;
+  // empty/hidden slots are handled by resolveSlots so the grid never collapses.
+  const resolved = resolveSlots(courses, config?.slots, limit);
+  const courseNodes = resolved.map((slot, i) =>
+    slot.kind === "live" ? (
+      <CourseCard key={i} course={slot.data} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
+    ) : (
+      <PlaceholderCard key={i} text={slot.text} />
+    ),
+  );
 
   // Section header — always shown, with eyebrow label + bold heading
   const SectionHeader = ({ centered = false }: { centered?: boolean }) => (
@@ -104,7 +90,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
           style={{ color: 'var(--theme-primary)' }}
         >
-          {translate("courses.featuredCourses")}
+          {tx("eyebrow", translate("courses.featuredCourses"))}
         </p>
         <h2
           className="text-3xl font-black tracking-tight sm:text-4xl"
@@ -124,7 +110,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
           style={{ color: 'var(--theme-primary)' }}
         >
-          {translate("home.exploreFullCatalogue")}
+          {tx("viewAll", translate("home.exploreFullCatalogue"))}
           <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
         </Link>
       )}
@@ -145,37 +131,39 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           }}
         >
           <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
-            {translate("home.viewAllCourses")}
+            {tx("viewAllButton", translate("home.viewAllCourses"))}
           </Link>
         </Button>
       </div>
     ) : null;
 
-  if (layout === "minimal") {
+  if (layout === "list") {
     return (
-      <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
+      <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader />
-          <div className={cn("grid gap-6", gridColClasses[gridColumns])}>
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
-            ))}
+          <div className="space-y-5">
+            {resolved.map((slot, i) =>
+              slot.kind === "live" ? (
+                <CourseCard key={i} course={slot.data} storeSlug={storeContext?.slug ?? null} />
+              ) : (
+                <PlaceholderCard key={i} text={slot.text} />
+              ),
+            )}
           </div>
         </div>
       </section>
     );
   }
 
-  if (layout === "compact") {
+  if (layout === "minimal" || layout === "compact") {
     return (
       <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader />
-          <div className={cn("grid gap-5", gridColClasses[gridColumns])}>
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
-            ))}
-          </div>
+          <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
+            {courseNodes}
+          </SlotGrid>
         </div>
       </section>
     );
@@ -186,29 +174,10 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
       <section id={id || "courses"} className="py-16 sm:py-24" style={featuredSectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionHeader centered />
-          <div className={cn("mx-auto grid gap-7 lg:max-w-none", gridColClasses[gridColumns])}>
-            {courses.map((course) => (
-              <div key={course.id} className="transform transition-all hover:scale-[1.02]">
-                <CourseCard course={course} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
-              </div>
-            ))}
-          </div>
+          <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
+            {courseNodes}
+          </SlotGrid>
           <ViewAllButton />
-        </div>
-      </section>
-    );
-  }
-
-  if (layout === "list") {
-    return (
-      <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeader />
-          <div className="space-y-5">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
-            ))}
-          </div>
         </div>
       </section>
     );
@@ -219,11 +188,9 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionHeader centered />
-        <div className={cn("mx-auto grid gap-7 lg:max-w-none", gridColClasses[gridColumns])}>
-          {courses.map((course) => (
-            <CourseCard key={course.id} course={course} storeSlug={storeContext?.slug ?? null} />
-          ))}
-        </div>
+        <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
+          {courseNodes}
+        </SlotGrid>
         <ViewAllButton />
       </div>
     </section>

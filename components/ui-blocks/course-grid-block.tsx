@@ -14,6 +14,9 @@ interface StaticCourse {
   stars?: string;
 }
 
+import { PlaceholderCard } from "./slot-grid";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+
 interface CourseGridBlockProps {
   id?: string;
   config?: {
@@ -25,6 +28,8 @@ interface CourseGridBlockProps {
     style?: "default" | "code" | "creative";
     /** code: sticky topic tab strip rendered above the grid. */
     topics?: string[];
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
 }
 
@@ -74,9 +79,9 @@ export function CourseGridBlock({ id, config }: CourseGridBlockProps) {
   if (config?.style === "code") return <CodeCourseGrid id={id} config={config} />;
   if (config?.style === "creative") return <CreativeCourseGrid id={id} config={config} />;
 
-  const label = config?.label || "کتابخانه دوره‌ها";
-  const title = config?.title || "آموزش هوشمندتر UX/UI";
-  const viewAllText = config?.viewAllText || "← مشاهده همه";
+  const label = config?.text?.label ?? config?.label ?? "کتابخانه دوره‌ها";
+  const title = config?.text?.title ?? config?.title ?? "آموزش هوشمندتر UX/UI";
+  const viewAllText = config?.text?.viewAllText ?? config?.viewAllText ?? "← مشاهده همه";
   const pills = config?.pills?.length ? config.pills : DEFAULT_PILLS;
   const courses = config?.courses?.length ? config.courses : DEFAULT_COURSES;
 
@@ -109,7 +114,10 @@ export function CourseGridBlock({ id, config }: CourseGridBlockProps) {
         </div>
 
         <div className="grid gap-[24px] md:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course, i) => (
+          {resolveSlots(courses, config?.slots, courses.length).map((slot, i) => {
+            if (slot.kind !== "live") return <PlaceholderCard key={i} text={slot.text} />;
+            const course = slot.data;
+            return (
             <div
               key={i}
               className="overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-background) transition-transform duration-200 hover:-translate-y-1"
@@ -142,7 +150,8 @@ export function CourseGridBlock({ id, config }: CourseGridBlockProps) {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -8,6 +8,9 @@ interface PricingTier {
   badge?: string;
 }
 
+import { PlaceholderCard } from "./slot-grid";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+
 interface PricingBlockProps {
   id?: string;
   config?: {
@@ -15,6 +18,8 @@ interface PricingBlockProps {
     title?: string;
     subtitle?: string;
     tiers?: PricingTier[];
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
 }
 
@@ -63,7 +68,9 @@ export function PricingBlock({ id, config }: PricingBlockProps) {
         </div>
 
         <div className="mt-[36px] grid items-stretch gap-[24px] md:grid-cols-3">
-          {tiers.map((tier, i) => {
+          {resolveSlots(tiers, config?.slots, tiers.length).map((slot, i) => {
+            if (slot.kind !== "live") return <PlaceholderCard key={i} text={slot.text} />;
+            const tier = slot.data;
             const featured = !!tier.featured;
             return (
               <div

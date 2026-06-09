@@ -3,11 +3,15 @@ interface CategoryPill {
   label: string;
 }
 
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+
 interface CategoriesBlockProps {
   id?: string;
   config?: {
     label?: string;
     categories?: CategoryPill[];
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
 }
 
@@ -25,7 +29,7 @@ const DEFAULT_CATEGORIES: CategoryPill[] = [
 ];
 
 export function CategoriesBlock({ id, config }: CategoriesBlockProps) {
-  const label = config?.label || "جستجو بر اساس دسته‌بندی";
+  const label = config?.text?.label ?? config?.label ?? "جستجو بر اساس دسته‌بندی";
   const categories = config?.categories?.length ? config.categories : DEFAULT_CATEGORIES;
 
   return (
@@ -33,19 +37,28 @@ export function CategoriesBlock({ id, config }: CategoriesBlockProps) {
       <div className="px-[40px] pt-[16px] text-[12px] font-extrabold text-(--theme-muted)">{label}</div>
       <div className="overflow-x-auto pb-[20px] pt-[12px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex w-max gap-[12px] px-[40px]">
-          {categories.map((cat, i) => (
-            <div
-              key={i}
-              className={
-                i === 0
-                  ? "flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-primary) bg-(--theme-primary-subtle) px-[20px] py-[16px] transition-all"
-                  : "flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-border-color) bg-(--theme-surface) px-[20px] py-[16px] transition-all hover:-translate-y-0.5 hover:border-(--theme-primary)"
-              }
-            >
-              <div className="text-[28px]">{cat.icon}</div>
-              <div className="whitespace-nowrap text-[12px] font-extrabold text-(--theme-foreground)">{cat.label}</div>
-            </div>
-          ))}
+          {resolveSlots(categories, config?.slots, categories.length).map((slot, i) =>
+            slot.kind !== "live" ? (
+              <div
+                key={i}
+                className="flex min-w-[100px] flex-col items-center justify-center gap-[8px] rounded-[16px] border-2 border-dashed border-(--theme-border-strong) bg-(--theme-surface-alt) px-[20px] py-[16px] text-[12px] font-medium text-(--theme-muted)"
+              >
+                {slot.text ?? "—"}
+              </div>
+            ) : (
+              <div
+                key={i}
+                className={
+                  i === 0
+                    ? "flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-primary) bg-(--theme-primary-subtle) px-[20px] py-[16px] transition-all"
+                    : "flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-border-color) bg-(--theme-surface) px-[20px] py-[16px] transition-all hover:-translate-y-0.5 hover:border-(--theme-primary)"
+                }
+              >
+                <div className="text-[28px]">{slot.data.icon}</div>
+                <div className="whitespace-nowrap text-[12px] font-extrabold text-(--theme-foreground)">{slot.data.label}</div>
+              </div>
+            ),
+          )}
         </div>
       </div>
     </section>

@@ -5,12 +5,17 @@ interface ProjectItem {
   large?: boolean;
 }
 
+import { PlaceholderCard } from "./slot-grid";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+
 interface ProjectsBlockProps {
   id?: string;
   config?: {
     title?: string;
     subtitle?: string;
     projects?: ProjectItem[];
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
 }
 
@@ -45,7 +50,10 @@ export function ProjectsBlock({ id, config }: ProjectsBlockProps) {
           <p className="mx-auto max-w-[480px] text-[15px] text-(--theme-muted)">{subtitle}</p>
         </div>
         <div className="grid grid-cols-2 gap-[16px] lg:grid-cols-4">
-          {projects.map((project, i) => (
+          {resolveSlots(projects, config?.slots, projects.length).map((slot, i) => {
+            if (slot.kind !== "live") return <PlaceholderCard key={i} text={slot.text} />;
+            const project = slot.data;
+            return (
             <div
               key={i}
               className={`group relative aspect-square overflow-hidden rounded-[16px] transition-transform duration-200 hover:scale-[1.03] ${
@@ -62,7 +70,8 @@ export function ProjectsBlock({ id, config }: ProjectsBlockProps) {
                 <div className="text-[11px] font-semibold text-white/80">{project.author}</div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

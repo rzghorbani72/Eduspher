@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils";
 import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
+import { SlotGrid, PlaceholderCard } from "./slot-grid";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 
 interface TestimonialsBlockProps {
   id?: string;
@@ -15,6 +17,8 @@ interface TestimonialsBlockProps {
     label?: string;
     /** flow: testimonial cards. */
     items?: { quote?: string; name?: string; role?: string; initials?: string }[];
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
 }
 
@@ -138,26 +142,30 @@ export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) 
             </p>
           )}
         </div>
-        <div className="mx-auto grid max-w-2xl grid-cols-1 gap-6 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          {items.slice(0, 3).map((t, i) => (
-            <div
-              key={i}
-              data-scroll-animate="fadeInUp"
-              data-scroll-delay={`${0.1 * i}`}
-              className={cn("group flex flex-col rounded-2xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)")}
-            >
-              <Stars count={t.rating} />
-              <p className="text-sm leading-relaxed flex-1 mb-4 text-(--theme-foreground)/70">"{t.content}"</p>
-              <div className="flex items-center gap-3">
-                <div className="transition-transform group-hover:scale-110"><Avatar emoji={t.avatar} /></div>
-                <div className="flex-1">
-                  <p className="font-semibold text-sm">{t.name}</p>
-                  <p className="text-xs text-(--theme-foreground)/55">{t.role}</p>
+        <SlotGrid config={config} minBasisFallback="320px">
+          {resolveSlots(items, config?.slots, 3).map((slot, i) =>
+            slot.kind === "live" ? (
+              <div
+                key={i}
+                data-scroll-animate="fadeInUp"
+                data-scroll-delay={`${0.1 * i}`}
+                className={cn("group flex h-full flex-col rounded-2xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)")}
+              >
+                <Stars count={slot.data.rating} />
+                <p className="text-sm leading-relaxed flex-1 mb-4 text-(--theme-foreground)/70">"{slot.data.content}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="transition-transform group-hover:scale-110"><Avatar emoji={slot.data.avatar} /></div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm">{slot.data.name}</p>
+                    <p className="text-xs text-(--theme-foreground)/55">{slot.data.role}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ) : (
+              <PlaceholderCard key={i} text={slot.text} />
+            ),
+          )}
+        </SlotGrid>
       </div>
     </section>
   );

@@ -38,6 +38,8 @@ export interface UIBlockConfig {
   type: string;
   order: number;
   isVisible: boolean;
+  // Per-block config is loosely typed; each block component declares its own
+  // config shape (including slot-model fields: slots, slotStyle, text).
   config?: Record<string, any>;
 }
 

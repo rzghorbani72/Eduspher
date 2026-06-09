@@ -4,6 +4,8 @@ import { buildAcademyPath, cn } from "@/lib/utils";
 import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
+import { SlotGrid, PlaceholderCard } from "./slot-grid";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 
 interface Stat { value: string; label: string; }
 
@@ -25,6 +27,8 @@ interface FeaturesBlockProps {
     items?: { icon?: string; title?: string; description?: string }[];
     /** creative-teachers: instructor cards. */
     teachers?: { name: string; field: string; rating: string; students: string }[];
+    slots?: SlotConfig[];
+    text?: Record<string, string>;
   };
 }
 
@@ -99,7 +103,6 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   const gridColumns = config?.gridColumns || 3;
   const variant = config?.variant || "cards";
   const showIcons = config?.showIcons !== false;
-  const cols = gridColCls[gridColumns] ?? gridColCls[3];
   const items = localizedFeatures.slice(0, gridColumns * 2);
 
   const SectionTitle = ({ centered = false }: { centered?: boolean }) => (
@@ -146,22 +149,26 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
       <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionTitle centered />
-          <div className={cn("mx-auto grid gap-6 lg:max-w-none", cols)}>
-            {items.map((f, i) => (
-              <div
-                key={i}
-                data-scroll-animate="fadeInUp"
-                data-scroll-delay={`${0.05 * i}`}
-                className="group flex flex-col items-center text-center"
-              >
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl text-4xl transition-all group-hover:scale-110 bg-(--theme-primary-subtle)">
-                  {f.icon}
+          <SlotGrid config={config} minBasisFallback="220px">
+            {resolveSlots(items, config?.slots, items.length).map((slot, i) =>
+              slot.kind === "live" ? (
+                <div
+                  key={i}
+                  data-scroll-animate="fadeInUp"
+                  data-scroll-delay={`${0.05 * i}`}
+                  className="group flex flex-col items-center text-center"
+                >
+                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-2xl text-4xl transition-all group-hover:scale-110 bg-(--theme-primary-subtle)">
+                    {slot.data.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold">{slot.data.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-(--theme-foreground)/60">{slot.data.description}</p>
                 </div>
-                <h3 className="text-lg font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-(--theme-foreground)/60">{f.description}</p>
-              </div>
-            ))}
-          </div>
+              ) : (
+                <PlaceholderCard key={i} text={slot.text} />
+              ),
+            )}
+          </SlotGrid>
         </div>
       </section>
     );
@@ -172,22 +179,26 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
       <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <SectionTitle />
-          <div className={cn("mx-auto grid gap-4 lg:max-w-none", cols)}>
-            {items.map((f, i) => (
-              <div
-                key={i}
-                data-scroll-animate="slideLeft"
-                data-scroll-delay={`${0.08 * i}`}
-                className="group flex items-start gap-4 rounded-xl border p-6 transition-all hover:shadow-md bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)"
-              >
-                {showIcons && <IconBubble icon={f.icon} />}
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{f.title}</h3>
-                  <p className="mt-1 text-sm leading-6 text-(--theme-foreground)/60">{f.description}</p>
+          <SlotGrid config={config} minBasisFallback="280px">
+            {resolveSlots(items, config?.slots, items.length).map((slot, i) =>
+              slot.kind === "live" ? (
+                <div
+                  key={i}
+                  data-scroll-animate="slideLeft"
+                  data-scroll-delay={`${0.08 * i}`}
+                  className="group flex h-full items-start gap-4 rounded-xl border p-6 transition-all hover:shadow-md bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)"
+                >
+                  {showIcons && <IconBubble icon={slot.data.icon} />}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold">{slot.data.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-(--theme-foreground)/60">{slot.data.description}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ) : (
+                <PlaceholderCard key={i} text={slot.text} />
+              ),
+            )}
+          </SlotGrid>
         </div>
       </section>
     );
@@ -198,23 +209,27 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
     <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionTitle centered />
-        <div className={cn("mx-auto grid gap-6 lg:max-w-none", cols)}>
-          {items.map((f, i) => (
-            <div
-              key={i}
-              data-scroll-animate="fadeInUp"
-              data-scroll-delay={`${0.08 * i}`}
-              className="group relative flex flex-col gap-y-3 rounded-xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)"
-            >
-              <div className="absolute inset-0 rounded-xl bg-linear-to-br from-(--theme-primary)/5 via-transparent to-(--theme-accent)/5 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />
-              <div className="relative">
-                {showIcons && <div className="mb-3"><IconBubble icon={f.icon} /></div>}
-                <h3 className="text-lg font-semibold leading-7">{f.title}</h3>
-                <p className="mt-1.5 text-sm leading-6 text-(--theme-foreground)/60">{f.description}</p>
+        <SlotGrid config={config} minBasisFallback="280px">
+          {resolveSlots(items, config?.slots, items.length).map((slot, i) =>
+            slot.kind === "live" ? (
+              <div
+                key={i}
+                data-scroll-animate="fadeInUp"
+                data-scroll-delay={`${0.08 * i}`}
+                className="group relative flex h-full flex-col gap-y-3 rounded-xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)"
+              >
+                <div className="absolute inset-0 rounded-xl bg-linear-to-br from-(--theme-primary)/5 via-transparent to-(--theme-accent)/5 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />
+                <div className="relative">
+                  {showIcons && <div className="mb-3"><IconBubble icon={slot.data.icon} /></div>}
+                  <h3 className="text-lg font-semibold leading-7">{slot.data.title}</h3>
+                  <p className="mt-1.5 text-sm leading-6 text-(--theme-foreground)/60">{slot.data.description}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ) : (
+              <PlaceholderCard key={i} text={slot.text} />
+            ),
+          )}
+        </SlotGrid>
       </div>
     </section>
   );
