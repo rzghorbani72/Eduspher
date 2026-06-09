@@ -335,8 +335,10 @@ a[class*="bg-slate-900"]:hover {
 }
 
 /* Ensure all elements respect theme colors */
-* {
-  border-color: rgb(var(--border));
+@layer base {
+  * {
+    border-color: rgb(var(--border));
+  }
 }
 
 /* Smooth transitions for interactive elements only — NOT applied globally to avoid navigation flash */
@@ -461,23 +463,25 @@ button {
   transition-property: background-color, border-color, color, opacity, transform;
 }
 
-/* Links already defined above - these ensure dark mode compatibility - only when .dark class is NOT present (system theme) */
-@media (prefers-color-scheme: dark) {
-  html:not(.dark) a {
+/* Links dark-mode color defaults — in @layer base so utility classes (text-on-primary, etc.) can override them */
+@layer base {
+  @media (prefers-color-scheme: dark) {
+    html:not(.dark) a {
+      color: var(--theme-primary);
+    }
+
+    html:not(.dark) a:hover {
+      color: var(--theme-secondary);
+    }
+  }
+
+  .dark a {
     color: var(--theme-primary);
   }
-  
-  html:not(.dark) a:hover {
+
+  .dark a:hover {
     color: var(--theme-secondary);
   }
-}
-
-.dark a {
-  color: var(--theme-primary);
-}
-
-.dark a:hover {
-  color: var(--theme-secondary);
 }
 
 /* Animation utilities */
