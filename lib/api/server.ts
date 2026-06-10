@@ -772,6 +772,42 @@ export async function getStoreUITemplate(
   }
 }
 
+export interface PreviewPreset {
+  id: string;
+  name: string;
+  blocks: Array<{
+    id: string;
+    type: string;
+    order: number;
+    isVisible: boolean;
+    config?: Record<string, any>;
+  }>;
+  theme: Record<string, any> | null;
+}
+
+// Single template/preset by key, for the standalone /preview/blocks renderer.
+// Academy scope is carried by the optional preview token.
+export async function getPreviewPreset(
+  key: string,
+  previewToken?: string,
+): Promise<PreviewPreset | null> {
+  try {
+    const path = previewToken
+      ? `/ui-template/preset/${encodeURIComponent(key)}?preview=${encodeURIComponent(previewToken)}`
+      : `/ui-template/preset/${encodeURIComponent(key)}`;
+    const result = await serverFetchRaw<{ data: PreviewPreset | null }>(path, {
+      includeAuth: false,
+    });
+    const preset = result?.data ?? null;
+    if (preset?.blocks) {
+      preset.blocks = [...preset.blocks].sort((a, b) => a.order - b.order);
+    }
+    return preset;
+  } catch {
+    return null;
+  }
+}
+
 export interface CourseQnA {
   id: number;
   course_id: number;

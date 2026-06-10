@@ -1,6 +1,9 @@
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
 import { buildAcademyPath } from "@/lib/utils";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface MembershipBlockProps {
   id?: string;
@@ -24,31 +27,6 @@ interface MembershipBlockProps {
   };
 }
 
-const DEFAULTS = {
-  tag: "اشتراک ویژه",
-  title: "دسترسی نامحدود به",
-  titleHighlight: "تمام دوره‌ها",
-  subtitle:
-    "با یک اشتراک مقرون‌به‌صرفه، به تمام ۵۰۰+ دوره دسترسی داشته باشید و با سرعت دلخواه یاد بگیرید.",
-  features: [
-    "دسترسی به تمام دوره‌های موجود و آینده",
-    "دانلود ویدیوها برای مشاهده آفلاین",
-    "پشتیبانی ۲۴ ساعته و انجمن اختصاصی",
-    "گواهینامه معتبر پس از اتمام دوره",
-  ],
-  ctaText: "همین امروز شروع کن",
-  price: "۱۸۰,۰۰۰",
-  period: "تومان / ماهانه",
-  planItems: [
-    "دسترسی کامل به ۵۰۰+ دوره",
-    "گواهینامه رسمی برای هر دوره",
-    "پروژه‌های عملی و مربی اختصاصی",
-    "انجمن اختصاصی و کدریویو",
-    "بدون تبلیغات",
-  ],
-  planCtaText: "شروع رایگان ۷ روزه",
-  guarantee: "بدون نیاز به کارت بانکی • لغو هر زمان",
-};
 
 const sectionStyle = {
   background:
@@ -56,8 +34,37 @@ const sectionStyle = {
   color: "var(--theme-on-primary)",
 };
 
-export function MembershipBlock({ id, config, storeContext }: MembershipBlockProps) {
-  const c = { ...DEFAULTS, ...config };
+export async function MembershipBlock({ id, config, storeContext }: MembershipBlockProps) {
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
+  const defaults = {
+    tag: tr("blocks.membershipTag"),
+    title: tr("blocks.membershipTitle"),
+    titleHighlight: tr("blocks.membershipTitleHighlight"),
+    subtitle: tr("blocks.membershipSubtitle"),
+    features: [
+      tr("blocks.membershipFeature1"),
+      tr("blocks.membershipFeature2"),
+      tr("blocks.membershipFeature3"),
+      tr("blocks.membershipFeature4"),
+    ],
+    ctaText: tr("blocks.membershipCta"),
+    price: tr("blocks.membershipPrice"),
+    period: tr("blocks.membershipPeriod"),
+    planItems: [
+      tr("blocks.membershipPlan1"),
+      tr("blocks.membershipPlan2"),
+      tr("blocks.membershipPlan3"),
+      tr("blocks.membershipPlan4"),
+      tr("blocks.membershipPlan5"),
+    ],
+    planCtaText: tr("blocks.membershipPlanCta"),
+    guarantee: tr("blocks.membershipGuarantee"),
+  };
+
+  const c = { ...defaults, ...config };
   const pricingHref = buildAcademyPath(storeContext?.slug ?? null, "/pricing");
 
   return (

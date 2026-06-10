@@ -60,6 +60,10 @@ export default async function RootLayout({
   const pathname = headersList.get("x-pathname") || "";
   const urlPathname = headersList.get("x-url-pathname") || pathname;
   const isPanelRoot = urlPathname === "/" || urlPathname === "";
+  // Standalone section/template render surface embedded by AdminPanel — no
+  // header/footer/banner chrome, raw full-width children.
+  const isPreview =
+    urlPathname.startsWith("/preview") || pathname.startsWith("/preview");
   const shellKey = isPanelRoot ? "panel" : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}`;
   const headerDisplayName =
     isAuthenticated && !isPanelRoot ? (await getUserDisplayName()).displayName : null;
@@ -118,8 +122,9 @@ export default async function RootLayout({
   const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
-  const useTemplateLayout = !isPanelRoot && isHomePage;
-  const mainClassName = isPanelRoot
+  const bareLayout = isPanelRoot || isPreview;
+  const useTemplateLayout = isPreview || (!isPanelRoot && isHomePage);
+  const mainClassName = bareLayout
     ? "w-full"
     : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12";
 
@@ -179,10 +184,12 @@ export default async function RootLayout({
                   style={{ backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' }}
                 >
                   {/* Creative animated background with gradients and flying icons */}
-                  <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
+                  {!isPreview && (
+                    <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
+                  )}
 
-                  {!isPanelRoot && <PreviewModeBanner />}
-                  {!isPanelRoot && <SiteHeaderShell />}
+                  {!bareLayout && <PreviewModeBanner />}
+                  {!bareLayout && <SiteHeaderShell />}
                   <main className="relative flex-1 z-10">
                     {useTemplateLayout ? (
                       <>{children}</>
@@ -192,7 +199,7 @@ export default async function RootLayout({
                       </div>
                     )}
                   </main>
-                  {!isPanelRoot && <SiteFooter />}
+                  {!bareLayout && <SiteFooter />}
                 </div>
               </ScrollAnimationProvider>
             </I18nProvider>

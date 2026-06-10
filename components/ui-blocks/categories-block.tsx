@@ -4,6 +4,9 @@ interface CategoryPill {
 }
 
 import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface CategoriesBlockProps {
   id?: string;
@@ -28,8 +31,12 @@ const DEFAULT_CATEGORIES: CategoryPill[] = [
   { icon: "🤖", label: "هوش مصنوعی" },
 ];
 
-export function CategoriesBlock({ id, config }: CategoriesBlockProps) {
-  const label = config?.text?.label ?? config?.label ?? "جستجو بر اساس دسته‌بندی";
+export async function CategoriesBlock({ id, config }: CategoriesBlockProps) {
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
+  const label = config?.text?.label ?? config?.label ?? tr("blocks.categoriesLabel");
   const categories = config?.categories?.length ? config.categories : DEFAULT_CATEGORIES;
 
   return (

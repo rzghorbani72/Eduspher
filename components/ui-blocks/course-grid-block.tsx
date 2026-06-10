@@ -16,6 +16,10 @@ interface StaticCourse {
 
 import { PlaceholderCard } from "./slot-grid";
 import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
+import type { LanguageCode } from "@/lib/i18n/config";
 
 interface CourseGridBlockProps {
   id?: string;
@@ -75,13 +79,17 @@ const DEFAULT_COURSES: StaticCourse[] = [
   },
 ];
 
-export function CourseGridBlock({ id, config }: CourseGridBlockProps) {
+export async function CourseGridBlock({ id, config }: CourseGridBlockProps) {
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
   if (config?.style === "code") return <CodeCourseGrid id={id} config={config} />;
   if (config?.style === "creative") return <CreativeCourseGrid id={id} config={config} />;
 
-  const label = config?.text?.label ?? config?.label ?? "کتابخانه دوره‌ها";
-  const title = config?.text?.title ?? config?.title ?? "آموزش هوشمندتر UX/UI";
-  const viewAllText = config?.text?.viewAllText ?? config?.viewAllText ?? "← مشاهده همه";
+  const label = config?.text?.label ?? config?.label ?? tr("blocks.courseGridLabel");
+  const title = config?.text?.title ?? config?.title ?? tr("blocks.courseGridTitle");
+  const viewAllText = config?.text?.viewAllText ?? config?.viewAllText ?? tr("blocks.courseGridViewAll");
   const pills = config?.pills?.length ? config.pills : DEFAULT_PILLS;
   const courses = config?.courses?.length ? config.courses : DEFAULT_COURSES;
 

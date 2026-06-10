@@ -7,6 +7,9 @@ interface ProjectItem {
 
 import { PlaceholderCard } from "./slot-grid";
 import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface ProjectsBlockProps {
   id?: string;
@@ -36,10 +39,13 @@ const DEFAULT_PROJECTS: ProjectItem[] = [
   { title: "ریل لوپ ۱۴۰۵", author: "توسط زوی پارک", likes: "۱۷۶" },
 ];
 
-export function ProjectsBlock({ id, config }: ProjectsBlockProps) {
-  const title = config?.title || "پروژه‌های دانشجویان";
-  const subtitle =
-    config?.subtitle || "ببین جامعه منتوریار چه می‌سازد. الهام بگیر و کار خودت را به اشتراک بذار.";
+export async function ProjectsBlock({ id, config }: ProjectsBlockProps) {
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
+  const title = config?.text?.title ?? config?.title ?? tr("blocks.projectsTitle");
+  const subtitle = config?.text?.subtitle ?? config?.subtitle ?? tr("blocks.projectsSubtitle");
   const projects = config?.projects?.length ? config.projects : DEFAULT_PROJECTS;
 
   return (

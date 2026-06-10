@@ -1,3 +1,8 @@
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
+import type { LanguageCode } from "@/lib/i18n/config";
+
 interface CtaBlockProps {
   id?: string;
   config?: {
@@ -8,18 +13,21 @@ interface CtaBlockProps {
     ctaSecondary?: string;
     style?: "default" | "creative";
   };
+  language?: LanguageCode;
 }
 
-export function CtaBlock({ id, config }: CtaBlockProps) {
-  if (config?.style === "creative") return <CreativeCta id={id} config={config} />;
+export async function CtaBlock({ id, config }: CtaBlockProps) {
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
 
-  const label = config?.label || "همین امروز شروع کن";
-  const title = config?.title || "یادگیری را شروع کن. رشد کن.";
-  const subtitle =
-    config?.subtitle ||
-    "به ۱۲٬۰۰۰+ یادگیرنده‌ای بپیوند که با دوره‌های متخصص‌محور منتوریار مهارت‌های واقعی می‌سازند.";
-  const ctaText = config?.ctaText || "رایگان بپیوند";
-  const ctaSecondary = config?.ctaSecondary || "مرور دوره‌ها";
+  if (config?.style === "creative") return <CreativeCta id={id} config={config} tr={tr} />;
+
+  const label = config?.label || tr("blocks.ctaLabel");
+  const title = config?.title || tr("blocks.ctaTitle");
+  const subtitle = config?.subtitle || tr("blocks.ctaSubtitle");
+  const ctaText = config?.ctaText || tr("blocks.ctaPrimary");
+  const ctaSecondary = config?.ctaSecondary || tr("blocks.ctaSecondaryText");
 
   return (
     <section id={id || "cta"} className="bg-(--theme-surface) py-[60px]">
@@ -50,10 +58,10 @@ export function CtaBlock({ id, config }: CtaBlockProps) {
 
 // ── Creative (استودیوی خلاق) — green band with navy button ────────────────────
 
-function CreativeCta({ id, config }: CtaBlockProps) {
-  const title = config?.title || "همین امروز شروع به ساختن کن.";
-  const subtitle = config?.subtitle || "دسترسی نامحدود به ۳۰٬۰۰۰+ کلاس. ۷ روز رایگان، هر زمان لغو کن.";
-  const ctaText = config?.ctaText || "← آزمایش رایگان";
+function CreativeCta({ id, config, tr }: CtaBlockProps & { tr: (key: string) => string }) {
+  const title = config?.title || tr("blocks.ctaCreativeTitle");
+  const subtitle = config?.subtitle || tr("blocks.ctaCreativeSubtitle");
+  const ctaText = config?.ctaText || tr("blocks.ctaCreativePrimary");
 
   return (
     <section id={id || "cta"} className="bg-(--theme-primary) px-[40px] py-[80px] text-center">

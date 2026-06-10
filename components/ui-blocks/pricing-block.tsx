@@ -10,6 +10,9 @@ interface PricingTier {
 
 import { PlaceholderCard } from "./slot-grid";
 import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { getCurrentAcademy } from "@/lib/api/server";
+import { getAcademyLanguage } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/server-translations";
 
 interface PricingBlockProps {
   id?: string;
@@ -49,11 +52,14 @@ const DEFAULT_TIERS: PricingTier[] = [
   },
 ];
 
-export function PricingBlock({ id, config }: PricingBlockProps) {
-  const label = config?.label || "قیمت‌گذاری";
-  const title = config?.title || "ساده و شفاف";
-  const subtitle =
-    config?.subtitle || "طرحی متناسب با اهداف یادگیری خودت انتخاب کن. هر زمان ارتقا یا لغو کن.";
+export async function PricingBlock({ id, config }: PricingBlockProps) {
+  const currentAcademy = await getCurrentAcademy().catch(() => null);
+  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const tr = (key: string) => t(key, language);
+
+  const label = config?.text?.label ?? config?.label ?? tr("blocks.pricingLabel");
+  const title = config?.text?.title ?? config?.title ?? tr("blocks.pricingTitle");
+  const subtitle = config?.text?.subtitle ?? config?.subtitle ?? tr("blocks.pricingSubtitle");
   const tiers = config?.tiers?.length ? config.tiers : DEFAULT_TIERS;
 
   return (
