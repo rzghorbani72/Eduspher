@@ -1,15 +1,12 @@
 #!/usr/bin/env ts-node
-/**
- * Edusphere Production Readiness Report
- *
- * Service/App specific checks:
- * Architecture, Code Quality, Scalability, Reliability, Integration, Documentation, Testing
- *
- * Run: npm run production-report
- */
-
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const rootDir = path.join(__dirname, '..');
 
 const colors = {
   reset: '\x1b[0m',
@@ -18,135 +15,259 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[36m',
   bold: '\x1b[1m',
-  dim: '\x1b[2m',
+  dim: '\x1b[2m'
 };
 
-interface AspectScore {
-  name: string;
-  score: number;
-  status: 'ready' | 'warning' | 'critical';
-}
+const log = (msg: string, color = colors.reset) => console.log(`${color}${msg}${colors.reset}`);
 
-interface ProjectReport {
-  name: string;
-  path: string;
-  overallScore: number;
-  aspects: AspectScore[];
-  timestamp: string;
-}
+const readPackageJson = () => {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8'));
+  } catch {
+    return {};
+  }
+};
 
-class EdusphereProductionReport {
-  private rootDir: string;
+const getFilesRecursive = (dir: string): string[] => {
+  let files: string[] = [];
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.name.startsWith('.')) continue;
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        files = files.concat(getFilesRecursive(fullPath));
+      } else {
+        files.push(fullPath);
+      }
+    }
+  } catch {}
+  return files;
+};
 
-  constructor() {
-    this.rootDir = path.join(__dirname, '..');
+const checkSecurity = (): number => {
+  let score = 0;
+  const pkg = readPackageJson();
+
+  if (pkg.dependencies?.['next-auth']) score += 15;
+  if (pkg.dependencies?.zod || pkg.dependencies?.yup) score += 15;
+  if (fs.existsSync(path.join(rootDir, '.env.example'))) score += 10;
+  if (pkg.dependencies?.dompurify) score += 12;
+  if (pkg.dependencies?.['jose']) score += 12;
+
+  const appDir = path.join(rootDir, 'app');
+  if (fs.existsSync(appDir)) {
+    const files = getFilesRecursive(appDir).filter(f => f.endsWith('.ts'));
+    let hasSecrets = false;
+    for (const file of files.slice(0, 20)) {
+      if (fs.readFileSync(file, 'utf-8').match(/password\s*=\s*['"]/)) {
+        hasSecrets = true;
+        break;
+      }
+    }
+    if (!hasSecrets) score += 14;
   }
 
-  private log(message: string, color: string = colors.reset) {
-    console.log(`${color}${message}${colors.reset}`);
+  return Math.min(score, 100);
+};
+
+const checkCodeQuality = (): number => {
+  let score = 0;
+  const tsconfig = path.join(rootDir, 'tsconfig.json');
+
+  if (fs.existsSync(tsconfig)) {
+    const cfg = JSON.parse(fs.readFileSync(tsconfig, 'utf-8'));
+    if (cfg.compilerOptions?.strict) score += 15;
   }
 
-  private getStatusIcon(score: number): string {
-    if (score >= 80) return '✅';
-    if (score >= 60) return '⚠️ ';
-    return '❌';
+  if (fs.existsSync(path.join(rootDir, '.eslintrc.js')) ||
+      fs.existsSync(path.join(rootDir, 'eslint.config.mjs'))) score += 12;
+  if (fs.existsSync(path.join(rootDir, '.prettierrc'))) score += 12;
+
+  const componentsDir = path.join(rootDir, 'components');
+  if (fs.existsSync(componentsDir)) {
+    const componentCount = getFilesRecursive(componentsDir).filter(f => f.endsWith('.tsx')).length;
+    if (componentCount > 10) score += 20;
+    else if (componentCount > 5) score += 10;
   }
 
-  private getStatusColor(score: number): string {
-    if (score >= 80) return colors.green;
-    if (score >= 60) return colors.yellow;
-    return colors.red;
+  const appDir = path.join(rootDir, 'app');
+  if (fs.existsSync(appDir)) {
+    const files = getFilesRecursive(appDir).filter(f => f.endsWith('.tsx'));
+    let noAny = 0;
+    for (const file of files.slice(0, 20)) {
+      if (!fs.readFileSync(file, 'utf-8').includes(': any')) {
+        noAny++;
+      }
+    }
+    score += (noAny / Math.min(20, files.length)) * 15;
   }
 
-  private generateReport(): ProjectReport {
-    const aspects: AspectScore[] = [
-      { name: 'Architecture', score: 75, status: 'warning' },
-      { name: 'Code Quality', score: 40, status: 'critical' },
-      { name: 'Scalability', score: 0, status: 'critical' },
-      { name: 'Reliability', score: 25, status: 'critical' },
-      { name: 'Integration', score: 0, status: 'critical' },
-      { name: 'Documentation', score: 25, status: 'critical' },
-      { name: 'Testing', score: 20, status: 'critical' },
-    ];
+  return Math.min(score, 100);
+};
 
-    const overallScore = Math.round(aspects.reduce((sum, a) => sum + a.score, 0) / aspects.length);
+const checkTesting = (): number => {
+  let score = 0;
+  const pkg = readPackageJson();
 
-    return {
-      name: 'Edusphere (Service/App)',
-      path: 'edusphere/',
-      overallScore,
-      aspects,
-      timestamp: new Date().toISOString(),
-    };
+  if (pkg.devDependencies?.jest || pkg.devDependencies?.vitest) score += 20;
+  if (pkg.devDependencies?.['@testing-library/react']) score += 15;
+
+  const appDir = path.join(rootDir, 'app');
+  if (fs.existsSync(appDir)) {
+    const testCount = getFilesRecursive(appDir).filter(f => f.endsWith('.test.tsx') || f.endsWith('.test.ts')).length;
+    if (testCount > 10) score += 30;
+    else if (testCount > 5) score += 20;
+    else if (testCount > 0) score += 10;
   }
 
-  private displayReport(report: ProjectReport): void {
-    this.log(`\n${'═'.repeat(80)}`, colors.blue);
-    this.log(`\n${report.name}`, colors.bold);
-    this.log(`Path: ${report.path}`, colors.dim);
-    this.log(`Generated: ${new Date(report.timestamp).toLocaleString()}`, colors.dim);
+  if (fs.existsSync(path.join(rootDir, 'jest.config.js'))) score += 15;
 
-    this.log(`\n${'─'.repeat(80)}`, colors.blue);
-    this.log('\nProduction Readiness by Aspect:\n', colors.bold);
+  return Math.min(score, 100);
+};
 
-    // Display each aspect
-    report.aspects.forEach((aspect) => {
-      const icon = this.getStatusIcon(aspect.score);
-      const color = this.getStatusColor(aspect.score);
-      const barLength = 30;
-      const filledLength = Math.round((aspect.score / 100) * barLength);
-      const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
+const checkPerformance = (): number => {
+  let score = 0;
+  const pkg = readPackageJson();
 
-      this.log(
-        `  ${aspect.name.padEnd(20)} ${String(aspect.score).padStart(3)}% ${icon} ${color}${bar}${colors.reset}`,
-        ''
-      );
-    });
+  if (pkg.dependencies?.sharp) score += 15;
 
-    // Overall score
-    const overallIcon = this.getStatusIcon(report.overallScore);
-    const overallColor = this.getStatusColor(report.overallScore);
-    const overallBarLength = 40;
-    const overallFilledLength = Math.round((report.overallScore / 100) * overallBarLength);
-    const overallBar = '█'.repeat(overallFilledLength) + '░'.repeat(overallBarLength - overallFilledLength);
+  const appDir = path.join(rootDir, 'app');
+  if (fs.existsSync(appDir)) {
+    const files = getFilesRecursive(appDir).filter(f => f.endsWith('.tsx'));
+    let hasImageOpt = 0;
+    let hasDynamic = 0;
 
-    this.log(`\n${'─'.repeat(80)}`, colors.blue);
-    this.log(`\nOVERALL SCORE: ${report.overallScore}% ${overallIcon}`, colors.bold + overallColor);
-    this.log(`${overallColor}${overallBar}${colors.reset}\n`, '');
-  }
-
-  private saveReport(report: ProjectReport): void {
-    const reportDir = path.join(this.rootDir, '..', 'reports');
-
-    if (!fs.existsSync(reportDir)) {
-      fs.mkdirSync(reportDir, { recursive: true });
+    for (const file of files.slice(0, 15)) {
+      const content = fs.readFileSync(file, 'utf-8');
+      if (content.includes('Image')) hasImageOpt++;
+      if (content.includes('dynamic(')) hasDynamic++;
     }
 
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const safeName = report.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-    const filename = `${safeName}-${timestamp}.json`;
-    const filepath = path.join(reportDir, filename);
-
-    fs.writeFileSync(filepath, JSON.stringify(report, null, 2), 'utf-8');
+    score += (hasImageOpt / Math.min(15, files.length)) * 20;
+    score += (hasDynamic / Math.min(15, files.length)) * 15;
   }
 
-  public run(): void {
-    console.clear();
+  if (pkg.dependencies?.tailwindcss) score += 10;
 
-    this.log(`\n${'═'.repeat(80)}`, colors.blue);
-    this.log(`📊 EDUSPHERE PRODUCTION READINESS REPORT`, colors.bold + colors.blue);
-    this.log(`Generated: ${new Date().toLocaleString()}`, colors.dim);
-    this.log(`${'═'.repeat(80)}\n`, colors.blue);
+  return Math.min(score, 100);
+};
 
-    const report = this.generateReport();
+const checkStateManagement = (): number => {
+  let score = 0;
+  const pkg = readPackageJson();
 
-    this.displayReport(report);
-    this.saveReport(report);
+  if (pkg.dependencies?.zustand) score += 25;
+  else if (pkg.dependencies?.['@tanstack/react-query']) score += 25;
+  else if (pkg.dependencies?.swr) score += 20;
 
-    this.log('\n📁 Report saved to: ../reports/', colors.dim);
-    this.log('💡 Re-run weekly to track progress\n', colors.dim);
+  const appDir = path.join(rootDir, 'app');
+  if (fs.existsSync(appDir)) {
+    const files = getFilesRecursive(appDir).filter(f => f.endsWith('.tsx'));
+    let contextCount = 0;
+    for (const file of files.slice(0, 10)) {
+      if (fs.readFileSync(file, 'utf-8').includes('useContext')) {
+        contextCount++;
+      }
+    }
+    score += (contextCount / Math.min(10, files.length)) * 20;
   }
-}
 
-const generator = new EdusphereProductionReport();
-generator.run();
+  const hooksDir = path.join(rootDir, 'hooks');
+  if (fs.existsSync(hooksDir)) score += 15;
+
+  return Math.min(score, 100);
+};
+
+const checkErrorHandling = (): number => {
+  let score = 0;
+  const appDir = path.join(rootDir, 'app');
+
+  if (fs.existsSync(appDir)) {
+    if (fs.existsSync(path.join(appDir, 'error.tsx'))) score += 25;
+    if (fs.existsSync(path.join(appDir, 'not-found.tsx'))) score += 15;
+    if (fs.existsSync(path.join(appDir, 'global-error.tsx'))) score += 15;
+
+    const files = getFilesRecursive(appDir).filter(f => f.endsWith('.tsx'));
+    let tryCatch = 0;
+    for (const file of files.slice(0, 15)) {
+      const content = fs.readFileSync(file, 'utf-8');
+      if (content.includes('try') && content.includes('catch')) {
+        tryCatch++;
+      }
+    }
+    score += (tryCatch / Math.min(15, files.length)) * 20;
+  }
+
+  const pkg = readPackageJson();
+  if (pkg.dependencies?.['@sentry/react']) score += 10;
+
+  return Math.min(score, 100);
+};
+
+const checkLogging = (): number => {
+  let score = 0;
+  const pkg = readPackageJson();
+
+  if (pkg.dependencies?.winston || pkg.dependencies?.pino) score += 30;
+  if (pkg.dependencies?.['@sentry/react'] || pkg.dependencies?.['@sentry/nextjs']) score += 20;
+
+  const appDir = path.join(rootDir, 'app');
+  if (fs.existsSync(appDir)) {
+    const files = getFilesRecursive(appDir).filter(f => f.endsWith('.tsx'));
+    let hasLogger = 0;
+    for (const file of files.slice(0, 10)) {
+      if (fs.readFileSync(file, 'utf-8').includes('logger')) {
+        hasLogger++;
+      }
+    }
+    score += (hasLogger / Math.min(10, files.length)) * 20;
+  }
+
+  const libDir = path.join(rootDir, 'lib');
+  if (fs.existsSync(libDir)) {
+    if (getFilesRecursive(libDir).some(f => f.includes('logger'))) score += 15;
+  }
+
+  return Math.min(score, 100);
+};
+
+const run = () => {
+  console.clear();
+  log(`\n${'═'.repeat(80)}`, colors.blue);
+  log(`📊 EDUSPHERE PRODUCTION READINESS REPORT`, colors.bold + colors.blue);
+  log(`Generated: ${new Date().toLocaleString()}`, colors.dim);
+  log(`${'═'.repeat(80)}\n`, colors.blue);
+
+  const scores = [
+    { name: 'Security', score: checkSecurity() },
+    { name: 'Code Quality', score: checkCodeQuality() },
+    { name: 'Testing', score: checkTesting() },
+    { name: 'Performance', score: checkPerformance() },
+    { name: 'State Management', score: checkStateManagement() },
+    { name: 'Error Handling', score: checkErrorHandling() },
+    { name: 'Logging', score: checkLogging() }
+  ];
+
+  const overall = Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length);
+
+  log('\nProduction Readiness by Aspect:\n', colors.bold);
+  scores.forEach(s => {
+    const icon = s.score >= 80 ? '✅' : s.score >= 60 ? '⚠️ ' : '❌';
+    const color = s.score >= 80 ? colors.green : s.score >= 60 ? colors.yellow : colors.red;
+    const barLen = 30;
+    const filled = Math.round((s.score / 100) * barLen);
+    const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
+    log(`  ${s.name.padEnd(20)} ${String(s.score).padStart(3)}% ${icon} ${color}${bar}${colors.reset}`, '');
+  });
+
+  const overallIcon = overall >= 80 ? '✅' : overall >= 60 ? '⚠️ ' : '❌';
+  const overallColor = overall >= 80 ? colors.green : overall >= 60 ? colors.yellow : colors.red;
+  const overallBar = '█'.repeat(Math.round((overall / 100) * 40)) + '░'.repeat(40 - Math.round((overall / 100) * 40));
+
+  log(`\n${'─'.repeat(80)}`, colors.blue);
+  log(`\nOVERALL SCORE: ${overall}% ${overallIcon}`, colors.bold + overallColor);
+  log(`${overallColor}${overallBar}${colors.reset}\n`, '');
+};
+
+run();
