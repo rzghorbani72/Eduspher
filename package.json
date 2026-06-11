@@ -6,7 +6,8 @@
     "dev": "next dev -p 5000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "production-report": "ts-node scripts/production-report.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
