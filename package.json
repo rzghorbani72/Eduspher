@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "production-report": "ts-node scripts/production-report.ts"
+    "production-report": "ts-node scripts/production-report.ts",
+    "load-test:basic": "k6 run loadtests/basic-frontend-load-test.js",
+    "load-test:journey": "k6 run loadtests/user-journey-load-test.js",
+    "load-test": "npm run load-test:basic"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
