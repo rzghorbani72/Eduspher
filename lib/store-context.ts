@@ -52,7 +52,13 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
     cookieAcademyId ??
     (resolvedSlug ? null : env.defaultAcademyId ? String(env.defaultAcademyId) : null);
 
-  const resolvedName = cookieAcademyName ?? env.siteName;
+  // Admin previewing a public template: it belongs to no academy, so show a
+  // neutral sample brand instead of leaking the previewing academy's name.
+  // Slug/id are kept so the preview still renders real catalog and theme data.
+  const isSamplePreview = headerStore.get("x-preview-sample") === "1";
+  const resolvedName = isSamplePreview
+    ? "نمونه"
+    : cookieAcademyName ?? env.siteName;
 
   return {
     id: resolvedId ? Number(resolvedId) : null,

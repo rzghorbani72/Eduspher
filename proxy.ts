@@ -50,12 +50,16 @@ function applyPreviewEmbedRequest(
 ): { preview: string | null; embed: boolean } {
   const preview = request.nextUrl.searchParams.get("preview");
   const embed = request.nextUrl.searchParams.get("embed") === "1";
+  const sample = request.nextUrl.searchParams.get("sample") === "1";
 
   if (preview) {
     requestHeaders.set("x-preview-token", preview);
   }
   if (embed) {
     requestHeaders.set("x-embed-mode", "1");
+  }
+  if (sample) {
+    requestHeaders.set("x-preview-sample", "1");
   }
 
   return { preview, embed };
