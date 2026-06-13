@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "production-report": "ts-node scripts/production-report.ts",
     "load-test:basic": "k6 run loadtests/basic-frontend-load-test.js",
     "load-test:journey": "k6 run loadtests/user-journey-load-test.js",
