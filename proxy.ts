@@ -189,6 +189,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "checkout",
   "courses",
   "payment",
+  "preview",
   "pricing",
   "roadmap",
 ]);

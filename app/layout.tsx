@@ -64,6 +64,10 @@ export default async function RootLayout({
   // header/footer/banner chrome, raw full-width children.
   const isPreview =
     urlPathname.startsWith("/preview") || pathname.startsWith("/preview");
+  // Admin master-template preview: the draft renders on the academy path but
+  // must look like a neutral sample site — strip academy chrome and identity so
+  // no academy name/logo/imagery leaks into the master being authored.
+  const isSamplePreview = headersList.get("x-preview-sample") === "1";
   const shellKey = isPanelRoot ? "panel" : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}`;
   const headerDisplayName =
     isAuthenticated && !isPanelRoot ? (await getUserDisplayName()).displayName : null;
@@ -122,8 +126,9 @@ export default async function RootLayout({
   const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
-  const bareLayout = isPanelRoot || isPreview;
-  const useTemplateLayout = isPreview || (!isPanelRoot && isHomePage);
+  const bareLayout = isPanelRoot || isPreview || isSamplePreview;
+  const useTemplateLayout =
+    isPreview || isSamplePreview || (!isPanelRoot && isHomePage);
   const mainClassName = bareLayout
     ? "w-full"
     : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12";
@@ -184,7 +189,7 @@ export default async function RootLayout({
                   style={{ backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' }}
                 >
                   {/* Creative animated background with gradients and flying icons */}
-                  {!isPreview && (
+                  {!isPreview && !isSamplePreview && (
                     <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
                   )}
 

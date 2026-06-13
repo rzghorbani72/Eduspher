@@ -33,13 +33,39 @@ export default async function PreviewBlocksPage({
     : preset.blocks;
   const themeVars = buildThemeCssVariables(preset.theme ?? null);
 
+  // The wrapper owns the full themed canvas (background + text color) so dark
+  // presets never show the host layout's light gaps behind a section.
+  const canvasStyle: CSSProperties = {
+    ...themeVars,
+    backgroundColor: "var(--theme-background)",
+    color: "var(--theme-foreground)",
+    minHeight: "100%",
+  } as CSSProperties;
+
   return (
-    <div style={themeVars as CSSProperties}>
-      <BlocksRenderer
-        blocks={blocks}
-        includeHeaderFooter
-        storeContext={{ id: null, slug: null, name: null }}
-      />
+    <div style={canvasStyle}>
+      {blocks.map((block, index) => {
+        // Header stays un-animated so its sticky positioning is preserved; every
+        // other section fades up in sequence for a lively showcase.
+        const animate = block.type !== "header";
+        return (
+          <div
+            key={block.id}
+            className={animate ? "preview-block-enter" : undefined}
+            style={
+              animate
+                ? ({ animationDelay: `${index * 90}ms` } as CSSProperties)
+                : undefined
+            }
+          >
+            <BlocksRenderer
+              blocks={[block]}
+              includeHeaderFooter
+              storeContext={{ id: null, slug: null, name: null }}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
