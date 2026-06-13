@@ -6,13 +6,12 @@ import { test, expect } from '@playwright/test';
  * directly regardless of the academy's display language.
  */
 test.describe('edusphere student login — validation', () => {
-  test('requires a password (email mode)', async ({ page }) => {
+  test('requires an identifier (empty submit)', async ({ page }) => {
     await page.goto('/auth/login');
 
-    await page.locator('#identifier').fill('student@example.com');
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.getByText('Password is required')).toBeVisible();
+    await expect(page.getByText('Email or phone is required')).toBeVisible();
   });
 
   test('rejects a too-short password', async ({ page }) => {
