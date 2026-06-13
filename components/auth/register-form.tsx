@@ -286,10 +286,11 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         return match ? decodeURIComponent(match[1]) : null;
       };
       
+      // Academy ids are cuid strings — never coerce to Number.
       const academyIdCookie = getCookieValue(env.academyIdCookie);
-      const finalAcademyId = academyIdCookie
-        ? Number(academyIdCookie)
-        : env.defaultAcademyId;
+      const finalAcademyId =
+        academyIdCookie ??
+        (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
 
       // Build user data based on primary method
       const userData: any = {

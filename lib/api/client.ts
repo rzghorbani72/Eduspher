@@ -430,6 +430,7 @@ export const verifyEmailOtp = (email: string, otp: string, type: string, options
   return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-email", {
     email,
     otp,
+    type,
   }, options);
 };
 
@@ -437,6 +438,7 @@ export const verifyPhoneOtp = (phone_number: string, otp: string, type: string, 
   return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-phone", {
     phone_number,
     otp,
+    type,
   }, options);
 };
 

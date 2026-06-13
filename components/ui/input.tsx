@@ -13,13 +13,16 @@ const inputBaseStyle: CSSProperties = {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, type = "text", value, style, ...props }, ref) => {
-    const normalizedValue = value === undefined || value === null ? "" : String(value);
+    // Only control the value when one is actually provided. Forcing value=""
+    // for uncontrolled inputs (e.g. react-hook-form `{...register()}` fields)
+    // pins them empty and makes typing impossible.
+    const isControlled = value !== undefined && value !== null;
 
     return (
       <input
         ref={ref}
         type={type}
-        value={normalizedValue}
+        {...(isControlled ? { value: String(value) } : {})}
         className={cn(
           "flex h-11 w-full rounded-lg border px-4 text-base shadow-sm transition-colors placeholder:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)]",
           className

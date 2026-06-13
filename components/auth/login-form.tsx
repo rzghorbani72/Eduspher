@@ -123,12 +123,15 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           return match ? decodeURIComponent(match[1]) : null;
         };
 
+        // Academy ids are cuid strings — never coerce to Number.
         const academyIdCookie = getCookieValue(env.academyIdCookie);
-        const finalAcademyId = academyIdCookie
-          ? Number(academyIdCookie)
-          : env.defaultAcademyId;
+        const finalAcademyId =
+          academyIdCookie ??
+          (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
 
-        const result = await postJson<any>("/auth/login", {
+        // Students use the public-login endpoint; /auth/login is staff-only
+        // (MANAGER/TEACHER) and rejects STUDENT/USER accounts.
+        const result = await postJson<any>("/auth/public/login", {
           identifier,
           password: values.password,
           academy_id: finalAcademyId,

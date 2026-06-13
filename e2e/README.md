@@ -18,12 +18,21 @@ pnpm test:e2e                         # auto-starts next dev on :5000
 ```
 
 ## Backend-dependent specs (`@backend`)
-Happy-path login is skipped unless `E2E_BACKEND=1`, and needs a seeded STUDENT
-plus an academy id edusphere can resolve:
+Happy-path login is skipped unless `E2E_BACKEND=1`. Verified recipe:
 
 ```bash
+# 1) seed a known academy + student (prints ACADEMY_ID)
+pnpm --dir ../Backend seed:e2e
+# 2) run the API (any free port, e.g. 3001)
+PORT=3001 NODE_ENV=development pnpm --dir ../Backend exec nest start &
+# 3) point edusphere at it + pass the seeded creds/academy
+NEXT_PUBLIC_BACKEND_ORIGIN=http://localhost:3001 \
 E2E_BACKEND=1 \
-E2E_STUDENT_EMAIL=student@example.com \
+E2E_STUDENT_EMAIL=e2e.student.live@test.local \
 E2E_STUDENT_PASSWORD='Passw0rd!' \
+E2E_ACADEMY_ID=<cuid printed by seed:e2e> \
 pnpm test:e2e
 ```
+
+The spec sets the `skillforge_selected_academy_id` cookie to `E2E_ACADEMY_ID` so
+the login form sends the correct (cuid) academy to public login.

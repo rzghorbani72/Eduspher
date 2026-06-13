@@ -32,14 +32,29 @@ test.describe('edusphere student login — validation', () => {
 test.describe('edusphere student login — happy path @backend', () => {
   test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
 
-  test('logs in and lands on courses', async ({ page }) => {
+  test('logs in and lands on courses', async ({ page, baseURL }) => {
     const email = process.env.E2E_STUDENT_EMAIL;
     const password = process.env.E2E_STUDENT_PASSWORD;
+    const academyId = process.env.E2E_ACADEMY_ID;
     test.skip(!email || !password, 'E2E_STUDENT_EMAIL/PASSWORD required');
+    test.skip(!academyId, 'E2E_ACADEMY_ID required (the cuid the student belongs to)');
+
+    // The student belongs to a specific academy; the login form reads the
+    // selected-academy cookie to send academy_id to public login.
+    await page.context().addCookies([
+      {
+        name: 'skillforge_selected_academy_id',
+        value: academyId!,
+        url: baseURL!,
+      },
+    ]);
 
     await page.goto('/auth/login');
     await page.locator('#identifier').fill(email!);
-    await page.locator('#password').fill(password!);
+    // The password input is react-hook-form registered with a custom onChange
+    // transform; type key-by-key so the value is captured reliably.
+    await page.locator('#password').click();
+    await page.locator('#password').pressSequentially(password!);
     await page.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/courses/, { timeout: 15_000 });
