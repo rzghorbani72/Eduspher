@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Mail, Phone, ArrowLeft } from "lucide-react";
 
-import { postJson, sendPhoneOtp } from "@/lib/api/client";
+import { postJson, sendPhoneOtp, sendEmailOtp, loginByPhoneOtp, loginByEmailOtp } from "@/lib/api/client";
 import { env } from "@/lib/env";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
@@ -41,6 +41,8 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [authMode, setAuthMode] = useState<"password" | "otp">("password");
+  const [otpLoginSent, setOtpLoginSent] = useState(false);
   const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
   const getInitialCountry = () => {
     if (defaultCountryCode) {
@@ -103,6 +105,56 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     } finally {
       setOtpResending(false);
     }
+  }
+
+  function resolveOtpTarget(): { channel: "phone" | "email"; value: string } | null {
+    if (loginMethod === "phone") {
+      if (!phoneNumber) return null;
+      const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+      return { channel: "phone", value: getFullPhoneNumber(cleaned, selectedCountry) };
+    }
+    if (!email) return null;
+    return { channel: "email", value: email };
+  }
+
+  function sendLoginOtp() {
+    const target = resolveOtpTarget();
+    if (!target) {
+      setError(loginMethod === "phone" ? t("auth.phoneRequired") : t("auth.emailRequired"));
+      return;
+    }
+    setError(null);
+    startTransition(async () => {
+      try {
+        if (target.channel === "phone") {
+          await sendPhoneOtp(target.value, OtpType.LOGIN_BY_PHONE);
+        } else {
+          await sendEmailOtp(target.value, OtpType.LOGIN_BY_EMAIL);
+        }
+        setOtpLoginSent(true);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
+      }
+    });
+  }
+
+  function verifyLoginOtp() {
+    const target = resolveOtpTarget();
+    if (!target) return;
+    setError(null);
+    startTransition(async () => {
+      try {
+        if (target.channel === "phone") {
+          await loginByPhoneOtp(target.value, otp);
+        } else {
+          await loginByEmailOtp(target.value, otp);
+        }
+        await finishLogin();
+      } catch (err) {
+        setAuthenticated(false);
+        setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
+      }
+    });
   }
 
   const onSubmit = handleSubmit((values) => {
@@ -207,109 +259,198 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     );
   }
 
-  return (
-    <form onSubmit={onSubmit} className="space-y-6">
-      <div className="space-y-2">
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              setLoginMethod("email");
-              setValue("identifier", email);
+  const identifierBlock = (
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setLoginMethod("email");
+            setValue("identifier", email);
+          }}
+          className={cn(
+            "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
+            loginMethod === "email"
+              ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
+              : "border-slate-200 bg-card  dark:hover:bg-slate-900"
+          )}
+        >
+          <Mail className="h-4 w-4" />
+          Email
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setLoginMethod("phone");
+            if (phoneNumber) {
+              const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+              setValue("identifier", getFullPhoneNumber(cleaned, selectedCountry));
+            }
+          }}
+          className={cn(
+            "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
+            loginMethod === "phone"
+              ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
+              : "border-slate-200 bg-card  dark:hover:bg-slate-900"
+          )}
+        >
+          <Phone className="h-4 w-4" />
+          Phone
+        </button>
+      </div>
+      {loginMethod === "email" ? (
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Mail className="h-5 w-5 text-muted opacity-60" />
+          </div>
+          <Input
+            id="identifier"
+            type="email"
+            dir="ltr"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              const v = toEnglishDigits(e.target.value);
+              setEmail(v);
+              setValue("identifier", v);
             }}
-            className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-              loginMethod === "email"
-                ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
-                : "border-slate-200 bg-card  dark:hover:bg-slate-900"
-            )}
-          >
-            <Mail className="h-4 w-4" />
-            Email
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setLoginMethod("phone");
-              if (phoneNumber) {
-                const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-                setValue("identifier", getFullPhoneNumber(cleaned, selectedCountry));
-              }
-            }}
-            className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-              loginMethod === "phone"
-                ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
-                : "border-slate-200 bg-card  dark:hover:bg-slate-900"
-            )}
-          >
-            <Phone className="h-4 w-4" />
-            Phone
-          </button>
+            className="pl-10"
+            placeholder="Enter your email"
+          />
         </div>
-        {loginMethod === "email" ? (
-          <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-muted opacity-60" />
-            </div>
+      ) : (
+        <PhoneInput
+          id="identifier"
+          value={phoneNumber}
+          onChange={(value) => {
+            setPhoneNumber(value);
+            const cleaned = cleanPhoneNumber(value, selectedCountry);
+            const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
+            setValue("identifier", fullPhone);
+          }}
+          onCountryChange={(country) => {
+            setSelectedCountry(country);
+            if (phoneNumber) {
+              const cleaned = cleanPhoneNumber(phoneNumber, country);
+              const fullPhone = getFullPhoneNumber(cleaned, country);
+              setValue("identifier", fullPhone);
+            }
+          }}
+          defaultCountry={selectedCountry}
+          placeholder="09121234567"
+          autoComplete="tel"
+        />
+      )}
+      {authMode === "password" && errors.identifier ? (
+        <p className="text-sm text-amber-600 dark:text-amber-400">{errors.identifier.message}</p>
+      ) : null}
+    </div>
+  );
+
+  const errorBlock = error ? (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+      {error}
+    </div>
+  ) : null;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-2 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
+        {(["password", "otp"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => {
+              setAuthMode(m);
+              setOtpLoginSent(false);
+              setOtp("");
+              setError(null);
+            }}
+            className={cn(
+              "rounded-md py-2 text-sm font-medium transition-colors",
+              authMode === m
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {m === "password" ? t("auth.loginWithPassword") : t("auth.loginWithOtp")}
+          </button>
+        ))}
+      </div>
+
+      {authMode === "password" ? (
+        <form onSubmit={onSubmit} className="space-y-6">
+          {identifierBlock}
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" type="password" dir="ltr" autoComplete="current-password" {...register("password")} onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("password").onChange(e); }} />
+            {errors.password ? (
+              <p className="text-sm text-amber-600 dark:text-amber-400">{errors.password.message}</p>
+            ) : null}
+          </div>
+          {errorBlock}
+          <Button type="submit" className="w-full" loading={pending}>
+            {pending ? t("auth.signingIn") : t("auth.signIn")}
+          </Button>
+        </form>
+      ) : otpLoginSent ? (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="otp-login">{t("auth.otpVerification")}</Label>
+            <p className="text-sm text-muted-foreground">
+              {t("auth.enterVerificationCode").replace("{phone}", resolveOtpTarget()?.value ?? "")}
+            </p>
             <Input
-              id="identifier"
-              type="email"
-              dir="ltr"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => {
-                const v = toEnglishDigits(e.target.value);
-                setEmail(v);
-                setValue("identifier", v);
-              }}
-              className="pl-10"
-              placeholder="Enter your email"
+              id="otp-login"
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder={t("auth.otpCodePlaceholder")}
+              value={otp}
+              onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
+              autoFocus
             />
           </div>
-        ) : (
-          <PhoneInput
-            id="identifier"
-            value={phoneNumber}
-            onChange={(value) => {
-              setPhoneNumber(value);
-              const cleaned = cleanPhoneNumber(value, selectedCountry);
-              const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-              setValue("identifier", fullPhone);
-            }}
-            onCountryChange={(country) => {
-              setSelectedCountry(country);
-              if (phoneNumber) {
-                const cleaned = cleanPhoneNumber(phoneNumber, country);
-                const fullPhone = getFullPhoneNumber(cleaned, country);
-                setValue("identifier", fullPhone);
-              }
-            }}
-            defaultCountry={selectedCountry}
-            placeholder="09121234567"
-            autoComplete="tel"
-          />
-        )}
-        {errors.identifier ? (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{errors.identifier.message}</p>
-        ) : null}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" dir="ltr" autoComplete="current-password" {...register("password")} onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("password").onChange(e); }} />
-        {errors.password ? (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{errors.password.message}</p>
-        ) : null}
-      </div>
-      {error ? (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-          {error}
+          {errorBlock}
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => { setOtpLoginSent(false); setOtp(""); setError(null); }}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("common.back")}
+            </Button>
+            <Button
+              type="button"
+              className="flex-1"
+              loading={pending}
+              onClick={verifyLoginOtp}
+              disabled={otp.length < 4}
+            >
+              {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
+            </Button>
+          </div>
+          <button
+            type="button"
+            className="w-full text-center text-sm text-sky-600 hover:underline dark:text-sky-400"
+            onClick={sendLoginOtp}
+            disabled={pending}
+          >
+            {t("auth.resendOtp")}
+          </button>
         </div>
-      ) : null}
-      <Button type="submit" className="w-full" loading={pending}>
-        {pending ? t("auth.signingIn") : t("auth.signIn")}
-      </Button>
-    </form>
+      ) : (
+        <div className="space-y-6">
+          {identifierBlock}
+          {errorBlock}
+          <Button type="button" className="w-full" loading={pending} onClick={sendLoginOtp}>
+            {pending ? t("auth.signingIn") : t("auth.sendLoginCode")}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
 

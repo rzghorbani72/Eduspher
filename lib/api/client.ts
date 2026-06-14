@@ -426,6 +426,14 @@ export const sendPhoneOtp = (phone_number: string, type: string, options?: Reque
   }, options);
 };
 
+export const loginByPhoneOtp = (phone_number: string, otp: string, options?: RequestOptions) => {
+  return postJson<AuthResponse>("/auth/login-by-phone-otp", { phone_number, otp }, options);
+};
+
+export const loginByEmailOtp = (email: string, otp: string, options?: RequestOptions) => {
+  return postJson<AuthResponse>("/auth/login-by-email-otp", { email, otp }, options);
+};
+
 export const verifyEmailOtp = (email: string, otp: string, type: string, options?: RequestOptions) => {
   return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-email", {
     email,

@@ -23,6 +23,17 @@ test.describe('edusphere student login — validation', () => {
 
     await expect(page.getByText('Minimum 6 characters')).toBeVisible();
   });
+
+  test('OTP method removes the password field', async ({ page }) => {
+    await page.goto('/auth/login');
+
+    // Password is the default method.
+    await expect(page.locator('#password')).toBeVisible();
+
+    // Second button in the method toggle switches to one-time-code login.
+    await page.locator('.bg-slate-100 button').nth(1).click();
+    await expect(page.locator('#password')).toHaveCount(0);
+  });
 });
 
 /**
