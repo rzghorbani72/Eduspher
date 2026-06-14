@@ -666,3 +666,96 @@ export const logoutAllDevices = async (options?: RequestOptions) => {
   }>("/auth/logout-all", {}, options);
 };
 
+
+// =====================================================================
+// Quiz, Assessment & Discussion (checklist 5.19)
+// =====================================================================
+
+export type QuizQuestionType = "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_TEXT";
+export type QuizAttemptStatus = "IN_PROGRESS" | "PENDING_REVIEW" | "GRADED";
+
+export interface QuizOption {
+  id: string;
+  text: string;
+  order: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  type: QuizQuestionType;
+  prompt: string;
+  points: number;
+  order: number;
+  Option: QuizOption[];
+}
+
+export interface StudentQuiz {
+  id: string;
+  title: string;
+  description?: string | null;
+  passing_score: number;
+  is_published: boolean;
+  Question: QuizQuestion[];
+}
+
+export interface QuizAnswer {
+  id: string;
+  question_id: string;
+  selected_option_id?: string | null;
+  answer_boolean?: boolean | null;
+  answer_text?: string | null;
+  is_correct?: boolean | null;
+  awarded_points: number;
+}
+
+export interface QuizAttempt {
+  id: string;
+  quiz_id: string;
+  status: QuizAttemptStatus;
+  score: number;
+  max_score: number;
+  passed?: boolean | null;
+  feedback?: string | null;
+  Answer?: QuizAnswer[];
+}
+
+export interface AnswerInput {
+  question_id: string;
+  selected_option_id?: string;
+  answer_boolean?: boolean;
+  answer_text?: string;
+}
+
+export interface DiscussionMessage {
+  id: string;
+  thread_id: string;
+  body: string;
+  created_at: string;
+  Author?: { id: string; display_name: string | null };
+}
+
+type Envelope<T> = { message: string; status: string; data: T };
+
+export const getLessonQuiz = async (lessonId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options)).data;
+
+export const startQuizAttempt = async (quizId: string, options?: RequestOptions) =>
+  (await postJson<Envelope<QuizAttempt>>(`/quizzes/${quizId}/attempt`, {}, options)).data;
+
+export const saveQuizAnswers = async (attemptId: string, answers: AnswerInput[], options?: RequestOptions) =>
+  (await patchJson<Envelope<{ attempt_id: string }>>(`/quiz-attempts/${attemptId}/answers`, { answers }, options)).data;
+
+export const submitQuizAttempt = async (attemptId: string, options?: RequestOptions) =>
+  (await postJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}/submit`, {}, options)).data;
+
+export const getQuizAttempt = async (attemptId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}`, options)).data;
+
+export const getDiscussionThread = async (threadId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<{ thread: unknown; messages: DiscussionMessage[] }>>(`/discussions/threads/${threadId}`, options)).data;
+
+export const postDiscussionMessage = async (
+  parent: { attempt_id?: string; submission_id?: string },
+  body: string,
+  options?: RequestOptions,
+) => (await postJson<Envelope<DiscussionMessage>>(`/discussions/messages`, { ...parent, body }, options)).data;
