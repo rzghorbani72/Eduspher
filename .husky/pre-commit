@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Frontend has no unit tests yet (Vitest install is registry-blocked), so the
+# pre-commit gate is lint + typecheck — fast, no running server needed.
+# Playwright e2e/smoke run in CI (they need the app + API), not on every commit.
+npm run lint && npx tsc --noEmit

@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "prepare": "husky || true",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:smoke": "playwright test smoke",
     "production-report": "ts-node scripts/production-report.ts",
     "load-test:basic": "k6 run loadtests/basic-frontend-load-test.js",
     "load-test:journey": "k6 run loadtests/user-journey-load-test.js",
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
+    "husky": "^9.1.7",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
