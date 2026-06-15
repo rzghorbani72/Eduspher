@@ -1,11 +1,18 @@
 # edusphere E2E (Playwright)
 
-Browser tests for the student auth flows (checklist 5.1).
+Browser tests for the student storefront.
 
-## Routes under test
-- `/auth/login` — STUDENT login (email or phone + password)
-- `/auth/register` — student sign-up
-- `/auth/forgot-password` — password reset
+## Layout
+- `e2e/auth/` — student auth-form validation + happy-path login (`@backend`).
+- `e2e/smoke/` — **no backend needed**, all green in CI/dev:
+  - `security-headers.spec.ts` — CSP / `X-Frame-Options: DENY` / nosniff / referrer (OWASP A05).
+  - `public-pages.spec.ts` — auth pages render, 404 page, Persian RTL `<html dir/lang>`.
+  - `auth-guard.spec.ts` — **hacker**: `/account`, `/account/orders`, `/checkout` bounce to `/auth/login` when unauthenticated.
+- `e2e/roles/` — `@backend` student persona journey (login → catalog → account/orders).
+
+## Running
+edusphere is multi-tenant and resolves the academy on the server, so pages can
+call the API during SSR. Run the backend on `:3000` for reliable runs:
 
 ## Running
 edusphere is multi-tenant and resolves the academy on the server, so pages can
