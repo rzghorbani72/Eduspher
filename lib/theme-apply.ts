@@ -28,6 +28,8 @@ const SHADOW_MAP: Record<string, string> = {
   strong: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
 };
 
+const ELEMENT_ANIMATION_STYLES = ["subtle", "moderate", "dynamic"];
+
 export const DEFAULT_PLATFORM_THEME: ThemeConfigInput = {
   primary_color: "#3b82f6",
   secondary_color: "#6366f1",
@@ -113,7 +115,14 @@ export function buildThemeCssVariables(
     "--theme-border-radius":
       BORDER_RADIUS_MAP[t.border_radius_style || "rounded"] || "16px",
     "--theme-shadow": SHADOW_MAP[t.shadow_style || "medium"] || SHADOW_MAP.medium,
-    "--theme-element-animation": t.element_animation_style || "subtle",
+    // Allowlist this value: it is the only free-form string interpolated into the
+    // emitted <style> block, so an unconstrained value could break out of it
+    // (`</style><script>…`). Map any unknown value back to a safe default.
+    "--theme-element-animation": ELEMENT_ANIMATION_STYLES.includes(
+      t.element_animation_style as string,
+    )
+      ? (t.element_animation_style as string)
+      : "subtle",
   };
 }
 

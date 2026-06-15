@@ -9,7 +9,7 @@ import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
-import { sanitizeRichText } from "@/lib/sanitize";
+import { SafeHtml } from "@/components/safe-html";
 
 type PageParams = Promise<{
   id: string;
@@ -65,7 +65,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
       </div>
       {article.content ? (
         <div className="prose prose-lg max-w-none text-slate-700 prose-headings:text-slate-900 dark:prose-invert dark:text-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-          <div dangerouslySetInnerHTML={{ __html: sanitizeRichText(article.content) }} />
+          <SafeHtml html={article.content} />
         </div>
       ) : article.description ? (
         <p className="text-base leading-7 text-muted animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
