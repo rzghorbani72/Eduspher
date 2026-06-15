@@ -249,7 +249,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         </div>
         <button
           type="button"
-          className="w-full text-center text-sm text-sky-600 hover:underline dark:text-sky-400"
+          className="w-full text-center text-sm text-(--theme-primary) hover:underline"
           onClick={resendOtp}
           disabled={otpResending}
         >
@@ -271,7 +271,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           className={cn(
             "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
             loginMethod === "email"
-              ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
+              ? "border-(--theme-primary) bg-(--theme-primary-subtle) text-(--theme-primary)"
               : "border-slate-200 bg-card  dark:hover:bg-slate-900"
           )}
         >
@@ -290,7 +290,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           className={cn(
             "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
             loginMethod === "phone"
-              ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
+              ? "border-(--theme-primary) bg-(--theme-primary-subtle) text-(--theme-primary)"
               : "border-slate-200 bg-card  dark:hover:bg-slate-900"
           )}
         >
@@ -434,7 +434,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           </div>
           <button
             type="button"
-            className="w-full text-center text-sm text-sky-600 hover:underline dark:text-sky-400"
+            className="w-full text-center text-sm text-(--theme-primary) hover:underline"
             onClick={sendLoginOtp}
             disabled={pending}
           >

@@ -270,7 +270,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               }}
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "email"
-                  ? "bg-sky-600 text-white dark:bg-sky-500"
+                  ? "bg-(--theme-primary) text-(--theme-on-primary)"
                   : "text-muted hover:bg-surface"
               }`}
             >
@@ -289,7 +289,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               }}
               className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 authMethod === "phone"
-                  ? "bg-sky-600 text-white dark:bg-sky-500"
+                  ? "bg-(--theme-primary) text-(--theme-on-primary)"
                   : "text-muted hover:bg-surface"
               }`}
             >
@@ -507,7 +507,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
       <div className="text-center text-sm">
         <Link
           href={buildPath("/auth/login")}
-          className="font-semibold text-sky-600 hover:underline dark:text-sky-400"
+          className="font-semibold text-(--theme-primary) hover:underline"
         >
           Back to Login
         </Link>

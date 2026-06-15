@@ -64,6 +64,10 @@ export default async function RootLayout({
   // header/footer/banner chrome, raw full-width children.
   const isPreview =
     urlPathname.startsWith("/preview") || pathname.startsWith("/preview");
+  // Auth routes render as a self-contained full-screen experience (its own
+  // gradient background, card, and controls) — strip the site chrome.
+  const isAuth =
+    urlPathname.startsWith("/auth") || pathname.startsWith("/auth");
   // Admin master-template preview: the draft renders on the academy path but
   // must look like a neutral sample site — strip academy chrome and identity so
   // no academy name/logo/imagery leaks into the master being authored.
@@ -126,7 +130,7 @@ export default async function RootLayout({
   const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;
   const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
-  const bareLayout = isPanelRoot || isPreview || isSamplePreview;
+  const bareLayout = isPanelRoot || isPreview || isSamplePreview || isAuth;
   const useTemplateLayout =
     isPreview || isSamplePreview || (!isPanelRoot && isHomePage);
   const mainClassName = bareLayout
@@ -189,7 +193,7 @@ export default async function RootLayout({
                   style={{ backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' }}
                 >
                   {/* Creative animated background with gradients and flying icons */}
-                  {!isPreview && !isSamplePreview && (
+                  {!isPreview && !isSamplePreview && !isAuth && (
                     <CreativeBackground theme={theme} storeIcons={validStoreIcons} />
                   )}
 
