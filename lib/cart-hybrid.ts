@@ -193,13 +193,22 @@ export async function loadCartFromServer(): Promise<CartItem[]> {
           (item.course_id != null && item.item_type !== "PRODUCT");
         return isCourse && typeof item.course_id === "number";
       })
-      .map((item: any) => ({
-        course_id: item.course_id,
-        course_title: item.course?.title || item.course_title,
-        course_price: item.course?.price ?? item.course_price,
-        course_cover: item.course?.Image?.publicUrl || item.course_cover,
-        added_at: item.created_at || new Date().toISOString(),
-      }));
+      .map(
+        (item: {
+          course_id?: number;
+          course?: { title?: string; price?: number; Image?: { publicUrl?: string } };
+          course_title?: string;
+          course_price?: number;
+          course_cover?: string;
+          created_at?: string;
+        }) => ({
+          course_id: item.course_id,
+          course_title: item.course?.title || item.course_title,
+          course_price: item.course?.price ?? item.course_price,
+          course_cover: item.course?.Image?.publicUrl || item.course_cover,
+          added_at: item.created_at || new Date().toISOString(),
+        }),
+      );
   } catch {
     return [];
   }

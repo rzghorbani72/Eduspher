@@ -95,8 +95,8 @@ export default async function RootLayout({
   const storeIcons: string[] = [];
   if (currentAcademy) {
     // Get logo if available
-    if ((currentAcademy as any).logo?.publicUrl) {
-      const logoUrl = resolveAssetUrl((currentAcademy as any).logo.publicUrl);
+    if ((currentAcademy as { logo?: { publicUrl?: string } }).logo?.publicUrl) {
+      const logoUrl = resolveAssetUrl((currentAcademy as { logo?: { publicUrl?: string } }).logo!.publicUrl);
       if (logoUrl) storeIcons.push(logoUrl);
     }
     // Get cover image if available
@@ -106,7 +106,7 @@ export default async function RootLayout({
     }
     // Get other images if available
     if (currentAcademy.images && Array.isArray(currentAcademy.images)) {
-      currentAcademy.images.slice(0, 5).forEach((img: any) => {
+      currentAcademy.images.slice(0, 5).forEach((img: { publicUrl?: string; filename?: string }) => {
         const imgUrl = img.publicUrl || img.filename;
         if (imgUrl) {
           const resolvedUrl = resolveAssetUrl(imgUrl);

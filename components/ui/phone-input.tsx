@@ -39,21 +39,20 @@ export const PhoneInput = ({
     [lockCountryCode]
   );
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
-    () => lockedCountry || defaultCountry || getDefaultCountry()
+    () => defaultCountry || getDefaultCountry()
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Update selectedCountry when defaultCountry prop changes
-  useEffect(() => {
-    if (lockedCountry) {
-      setSelectedCountry(lockedCountry);
-      return;
-    }
-    if (defaultCountry) {
-      setSelectedCountry(defaultCountry);
-    }
-  }, [defaultCountry, lockedCountry]);
+  // Follow the defaultCountry prop without an effect (React's "adjust state on
+  // prop change" pattern). A locked country always wins and is derived below.
+  const [prevDefault, setPrevDefault] = useState(defaultCountry);
+  if (defaultCountry && defaultCountry !== prevDefault) {
+    setPrevDefault(defaultCountry);
+    setSelectedCountry(defaultCountry);
+  }
+
+  const activeCountry = lockedCountry ?? selectedCountry;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,8 +93,8 @@ export const PhoneInput = ({
               isOpen && "ring-2 ring-sky-500"
             )}
           >
-            <span className="text-base">{selectedCountry.flag}</span>
-            <span className="text-xs">{selectedCountry.dialCode}</span>
+            <span className="text-base">{activeCountry.flag}</span>
+            <span className="text-xs">{activeCountry.dialCode}</span>
             {!lockedCountry && (
               <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
             )}
@@ -112,7 +111,7 @@ export const PhoneInput = ({
                   onClick={() => handleCountrySelect(country)}
                   className={cn(
                     "flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100  dark:hover:bg-slate-800",
-                    selectedCountry.code === country.code && "bg-sky-50 dark:bg-sky-950"
+                    activeCountry.code === country.code && "bg-sky-50 dark:bg-sky-950"
                   )}
                 >
                   <span className="text-base">{country.flag}</span>

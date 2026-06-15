@@ -69,7 +69,10 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   // Courses are public - anyone can view them
   const courses = coursePayload?.courses ?? [];
   const pagination = coursePayload?.pagination;
-  const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
+  const storeCurrency =
+    user?.currentAcademy ||
+    (currentAcademy as { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" }) ||
+    null;
 
   // Get store language for translations
   let storeForLang = currentAcademy;

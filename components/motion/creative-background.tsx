@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import { FlyingIcons } from './flying-icons';
+
+const subscribeNoop = () => () => {};
 
 interface CreativeBackgroundProps {
   theme?: {
@@ -22,35 +24,23 @@ interface CreativeBackgroundProps {
 }
 
 export function CreativeBackground({ theme, storeIcons = [], className = '' }: CreativeBackgroundProps) {
-  if (!theme) return null;
-
-  // Track if component is mounted to prevent hydration mismatches
-  const [mounted, setMounted] = useState(false);
-  const [isDark, setIsDark] = useState(() => {
-    // On server, always use theme.dark_mode value (never system preference)
-    if (typeof window === 'undefined') {
-      return theme.dark_mode === true;
-    }
-    // On client initial render, match server behavior for hydration
-    return theme.dark_mode === true;
-  });
-
-  // Set mounted state after hydration
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Hooks must run unconditionally; the `!theme` early return lives below them.
+  // `mounted` is false during SSR/first render and true after hydration, which
+  // keeps CSS-variable resolution and system-pref matching off the server.
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [isDark, setIsDark] = useState(() => theme?.dark_mode === true);
 
   // Watch for dark mode changes after mount
   useEffect(() => {
-    if (!mounted) return;
-    
+    if (!mounted || !theme) return;
+
     const updateDarkMode = () => {
       const newIsDark = theme.dark_mode === true || (theme.dark_mode === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
       setIsDark(newIsDark);
     };
 
     updateDarkMode();
-    
+
     // Listen for system preference changes
     if (theme.dark_mode === null) {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -60,17 +50,17 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
         mediaQuery.removeEventListener('change', updateDarkMode);
       };
     }
-  }, [theme.dark_mode, mounted]);
+  }, [theme?.dark_mode, mounted]);
 
   // Get colors - use light/dark variants based on current mode
   // Use consistent logic for server and initial client render
-  const primaryColorRaw = isDark 
-    ? (theme.primary_color_dark || theme.primary_color || '#60a5fa')
-    : (theme.primary_color_light || theme.primary_color || '#3b82f6');
+  const primaryColorRaw = isDark
+    ? (theme?.primary_color_dark || theme?.primary_color || '#60a5fa')
+    : (theme?.primary_color_light || theme?.primary_color || '#3b82f6');
   const secondaryColorRaw = isDark
-    ? (theme.secondary_color_dark || theme.secondary_color || '#818cf8')
-    : (theme.secondary_color_light || theme.secondary_color || '#6366f1');
-  const accentColorRaw = theme.accent_color || '#f59e0b';
+    ? (theme?.secondary_color_dark || theme?.secondary_color || '#818cf8')
+    : (theme?.secondary_color_light || theme?.secondary_color || '#6366f1');
+  const accentColorRaw = theme?.accent_color || '#f59e0b';
 
   // Resolve colors on client side (handle CSS variables) - only after mount
   const resolveColor = (color: string, fallback: string): string => {
@@ -104,11 +94,13 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
     return color || fallback;
   };
 
-  // Compute resolved colors - use mounted state to ensure consistent initial render
-  const primaryColor = useMemo(() => resolveColor(primaryColorRaw, '#3b82f6'), [primaryColorRaw, isDark, mounted]);
-  const secondaryColor = useMemo(() => resolveColor(secondaryColorRaw, '#6366f1'), [secondaryColorRaw, isDark, mounted]);
-  const accentColor = useMemo(() => resolveColor(accentColorRaw, '#f59e0b'), [accentColorRaw, mounted]);
-  
+  // Compute resolved colors (the React Compiler memoizes these automatically).
+  const primaryColor = resolveColor(primaryColorRaw, '#3b82f6');
+  const secondaryColor = resolveColor(secondaryColorRaw, '#6366f1');
+  const accentColor = resolveColor(accentColorRaw, '#f59e0b');
+
+  if (!theme) return null;
+
   // Animation settings from API response - can be: gradient, blobs, particles, waves, mesh, grid, or none
   // Normalize the animation type (handle both "blob" and "blobs" for compatibility)
   const rawAnimationType = theme.background_animation_type || 'blobs';

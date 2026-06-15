@@ -440,7 +440,7 @@ function CreatorHero({ id, config, storeContext }: HeroBlockProps) {
             ))}
             {/* Revenue widget */}
             <div className="col-span-2 rounded-2xl p-5 text-(--theme-on-primary) shadow-xl" style={{ background: "linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))" }}>
-              <p className="text-sm font-medium opacity-80">This month's earnings</p>
+              <p className="text-sm font-medium opacity-80">This month&apos;s earnings</p>
               <p className="text-3xl font-bold mt-1">$12,840</p>
               <p className="text-xs opacity-70 mt-1">↑ 24% from last month</p>
             </div>

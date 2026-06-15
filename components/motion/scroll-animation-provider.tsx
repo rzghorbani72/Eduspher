@@ -24,7 +24,7 @@ export function ScrollAnimationProvider({ children }: { children: React.ReactNod
         gsapInstance.registerPlugin(ScrollTriggerInstance);
 
         // Kill previous page's ScrollTrigger instances before re-init
-        ScrollTriggerInstance.getAll().forEach((trigger: any) => trigger.kill());
+        ScrollTriggerInstance.getAll().forEach((trigger: { kill: () => void }) => trigger.kill());
 
         const initScrollAnimations = () => {
           const animatedElements = document.querySelectorAll('[data-scroll-animate]');
@@ -82,7 +82,7 @@ export function ScrollAnimationProvider({ children }: { children: React.ReactNod
         cleanup = () => {
           clearTimeout(timeoutId);
           window.removeEventListener('resize', handleResize);
-          ScrollTriggerInstance.getAll().forEach((trigger: any) => trigger.kill());
+          ScrollTriggerInstance.getAll().forEach((trigger: { kill: () => void }) => trigger.kill());
         };
       } catch (error) {
         console.warn('GSAP ScrollTrigger failed to load:', error);

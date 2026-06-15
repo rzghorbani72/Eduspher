@@ -94,7 +94,7 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
       <div className="relative min-h-screen">
         {animationType !== 'none' && (
           <AnimatedBackground
-            type={animationType as any}
+            type={animationType as React.ComponentProps<typeof AnimatedBackground>["type"]}
             speed={animationSpeed}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}

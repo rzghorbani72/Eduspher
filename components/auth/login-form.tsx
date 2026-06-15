@@ -183,14 +183,19 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
 
         // Students use the public-login endpoint; /auth/login is staff-only
         // (MANAGER/TEACHER) and rejects STUDENT/USER accounts.
-        const result = await postJson<any>("/auth/public/login", {
+        const result = await postJson<{
+          phone_verification_required?: boolean;
+          temp_token?: string;
+          phone?: string;
+          full_phone?: string;
+        }>("/auth/public/login", {
           identifier,
           password: values.password,
           academy_id: finalAcademyId,
         });
 
         if (result?.phone_verification_required) {
-          setOtpGate({ tempToken: result.temp_token, maskedPhone: result.phone, phone: result.full_phone || result.phone });
+          setOtpGate({ tempToken: result.temp_token ?? "", maskedPhone: result.phone ?? "", phone: result.full_phone || result.phone || "" });
           return;
         }
 

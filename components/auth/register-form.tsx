@@ -125,7 +125,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
 
     try {
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
-      const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as any;
+      const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as { otp?: string };
       setPhoneOtpSent(true);
       // TODO: Remove when real SMS/email provider is integrated
       if (response?.otp) {
@@ -181,7 +181,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     setMessage(null);
 
     try {
-      const response = await sendEmailOtp(email as string, OtpType.REGISTER_EMAIL_VERIFICATION) as any;
+      const response = await sendEmailOtp(email as string, OtpType.REGISTER_EMAIL_VERIFICATION) as { otp?: string };
       setEmailOtpSent(true);
       // TODO: Remove when real SMS/email provider is integrated
       if (response?.otp) {
@@ -293,7 +293,19 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
 
       // Build user data based on primary method
-      const userData: any = {
+      const userData: {
+        name?: string;
+        display_name?: string;
+        password?: string;
+        confirmed_password?: string;
+        bio?: string;
+        role: string;
+        academy_id?: string;
+        phone_number?: string;
+        phone_otp?: string;
+        email?: string;
+        email_otp?: string;
+      } = {
         name: values.name,
         display_name: values.display_name,
         password: values.password,

@@ -43,7 +43,7 @@ export async function AcademyHomePage() {
     getAcademiesPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
-    getCourses({ limit: 6, published: true, is_featured: true } as any).catch(
+    getCourses({ limit: 6, published: true, is_featured: true } as Parameters<typeof getCourses>[0]).catch(
       () => null,
     ),
     getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
@@ -57,25 +57,28 @@ export async function AcademyHomePage() {
     ? academies.find((a) => a.id === storeContext.id)
     : null;
   const academyMatchBySlug = storeContext.slug
-    ? academies.find((a) => (a as any).slug === storeContext.slug)
+    ? academies.find((a) => (a as { slug?: string }).slug === storeContext.slug)
     : null;
   const primaryAcademy = academyMatchById ?? academyMatchBySlug ?? null;
   const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
-  const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
+  const storeCurrency =
+    user?.currentAcademy ||
+    (currentAcademy as { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" }) ||
+    null;
+  const paStats = primaryAcademy as
+    | { student_count?: number; mentor_count?: number; course_count?: number; average_rating?: number }
+    | null;
   const stats = {
-    students: (primaryAcademy as any)?.student_count ?? null,
-    mentors: (primaryAcademy as any)?.mentor_count ?? null,
-    courses:
-      (primaryAcademy as any)?.course_count ??
-      coursePayload?.pagination?.total ??
-      null,
-    rating: (primaryAcademy as any)?.average_rating ?? null,
+    students: paStats?.student_count ?? null,
+    mentors: paStats?.mentor_count ?? null,
+    courses: paStats?.course_count ?? coursePayload?.pagination?.total ?? null,
+    rating: paStats?.average_rating ?? null,
   };
 
   let storeForLang = currentAcademy;
   if (!storeForLang && storeContext.slug)
     storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
-  if (!storeForLang && primaryAcademy) storeForLang = primaryAcademy as any;
+  if (!storeForLang && primaryAcademy) storeForLang = primaryAcademy as typeof currentAcademy;
   const language = getAcademyLanguage(
     storeForLang?.language || null,
     storeForLang?.country_code || null,

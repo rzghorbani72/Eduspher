@@ -194,7 +194,7 @@ const baseFetch = async (
     
     const message = `API request failed: ${errorMessage}`;
     const error = new Error(message);
-    (error as any).status = response.status;
+    (error as Error & { status?: number }).status = response.status;
     throw error;
   }
 
@@ -631,9 +631,9 @@ export async function getStoreThemeConfig(
           element_animation_style?: string;
           border_radius_style?: string;
           shadow_style?: string;
-          [key: string]: any;
+          [key: string]: unknown;
         };
-        [key: string]: any;
+        [key: string]: unknown;
       };
     }>(path, {
       includeAuth: false, // Always use public endpoint for theme config
@@ -644,7 +644,7 @@ export async function getStoreThemeConfig(
       return null;
     }
     if (process.env.NODE_ENV === 'development' && error instanceof Error) {
-      const status = (error as any).status;
+      const status = (error as Error & { status?: number }).status;
       if (status !== 404 && !error.message.includes('404')) {
         console.error('Failed to fetch theme config:', error);
       }
@@ -676,7 +676,7 @@ export async function getCurrentUITemplate() {
           type: string;
           order: number;
           isVisible: boolean;
-          config?: Record<string, any>;
+          config?: Record<string, unknown>;
         }>;
         template_preset?: string;
         is_active?: boolean;
@@ -729,7 +729,7 @@ export async function getStoreUITemplate(
           type: string;
           order: number;
           isVisible: boolean;
-          config?: Record<string, any>;
+          config?: Record<string, unknown>;
         }>;
         template_preset?: string;
         is_active?: boolean;
@@ -754,7 +754,7 @@ export async function getStoreUITemplate(
     // Log error details for debugging but don't throw
     // This is a non-critical feature, so we gracefully degrade
     if (error instanceof Error) {
-      const status = (error as any).status;
+      const status = (error as Error & { status?: number }).status;
       // Only log non-404 errors to avoid noise
       // 404 means store/template doesn't exist, which is acceptable
       if (status !== 404 && !error.message.includes('404')) {
@@ -780,9 +780,9 @@ export interface PreviewPreset {
     type: string;
     order: number;
     isVisible: boolean;
-    config?: Record<string, any>;
+    config?: Record<string, unknown>;
   }>;
-  theme: Record<string, any> | null;
+  theme: Record<string, unknown> | null;
 }
 
 // Single template/preset by key, for the standalone /preview/blocks renderer.

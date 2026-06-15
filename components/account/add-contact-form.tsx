@@ -100,7 +100,7 @@ export const AddContactForm = ({
           setEmailError(emailError);
           return;
         }
-        const response = await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION) as any;
+        const response = await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION) as { otp?: string };
         // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
           setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
@@ -123,7 +123,7 @@ export const AddContactForm = ({
           setPhoneError(phoneError);
           return;
         }
-        const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as any;
+        const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as { otp?: string };
         // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
           setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);

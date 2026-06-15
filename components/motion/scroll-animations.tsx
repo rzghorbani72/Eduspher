@@ -77,7 +77,7 @@ export function ScrollAnimations({ children, className = '' }: ScrollAnimationsP
 
       return () => {
         // Cleanup ScrollTrigger instances
-        ScrollTriggerInstance.getAll().forEach((trigger: any) => trigger.kill());
+        ScrollTriggerInstance.getAll().forEach((trigger: { kill: () => void }) => trigger.kill());
       };
     };
 
@@ -102,11 +102,11 @@ export function ScrollAnimations({ children, className = '' }: ScrollAnimationsP
  * These attributes are only used by the ScrollAnimations component on the client
  */
 export function withScrollAnimation(
-  Component: React.ComponentType<any>,
+  Component: React.ComponentType<Record<string, unknown>>,
   animationType: 'fadeIn' | 'slideLeft' | 'slideRight' | 'scaleUp' = 'fadeIn',
   delay: number = 0
 ) {
-  return function ScrollAnimatedComponent(props: any) {
+  return function ScrollAnimatedComponent(props: Record<string, unknown>) {
     return (
       <div data-scroll-animate={animationType} data-scroll-delay={delay.toString()}>
         <Component {...props} />

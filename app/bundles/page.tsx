@@ -35,7 +35,7 @@ export default async function BundlesPage() {
   const allCourseIds = packages.flatMap((p) => p.AcademyPlanCourse.map((c) => c.Course.id));
   const uniqueIds = [...new Set(allCourseIds)];
 
-  let enrichedCourses: Record<string, { title: string; price: number; lessons_count?: number; duration?: number }> = {};
+  const enrichedCourses: Record<string, { title: string; price: number; lessons_count?: number; duration?: number }> = {};
   if (uniqueIds.length > 0) {
     const coursePayload = await getCourses({ limit: 50, published: true }).catch(() => null);
     if (coursePayload) {

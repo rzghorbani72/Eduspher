@@ -40,7 +40,8 @@ export const CourseCurriculum = ({
   const lessons = useMemo(() => buildLessons(seasons), [seasons]);
 
   const initialLesson = useMemo(() => {
-    const withVideo = (l: LessonWithSeason) => Boolean((l as any).Video?.publicUrl);
+    const withVideo = (l: LessonWithSeason) =>
+      Boolean((l as { Video?: { publicUrl?: string } }).Video?.publicUrl);
     const isLive = (l: LessonWithSeason) =>
       l.lesson_type === "LIVE" || Boolean(l.LiveSession);
     return (
@@ -54,8 +55,8 @@ export const CourseCurriculum = ({
 
   const [currentLesson, setCurrentLesson] = useState<LessonWithSeason | null>(initialLesson);
 
-  const currentVideoUrl = (currentLesson as any)?.Video?.publicUrl
-    ? resolveAssetUrl((currentLesson as any).Video.publicUrl)
+  const currentVideoUrl = (currentLesson as { Video?: { publicUrl?: string } })?.Video?.publicUrl
+    ? resolveAssetUrl((currentLesson as { Video?: { publicUrl?: string } }).Video!.publicUrl)
     : null;
   const isLiveLesson =
     currentLesson?.lesson_type === "LIVE" || Boolean(currentLesson?.LiveSession);
@@ -142,7 +143,7 @@ export const CourseCurriculum = ({
                     <ul className="divide-y divide-theme">
                       {seasonLessons.map((lesson: LessonSummary, lessonIndex: number) => {
                         const isActive = currentLesson?.id === lesson.id;
-                        const hasVideo = Boolean((lesson as any).Video?.publicUrl);
+                        const hasVideo = Boolean((lesson as { Video?: { publicUrl?: string } }).Video?.publicUrl);
                         const lessonIsLive =
                           lesson.lesson_type === "LIVE" || Boolean(lesson.LiveSession);
                         return (

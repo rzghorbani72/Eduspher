@@ -61,6 +61,9 @@ export function FlyingIcons({
       });
     }
 
+    // Initial positions depend on the measured container size, so this must run
+    // in an effect (the DOM can't be measured during render).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFlyingIcons(initialIcons);
 
     let lastTime = performance.now();
@@ -73,7 +76,7 @@ export function FlyingIcons({
         return prevIcons.map((icon) => {
           let newX = icon.x + icon.vx * deltaTime;
           let newY = icon.y + icon.vy * deltaTime;
-          let newRotation = icon.rotation + icon.rotationSpeed * deltaTime;
+          const newRotation = icon.rotation + icon.rotationSpeed * deltaTime;
 
           // Bounce off walls
           if (newX < 0 || newX > containerWidth) {

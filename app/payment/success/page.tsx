@@ -30,8 +30,8 @@ interface PaymentDetails {
     amount?: number;
     currency?: string;
     fee_amount?: number;
-    raw_response?: Record<string, any>;
-    processed_data?: Record<string, any>;
+    raw_response?: Record<string, unknown>;
+    processed_data?: Record<string, unknown>;
     gateway?: {
       name: string;
       display_name: string;
@@ -57,7 +57,13 @@ export default function PaymentSuccessPage() {
   const [loading, setLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [store, setStore] = useState<any>(null);
+  const [store, setStore] = useState<{
+    currency?: string;
+    currency_symbol?: string;
+    currency_position?: "before" | "after";
+    country_code?: string;
+    language?: string;
+  } | null>(null);
 
   // Bank gateway parameters (common across different gateways)
   const paymentId = searchParams.get("payment_id") || searchParams.get("PaymentId") || searchParams.get("paymentId");

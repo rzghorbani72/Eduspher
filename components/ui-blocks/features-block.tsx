@@ -105,7 +105,7 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   const showIcons = config?.showIcons !== false;
   const items = localizedFeatures.slice(0, gridColumns * 2);
 
-  const SectionTitle = ({ centered = false }: { centered?: boolean }) => (
+  const renderTitle = (centered = false) => (
     <div className={cn("max-w-2xl mb-12", centered && "mx-auto text-center")}>
       {title ? (
         <>
@@ -148,7 +148,7 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
     return (
       <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionTitle centered />
+          {renderTitle(true)}
           <SlotGrid config={config} minBasisFallback="220px">
             {resolveSlots(items, config?.slots, items.length).map((slot, i) =>
               slot.kind === "live" ? (
@@ -178,7 +178,7 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
     return (
       <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionTitle />
+          {renderTitle(false)}
           <SlotGrid config={config} minBasisFallback="280px">
             {resolveSlots(items, config?.slots, items.length).map((slot, i) =>
               slot.kind === "live" ? (
@@ -208,7 +208,7 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
   return (
     <section id={id || "features"} className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <SectionTitle centered />
+        {renderTitle(true)}
         <SlotGrid config={config} minBasisFallback="280px">
           {resolveSlots(items, config?.slots, items.length).map((slot, i) =>
             slot.kind === "live" ? (

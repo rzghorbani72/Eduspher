@@ -30,7 +30,29 @@ export interface ThemeConfig {
   shadow_style?: string;
   css_variables?: Record<string, string>;
   css_block?: string;
-  [key: string]: any;
+  [key: string]: unknown;
+}
+
+// Raw theme values as the API returns them: dark_mode/animation fields may
+// arrive as strings ("true"/"null") before they are normalized below.
+interface ThemeConfigSource {
+  primary_color?: string;
+  primary_color_light?: string;
+  primary_color_dark?: string;
+  secondary_color?: string;
+  secondary_color_light?: string;
+  secondary_color_dark?: string;
+  accent_color?: string;
+  background_color?: string;
+  background_color_light?: string;
+  background_color_dark?: string;
+  dark_mode?: boolean | string | null;
+  background_animation_type?: string;
+  background_animation_speed?: string;
+  background_svg_pattern?: string;
+  element_animation_style?: string;
+  border_radius_style?: string;
+  shadow_style?: string;
 }
 
 export interface UIBlockConfig {
@@ -38,8 +60,9 @@ export interface UIBlockConfig {
   type: string;
   order: number;
   isVisible: boolean;
-  // Per-block config is loosely typed; each block component declares its own
-  // config shape (including slot-model fields: slots, slotStyle, text).
+  // Per-block config is dynamic JSON from the DB; each block component declares
+  // and validates its own shape, so `any` keeps it assignable to every block.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config?: Record<string, any>;
 }
 
@@ -108,41 +131,42 @@ export async function getStoreThemeAndTemplate() {
     }
 
     // Extract configs from response - API returns { data: { configs: {...} } }
-    const configs = (themeData as any)?.configs || {};
-    const themeId = (themeData as any)?.themeId;
-    const themeName = (themeData as any)?.name;
-    
+    const configs: ThemeConfigSource =
+      (themeData as { configs?: ThemeConfigSource })?.configs ?? {};
+    // Typed view of the root theme values (the raw API type is loosely keyed).
+    const td = themeData as ThemeConfigSource | null;
+
     return {
       theme: themeData
         ? {
             // Use configs first (from API response), then fallback to themeData root, then defaults
-            primary_color: configs.primary_color || themeData.primary_color || "#3b82f6",
-            primary_color_light: configs.primary_color_light || themeData.primary_color_light || configs.primary_color || themeData.primary_color || "#3b82f6",
-            primary_color_dark: configs.primary_color_dark || themeData.primary_color_dark || configs.primary_color || themeData.primary_color || "#60a5fa",
-            secondary_color: configs.secondary_color || themeData.secondary_color || "#6366f1",
-            secondary_color_light: configs.secondary_color_light || themeData.secondary_color_light || configs.secondary_color || themeData.secondary_color || "#6366f1",
-            secondary_color_dark: configs.secondary_color_dark || themeData.secondary_color_dark || configs.secondary_color || themeData.secondary_color || "#818cf8",
-            accent_color: configs.accent_color || themeData.accent_color || "#f59e0b",
-            background_color: configs.background_color || themeData.background_color || "#f8fafc",
-            background_color_light: configs.background_color_light || themeData.background_color_light || configs.background_color || themeData.background_color || "#f8fafc",
-            background_color_dark: configs.background_color_dark || themeData.background_color_dark || configs.background_color || themeData.background_color || "#0f172a",
+            primary_color: configs.primary_color || td?.primary_color || "#3b82f6",
+            primary_color_light: configs.primary_color_light || td?.primary_color_light || configs.primary_color || td?.primary_color || "#3b82f6",
+            primary_color_dark: configs.primary_color_dark || td?.primary_color_dark || configs.primary_color || td?.primary_color || "#60a5fa",
+            secondary_color: configs.secondary_color || td?.secondary_color || "#6366f1",
+            secondary_color_light: configs.secondary_color_light || td?.secondary_color_light || configs.secondary_color || td?.secondary_color || "#6366f1",
+            secondary_color_dark: configs.secondary_color_dark || td?.secondary_color_dark || configs.secondary_color || td?.secondary_color || "#818cf8",
+            accent_color: configs.accent_color || td?.accent_color || "#f59e0b",
+            background_color: configs.background_color || td?.background_color || "#f8fafc",
+            background_color_light: configs.background_color_light || td?.background_color_light || configs.background_color || td?.background_color || "#f8fafc",
+            background_color_dark: configs.background_color_dark || td?.background_color_dark || configs.background_color || td?.background_color || "#0f172a",
             // Handle dark_mode: can be boolean, string "true"/"false", or null
             dark_mode: configs.dark_mode !== undefined
               ? (configs.dark_mode === null || (typeof configs.dark_mode === 'string' && configs.dark_mode === 'null')
                   ? null
                   : configs.dark_mode === true || (typeof configs.dark_mode === 'string' && (configs.dark_mode === 'true' || configs.dark_mode === '1')))
-              : (themeData.dark_mode !== undefined
-                  ? (themeData.dark_mode === null || (typeof themeData.dark_mode === 'string' && themeData.dark_mode === 'null')
+              : (td?.dark_mode !== undefined
+                  ? (td?.dark_mode === null || (typeof td?.dark_mode === 'string' && td?.dark_mode === 'null')
                       ? null
-                      : themeData.dark_mode === true || (typeof themeData.dark_mode === 'string' && (themeData.dark_mode === 'true' || themeData.dark_mode === '1')))
+                      : td?.dark_mode === true || (typeof td?.dark_mode === 'string' && (td?.dark_mode === 'true' || td?.dark_mode === '1')))
                   : false),
             // Animation and style settings from configs
-            background_animation_type: configs.background_animation_type || themeData.background_animation_type || 'none',
-            background_animation_speed: configs.background_animation_speed || themeData.background_animation_speed || 'medium',
-            background_svg_pattern: configs.background_svg_pattern || themeData.background_svg_pattern || '',
-            element_animation_style: configs.element_animation_style || themeData.element_animation_style || 'subtle',
-            border_radius_style: configs.border_radius_style || themeData.border_radius_style || 'rounded',
-            shadow_style: configs.shadow_style || themeData.shadow_style || 'medium',
+            background_animation_type: configs.background_animation_type || td?.background_animation_type || 'none',
+            background_animation_speed: configs.background_animation_speed || td?.background_animation_speed || 'medium',
+            background_svg_pattern: configs.background_svg_pattern || td?.background_svg_pattern || '',
+            element_animation_style: configs.element_animation_style || td?.element_animation_style || 'subtle',
+            border_radius_style: configs.border_radius_style || td?.border_radius_style || 'rounded',
+            shadow_style: configs.shadow_style || td?.shadow_style || 'medium',
             css_variables: (themeData as { css_variables?: Record<string, string> }).css_variables,
             css_block: (themeData as { css_block?: string }).css_block,
           }

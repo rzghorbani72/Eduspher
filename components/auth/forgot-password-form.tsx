@@ -155,7 +155,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
     try {
       if (authMethod === "email") {
-        const response = await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL) as any;
+        const response = await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL) as { otp?: string };
         // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
           setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
@@ -163,7 +163,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
           setMessage("OTP sent to your email address");
         }
       } else {
-        const response = await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE) as any;
+        const response = await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE) as { otp?: string };
         // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
           setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);

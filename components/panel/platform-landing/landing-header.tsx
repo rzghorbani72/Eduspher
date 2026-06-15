@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { LP } from "../platform-landing-page.messages";
 
 export function LandingHeader({ adminLoginUrl }: { adminLoginUrl: string }) {
@@ -35,7 +36,7 @@ export function LandingHeader({ adminLoginUrl }: { adminLoginUrl: string }) {
     >
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 44px" }}>
         <div className="flex items-center justify-between">
-          <a
+          <Link
             href="/"
             style={{
               fontSize: 20,
@@ -47,7 +48,7 @@ export function LandingHeader({ adminLoginUrl }: { adminLoginUrl: string }) {
           >
             {LP.nav.logoText}
             <em style={{ color: "#CC7A00", fontStyle: "normal" }}>{LP.nav.logoHighlight}</em>
-          </a>
+          </Link>
 
           <ul className="hidden md:flex items-center gap-7 list-none m-0 p-0">
             {LP.nav.links.map((link) => (

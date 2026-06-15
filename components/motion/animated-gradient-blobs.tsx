@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
+
+const subscribeNoop = () => () => {};
 
 interface AnimatedGradientBlobsProps {
   primaryColor?: string;
@@ -54,15 +56,13 @@ export function AnimatedGradientBlobs({
     return color || fallback;
   };
 
-  const [resolvedPrimary, setResolvedPrimary] = useState(primaryColor);
-  const [resolvedSecondary, setResolvedSecondary] = useState(secondaryColor);
-  const [resolvedAccent, setResolvedAccent] = useState(accentColor);
-
-  useEffect(() => {
-    setResolvedPrimary(resolveColor(primaryColor, '#3b82f6'));
-    setResolvedSecondary(resolveColor(secondaryColor, '#6366f1'));
-    setResolvedAccent(resolveColor(accentColor, '#f59e0b'));
-  }, [primaryColor, secondaryColor, accentColor]);
+  // resolveColor reads getComputedStyle, so it only works after hydration. On
+  // the server we render the raw props (matching SSR), then resolve on the
+  // client once hydrated — no setState-in-effect needed.
+  const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const resolvedPrimary = hydrated ? resolveColor(primaryColor, '#3b82f6') : primaryColor;
+  const resolvedSecondary = hydrated ? resolveColor(secondaryColor, '#6366f1') : secondaryColor;
+  const resolvedAccent = hydrated ? resolveColor(accentColor, '#f59e0b') : accentColor;
 
   // Helper to add opacity to hex color (for Tailwind-like /20, /30, etc.)
   const withOpacity = (color: string, opacity: number) => {

@@ -6,7 +6,6 @@ import {
   type PropsWithChildren,
   type SetStateAction,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -36,9 +35,14 @@ type StoreProviderProps = PropsWithChildren<{
 export const StoreProvider = ({ initialValue, children }: StoreProviderProps) => {
   const [store, setStore] = useState<StoreState>(initialValue);
 
-  useEffect(() => {
+  // Re-sync from the server-provided value when the tenant changes, without an
+  // effect (React's "adjust state on prop change" pattern).
+  const tenantKey = `${initialValue.id}|${initialValue.slug}|${initialValue.name}`;
+  const [prevTenantKey, setPrevTenantKey] = useState(tenantKey);
+  if (tenantKey !== prevTenantKey) {
+    setPrevTenantKey(tenantKey);
     setStore(initialValue);
-  }, [initialValue.id, initialValue.slug, initialValue.name]);
+  }
 
   const value = useMemo<AcademyContextValue>(
     () => ({

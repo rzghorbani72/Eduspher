@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { sanitizeRichText } from '@/lib/sanitize';
+
+const subscribeNoop = () => () => {};
 
 /**
  * Renders untrusted rich-text (article / lesson body) safely.
@@ -13,11 +15,10 @@ import { sanitizeRichText } from '@/lib/sanitize';
  * browser, so unsanitized markup never reaches the document.
  */
 export function SafeHtml({ html, className }: { html: string; className?: string }) {
-  const [clean, setClean] = useState('');
-
-  useEffect(() => {
-    setClean(sanitizeRichText(html || ''));
-  }, [html]);
+  // Render nothing during SSR (DOMPurify is a no-op on the server); only after
+  // hydration do we inject the sanitized HTML — no setState-in-effect needed.
+  const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const clean = hydrated ? sanitizeRichText(html || '') : '';
 
   return <div className={className} dangerouslySetInnerHTML={{ __html: clean }} />;
 }

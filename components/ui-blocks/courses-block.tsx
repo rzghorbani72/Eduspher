@@ -54,7 +54,10 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   ]);
 
   const courses = coursePayload?.courses || [];
-  const storeCurrency = user?.currentAcademy || (currentAcademy as any) || null;
+  const storeCurrency =
+    user?.currentAcademy ||
+    (currentAcademy as { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" }) ||
+    null;
 
   let storeForLang = currentAcademy;
   if (!storeForLang && storeContext?.slug) {
@@ -76,7 +79,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   );
 
   // Section header — always shown, with eyebrow label + bold heading
-  const SectionHeader = ({ centered = false }: { centered?: boolean }) => (
+  const renderHeader = (centered = false) => (
     <div
       className={cn(
         "mb-14",
@@ -117,7 +120,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     </div>
   );
 
-  const ViewAllButton = () =>
+  const renderViewAll = () =>
     showViewAll ? (
       <div className="mt-10 text-center">
         <Button
@@ -141,7 +144,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     return (
       <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeader />
+          {renderHeader(false)}
           <div className="space-y-5">
             {resolved.map((slot, i) =>
               slot.kind === "live" ? (
@@ -160,7 +163,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     return (
       <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeader />
+          {renderHeader(false)}
           <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
             {courseNodes}
           </SlotGrid>
@@ -173,11 +176,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     return (
       <section id={id || "courses"} className="py-16 sm:py-24" style={featuredSectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <SectionHeader centered />
+          {renderHeader(true)}
           <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
             {courseNodes}
           </SlotGrid>
-          <ViewAllButton />
+          {renderViewAll()}
         </div>
       </section>
     );
@@ -187,11 +190,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   return (
     <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <SectionHeader centered />
+        {renderHeader(true)}
         <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
           {courseNodes}
         </SlotGrid>
-        <ViewAllButton />
+        {renderViewAll()}
       </div>
     </section>
   );

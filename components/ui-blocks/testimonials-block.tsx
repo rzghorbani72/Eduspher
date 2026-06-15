@@ -106,7 +106,7 @@ export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) 
               {[...items, ...items].map((t, i) => (
                 <div key={i} className="min-w-80 shrink-0 rounded-2xl border p-6 shadow-sm bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)">
                   <Stars count={t.rating} />
-                  <p className="text-sm leading-relaxed mb-4 text-(--theme-foreground)/70">"{t.content}"</p>
+                  <p className="text-sm leading-relaxed mb-4 text-(--theme-foreground)/70">&quot;{t.content}&quot;</p>
                   <div className="flex items-center gap-3">
                     <Avatar emoji={t.avatar} />
                     <div>
@@ -152,7 +152,7 @@ export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) 
                 className={cn("group flex h-full flex-col rounded-2xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)")}
               >
                 <Stars count={slot.data.rating} />
-                <p className="text-sm leading-relaxed flex-1 mb-4 text-(--theme-foreground)/70">"{slot.data.content}"</p>
+                <p className="text-sm leading-relaxed flex-1 mb-4 text-(--theme-foreground)/70">&quot;{slot.data.content}&quot;</p>
                 <div className="flex items-center gap-3">
                   <div className="transition-transform group-hover:scale-110"><Avatar emoji={slot.data.avatar} /></div>
                   <div className="flex-1">
@@ -199,7 +199,7 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
           <p className="text-4xl font-bold text-(--theme-foreground) mb-1">{testimonials[4].revenue}</p>
           <p className="text-(--theme-foreground)/55 text-sm mb-6 uppercase tracking-wide">earned on this platform</p>
           <blockquote className="text-lg leading-relaxed text-(--theme-foreground)/75 italic mb-6">
-            "{testimonials[4].content}"
+            &quot;{testimonials[4].content}&quot;
           </blockquote>
           <div className="flex items-center justify-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--theme-secondary-subtle) text-2xl">
@@ -222,7 +222,7 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
               className="rounded-xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-5"
             >
               <Stars count={t.rating} />
-              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-4">"{t.content}"</p>
+              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-4">&quot;{t.content}&quot;</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(--theme-secondary-subtle) text-lg">{t.avatar}</div>
                 <div>
@@ -282,7 +282,7 @@ function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
                 </div>
               </div>
               <Stars count={p.rating} />
-              <p className="text-xs text-(--theme-foreground)/70 leading-relaxed">"{p.content}"</p>
+              <p className="text-xs text-(--theme-foreground)/70 leading-relaxed">&quot;{p.content}&quot;</p>
             </div>
           ))}
         </div>
@@ -336,7 +336,7 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
                 </div>
               </div>
               <Stars count={c.rating} />
-              <p className="text-(--theme-foreground)/70 leading-relaxed">"{c.content}"</p>
+              <p className="text-(--theme-foreground)/70 leading-relaxed">&quot;{c.content}&quot;</p>
             </div>
           ))}
         </div>
@@ -387,7 +387,7 @@ function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
               className="rounded-2xl bg-(--theme-card-bg) border border-(--theme-border-color) p-6 shadow-sm hover:shadow-md transition-shadow"
             >
               <Stars count={t.rating} />
-              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-5">"{t.content}"</p>
+              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-5">&quot;{t.content}&quot;</p>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-xl">{t.avatar}</div>
                 <div>
@@ -438,7 +438,7 @@ function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
                 </div>
               </div>
               <Stars count={t.rating} />
-              <p className="text-sm text-(--theme-foreground)/70 leading-relaxed">"{t.content}"</p>
+              <p className="text-sm text-(--theme-foreground)/70 leading-relaxed">&quot;{t.content}&quot;</p>
             </div>
           ))}
         </div>
