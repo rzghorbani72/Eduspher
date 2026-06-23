@@ -1,12 +1,9 @@
-@import "tailwindcss";
-/* Persian site fonts — every slug the theme picker offers must be loaded here
+/* Site fonts — every slug the theme picker offers must be loaded here
    so switching font_family renders instantly and consistently on the public
-   site. Stacks live in Backend theme-css.util.ts / edusphere theme-apply.ts. */
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Markazi+Text:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Lalezar&display=swap");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+   site. Stacks live in Backend theme-css.util.ts / edusphere theme-apply.ts.
+   Must precede @import "tailwindcss" so PostCSS doesn't emit rules before it. */
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Markazi+Text:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Lalezar&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
 
 @keyframes lp-marquee {
   from { transform: translateX(0); }

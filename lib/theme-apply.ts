@@ -25,10 +25,15 @@ const BORDER_RADIUS_MAP: Record<string, string> = {
 // Slug → CSS font stack. Mirrors Backend theme-css.util.ts; only mapped values
 // are emitted, so an unknown slug can never break out of the <style> block.
 const FONT_STACK_MAP: Record<string, string> = {
+  // Persian / Arabic
   vazirmatn: "'Vazirmatn', system-ui, sans-serif",
   markazi: "'Markazi Text', 'Vazirmatn', serif",
   "noto-naskh": "'Noto Naskh Arabic', 'Vazirmatn', serif",
   lalezar: "'Lalezar', 'Vazirmatn', cursive",
+  // Latin / English
+  inter: "'Inter', system-ui, sans-serif",
+  poppins: "'Poppins', system-ui, sans-serif",
+  playfair: "'Playfair Display', Georgia, serif",
 };
 const DEFAULT_FONT_STACK = FONT_STACK_MAP.vazirmatn;
 

@@ -46,6 +46,7 @@ export const ar = {
     checkout: 'الدفع',
     bundles: 'الباقات',
     roadmap: 'خارطة الطريق',
+    aboutUs: 'من نحن',
   },
   courses: {
     title: 'الدورات',

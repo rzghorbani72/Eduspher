@@ -46,6 +46,7 @@ export const fa = {
     checkout: 'تسویه حساب',
     bundles: 'بسته‌ها',
     roadmap: 'نقشه راه',
+    aboutUs: 'درباره ما',
   },
   courses: {
     title: 'دوره‌ها',

@@ -46,6 +46,7 @@ export const en = {
     checkout: 'Checkout',
     bundles: 'Bundles',
     roadmap: 'Roadmap',
+    aboutUs: 'About Us',
   },
   courses: {
     title: 'Courses',

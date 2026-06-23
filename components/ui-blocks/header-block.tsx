@@ -8,7 +8,10 @@ import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { cn } from "@/lib/utils";
-import { useAcademyContext, useStorePath } from "@/components/providers/store-provider";
+import {
+  useAcademyContext,
+  useStorePath,
+} from "@/components/providers/store-provider";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { CartIcon } from "@/components/cart/cart-icon";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -47,19 +50,24 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
       id={id || "header"}
       className={cn(
         sticky && "sticky top-0 z-50",
-        transparent && "absolute left-0 right-0 top-0"
+        transparent && "absolute left-0 right-0 top-0",
       )}
     >
       <div
         className={cn(
           "w-full border-b transition-all backdrop-blur-md",
           compact && "py-2",
-          (transparent || minimal) && "border-none bg-transparent"
+          (transparent || minimal) && "border-none bg-transparent",
         )}
-        style={(!transparent && !minimal) ? {
-          backgroundColor: 'color-mix(in srgb, var(--theme-background) 88%, transparent)',
-          borderColor: 'var(--theme-border-color)',
-        } : undefined}
+        style={
+          !transparent && !minimal
+            ? {
+                backgroundColor:
+                  "color-mix(in srgb, var(--theme-background) 88%, transparent)",
+                borderColor: "var(--theme-border-color)",
+              }
+            : undefined
+        }
       >
         <SiteHeaderShell />
       </div>
@@ -95,17 +103,20 @@ function CreativeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
       id={id || "header"}
       className={cn(
         "z-50 w-full border-b border-(--theme-border-color) bg-(--theme-surface)/95 backdrop-blur-md transition-all",
-        sticky && "sticky top-0"
+        sticky && "sticky top-0",
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-5 px-4 sm:px-6">
-        <Link href={buildPath("/")} className="shrink-0 text-xl font-black text-(--theme-foreground)">
+        <Link
+          href={buildPath("/")}
+          className="shrink-0 text-xl font-black text-(--theme-foreground)"
+        >
           {academyName}
         </Link>
 
         <form
           onSubmit={handleSearch}
-          className="hidden h-10 max-w-sm flex-1 items-center gap-2 rounded-full border border-(--theme-border-strong) bg-(--theme-surface-alt) px-4 md:flex"
+          className="hidden h-10 max-w-sm flex-1 items-center gap-2 rounded-full border border-(--theme-border-strong) bg-transparent px-4 md:flex"
         >
           <Search className="h-4 w-4 text-(--theme-foreground)/40" />
           <input
@@ -113,7 +124,7 @@ function CreativeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("courses.searchPlaceholder")}
-            className="w-full bg-transparent text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
+            className="w-full bg-transparent! text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
           />
         </form>
 
@@ -161,7 +172,11 @@ function CreativeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
             className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--theme-border-strong) text-(--theme-foreground) lg:hidden"
             aria-label="Toggle navigation"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
@@ -215,15 +230,20 @@ function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
       id={id || "header"}
       className={cn(
         "z-50 w-full border-b border-(--theme-border-color) bg-(--theme-background)/95 backdrop-blur-md transition-all",
-        sticky && "sticky top-0"
+        sticky && "sticky top-0",
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-5 px-4 sm:px-6">
-        <Link href={buildPath("/")} className="flex shrink-0 items-center gap-2.5">
+        <Link
+          href={buildPath("/")}
+          className="flex shrink-0 items-center gap-2.5"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--theme-primary) font-mono text-sm font-black tracking-tighter text-(--theme-on-primary)">
             {"</>"}
           </div>
-          <span className="text-lg font-bold text-(--theme-foreground)">{academyName}</span>
+          <span className="text-lg font-bold text-(--theme-foreground)">
+            {academyName}
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -240,7 +260,7 @@ function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
 
         <form
           onSubmit={handleSearch}
-          className="hidden h-10 max-w-xs flex-1 items-center gap-2 rounded-(--theme-border-radius) border border-(--theme-border-strong) bg-(--theme-surface-alt) px-3.5 md:flex"
+          className="hidden h-10 max-w-xs flex-1 items-center gap-2 rounded-(--theme-border-radius) border border-(--theme-border-strong) bg-transparent px-3.5 md:flex"
         >
           <Search className="h-4 w-4 text-(--theme-foreground)/40" />
           <input
@@ -248,7 +268,7 @@ function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("courses.searchPlaceholder")}
-            className="w-full bg-transparent text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
+            className="w-full bg-transparent! text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
           />
         </form>
 
@@ -270,8 +290,14 @@ function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
               >
                 {t("auth.login")}
               </Link>
-              <Button asChild size="sm" className="rounded-(--theme-border-radius) bg-(--theme-primary) font-bold text-(--theme-on-primary) hover:opacity-90">
-                <Link href={buildPath("/auth/register")}>{t("auth.startFree")}</Link>
+              <Button
+                asChild
+                size="sm"
+                className="rounded-(--theme-border-radius) bg-(--theme-primary) font-bold text-(--theme-on-primary) hover:opacity-90"
+              >
+                <Link href={buildPath("/auth/register")}>
+                  {t("auth.startFree")}
+                </Link>
               </Button>
             </>
           )}
@@ -283,7 +309,11 @@ function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
           className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--theme-border-strong) text-(--theme-foreground) lg:hidden"
           aria-label="Toggle navigation"
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
       </div>
 
