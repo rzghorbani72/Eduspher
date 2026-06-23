@@ -790,10 +790,15 @@ export interface PreviewPreset {
 export async function getPreviewPreset(
   key: string,
   previewToken?: string,
+  draft = false,
 ): Promise<PreviewPreset | null> {
   try {
-    const path = previewToken
-      ? `/ui-template/preset/${encodeURIComponent(key)}?preview=${encodeURIComponent(previewToken)}`
+    const params = new URLSearchParams();
+    if (previewToken) params.set("preview", previewToken);
+    if (draft) params.set("draft", "1");
+    const qs = params.toString();
+    const path = qs
+      ? `/ui-template/preset/${encodeURIComponent(key)}?${qs}`
       : `/ui-template/preset/${encodeURIComponent(key)}`;
     const result = await serverFetchRaw<{ data: PreviewPreset | null }>(path, {
       includeAuth: false,

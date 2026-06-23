@@ -6,7 +6,7 @@ import { buildAcademyPath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
-import { SlotGrid, PlaceholderCard } from "./slot-grid";
+import { SlotGrid, PlaceholderCard, SectionEmptyState } from "./slot-grid";
 import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 
 interface CoursesBlockProps {
@@ -139,6 +139,22 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
         </Button>
       </div>
     ) : null;
+
+  // No published courses yet — show one designed empty state instead of a grid
+  // of identical placeholder cards, so a new academy still looks intentional.
+  if (courses.length === 0) {
+    return (
+      <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          {renderHeader(true)}
+          <SectionEmptyState
+            title={translate("home.noFeaturedCourses")}
+            subtitle={translate("home.checkBackSoon")}
+          />
+        </div>
+      </section>
+    );
+  }
 
   if (layout === "list") {
     return (

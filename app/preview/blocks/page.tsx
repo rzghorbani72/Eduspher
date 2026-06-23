@@ -18,10 +18,11 @@ export default async function PreviewBlocksPage({
   const template = typeof sp.template === "string" ? sp.template : undefined;
   const only = typeof sp.only === "string" ? sp.only : undefined;
   const token = typeof sp.token === "string" ? sp.token : undefined;
+  const draft = sp.draft === "1";
 
   if (!template) return null;
 
-  const preset = await getPreviewPreset(template, token);
+  const preset = await getPreviewPreset(template, token, draft);
   if (!preset || !preset.blocks?.length) {
     return (
       <div className="p-4 text-sm text-(--theme-muted)">No preview available</div>

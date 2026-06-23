@@ -40,6 +40,23 @@ export function SlotGrid({ config, minBasisFallback = "280px", className, childr
   );
 }
 
+// Whole-section empty state — shown once when a real-data section has no live
+// items yet, instead of a grid of identical placeholder cards. Keeps a new
+// academy's storefront looking intentional rather than broken.
+export function SectionEmptyState({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 rounded-(--theme-border-radius) border border-dashed border-(--theme-border-strong) bg-(--theme-surface-alt) px-6 py-16 text-center">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-(--theme-primary)">
+        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.5v11m5.5-5.5h-11M4 7a3 3 0 013-3h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7z" />
+        </svg>
+      </span>
+      <p className="text-lg font-bold text-(--theme-foreground)">{title}</p>
+      {subtitle && <p className="max-w-md text-sm text-(--theme-muted)">{subtitle}</p>}
+    </div>
+  );
+}
+
 // Styled empty/placeholder slot — never raw empty space. Shows optional static
 // text supplied by the owner via the slot's three-way visibility toggle.
 export function PlaceholderCard({ text }: { text?: string }) {
