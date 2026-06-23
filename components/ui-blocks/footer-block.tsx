@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils";
 import Link from "@/components/ui/link";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
-import { env } from "@/lib/env";
 import { Mail, Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
+import { t } from "@/lib/i18n/server-translations";
 
 interface FooterBlockProps {
   id?: string;
@@ -18,35 +18,37 @@ interface FooterBlockProps {
   };
 }
 
-const footerLinks = [
-  {
-    title: "Product",
-    items: [
-      { label: "Courses", href: "/courses" },
-      { label: "Learning Paths", href: "/paths" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "Scholarships", href: "/scholarships" },
-    ],
-  },
-  {
-    title: "Company",
-    items: [
-      { label: "About", href: "/about" },
-      { label: "Blog", href: "/articles" },
-      { label: "Careers", href: "/careers" },
-      { label: "Press", href: "/press" },
-    ],
-  },
-  {
-    title: "Support",
-    items: [
-      { label: "Help Center", href: "/support" },
-      { label: "Contact", href: "/contact" },
-      { label: "Status", href: "/status" },
-      { label: "Terms", href: "/legal/terms" },
-    ],
-  },
-];
+function getFooterLinks() {
+  return [
+    {
+      title: t("footer.product"),
+      items: [
+        { label: t("navigation.courses"), href: "/courses" },
+        { label: t("footer.learningPaths"), href: "/paths" },
+        { label: t("footer.pricing"), href: "/pricing" },
+        { label: t("footer.scholarships"), href: "/scholarships" },
+      ],
+    },
+    {
+      title: t("footer.company"),
+      items: [
+        { label: t("footer.about"), href: "/about" },
+        { label: t("footer.blog"), href: "/articles" },
+        { label: t("footer.careers"), href: "/careers" },
+        { label: t("footer.press"), href: "/press" },
+      ],
+    },
+    {
+      title: t("footer.support"),
+      items: [
+        { label: t("footer.helpCenter"), href: "/support" },
+        { label: t("footer.contact"), href: "/contact" },
+        { label: t("footer.status"), href: "/status" },
+        { label: t("footer.terms"), href: "/legal/terms" },
+      ],
+    },
+  ];
+}
 
 const socialLinks = [
   { name: "Facebook", icon: Facebook, href: "#" },
@@ -81,8 +83,8 @@ const SocialLinks = ({ max }: { max?: number }) => (
   </div>
 );
 
-const Copyright = ({ name }: { name: string }) => (
-  <p className="text-xs opacity-40">&copy; {new Date().getFullYear()} {name}. All rights reserved.</p>
+const Copyright = ({ name, rightsText }: { name: string; rightsText: string }) => (
+  <p className="text-xs opacity-40">&copy; {new Date().getFullYear()} {name}. {rightsText}</p>
 );
 
 export async function FooterBlock({ id, config }: FooterBlockProps) {
@@ -100,8 +102,10 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
   const compact = config?.compact === true;
   const showLegal = config?.showLegal === true;
 
+  const footerLinks = getFooterLinks();
   const displayLinks = minimal ? footerLinks.slice(0, 2) : footerLinks;
   const gridCols = minimal ? "sm:grid-cols-2" : `sm:grid-cols-${Math.min(columns, 3)}`;
+  const rightsText = t("footer.allRightsReserved");
 
   if (minimal) {
     return (
@@ -120,7 +124,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
               ))
             )}
           </div>
-          <Copyright name={store.name ?? ''} />
+          <Copyright name={store.name ?? ''} rightsText={rightsText} />
         </div>
       </footer>
     );
@@ -135,7 +139,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
               <LogoBadge />
               <p className="text-lg font-semibold">{store.name}</p>
             </div>
-            <p className="text-sm leading-relaxed opacity-55">{env.siteDescription}</p>
+            <p className="text-sm leading-relaxed opacity-55">{t("footer.description")}</p>
           </div>
           <div className={`grid flex-1 gap-4 ${gridCols}`}>
             {displayLinks.map((section) => (
@@ -156,7 +160,7 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
         </div>
         <div className="mx-auto w-full max-w-6xl border-t px-6 py-4" style={dividerStyle}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Copyright name={store.name ?? ''} />
+            <Copyright name={store.name ?? ''} rightsText={rightsText} />
             {showSocialLinks && <SocialLinks max={4} />}
           </div>
         </div>
@@ -173,22 +177,21 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
             <LogoBadge />
             <p className="text-lg font-semibold">{store.name}</p>
           </div>
-          <p className="text-sm leading-relaxed opacity-55">
-            {env.siteDescription} Grow your skills with curated lessons, guided paths, and mentoring from experts.
-          </p>
+          <p className="text-sm leading-relaxed opacity-55">{t("footer.description")}</p>
           {showSocialLinks && <SocialLinks />}
           {showNewsletter && (
             <div className="space-y-2">
-              <p className="text-sm font-semibold">Subscribe to our newsletter</p>
+              <p className="text-sm font-semibold">{t("footer.newsletter")}</p>
               <form className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={t("footer.emailPlaceholder")}
                   className="flex-1 rounded-lg border border-(--theme-border-strong) px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)]/20"
                   style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}
                 />
                 <button
                   type="submit"
+                  aria-label={t("footer.newsletter")}
                   className="rounded-lg px-4 py-2 text-sm font-semibold shadow-lg transition-all hover:opacity-90"
                   style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)' }}
                 >
@@ -217,12 +220,12 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
       </div>
       <div className="mx-auto w-full max-w-6xl border-t px-6 py-4" style={dividerStyle}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Copyright name={store.name ?? ''} />
+          <Copyright name={store.name ?? ''} rightsText={rightsText} />
           {showLegal && (
             <div className="flex flex-wrap items-center gap-4 text-xs opacity-55">
-              <Link href={buildPath("/legal/terms")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">Terms of Service</Link>
-              <Link href={buildPath("/legal/privacy")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">Privacy Policy</Link>
-              <Link href={buildPath("/legal/cookies")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">Cookie Policy</Link>
+              <Link href={buildPath("/legal/terms")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">{t("footer.termsOfService")}</Link>
+              <Link href={buildPath("/legal/privacy")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">{t("footer.privacy")}</Link>
+              <Link href={buildPath("/legal/cookies")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">{t("footer.cookies")}</Link>
             </div>
           )}
         </div>
