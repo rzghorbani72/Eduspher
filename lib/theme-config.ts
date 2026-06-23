@@ -28,6 +28,7 @@ export interface ThemeConfig {
   element_animation_style?: string;
   border_radius_style?: string;
   shadow_style?: string;
+  font_family?: string;
   css_variables?: Record<string, string>;
   css_block?: string;
   [key: string]: unknown;
@@ -53,6 +54,7 @@ interface ThemeConfigSource {
   element_animation_style?: string;
   border_radius_style?: string;
   shadow_style?: string;
+  font_family?: string;
 }
 
 export interface UIBlockConfig {
@@ -167,6 +169,7 @@ export async function getStoreThemeAndTemplate() {
             element_animation_style: configs.element_animation_style || td?.element_animation_style || 'subtle',
             border_radius_style: configs.border_radius_style || td?.border_radius_style || 'rounded',
             shadow_style: configs.shadow_style || td?.shadow_style || 'medium',
+            font_family: configs.font_family || td?.font_family || 'vazirmatn',
             css_variables: (themeData as { css_variables?: Record<string, string> }).css_variables,
             css_block: (themeData as { css_block?: string }).css_block,
           }

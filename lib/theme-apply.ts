@@ -13,6 +13,7 @@ export type ThemeConfigInput = {
   element_animation_style?: string;
   border_radius_style?: string;
   shadow_style?: string;
+  font_family?: string;
 };
 
 const BORDER_RADIUS_MAP: Record<string, string> = {
@@ -20,6 +21,16 @@ const BORDER_RADIUS_MAP: Record<string, string> = {
   soft: "24px",
   sharp: "4px",
 };
+
+// Slug → CSS font stack. Mirrors Backend theme-css.util.ts; only mapped values
+// are emitted, so an unknown slug can never break out of the <style> block.
+const FONT_STACK_MAP: Record<string, string> = {
+  vazirmatn: "'Vazirmatn', system-ui, sans-serif",
+  markazi: "'Markazi Text', 'Vazirmatn', serif",
+  "noto-naskh": "'Noto Naskh Arabic', 'Vazirmatn', serif",
+  lalezar: "'Lalezar', 'Vazirmatn', cursive",
+};
+const DEFAULT_FONT_STACK = FONT_STACK_MAP.vazirmatn;
 
 const SHADOW_MAP: Record<string, string> = {
   none: "none",
@@ -123,6 +134,8 @@ export function buildThemeCssVariables(
     )
       ? (t.element_animation_style as string)
       : "subtle",
+    "--theme-font-family":
+      FONT_STACK_MAP[t.font_family || "vazirmatn"] || DEFAULT_FONT_STACK,
   };
 }
 

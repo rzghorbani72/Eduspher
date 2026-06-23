@@ -1,4 +1,8 @@
 @import "tailwindcss";
+/* Persian site fonts — every slug the theme picker offers must be loaded here
+   so switching font_family renders instantly and consistently on the public
+   site. Stacks live in Backend theme-css.util.ts / edusphere theme-apply.ts. */
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Markazi+Text:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Lalezar&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -229,7 +233,16 @@ body {
   min-height: 100vh;
   background-color: var(--theme-background, #f8fafc);
   color: var(--theme-foreground, #0f172a);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(
+    --theme-font-family,
+    "Vazirmatn",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif
+  );
 }
 
 /* Layered so Tailwind utility classes (e.g. text-(--theme-on-primary) on
