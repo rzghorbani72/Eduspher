@@ -733,6 +733,7 @@ export async function getStoreUITemplate(
         }>;
         template_preset?: string;
         is_active?: boolean;
+        academy_stats?: { courseCount: number; studentCount: number } | null;
       };
     }>(path, {
       includeAuth: false,
@@ -783,6 +784,7 @@ export interface PreviewPreset {
     config?: Record<string, unknown>;
   }>;
   theme: Record<string, unknown> | null;
+  academy_stats?: { courseCount: number; studentCount: number } | null;
 }
 
 // Single template/preset by key, for the standalone /preview/blocks renderer.

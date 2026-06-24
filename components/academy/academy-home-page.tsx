@@ -93,7 +93,10 @@ export async function AcademyHomePage() {
     return (
       <BlocksRenderer
         blocks={themeAndTemplate.template.blocks}
-        storeContext={storeContext}
+        storeContext={{
+          ...storeContext,
+          stats: themeAndTemplate.template.academy_stats ?? null,
+        }}
         includeHeaderFooter={false}
       />
     );

@@ -77,8 +77,8 @@ export function PreviewEditBridge() {
   return (
     <style>{`
       [data-block-id] { cursor: pointer; }
-      .${HOVER} { outline: 2px dashed color-mix(in srgb, var(--theme-primary) 60%, transparent); outline-offset: -2px; }
-      .${SELECTED} { outline: 2px dashed #ec4899; outline-offset: -2px; position: relative; }
+      .${HOVER} { outline: 2px dashed color-mix(in srgb, #ef4444 60%, transparent); outline-offset: -2px; }
+      .${SELECTED} { outline: 2px dashed #ef4444; outline-offset: -2px; position: relative; }
     `}</style>
   );
 }

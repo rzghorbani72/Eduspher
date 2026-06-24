@@ -20,6 +20,7 @@ interface BlocksRendererProps {
     id: number | null;
     slug: string | null;
     name: string | null;
+    stats?: { courseCount: number; studentCount: number } | null;
   };
   includeHeaderFooter?: boolean; // Option to include header/footer in blocks renderer
 }

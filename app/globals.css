@@ -895,7 +895,9 @@ select[class*="rounded-sm"] {
   padding-top: var(--theme-section-padding-y);
   padding-bottom: var(--theme-section-padding-y);
 }
-.ui-blocks-root .max-w-7xl {
+.ui-blocks-root .max-w-7xl,
+.ui-blocks-root .max-w-6xl,
+.ui-blocks-root .max-w-\[1240px\] {
   max-width: var(--theme-container-max-width);
 }
 .ui-blocks-root section h2 {

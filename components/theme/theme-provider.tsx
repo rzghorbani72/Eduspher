@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { AnimatedBackground } from './animated-background';
 import { SVGPattern } from './svg-patterns';
+import { resolveThemeIsDark } from '@/lib/theme-apply';
 
 interface ThemeConfig {
   primary_color?: string;
@@ -15,7 +16,7 @@ interface ThemeConfig {
   background_color?: string;
   background_color_light?: string;
   background_color_dark?: string;
-  dark_mode?: boolean | null;
+  dark_mode?: boolean | string | null;
   background_animation_type?: string;
   background_animation_speed?: string;
   background_svg_pattern?: string;
@@ -59,19 +60,16 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
       return;
     }
 
-    const checkDarkMode = () => {
-      if (theme.dark_mode === null || theme.dark_mode === undefined) {
-        setIsDark(
-          window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false
-        );
-      } else {
-        setIsDark(theme.dark_mode === true);
-      }
-    };
+    const prefersDark = () =>
+      window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+    const followsSystem =
+      theme.dark_mode === null ||
+      theme.dark_mode === undefined ||
+      theme.dark_mode === "null";
 
-    checkDarkMode();
+    setIsDark(resolveThemeIsDark(theme, prefersDark()));
 
-    if (theme.dark_mode === null || theme.dark_mode === undefined) {
+    if (followsSystem) {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
       mediaQuery.addEventListener("change", handler);

@@ -29,6 +29,9 @@ export interface ThemeConfig {
   border_radius_style?: string;
   shadow_style?: string;
   font_family?: string;
+  section_spacing?: string;
+  container_width?: string;
+  heading_scale?: string;
   css_variables?: Record<string, string>;
   css_block?: string;
   [key: string]: unknown;
@@ -55,6 +58,9 @@ interface ThemeConfigSource {
   border_radius_style?: string;
   shadow_style?: string;
   font_family?: string;
+  section_spacing?: string;
+  container_width?: string;
+  heading_scale?: string;
 }
 
 export interface UIBlockConfig {
@@ -170,6 +176,9 @@ export async function getStoreThemeAndTemplate() {
             border_radius_style: configs.border_radius_style || td?.border_radius_style || 'rounded',
             shadow_style: configs.shadow_style || td?.shadow_style || 'medium',
             font_family: configs.font_family || td?.font_family || 'vazirmatn',
+            section_spacing: configs.section_spacing || td?.section_spacing || 'comfortable',
+            container_width: configs.container_width || td?.container_width || 'standard',
+            heading_scale: configs.heading_scale || td?.heading_scale || 'standard',
             css_variables: (themeData as { css_variables?: Record<string, string> }).css_variables,
             css_block: (themeData as { css_block?: string }).css_block,
           }
@@ -215,6 +224,9 @@ export async function getStoreThemeAndTemplate() {
               return validBlocks;
             })(),
             template_preset: templateData.template_preset,
+            academy_stats:
+              (templateData as { academy_stats?: { courseCount: number; studentCount: number } | null })
+                .academy_stats ?? null,
           }
         : null,
     };

@@ -9,11 +9,16 @@ export type ThemeConfigInput = {
   background_color?: string;
   background_color_light?: string;
   background_color_dark?: string;
-  dark_mode?: boolean | null;
+  // The API may return dark_mode as a real boolean OR the string "true"/"false"
+  // /"null" — resolveThemeIsDark normalizes both shapes.
+  dark_mode?: boolean | string | null;
   element_animation_style?: string;
   border_radius_style?: string;
   shadow_style?: string;
   font_family?: string;
+  section_spacing?: string;
+  container_width?: string;
+  heading_scale?: string;
 };
 
 const BORDER_RADIUS_MAP: Record<string, string> = {
@@ -45,6 +50,27 @@ const SHADOW_MAP: Record<string, string> = {
 };
 
 const ELEMENT_ANIMATION_STYLES = ["subtle", "moderate", "dynamic"];
+
+// Design-system size tokens. These map the manager's coarse choices onto the
+// CSS vars that globals.css already consumes (.ui-blocks-root rules), so a size
+// change applies uniformly to every section regardless of its source template.
+const SECTION_SPACING_MAP: Record<string, string> = {
+  compact: "2.5rem",
+  comfortable: "4rem",
+  spacious: "6rem",
+};
+const CONTAINER_WIDTH_MAP: Record<string, string> = {
+  narrow: "960px",
+  standard: "1120px",
+  wide: "1320px",
+  full: "100%",
+};
+const HEADING_SCALE_MAP: Record<string, { sm: string; md: string; lg: string }> =
+  {
+    compact: { sm: "1.25rem", md: "1.875rem", lg: "2.5rem" },
+    standard: { sm: "1.5rem", md: "2.25rem", lg: "3rem" },
+    large: { sm: "1.875rem", md: "2.75rem", lg: "3.75rem" },
+  };
 
 export const DEFAULT_PLATFORM_THEME: ThemeConfigInput = {
   primary_color: "#3b82f6",
@@ -83,12 +109,15 @@ export function buttonTextContrast(hex: string): string {
 
 export function resolveThemeIsDark(
   theme: ThemeConfigInput | null,
-  prefersDark = false
+  _prefersDark = false
 ): boolean {
-  if (!theme || theme.dark_mode === null || theme.dark_mode === undefined) {
-    return false;
-  }
-  return theme.dark_mode === true;
+  const dm = theme?.dark_mode;
+  // Light is the default for every template; dark is opt-in. When the manager
+  // picks "both", the visitor's explicit toggle is applied upstream (it sets an
+  // explicit dark_mode), so an unset value here always resolves to light.
+  if (dm === null || dm === undefined || dm === "null") return false;
+  if (typeof dm === "string") return dm === "true" || dm === "1";
+  return dm === true;
 }
 
 export function buildThemeCssVariables(
@@ -109,6 +138,8 @@ export function buildThemeCssVariables(
     : t.background_color_light || t.background_color || "#f8fafc";
   const accent = t.accent_color || "#f59e0b";
   const foreground = hexContrast(background);
+  const heading = HEADING_SCALE_MAP[t.heading_scale || "standard"] ||
+    HEADING_SCALE_MAP.standard;
 
   return {
     "--theme-primary": primary,
@@ -141,6 +172,13 @@ export function buildThemeCssVariables(
       : "subtle",
     "--theme-font-family":
       FONT_STACK_MAP[t.font_family || "vazirmatn"] || DEFAULT_FONT_STACK,
+    "--theme-section-padding-y":
+      SECTION_SPACING_MAP[t.section_spacing || "comfortable"] || "4rem",
+    "--theme-container-max-width":
+      CONTAINER_WIDTH_MAP[t.container_width || "standard"] || "1120px",
+    "--theme-heading-size-sm": heading.sm,
+    "--theme-heading-size-md": heading.md,
+    "--theme-heading-size-lg": heading.lg,
   };
 }
 

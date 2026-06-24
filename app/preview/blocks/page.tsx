@@ -21,6 +21,9 @@ export default async function PreviewBlocksPage({
   const token = typeof sp.token === "string" ? sp.token : undefined;
   const draft = sp.draft === "1";
   const edit = sp.edit === "1";
+  // Live hero-variant thumbnails: force the hero's `style` so the picker can
+  // preview every design with the academy's real theme and content.
+  const heroStyle = typeof sp.heroStyle === "string" ? sp.heroStyle : undefined;
 
   if (!template) return null;
 
@@ -31,17 +34,28 @@ export default async function PreviewBlocksPage({
     );
   }
 
-  const blocks = only
+  const selected = only
     ? preset.blocks.filter((block) => block.id === only)
     : preset.blocks;
+  const blocks = heroStyle
+    ? selected.map((block) =>
+        block.type === "hero"
+          ? { ...block, config: { ...block.config, style: heroStyle } }
+          : block,
+      )
+    : selected;
   const themeVars = buildThemeCssVariables(preset.theme ?? null);
 
   // The wrapper owns the full themed canvas (background + text color) so dark
   // presets never show the host layout's light gaps behind a section.
+  // The font-family declaration only lives on `body` (globals.css), which is
+  // outside this canvas, so the --theme-font-family var must be consumed here
+  // for the chosen font to actually render in the editor preview.
   const canvasStyle: CSSProperties = {
     ...themeVars,
     backgroundColor: "var(--theme-background)",
     color: "var(--theme-foreground)",
+    fontFamily: "var(--theme-font-family)",
     minHeight: "100%",
   } as CSSProperties;
 
@@ -67,7 +81,12 @@ export default async function PreviewBlocksPage({
             <BlocksRenderer
               blocks={[block]}
               includeHeaderFooter
-              storeContext={{ id: null, slug: null, name: null }}
+              storeContext={{
+                id: null,
+                slug: null,
+                name: null,
+                stats: preset.academy_stats ?? null,
+              }}
             />
           </div>
         );

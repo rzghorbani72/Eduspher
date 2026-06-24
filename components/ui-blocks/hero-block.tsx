@@ -1,6 +1,8 @@
+import type { CSSProperties } from "react";
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
 import { buildAcademyPath, cn, resolveAssetUrl } from "@/lib/utils";
+import { hexContrast } from "@/lib/theme-apply";
 import { HeroSlideshow, type SlideConfig } from "./hero-slideshow";
 import { SectionMedia, type MediaAspect, type MediaSize } from "./section-media";
 
@@ -13,6 +15,11 @@ interface HeroBlockProps {
     ctaText?: string;
     ctaSecondary?: string;
     backgroundImage?: string | null;
+    /** Background controls from the Style tab (gradient = theme default). */
+    bgType?: "gradient" | "solid" | "image";
+    bgColor?: string;
+    bgImage?: string | null;
+    overlayOpacity?: number;
     illustration?: string | null;
     illustrationPreset?: string | null;
     overlay?: boolean;
@@ -56,21 +63,83 @@ interface HeroBlockProps {
     mediaAspect?: MediaAspect;
     /** Multiple slides for the hero carousel. When provided, overrides single title/subtitle. */
     slides?: SlideConfig[];
+    /** When true, fill stat fields (learner/course counts) from real academy data. */
+    useLiveData?: boolean;
   };
   storeContext?: {
     id: number | null;
     slug: string | null;
     name: string | null;
+    stats?: { courseCount: number; studentCount: number } | null;
   };
   blockType?: "hero" | "slideshow";
 }
 
 const heightCls = { small: "py-8 sm:py-10", medium: "py-12 sm:py-16", large: "py-20 sm:py-28" };
 
+const GRADIENT_BG =
+  "linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 65%, color-mix(in srgb, var(--theme-secondary) 55%, var(--theme-accent)) 100%)";
+
+type HeroBg =
+  | { kind: "image"; url: string; overlay: number }
+  | { kind: "solid"; color: string }
+  | { kind: "gradient" };
+
+// Resolves the Style-tab background config into one shape. Accepts both the new
+// keys (bgType/bgColor/bgImage/overlayOpacity) and the legacy `backgroundImage`.
+function resolveHeroBg(config?: HeroBlockProps["config"]): HeroBg {
+  const url = resolveAssetUrl(config?.bgImage ?? config?.backgroundImage);
+  const bgType = config?.bgType ?? (url ? "image" : "gradient");
+  if (bgType === "image" && url) {
+    return { kind: "image", url, overlay: config?.overlayOpacity ?? 40 };
+  }
+  if (bgType === "solid" && config?.bgColor) {
+    return { kind: "solid", color: config.bgColor };
+  }
+  return { kind: "gradient" };
+}
+
+function heroBgStyle(bg: HeroBg): CSSProperties {
+  if (bg.kind === "image") return { backgroundImage: `url(${bg.url})` };
+  if (bg.kind === "solid") return { background: bg.color };
+  return { background: GRADIENT_BG };
+}
+
+function heroContentColorFor(bg: HeroBg): string {
+  if (bg.kind === "image") return "#ffffff";
+  if (bg.kind === "solid") return hexContrast(bg.color);
+  return "var(--theme-on-primary)";
+}
+
+function HeroOverlay({ bg }: { bg: HeroBg }) {
+  if (bg.kind !== "image" || bg.overlay <= 0) return null;
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{ backgroundColor: `rgba(0, 0, 0, ${bg.overlay / 100})` }}
+    />
+  );
+}
+
 function speedToMs(speed?: string) {
   if (speed === "slow") return 5000;
   if (speed === "fast") return 1500;
   return 2800;
+}
+
+// In "dynamic data" mode, fill the hero's learner-count field from real academy
+// stats. Falls back to the static config when live data is off or unavailable
+// (e.g. a brand-new academy with zero students), so the hero never reads "0".
+function applyDynamicData(
+  config: HeroBlockProps["config"],
+  stats: { courseCount: number; studentCount: number } | null | undefined,
+): HeroBlockProps["config"] {
+  if (!config?.useLiveData || !stats) return config;
+  const next = { ...config };
+  if (stats.studentCount > 0) {
+    next.trustCount = `${stats.studentCount.toLocaleString("fa-IR")}+`;
+  }
+  return next;
 }
 
 // Shared illustration slot — owner-uploaded image with bounded size/aspect.
@@ -85,7 +154,8 @@ function HeroMedia({ config, defaultSize = "lg" }: { config?: HeroBlockProps["co
   );
 }
 
-export function HeroBlock({ id, config, storeContext, blockType }: HeroBlockProps) {
+export function HeroBlock({ id, config: rawConfig, storeContext, blockType }: HeroBlockProps) {
+  const config = applyDynamicData(rawConfig, storeContext?.stats);
   // Slideshow block type: always render as full-width image carousel
   if (blockType === "slideshow") {
     const slides = (config?.slides as SlideConfig[] | undefined) ?? [];
@@ -145,20 +215,18 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
   const subtitle = config?.subtitle || "Learn something new today";
   const showCTA  = config?.showCTA  !== false;
   const ctaText  = config?.ctaText  || "Browse Courses";
-  const hasBackground = !!config?.backgroundImage;
   const titleSz  = height === "small" ? "text-3xl sm:text-4xl md:text-5xl" : height === "medium" ? "text-4xl sm:text-5xl md:text-6xl" : "text-5xl sm:text-6xl md:text-7xl";
-  // Vivid primary→secondary gradient — matches AdminPanel preview regardless of dark/light theme
-  const bgStyle = hasBackground
-    ? { backgroundImage: `url(${config!.backgroundImage})` }
-    : { background: "linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 65%, color-mix(in srgb, var(--theme-secondary) 55%, var(--theme-accent)) 100%)" };
-
-  const heroContentColor = hasBackground ? undefined : "var(--theme-on-primary)";
+  const bg = resolveHeroBg(config);
+  const isGradient = bg.kind === "gradient";
+  const bgStyle = heroBgStyle(bg);
+  const heroContentColor = heroContentColorFor(bg);
 
   // Split layout when illustration is configured (uploaded or built-in default)
   if (hasIllustration) {
     return (
-      <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={{ ...bgStyle, color: heroContentColor }}>
-        {!hasBackground && (
+      <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], bg.kind === "image" ? "bg-cover bg-center" : "")} style={{ ...bgStyle, color: heroContentColor }}>
+        <HeroOverlay bg={bg} />
+        {isGradient && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-white/10 blur-3xl animate-float-slow" />
             <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-white/8 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
@@ -174,7 +242,7 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
               {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-4 leading-relaxed text-lg sm:text-xl opacity-80">{subtitle}</p>}
               {showCTA && (
                 <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-8 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
-                  <Button size="lg" asChild className="font-semibold hover:opacity-90" style={!hasBackground ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: 'var(--theme-on-primary)' }}>
+                  <Button size="lg" asChild className="font-semibold hover:opacity-90" style={isGradient ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: heroContentColor }}>
                     <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
                   </Button>
                   {config?.ctaSecondary && (
@@ -198,8 +266,9 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
   // Centered layout (no illustration configured)
   const alignMap = { left: "text-left items-start", center: "text-center items-center", right: "text-right items-end" };
   return (
-    <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], hasBackground ? "bg-cover bg-center" : "")} style={{ ...bgStyle, color: heroContentColor }}>
-      {!hasBackground && (
+    <section id={id || "hero"} className={cn("relative overflow-hidden", heightCls[height], bg.kind === "image" ? "bg-cover bg-center" : "")} style={{ ...bgStyle, color: heroContentColor }}>
+      <HeroOverlay bg={bg} />
+      {isGradient && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-white/10 blur-3xl animate-float-slow" />
           <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-white/8 blur-3xl animate-float-slow" style={{ animationDelay: "1s" }} />
@@ -213,7 +282,7 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
           {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-3 leading-relaxed text-lg sm:text-xl opacity-80">{subtitle}</p>}
           {showCTA && (
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-6 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
-              <Button size="lg" asChild className="font-semibold hover:opacity-90" style={!hasBackground ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: 'var(--theme-on-primary)' }}>
+              <Button size="lg" asChild className="font-semibold hover:opacity-90" style={isGradient ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: heroContentColor }}>
                 <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
               </Button>
               {config?.ctaSecondary && (
