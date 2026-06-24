@@ -112,6 +112,7 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
           <p
             data-scroll-animate="fadeIn"
             data-scroll-delay="0"
+            data-editable="title"
             className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-(--theme-primary)"
           >
             {title}
@@ -119,21 +120,23 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.08"
+            data-editable="subtitle"
+            data-editable-kind="rich"
             className="text-3xl font-black tracking-tight sm:text-4xl text-(--theme-foreground)"
             style={{ letterSpacing: '-0.025em' }}
-          >
-            {subtitle || title}
-          </h2>
+            dangerouslySetInnerHTML={{ __html: subtitle || title }}
+          />
         </>
       ) : subtitle ? (
         <h2
           data-scroll-animate="fadeIn"
           data-scroll-delay="0.05"
+          data-editable="subtitle"
+          data-editable-kind="rich"
           className="text-3xl font-black tracking-tight sm:text-4xl text-(--theme-foreground)"
           style={{ letterSpacing: '-0.025em' }}
-        >
-          {subtitle}
-        </h2>
+          dangerouslySetInnerHTML={{ __html: subtitle }}
+        />
       ) : null}
     </div>
   );

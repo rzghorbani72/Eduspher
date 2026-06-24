@@ -211,10 +211,10 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
     );
   }
 
-  const title    = config?.title    || "Welcome to Our Store";
-  const subtitle = config?.subtitle || "Learn something new today";
+  const title    = config?.title    || "به آکادمی ما خوش آمدید";
+  const subtitle = config?.subtitle || "بهترین دوره‌های آموزشی را اینجا بیابید";
   const showCTA  = config?.showCTA  !== false;
-  const ctaText  = config?.ctaText  || "Browse Courses";
+  const ctaText  = config?.ctaText  || "مرور دوره‌ها";
   const titleSz  = height === "small" ? "text-3xl sm:text-4xl md:text-5xl" : height === "medium" ? "text-4xl sm:text-5xl md:text-6xl" : "text-5xl sm:text-6xl md:text-7xl";
   const bg = resolveHeroBg(config);
   const isGradient = bg.kind === "gradient";
@@ -236,18 +236,27 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
             {/* Text side */}
             <div className={cn(alignment === "center" ? "text-center" : "text-left")}>
-              <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz)}>
+              <h1 data-scroll-animate="fadeIn" data-editable="title" className={cn("font-bold tracking-tight", titleSz)}>
                 {title}
               </h1>
-              {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-4 leading-relaxed text-lg sm:text-xl opacity-80">{subtitle}</p>}
+              {subtitle && (
+                <p
+                  data-scroll-animate="fadeIn"
+                  data-scroll-delay="0.15"
+                  data-editable="subtitle"
+                  data-editable-kind="rich"
+                  className="mt-4 leading-relaxed text-lg sm:text-xl opacity-80"
+                  dangerouslySetInnerHTML={{ __html: subtitle }}
+                />
+              )}
               {showCTA && (
                 <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-8 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
                   <Button size="lg" asChild className="font-semibold hover:opacity-90" style={isGradient ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: heroContentColor }}>
-                    <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
+                    <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}><span data-editable="ctaText">{ctaText}</span></Link>
                   </Button>
                   {config?.ctaSecondary && (
                     <Button size="lg" variant="outline" asChild style={{ borderColor: 'color-mix(in srgb, var(--theme-on-primary) 40%, transparent)', color: 'var(--theme-on-primary)' }}>
-                      <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}>{config.ctaSecondary}</Link>
+                      <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}><span data-editable="ctaSecondary">{config.ctaSecondary}</span></Link>
                     </Button>
                   )}
                 </div>
@@ -276,18 +285,27 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
       )}
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8 mt-14">
         <div className={cn("mx-auto max-w-4xl flex flex-col", alignMap[alignment])}>
-          <h1 data-scroll-animate="fadeIn" className={cn("font-bold tracking-tight", titleSz)}>
+          <h1 data-scroll-animate="fadeIn" data-editable="title" className={cn("font-bold tracking-tight", titleSz)}>
             {title}
           </h1>
-          {subtitle && <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-3 leading-relaxed text-lg sm:text-xl opacity-80">{subtitle}</p>}
+          {subtitle && (
+            <p
+              data-scroll-animate="fadeIn"
+              data-scroll-delay="0.15"
+              data-editable="subtitle"
+              data-editable-kind="rich"
+              className="mt-3 leading-relaxed text-lg sm:text-xl opacity-80"
+              dangerouslySetInnerHTML={{ __html: subtitle }}
+            />
+          )}
           {showCTA && (
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-6 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
               <Button size="lg" asChild className="font-semibold hover:opacity-90" style={isGradient ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: heroContentColor }}>
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}><span data-editable="ctaText">{ctaText}</span></Link>
               </Button>
               {config?.ctaSecondary && (
                 <Button size="lg" variant="outline" asChild style={{ borderColor: 'color-mix(in srgb, var(--theme-on-primary) 40%, transparent)', color: 'var(--theme-on-primary)' }}>
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}>{config.ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}><span data-editable="ctaSecondary">{config.ctaSecondary}</span></Link>
                 </Button>
               )}
             </div>
@@ -301,10 +319,10 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
 // ── Expert Academy (Kajabi-inspired) ─────────────────────────────────────────
 
 function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
-  const title = config?.title || "Turn What You Know Into What You're Known For";
-  const subtitle = config?.subtitle || "The all-in-one platform to build, sell, and scale your expert business.";
-  const ctaText = config?.ctaText || "Start Free Today";
-  const ctaSecondary = config?.ctaSecondary || "See How It Works";
+  const title = config?.title || "تخصص خود را به شهرت تبدیل کنید";
+  const subtitle = config?.subtitle || "پلتفرم جامع برای ساخت، فروش و رشد کسب‌وکار تخصصی شما";
+  const ctaText = config?.ctaText || "شروع رایگان";
+  const ctaSecondary = config?.ctaSecondary || "نحوه کار را ببین";
   const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
@@ -321,7 +339,7 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
           <div>
             <div data-scroll-animate="fadeIn" className="mb-4 inline-flex items-center gap-2 rounded-full bg-(--theme-primary-subtle) px-4 py-1.5 text-sm font-medium text-(--theme-primary)">
               <span className="h-2 w-2 rounded-full bg-(--theme-primary) animate-pulse" />
-              Trusted by 100K+ Creators
+              مورد اعتماد ۱۰۰هزار+ مدرس
             </div>
             <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-(--theme-foreground) sm:text-5xl md:text-6xl leading-tight">
               {title}
@@ -348,7 +366,7 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
                 </div>
                 <div>
                   <div className="flex gap-0.5">{"★★★★★".split("").map((s, i) => <span key={i} className="text-(--theme-accent) text-sm">{s}</span>)}</div>
-                  <p className="text-xs text-(--theme-foreground)/55 mt-0.5">Join 100K+ successful creators</p>
+                  <p className="text-xs text-(--theme-foreground)/55 mt-0.5">به ۱۰۰هزار+ مدرس موفق بپیوندید</p>
                 </div>
               </div>
             )}
@@ -368,10 +386,10 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
 // ── Studio (Warm split — for educators & studio owners) ───────────────────────
 
 function StudioHero({ id, config, storeContext }: HeroBlockProps) {
-  const title = config?.title || "Your Studio, Your Rules";
-  const subtitle = config?.subtitle || "Create, teach and sell your courses with a beautiful all-in-one platform.";
-  const ctaText = config?.ctaText || "Start Creating";
-  const ctaSecondary = config?.ctaSecondary || "Explore Features";
+  const title = config?.title || "استودیوی شما، قوانین شما";
+  const subtitle = config?.subtitle || "با یک پلتفرم جامع و زیبا دوره‌هایتان را بسازید، تدریس کنید و بفروشید";
+  const ctaText = config?.ctaText || "شروع به ساخت";
+  const ctaSecondary = config?.ctaSecondary || "کاوش ویژگی‌ها";
 
   return (
     <section id={id || "hero"} className="relative overflow-hidden bg-(--theme-surface-alt) py-20 sm:py-28">
@@ -386,7 +404,7 @@ function StudioHero({ id, config, storeContext }: HeroBlockProps) {
           <div>
             <div data-scroll-animate="slideLeft" className="mb-4 inline-flex items-center gap-2 rounded-full border border-(--theme-border-color) bg-(--theme-secondary-subtle) px-4 py-1.5 text-sm font-medium text-(--theme-secondary)">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-              Built for creators
+              برای مدرسان ساخته شده
             </div>
             <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-(--theme-foreground) sm:text-5xl lg:text-6xl leading-tight">
               {title}
@@ -406,7 +424,7 @@ function StudioHero({ id, config, storeContext }: HeroBlockProps) {
 
             {/* Trust indicators */}
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.4" className="mt-10 grid grid-cols-3 gap-4">
-              {[["5K+", "Courses"], ["98%", "Satisfaction"], ["24/7", "Support"]].map(([val, label], i) => (
+              {[["۵هزار+", "دوره"], ["۹۸٪", "رضایت‌مندی"], ["۲۴/۷", "پشتیبانی"]].map(([val, label], i) => (
                 <div key={i} className="rounded-xl bg-(--theme-card-bg) p-3 text-center shadow-sm border border-(--theme-border-color)">
                   <p className="text-xl font-bold text-(--theme-primary)">{val}</p>
                   <p className="text-xs text-(--theme-foreground)/55 mt-0.5">{label}</p>
@@ -420,23 +438,23 @@ function StudioHero({ id, config, storeContext }: HeroBlockProps) {
             <div className="relative rounded-2xl bg-(--theme-card-bg) p-4 shadow-2xl border border-(--theme-border-color)">
               {/* Mock course card */}
               <div className="rounded-xl p-5 text-(--theme-on-primary) mb-3" style={{ background: "linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))" }}>
-                <p className="text-xs font-medium opacity-80">Featured Course</p>
-                <p className="mt-1 text-lg font-bold leading-tight">Master Your Craft in 30 Days</p>
+                <p className="text-xs font-medium opacity-80">دوره برگزیده</p>
+                <p className="mt-1 text-lg font-bold leading-tight">تسلط بر مهارت در ۳۰ روز</p>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-sm">👩‍🏫</div>
-                  <span className="text-xs opacity-80">12 lessons · 4h total</span>
+                  <span className="text-xs opacity-80">۱۲ درس · ۴ ساعت محتوا</span>
                 </div>
               </div>
               {/* Mini stats */}
               <div className="grid grid-cols-3 gap-2">
-                {["🎓 Learn", "🏆 Certify", "🚀 Grow"].map((item, i) => (
+                {["🎓 یادگیری", "🏆 گواهینامه", "🚀 رشد"].map((item, i) => (
                   <div key={i} className="rounded-lg bg-(--theme-surface-alt) p-2 text-center text-xs font-medium text-(--theme-foreground)/80">{item}</div>
                 ))}
               </div>
             </div>
             {/* Floating badge */}
             <div className="absolute -right-4 -top-4 rounded-xl bg-(--theme-primary) px-3 py-2 text-(--theme-on-primary) shadow-lg">
-              <p className="text-xs font-bold">🔥 Popular</p>
+              <p className="text-xs font-bold">🔥 محبوب</p>
             </div>
           </div>
         </div>
@@ -448,16 +466,16 @@ function StudioHero({ id, config, storeContext }: HeroBlockProps) {
 // ── Creator (Bold creator economy) ────────────────────────────────────────────
 
 function CreatorHero({ id, config, storeContext }: HeroBlockProps) {
-  const title = config?.title || "The All-in-One Platform for Modern Creators";
-  const subtitle = config?.subtitle || "Sell courses, digital products, and memberships — all from one beautiful storefront.";
-  const ctaText = config?.ctaText || "Start Your Free Trial";
-  const ctaSecondary = config?.ctaSecondary || "Watch Demo";
+  const title = config?.title || "پلتفرم جامع برای مدرسان مدرن";
+  const subtitle = config?.subtitle || "دوره‌ها، محصولات دیجیتال و اشتراک‌ها را از یک فروشگاه زیبا بفروشید";
+  const ctaText = config?.ctaText || "شروع رایگان";
+  const ctaSecondary = config?.ctaSecondary || "مشاهده دمو";
 
   const products = [
-    { icon: "📚", label: "Courses" },
-    { icon: "🎁", label: "Digital Products" },
-    { icon: "👥", label: "Memberships" },
-    { icon: "🎙️", label: "Coaching" },
+    { icon: "📚", label: "دوره‌ها" },
+    { icon: "🎁", label: "محصولات دیجیتال" },
+    { icon: "👥", label: "اشتراک‌ها" },
+    { icon: "🎙️", label: "مشاوره" },
   ];
 
   return (
@@ -472,7 +490,7 @@ function CreatorHero({ id, config, storeContext }: HeroBlockProps) {
           {/* Text */}
           <div>
             <div data-scroll-animate="slideLeft" className="mb-6 inline-flex items-center gap-2 rounded-full bg-(--theme-primary) px-4 py-1.5 text-sm font-semibold text-(--theme-on-primary) shadow-lg">
-              ✨ Made for creators like you
+              ✨ ساخته‌شده برای مدرسانی مثل شما
             </div>
             <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-extrabold tracking-tight text-(--theme-foreground) sm:text-5xl lg:text-6xl leading-[1.1]">
               {title}
@@ -502,16 +520,16 @@ function CreatorHero({ id, config, storeContext }: HeroBlockProps) {
                 <div>
                   <p className="font-semibold text-(--theme-foreground) text-sm">{p.label}</p>
                   <span className="mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium bg-(--theme-primary-subtle) text-(--theme-primary)">
-                    Ready to sell
+                    آماده فروش
                   </span>
                 </div>
               </div>
             ))}
             {/* Revenue widget */}
             <div className="col-span-2 rounded-2xl p-5 text-(--theme-on-primary) shadow-xl" style={{ background: "linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))" }}>
-              <p className="text-sm font-medium opacity-80">This month&apos;s earnings</p>
-              <p className="text-3xl font-bold mt-1">$12,840</p>
-              <p className="text-xs opacity-70 mt-1">↑ 24% from last month</p>
+              <p className="text-sm font-medium opacity-80">درآمد این ماه</p>
+              <p className="text-3xl font-bold mt-1">۱۲٬۸۴۰ هزار تومان</p>
+              <p className="text-xs opacity-70 mt-1">↑ ۲۴٪ نسبت به ماه قبل</p>
             </div>
           </div>
         </div>
@@ -523,9 +541,9 @@ function CreatorHero({ id, config, storeContext }: HeroBlockProps) {
 // ── Social / Stan-inspired ─────────────────────────────────────────────────────
 
 function SocialHero({ id, config, storeContext }: HeroBlockProps) {
-  const title = config?.title || "Meet Your All-in-One Creator Store";
-  const subtitle = config?.subtitle || "Join 100,000+ solo business owners building their dream business.";
-  const ctaText = config?.ctaText || "Start Your Trial";
+  const title = config?.title || "فروشگاه جامع مدرسان محتوا";
+  const subtitle = config?.subtitle || "به بیش از ۱۰۰٬۰۰۰ صاحب کسب‌وکار موفق بپیوندید";
+  const ctaText = config?.ctaText || "شروع رایگان";
   const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
@@ -559,10 +577,10 @@ function SocialHero({ id, config, storeContext }: HeroBlockProps) {
 // ── Community (Circle-inspired, dark) ─────────────────────────────────────────
 
 function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
-  const title = config?.title || "Where Your Community Comes to Life";
-  const subtitle = config?.subtitle || "Create spaces for your audience to connect, learn, and grow together.";
-  const ctaText = config?.ctaText || "Build Your Community";
-  const ctaSecondary = config?.ctaSecondary || "See Examples";
+  const title = config?.title || "جایی که جامعه شما زنده می‌شود";
+  const subtitle = config?.subtitle || "فضاهایی برای ارتباط، یادگیری و رشد مخاطبانتان بسازید";
+  const ctaText = config?.ctaText || "جامعه خود را بسازید";
+  const ctaSecondary = config?.ctaSecondary || "نمونه‌ها را ببین";
   const hasIllustration = !!(config?.illustration || config?.illustrationPreset);
 
   return (
@@ -578,7 +596,7 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
           <div>
             <div data-scroll-animate="fadeIn" className="mb-6 inline-flex items-center gap-2 rounded-full border border-(--theme-border-color) bg-(--theme-primary-subtle) px-4 py-1.5 text-sm font-medium text-(--theme-primary) backdrop-blur-sm">
               <span className="h-2 w-2 rounded-full bg-(--theme-primary) animate-pulse" />
-              Now in public beta
+              در نسخه بتا عمومی
             </div>
 
             <h1 data-scroll-animate="slideLeft" data-scroll-delay="0.1" className="text-4xl font-bold tracking-tight text-(--theme-foreground) sm:text-5xl lg:text-6xl leading-tight">
@@ -607,7 +625,7 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
                 <div className="flex items-center gap-1">
                   {"★★★★★".split("").map((s, i) => <span key={i} className="text-(--theme-accent) text-xs">{s}</span>)}
                 </div>
-                <p className="text-xs text-(--theme-foreground)/55 mt-0.5">10,000+ active members</p>
+                <p className="text-xs text-(--theme-foreground)/55 mt-0.5">۱۰٬۰۰۰+ عضو فعال</p>
               </div>
             </div>
           </div>
@@ -925,7 +943,7 @@ function CodeHero({ id, config, storeContext }: HeroBlockProps) {
   const ratingLabel = config?.ratingLabel || "میانگین امتیاز دوره‌ها";
   const liveText = config?.liveText || "هم‌اکنون ۲۳۴ نفر در حال یادگیری";
   const featuredLabel = config?.featuredLabel || "دوره پرفروش";
-  const featuredTitle = config?.featuredTitle || "React Advanced Patterns";
+  const featuredTitle = config?.featuredTitle || "الگوهای پیشرفته React";
   const avatars = ["آ", "س", "م", "ر"];
 
   const bannerImage = resolveAssetUrl(config?.backgroundImage);

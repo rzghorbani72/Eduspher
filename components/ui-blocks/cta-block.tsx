@@ -33,16 +33,21 @@ export async function CtaBlock({ id, config }: CtaBlockProps) {
     <section id={id || "cta"} className="bg-(--theme-surface) py-[60px]">
       <div className="mx-auto max-w-[640px] px-[48px] text-center">
         <div className="mb-[12px] text-[12px] font-bold text-(--theme-primary)">{label}</div>
-        <h2 className="mb-[16px] text-[clamp(32px,4vw,48px)] font-extrabold leading-[1.3] text-(--theme-foreground)">
+        <h2 data-editable="title" className="mb-[16px] text-[clamp(32px,4vw,48px)] font-extrabold leading-[1.3] text-(--theme-foreground)">
           {title}
         </h2>
-        <p className="mb-[36px] text-[15px] leading-[1.85] text-(--theme-muted)">{subtitle}</p>
+        <p
+          data-editable="subtitle"
+          data-editable-kind="rich"
+          className="mb-[36px] text-[15px] leading-[1.85] text-(--theme-muted)"
+          dangerouslySetInnerHTML={{ __html: subtitle }}
+        />
         <div className="flex flex-wrap justify-center gap-[12px]">
           <button
             type="button"
             className="rounded-(--theme-border-radius) bg-(--theme-primary) px-[28px] py-[14px] text-[15px] font-bold text-(--theme-on-primary) hover:opacity-90"
           >
-            {ctaText}
+            <span data-editable="ctaText">{ctaText}</span>
           </button>
           <button
             type="button"
