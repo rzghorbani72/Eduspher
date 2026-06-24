@@ -50,6 +50,7 @@ export function PreviewEditBridge() {
     const onMessage = (e: MessageEvent) => {
       const data = e.data;
       if (!data || data.source !== "mentoma-admin") return;
+
       if (data.type === "highlight") {
         document
           .querySelectorAll(`.${SELECTED}`)
@@ -61,6 +62,14 @@ export function PreviewEditBridge() {
           el?.classList.add(SELECTED);
           el?.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+      }
+
+      // Instant visibility toggle — no iframe reload needed for show/hide.
+      if (data.type === "toggle-visible" && data.blockId) {
+        const el = document.querySelector<HTMLElement>(
+          `[data-block-id="${data.blockId}"]`,
+        );
+        if (el) el.style.display = data.visible ? "" : "none";
       }
     };
 
