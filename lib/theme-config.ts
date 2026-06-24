@@ -32,6 +32,7 @@ export interface ThemeConfig {
   section_spacing?: string;
   container_width?: string;
   heading_scale?: string;
+  text_direction?: 'ltr' | 'rtl';
   css_variables?: Record<string, string>;
   css_block?: string;
   [key: string]: unknown;
@@ -61,6 +62,7 @@ interface ThemeConfigSource {
   section_spacing?: string;
   container_width?: string;
   heading_scale?: string;
+  text_direction?: string;
 }
 
 export interface UIBlockConfig {
@@ -179,6 +181,7 @@ export async function getStoreThemeAndTemplate() {
             section_spacing: configs.section_spacing || td?.section_spacing || 'comfortable',
             container_width: configs.container_width || td?.container_width || 'standard',
             heading_scale: configs.heading_scale || td?.heading_scale || 'standard',
+            text_direction: (configs.text_direction || td?.text_direction) as 'ltr' | 'rtl' | undefined,
             css_variables: (themeData as { css_variables?: Record<string, string> }).css_variables,
             css_block: (themeData as { css_block?: string }).css_block,
           }

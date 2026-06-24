@@ -123,8 +123,10 @@ export default async function RootLayout({
   const countryCode = currentAcademy?.country_code || null;
   const storeLanguage = currentAcademy?.language || null;
   const language = getAcademyLanguage(storeLanguage, countryCode);
-  const direction = getAcademyDirection(storeLanguage, countryCode);
-  const rtl = isAcademyRTL(storeLanguage, countryCode);
+  // theme.text_direction overrides the language-derived default so the manager
+  // can set direction independently (e.g. English content in an RTL layout).
+  const direction = (theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? getAcademyDirection(storeLanguage, countryCode);
+  const rtl = direction === 'rtl';
   
   const isAcademyHome = headersList.get("x-academy-home") === "1";
   const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;

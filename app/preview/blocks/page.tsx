@@ -59,8 +59,11 @@ export default async function PreviewBlocksPage({
     minHeight: "100%",
   } as CSSProperties;
 
+  // Direction from theme config overrides the HTML-level dir set by layout.tsx.
+  const canvasDir = (preset.theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? 'rtl';
+
   return (
-    <div style={canvasStyle}>
+    <div style={canvasStyle} dir={canvasDir}>
       {edit && <PreviewEditBridge />}
       {blocks.map((block, index) => {
         // Header stays un-animated so its sticky positioning is preserved; every
