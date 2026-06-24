@@ -96,15 +96,20 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           {tx("eyebrow", translate("courses.featuredCourses"))}
         </p>
         <h2
+          data-editable="title"
           className="text-3xl font-black tracking-tight sm:text-4xl"
           style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
         >
           {title || translate("home.featuredCoursesDescription")}
         </h2>
         {subtitle && (
-          <p className="mt-3 text-base leading-relaxed" style={{ color: 'var(--theme-muted)' }}>
-            {subtitle}
-          </p>
+          <p
+            data-editable="subtitle"
+            data-editable-kind="rich"
+            className="mt-3 text-base leading-relaxed"
+            style={{ color: 'var(--theme-muted)' }}
+            dangerouslySetInnerHTML={{ __html: subtitle }}
+          />
         )}
       </div>
       {!centered && showViewAll && (
@@ -161,7 +166,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
       <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(false)}
-          <div className="space-y-5">
+          <div data-dynamic="true" className="space-y-5">
             {resolved.map((slot, i) =>
               slot.kind === "live" ? (
                 <CourseCard key={i} course={slot.data} storeSlug={storeContext?.slug ?? null} />
@@ -180,9 +185,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
       <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(false)}
-          <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
-            {courseNodes}
-          </SlotGrid>
+          <div data-dynamic="true">
+            <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
+              {courseNodes}
+            </SlotGrid>
+          </div>
         </div>
       </section>
     );
@@ -193,9 +200,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
       <section id={id || "courses"} className="py-16 sm:py-24" style={featuredSectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(true)}
-          <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
-            {courseNodes}
-          </SlotGrid>
+          <div data-dynamic="true">
+            <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
+              {courseNodes}
+            </SlotGrid>
+          </div>
           {renderViewAll()}
         </div>
       </section>
@@ -207,9 +216,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {renderHeader(true)}
-        <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
-          {courseNodes}
-        </SlotGrid>
+        <div data-dynamic="true">
+          <SlotGrid config={config} minBasisFallback={basisFor(gridColumns)}>
+            {courseNodes}
+          </SlotGrid>
+        </div>
         {renderViewAll()}
       </div>
     </section>

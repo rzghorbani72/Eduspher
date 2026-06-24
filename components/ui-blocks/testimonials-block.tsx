@@ -131,17 +131,24 @@ export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) 
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
+            data-editable="title"
             className="text-3xl font-black tracking-tight sm:text-4xl"
             style={{ letterSpacing: '-0.025em' }}
           >
             {title}
           </h2>
           {subtitle && (
-            <p data-scroll-animate="fadeIn" data-scroll-delay="0.15" className="mt-3 text-base leading-relaxed text-(--theme-foreground)/60">
-              {subtitle}
-            </p>
+            <p
+              data-scroll-animate="fadeIn"
+              data-scroll-delay="0.15"
+              data-editable="subtitle"
+              data-editable-kind="rich"
+              className="mt-3 text-base leading-relaxed text-(--theme-foreground)/60"
+              dangerouslySetInnerHTML={{ __html: subtitle }}
+            />
           )}
         </div>
+        <div data-dynamic="true">
         <SlotGrid config={config} minBasisFallback="320px">
           {resolveSlots(items, config?.slots, 3).map((slot, i) =>
             slot.kind === "live" ? (
@@ -166,6 +173,7 @@ export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) 
             ),
           )}
         </SlotGrid>
+        </div>
       </div>
     </section>
   );
