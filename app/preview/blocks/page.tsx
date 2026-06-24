@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { getPreviewPreset } from "@/lib/api/server";
 import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
 import { buildThemeCssVariables } from "@/lib/theme-apply";
+import { PreviewEditBridge } from "@/components/preview/preview-edit-bridge";
 
 // Standalone render surface embedded (scaled) by AdminPanel as gallery-card and
 // section-picker thumbnails. Renders a specific preset's blocks — or a single
@@ -19,6 +20,7 @@ export default async function PreviewBlocksPage({
   const only = typeof sp.only === "string" ? sp.only : undefined;
   const token = typeof sp.token === "string" ? sp.token : undefined;
   const draft = sp.draft === "1";
+  const edit = sp.edit === "1";
 
   if (!template) return null;
 
@@ -45,13 +47,16 @@ export default async function PreviewBlocksPage({
 
   return (
     <div style={canvasStyle}>
+      {edit && <PreviewEditBridge />}
       {blocks.map((block, index) => {
         // Header stays un-animated so its sticky positioning is preserved; every
-        // other section fades up in sequence for a lively showcase.
-        const animate = block.type !== "header";
+        // other section fades up in sequence for a lively showcase. In edit mode
+        // animation is skipped so a freshly selected section doesn't re-animate.
+        const animate = !edit && block.type !== "header";
         return (
           <div
             key={block.id}
+            data-block-id={block.id}
             className={animate ? "preview-block-enter" : undefined}
             style={
               animate
