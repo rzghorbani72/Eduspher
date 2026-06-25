@@ -12,7 +12,6 @@ function buildToolbar(target: HTMLElement): HTMLElement {
 
   const bar = document.createElement("div");
   bar.id = TOOLBAR_ID;
-  bar.setAttribute("aria-label", "Text formatting");
   Object.assign(bar.style, {
     position: "fixed",
     zIndex: "99999",
@@ -26,16 +25,16 @@ function buildToolbar(target: HTMLElement): HTMLElement {
     pointerEvents: "all",
   });
 
-  const tools: { cmd: string; label: string; title: string }[] = [
-    { cmd: "bold",      label: "B",  title: "Bold (Ctrl+B)"      },
-    { cmd: "italic",    label: "I",  title: "Italic (Ctrl+I)"    },
-    { cmd: "underline", label: "U",  title: "Underline (Ctrl+U)" },
+  const tools = [
+    { cmd: "bold",      label: "B", weight: "bold",   style: "normal",  deco: "none"      },
+    { cmd: "italic",    label: "I", weight: "normal",  style: "italic",  deco: "none"      },
+    { cmd: "underline", label: "U", weight: "normal",  style: "normal",  deco: "underline" },
   ];
 
   for (const tool of tools) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.title = tool.title;
+    btn.title = tool.cmd;
     btn.textContent = tool.label;
     Object.assign(btn.style, {
       padding: "4px 10px",
@@ -44,15 +43,15 @@ function buildToolbar(target: HTMLElement): HTMLElement {
       borderRadius: "4px",
       color: "#e4e4e7",
       fontSize: "13px",
-      fontWeight: tool.cmd === "bold" ? "bold" : "normal",
-      fontStyle: tool.cmd === "italic" ? "italic" : "normal",
-      textDecoration: tool.cmd === "underline" ? "underline" : "none",
+      fontWeight: tool.weight,
+      fontStyle: tool.style,
+      textDecoration: tool.deco,
       cursor: "pointer",
       lineHeight: "1",
     });
     btn.addEventListener("mouseover", () => { btn.style.background = "#3f3f46"; });
     btn.addEventListener("mouseout",  () => { btn.style.background = "transparent"; });
-    // mousedown keeps focus on the contenteditable (blur is not triggered)
+    // mousedown keeps focus on the contenteditable (blur not triggered)
     btn.addEventListener("mousedown", (e) => {
       e.preventDefault();
       document.execCommand(tool.cmd, false);
@@ -68,10 +67,9 @@ function buildToolbar(target: HTMLElement): HTMLElement {
 
 function placeToolbar(bar: HTMLElement, target: HTMLElement) {
   const rect = target.getBoundingClientRect();
-  const barH = 36;
-  const top = rect.top > barH + 12 ? rect.top - barH - 8 : rect.bottom + 8;
+  const top = rect.top > 44 ? rect.top - 40 : rect.bottom + 8;
   bar.style.left = `${Math.max(4, rect.left)}px`;
-  bar.style.top = `${top}px`;
+  bar.style.top  = `${top}px`;
 }
 
 export function PreviewEditBridge() {
@@ -85,9 +83,12 @@ export function PreviewEditBridge() {
     };
     let activeEdit: ActiveEdit | null = null;
     let blurTimer: ReturnType<typeof setTimeout> | null = null;
+    let liveToast: HTMLElement | null = null;
 
-    const findBlockEl = (target: EventTarget | null): HTMLElement | null => {
-      let el = target as HTMLElement | null;
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    const findBlockEl = (t: EventTarget | null): HTMLElement | null => {
+      let el = t as HTMLElement | null;
       while (el && el !== document.body) {
         if (el.dataset?.blockId) return el;
         el = el.parentElement;
@@ -95,12 +96,19 @@ export function PreviewEditBridge() {
       return null;
     };
 
-    // Return true if target is inside a [data-dynamic] container
-    const isInsideDynamic = (
-      target: EventTarget | null,
-      blockEl: HTMLElement,
-    ): boolean => {
-      let el = target as HTMLElement | null;
+    // Walk up from target to (not including) blockEl, stop early inside dynamic.
+    const findEditableEl = (t: EventTarget | null, blockEl: HTMLElement): HTMLElement | null => {
+      let el = t as HTMLElement | null;
+      while (el && el !== blockEl) {
+        if (el.dataset?.dynamic)   return null;   // live data — never editable
+        if (el.dataset?.editable)  return el;
+        el = el.parentElement;
+      }
+      return null;
+    };
+
+    const isInsideDynamic = (t: EventTarget | null, blockEl: HTMLElement): boolean => {
+      let el = t as HTMLElement | null;
       while (el && el !== blockEl) {
         if (el.dataset?.dynamic) return true;
         el = el.parentElement;
@@ -108,47 +116,32 @@ export function PreviewEditBridge() {
       return false;
     };
 
-    // Find the nearest data-editable ancestor, stopping at (not including) blockEl.
-    // Returns null if the target is inside a [data-dynamic] container.
-    const findEditableEl = (
-      target: EventTarget | null,
-      blockEl: HTMLElement,
-    ): HTMLElement | null => {
-      let el = target as HTMLElement | null;
-      while (el && el !== blockEl) {
-        if (el.dataset?.dynamic) return null; // inside live data — not editable
-        if (el.dataset?.editable) return el;
-        el = el.parentElement;
-      }
-      return null;
-    };
-
-    // Show a self-removing toast near the cursor for live-data click feedback
-    let liveToast: HTMLElement | null = null;
     const showLiveToast = (x: number, y: number) => {
       liveToast?.remove();
-      const toast = document.createElement("div");
-      toast.style.cssText = `
-        position: fixed; z-index: 99998;
-        left: ${x + 12}px; top: ${y - 36}px;
-        background: #78350f; color: #fef3c7;
-        border: 1px solid #92400e;
-        border-radius: 6px; padding: 5px 10px;
-        font-size: 12px; font-family: sans-serif;
-        white-space: nowrap; pointer-events: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-      `;
-      toast.textContent = "محتوای زنده — از داشبورد مدیریت می‌شود";
-      document.body.appendChild(toast);
-      liveToast = toast;
-      setTimeout(() => { toast.remove(); if (liveToast === toast) liveToast = null; }, 2200);
+      const d = document.createElement("div");
+      Object.assign(d.style, {
+        position: "fixed", zIndex: "99998",
+        left: `${x + 12}px`, top: `${y - 36}px`,
+        background: "#78350f", color: "#fef3c7",
+        border: "1px solid #92400e", borderRadius: "6px",
+        padding: "5px 10px", fontSize: "12px",
+        fontFamily: "sans-serif", whiteSpace: "nowrap",
+        pointerEvents: "none",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.35)",
+      });
+      d.textContent = "محتوای زنده — از داشبورد مدیریت می‌شود";
+      document.body.appendChild(d);
+      liveToast = d;
+      setTimeout(() => { d.remove(); if (liveToast === d) liveToast = null; }, 2200);
     };
+
+    // ── Edit lifecycle ────────────────────────────────────────────────────────
 
     const commitEdit = () => {
       if (!activeEdit) return;
-      const { el, blockId, fieldKey, isRich, original } = activeEdit;
       if (blurTimer) { clearTimeout(blurTimer); blurTimer = null; }
 
+      const { el, blockId, fieldKey, isRich, original } = activeEdit;
       el.removeAttribute("contenteditable");
       el.classList.remove(EDITING);
 
@@ -160,39 +153,25 @@ export function PreviewEditBridge() {
         );
       }
 
-      // Restore block selection outline after inline edit
-      const blockEl = document.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
-      blockEl?.classList.add(SELECTED);
-
+      // Restore block selection ring
+      document.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`)?.classList.add(SELECTED);
       document.getElementById(TOOLBAR_ID)?.remove();
       activeEdit = null;
     };
 
+    // enterEdit is called from onMouseDown BEFORE the browser focuses the element.
+    // Setting contenteditable here lets the browser's natural mousedown→focus→cursor
+    // sequence place the cursor exactly where the user clicked — no manual range needed.
     const enterEdit = (editableEl: HTMLElement, blockId: string) => {
-      if (activeEdit) commitEdit();
-
       const fieldKey = editableEl.dataset.editable!;
-      const isRich = editableEl.dataset.editableKind === "rich";
+      const isRich   = editableEl.dataset.editableKind === "rich";
       const original = isRich ? editableEl.innerHTML : editableEl.innerText.trim();
 
-      // Hide the block-level selection ring while typing so the edit border is clear
+      // Drop block ring so the blue editing outline is unambiguous
       document.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`)?.classList.remove(SELECTED);
 
       editableEl.setAttribute("contenteditable", "true");
       editableEl.classList.add(EDITING);
-
-      // Focus must happen in the same microtask; requestAnimationFrame is NOT used
-      // here so the browser keeps this as a trusted user-gesture focus call.
-      editableEl.focus();
-
-      // Place cursor at end of content
-      const range = document.createRange();
-      range.selectNodeContents(editableEl);
-      range.collapse(false);
-      const sel = window.getSelection();
-      sel?.removeAllRanges();
-      sel?.addRange(range);
-
       activeEdit = { el: editableEl, blockId, fieldKey, isRich, original };
 
       if (isRich) {
@@ -200,8 +179,7 @@ export function PreviewEditBridge() {
         editableEl.addEventListener("keyup", () => placeToolbar(bar, editableEl));
       }
 
-      // Commit on blur — the 150 ms delay lets toolbar's mousedown (which
-      // calls preventDefault, keeping focus) cancel this before it fires.
+      // Commit on blur; the 150 ms delay lets toolbar's mousedown cancel this first.
       const onBlur = () => {
         blurTimer = setTimeout(() => {
           if (activeEdit?.el === editableEl) commitEdit();
@@ -210,6 +188,8 @@ export function PreviewEditBridge() {
       editableEl.addEventListener("blur", onBlur, { once: true });
     };
 
+    // ── Mouse events ──────────────────────────────────────────────────────────
+
     const onOver = (e: MouseEvent) => {
       if (activeEdit) return;
       const el = findBlockEl(e.target);
@@ -217,16 +197,64 @@ export function PreviewEditBridge() {
       if (el && !el.classList.contains(SELECTED)) el.classList.add(HOVER);
     };
 
+    // mousedown: the entry point for inline editing.
+    // By setting contenteditable here (without stopPropagation), the browser's
+    // natural focus + cursor-placement fires immediately after — exactly like
+    // clicking into any contenteditable in a real editor (Medium, Notion, etc.).
+    const onMouseDown = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+
+      // Toolbar buttons prevent blur themselves via their own mousedown handler
+      if (target.closest?.(`#${TOOLBAR_ID}`)) return;
+
+      // Clicks inside the currently active editable = text selection — pass through
+      if (activeEdit && activeEdit.el.contains(target)) return;
+
+      const blockEl = findBlockEl(target);
+
+      if (!blockEl) {
+        // Clicked completely outside any block
+        if (activeEdit) { commitEdit(); }
+        return;
+      }
+
+      if (isInsideDynamic(target, blockEl)) return; // handled in onClick
+
+      const editableEl = findEditableEl(target, blockEl);
+
+      if (editableEl) {
+        // Switching from one editable to another: commit first
+        if (activeEdit && activeEdit.el !== editableEl) commitEdit();
+
+        if (!activeEdit) {
+          enterEdit(editableEl, blockEl.dataset.blockId!);
+        }
+        // Do NOT preventDefault / stopPropagation.
+        // The browser's default mousedown behavior will focus the contenteditable
+        // and place the cursor exactly where the user clicked.
+        return;
+      }
+
+      // Clicked on a non-editable part of the block → commit any open edit.
+      if (activeEdit) commitEdit();
+      // Let onClick handle block selection.
+    };
+
+    // click: handles block selection, link prevention, and dynamic toasts.
+    // Editing itself is handled by mousedown above.
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
 
-      // Toolbar buttons handle their own events — pass through
       if (target.closest?.(`#${TOOLBAR_ID}`)) return;
 
-      // Clicks INSIDE the active editable are normal text-selection clicks
-      if (activeEdit && activeEdit.el.contains(target)) return;
+      // Inside the active editable: only block link navigation
+      if (activeEdit && activeEdit.el.contains(target)) {
+        e.preventDefault();   // stop any <a> / <Link> from navigating
+        e.stopPropagation();  // don't fall into block-select below
+        return;
+      }
 
-      // Click anywhere outside the active editable → commit the edit
+      // Click outside active edit → commit (blur may not have fired yet)
       if (activeEdit) {
         commitEdit();
         e.preventDefault();
@@ -242,88 +270,53 @@ export function PreviewEditBridge() {
 
       const blockId = blockEl.dataset.blockId!;
 
-      // If click is on dynamic (live-data) content, show an informational toast
-      // and just select the block — never enter inline edit.
+      // Dynamic content
       if (isInsideDynamic(target, blockEl)) {
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
-        blockEl.classList.remove(HOVER);
         blockEl.classList.add(SELECTED);
         window.parent?.postMessage(
-          { source: "mentoma-editor", type: "select", blockId },
-          "*",
+          { source: "mentoma-editor", type: "select", blockId }, "*",
         );
         showLiveToast(e.clientX, e.clientY);
         return;
       }
 
-      // Check if the clicked element (or any ancestor up to the block) is a
-      // text-editable node. A single click on text enters inline edit directly.
-      const editableEl = findEditableEl(target, blockEl);
-      if (editableEl) {
-        // Select the block visually and notify AdminPanel (opens the sidebar panel)
-        document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
-        blockEl.classList.remove(HOVER);
-        blockEl.classList.add(SELECTED);
-        window.parent?.postMessage(
-          { source: "mentoma-editor", type: "select", blockId },
-          "*",
-        );
-        // Enter inline edit immediately — no second click required
-        enterEdit(editableEl, blockId);
-        return;
-      }
-
-      // Click on non-editable area → just select the block
+      // Select the block
       document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
       blockEl.classList.remove(HOVER);
       blockEl.classList.add(SELECTED);
       window.parent?.postMessage(
-        { source: "mentoma-editor", type: "select", blockId },
-        "*",
+        { source: "mentoma-editor", type: "select", blockId }, "*",
       );
     };
+
+    // ── Keyboard ──────────────────────────────────────────────────────────────
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (!activeEdit) return;
       if (e.key === "Escape") {
         const { el, isRich, original } = activeEdit;
         if (isRich) el.innerHTML = original;
-        else el.innerText = original;
-        el.removeAttribute("contenteditable");
-        el.classList.remove(EDITING);
-        document
-          .querySelector<HTMLElement>(`[data-block-id="${activeEdit.blockId}"]`)
-          ?.classList.add(SELECTED);
-        document.getElementById(TOOLBAR_ID)?.remove();
-        if (blurTimer) { clearTimeout(blurTimer); blurTimer = null; }
-        activeEdit = null;
+        else        el.innerText  = original;
+        el.blur(); // triggers blur → commitEdit (value === original → no postMessage)
         e.preventDefault();
       }
     };
 
+    // ── postMessage from AdminPanel ───────────────────────────────────────────
+
     const onMessage = (e: MessageEvent) => {
       const data = e.data as {
-        source?: string;
-        type?: string;
-        blockId?: string;
-        fieldKey?: string;
-        value?: string;
-        visible?: boolean;
+        source?: string; type?: string;
+        blockId?: string; fieldKey?: string; value?: string; visible?: boolean;
       };
       if (!data || data.source !== "mentoma-admin") return;
 
       if (data.type === "highlight") {
-        // If the incoming highlight is for the block the user is currently
-        // editing, don't commit — this happens when AdminPanel echoes back the
-        // 'select' we just sent after clicking into inline edit mode.
-        if (activeEdit && data.blockId === activeEdit.blockId) {
-          // Keep the block ring off while editing; do nothing else
-          return;
-        }
+        // Same block as active edit → just ignore (don't commit mid-edit)
+        if (activeEdit && data.blockId === activeEdit.blockId) return;
 
-        // Switching to a different block → commit any open edit first
         if (activeEdit) commitEdit();
-
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
         if (data.blockId) {
           const el = document.querySelector<HTMLElement>(`[data-block-id="${data.blockId}"]`);
@@ -337,29 +330,32 @@ export function PreviewEditBridge() {
         if (el) el.style.display = data.visible ? "" : "none";
       }
 
-      // Sidebar input changed → mirror the text into the preview immediately
+      // Sidebar-driven field sync (keeps preview text in sync with any sidebar controls)
       if (data.type === "sync-field" && data.blockId && data.fieldKey) {
         const el = document.querySelector<HTMLElement>(
           `[data-block-id="${data.blockId}"] [data-editable="${data.fieldKey}"]`,
         );
-        // Don't overwrite the element the user is currently typing in
         if (el && el !== activeEdit?.el) {
           if (el.dataset.editableKind === "rich") el.innerHTML = data.value ?? "";
-          else el.innerText = data.value ?? "";
+          else                                    el.innerText  = data.value ?? "";
         }
       }
     };
 
-    document.addEventListener("mouseover", onOver);
-    document.addEventListener("click", onClick, true);
-    document.addEventListener("keydown", onKeyDown);
-    window.addEventListener("message", onMessage);
+    // ── Register ──────────────────────────────────────────────────────────────
+
+    document.addEventListener("mouseover",  onOver);
+    document.addEventListener("mousedown",  onMouseDown, true);  // capture
+    document.addEventListener("click",      onClick,     true);  // capture
+    document.addEventListener("keydown",    onKeyDown);
+    window.addEventListener("message",      onMessage);
 
     return () => {
-      document.removeEventListener("mouseover", onOver);
-      document.removeEventListener("click", onClick, true);
-      document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("message", onMessage);
+      document.removeEventListener("mouseover",  onOver);
+      document.removeEventListener("mousedown",  onMouseDown, true);
+      document.removeEventListener("click",      onClick,     true);
+      document.removeEventListener("keydown",    onKeyDown);
+      window.removeEventListener("message",      onMessage);
       document.getElementById(TOOLBAR_ID)?.remove();
       liveToast?.remove();
     };
@@ -367,31 +363,30 @@ export function PreviewEditBridge() {
 
   return (
     <style>{`
-      [data-block-id] { cursor: pointer; }
-      .${HOVER}    { outline: 2px dashed color-mix(in srgb, #ef4444 60%, transparent); outline-offset: -2px; }
-      .${SELECTED} { outline: 2px dashed #ef4444; outline-offset: -2px; position: relative; }
+      /* Unselected blocks show pointer — "click to select" */
+      [data-block-id]:not(.${SELECTED}) { cursor: pointer; }
 
-      /* Subtle hint that text elements are editable */
-      [data-editable]:not([contenteditable]) {
-        cursor: text;
-        border-radius: 3px;
-        transition: outline 120ms ease;
-      }
+      /* Once selected, default cursor so children can show their own cursor */
+      .${SELECTED} { cursor: default; outline: 2px dashed #ef4444; outline-offset: -2px; position: relative; }
+      .${HOVER}    { outline: 2px dashed color-mix(in srgb, #ef4444 60%, transparent); outline-offset: -2px; }
+
+      /* Editable text — text cursor and a subtle blue hint on hover */
+      [data-editable]:not([contenteditable]) { cursor: text; border-radius: 3px; }
       [data-editable]:not([contenteditable]):hover {
         outline: 1px dashed rgba(59,130,246,0.45);
         outline-offset: 3px;
       }
-      /* Active inline edit — blue border, caret */
+
+      /* Active inline edit */
       [data-editable][contenteditable] {
         outline: 2px solid #3b82f6 !important;
         outline-offset: 3px;
         border-radius: 3px;
-        cursor: text;
         caret-color: #3b82f6;
         min-width: 4px;
       }
 
-      /* Live / dynamic data — show a "not editable" cursor and amber hint on hover */
+      /* Live / dynamic content */
       [data-dynamic] * { cursor: default !important; }
       [data-dynamic]:hover {
         outline: 1px dashed rgba(245,158,11,0.5);
