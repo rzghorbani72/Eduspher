@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@/components/ui/link";
-import { Mail, Phone, Lock, ArrowLeft, CheckCircle } from "lucide-react";
+import { Mail, Lock, ArrowLeft, CheckCircle } from "lucide-react";
 
 import { 
   validatePhoneAndEmail,

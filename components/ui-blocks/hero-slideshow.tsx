@@ -50,7 +50,6 @@ export function HeroSlideshow({
   autoplay = true,
   interval = 5000,
   storeContext,
-  dark = false,
   className,
 }: HeroSlideshowProps) {
   const [current, setCurrent] = useState(0);

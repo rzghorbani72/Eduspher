@@ -31,7 +31,7 @@ export const options = {
   },
 };
 
-export default function() {
+export default function userJourneyLoadTest() {
   const baseUrl = __ENV.BASE_URL || 'http://localhost:3001';
 
   group('Scenario 1: Course Buyer Journey', () => {

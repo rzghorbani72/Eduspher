@@ -4,9 +4,10 @@ import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { OrderSummary } from "@/components/checkout/order-summary";
 import { CartCheckout } from "@/components/checkout/cart-checkout";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourseById, getCurrentUser, getCart, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import Image from "next/image";
+import { getCourseById, getCurrentUser, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath, resolveAssetUrl, formatCurrencyWithAcademy } from "@/lib/utils";
+import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
@@ -131,7 +132,6 @@ export default async function CheckoutPage({
   }
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -149,9 +149,11 @@ export default async function CheckoutPage({
           <div className="rounded-theme border border-theme bg-card p-5 shadow-sm transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
             <div className="flex gap-4">
               {course.Image?.publicUrl && (
-                <img
+                <Image
                   src={coverUrl}
                   alt={course.title}
+                  width={96}
+                  height={96}
                   className="h-24 w-24 rounded-lg object-cover"
                 />
               )}

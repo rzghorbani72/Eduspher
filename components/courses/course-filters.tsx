@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect, useState, useTransition, useRef, useLayoutEffect } from "react";
+import { useEffect, useState, useTransition, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { useTranslation } from "@/lib/i18n/hooks";

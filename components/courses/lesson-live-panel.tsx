@@ -44,10 +44,6 @@ const panelStyle = {
   color: 'var(--theme-on-primary)',
 };
 
-const dividerStyle = {
-  borderColor: 'color-mix(in srgb, var(--theme-on-primary) 15%, transparent)',
-};
-
 export const LessonLivePanel = ({
   lesson,
   isLoggedIn,

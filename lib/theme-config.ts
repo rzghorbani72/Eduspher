@@ -233,7 +233,7 @@ export async function getStoreThemeAndTemplate() {
           }
         : null,
     };
-  } catch (error) {
+  } catch {
     return {
       theme: null,
       template: null,

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslation } from "@/lib/i18n/hooks";
-import type { CourseSummary, SeasonSummary } from "@/lib/api/types";
+import type { CourseSummary } from "@/lib/api/types";
 import { CourseCurriculum } from "@/components/courses/course-curriculum";
 import { CourseQnA } from "@/components/courses/course-qna";
 

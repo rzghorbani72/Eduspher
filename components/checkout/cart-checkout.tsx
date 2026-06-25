@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle, Loader2, AlertCircle, X, Trash2 } from "lucide-react";
+import { Loader2, AlertCircle, X, Trash2 } from "lucide-react";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getCartItems, removeCourseFromCart, syncCart, type CartItem } from "@/app/actions/cart";

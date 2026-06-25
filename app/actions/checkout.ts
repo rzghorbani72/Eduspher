@@ -88,10 +88,6 @@ export async function processCheckout(
       }
 
       const hasPaidCourses = validCourses.some((c) => !c.is_free && c.price > 0);
-      const totalAmount = validCourses.reduce(
-        (sum, c) => sum + (c.is_free ? 0 : c.price * 100),
-        0
-      );
 
       // For free courses only, enroll directly
       if (!hasPaidCourses) {

@@ -11,13 +11,8 @@ export default function GlobalError({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap"
-          rel="stylesheet"
-        />
         <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
           *{box-sizing:border-box;margin:0;padding:0}
           body{
             font-family:'Vazirmatn',system-ui,sans-serif;
@@ -114,6 +109,7 @@ export default function GlobalError({
             <button className="btn-primary" onClick={reset}>
               تلاش دوباره
             </button>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a className="btn-ghost" href="/contact">
               تماس با پشتیبانی
             </a>

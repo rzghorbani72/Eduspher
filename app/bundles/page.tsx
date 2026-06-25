@@ -1,6 +1,6 @@
 import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
-import { Package, Check, ChevronDown } from "lucide-react";
+import { Package, Check } from "lucide-react";
 
 import { getAcademyPlansPublic, getCurrentAcademy, getAcademyBySlug, getCurrentUser, getCourses } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";

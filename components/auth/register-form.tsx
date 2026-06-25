@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Phone, Lock, CheckCircle } from "lucide-react";
+import { Mail, Lock, CheckCircle } from "lucide-react";
 
 import { 
   sendEmailOtp,
@@ -59,7 +59,7 @@ interface RegisterFormProps {
 
 export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
   const router = useRouter();
-  const { setAuthenticated } = useAuthContext();
+  useAuthContext();
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);

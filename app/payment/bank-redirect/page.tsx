@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 export default function BankRedirectPage() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const paymentId = searchParams.get("payment_id");
   const basketId = searchParams.get("basket_id");
   const amount = searchParams.get("amount");

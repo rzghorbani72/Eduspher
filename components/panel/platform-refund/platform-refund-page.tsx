@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AboutHeader } from "../platform-about/about-header";
 import { AboutFooter } from "../platform-about/about-footer";
 
@@ -30,14 +30,14 @@ const sections = [
 ];
 
 export function PlatformRefundPage({ adminRegisterUrl }: { adminRegisterUrl: string }) {
-  const [theme, setTheme] = useState<Theme>("light");
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
     try {
       const saved = localStorage.getItem("mentoma-theme") as Theme | null;
-      if (saved === "dark" || saved === "light") setTheme(saved);
+      if (saved === "dark" || saved === "light") return saved;
     } catch {}
-  }, []);
+    return "light";
+  });
 
   const toggleTheme = () => {
     const next: Theme = theme === "dark" ? "light" : "dark";

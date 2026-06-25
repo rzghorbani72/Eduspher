@@ -31,7 +31,7 @@ export const options = {
   },
 };
 
-export default function() {
+export default function basicFrontendLoadTest() {
   const baseUrl = __ENV.BASE_URL || 'http://localhost:3001';
 
   // Test 1: Homepage

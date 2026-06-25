@@ -37,7 +37,7 @@ export function SiteHeaderClient({
   const pathSlug = slugFromPathname(pathname);
   const onAcademySite = Boolean(pathSlug ?? storeSlug);
   const buildPath = useStorePath();
-  const { t, language } = useTranslation();
+  const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,7 +55,7 @@ export function SiteHeaderClient({
             { href: "/bundles", label: t("navigation.bundles") },
             { href: "/roadmap", label: t("navigation.roadmap") },
           ],
-    [showPanelNav, t, language]
+    [showPanelNav, t]
   );
 
   const toggleMobile = useCallback(() => {

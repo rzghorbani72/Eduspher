@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "@/components/ui/link";
-import { BookOpen, Clock, ArrowLeft } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
 

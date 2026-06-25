@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "@/components/ui/link";
 import { CheckCircle, Loader2, Receipt, CreditCard, Calendar, Hash, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStorePath } from "@/components/providers/store-provider";
@@ -56,7 +55,7 @@ export default function PaymentSuccessPage() {
   const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
   const [store, setStore] = useState<{
     currency?: string;
     currency_symbol?: string;
@@ -69,19 +68,9 @@ export default function PaymentSuccessPage() {
   const paymentId = searchParams.get("payment_id") || searchParams.get("PaymentId") || searchParams.get("paymentId");
   const transactionId = searchParams.get("transaction_id") || searchParams.get("TransactionId") || searchParams.get("TransId") || searchParams.get("transId") || searchParams.get("Authority");
   const reference = searchParams.get("reference") || searchParams.get("Reference") || searchParams.get("RefNum") || searchParams.get("refNum");
-  const status = searchParams.get("status") || searchParams.get("Status") || searchParams.get("ResCode");
-  const message = searchParams.get("message") || searchParams.get("Message");
   const authCode = searchParams.get("auth_code") || searchParams.get("AuthCode") || searchParams.get("authCode");
-  const orderId = searchParams.get("order_id") || searchParams.get("OrderId") || searchParams.get("orderId");
-  const basketId = searchParams.get("basket_id") || searchParams.get("BasketId") || searchParams.get("basketId");
-  
-  // Additional gateway-specific parameters
-  const cardHash = searchParams.get("card_hash") || searchParams.get("CardHash");
-  const cardPan = searchParams.get("card_pan") || searchParams.get("CardPan") || searchParams.get("cardPan");
   const rrn = searchParams.get("rrn") || searchParams.get("RRN");
-  const traceNo = searchParams.get("trace_no") || searchParams.get("TraceNo");
   const hostRefNum = searchParams.get("host_ref_num") || searchParams.get("HostRefNum");
-  const procReturnCode = searchParams.get("proc_return_code") || searchParams.get("ProcReturnCode");
   
   // Store all URL params for display
   const urlParams: Record<string, string> = {};
@@ -102,7 +91,7 @@ export default function PaymentSuccessPage() {
             const data = await response.json();
             setPaymentDetails(data.data);
           }
-        } catch (err) {
+        } catch {
           // Silently fail - we'll show URL params instead
         }
       }
@@ -116,7 +105,7 @@ export default function PaymentSuccessPage() {
           const storeData = await storeResponse.json();
           setStore(storeData.data);
         }
-      } catch (err) {
+      } catch {
         // Silently fail - currency formatting will use defaults
       }
 

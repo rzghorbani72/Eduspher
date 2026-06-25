@@ -41,12 +41,11 @@ export function MotionWrapper({
         { threshold: 0.1 }
       );
 
-      observer.observe(elementRef.current);
+      const element = elementRef.current;
+      observer.observe(element);
 
       return () => {
-        if (elementRef.current) {
-          observer.unobserve(elementRef.current);
-        }
+        observer.unobserve(element);
       };
     }
   }, [trigger, delay]);

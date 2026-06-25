@@ -109,6 +109,7 @@ export function buttonTextContrast(hex: string): string {
 
 export function resolveThemeIsDark(
   theme: ThemeConfigInput | null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _prefersDark = false
 ): boolean {
   const dm = theme?.dark_mode;

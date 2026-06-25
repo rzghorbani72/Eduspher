@@ -126,7 +126,7 @@ async function verifyJWT(token: string): Promise<{ valid: boolean; payload: JWTP
     });
 
     return { valid: true, payload };
-  } catch (error) {
+  } catch {
     // Token verification failed (invalid signature, expired, malformed)
     return { valid: false, payload: null };
   }
@@ -182,7 +182,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "favicon.ico",
   "robots.txt",
   "sitemap.xml",
-  // Top-level platform routes — must not be shadowed by an academy slug route
+  // Academy-scoped routes
   "account",
   "articles",
   "bundles",
@@ -190,8 +190,29 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "courses",
   "payment",
   "preview",
-  "pricing",
   "roadmap",
+  // Platform-only routes — must not be shadowed by an academy slug
+  "about",
+  "career",
+  "contact",
+  "pricing",
+  "privacy",
+  "refund",
+  "terms",
+]);
+
+// Paths that belong to the platform itself, not any academy.
+// Middleware sets x-panel-root: 1 for these so the layout renders platform chrome.
+const PLATFORM_PATHS = new Set([
+  "/",
+  "",
+  "/about",
+  "/career",
+  "/contact",
+  "/pricing",
+  "/privacy",
+  "/refund",
+  "/terms",
 ]);
 
 // Define protected routes that require authentication
@@ -290,8 +311,7 @@ export async function proxy(request: NextRequest) {
   const pathAcademySlug = searchParamSlug ?? slugFromPath;
   const hasPathAcademy = Boolean(pathAcademySlug);
   const isPanelRoot =
-    !hasPathAcademy &&
-    (requestUrl.pathname === "/" || requestUrl.pathname === "");
+    !hasPathAcademy && PLATFORM_PATHS.has(requestUrl.pathname);
   let matchedStore: PublicStore | null = null;
 
   if (stores) {

@@ -19,7 +19,6 @@ import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
-import type { LanguageCode } from "@/lib/i18n/config";
 
 interface CourseGridBlockProps {
   id?: string;

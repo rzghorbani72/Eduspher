@@ -6,7 +6,6 @@
 
 import { useI18n } from "./provider";
 import { t as translate, getTranslations } from "./index";
-import type { LanguageCode } from "./config";
 
 /**
  * Hook to get translation function

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle2, XCircle, MessageSquare } from 'lucide-react';
@@ -32,13 +32,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
 
   const isModerator = userRole === 'ADMIN' || userRole === 'TEACHER' || userRole === 'MANAGER';
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      loadQnAs();
-    }
-  }, [courseId, isLoggedIn]);
-
-  const loadQnAs = async () => {
+  const loadQnAs = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await getCourseQnAs(courseId);
@@ -50,7 +44,13 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [courseId]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      loadQnAs();
+    }
+  }, [courseId, isLoggedIn, loadQnAs]);
 
   const handleSubmitQuestion = async (e: React.FormEvent) => {
     e.preventDefault();

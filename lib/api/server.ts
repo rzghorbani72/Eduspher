@@ -322,7 +322,7 @@ export async function getAcademyBySlug(slug: string): Promise<StoreSummary | nul
     const academies = result.data || [];
     const academy = academies.find((s) => s.slug === slug);
     return academy || null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -699,7 +699,7 @@ export async function getCurrentUITemplate() {
     }
 
     return templateData;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

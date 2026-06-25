@@ -51,7 +51,7 @@ export function ComparisonSection() {
           </div>
         </div>
         {/* Data rows */}
-        {rows.map(({ label, m, l }, i) => (
+        {rows.map(({ label, m, l }) => (
           <div key={label} style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", alignItems: "center", borderTop: "1px solid var(--bd-2)" }}>
             <div style={{ padding: "18px 26px", fontWeight: 700, fontSize: 15, textAlign: "right" }}>{label}</div>
             <div style={{ padding: 18, textAlign: "center", background: "var(--brand-soft)" }}><CellM v={m} /></div>

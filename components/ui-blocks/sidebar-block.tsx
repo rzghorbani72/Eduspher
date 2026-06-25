@@ -27,7 +27,7 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
   const showCategories = config?.showCategories !== false;
   const showFilters = config?.showFilters !== false;
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory] = useState<string | null>(null);
 
   const filterOptions = [
     { label: "Price", options: ["Free", "Paid", "All"] },

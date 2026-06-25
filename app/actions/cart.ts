@@ -12,7 +12,6 @@ import {
   addToLocalCart,
   removeFromLocalCart,
   clearLocalCart,
-  isCartSynced,
   markCartSynced,
   syncCartToServer,
   loadCartFromServer,

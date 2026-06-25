@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Phone, CheckCircle } from "lucide-react";
+import { Mail, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,11 +48,10 @@ const getPhoneValidationError = (phone: string): string | null => {
   return null;
 };
 
-export const AddContactForm = ({ 
-  method, 
-  primaryMethod,
+export const AddContactForm = ({
+  method,
   defaultCountryCode,
-  onSuccess 
+  onSuccess
 }: AddContactFormProps) => {
   const router = useRouter();
   const [step, setStep] = useState<"input" | "otp" | "success">("input");
@@ -78,7 +77,7 @@ export const AddContactForm = ({
   
   // OTP state
   const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
+  const [, setOtpSent] = useState(false);
 
   const handleSendOtp = async () => {
     setIsLoading(true);

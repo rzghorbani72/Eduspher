@@ -4,7 +4,7 @@ import "./globals.css";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
-import { checkAuth, getUserDisplayName } from "@/app/actions/auth";
+import { getUserDisplayName } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ShellProvider } from "@/components/providers/shell-provider";
 import { StoreProvider } from "@/components/providers/store-provider";
@@ -23,8 +23,7 @@ import {
   generateThemeCSSVariables,
 } from "@/lib/theme-config";
 import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
-import { getAcademyLanguage, getAcademyDirection, isAcademyRTL } from "@/lib/i18n/server";
-import type { LanguageCode } from "@/lib/i18n/config";
+import { getAcademyLanguage, getAcademyDirection } from "@/lib/i18n/server";
 import { CreativeBackground } from "@/components/motion/creative-background";
 import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
@@ -59,7 +58,11 @@ export default async function RootLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "";
   const urlPathname = headersList.get("x-url-pathname") || pathname;
-  const isPanelRoot = urlPathname === "/" || urlPathname === "" || urlPathname === "/about";
+  // Trust the middleware signal; fall back to URL check when middleware is not running.
+  const isPanelRoot =
+    headersList.get("x-panel-root") === "1" ||
+    urlPathname === "/" ||
+    urlPathname === "";
   // Standalone section/template render surface embedded by AdminPanel — no
   // header/footer/banner chrome, raw full-width children.
   const isPreview =
@@ -76,7 +79,7 @@ export default async function RootLayout({
   const headerDisplayName =
     isAuthenticated && !isPanelRoot ? (await getUserDisplayName()).displayName : null;
   
-  const { theme, template } = await getStoreThemeAndTemplate();
+  const { theme } = await getStoreThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
   const themeKey = isPanelRoot
     ? "panel"
@@ -126,11 +129,9 @@ export default async function RootLayout({
   // theme.text_direction overrides the language-derived default so the manager
   // can set direction independently (e.g. English content in an RTL layout).
   const direction = (theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? getAcademyDirection(storeLanguage, countryCode);
-  const rtl = direction === 'rtl';
-  
+
   const isAcademyHome = headersList.get("x-academy-home") === "1";
   const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;
-  const hasTemplateBlocks = template?.blocks && template.blocks.length > 0;
   
   const bareLayout = isPanelRoot || isPreview || isSamplePreview || isAuth;
   const useTemplateLayout =
@@ -191,7 +192,7 @@ export default async function RootLayout({
               <DocumentLangSync />
               <ScrollAnimationProvider>
                 <div
-                  className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-x-hidden"
+                  className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-x-clip"
                   style={{ backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' }}
                 >
                   {/* Creative animated background with gradients and flying icons */}

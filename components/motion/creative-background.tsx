@@ -50,7 +50,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
         mediaQuery.removeEventListener('change', updateDarkMode);
       };
     }
-  }, [theme?.dark_mode, mounted]);
+  }, [theme, mounted]);
 
   // Get colors - use light/dark variants based on current mode
   // Use consistent logic for server and initial client render

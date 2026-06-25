@@ -230,7 +230,6 @@ function drawGrid(
 ) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const [r1, g1, b1] = hexToRgb(primary);
-  const [r2, g2, b2] = hexToRgb(secondary);
 
   const gridSize = 40;
   const offset = (time * speed * 10) % gridSize;

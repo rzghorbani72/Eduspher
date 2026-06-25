@@ -27,31 +27,40 @@ export function ScrollAnimationProvider({ children }: { children: React.ReactNod
         ScrollTriggerInstance.getAll().forEach((trigger: { kill: () => void }) => trigger.kill());
 
         const initScrollAnimations = () => {
+          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           const animatedElements = document.querySelectorAll('[data-scroll-animate]');
+          const viewportHeight = window.innerHeight;
 
           animatedElements.forEach((element) => {
             const animationType = element.getAttribute('data-scroll-animate') || 'fadeIn';
             const delay = parseFloat(element.getAttribute('data-scroll-delay') || '0');
             const duration = parseFloat(element.getAttribute('data-scroll-duration') || '0.8');
 
-            switch (animationType) {
-              case 'fadeIn':
-                gsapInstance.set(element, { opacity: 0, y: 30 });
-                break;
-              case 'slideLeft':
-                gsapInstance.set(element, { opacity: 0, x: -50 });
-                break;
-              case 'slideRight':
-                gsapInstance.set(element, { opacity: 0, x: 50 });
-                break;
-              case 'scaleUp':
-                gsapInstance.set(element, { opacity: 0, scale: 0.8 });
-                break;
-              case 'fadeInUp':
-                gsapInstance.set(element, { opacity: 0, y: 50 });
-                break;
-              default:
-                gsapInstance.set(element, { opacity: 0, y: 30 });
+            if (prefersReducedMotion) return;
+
+            // Never hide above-fold content — protects LCP elements
+            const rect = element.getBoundingClientRect();
+            const isAboveFold = rect.top < viewportHeight * 0.9;
+            if (!isAboveFold) {
+              switch (animationType) {
+                case 'fadeIn':
+                  gsapInstance.set(element, { opacity: 0, y: 30 });
+                  break;
+                case 'slideLeft':
+                  gsapInstance.set(element, { opacity: 0, x: -50 });
+                  break;
+                case 'slideRight':
+                  gsapInstance.set(element, { opacity: 0, x: 50 });
+                  break;
+                case 'scaleUp':
+                  gsapInstance.set(element, { opacity: 0, scale: 0.8 });
+                  break;
+                case 'fadeInUp':
+                  gsapInstance.set(element, { opacity: 0, y: 50 });
+                  break;
+                default:
+                  gsapInstance.set(element, { opacity: 0, y: 30 });
+              }
             }
 
             gsapInstance.to(element, {

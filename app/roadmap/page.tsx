@@ -1,4 +1,3 @@
-import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 
 import { getCategories, getCourses, getArticles, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
@@ -6,7 +5,6 @@ import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath, formatCurrencyWithAcademy, resolveAssetUrl } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
-import { Badge } from "@/components/ui/badge";
 import { RoadmapTabs } from "@/components/courses/roadmap-tabs";
 
 export default async function RoadmapPage() {

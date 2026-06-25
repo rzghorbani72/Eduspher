@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { LanguageCode, TextDirection, LanguageConfig } from "./config";
-import { DEFAULT_LANGUAGE, getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirection } from "./config";
+import { DEFAULT_LANGUAGE, getLanguageConfig, getDefaultLanguageForCountry, isRTL } from "./config";
 
 interface I18nContextValue {
   language: LanguageCode;

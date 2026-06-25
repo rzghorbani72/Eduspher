@@ -13,7 +13,6 @@ import {
 } from "@/lib/api/server";
 import { CourseCard } from "@/components/courses/course-card";
 import {
-  buildOgImageUrl,
   resolveAssetUrl,
   truncate,
   buildAcademyPath,

@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { decodeJwt } from 'jose';
-import { backendApiBaseUrl, env } from '@/lib/env';
+import { backendApiBaseUrl } from '@/lib/env';
 
 /**
  * Check authentication status from SSR cookies

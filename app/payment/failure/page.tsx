@@ -54,7 +54,6 @@ export default function PaymentFailurePage() {
   const buildPath = useStorePath();
   const [loading, setLoading] = useState(true);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [store, setStore] = useState<{
     currency?: string;
     currency_symbol?: string;
@@ -67,15 +66,8 @@ export default function PaymentFailurePage() {
   const paymentId = searchParams.get("payment_id") || searchParams.get("PaymentId") || searchParams.get("paymentId");
   const transactionId = searchParams.get("transaction_id") || searchParams.get("TransactionId") || searchParams.get("TransId") || searchParams.get("transId") || searchParams.get("Authority");
   const reference = searchParams.get("reference") || searchParams.get("Reference") || searchParams.get("RefNum") || searchParams.get("refNum");
-  const status = searchParams.get("status") || searchParams.get("Status") || searchParams.get("ResCode");
   const errorCode = searchParams.get("error_code") || searchParams.get("ErrorCode") || searchParams.get("errorCode") || searchParams.get("ResCode");
   const errorMessage = searchParams.get("error_message") || searchParams.get("ErrorMessage") || searchParams.get("errorMessage") || searchParams.get("message") || searchParams.get("Message") || searchParams.get("ErrMsg");
-  const orderId = searchParams.get("order_id") || searchParams.get("OrderId") || searchParams.get("orderId");
-  const basketId = searchParams.get("basket_id") || searchParams.get("BasketId") || searchParams.get("basketId");
-  
-  // Additional gateway-specific parameters
-  const procReturnCode = searchParams.get("proc_return_code") || searchParams.get("ProcReturnCode");
-  const hostRefNum = searchParams.get("host_ref_num") || searchParams.get("HostRefNum");
   
   // Store all URL params for display
   const urlParams: Record<string, string> = {};
@@ -96,7 +88,7 @@ export default function PaymentFailurePage() {
             const data = await response.json();
             setPaymentDetails(data.data);
           }
-        } catch (err) {
+        } catch {
           // Silently fail - we'll show URL params instead
         }
       }
@@ -110,7 +102,7 @@ export default function PaymentFailurePage() {
           const storeData = await storeResponse.json();
           setStore(storeData.data);
         }
-      } catch (err) {
+      } catch {
         // Silently fail - currency formatting will use defaults
       }
       setLoading(false);
