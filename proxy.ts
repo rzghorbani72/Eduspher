@@ -242,6 +242,24 @@ const extractCandidateSlug = (host?: string | null) => {
   return firstPart;
 };
 
+const BASE_DOMAIN = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost").hostname;
+  } catch {
+    return "localhost";
+  }
+})();
+
+const extractSubdomainSlug = (hostname: string | null): string | null => {
+  if (!hostname) return null;
+  if (hostname === BASE_DOMAIN || hostname === `www.${BASE_DOMAIN}`) return null;
+  if (hostname.endsWith(`.${BASE_DOMAIN}`)) {
+    const sub = hostname.slice(0, hostname.length - BASE_DOMAIN.length - 1);
+    if (sub && sub !== "www") return sub;
+  }
+  return null;
+};
+
 const matchStore = (
   stores: PublicStore[],
   options: { slug?: string | null; host?: string | null; id?: string | null }
@@ -300,22 +318,28 @@ export async function proxy(request: NextRequest) {
   const decodedExistingName = existingNameCookie ? decodeURIComponent(existingNameCookie) : null;
   const pathnameSegments = requestUrl.pathname.split("/").filter(Boolean);
   const firstSegment = pathnameSegments[0] ?? null;
-  const slugFromPath = firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment) ? firstSegment : null;
-  const isAcademyHomePath = Boolean(slugFromPath) && pathnameSegments.length === 1;
   const searchParamSlug = requestUrl.searchParams.get("academy");
   const hostHeader = extractHost(request.headers.get("host"));
-  const candidateSlug = searchParamSlug ?? slugFromPath ?? extractCandidateSlug(hostHeader) ?? DEFAULT_ACADEMY_SLUG;
+  const subdomainSlug = extractSubdomainSlug(hostHeader);
+  const isSubdomainRequest = Boolean(subdomainSlug);
+  // On subdomain requests the first path segment is never an academy slug.
+  const slugFromPath = !isSubdomainRequest && firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment) ? firstSegment : null;
+  const isAcademyHomePath = Boolean(slugFromPath) && pathnameSegments.length === 1;
+  const candidateSlug = searchParamSlug ?? slugFromPath ?? subdomainSlug ?? extractCandidateSlug(hostHeader) ?? DEFAULT_ACADEMY_SLUG;
   const numericSlugId = slugFromPath && /^\d+$/.test(slugFromPath) ? slugFromPath : null;
 
   const stores = await fetchStores();
   const pathAcademySlug = searchParamSlug ?? slugFromPath;
   const hasPathAcademy = Boolean(pathAcademySlug);
   const isPanelRoot =
-    !hasPathAcademy && PLATFORM_PATHS.has(requestUrl.pathname);
+    !isSubdomainRequest && !hasPathAcademy && PLATFORM_PATHS.has(requestUrl.pathname);
   let matchedStore: PublicStore | null = null;
 
   if (stores) {
-    if (pathAcademySlug) {
+    if (subdomainSlug) {
+      matchedStore = matchStore(stores, { slug: subdomainSlug, host: hostHeader ?? undefined }) ?? null;
+    }
+    if (!matchedStore && pathAcademySlug) {
       matchedStore =
         matchStore(stores, { slug: pathAcademySlug, host: hostHeader ?? undefined }) ?? null;
     }
@@ -330,7 +354,7 @@ export async function proxy(request: NextRequest) {
           id: numericSlugId ?? undefined,
         }) ?? null;
     }
-    if (!matchedStore && !hasPathAcademy && !isPanelRoot && existingId) {
+    if (!matchedStore && !isSubdomainRequest && !hasPathAcademy && !isPanelRoot && existingId) {
       matchedStore = matchStore(stores, { id: existingId }) ?? null;
     }
   }
@@ -343,6 +367,11 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-url-pathname", requestUrl.pathname);
   if (isPanelRoot) {
     requestHeaders.set("x-panel-root", "1");
+  } else if (isSubdomainRequest) {
+    requestHeaders.set("x-academy-subdomain", "1");
+    if (requestUrl.pathname === "/" || requestUrl.pathname === "") {
+      requestHeaders.set("x-academy-home", "1");
+    }
   } else if (slugFromPath) {
     requestHeaders.set("x-academy-from-path", "1");
     requestHeaders.set("x-academy-path-slug", slugFromPath);
@@ -466,9 +495,12 @@ export async function proxy(request: NextRequest) {
   }
 
   let internalUrl: URL | null = null;
-  if (slugFromPath && !isAcademyHomePath) {
-    // Academy home (e.g. "/my-academy") is served directly by app/[slug]/page.tsx — no rewrite needed.
-    // Nested paths (e.g. "/my-academy/courses") are stripped down to the shared platform route.
+  if (isSubdomainRequest && matchedStore && (requestUrl.pathname === "/" || requestUrl.pathname === "")) {
+    // Subdomain academy home: rewrite "/" → "/{slug}" so app/[slug]/page.tsx serves it.
+    internalUrl = requestUrl.clone();
+    internalUrl.pathname = `/${matchedStore.slug ?? subdomainSlug}`;
+  } else if (slugFromPath && !isAcademyHomePath) {
+    // Path-based routing: strip the academy slug prefix so the shared route handles it.
     const cleanedPathSegments = pathnameSegments.slice(1);
     const cleanedPathname = `/${cleanedPathSegments.join("/")}`.replace(/\/+$/, "");
     const normalizedPath = cleanedPathname === "" ? "/" : cleanedPathname;
