@@ -10,7 +10,6 @@ import { FeaturesSection } from "./platform-landing/features-section";
 import { HowSection } from "./platform-landing/how-section";
 import { ExamplesSection } from "./platform-landing/examples-section";
 import { ComparisonSection } from "./platform-landing/comparison-section";
-import { FounderSection } from "./platform-landing/founder-section";
 import { TestimonialsSection } from "./platform-landing/testimonials-section";
 import { PricingSection } from "./platform-landing/pricing-section";
 import { FaqSection } from "./platform-landing/faq-section";
@@ -26,7 +25,10 @@ type Props = {
   academies: StoreSummary[];
 };
 
-export function PlatformLandingPage({ adminLoginUrl, adminRegisterUrl }: Props) {
+export function PlatformLandingPage({
+  adminLoginUrl,
+  adminRegisterUrl,
+}: Props) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "light";
     try {
@@ -39,7 +41,9 @@ export function PlatformLandingPage({ adminLoginUrl, adminRegisterUrl }: Props) 
   const toggleTheme = () => {
     const next: Theme = theme === "dark" ? "light" : "dark";
     setTheme(next);
-    try { localStorage.setItem("mentoma-theme", next); } catch {}
+    try {
+      localStorage.setItem("mentoma-theme", next);
+    } catch {}
   };
 
   return (
@@ -57,15 +61,52 @@ export function PlatformLandingPage({ adminLoginUrl, adminRegisterUrl }: Props) 
       }}
     >
       {/* Ambient background blobs */}
-      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: "-12%", right: "-8%", width: "46vw", height: "46vw", borderRadius: "50%", background: "radial-gradient(circle at 30% 30%,rgba(124,108,255,.30),transparent 62%)", filter: "blur(20px)" }} />
-        <div style={{ position: "absolute", top: "24%", left: "-10%", width: "42vw", height: "42vw", borderRadius: "50%", background: "radial-gradient(circle at 50% 50%,rgba(79,140,255,.24),transparent 64%)", filter: "blur(24px)" }} />
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          pointerEvents: "none",
+          zIndex: 0,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "-12%",
+            right: "-8%",
+            width: "46vw",
+            height: "46vw",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle at 30% 30%,rgba(124,108,255,.30),transparent 62%)",
+            filter: "blur(20px)",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "24%",
+            left: "-10%",
+            width: "42vw",
+            height: "42vw",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle at 50% 50%,rgba(79,140,255,.24),transparent 64%)",
+            filter: "blur(24px)",
+          }}
+        />
       </div>
 
       <LandingScrollReveal />
 
       <div style={{ position: "relative", zIndex: 1 }}>
-        <HomeHeader theme={theme} toggleTheme={toggleTheme} adminLoginUrl={adminLoginUrl} adminRegisterUrl={adminRegisterUrl} />
+        <HomeHeader
+          theme={theme}
+          toggleTheme={toggleTheme}
+          adminLoginUrl={adminLoginUrl}
+          adminRegisterUrl={adminRegisterUrl}
+        />
 
         <main>
           <HeroSection adminRegisterUrl={adminRegisterUrl} />
@@ -75,7 +116,6 @@ export function PlatformLandingPage({ adminLoginUrl, adminRegisterUrl }: Props) 
           <HowSection />
           <ExamplesSection />
           <ComparisonSection />
-          <FounderSection />
           <TestimonialsSection />
           <PricingSection />
           <FaqSection />
