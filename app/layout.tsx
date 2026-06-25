@@ -59,7 +59,7 @@ export default async function RootLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") || "";
   const urlPathname = headersList.get("x-url-pathname") || pathname;
-  const isPanelRoot = urlPathname === "/" || urlPathname === "";
+  const isPanelRoot = urlPathname === "/" || urlPathname === "" || urlPathname === "/about";
   // Standalone section/template render surface embedded by AdminPanel — no
   // header/footer/banner chrome, raw full-width children.
   const isPreview =

@@ -1,12 +1,23 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import type { StoreSummary } from "@/lib/api/types";
-import { LandingHeader } from "./platform-landing/landing-header";
+import { HomeHeader } from "./platform-landing/home-header";
 import { HeroSection } from "./platform-landing/hero-section";
-import { ProofBar } from "./platform-landing/proof-bar";
+import { TrustStrip } from "./platform-landing/trust-strip";
+import { MetricsSection } from "./platform-landing/metrics-section";
 import { FeaturesSection } from "./platform-landing/features-section";
-import { DemosSection } from "./platform-landing/demos-section";
+import { HowSection } from "./platform-landing/how-section";
+import { ExamplesSection } from "./platform-landing/examples-section";
+import { ComparisonSection } from "./platform-landing/comparison-section";
+import { FounderSection } from "./platform-landing/founder-section";
+import { TestimonialsSection } from "./platform-landing/testimonials-section";
 import { PricingSection } from "./platform-landing/pricing-section";
+import { FaqSection } from "./platform-landing/faq-section";
 import { CtaSection } from "./platform-landing/cta-section";
-import { LandingFooter } from "./platform-landing/landing-footer";
+import { HomeFooter } from "./platform-landing/home-footer";
+
+type Theme = "light" | "dark";
 
 type Props = {
   adminLoginUrl: string;
@@ -14,29 +25,63 @@ type Props = {
   academies: StoreSummary[];
 };
 
-export function PlatformLandingPage({ adminLoginUrl, adminRegisterUrl, academies }: Props) {
+export function PlatformLandingPage({ adminLoginUrl, adminRegisterUrl }: Props) {
+  const [theme, setTheme] = useState<Theme>("light");
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("mentoma-theme") as Theme | null;
+      if (saved === "dark" || saved === "light") setTheme(saved);
+    } catch {}
+  }, []);
+
+  const toggleTheme = () => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    try { localStorage.setItem("mentoma-theme", next); } catch {}
+  };
+
   return (
     <div
+      id="top"
+      className={`mentoma-page${theme === "dark" ? " theme-dark" : ""}`}
       dir="rtl"
-      className="min-h-screen overflow-x-hidden"
-      style={{ background: "#F8F7F2", fontFamily: "'Vazirmatn', sans-serif", color: "#100F0C" }}
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        background: "var(--bg)",
+        color: "var(--ink)",
+        overflowX: "clip",
+        lineHeight: 1.6,
+        fontFamily: "'Vazirmatn', system-ui, sans-serif",
+      }}
     >
-      {/* Vazirmatn font — React 19 hoists link tags to <head> */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap"
-        rel="stylesheet"
-      />
+      {/* Ambient background blobs */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-12%", right: "-8%", width: "46vw", height: "46vw", borderRadius: "50%", background: "radial-gradient(circle at 30% 30%,rgba(124,108,255,.30),transparent 62%)", filter: "blur(20px)" }} />
+        <div style={{ position: "absolute", top: "24%", left: "-10%", width: "42vw", height: "42vw", borderRadius: "50%", background: "radial-gradient(circle at 50% 50%,rgba(79,140,255,.24),transparent 64%)", filter: "blur(24px)" }} />
+      </div>
 
-      <LandingHeader adminLoginUrl={adminLoginUrl} />
-      <HeroSection adminRegisterUrl={adminRegisterUrl} academies={academies} />
-      <ProofBar academies={academies} />
-      <FeaturesSection />
-      <DemosSection academies={academies} />
-      <PricingSection adminRegisterUrl={adminRegisterUrl} adminLoginUrl={adminLoginUrl} />
-      <CtaSection adminRegisterUrl={adminRegisterUrl} />
-      <LandingFooter />
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <HomeHeader theme={theme} toggleTheme={toggleTheme} adminLoginUrl={adminLoginUrl} adminRegisterUrl={adminRegisterUrl} />
+
+        <main>
+          <HeroSection adminRegisterUrl={adminRegisterUrl} />
+          <TrustStrip />
+          <MetricsSection />
+          <FeaturesSection />
+          <HowSection />
+          <ExamplesSection />
+          <ComparisonSection />
+          <FounderSection />
+          <TestimonialsSection />
+          <PricingSection />
+          <FaqSection />
+          <CtaSection adminRegisterUrl={adminRegisterUrl} />
+        </main>
+
+        <HomeFooter />
+      </div>
     </div>
   );
 }

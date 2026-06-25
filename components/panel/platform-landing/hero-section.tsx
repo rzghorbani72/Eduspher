@@ -1,396 +1,150 @@
-import { LP } from "../platform-landing-page.messages";
-import type { StoreSummary } from "@/lib/api/types";
+import type { CSSProperties } from "react";
 
-function BrowserMockup() {
+const barHeights = ["42%", "58%", "50%", "72%", "64%", "88%", "76%", "100%"];
+
+type Props = { adminRegisterUrl: string };
+
+export function HeroSection({ adminRegisterUrl }: Props) {
   return (
-    <div
-      style={{
-        background: "#FFFFFF",
-        border: "1px solid #E5E3DA",
-        borderRadius: 16,
-        overflow: "hidden",
-        boxShadow:
-          "0 4px 6px rgba(0,0,0,.04), 0 20px 60px rgba(0,0,0,.1), 0 0 0 1px rgba(255,255,255,.7) inset",
-        transform: "perspective(1100px) rotateY(4deg) rotateX(2deg)",
-        transition: "transform .5s ease",
-      }}
-    >
-      {/* Browser chrome */}
-      <div
-        className="flex items-center gap-3 px-4 py-[11px]"
-        style={{
-          background: "#F2F1EC",
-          borderBottom: "1px solid #E5E3DA",
-          direction: "ltr",
-        }}
-      >
-        <div className="flex gap-[5px]">
-          <div
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: "#FF5F57",
-            }}
-          />
-          <div
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: "#FEBC2E",
-            }}
-          />
-          <div
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: "#28C840",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            flex: 1,
-            background: "#F8F7F2",
-            border: "1px solid #E5E3DA",
-            borderRadius: 5,
-            padding: "5px 12px",
-            fontSize: 11,
-            color: "#A09B8C",
-            fontFamily: "monospace",
-            textAlign: "center",
-          }}
-        >
-          {LP.hero.mockupUrl}
-        </div>
+    <section style={{ maxWidth: 1240, margin: "0 auto", padding: "150px 22px 40px", textAlign: "center" }}>
+      {/* Badge */}
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "7px 8px 7px 16px", borderRadius: 999, border: "1px solid var(--bd)", background: "var(--card)", boxShadow: "var(--sh-sm)", fontSize: 13.5, fontWeight: 600, color: "var(--ink-2)" }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 11px", borderRadius: 999, background: "var(--grad-soft)", color: "var(--brand)", fontWeight: 700 }}>جدید</span>
+        ساخت آکادمی با هوش مصنوعی، حالا در منتوما
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "scaleX(-1)" }}><path d="m9 6 6 6-6 6" /></svg>
       </div>
 
-      {/* Inner academy mockup */}
-      <div style={{ background: "#F5F9FF", direction: "rtl" }}>
-        {/* Mock nav */}
-        <div
-          className="flex items-center justify-between"
-          style={{
-            padding: "11px 18px",
-            background: "#FFFFFF",
-            borderBottom: "1px solid rgba(0,0,0,.06)",
-          }}
-        >
-          <span style={{ fontSize: 13, fontWeight: 700, color: "#2A50CC" }}>
-            {LP.hero.mockupBrand}
-          </span>
-          <div className="flex gap-[10px]">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                style={{
-                  width: 32,
-                  height: 4,
-                  background: "rgba(0,0,0,.08)",
-                  borderRadius: 3,
-                }}
-              />
-            ))}
-          </div>
-        </div>
+      <h1 style={{ margin: "26px auto 0", maxWidth: 820, fontSize: "clamp(36px,5.6vw,68px)", lineHeight: 1.18, fontWeight: 900, letterSpacing: "-.015em" }}>
+        آکادمی آنلاین خودت را{" "}
+        <span style={{ background: "var(--grad)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}>بدون دانش فنی</span>{" "}
+        بساز
+      </h1>
 
-        {/* Mock hero */}
-        <div
-          className="flex items-start gap-[14px]"
-          style={{
-            padding: "22px 18px",
-            background: "linear-gradient(135deg,#EEF3FF,#F8FAFF)",
-          }}
-        >
-          <div className="flex-1 min-w-0">
-            <div
-              style={{
-                height: 12,
-                width: "80%",
-                background: "rgba(42,80,204,.45)",
-                borderRadius: 3,
-                marginBottom: 6,
-              }}
-            />
-            <div
-              style={{
-                height: 12,
-                width: "60%",
-                background: "rgba(42,80,204,.45)",
-                borderRadius: 3,
-                marginBottom: 13,
-              }}
-            />
-            <div
-              style={{
-                height: 5,
-                width: "88%",
-                background: "rgba(0,0,0,.07)",
-                borderRadius: 2,
-                marginBottom: 5,
-              }}
-            />
-            <div
-              style={{
-                height: 5,
-                width: "70%",
-                background: "rgba(0,0,0,.07)",
-                borderRadius: 2,
-                marginBottom: 5,
-              }}
-            />
-            <div
-              style={{
-                height: 5,
-                width: "50%",
-                background: "rgba(0,0,0,.07)",
-                borderRadius: 2,
-                marginBottom: 10,
-              }}
-            />
-            <div
-              style={{
-                width: 76,
-                height: 22,
-                background: "#2A50CC",
-                borderRadius: 5,
-              }}
-            />
-          </div>
-          <div
-            style={{
-              width: 120,
-              height: 82,
-              flexShrink: 0,
-              background: "linear-gradient(135deg,#C9D8FF,#97B4F8)",
-              borderRadius: 7,
-              border: "1px solid rgba(42,80,204,.12)",
-            }}
-          />
-        </div>
+      <p style={{ margin: "30px auto 0", maxWidth: 640, fontSize: "clamp(16px,2.1vw,20px)", color: "var(--ink-2)", lineHeight: 1.85 }}>
+        منتوما کمکت می‌کند آکادمی شخصی‌ات را بسازی، دوره بفروشی، دانشجو مدیریت کنی و کسب‌وکار آموزشی‌ات را رشد بدهی — همه از یک داشبورد ساده و قدرتمند.
+      </p>
 
-        {/* Mock course cards */}
-        <div
-          className="grid grid-cols-3 gap-[7px]"
-          style={{ padding: "0 18px 18px" }}
-        >
-          {(
-            [
-              "linear-gradient(135deg,#C9D8FF,#97B4F8)",
-              "linear-gradient(135deg,#D4C9FF,#B497F8)",
-              "linear-gradient(135deg,#C9EAD4,#97D4B4)",
-            ] as const
-          ).map((bg, i) => (
-            <div
-              key={i}
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid rgba(0,0,0,.07)",
-                borderRadius: 6,
-                overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(0,0,0,.05)",
-              }}
-            >
-              <div style={{ height: 40, background: bg }} />
-              <div style={{ padding: 7 }}>
-                <div
-                  style={{
-                    height: 5,
-                    background: "rgba(0,0,0,.18)",
-                    borderRadius: 2,
-                    marginBottom: 4,
-                  }}
-                />
-                <div
-                  style={{
-                    height: 4,
-                    width: "60%",
-                    background: "rgba(0,0,0,.08)",
-                    borderRadius: 2,
-                  }}
-                />
-              </div>
-            </div>
+      <div style={{ margin: "36px 0 0", display: "flex", alignItems: "center", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+        <a href={adminRegisterUrl} style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "16px 28px", borderRadius: 999, textDecoration: "none", color: "var(--brand-ink)", fontWeight: 700, fontSize: 17, background: "var(--grad)", boxShadow: "0 18px 40px -14px rgba(109,94,252,.8)" }}>
+          ساخت آکادمی رایگان
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "scaleX(-1)" }}><path d="m9 6 6 6-6 6" /></svg>
+        </a>
+        <a href="#examples" style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "16px 26px", borderRadius: 999, textDecoration: "none", color: "var(--ink)", fontWeight: 700, fontSize: 17, background: "var(--card)", border: "1px solid var(--bd)", boxShadow: "var(--sh-sm)" }}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          مشاهده نمونه آکادمی‌ها
+        </a>
+      </div>
+      <p style={{ margin: "18px 0 0", fontSize: 13.5, color: "var(--ink-3)" }}>بدون نیاز به کارت بانکی · راه‌اندازی در کمتر از ۵ دقیقه</p>
+
+      {/* Social proof */}
+      <div style={{ margin: "30px 0 0", display: "inline-flex", alignItems: "center", gap: 14, flexWrap: "wrap", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {([ ["س","#ffb86b","#ff7a59"], ["ا","#6d5efc","#4f8cff"], ["ن","#34e1a3","#15b8c4"], ["م","#f857a6","#ff5858"] ] as [string,string,string][]).map(([l,c1,c2],i) => (
+            <span key={i} style={{ width:38,height:38,borderRadius:"50%",background:`linear-gradient(135deg,${c1},${c2})`,border:"2px solid var(--bg)",display:"grid",placeItems:"center",color:"#fff",fontWeight:800,fontSize:14,...(i>0?{marginRight:-12}:{}) } as CSSProperties}>{l}</span>
           ))}
         </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ display: "flex", gap: 2, color: "#ffb020" }}>
+            {[0,1,2,3,4].map(i => (
+              <svg key={i} width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+            ))}
+          </div>
+          <div style={{ marginTop: 3, fontSize: 13, color: "var(--ink-2)", fontWeight: 600 }}>امتیاز ۵.۰ — مورد اعتماد ۱۰٬۸۰۰+ سازنده</div>
+        </div>
       </div>
-    </div>
-  );
-}
 
-type Props = {
-  adminRegisterUrl: string;
-  academies: StoreSummary[];
-};
-
-export function HeroSection({ adminRegisterUrl, academies }: Props) {
-  const activeCount =
-    academies.length > 0
-      ? `${academies.length.toLocaleString("fa-IR")}+`
-      : "+۱٬۲۰۰";
-
-  return (
-    <section
-      style={{
-        position: "relative",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        paddingTop: 82,
-        overflow: "hidden",
-      }}
-    >
-      {/* Ambient gradients */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          background:
-            "radial-gradient(ellipse 55% 65% at 62% 18%, rgba(204,122,0,.09) 0%,transparent 60%), radial-gradient(ellipse 45% 55% at 88% 70%, rgba(204,122,0,.06) 0%,transparent 55%), radial-gradient(ellipse 60% 40% at 15% 85%, rgba(11,17,51,.04) 0%,transparent 55%)",
-        }}
-      />
-
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "0 44px",
-          width: "100%",
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
-          {/* Text — right side in RTL */}
-          <div>
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 mb-[26px]"
-              style={{
-                background: "#FEF3E0",
-                border: "1px solid rgba(204,122,0,.22)",
-                borderRadius: 100,
-                padding: "6px 14px",
-                fontSize: 12,
-                fontWeight: 600,
-                color: "#CC7A00",
-              }}
-            >
-              <span
-                className="lp-blink"
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: "50%",
-                  background: "#CC7A00",
-                  display: "inline-block",
-                  flexShrink: 0,
-                }}
-              />
-              {LP.hero.badge}
+      {/* Dashboard mockup */}
+      <div style={{ position: "relative", margin: "70px auto 0", maxWidth: 1080 }}>
+        <div style={{ position: "absolute", inset: "-6% -4%", background: "var(--grad-soft)", filter: "blur(50px)", borderRadius: "50%", zIndex: 0 }} />
+        <div style={{ position: "relative", zIndex: 2, borderRadius: "var(--r-xl)", border: "1px solid var(--bd)", background: "var(--card)", boxShadow: "var(--sh-lg)", overflow: "hidden" }}>
+          {/* Browser chrome */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 18px", borderBottom: "1px solid var(--bd-2)", background: "var(--card-2)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+              {["#ff5f57","#febc2e","#28c840"].map(c => <span key={c} style={{ width:10,height:10,borderRadius:"50%",background:c }}/>)}
             </div>
-
-            <h1
-              style={{
-                fontSize: "clamp(44px,5.8vw,74px)",
-                fontWeight: 900,
-                lineHeight: 1.1,
-                marginBottom: 22,
-                letterSpacing: "-.02em",
-                color: "#100F0C",
-              }}
-            >
-              {LP.hero.h1Part1}
-              <br />
-              {LP.hero.h1Part2}
-              <br />
-              <span
-                style={{
-                  color: "#CC7A00",
-                  position: "relative",
-                  display: "inline-block",
-                }}
-                className="lp-hl-und"
-              >
-                {LP.hero.h1Highlight}
-              </span>{" "}
-              {LP.hero.h1End}
-            </h1>
-
-            <p
-              style={{
-                fontSize: 17,
-                color: "#625E52",
-                lineHeight: 1.9,
-                maxWidth: 440,
-                marginBottom: 38,
-                fontWeight: 400,
-              }}
-            >
-              {LP.hero.sub}
-            </p>
-
-            <div className="flex items-center flex-wrap gap-[14px]">
-              <a href={adminRegisterUrl} className="lp-btn-amber text-white">
-                {LP.hero.ctaPrimary}
-              </a>
-              <a href="#demos" className="lp-btn-ghost">
-                {LP.hero.ctaGhost} ←
-              </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 999, background: "var(--bg-2)", color: "var(--ink-3)", fontSize: 12.5, fontWeight: 600 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              academy.mentoma.ir
             </div>
-
-            {/* Stats */}
-            <div
-              className="grid grid-cols-3 gap-4 mt-10 pt-7"
-              style={{ borderTop: "1px solid #E5E3DA" }}
-            >
-              {LP.hero.stats.map((stat, i) => (
-                <div key={i}>
-                  <div
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 700,
-                      color: "#100F0C",
-                      letterSpacing: "-.02em",
-                    }}
-                  >
-                    {i === 0 ? activeCount : stat.value}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: "#A09B8C",
-                      marginTop: 2,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {stat.label}
-                  </div>
+            <div style={{ width: 60 }} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", minHeight: 440 }}>
+            {/* Sidebar */}
+            <aside style={{ borderLeft: "1px solid var(--bd-2)", background: "var(--card-2)", padding: "18px 14px", display: "flex", flexDirection: "column", gap: 5 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 6px 16px" }}>
+                <span style={{ width:30,height:30,borderRadius:9,background:"var(--grad)" }}/>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontWeight:800,fontSize:14 }}>آکادمی رها</div>
+                  <div style={{ fontSize:11,color:"var(--ink-3)" }}>پلن پرو</div>
                 </div>
+              </div>
+              {[
+                { label:"داشبورد",active:true,icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg> },
+                { label:"دوره‌ها",icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg> },
+                { label:"دانشجوها",icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M17 11a3 3 0 1 0-2-5.2M16 20a5 5 0 0 0-3-4.6"/></svg> },
+                { label:"تحلیل و درآمد",icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-5"/></svg> },
+              ].map(({label,active,icon}) => (
+                <div key={label} style={{ display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:11,background:active?"var(--brand-soft)":"transparent",color:active?"var(--brand)":"var(--ink-2)",fontWeight:active?700:600,fontSize:13.5 }}>{icon}{label}</div>
               ))}
+            </aside>
+            {/* Content */}
+            <div style={{ padding: 20, background: "var(--bg)" }}>
+              <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16 }}>
+                <div style={{ textAlign:"right" }}>
+                  <div style={{ fontWeight:800,fontSize:17 }}>سلام رها 👋</div>
+                  <div style={{ fontSize:12.5,color:"var(--ink-3)" }}>گزارش امروز آکادمی شما</div>
+                </div>
+                <div style={{ display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:10,background:"var(--grad)",color:"#fff",fontWeight:700,fontSize:12.5 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>دوره جدید
+                </div>
+              </div>
+              <div style={{ display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:14 }}>
+                {[
+                  {label:"درآمد این ماه",val:"۱۸۴٬۵۰۰",unit:" هزار ت",badge:"↑ ۲۳٪ نسبت به ماه قبل",bc:"#1aa472"},
+                  {label:"دانشجوی فعال",val:"۲٬۴۸۹",badge:"↑ ۱۴۲ نفر این هفته",bc:"#1aa472"},
+                  {label:"نرخ تکمیل دوره",val:"۷۸٪",badge:"بالاتر از میانگین",bc:"var(--brand)"},
+                ].map(({label,val,unit,badge,bc}) => (
+                  <div key={label} style={{ padding:14,borderRadius:14,border:"1px solid var(--bd-2)",background:"var(--card)",boxShadow:"var(--sh-sm)" }}>
+                    <div style={{ fontSize:11.5,color:"var(--ink-3)",fontWeight:600 }}>{label}</div>
+                    <div style={{ fontWeight:900,fontSize:21,marginTop:4 }}>{val}{unit&&<span style={{fontSize:11,color:"var(--ink-3)",fontWeight:600}}>{unit}</span>}</div>
+                    <div style={{ fontSize:11,color:bc,fontWeight:700,marginTop:3 }}>{badge}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ padding:16,borderRadius:14,border:"1px solid var(--bd-2)",background:"var(--card)",boxShadow:"var(--sh-sm)" }}>
+                <div style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14 }}>
+                  <div style={{ fontWeight:700,fontSize:13.5 }}>روند فروش دوره‌ها</div>
+                  <div style={{ fontSize:11,color:"var(--ink-3)",fontWeight:600 }}>۳۰ روز اخیر</div>
+                </div>
+                <div style={{ display:"flex",alignItems:"flex-end",gap:8,height:108 }}>
+                  {barHeights.map((h,i) => (
+                    <div key={i} className="mtm-bar-grow" style={{ flex:1,height:h,background:i===5||i===7?"var(--grad)":"var(--bg-3)",borderRadius:"6px 6px 0 0",animationDelay:`${i*55}ms` } as CSSProperties}/>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Browser mockup — left side in RTL */}
-          <div className="flex justify-center lg:justify-start">
-            <div style={{ position: "relative", width: "100%", maxWidth: 420 }}>
-              <div
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  inset: "-8% 4%",
-                  background:
-                    "radial-gradient(ellipse, rgba(204,122,0,.14), transparent 65%)",
-                  filter: "blur(40px)",
-                  pointerEvents: "none",
-                }}
-              />
-              <BrowserMockup />
-            </div>
+        </div>
+        {/* Floating sale card */}
+        <div className="mtm-float-a" style={{ position:"absolute",zIndex:3,top:"16%",left:"-3%",display:"flex",alignItems:"center",gap:10,padding:"12px 16px",borderRadius:16,background:"var(--card)",border:"1px solid var(--bd)",boxShadow:"var(--sh)" }}>
+          <span style={{ display:"grid",placeItems:"center",width:36,height:36,borderRadius:10,background:"rgba(26,164,114,.14)",color:"#1aa472" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+          </span>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontWeight:800,fontSize:13 }}>فروش جدید!</div>
+            <div style={{ fontSize:11,color:"var(--ink-3)" }}>دوره «ری‌اکت پیشرفته»</div>
+          </div>
+        </div>
+        {/* Floating students card */}
+        <div className="mtm-float-b" style={{ position:"absolute",zIndex:3,bottom:"14%",right:"-4%",display:"flex",alignItems:"center",gap:10,padding:"12px 16px",borderRadius:16,background:"var(--card)",border:"1px solid var(--bd)",boxShadow:"var(--sh)" }}>
+          <div style={{ display:"flex",marginLeft:2 }}>
+            {([ ["#ffb86b","#ff7a59"], ["#6d5efc","#4f8cff"], ["#34e1a3","#15b8c4"] ] as [string,string][]).map(([c1,c2],i) => (
+              <span key={i} style={{ width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${c1},${c2})`,border:"2px solid var(--card)",...(i>0?{marginRight:-9}:{}) } as CSSProperties}/>
+            ))}
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontWeight:800,fontSize:13 }}>۱۲ دانشجوی جدید</div>
+            <div style={{ fontSize:11,color:"var(--ink-3)" }}>در یک ساعت گذشته</div>
           </div>
         </div>
       </div>
