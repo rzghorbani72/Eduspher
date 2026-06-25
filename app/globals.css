@@ -1249,3 +1249,30 @@ select[class*="rounded-sm"] {
 .auth-pill:hover {
   background: rgba(0, 0, 0, 0.38);
 }
+
+/* 404 page */
+.not-found-glow {
+  background: color-mix(in srgb, var(--theme-primary) 18%, var(--theme-background));
+  filter: blur(10px);
+}
+.not-found-number {
+  background: linear-gradient(135deg, var(--theme-primary) 0%, color-mix(in srgb, var(--theme-primary) 55%, #4f8cff) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 900;
+  line-height: 1;
+}
+.not-found-btn-primary {
+  background: var(--theme-primary);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--theme-primary) 70%, transparent);
+  color: #ffffff;
+}
+.not-found-btn-primary:hover { transform: translateY(-1px); }
+.not-found-btn-secondary {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border-strong);
+  color: var(--theme-foreground);
+}
+.not-found-btn-secondary:hover { border-color: var(--theme-primary); }
