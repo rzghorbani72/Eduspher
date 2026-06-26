@@ -155,10 +155,12 @@ const baseFetch = async (
         const headerStore = await nextHeaders();
         const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
         const headerAcademySlug = headerStore?.get?.("x-academy-slug") ?? null;
+        const isSubdomain = headerStore?.get?.("x-academy-subdomain") === "1";
         const storeSlug =
           headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
-        
-        const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
+
+        // In subdomain mode the slug is already in the hostname — paths must be bare
+        const loginPath = !isSubdomain && storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
         
         throw new UnauthorizedError(`Unauthorized (401): ${response.statusText}`, loginPath);
       }

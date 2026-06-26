@@ -89,12 +89,20 @@ export async function AcademyHomePage() {
     themeAndTemplate.template.blocks.length > 0;
 
   if (hasUITemplate && themeAndTemplate.template) {
+    // Prefer live academy stats over template-configured placeholder stats
+    const liveStats =
+      stats.students !== null || stats.courses !== null
+        ? {
+            studentCount: stats.students ?? 0,
+            courseCount: stats.courses ?? 0,
+          }
+        : null;
     return (
       <BlocksRenderer
         blocks={themeAndTemplate.template.blocks}
         storeContext={{
           ...storeContext,
-          stats: themeAndTemplate.template.academy_stats ?? null,
+          stats: liveStats ?? themeAndTemplate.template.academy_stats ?? null,
         }}
         includeHeaderFooter={false}
       />

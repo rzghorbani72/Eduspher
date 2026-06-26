@@ -118,7 +118,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CourseCard course={course} storeSlug={storeContext.slug} store={storeCurrency} />
+                  <CourseCard course={course} storeSlug={storeContext.isSubdomain ? null : storeContext.slug} store={storeCurrency} />
                 </div>
               ))}
             </div>

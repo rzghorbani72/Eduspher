@@ -242,7 +242,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <CourseCard course={item} storeSlug={storeContext.slug} />
+                  <CourseCard course={item} storeSlug={storeContext.isSubdomain ? null : storeContext.slug} />
                 </div>
               ))}
           </div>

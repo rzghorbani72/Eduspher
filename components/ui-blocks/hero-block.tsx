@@ -1109,8 +1109,20 @@ function CreativeHero({ id, config, storeContext }: HeroBlockProps) {
     "هزاران کلاس در تصویرسازی، طراحی، عکاسی، فیلم، فریلنسری و بیشتر. به جامعه خلاقان بپیوند.";
   const ctaText = config?.ctaText || "آزمایش رایگان شروع کن";
   const ctaSecondary = config?.ctaSecondary || "کشف کلاس‌ها";
-  const stats = config?.stats?.length ? config.stats : CREATIVE_STATS;
-  const miniCards = config?.miniCards?.length ? config.miniCards : CREATIVE_MINI_CARDS;
+  const stats = config?.stats?.length
+    ? config.stats
+    : storeContext?.stats
+    ? [
+        storeContext.stats.studentCount > 0
+          ? { value: `${storeContext.stats.studentCount.toLocaleString("fa-IR")}+`, label: "دانشجو" }
+          : null,
+        storeContext.stats.courseCount > 0
+          ? { value: `${storeContext.stats.courseCount.toLocaleString("fa-IR")}+`, label: "دوره" }
+          : null,
+      ].filter((s): s is { value: string; label: string } => s !== null)
+    : CREATIVE_STATS;
+  // Mini-cards only from config — do not show fake placeholder courses
+  const miniCards = config?.miniCards?.length ? config.miniCards : [];
 
   return (
     <section
