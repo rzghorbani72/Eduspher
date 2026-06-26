@@ -26,7 +26,7 @@ interface HeroSlideshowProps {
   showDots?: boolean;
   autoplay?: boolean;
   interval?: number;
-  storeContext?: { id: number | null; slug: string | null; name: string | null };
+  storeContext?: { id: number | null; slug: string | null; name: string | null; isSubdomain?: boolean };
   /** Override text/button colours when needed (e.g. dark slide) */
   dark?: boolean;
   className?: string;
@@ -166,7 +166,7 @@ export function HeroSlideshow({
                   className="bg-(--theme-background) text-(--theme-foreground) hover:opacity-90 font-semibold shadow-lg"
                   asChild
                 >
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, '/courses')}>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), '/courses')}>
                     {slide.ctaText}
                   </Link>
                 </Button>
@@ -178,7 +178,7 @@ export function HeroSlideshow({
                   className="border-white/40 text-white hover:bg-white/10 backdrop-blur-sm"
                   asChild
                 >
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, '/about')}>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), '/about')}>
                     {slide.ctaSecondary}
                   </Link>
                 </Button>

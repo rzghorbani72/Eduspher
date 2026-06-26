@@ -20,6 +20,7 @@ type StoreState = {
   id: number | null;
   slug: string | null;
   name: string;
+  isSubdomain: boolean;
 };
 
 type AcademyContextValue = StoreState & {
@@ -64,10 +65,11 @@ export const useAcademyContext = () => {
 };
 
 export const useStorePath = () => {
-  const { slug } = useAcademyContext();
+  const { slug, isSubdomain } = useAcademyContext();
   const pathname = usePathname();
   const pathSlug = slugFromPathname(pathname);
-  const effectiveSlug = slug ?? pathSlug;
+  // In subdomain mode the slug lives in the hostname, not the path.
+  const effectiveSlug = isSubdomain ? null : (slug ?? pathSlug);
 
   return (path: string) => buildAcademyPathFromSlug(effectiveSlug, path);
 };

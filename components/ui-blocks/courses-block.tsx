@@ -26,6 +26,7 @@ interface CoursesBlockProps {
   storeContext?: {
     id: number | null;
     slug: string | null;
+    isSubdomain?: boolean;
     name: string | null;
   };
 }
@@ -72,7 +73,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const resolved = resolveSlots(courses, config?.slots, limit);
   const courseNodes = resolved.map((slot, i) =>
     slot.kind === "live" ? (
-      <CourseCard key={i} course={slot.data} storeSlug={storeContext?.slug ?? null} store={storeCurrency} />
+      <CourseCard key={i} course={slot.data} storeSlug={storeContext?.isSubdomain ? null : (storeContext?.slug ?? null)} store={storeCurrency} />
     ) : (
       <PlaceholderCard key={i} text={slot.text} />
     ),
@@ -114,7 +115,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
       </div>
       {!centered && showViewAll && (
         <Link
-          href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+          href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
           className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
           style={{ color: 'var(--theme-primary)' }}
         >
@@ -138,7 +139,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
             boxShadow: 'var(--theme-shadow)',
           }}
         >
-          <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>
+          <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>
             {tx("viewAllButton", translate("home.viewAllCourses"))}
           </Link>
         </Button>
@@ -169,7 +170,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           <div data-dynamic="true" className="space-y-5">
             {resolved.map((slot, i) =>
               slot.kind === "live" ? (
-                <CourseCard key={i} course={slot.data} storeSlug={storeContext?.slug ?? null} />
+                <CourseCard key={i} course={slot.data} storeSlug={storeContext?.isSubdomain ? null : (storeContext?.slug ?? null)} />
               ) : (
                 <PlaceholderCard key={i} text={slot.text} />
               ),

@@ -27,7 +27,7 @@ export default async function CheckoutPage({
   const session = await getSession();
   if (!session || !session.userId || !session.profileId) {
     const storeContext = await getAcademyContext();
-    const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+    const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
     const redirectUrl = courseId 
       ? `/checkout?course=${courseId}`
       : "/checkout";
@@ -37,7 +37,7 @@ export default async function CheckoutPage({
   const user = await getCurrentUser();
   if (!user) {
     const storeContext = await getAcademyContext();
-    const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+    const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
     redirect(buildPath("/auth/login"));
   }
 

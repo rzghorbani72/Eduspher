@@ -222,6 +222,16 @@ export const resolveAssetUrl = (path?: string | null) => {
   return `${env.backendOrigin}${normalized}`;
 };
 
+// Builds a subdomain URL for an academy: http://siah.localhost:5000 or https://siah.mentoma.com
+export const buildAcademySubdomainUrl = (slug: string, appUrl: string): string => {
+  try {
+    const { protocol, host } = new URL(appUrl);
+    return `${protocol}//${slug}.${host}`;
+  } catch {
+    return `http://${slug}.localhost:5000`;
+  }
+};
+
 export const buildAcademyPath = (slug: string | null, path: string): string => {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   if (!slug) {

@@ -69,6 +69,7 @@ interface HeroBlockProps {
   storeContext?: {
     id: number | null;
     slug: string | null;
+    isSubdomain?: boolean;
     name: string | null;
     stats?: { courseCount: number; studentCount: number } | null;
   };
@@ -252,11 +253,11 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
               {showCTA && (
                 <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-8 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
                   <Button size="lg" asChild className="font-semibold hover:opacity-90" style={isGradient ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: heroContentColor }}>
-                    <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}><span data-editable="ctaText">{ctaText}</span></Link>
+                    <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}><span data-editable="ctaText">{ctaText}</span></Link>
                   </Button>
                   {config?.ctaSecondary && (
                     <Button size="lg" variant="outline" asChild style={{ borderColor: 'color-mix(in srgb, var(--theme-on-primary) 40%, transparent)', color: 'var(--theme-on-primary)' }}>
-                      <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}><span data-editable="ctaSecondary">{config.ctaSecondary}</span></Link>
+                      <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/about")}><span data-editable="ctaSecondary">{config.ctaSecondary}</span></Link>
                     </Button>
                   )}
                 </div>
@@ -301,11 +302,11 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
           {showCTA && (
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className={cn("mt-6 flex flex-wrap gap-4", alignment === "center" ? "justify-center" : "justify-start")}>
               <Button size="lg" asChild className="font-semibold hover:opacity-90" style={isGradient ? { backgroundColor: 'var(--theme-background)', color: 'var(--theme-primary)', borderRadius: 'var(--theme-border-radius)', boxShadow: 'var(--theme-shadow)' } : { color: heroContentColor }}>
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}><span data-editable="ctaText">{ctaText}</span></Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}><span data-editable="ctaText">{ctaText}</span></Link>
               </Button>
               {config?.ctaSecondary && (
                 <Button size="lg" variant="outline" asChild style={{ borderColor: 'color-mix(in srgb, var(--theme-on-primary) 40%, transparent)', color: 'var(--theme-on-primary)' }}>
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}><span data-editable="ctaSecondary">{config.ctaSecondary}</span></Link>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/about")}><span data-editable="ctaSecondary">{config.ctaSecondary}</span></Link>
                 </Button>
               )}
             </div>
@@ -348,11 +349,11 @@ function ExpertAcademyHero({ id, config, storeContext }: HeroBlockProps) {
 
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-(--theme-primary) text-(--theme-on-primary) shadow-xl font-semibold px-8 hover:opacity-90">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-(--theme-on-primary)">{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")} className="text-(--theme-on-primary)">{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="outline" asChild className="border-(--theme-border-strong) text-(--theme-foreground)/70 hover:bg-(--theme-surface-alt) font-semibold">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/pricing")} className="text-(--theme-foreground)/70">{ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/pricing")} className="text-(--theme-foreground)/70">{ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -413,11 +414,11 @@ function StudioHero({ id, config, storeContext }: HeroBlockProps) {
 
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-(--theme-primary) text-(--theme-on-primary) shadow-lg font-semibold hover:opacity-90">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-(--theme-on-primary)">{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")} className="text-(--theme-on-primary)">{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="outline" asChild className="border-(--theme-border-strong) text-(--theme-foreground)/70 hover:bg-(--theme-surface)">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-(--theme-foreground)/70">{ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/about")} className="text-(--theme-foreground)/70">{ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -499,11 +500,11 @@ function CreatorHero({ id, config, storeContext }: HeroBlockProps) {
 
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-3">
               <Button size="lg" asChild className="bg-(--theme-primary) text-(--theme-on-primary) shadow-xl font-bold px-8 rounded-full hover:opacity-90">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")} className="text-(--theme-on-primary)">{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")} className="text-(--theme-on-primary)">{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="ghost" asChild className="text-(--theme-primary) hover:bg-(--theme-primary-subtle) font-semibold gap-2">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")} className="text-(--theme-primary)">
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/about")} className="text-(--theme-primary)">
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-(--theme-primary-subtle)">▶</span>
                     {ctaSecondary}
                   </Link>
@@ -559,7 +560,7 @@ function SocialHero({ id, config, storeContext }: HeroBlockProps) {
             <p data-scroll-animate="slideLeft" data-scroll-delay="0.15" className="mt-5 text-lg leading-relaxed opacity-80">{subtitle}</p>
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-(--theme-accent) text-(--theme-on-accent) font-semibold shadow-xl rounded-full px-8 hover:opacity-90">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>{ctaText}</Link>
               </Button>
             </div>
           </div>
@@ -606,11 +607,11 @@ function CommunityHero({ id, config, storeContext }: HeroBlockProps) {
 
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-10 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-(--theme-primary) text-(--theme-on-primary) font-semibold shadow-xl px-8 rounded-xl hover:opacity-90">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="outline" asChild className="border-(--theme-border-strong) text-(--theme-foreground)/70 hover:bg-(--theme-surface-alt) hover:text-(--theme-foreground) rounded-xl">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/about")}>{ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/about")}>{ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -670,11 +671,11 @@ function DarkProgrammerHero({ id, config, storeContext }: HeroBlockProps) {
             <p data-scroll-animate="slideLeft" data-scroll-delay="0.2" className="mt-5 text-lg leading-relaxed text-(--theme-foreground)/65">{subtitle}</p>
             <div data-scroll-animate="slideLeft" data-scroll-delay="0.3" className="mt-8 flex flex-wrap gap-4">
               <Button size="lg" asChild className="bg-(--theme-primary) text-(--theme-on-primary) font-bold shadow-xl rounded-full px-8 hover:opacity-90">
-                <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaText}</Link>
+                <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>{ctaText}</Link>
               </Button>
               {ctaSecondary && (
                 <Button size="lg" variant="outline" asChild className="border-(--theme-border-strong) text-(--theme-foreground)/70 hover:bg-(--theme-surface-alt) rounded-full">
-                  <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>{ctaSecondary}</Link>
+                  <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>{ctaSecondary}</Link>
                 </Button>
               )}
             </div>
@@ -768,7 +769,7 @@ function DarkProgrammerShowcase({ storeContext }: { storeContext?: HeroBlockProp
         <div className="mt-3 flex items-center justify-between">
           <span className="text-sm font-bold text-(--theme-foreground)">۱,۳۰۰,۰۰۰ تومان</span>
           <Button size="sm" asChild className="bg-(--theme-primary) text-(--theme-on-primary) rounded-full hover:opacity-90">
-            <Link href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}>ثبت‌نام</Link>
+            <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>ثبت‌نام</Link>
           </Button>
         </div>
       </div>
@@ -833,13 +834,13 @@ function FlowHero({ id, config, storeContext }: HeroBlockProps) {
           </p>
           <div className="flex flex-wrap items-center gap-[16px]">
             <Link
-              href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+              href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
               className="inline-flex items-center justify-center rounded-(--theme-border-radius) bg-(--theme-primary) px-[28px] py-[14px] text-[15px] font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90"
             >
               {ctaText}
             </Link>
             <Link
-              href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+              href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
               className="flex items-center gap-[6px] text-[14px] font-semibold text-(--theme-foreground)"
             >
               <span aria-hidden>←</span>
@@ -977,13 +978,13 @@ function CodeHero({ id, config, storeContext }: HeroBlockProps) {
           </p>
           <div className="mb-[44px] flex flex-wrap items-center gap-[14px]">
             <Link
-              href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+              href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
               className="inline-flex items-center justify-center rounded-(--theme-border-radius) bg-(--theme-primary) px-[28px] py-[14px] text-[15px] font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90"
             >
               {ctaText}
             </Link>
             <Link
-              href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+              href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
               className="inline-flex items-center justify-center rounded-(--theme-border-radius) border-[1.5px] border-(--theme-border-strong) bg-(--theme-surface-alt) px-[26px] py-[13px] text-[15px] font-semibold text-(--theme-foreground)"
             >
               {ctaSecondary}
@@ -1053,7 +1054,7 @@ function CodeHero({ id, config, storeContext }: HeroBlockProps) {
                   <span className="text-(--theme-accent)">★★★★★</span> {cardRating} {cardRatingCount}
                 </div>
                 <Link
-                  href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+                  href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
                   className="rounded-[8px] bg-(--theme-primary) px-[18px] py-[9px] text-[13px] font-bold text-(--theme-on-primary)"
                 >
                   {cardEnroll}
@@ -1137,13 +1138,13 @@ function CreativeHero({ id, config, storeContext }: HeroBlockProps) {
           </p>
           <div className="mb-[40px] flex flex-wrap gap-[12px]">
             <Link
-              href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+              href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
               className="inline-flex items-center justify-center rounded-(--theme-border-radius) bg-(--theme-primary) px-[32px] py-[14px] text-[15px] font-extrabold text-(--theme-secondary) transition-opacity hover:opacity-90"
             >
               {ctaText}
             </Link>
             <Link
-              href={buildAcademyPath(storeContext?.slug ?? null, "/courses")}
+              href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
               className="inline-flex items-center justify-center rounded-(--theme-border-radius) border-2 border-(--theme-on-secondary)/30 px-[32px] py-[12px] text-[15px] font-extrabold text-(--theme-on-secondary) transition-colors hover:border-(--theme-on-secondary)/70"
             >
               {ctaSecondary}

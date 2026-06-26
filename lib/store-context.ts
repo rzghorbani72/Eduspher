@@ -8,6 +8,7 @@ export type ResolvedAcademy = {
   id: number | null;
   slug: string | null;
   name: string;
+  isSubdomain: boolean;
 };
 
 const decodeCookieValue = (value?: string | null) => {
@@ -28,6 +29,7 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
       id: null,
       slug: null,
       name: env.siteName,
+      isSubdomain: false,
     };
   }
 
@@ -64,5 +66,6 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
     id: resolvedId ? Number(resolvedId) : null,
     slug: resolvedSlug,
     name: resolvedName,
+    isSubdomain: headerStore.get("x-academy-subdomain") === "1",
   };
 };

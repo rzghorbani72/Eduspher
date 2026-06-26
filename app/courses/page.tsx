@@ -43,7 +43,7 @@ const buildQueryString = (params: Record<string, string | number | boolean | und
 
 export default async function CoursesPage({ searchParams }: { searchParams: SearchParams }) {
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
   const params = await searchParams;
   const query = params?.q ?? "";
   const page = parseNumber(params?.page) ?? 1;

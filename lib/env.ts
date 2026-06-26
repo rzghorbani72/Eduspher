@@ -37,6 +37,7 @@ export const env = {
   siteDescription:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
     'Online courses for your institute — one branded site for classes, teachers, and students.',
+  appUrl: normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:5000'),
 };
 
 export const backendApiBaseUrl = `${env.backendOrigin}${env.backendApiPath}`;

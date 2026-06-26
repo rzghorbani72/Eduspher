@@ -7,7 +7,7 @@ import { t } from "@/lib/i18n/server-translations";
 
 export default async function NotFound() {
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   let currentAcademy = await getCurrentAcademy().catch(() => null);
   if (!currentAcademy && storeContext.slug) {

@@ -23,6 +23,7 @@ interface MembershipBlockProps {
   storeContext?: {
     id: number | null;
     slug: string | null;
+    isSubdomain?: boolean;
     name: string | null;
   };
 }
@@ -65,7 +66,7 @@ export async function MembershipBlock({ id, config, storeContext }: MembershipBl
   };
 
   const c = { ...defaults, ...config };
-  const pricingHref = buildAcademyPath(storeContext?.slug ?? null, "/pricing");
+  const pricingHref = buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/pricing");
 
   return (
     <section id={id || "membership"} className="py-20 sm:py-24 text-white" style={sectionStyle}>

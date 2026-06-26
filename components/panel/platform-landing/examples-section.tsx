@@ -2,6 +2,8 @@
 
 import { useRef, useEffect, useState } from "react";
 import type { StoreSummary } from "@/lib/api/types";
+import { env } from "@/lib/env";
+import { buildAcademySubdomainUrl } from "@/lib/utils";
 
 const GRADIENTS = [
   "linear-gradient(135deg,#7c6cff,#4f8cff)",
@@ -149,7 +151,7 @@ export function ExamplesSection({ academies = [] }: Props) {
             );
 
             return slug ? (
-              <a key={academy.id} href={`/${slug}`} style={{ textDecoration: "none", color: "inherit", display: "block", flex: "0 0 360px" }}>
+              <a key={academy.id} href={buildAcademySubdomainUrl(slug, env.appUrl)} style={{ textDecoration: "none", color: "inherit", display: "block", flex: "0 0 360px" }}>
                 {card}
               </a>
             ) : (

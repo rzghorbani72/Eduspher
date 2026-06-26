@@ -21,7 +21,7 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
     getArticleById(id).catch(() => null),
     getAcademyContext(),
   ]);
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   if (!article) {
     return notFound();

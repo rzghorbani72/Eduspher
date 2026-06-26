@@ -28,7 +28,7 @@ import { AcademyHomeAnimations } from "./academy-home-animations";
 
 export async function AcademyHomePage() {
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   const [
     academies,
@@ -364,7 +364,7 @@ export async function AcademyHomePage() {
                 <CourseCard
                   key={course.id}
                   course={course}
-                  storeSlug={storeContext.slug}
+                  storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
                   store={storeCurrency}
                 />
               ))}

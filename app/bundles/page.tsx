@@ -14,7 +14,7 @@ export default async function BundlesPage() {
   const storeContext = await getAcademyContext();
   if (!storeContext.slug) notFound();
 
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   const [packages, user, currentAcademy] = await Promise.all([
     getAcademyPlansPublic("PACKAGE").catch(() => []),

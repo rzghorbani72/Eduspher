@@ -11,7 +11,7 @@ export default async function RoadmapPage() {
   const storeContext = await getAcademyContext();
   if (!storeContext.slug) notFound();
 
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   const [categories, coursePayload, articles, currentAcademy] = await Promise.all([
     getCategories().catch(() => []),

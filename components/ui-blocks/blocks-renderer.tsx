@@ -19,6 +19,7 @@ interface BlocksRendererProps {
   storeContext?: {
     id: number | null;
     slug: string | null;
+    isSubdomain?: boolean;
     name: string | null;
     stats?: { courseCount: number; studentCount: number } | null;
   };

@@ -8,7 +8,7 @@ import { getAcademyContext } from "@/lib/store-context";
 
 export default async function ArticlesPage() {
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
   const articles = await getArticles().catch(() => []);
 
   if (!articles.length) {

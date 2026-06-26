@@ -21,7 +21,7 @@ type SearchParams = Promise<{ tab?: string }>;
 export default async function AccountPage({ searchParams }: { searchParams: SearchParams }) {
   const session = await getSession();
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   let currentAcademy = await getCurrentAcademy().catch(() => null);
   if (!currentAcademy && storeContext.slug) {
@@ -132,7 +132,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Sear
                       className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                       style={{ animationDelay: `${idx * 80}ms` }}
                     >
-                      <EnrolledCourseCard enrollment={enrollment} storeSlug={storeContext.slug} />
+                      <EnrolledCourseCard enrollment={enrollment} storeSlug={storeContext.isSubdomain ? null : storeContext.slug} />
                     </div>
                   ))}
                 </div>

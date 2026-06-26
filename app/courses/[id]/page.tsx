@@ -67,7 +67,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt");
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.slug, path);
+  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   const [course, user] = await Promise.all([
     getCourseById(id),
