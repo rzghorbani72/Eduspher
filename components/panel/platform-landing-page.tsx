@@ -28,6 +28,7 @@ type Props = {
 export function PlatformLandingPage({
   adminLoginUrl,
   adminRegisterUrl,
+  academies,
 }: Props) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "light";
@@ -114,7 +115,7 @@ export function PlatformLandingPage({
           <MetricsSection />
           <FeaturesSection />
           <HowSection />
-          <ExamplesSection />
+          <ExamplesSection academies={academies} />
           <ComparisonSection />
           <TestimonialsSection />
           <PricingSection />

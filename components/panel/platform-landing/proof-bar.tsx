@@ -2,9 +2,12 @@ import { LP } from "../platform-landing-page.messages";
 import type { StoreSummary } from "@/lib/api/types";
 
 export function ProofBar({ academies }: { academies: StoreSummary[] }) {
-  const names =
-    academies.length > 0 ? academies.map((a) => a.name) : [...LP.proof.fallback];
-  const doubled = [...names, ...names];
+  const items =
+    academies.length > 0
+      ? academies.map((a) => ({ name: a.name, slug: a.slug ?? null }))
+      : LP.proof.fallback.map((name) => ({ name, slug: null }));
+
+  const doubled = [...items, ...items];
 
   return (
     <div style={{ background: "#0B1133", padding: "14px 0", overflow: "hidden" }}>
@@ -22,18 +25,27 @@ export function ProofBar({ academies }: { academies: StoreSummary[] }) {
       </p>
       <div className="flex overflow-hidden" dir="ltr">
         <div className="lp-proof-strip flex shrink-0 gap-0">
-          {doubled.map((name, i) => (
-            <span
-              key={i}
-              className="inline-flex items-center gap-[10px] whitespace-nowrap"
-              style={{ padding: "0 36px", borderLeft: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.65)", fontSize: 14, fontWeight: 500 }}
-            >
+          {doubled.map(({ name, slug }, i) => {
+            const inner = (
               <span
-                style={{ width: 4, height: 4, borderRadius: "50%", background: "#CC7A00", flexShrink: 0, display: "inline-block" }}
-              />
-              {name}
-            </span>
-          ))}
+                className="inline-flex items-center gap-[10px] whitespace-nowrap"
+                style={{ padding: "0 36px", borderLeft: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.65)", fontSize: 14, fontWeight: 500 }}
+              >
+                <span
+                  style={{ width: 4, height: 4, borderRadius: "50%", background: "#CC7A00", flexShrink: 0, display: "inline-block" }}
+                />
+                {name}
+              </span>
+            );
+
+            return slug ? (
+              <a key={i} href={`/${slug}`} style={{ textDecoration: "none", display: "inline-flex" }}>
+                {inner}
+              </a>
+            ) : (
+              <span key={i} style={{ display: "inline-flex" }}>{inner}</span>
+            );
+          })}
         </div>
       </div>
     </div>
