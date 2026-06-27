@@ -205,6 +205,18 @@ export const formatCurrencyWithAcademy = (
   });
 };
 
+const PERSIAN_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"] as const;
+
+/**
+ * Convert Latin digits (0-9) to Persian digits when the language is `fa`.
+ * Keeps separators (commas, dots) untouched so "2,900,000" -> "۲,۹۰۰,۰۰۰".
+ */
+export const toPersianDigits = (value: string | number, language?: string): string => {
+  const text = String(value);
+  if (language !== "fa") return text;
+  return text.replace(/[0-9]/g, (digit) => PERSIAN_DIGITS[Number(digit)]);
+};
+
 export const truncate = (value: string, length = 150) =>
   value.length > length ? `${value.slice(0, length).trimEnd()}…` : value;
 

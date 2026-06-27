@@ -1,217 +1,214 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Play,
+  Lock,
+  HelpCircle,
+  FileText,
+  Video,
+  Download,
+  ChevronDown,
+} from "lucide-react";
 
-import type { LessonSummary, SeasonSummary } from "@/lib/api/types";
-import { cn, resolveAssetUrl } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { LessonLivePanel } from "@/components/courses/lesson-live-panel";
+import { cn, toPersianDigits } from "@/lib/utils";
+import {
+  getDemoCurriculum,
+  type CurriculumLesson,
+  type LessonKind,
+  type LessonBadge,
+} from "@/components/courses/course-detail-demo";
 
 interface CourseCurriculumProps {
-  courseTitle: string;
-  seasons: SeasonSummary[];
-  isLoggedIn: boolean;
-  loginHref: string;
-  enrollHref: string;
+  lessonCount: number;
+  durationHours: number | null;
 }
 
-type LessonWithSeason = LessonSummary & {
-  seasonId: number;
-  seasonTitle: string;
+const KIND_ICON: Record<LessonKind, typeof Play> = {
+  video: Play,
+  quiz: HelpCircle,
+  text: FileText,
+  live: Video,
 };
 
-const buildLessons = (seasons: SeasonSummary[]): LessonWithSeason[] =>
-  seasons.flatMap((season) =>
-    (season.Lesson ?? []).map((lesson) => ({
-      ...lesson,
-      seasonId: season.id,
-      seasonTitle: season.title,
-    }))
-  );
+const BADGE: Record<LessonBadge, { key: string; cls: string; dot: string }> = {
+  preview: {
+    key: "courses.badgePreview",
+    cls: "text-(--theme-primary) bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)]",
+    dot: "bg-(--theme-primary)",
+  },
+  locked: {
+    key: "courses.badgeLocked",
+    cls: "text-(--theme-muted) bg-(--theme-surface)",
+    dot: "bg-(--theme-muted)",
+  },
+  live_now: {
+    key: "courses.badgeLiveNow",
+    cls: "text-[#ef4444] bg-[rgba(239,68,68,0.12)]",
+    dot: "bg-[#ef4444]",
+  },
+  free: {
+    key: "courses.badgeFree",
+    cls: "text-[#16a34a] bg-[color-mix(in_srgb,#22c55e_15%,transparent)]",
+    dot: "bg-[#16a34a]",
+  },
+  recorded: {
+    key: "courses.badgeRecorded",
+    cls: "text-(--theme-muted) bg-(--theme-surface)",
+    dot: "bg-(--theme-muted)",
+  },
+};
 
-export const CourseCurriculum = ({
-  courseTitle,
-  seasons,
-  isLoggedIn,
-  loginHref,
-  enrollHref,
-}: CourseCurriculumProps) => {
+const LessonRow = ({ lesson }: { lesson: CurriculumLesson }) => {
   const { t } = useTranslation();
-  const lessons = useMemo(() => buildLessons(seasons), [seasons]);
+  const KindIcon = KIND_ICON[lesson.kind];
+  const liveNow = lesson.badge === "live_now";
+  const badge = lesson.badge ? BADGE[lesson.badge] : null;
+  const subtitle =
+    lesson.meta ??
+    (lesson.kind === "quiz"
+      ? t("courses.kindQuiz")
+      : lesson.kind === "text"
+        ? t("courses.kindText")
+        : t("courses.kindVideo"));
 
-  const initialLesson = useMemo(() => {
-    const withVideo = (l: LessonWithSeason) =>
-      Boolean((l as { Video?: { publicUrl?: string } }).Video?.publicUrl);
-    const isLive = (l: LessonWithSeason) =>
-      l.lesson_type === "LIVE" || Boolean(l.LiveSession);
-    return (
-      lessons.find((lesson) => lesson.is_free && withVideo(lesson)) ??
-      lessons.find((lesson) => withVideo(lesson)) ??
-      lessons.find((lesson) => isLive(lesson)) ??
-      lessons[0] ??
-      null
-    );
-  }, [lessons]);
+  return (
+    <li className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-(--theme-surface)">
+      <span
+        className={cn(
+          "grid h-9 w-9 shrink-0 place-items-center rounded-lg",
+          liveNow
+            ? "bg-[rgba(239,68,68,0.12)] text-[#ef4444]"
+            : "bg-(--theme-surface) text-(--theme-muted)",
+        )}
+      >
+        <KindIcon className="h-[18px] w-[18px]" />
+      </span>
 
-  const [currentLesson, setCurrentLesson] = useState<LessonWithSeason | null>(initialLesson);
+      <div className="min-w-0 flex-1 text-right">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {badge && (
+            <span
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-bold",
+                badge.cls,
+              )}
+            >
+              <span className={cn("h-1.5 w-1.5 rounded-full", badge.dot)} />
+              {t(badge.key)}
+            </span>
+          )}
+          <span className="truncate text-sm font-bold text-(--theme-foreground)">
+            {lesson.title}
+          </span>
+        </div>
+        <p className="mt-0.5 text-xs text-(--theme-muted)">{subtitle}</p>
+      </div>
 
-  const currentVideoUrl = (currentLesson as { Video?: { publicUrl?: string } })?.Video?.publicUrl
-    ? resolveAssetUrl((currentLesson as { Video?: { publicUrl?: string } }).Video!.publicUrl)
-    : null;
-  const isLiveLesson =
-    currentLesson?.lesson_type === "LIVE" || Boolean(currentLesson?.LiveSession);
-  const currentSeasonTitle =
-    currentLesson?.seasonTitle ?? (seasons[0]?.title ?? t("courses.coursePreview"));
-  const currentTitle = currentLesson?.title ?? courseTitle;
+      <span className="cd-price shrink-0 text-xs text-(--theme-muted)">{lesson.duration}</span>
+
+      <span className="flex w-[68px] shrink-0 justify-end">
+        {lesson.action === "play" && (
+          <span className="grid h-8 w-8 place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-(--theme-primary)">
+            <Play className="h-4 w-4" />
+          </span>
+        )}
+        {lesson.action === "lock" && <Lock className="h-4 w-4 text-(--theme-muted)" />}
+        {lesson.action === "join" && (
+          <span className="rounded-full bg-[#ef4444] px-3 py-1.5 text-xs font-bold text-white">
+            {t("courses.actionJoin")}
+          </span>
+        )}
+        {lesson.action === "remind" && (
+          <span className="text-xs font-bold text-[#16a34a]">{t("courses.actionRemind")}</span>
+        )}
+        {lesson.action === "record" && (
+          <span className="flex items-center gap-1 text-xs font-bold text-(--theme-primary)">
+            <Download className="h-3.5 w-3.5" />
+            {t("courses.actionRecording")}
+          </span>
+        )}
+      </span>
+    </li>
+  );
+};
+
+export const CourseCurriculum = ({ lessonCount, durationHours }: CourseCurriculumProps) => {
+  const { t, language } = useTranslation();
+  const seasons = getDemoCurriculum(language);
+  const [openSeasons, setOpenSeasons] = useState<number[]>(seasons.map((s) => s.id));
+
+  const toggle = (id: number) =>
+    setOpenSeasons((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const summary = [
+    `${toPersianDigits(seasons.length, language)} ${t("courses.sectionsLabel")}`,
+    `${toPersianDigits(lessonCount, language)} ${t("courses.lesson")}`,
+    durationHours
+      ? `${toPersianDigits(durationHours, language)} ${t("courses.hours")}`
+      : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-theme border border-theme bg-card shadow-lg transition-all hover:shadow-xl">
-        {currentLesson && isLiveLesson ? (
-          <LessonLivePanel
-            lesson={currentLesson}
-            isLoggedIn={isLoggedIn}
-            loginHref={loginHref}
-            enrollHref={enrollHref}
-          />
-        ) : currentVideoUrl ? (
-          <video key={currentVideoUrl} src={currentVideoUrl} controls className="aspect-video w-full bg-black">
-            {t("courses.videoNotSupported")}
-          </video>
-        ) : (
-          /* No-preview placeholder — branded dark panel */
-          <div
-            className="flex aspect-video w-full flex-col items-center justify-center gap-3"
-            style={{
-              background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 20%, #000), color-mix(in srgb, var(--theme-secondary) 10%, #000))',
-              color: 'var(--theme-on-primary)',
-            }}
-          >
-            <div
-              className="flex h-16 w-16 items-center justify-center rounded-full opacity-60"
-              style={{ backgroundColor: 'color-mix(in srgb, var(--theme-on-primary) 15%, transparent)' }}
-            >
-              <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-            <span className="text-sm font-medium opacity-80">{t("courses.noPreviewAvailable")}</span>
-            <span className="text-xs opacity-50">{t("courses.selectLessonToView")}</span>
-          </div>
-        )}
-        <div className="space-y-1 border-t border-theme bg-card p-4">
-          <p className="text-xs uppercase tracking-wide text-muted opacity-60">{currentSeasonTitle}</p>
-          <h3 className="text-lg font-semibold text-foreground">{currentTitle}</h3>
-          {currentLesson?.description ? (
-            <p className="text-sm leading-relaxed text-muted">{currentLesson.description}</p>
-          ) : null}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-black text-(--theme-foreground)">
+            {t("courses.curriculumTitle")}
+          </h2>
+          <p className="mt-1 text-[13px] text-(--theme-muted)">{t("courses.curriculumSubtitle")}</p>
         </div>
+        <span className="cd-price pt-1 text-sm font-semibold text-(--theme-muted)">{summary}</span>
       </div>
 
       <div className="space-y-4">
-        {seasons.length ? (
-          seasons
-            .slice()
-            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-            .map((season, seasonIndex) => {
-              const seasonLessons = (season.Lesson ?? []).slice().sort((a: LessonSummary, b: LessonSummary) => (a.order ?? 0) - (b.order ?? 0));
+        {seasons.map((season, index) => {
+          const isOpen = openSeasons.includes(season.id);
+          return (
+            <div key={season.id} className="cd-review-card overflow-hidden rounded-2xl border">
+              <button
+                type="button"
+                onClick={() => toggle(season.id)}
+                className="flex w-full items-center gap-3 p-4 text-right"
+              >
+                <span className="cd-price grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-sm font-extrabold text-(--theme-primary)">
+                  {toPersianDigits(index + 1, language)}
+                </span>
+                <span className="flex-1 text-base font-extrabold text-(--theme-foreground)">
+                  {season.title}
+                </span>
+                <span className="cd-price text-xs text-(--theme-muted)">{season.summary}</span>
+                <ChevronDown
+                  className={cn(
+                    "h-4 w-4 shrink-0 text-(--theme-muted) transition-transform duration-300",
+                    isOpen && "rotate-180",
+                  )}
+                />
+              </button>
 
-              return (
-                <div
-                  key={season.id}
-                  className="rounded-xl border transition-all hover:shadow-md"
-                  style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
-                >
-                  <div className="flex items-start gap-3 border-b p-4" style={{ borderColor: 'var(--theme-border-color)' }}>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--theme-primary)] text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30">
-                      {seasonIndex + 1}
-                    </span>
-                    <div>
-                      <p className="text-base font-semibold text-foreground">{season.title}</p>
-                      {season.description ? (
-                        <p className="text-xs text-muted opacity-70">{season.description}</p>
-                      ) : null}
-                      <p className="text-xs text-muted opacity-70">
-                        {seasonLessons.length
-                          ? `${seasonLessons.length} ${seasonLessons.length > 1 ? t("courses.lessons") : t("courses.lesson")}`
-                          : t("courses.lessonsComingSoon")}
-                      </p>
-                    </div>
-                  </div>
-
-                  {seasonLessons.length ? (
-                    <ul className="divide-y divide-theme">
-                      {seasonLessons.map((lesson: LessonSummary, lessonIndex: number) => {
-                        const isActive = currentLesson?.id === lesson.id;
-                        const hasVideo = Boolean((lesson as { Video?: { publicUrl?: string } }).Video?.publicUrl);
-                        const lessonIsLive =
-                          lesson.lesson_type === "LIVE" || Boolean(lesson.LiveSession);
-                        return (
-                          <li key={lesson.id}>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setCurrentLesson({
-                                  ...lesson,
-                                  seasonId: season.id,
-                                  seasonTitle: season.title,
-                                })
-                              }
-                              className={cn(
-                                "flex w-full items-start gap-3 px-4 py-3 text-left transition-all duration-200",
-                                isActive
-                                  ? "bg-primary/10 text-foreground"
-                                  : "hover:bg-[var(--theme-surface)]"
-                              )}
-                            >
-                              <div className={cn(
-                                "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border text-xs font-semibold transition-all",
-                                isActive
-                                  ? "border-[var(--theme-primary)] bg-[var(--theme-primary)] text-[var(--theme-on-primary)]"
-                                  : "border-[var(--theme-border-color)]"
-                              )}>
-                                {lessonIndex + 1}
-                              </div>
-                              <div className="flex flex-1 flex-col gap-1">
-                                <span className="text-sm font-semibold">{lesson.title}</span>
-                                <div className="flex flex-wrap items-center gap-2 text-xs text-muted opacity-70">
-                                  {lesson.is_free ? (
-                                    <span className="rounded-full bg-primary-subtle px-2 py-1 font-medium text-primary">
-                                      {t("courses.preview")}
-                                    </span>
-                                  ) : null}
-                                  {lessonIsLive ? (
-                                    <span className="rounded-full bg-secondary-subtle px-2 py-1 font-medium text-secondary">
-                                      {t("courses.liveSession")}
-                                    </span>
-                                  ) : null}
-                                  {lesson.duration ? <span>{`${lesson.duration} ${t("courses.min")}`}</span> : null}
-                                  {!lessonIsLive && !hasVideo ? (
-                                    <span>{t("courses.noVideo")}</span>
-                                  ) : null}
-                                </div>
-                                {lesson.description ? (
-                                  <p className="text-xs leading-relaxed text-muted opacity-70">
-                                    {lesson.description}
-                                  </p>
-                                ) : null}
-                              </div>
-                            </button>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  ) : null}
-                </div>
-              );
-            })
-        ) : (
-          <p className="rounded-xl border border-theme bg-card p-4 text-muted">
-            {t("courses.lessonsComingSoonCheckBack")}
-          </p>
-        )}
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.ul
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="divide-y divide-(--theme-border-color) border-t border-(--theme-border-color)"
+                  >
+                    {season.lessons.map((lesson) => (
+                      <LessonRow key={lesson.id} lesson={lesson} />
+                    ))}
+                  </motion.ul>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
-
