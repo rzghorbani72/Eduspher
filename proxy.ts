@@ -364,7 +364,9 @@ export async function proxy(request: NextRequest) {
   const previewEmbed = applyPreviewEmbed
     ? applyPreviewEmbedRequest(request, requestHeaders)
     : { preview: null, embed: false };
-  requestHeaders.set("x-url-pathname", requestUrl.pathname);
+  // x-url-pathname is set after rewrite decision (see below) so the layout
+  // sees the effective pathname, not the original "/" that would incorrectly
+  // trigger isPanelRoot for subdomain academy requests.
   if (isPanelRoot) {
     requestHeaders.set("x-panel-root", "1");
   } else if (isSubdomainRequest) {
@@ -507,6 +509,10 @@ export async function proxy(request: NextRequest) {
     internalUrl = requestUrl.clone();
     internalUrl.pathname = normalizedPath;
   }
+
+  // Set x-url-pathname to the EFFECTIVE path after rewrite so the layout's
+  // isPanelRoot check sees "/siah" (not "/") for subdomain home requests.
+  requestHeaders.set("x-url-pathname", internalUrl?.pathname ?? requestUrl.pathname);
 
   const response = internalUrl
     ? NextResponse.rewrite(internalUrl, {
