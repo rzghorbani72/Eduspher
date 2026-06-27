@@ -47,6 +47,7 @@ export const fa = {
     bundles: 'بسته‌ها',
     roadmap: 'نقشه راه',
     aboutUs: 'درباره ما',
+    aboutAcademy: 'درباره آکادمی',
   },
   courses: {
     title: 'دوره‌ها',

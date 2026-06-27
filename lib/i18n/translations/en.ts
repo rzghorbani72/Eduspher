@@ -47,6 +47,7 @@ export const en = {
     bundles: 'Bundles',
     roadmap: 'Roadmap',
     aboutUs: 'About Us',
+    aboutAcademy: 'About academy',
   },
   courses: {
     title: 'Courses',

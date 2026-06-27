@@ -15,6 +15,7 @@ import {
   useStorePath,
 } from "@/components/providers/store-provider";
 import { CartIcon } from "@/components/cart/cart-icon";
+import { ThemeToggle } from "@/components/theme/theme-toggle-button";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { getAdminPanelUrl } from "@/lib/admin-panel-url";
 import { slugFromPathname } from "@/lib/academy-path";
@@ -54,6 +55,7 @@ export function SiteHeaderClient({
             { href: "/courses", label: t("navigation.courses") },
             { href: "/bundles", label: t("navigation.bundles") },
             { href: "/roadmap", label: t("navigation.roadmap") },
+            { href: "/about", label: t("navigation.aboutAcademy") },
           ],
     [showPanelNav, t]
   );
@@ -100,25 +102,17 @@ export function SiteHeaderClient({
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link
           href={buildPath("/")}
-          className="flex items-center gap-3 transition-opacity hover:opacity-80"
+          className="flex items-center gap-2.5 transition-opacity hover:opacity-80"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--theme-primary)] text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105">
-            <span className="text-lg font-semibold">ES</span>
-          </div>
-          <div>
-            <p
-              className="text-lg font-semibold"
-              style={{ color: "var(--theme-foreground)" }}
-            >
-              {storeName}
-            </p>
-            <p
-              className="text-xs opacity-50"
-              style={{ color: "var(--theme-foreground)" }}
-            >
-              {t("common.tagline")}
-            </p>
-          </div>
+          <span
+            className="text-xl font-black"
+            style={{ color: "var(--theme-foreground)" }}
+          >
+            {storeName}
+          </span>
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--theme-primary) text-(--theme-on-primary) shadow-lg shadow-(--theme-primary)/30 transition-transform hover:scale-105">
+            <span className="text-base font-black">{storeName?.charAt(0) || "A"}</span>
+          </span>
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
           {navItems.map((item) => (
@@ -138,6 +132,7 @@ export function SiteHeaderClient({
           ))}
         </nav>
         <div className="flex shrink-0 items-center gap-2">
+          <ThemeToggle className="flex h-10 w-10 items-center justify-center rounded-full border border-(--theme-border-color) text-(--theme-foreground) transition-colors hover:bg-(--theme-surface)" />
           {showPanelNav ? (
             <a
               href={adminLoginUrl}

@@ -183,7 +183,7 @@ export default async function RootLayout({
             <ThemeStyleSync theme={theme} syncKey={themeKey} />
             <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
             <ThemeLiveUpdater />
-            <ThemeToggleButton />
+            {bareLayout && <ThemeToggleButton />}
             <I18nProvider
               key={`i18n-${shellKey}-${language}`}
               initialLanguage={language}
