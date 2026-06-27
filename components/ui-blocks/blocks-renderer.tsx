@@ -22,6 +22,9 @@ interface BlocksRendererProps {
     isSubdomain?: boolean;
     name: string | null;
     stats?: { courseCount: number; studentCount: number } | null;
+    // Cuid academy scope used by preview real-data mode so dynamic blocks fetch
+    // the editing academy's own records instead of the ambient/default one.
+    academyId?: string | null;
   };
   includeHeaderFooter?: boolean; // Option to include header/footer in blocks renderer
 }

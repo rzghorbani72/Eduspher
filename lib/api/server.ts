@@ -259,6 +259,7 @@ export async function getCourses(params?: {
   is_featured?: boolean;
   is_free?: boolean;
   category_id?: number;
+  academy_id?: string;
 }) {
   try {
     const result = await serverFetch<CourseListPayload>("/courses", {
@@ -787,6 +788,7 @@ export interface PreviewPreset {
   }>;
   theme: Record<string, unknown> | null;
   academy_stats?: { courseCount: number; studentCount: number } | null;
+  academy_id?: string | null;
 }
 
 // Single template/preset by key, for the standalone /preview/blocks renderer.

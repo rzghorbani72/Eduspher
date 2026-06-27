@@ -622,6 +622,50 @@ export const answerCourseQnA = async (
   return response.data;
 };
 
+export interface CourseReview {
+  id: string;
+  rating: number;
+  title: string | null;
+  content: string | null;
+  is_verified: boolean;
+  created_at: string;
+  Profile?: {
+    id: string;
+    display_name: string;
+    Image_Profile_avatar_idToImage?: { publicUrl: string | null } | null;
+  };
+}
+
+export interface CourseReviewsResponse {
+  reviews: CourseReview[];
+  summary: { avg_rating: number; total_reviews: number };
+}
+
+export const getCourseReviews = async (
+  courseId: number,
+  options?: RequestOptions
+) => {
+  const response = await getJson<{
+    message: string;
+    status: string;
+    data: CourseReviewsResponse;
+  }>(`/courses/${courseId}/reviews`, options);
+  return response.data;
+};
+
+export const createCourseReview = async (
+  courseId: number,
+  review: { rating: number; title?: string; content?: string },
+  options?: RequestOptions
+) => {
+  const response = await postJson<{
+    message: string;
+    status: string;
+    data: CourseReview;
+  }>(`/courses/${courseId}/reviews`, review, options);
+  return response.data;
+};
+
 // ============================================================================
 // SESSION MANAGEMENT APIs
 // ============================================================================
