@@ -638,7 +638,7 @@ export interface CourseReview {
 
 export interface CourseReviewsResponse {
   reviews: CourseReview[];
-  summary: { avg_rating: number; total_reviews: number };
+  summary: { avg_rating: number; total_reviews: number; can_review: boolean };
 }
 
 export const getCourseReviews = async (
