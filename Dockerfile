@@ -8,13 +8,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV npm_config_registry=${NPM_REGISTRY}
 ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 
+# pnpm install config (registry, retries, timeouts) comes from the project
+# .npmrc copied in the deps stage — no global `pnpm config set` needed.
 RUN npm config set registry "${NPM_REGISTRY}" \
-  && npm install -g pnpm@11.5.2 \
-  && pnpm config set registry "${NPM_REGISTRY}" \
-  && pnpm config set fetch-retries 5 \
-  && pnpm config set fetch-retry-mintimeout 20000 \
-  && pnpm config set fetch-retry-maxtimeout 120000 \
-  && pnpm config set network-timeout 600000
+  && npm install -g pnpm@11.5.2
 
 WORKDIR /app
 
