@@ -117,7 +117,7 @@ export function PlatformLandingPage({
           <HowSection />
           <ExamplesSection academies={academies} />
           <ComparisonSection />
-          <TestimonialsSection />
+          {/* <TestimonialsSection /> */}
           <PricingSection />
           <FaqSection />
           <CtaSection adminRegisterUrl={adminRegisterUrl} />

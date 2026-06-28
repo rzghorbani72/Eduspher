@@ -33,10 +33,10 @@ export const env = {
   academyIdCookie,
   academySlugCookie,
   academyNameCookie,
-  siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? 'EduSpher',
+  siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? 'منتوما',
   siteDescription:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
-    'Online courses for your institute — one branded site for classes, teachers, and students.',
+    'سیستم‌عاملِ آکادمی — ثبت‌نام دانشجو، مدیریت معلم‌ها و برگزاری کلاس‌های زنده، همه از یک سایت اختصاصی.',
   appUrl: normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:5000'),
 };
 
