@@ -1,15 +1,17 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import { Star } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { toPersianDigits, cn } from "@/lib/utils";
 import { CourseQnA } from "@/components/courses/course-qna";
+import { CourseReviewForm } from "@/components/courses/course-review-form";
 import {
-  getDemoReviews,
-  DEMO_RATING,
-  DEMO_REVIEW_COUNT,
-} from "@/components/courses/course-mock-data";
+  getCourseReviews,
+  type CourseReview,
+  type CourseReviewsResponse,
+} from "@/lib/api/client";
 
 interface CourseReviewsProps {
   courseId: number;
@@ -30,9 +32,36 @@ const Stars = ({ rating }: { rating: number }) => (
   </div>
 );
 
+const formatRelativeDate = (iso: string, language: string) =>
+  new Date(iso).toLocaleDateString(language === "fa" ? "fa-IR" : "en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
 export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
   const { t, language } = useTranslation();
-  const reviews = getDemoReviews(language);
+  const [data, setData] = useState<CourseReviewsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadReviews = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setData(await getCourseReviews(courseId));
+    } catch (error) {
+      console.error("Failed to load reviews:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [courseId]);
+
+  useEffect(() => {
+    loadReviews();
+  }, [loadReviews]);
+
+  const reviews: CourseReview[] = data?.reviews ?? [];
+  const avgRating = data?.summary.avg_rating ?? 0;
+  const totalReviews = data?.summary.total_reviews ?? 0;
 
   return (
     <section className="animate-in fade-in slide-in-from-bottom-3 space-y-6 duration-300">
@@ -40,36 +69,62 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
         <h2 className="text-xl font-black text-(--theme-foreground)">
           {t("courses.studentReviewsTitle")}
         </h2>
-        <span className="cd-rating-pill flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold">
-          <Star className="h-4 w-4 fill-[#f5a623] text-[#f5a623]" />
-          <span className="cd-price">
-            {toPersianDigits(DEMO_RATING.toFixed(1), language)} {t("courses.reviewsOutOf")}{" "}
-            {toPersianDigits(DEMO_REVIEW_COUNT, language)} {t("courses.reviewsWord")}
+        {totalReviews > 0 && (
+          <span className="cd-rating-pill flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold">
+            <Star className="h-4 w-4 fill-[#f5a623] text-[#f5a623]" />
+            <span className="cd-price">
+              {toPersianDigits(avgRating.toFixed(1), language)} {t("courses.reviewsOutOf")}{" "}
+              {toPersianDigits(totalReviews, language)} {t("courses.reviewsWord")}
+            </span>
           </span>
-        </span>
+        )}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {reviews.map((review) => (
-          <div key={review.id} className="cd-review-card rounded-2xl border p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="cd-teacher-avatar grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-extrabold text-white">
-                  {review.initial}
-                </span>
-                <div className="leading-tight">
-                  <div className="text-sm font-extrabold text-(--theme-foreground)">
-                    {review.name}
+      {data?.summary.can_review && (
+        <CourseReviewForm courseId={courseId} onSubmitted={loadReviews} />
+      )}
+
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-(--theme-primary)" />
+        </div>
+      ) : reviews.length === 0 ? (
+        <p className="py-8 text-center text-sm text-(--theme-muted)">
+          {t("courses.noReviewsYet")}
+        </p>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {reviews.map((review) => {
+            const name = review.Profile?.display_name ?? "";
+            return (
+              <div key={review.id} className="cd-review-card rounded-2xl border p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="cd-teacher-avatar grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-extrabold text-white">
+                      {name.charAt(0)}
+                    </span>
+                    <div className="leading-tight">
+                      <div className="text-sm font-extrabold text-(--theme-foreground)">{name}</div>
+                      <div className="text-xs text-(--theme-muted)">
+                        {formatRelativeDate(review.created_at, language)}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-xs text-(--theme-muted)">{review.timeAgo}</div>
+                  <Stars rating={review.rating} />
                 </div>
+                {review.title && (
+                  <p className="mt-3 text-sm font-bold text-(--theme-foreground)">{review.title}</p>
+                )}
+                {review.content && (
+                  <p className="mt-1.5 text-[13.5px] leading-relaxed text-(--theme-muted)">
+                    {review.content}
+                  </p>
+                )}
               </div>
-              <Stars rating={review.rating} />
-            </div>
-            <p className="mt-3 text-[13.5px] leading-relaxed text-(--theme-muted)">{review.text}</p>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {isLoggedIn && (
         <div className="pt-2">

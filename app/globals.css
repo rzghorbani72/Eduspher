@@ -921,6 +921,44 @@ select[class*="rounded-sm"] {
 .mentoma-page { --glass:rgba(255,255,255,.72); --glass-bd:rgba(255,255,255,.7); }
 .mentoma-page.theme-dark { --glass:rgba(14,17,32,.62); --glass-bd:rgba(255,255,255,.08); }
 
+/* ── Course catalog — precise design tokens (CourseCatalog.dc.html) ──────────
+   Neutral surfaces/text match the design 1:1; the accent (--cc-brand / --cc-grad)
+   stays bound to the academy theme so per-academy white-label colour is kept. */
+.course-catalog {
+  color-scheme: light; /* native controls (select) follow the academy theme, not the OS */
+  --cc-bg:#ffffff; --cc-card:#ffffff; --cc-card-2:#fbfbff;
+  --cc-bd:rgba(18,20,50,.09); --cc-bd-2:rgba(18,20,50,.06);
+  --cc-ink:#121430; --cc-ink-2:#4c4f6e; --cc-ink-3:#888caa;
+  --cc-brand:var(--theme-primary);
+  --cc-brand-soft:color-mix(in srgb, var(--theme-primary) 10%, transparent);
+  --cc-grad:linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  --cc-sh-sm:0 1px 2px rgba(20,22,55,.06),0 1px 1px rgba(20,22,55,.04);
+  --cc-sh:0 14px 40px -12px rgba(40,40,90,.18);
+}
+/* Dark follows the app's authoritative .dark class only — never the OS
+   prefers-color-scheme, because an academy can force light while the OS is dark. */
+.dark .course-catalog,
+.course-catalog.theme-dark {
+  color-scheme: dark;
+  --cc-bg:#070810; --cc-card:#0e1120; --cc-card-2:#12152a;
+  --cc-bd:rgba(255,255,255,.09); --cc-bd-2:rgba(255,255,255,.055);
+  --cc-ink:#f0f1fb; --cc-ink-2:#abafd2; --cc-ink-3:#6b6f93;
+  --cc-brand-soft:color-mix(in srgb, var(--theme-primary) 22%, transparent);
+  --cc-sh-sm:0 1px 2px rgba(0,0,0,.5);
+  --cc-sh:0 18px 50px -12px rgba(0,0,0,.6);
+}
+
+/* Native form controls inside the catalog follow the catalog tokens, not the
+   OS-driven global `select { background: rgb(var(--background)) }` rule above
+   (which is unlayered and would otherwise beat the bg-(--cc-card) utility). */
+.course-catalog select,
+.course-catalog input,
+.course-catalog textarea {
+  background-color: var(--cc-card);
+  color: var(--cc-ink);
+  border-color: var(--cc-bd);
+}
+
 /* Mentoma keyframe animations */
 @keyframes mtm-float-a { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
 @keyframes mtm-float-b { 0%,100%{transform:translateY(0)} 50%{transform:translateY(11px)} }

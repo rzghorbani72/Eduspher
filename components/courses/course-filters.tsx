@@ -1,15 +1,13 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect, useState, useTransition, useRef } from "react";
-import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/lib/hooks/use-debounce";
+import { useTransition } from "react";
+
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { CategorySummary } from "@/lib/api/types";
 
 interface CourseFiltersProps {
   categories: CategorySummary[];
-  initialQuery?: string;
   initialCategoryId?: number;
   initialOrderBy?: string;
   initialIsFree?: boolean;
@@ -17,7 +15,6 @@ interface CourseFiltersProps {
 
 export function CourseFilters({
   categories,
-  initialQuery = "",
   initialCategoryId,
   initialOrderBy = "",
   initialIsFree = false,
@@ -28,245 +25,77 @@ export function CourseFilters({
   const searchParams = useSearchParams();
   const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const isTypingRef = useRef(false);
-  const shouldRestoreFocusRef = useRef(false);
 
-  const [query, setQuery] = useState(initialQuery ?? "");
-  const [categoryId, setCategoryId] = useState(initialCategoryId?.toString() ?? "");
-  const [orderBy, setOrderBy] = useState(initialOrderBy ?? "");
-  const [isFree, setIsFree] = useState(initialIsFree ?? false);
-  const [mounted, setMounted] = useState(false);
-
-  const debouncedQuery = useDebounce(query, 500);
-
-  // Check for focus restoration on mount
-  useEffect(() => {
-    setMounted(true);
-    // Check if we should restore focus (from sessionStorage)
-    if (typeof window !== 'undefined' && sessionStorage.getItem('restoreSearchFocus') === 'true') {
-      shouldRestoreFocusRef.current = true;
-      sessionStorage.removeItem('restoreSearchFocus');
-    }
-  }, []);
-
-  // Only sync from props if user is not actively typing
-  useEffect(() => {
-    if (!isTypingRef.current) {
-      setQuery(initialQuery ?? "");
-      setCategoryId(initialCategoryId?.toString() ?? "");
-      setOrderBy(initialOrderBy ?? "");
-      setIsFree(initialIsFree ?? false);
-    }
-  }, [initialQuery, initialCategoryId, initialOrderBy, initialIsFree]);
-
-  // Restore focus after URL update completes - use multiple strategies
-  useEffect(() => {
-    if (shouldRestoreFocusRef.current && mounted) {
-      // Use requestAnimationFrame to ensure DOM is ready
-      const rafId = requestAnimationFrame(() => {
-        const rafId2 = requestAnimationFrame(() => {
-          if (searchInputRef.current && document.contains(searchInputRef.current)) {
-            searchInputRef.current.focus();
-            // Restore cursor position to end of input
-            const length = searchInputRef.current.value.length;
-            searchInputRef.current.setSelectionRange(length, length);
-            shouldRestoreFocusRef.current = false;
-          }
-        });
-        return () => cancelAnimationFrame(rafId2);
-      });
-      return () => cancelAnimationFrame(rafId);
-    }
-  }, [mounted]);
-
-  // Also try to restore focus when searchParams change (after page re-render)
-  useEffect(() => {
-    if (shouldRestoreFocusRef.current && mounted) {
-      const timer = setTimeout(() => {
-        if (searchInputRef.current && document.contains(searchInputRef.current)) {
-          searchInputRef.current.focus();
-          const length = searchInputRef.current.value.length;
-          searchInputRef.current.setSelectionRange(length, length);
-          shouldRestoreFocusRef.current = false;
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [searchParams, mounted]);
-
-  const updateSearchParams = (updates: Record<string, string | number | boolean | undefined>) => {
+  const update = (updates: Record<string, string | number | boolean | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
-
     Object.entries(updates).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === "") {
-        params.delete(key);
-      } else {
-        params.set(key, String(value));
-      }
+      if (value === undefined || value === null || value === "" || value === false) params.delete(key);
+      else params.set(key, String(value));
     });
-
     params.delete("page");
-
-    // Track if input was focused before update - persist to sessionStorage for remounts
-    const wasFocused = document.activeElement === searchInputRef.current;
-    if (wasFocused) {
-      shouldRestoreFocusRef.current = true;
-      // Also store in sessionStorage in case component remounts
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('restoreSearchFocus', 'true');
-      }
-    }
-
-    startTransition(() => {
-      // Use replace instead of push to avoid adding to history and maintain focus
-      router.replace(`${pathname}?${params.toString()}`);
-    });
+    startTransition(() => router.replace(`${pathname}?${params.toString()}`));
   };
 
-  useEffect(() => {
-    const currentQuery = searchParams.get("q") ?? "";
-    if (debouncedQuery !== currentQuery) {
-      updateSearchParams({ q: debouncedQuery || undefined });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedQuery]);
-
-  const handleCategoryChange = (value: string) => {
-    setCategoryId(value);
-    updateSearchParams({ category_id: value || undefined });
-  };
-
-  const handleOrderByChange = (value: string) => {
-    setOrderBy(value);
-    updateSearchParams({ order_by: value || undefined });
-  };
-
-  const handleIsFreeChange = (checked: boolean) => {
-    setIsFree(checked);
-    updateSearchParams({ is_free: checked || undefined });
-  };
-
-  const handleClear = () => {
-    setQuery("");
-    setCategoryId("");
-    setOrderBy("");
-    setIsFree(false);
-    const wasFocused = document.activeElement === searchInputRef.current;
-    if (wasFocused) {
-      shouldRestoreFocusRef.current = true;
-    }
-    startTransition(() => {
-      router.replace(pathname);
-    });
-  };
-
-  const selectStyle = {
-    backgroundColor: 'var(--theme-surface)',
-    borderColor: 'var(--theme-border-color)',
-    color: 'var(--theme-foreground)',
-  };
+  const pillClass = (active: boolean) =>
+    `rounded-full border px-3.5 py-1.5 text-[13.5px] font-bold transition-all disabled:opacity-50 ${
+      active
+        ? "bg-(--cc-brand) text-(--theme-on-primary) border-transparent"
+        : "border-(--cc-bd) text-(--cc-ink-2) hover:border-(--cc-brand) hover:text-(--cc-ink)"
+    }`;
 
   return (
-    <div
-      className="rounded-theme border p-5 shadow-sm transition-all hover:shadow-md"
-      style={{ backgroundColor: 'var(--theme-card-bg)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
-    >
-      <form
-        className="grid gap-5 md:grid-cols-[2fr_1fr_1fr] md:items-end"
-        onSubmit={(e) => e.preventDefault()}
+    <section className="sticky top-[73px] z-40 flex flex-wrap items-center gap-3.5 rounded-[18px] border bg-(--cc-card) border-(--cc-bd) px-4 py-3.5 shadow-(--cc-sh-sm)">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="me-0.5 text-[13px] font-bold text-(--cc-ink-3)">{t("courses.category")}:</span>
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={() => update({ category_id: undefined })}
+          className={pillClass(!initialCategoryId)}
+        >
+          {t("courses.all")}
+        </button>
+        {categoryList.map((category) => (
+          <button
+            key={category.id}
+            type="button"
+            disabled={isPending}
+            onClick={() => update({ category_id: category.id })}
+            className={pillClass(initialCategoryId === category.id)}
+          >
+            {category.name}
+          </button>
+        ))}
+      </div>
+
+      <div className="h-6 w-px bg-(--cc-bd)" />
+
+      <button
+        type="button"
+        disabled={isPending}
+        onClick={() => update({ is_free: !initialIsFree })}
+        className={`inline-flex items-center gap-2 ${pillClass(initialIsFree)}`}
       >
-        <div className="space-y-2">
-          <label className="text-sm font-medium opacity-75" htmlFor="q">
-            {t("courses.searchCourses")}
-          </label>
-          <Input
-            ref={searchInputRef}
-            id="q"
-            name="q"
-            value={query}
-            onChange={(e) => {
-              isTypingRef.current = true;
-              setQuery(e.target.value);
-              setTimeout(() => { isTypingRef.current = false; }, 600);
-            }}
-            onBlur={() => { setTimeout(() => { isTypingRef.current = false; }, 100); }}
-            placeholder={t("courses.searchPlaceholder")}
-            disabled={isPending}
-            className="transition-all focus:border-[var(--theme-primary)] focus:ring-[var(--theme-primary)]/20"
-            autoComplete="off"
-            style={selectStyle}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium opacity-75" htmlFor="category_id">
-            {t("courses.category")}
-          </label>
-          <select
-            id="category_id"
-            name="category_id"
-            value={categoryId}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            disabled={isPending}
-            className="h-11 w-full rounded-theme border px-3 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] disabled:opacity-50"
-            style={selectStyle}
-          >
-            <option value="">{t("courses.allCategories")}</option>
-            {categoryList.map((category) => (
-              <option key={category.id} value={category.id}>{category.name}</option>
-            ))}
-          </select>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium opacity-75" htmlFor="order_by">
-            {t("courses.sortBy")}
-          </label>
-          <select
-            id="order_by"
-            name="order_by"
-            value={orderBy}
-            onChange={(e) => handleOrderByChange(e.target.value)}
-            disabled={isPending}
-            className="h-11 w-full rounded-theme border px-3 text-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] disabled:opacity-50"
-            style={selectStyle}
-          >
-            <option value="">{t("courses.newest")}</option>
-            <option value="OLDEST">{t("courses.oldest")}</option>
-            <option value="PRICE_LOW_TO_HIGH">{t("courses.priceLowToHigh")}</option>
-            <option value="PRICE_HIGH_TO_LOW">{t("courses.priceHighToLow")}</option>
-            <option value="UPDATED_DESC">{t("courses.recentlyUpdated")}</option>
-          </select>
-        </div>
-        <div className="md:col-span-3 border-t pt-4" style={{ borderColor: 'var(--theme-border-color)' }}>
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="is_free"
-                name="is_free"
-                checked={isFree}
-                onChange={(e) => handleIsFreeChange(e.target.checked)}
-                disabled={isPending}
-                className="h-4 w-4 rounded text-[var(--theme-primary)] focus:ring-[var(--theme-primary)] disabled:opacity-50 transition-all"
-                style={{ borderColor: 'var(--theme-border-strong)', accentColor: 'var(--theme-primary)' }}
-              />
-              <label htmlFor="is_free" className="text-sm font-medium opacity-75">
-                {t("courses.freeCoursesOnly")}
-              </label>
-            </div>
-            <button
-              type="button"
-              onClick={handleClear}
-              disabled={isPending}
-              className="inline-flex h-10 items-center rounded-full border px-5 text-sm font-semibold transition-all hover:scale-105 hover:bg-[var(--theme-surface)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)] disabled:opacity-50"
-              style={{ borderColor: 'var(--theme-border-strong)', color: 'var(--theme-foreground)' }}
-            >
-              {t("common.clear")}
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
+        <span className="h-1.5 w-1.5 rounded-full bg-[#10b981]" />
+        {t("courses.freeCoursesOnly")}
+      </button>
+
+      <div className="ms-auto flex items-center gap-2">
+        <span className="text-[13px] font-bold text-(--cc-ink-3)">{t("courses.sortBy")}:</span>
+        <select
+          aria-label={t("courses.sortBy")}
+          value={initialOrderBy}
+          disabled={isPending}
+          onChange={(e) => update({ order_by: e.target.value || undefined })}
+          className="cursor-pointer rounded-[10px] border bg-(--cc-card) border-(--cc-bd) px-3 py-2 text-[13.5px] font-bold text-(--cc-ink) outline-none disabled:opacity-50"
+        >
+          <option value="">{t("courses.newest")}</option>
+          <option value="OLDEST">{t("courses.oldest")}</option>
+          <option value="PRICE_LOW_TO_HIGH">{t("courses.priceLowToHigh")}</option>
+          <option value="PRICE_HIGH_TO_LOW">{t("courses.priceHighToLow")}</option>
+          <option value="UPDATED_DESC">{t("courses.recentlyUpdated")}</option>
+        </select>
+      </div>
+    </section>
   );
 }
-

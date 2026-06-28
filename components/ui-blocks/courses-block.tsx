@@ -28,6 +28,7 @@ interface CoursesBlockProps {
     slug: string | null;
     isSubdomain?: boolean;
     name: string | null;
+    academyId?: string | null;
   };
 }
 
@@ -49,7 +50,11 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const showViewAll = config?.showViewAll !== false;
 
   const [coursePayload, user, currentAcademy] = await Promise.all([
-    getCourses({ limit, published: true }).catch(() => null),
+    getCourses({
+      limit,
+      published: true,
+      ...(storeContext?.academyId ? { academy_id: storeContext.academyId } : {}),
+    }).catch(() => null),
     getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
   ]);

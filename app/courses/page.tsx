@@ -3,9 +3,10 @@ import { BookOpen } from "lucide-react";
 
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseFilters } from "@/components/courses/course-filters";
+import { CourseSearch } from "@/components/courses/course-search";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCourses, getCategories, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
-import { buildAcademyPath } from "@/lib/utils";
+import { buildAcademyPath, toPersianDigits } from "@/lib/utils";
 import { getAcademyContext } from "@/lib/store-context";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
@@ -82,36 +83,50 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
   const translate = (key: string) => t(key, language);
 
+  const academyName = (storeForLang as { name?: string } | null)?.name ?? null;
+  const total = pagination?.total ?? courses.length;
+
   return (
-    <div className="relative space-y-6">
+    <div className="course-catalog relative space-y-7">
       {/* Creative background elements for courses page */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-1/4 w-72 h-72 bg-gradient-to-br from-[var(--theme-primary)]/8 to-[var(--theme-secondary)]/8 rounded-full blur-3xl animate-float-slow" />
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-gradient-to-br from-[var(--theme-secondary)]/8 to-[var(--theme-accent)]/8 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: "1.5s" }} />
       </div>
-      
-      <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--theme-foreground)] sm:text-4xl">
-          {translate("pages.courseCatalogue")}
+
+      <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {academyName ? (
+          <span className="inline-block rounded-full bg-(--cc-brand-soft) px-3.5 py-1.5 text-[13px] font-extrabold text-(--cc-brand)">
+            {academyName}
+          </span>
+        ) : null}
+        <h1 className="mt-4 max-w-3xl text-balance text-4xl font-black leading-tight tracking-tight text-(--cc-ink) sm:text-5xl">
+          {translate("courses.heroTitle")}{" "}
+          <span className="bg-linear-to-br from-(--theme-primary) to-(--theme-secondary) bg-clip-text text-transparent">
+            {translate("courses.heroTitleAccent")}
+          </span>
         </h1>
-        <p className="max-w-2xl text-base leading-7 text-muted">
-          {translate("pages.courseCatalogueDescription")}
-        </p>
-      </div>
+        <p className="mt-4 max-w-xl text-lg text-(--cc-ink-2)">{translate("courses.heroSubtitle")}</p>
+        <CourseSearch initialQuery={query} />
+      </section>
 
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
         <CourseFilters
           categories={categories}
-          initialQuery={query}
           initialCategoryId={categoryId}
           initialOrderBy={orderBy}
           initialIsFree={isFree}
         />
       </div>
 
+      <div className="flex items-baseline gap-2">
+        <span className="text-[22px] font-black text-(--cc-ink)">{toPersianDigits(total, language)}</span>
+        <span className="text-[15px] font-semibold text-(--cc-ink-3)">{translate("courses.coursesFound")}</span>
+      </div>
+
       {courses.length > 0 ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
               {courses.map((course, index) => (
                 <div
                   key={course.id}
@@ -133,7 +148,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       is_free: isFree,
                       page: page - 1,
                     })}`}
-                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-theme bg-card px-3 text-sm font-semibold text-foreground transition-all hover:scale-105 hover:bg-surface hover:border-primary/30"
+                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border bg-(--cc-card) border-(--cc-bd) px-3 text-sm font-semibold text-(--cc-ink) transition-all hover:scale-105 hover:border-(--cc-brand)"
                   >
                     ←
                   </Link>
@@ -157,11 +172,11 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                         href={`${buildPath("/courses")}${href}`}
                         className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition-all ${
                           isActive
-                            ? "bg-[var(--theme-primary)] text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 scale-105"
-                            : "border border-theme bg-card text-foreground hover:scale-105 hover:bg-surface hover:border-primary/30"
+                            ? "bg-(--cc-brand) text-(--theme-on-primary) shadow-lg scale-105"
+                            : "border bg-(--cc-card) border-(--cc-bd) text-(--cc-ink) hover:scale-105 hover:border-(--cc-brand)"
                         }`}
                       >
-                        {targetPage}
+                        {toPersianDigits(targetPage, language)}
                       </Link>
                     );
                   }
@@ -175,7 +190,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                       is_free: isFree,
                       page: page + 1,
                     })}`}
-                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-theme bg-card px-3 text-sm font-semibold text-foreground transition-all hover:scale-105 hover:bg-surface hover:border-primary/30"
+                    className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border bg-(--cc-card) border-(--cc-bd) px-3 text-sm font-semibold text-(--cc-ink) transition-all hover:scale-105 hover:border-(--cc-brand)"
                   >
                     →
                   </Link>

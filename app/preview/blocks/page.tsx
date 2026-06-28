@@ -21,6 +21,9 @@ export default async function PreviewBlocksPage({
   const token = typeof sp.token === "string" ? sp.token : undefined;
   const draft = sp.draft === "1";
   const edit = sp.edit === "1";
+  // Real-data mode renders dynamic blocks (e.g. courses) with the editing
+  // academy's own records instead of placeholder/sample content.
+  const realData = sp.data === "real";
   // Live hero-variant thumbnails: force the hero's `style` so the picker can
   // preview every design with the academy's real theme and content.
   const heroStyle = typeof sp.heroStyle === "string" ? sp.heroStyle : undefined;
@@ -89,6 +92,7 @@ export default async function PreviewBlocksPage({
                 slug: null,
                 name: null,
                 stats: preset.academy_stats ?? null,
+                academyId: realData ? preset.academy_id ?? null : null,
               }}
             />
           </div>
