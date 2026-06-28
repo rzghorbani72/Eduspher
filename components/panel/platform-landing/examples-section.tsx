@@ -140,7 +140,12 @@ export function ExamplesSection({ academies = [] }: Props) {
                 </div>
                 <div style={{ padding: 22, textAlign: "right" }}>
                   <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>{academy.name}</h3>
-                  <div style={{ marginTop: 16, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                  {slug && (
+                    <p style={{ margin: "6px 0 0", fontSize: 12, color: "var(--ink-3)", direction: "ltr", textAlign: "right", fontFamily: "monospace" }}>
+                      {slug}.mentoma.com
+                    </p>
+                  )}
+                  <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "var(--brand)", fontWeight: 700, fontSize: 13 }}>
                       دیدن آکادمی
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" style={{ transform: "scaleX(-1)" }}><path d="m9 6 6 6-6 6" /></svg>

@@ -114,7 +114,7 @@ export function PlatformLandingPage({
           <TrustStrip />
           <MetricsSection />
           <FeaturesSection />
-          <HowSection />
+          {/* <HowSection /> */}
           <ExamplesSection academies={academies} />
           <ComparisonSection />
           {/* <TestimonialsSection /> */}
