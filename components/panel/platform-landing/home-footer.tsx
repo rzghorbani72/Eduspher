@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const MentomaLogo = () => (
+const BrandLogo = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <circle cx="6" cy="7" r="2.3" fill="#fff" />
     <circle cx="18" cy="6" r="2.3" fill="#fff" opacity=".85" />
@@ -27,7 +27,7 @@ export function HomeFooter() {
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "64px 22px 30px", display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr 1fr", gap: 40 }}>
         <div>
           <a href="#top" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "inherit" }}>
-            <span style={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 12, background: "var(--grad)", flexShrink: 0 }}><MentomaLogo /></span>
+            <span style={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 12, background: "var(--grad)", flexShrink: 0 }}><BrandLogo /></span>
             <span style={{ fontWeight: 800, fontSize: 21 }}>منتوما</span>
           </a>
           <p style={{ margin: "16px 0 0", fontSize: 14.5, color: "var(--ink-2)", maxWidth: 300, lineHeight: 1.8 }}>

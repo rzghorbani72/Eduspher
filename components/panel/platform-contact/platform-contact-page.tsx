@@ -38,7 +38,7 @@ export function PlatformContactPage({ adminRegisterUrl }: { adminRegisterUrl: st
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "light";
     try {
-      const saved = localStorage.getItem("mentoma-theme") as Theme | null;
+      const saved = localStorage.getItem("landing-theme") as Theme | null;
       if (saved === "dark" || saved === "light") return saved;
     } catch {}
     return "light";
@@ -49,7 +49,7 @@ export function PlatformContactPage({ adminRegisterUrl }: { adminRegisterUrl: st
   const toggleTheme = () => {
     const next: Theme = theme === "dark" ? "light" : "dark";
     setTheme(next);
-    try { localStorage.setItem("mentoma-theme", next); } catch {}
+    try { localStorage.setItem("landing-theme", next); } catch {}
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -59,7 +59,7 @@ export function PlatformContactPage({ adminRegisterUrl }: { adminRegisterUrl: st
 
   return (
     <div
-      className={`mentoma-page${theme === "dark" ? " theme-dark" : ""}`}
+      className={`landing-page${theme === "dark" ? " theme-dark" : ""}`}
       dir="rtl"
       style={{
         position: "relative",

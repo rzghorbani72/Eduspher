@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const MentomaLogo = () => (
+const BrandLogo = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <circle cx="6" cy="7" r="2.3" fill="#fff" />
     <circle cx="18" cy="6" r="2.3" fill="#fff" opacity=".85" />
@@ -61,7 +61,7 @@ export function AboutFooter() {
                 flexShrink: 0,
               }}
             >
-              <MentomaLogo />
+              <BrandLogo />
             </span>
             <span style={{ fontWeight: 800, fontSize: 21 }}>منتوما</span>
           </Link>

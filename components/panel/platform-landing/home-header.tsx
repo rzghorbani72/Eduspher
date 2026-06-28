@@ -4,7 +4,7 @@ import Link from "next/link";
 
 type Theme = "light" | "dark";
 
-const MentomaLogo = () => (
+const BrandLogo = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <circle cx="6" cy="7" r="2.3" fill="#fff" />
     <circle cx="18" cy="6" r="2.3" fill="#fff" opacity=".85" />
@@ -36,7 +36,7 @@ export function HomeHeader({ theme, toggleTheme, adminLoginUrl, adminRegisterUrl
         >
           <a href="#top" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "inherit" }}>
             <span style={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 12, background: "var(--grad)", boxShadow: "0 8px 20px -6px rgba(109,94,252,.6)", flexShrink: 0 }}>
-              <MentomaLogo />
+              <BrandLogo />
             </span>
             <span style={{ fontWeight: 800, fontSize: 21, letterSpacing: "-.01em" }}>منتوما</span>
           </a>

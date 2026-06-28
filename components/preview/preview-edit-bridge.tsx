@@ -148,7 +148,7 @@ export function PreviewEditBridge() {
       const value = isRich ? el.innerHTML : el.innerText.trim();
       if (value !== original) {
         window.parent?.postMessage(
-          { source: "mentoma-editor", type: "field-update", blockId, fieldKey, value },
+          { source: "template-editor", type: "field-update", blockId, fieldKey, value },
           "*",
         );
       }
@@ -275,7 +275,7 @@ export function PreviewEditBridge() {
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
         blockEl.classList.add(SELECTED);
         window.parent?.postMessage(
-          { source: "mentoma-editor", type: "select", blockId }, "*",
+          { source: "template-editor", type: "select", blockId }, "*",
         );
         showLiveToast(e.clientX, e.clientY);
         return;
@@ -286,7 +286,7 @@ export function PreviewEditBridge() {
       blockEl.classList.remove(HOVER);
       blockEl.classList.add(SELECTED);
       window.parent?.postMessage(
-        { source: "mentoma-editor", type: "select", blockId }, "*",
+        { source: "template-editor", type: "select", blockId }, "*",
       );
     };
 
@@ -310,7 +310,7 @@ export function PreviewEditBridge() {
         source?: string; type?: string;
         blockId?: string; fieldKey?: string; value?: string; visible?: boolean;
       };
-      if (!data || data.source !== "mentoma-admin") return;
+      if (!data || data.source !== "template-admin") return;
 
       if (data.type === "highlight") {
         // Same block as active edit → just ignore (don't commit mid-edit)

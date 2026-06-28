@@ -7,7 +7,7 @@ const oldWayItems = [
   "نمایش برندِ ابزار، نه برند تو",
 ];
 
-const mentomaItems = [
+const landingItems = [
   "راه‌اندازی کامل در همان روز",
   "بدون نیاز به کدنویسی یا تیم فنی",
   "سایت، دوره و فروش در یک داشبورد",
@@ -74,7 +74,7 @@ export function ComparisonSection() {
           </div>
         </div>
 
-        {/* Mentoma Way */}
+        {/* Landing Way */}
         <div style={{ position: "relative", padding: "34px 30px", borderRadius: "var(--r-xl)", border: "1px solid var(--brand)", background: "linear-gradient(160deg,var(--brand-soft),var(--card) 70%)", boxShadow: "var(--sh)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 26 }}>
             <span style={{ display: "grid", placeItems: "center", width: 42, height: 42, borderRadius: 12, background: "var(--grad)", color: "#fff", boxShadow: "0 10px 22px -8px rgba(109,94,252,.6)" }}>
@@ -86,7 +86,7 @@ export function ComparisonSection() {
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            {mentomaItems.map((item) => (
+            {landingItems.map((item) => (
               <div key={item} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
                 <span style={{ flex: "0 0 auto", width: 10, height: 10, borderRadius: "50%", background: "var(--grad)", marginTop: 7, boxShadow: "0 0 0 4px var(--brand-soft)" }} />
                 <span style={{ fontSize: 15.5, fontWeight: 600, color: "var(--ink)", lineHeight: 1.6 }}>{item}</span>
