@@ -9,7 +9,7 @@ ENV npm_config_registry=${NPM_REGISTRY}
 ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 
 RUN npm config set registry "${NPM_REGISTRY}" \
-  && npm install -g pnpm@9.15.9 \
+  && npm install -g pnpm@11.5.2 \
   && pnpm config set registry "${NPM_REGISTRY}" \
   && pnpm config set fetch-retries 5 \
   && pnpm config set fetch-retry-mintimeout 20000 \
@@ -22,7 +22,7 @@ FROM base AS deps
 
 ENV HUSKY=0
 
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 RUN pnpm config get registry \
   && pnpm install --frozen-lockfile --registry "${NPM_REGISTRY}"

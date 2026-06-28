@@ -49,12 +49,5 @@
     "tailwindcss": "^4.1.17",
     "ts-node": "^10.9.2",
     "typescript": "^5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "sharp",
-      "unrs-resolver"
-    ]
   }
 }
