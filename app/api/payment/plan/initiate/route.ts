@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { academy_plan_id, amount, coupon_code, mobile } = body;
+    const { academy_plan_id, amount, coupon_code, mobile, provider } = body;
 
     if (!academy_plan_id || !amount) {
       return NextResponse.json(
@@ -34,7 +34,9 @@ export async function POST(request: NextRequest) {
 
     const academyId = cookieStore.get(env.academyIdCookie)?.value;
     const origin = request.headers.get("origin") || env.backendOrigin;
-    const callbackUrl = `${origin}/payment/callback`;
+    const callbackUrl = provider === 'SAMAN_SEP'
+      ? `${origin}/payment/saman-callback`
+      : `${origin}/payment/callback`;
 
     const backendRes = await fetch(`${backendApiBaseUrl}/payments/checkout`, {
       method: "POST",
@@ -49,6 +51,7 @@ export async function POST(request: NextRequest) {
         callback_url: callbackUrl,
         ...(coupon_code && { coupon_code }),
         ...(mobile && { mobile }),
+        ...(provider && { provider }),
       }),
     });
 

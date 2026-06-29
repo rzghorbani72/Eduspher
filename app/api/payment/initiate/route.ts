@@ -34,9 +34,11 @@ export async function POST(request: NextRequest) {
 
     const academyId = cookieStore.get(env.academyIdCookie)?.value;
 
-    // Build the callback URL PayPing will redirect the user back to
+    // Saman SEP POSTs back to callback; PayPing GETs back to callback
     const origin = request.headers.get("origin") || env.backendOrigin;
-    const callbackUrl = `${origin}/payment/callback`;
+    const callbackUrl = provider === 'SAMAN_SEP'
+      ? `${origin}/payment/saman-callback`
+      : `${origin}/payment/callback`;
 
     const backendRes = await fetch(`${backendApiBaseUrl}/payments/checkout`, {
       method: "POST",
