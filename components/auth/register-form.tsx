@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
+import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Mail, Lock, CheckCircle } from "lucide-react";
@@ -72,6 +73,8 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const isSubmittingRef = useRef(false);
+  const phoneOtpTimer = useOtpTimer();
+  const emailOtpTimer = useOtpTimer();
 
   const registerSchema = createRegisterSchema(primaryVerificationMethod);
   type RegisterValues = z.infer<typeof registerSchema>;
@@ -127,6 +130,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
       const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as { otp?: string };
       setPhoneOtpSent(true);
+      phoneOtpTimer.start();
       // TODO: Remove when real SMS/email provider is integrated
       if (response?.otp) {
         setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
@@ -183,6 +187,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     try {
       const response = await sendEmailOtp(email as string, OtpType.REGISTER_EMAIL_VERIFICATION) as { otp?: string };
       setEmailOtpSent(true);
+      emailOtpTimer.start();
       // TODO: Remove when real SMS/email provider is integrated
       if (response?.otp) {
         setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
@@ -432,15 +437,21 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                     disabled={isLoading || otpLoading}
                     className="flex-1"
                   />
-                  <Button
-                    type="button"
-                    onClick={handleSendPhoneOtp}
-                    disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
-                    variant="outline"
-                    className="whitespace-nowrap"
-                  >
-                    {otpLoading ? "Sending..." : phoneOtpSent ? "Resend OTP" : "Send Phone OTP"}
-                  </Button>
+                  {phoneOtpSent && !phoneOtpTimer.canResend ? (
+                    <span className="whitespace-nowrap text-sm text-muted-foreground tabular-nums px-2">
+                      {phoneOtpTimer.formatted}
+                    </span>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={handleSendPhoneOtp}
+                      disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
+                      variant="outline"
+                      className="whitespace-nowrap"
+                    >
+                      {otpLoading ? "Sending..." : phoneOtpSent ? "Resend OTP" : "Send Phone OTP"}
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     onClick={handleVerifyPhoneOtp}
@@ -470,15 +481,21 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                     disabled={isLoading || otpLoading}
                     className="flex-1"
                   />
-                  <Button
-                    type="button"
-                    onClick={handleSendEmailOtp}
-                    disabled={otpLoading || !hasEmail}
-                    variant="outline"
-                    className="whitespace-nowrap"
-                  >
-                    {otpLoading ? "Sending..." : emailOtpSent ? "Resend OTP" : "Send Email OTP"}
-                  </Button>
+                  {emailOtpSent && !emailOtpTimer.canResend ? (
+                    <span className="whitespace-nowrap text-sm text-muted-foreground tabular-nums px-2">
+                      {emailOtpTimer.formatted}
+                    </span>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={handleSendEmailOtp}
+                      disabled={otpLoading || !hasEmail}
+                      variant="outline"
+                      className="whitespace-nowrap"
+                    >
+                      {otpLoading ? "Sending..." : emailOtpSent ? "Resend OTP" : "Send Email OTP"}
+                    </Button>
+                  )}
                   <Button
                     type="button"
                     onClick={handleVerifyEmailOtp}

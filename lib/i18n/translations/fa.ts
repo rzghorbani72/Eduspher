@@ -422,6 +422,7 @@ export const fa = {
     invalidOtp: 'کد تأیید نامعتبر است',
     otpExpired: 'کد تأیید منقضی شده است',
     resendOtp: 'ارسال مجدد کد',
+    resendIn: 'ارسال مجدد در',
   },
   account: {
     title: 'حساب کاربری من',

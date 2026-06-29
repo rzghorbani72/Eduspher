@@ -420,6 +420,7 @@ export const en = {
     invalidOtp: 'Invalid verification code',
     otpExpired: 'Verification code has expired',
     resendOtp: 'Resend code',
+    resendIn: 'Resend in',
   },
   account: {
     title: 'My Account',

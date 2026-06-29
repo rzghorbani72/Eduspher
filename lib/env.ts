@@ -4,7 +4,7 @@ const normalizeBaseUrl = (origin: string) => {
 };
 
 const normalizeApiPath = (path: string) => {
-  if (!path) return '/api';
+  if (!path) return '/v1';
   if (!path.startsWith('/')) {
     return `/${path}`;
   }
@@ -26,7 +26,7 @@ const adminPanelOrigin = normalizeBaseUrl(
 
 export const env = {
   backendOrigin: normalizeBaseUrl(process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? ''),
-  backendApiPath: normalizeApiPath(process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? '/api'),
+  backendApiPath: normalizeApiPath(process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? '/v1'),
   adminPanelOrigin,
   defaultAcademyId,
   defaultAcademySlug,

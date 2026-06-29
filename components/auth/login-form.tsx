@@ -2,12 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Mail, Phone, ArrowLeft } from "lucide-react";
 
 import { postJson, sendPhoneOtp, sendEmailOtp, loginByPhoneOtp, loginByEmailOtp } from "@/lib/api/client";
+import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { env } from "@/lib/env";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,8 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string; phone: string } | null>(null);
   const [otp, setOtp] = useState("");
   const [otpResending, setOtpResending] = useState(false);
+  const otpGateTimer = useOtpTimer();
+  const otpLoginTimer = useOtpTimer();
 
   const {
     register,
@@ -100,6 +103,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     setError(null);
     try {
       await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION);
+      otpGateTimer.start();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
@@ -132,6 +136,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           await sendEmailOtp(target.value, OtpType.LOGIN_BY_EMAIL);
         }
         setOtpLoginSent(true);
+        otpLoginTimer.start();
       } catch (err) {
         setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
       }
@@ -196,6 +201,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
 
         if (result?.phone_verification_required) {
           setOtpGate({ tempToken: result.temp_token ?? "", maskedPhone: result.phone ?? "", phone: result.full_phone || result.phone || "" });
+          otpGateTimer.start();
           return;
         }
 
@@ -252,14 +258,20 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
             {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
           </Button>
         </div>
-        <button
-          type="button"
-          className="w-full text-center text-sm text-(--theme-primary) hover:underline"
-          onClick={resendOtp}
-          disabled={otpResending}
-        >
-          {otpResending ? `${t("auth.resendOtp")}...` : t("auth.resendOtp")}
-        </button>
+        {otpGateTimer.canResend ? (
+          <button
+            type="button"
+            className="w-full text-center text-sm text-(--theme-primary) hover:underline"
+            onClick={resendOtp}
+            disabled={otpResending}
+          >
+            {otpResending ? `${t("auth.resendOtp")}...` : t("auth.resendOtp")}
+          </button>
+        ) : (
+          <p className="text-center text-sm text-muted-foreground tabular-nums">
+            {t("auth.resendIn")} {otpGateTimer.formatted}
+          </p>
+        )}
       </div>
     );
   }
@@ -437,14 +449,20 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
             </Button>
           </div>
-          <button
-            type="button"
-            className="w-full text-center text-sm text-(--theme-primary) hover:underline"
-            onClick={sendLoginOtp}
-            disabled={pending}
-          >
-            {t("auth.resendOtp")}
-          </button>
+          {otpLoginTimer.canResend ? (
+            <button
+              type="button"
+              className="w-full text-center text-sm text-(--theme-primary) hover:underline"
+              onClick={() => { sendLoginOtp(); otpLoginTimer.start(); }}
+              disabled={pending}
+            >
+              {t("auth.resendOtp")}
+            </button>
+          ) : (
+            <p className="text-center text-sm text-muted-foreground tabular-nums">
+              {t("auth.resendIn")} {otpLoginTimer.formatted}
+            </p>
+          )}
         </div>
       ) : (
         <div className="space-y-6">

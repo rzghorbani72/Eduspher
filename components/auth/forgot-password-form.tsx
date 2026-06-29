@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useRouter } from "next/navigation";
 import Link from "@/components/ui/link";
 import { Mail, Lock, ArrowLeft, CheckCircle } from "lucide-react";
@@ -45,6 +46,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
+  const otpTimer = useOtpTimer();
   const getInitialCountry = () => {
     if (defaultCountryCode) {
       const country = getCountryByCode(defaultCountryCode);
@@ -172,6 +174,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
         }
       }
       setStep("otp");
+      otpTimer.start();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
       setError(errorMessage);
@@ -394,6 +397,23 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             >
               {isLoading ? "Verifying..." : "Verify OTP"}
             </Button>
+          </div>
+
+          <div className="text-center">
+            {otpTimer.canResend ? (
+              <button
+                type="button"
+                className="text-sm text-(--theme-primary) hover:underline"
+                onClick={handleSendOtp}
+                disabled={isLoading}
+              >
+                Resend code
+              </button>
+            ) : (
+              <p className="text-sm text-muted-foreground tabular-nums">
+                Resend in {otpTimer.formatted}
+              </p>
+            )}
           </div>
         </div>
       )}
