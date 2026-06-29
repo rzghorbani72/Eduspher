@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { ACADEMY_ID, setAcademyCookie } from '../helpers/auth';
+import { setAcademyCookie } from '../helpers/auth';
 
 /**
  * Full student registration flow @backend.
