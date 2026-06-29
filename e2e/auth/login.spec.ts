@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 /**
  * edusphere `/auth/login` — STUDENT login (email or phone + password).
- * The form's zod messages are literal English strings, so we can assert them
- * directly regardless of the academy's display language.
+ * The form uses t() for validation messages (translated to the academy's language),
+ * so we assert on the `has-error` CSS class added by the form, not message text.
  */
 test.describe('edusphere student login — validation', () => {
   test('requires an identifier (empty submit)', async ({ page }) => {
@@ -11,7 +11,8 @@ test.describe('edusphere student login — validation', () => {
 
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.getByText('Email or phone is required')).toBeVisible();
+    // In password mode the identifier input gets has-error when blank.
+    await expect(page.locator('#identifier')).toHaveClass(/has-error/);
   });
 
   test('rejects a too-short password', async ({ page }) => {
@@ -21,7 +22,8 @@ test.describe('edusphere student login — validation', () => {
     await page.locator('#password').fill('123');
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.getByText('Minimum 6 characters')).toBeVisible();
+    // The password input gets has-error when validation fails.
+    await expect(page.locator('#password')).toHaveClass(/has-error/);
   });
 
   test('OTP method removes the password field', async ({ page }) => {
