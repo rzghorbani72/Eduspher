@@ -423,6 +423,12 @@ export const fa = {
     otpExpired: 'کد تأیید منقضی شده است',
     resendOtp: 'ارسال مجدد کد',
     resendIn: 'ارسال مجدد در',
+    phoneRequired: 'شماره تلفن الزامی است',
+    emailRequired: 'ایمیل الزامی است',
+    identifierRequired: 'ایمیل یا شماره تلفن الزامی است',
+    passwordMinLength: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
+    showPassword: 'نمایش رمز عبور',
+    hidePassword: 'پنهان کردن رمز عبور',
   },
   account: {
     title: 'حساب کاربری من',

@@ -2,10 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Phone, ArrowLeft } from "lucide-react";
+import { Mail, Phone, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 import { postJson, sendPhoneOtp, sendEmailOtp, loginByPhoneOtp, loginByEmailOtp } from "@/lib/api/client";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
@@ -13,7 +13,6 @@ import { env } from "@/lib/env";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
@@ -22,14 +21,7 @@ import { useTranslation } from "@/lib/i18n/hooks";
 import { OtpType } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const loginSchema = z.object({
-  identifier: z
-    .string({ required_error: "Email or phone is required" })
-    .min(1, "Email or phone is required"),
-  password: z.string({ required_error: "Password is required" }).min(6, "Minimum 6 characters"),
-});
-
-type LoginValues = z.infer<typeof loginSchema>;
+type LoginValues = { identifier: string; password: string };
 
 interface LoginFormProps {
   defaultCountryCode?: string;
@@ -45,6 +37,8 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const [authMode, setAuthMode] = useState<"password" | "otp">("password");
   const [otpLoginSent, setOtpLoginSent] = useState(false);
   const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
+  const [showPassword, setShowPassword] = useState(false);
+
   const getInitialCountry = () => {
     if (defaultCountryCode) {
       const country = getCountryByCode(defaultCountryCode);
@@ -56,12 +50,20 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
-  // OTP gate state (for admin-created accounts with unverified phone)
   const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string; phone: string } | null>(null);
   const [otp, setOtp] = useState("");
   const [otpResending, setOtpResending] = useState(false);
   const otpGateTimer = useOtpTimer();
   const otpLoginTimer = useOtpTimer();
+
+  const loginSchema = useMemo(
+    () =>
+      z.object({
+        identifier: z.string().min(1, t("auth.identifierRequired")),
+        password: z.string().min(6, t("auth.passwordMinLength")),
+      }),
+    [t]
+  );
 
   const {
     register,
@@ -70,10 +72,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     setValue,
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      identifier: "",
-      password: "",
-    },
+    defaultValues: { identifier: "", password: "" },
   });
 
   async function finishLogin() {
@@ -180,14 +179,11 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           return match ? decodeURIComponent(match[1]) : null;
         };
 
-        // Academy ids are cuid strings — never coerce to Number.
         const academyIdCookie = getCookieValue(env.academyIdCookie);
         const finalAcademyId =
           academyIdCookie ??
           (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
 
-        // Students use the public-login endpoint; /auth/login is staff-only
-        // (MANAGER/TEACHER) and rejects STUDENT/USER accounts.
         const result = await postJson<{
           phone_verification_required?: boolean;
           temp_token?: string;
@@ -208,17 +204,22 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         await finishLogin();
       } catch (err) {
         setAuthenticated(false);
-        const message = err instanceof Error ? err.message : t("auth.unableToLogin");
-        setError(message);
+        setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
       }
     });
   });
 
+  const errorBlock = error ? (
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+      {error}
+    </div>
+  ) : null;
+
   if (otpGate) {
     return (
       <div className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="otp">{t("auth.otpVerification")}</Label>
+        <div className="space-y-1">
+          <p className="text-sm font-medium">{t("auth.otpVerification")}</p>
           <p className="text-sm text-muted-foreground">
             {t("auth.enterVerificationCode").replace("{phone}", otpGate.maskedPhone)}
           </p>
@@ -233,11 +234,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
           autoFocus
         />
-        {error && (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-            {error}
-          </div>
-        )}
+        {errorBlock}
         <div className="flex gap-2">
           <Button
             type="button"
@@ -277,23 +274,20 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   }
 
   const identifierBlock = (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex gap-2">
         <button
           type="button"
-          onClick={() => {
-            setLoginMethod("email");
-            setValue("identifier", email);
-          }}
+          onClick={() => { setLoginMethod("email"); setValue("identifier", email); }}
           className={cn(
             "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
             loginMethod === "email"
               ? "border-(--theme-primary) bg-(--theme-primary-subtle) text-(--theme-primary)"
-              : "border-slate-200 bg-card  dark:hover:bg-slate-900"
+              : "border-slate-200 bg-card dark:hover:bg-slate-900"
           )}
         >
           <Mail className="h-4 w-4" />
-          Email
+          {t("auth.email")}
         </button>
         <button
           type="button"
@@ -308,19 +302,17 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
             "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
             loginMethod === "phone"
               ? "border-(--theme-primary) bg-(--theme-primary-subtle) text-(--theme-primary)"
-              : "border-slate-200 bg-card  dark:hover:bg-slate-900"
+              : "border-slate-200 bg-card dark:hover:bg-slate-900"
           )}
         >
           <Phone className="h-4 w-4" />
-          Phone
+          {t("auth.phone")}
         </button>
       </div>
+
       {loginMethod === "email" ? (
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Mail className="h-5 w-5 text-muted opacity-60" />
-          </div>
-          <Input
+        <div>
+          <input
             id="identifier"
             type="email"
             dir="ltr"
@@ -331,9 +323,12 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               setEmail(v);
               setValue("identifier", v);
             }}
-            className="pl-10"
-            placeholder="Enter your email"
+            placeholder={t("auth.enterEmail")}
+            className={cn("auth-input", authMode === "password" && errors.identifier && "has-error")}
           />
+          {authMode === "password" && errors.identifier && (
+            <p className="mt-1 text-xs text-destructive">{errors.identifier.message}</p>
+          )}
         </div>
       ) : (
         <PhoneInput
@@ -342,33 +337,22 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           onChange={(value) => {
             setPhoneNumber(value);
             const cleaned = cleanPhoneNumber(value, selectedCountry);
-            const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-            setValue("identifier", fullPhone);
+            setValue("identifier", getFullPhoneNumber(cleaned, selectedCountry));
           }}
           onCountryChange={(country) => {
             setSelectedCountry(country);
             if (phoneNumber) {
               const cleaned = cleanPhoneNumber(phoneNumber, country);
-              const fullPhone = getFullPhoneNumber(cleaned, country);
-              setValue("identifier", fullPhone);
+              setValue("identifier", getFullPhoneNumber(cleaned, country));
             }
           }}
           defaultCountry={selectedCountry}
-          placeholder="09121234567"
+          placeholder={t("auth.enterPhone")}
           autoComplete="tel"
         />
       )}
-      {authMode === "password" && errors.identifier ? (
-        <p className="text-sm text-amber-600 dark:text-amber-400">{errors.identifier.message}</p>
-      ) : null}
     </div>
   );
-
-  const errorBlock = error ? (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-      {error}
-    </div>
-  ) : null;
 
   return (
     <div className="space-y-6">
@@ -377,12 +361,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           <button
             key={m}
             type="button"
-            onClick={() => {
-              setAuthMode(m);
-              setOtpLoginSent(false);
-              setOtp("");
-              setError(null);
-            }}
+            onClick={() => { setAuthMode(m); setOtpLoginSent(false); setOtp(""); setError(null); }}
             className={cn(
               "rounded-md py-2 text-sm font-medium transition-colors",
               authMode === m
@@ -398,13 +377,37 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
       {authMode === "password" ? (
         <form onSubmit={onSubmit} className="space-y-6">
           {identifierBlock}
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" dir="ltr" autoComplete="current-password" {...register("password")} onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("password").onChange(e); }} />
-            {errors.password ? (
-              <p className="text-sm text-amber-600 dark:text-amber-400">{errors.password.message}</p>
-            ) : null}
+
+          <div>
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                dir="ltr"
+                autoComplete="current-password"
+                placeholder={t("auth.password")}
+                className={cn("auth-input with-toggle", errors.password && "has-error")}
+                {...register("password")}
+                onChange={(e) => {
+                  e.target.value = toEnglishDigits(e.target.value);
+                  register("password").onChange(e);
+                }}
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+            )}
           </div>
+
           {errorBlock}
           <Button type="submit" className="w-full" loading={pending}>
             {pending ? t("auth.signingIn") : t("auth.signIn")}
@@ -412,8 +415,8 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         </form>
       ) : otpLoginSent ? (
         <div className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="otp-login">{t("auth.otpVerification")}</Label>
+          <div className="space-y-1">
+            <p className="text-sm font-medium">{t("auth.otpVerification")}</p>
             <p className="text-sm text-muted-foreground">
               {t("auth.enterVerificationCode").replace("{phone}", resolveOtpTarget()?.value ?? "")}
             </p>
@@ -476,4 +479,3 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     </div>
   );
 };
-

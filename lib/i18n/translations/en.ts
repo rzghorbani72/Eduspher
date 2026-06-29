@@ -421,6 +421,12 @@ export const en = {
     otpExpired: 'Verification code has expired',
     resendOtp: 'Resend code',
     resendIn: 'Resend in',
+    phoneRequired: 'Phone number is required',
+    emailRequired: 'Email is required',
+    identifierRequired: 'Email or phone number is required',
+    passwordMinLength: 'Minimum 6 characters',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
   },
   account: {
     title: 'My Account',

@@ -1309,6 +1309,36 @@ select[class*="rounded-sm"] {
   background: rgba(0, 0, 0, 0.38);
 }
 
+/* Underline input — mirrors AdminPanel auth design */
+.auth-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--auth-card-ink) 22%, transparent);
+  border-radius: 0;
+  padding: 0.5rem 0;
+  color: var(--auth-card-ink);
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.auth-input::placeholder {
+  color: color-mix(in srgb, var(--auth-card-ink) 40%, transparent);
+}
+.auth-input:hover:not(:focus) {
+  border-bottom-color: color-mix(in srgb, var(--auth-card-ink) 42%, transparent);
+}
+.auth-input:focus {
+  outline: none;
+  border-bottom-color: var(--auth-accent);
+  box-shadow: 0 1px 0 0 var(--auth-accent);
+}
+.auth-input.with-toggle {
+  padding-left: 2rem;
+}
+.auth-input.has-error {
+  border-bottom-color: hsl(var(--destructive));
+}
+
 /* 404 page */
 .not-found-glow {
   background: color-mix(in srgb, var(--theme-primary) 18%, var(--theme-background));
