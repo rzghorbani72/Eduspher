@@ -427,6 +427,10 @@ export const en = {
     passwordMinLength: 'Minimum 6 characters',
     showPassword: 'Show password',
     hidePassword: 'Hide password',
+    orContinueWith: 'or',
+    continueWithGoogle: 'Continue with Google',
+    googleSoon: 'Google sign-in is coming soon',
+    dontHaveAccountYet: "Don't have an account?",
   },
   account: {
     title: 'My Account',

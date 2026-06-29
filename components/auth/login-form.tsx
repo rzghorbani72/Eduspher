@@ -5,13 +5,12 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Phone, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { postJson, sendPhoneOtp, sendEmailOtp, loginByPhoneOtp, loginByEmailOtp } from "@/lib/api/client";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { env } from "@/lib/env";
 import { useAuthContext } from "@/components/providers/auth-provider";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useStorePath } from "@/components/providers/store-provider";
@@ -20,11 +19,23 @@ import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from "@/lib/pho
 import { useTranslation } from "@/lib/i18n/hooks";
 import { OtpType } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import Link from "@/components/ui/link";
 
 type LoginValues = { identifier: string; password: string };
 
 interface LoginFormProps {
   defaultCountryCode?: string;
+}
+
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden>
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z" />
+      <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z" />
+      <path fill="#EA4335" d="M12 4.75c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.46 1.5 14.97.5 12 .5A11 11 0 0 0 2.18 7.06L5.84 9.9C6.71 7.3 9.14 4.75 12 4.75Z" />
+    </svg>
+  );
 }
 
 export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
@@ -83,7 +94,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     router.refresh();
   }
 
-  async function submitOtp() {
+  async function submitOtpGate() {
     if (!otpGate) return;
     setError(null);
     startTransition(async () => {
@@ -96,7 +107,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     });
   }
 
-  async function resendOtp() {
+  async function resendOtpGate() {
     if (!otpGate) return;
     setOtpResending(true);
     setError(null);
@@ -196,7 +207,11 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         });
 
         if (result?.phone_verification_required) {
-          setOtpGate({ tempToken: result.temp_token ?? "", maskedPhone: result.phone ?? "", phone: result.full_phone || result.phone || "" });
+          setOtpGate({
+            tempToken: result.temp_token ?? "",
+            maskedPhone: result.phone ?? "",
+            phone: result.full_phone || result.phone || "",
+          });
           otpGateTimer.start();
           return;
         }
@@ -210,22 +225,23 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   });
 
   const errorBlock = error ? (
-    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
       {error}
     </div>
   ) : null;
 
+  // ── Phone-verification OTP gate (after password login) ──────────────
   if (otpGate) {
     return (
-      <div className="space-y-6">
-        <div className="space-y-1">
-          <p className="text-sm font-medium">{t("auth.otpVerification")}</p>
-          <p className="text-sm text-muted-foreground">
+      <div className="space-y-5">
+        <div className="space-y-1 text-center">
+          <p className="text-sm font-semibold">{t("auth.otpVerification")}</p>
+          <p className="text-xs text-muted-foreground">
             {t("auth.enterVerificationCode").replace("{phone}", otpGate.maskedPhone)}
           </p>
         </div>
         <Input
-          id="otp"
+          id="otp-gate"
           type="text"
           inputMode="numeric"
           maxLength={6}
@@ -236,78 +252,133 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
         />
         {errorBlock}
         <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => { setOtpGate(null); setOtp(""); setError(null); }}
-            className="flex-1"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.back")}
-          </Button>
-          <Button
-            type="button"
-            className="flex-1"
-            loading={pending}
-            onClick={submitOtp}
-            disabled={otp.length < 4}
-          >
-            {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
-          </Button>
-        </div>
-        {otpGateTimer.canResend ? (
           <button
             type="button"
-            className="w-full text-center text-sm text-(--theme-primary) hover:underline"
-            onClick={resendOtp}
-            disabled={otpResending}
+            onClick={() => { setOtpGate(null); setOtp(""); setError(null); }}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            {otpResending ? `${t("auth.resendOtp")}...` : t("auth.resendOtp")}
+            <ArrowLeft className="h-4 w-4" />
+            {t("common.back")}
           </button>
-        ) : (
-          <p className="text-center text-sm text-muted-foreground tabular-nums">
-            {t("auth.resendIn")} {otpGateTimer.formatted}
-          </p>
-        )}
+          <button
+            type="button"
+            className="auth-submit-btn flex-1"
+            onClick={submitOtpGate}
+            disabled={pending || otp.length < 4}
+          >
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+            {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
+          </button>
+        </div>
+        <div className="text-center text-sm">
+          {otpGateTimer.canResend ? (
+            <button
+              type="button"
+              className="text-[color:var(--auth-accent)] hover:underline disabled:opacity-50"
+              onClick={resendOtpGate}
+              disabled={otpResending}
+            >
+              {otpResending ? `${t("auth.resendOtp")}...` : t("auth.resendOtp")}
+            </button>
+          ) : (
+            <span className="tabular-nums text-muted-foreground text-xs">
+              {t("auth.resendIn")} {otpGateTimer.formatted}
+            </span>
+          )}
+        </div>
       </div>
     );
   }
 
+  // ── OTP login verify step ────────────────────────────────────────────
+  if (authMode === "otp" && otpLoginSent) {
+    return (
+      <div className="space-y-5">
+        <div className="space-y-1 text-center">
+          <p className="text-sm font-semibold">{t("auth.otpVerification")}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("auth.enterVerificationCode").replace("{phone}", resolveOtpTarget()?.value ?? "")}
+          </p>
+        </div>
+        <Input
+          id="otp-login"
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
+          placeholder={t("auth.otpCodePlaceholder")}
+          value={otp}
+          onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
+          autoFocus
+        />
+        {errorBlock}
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => { setOtpLoginSent(false); setOtp(""); setError(null); }}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t("common.back")}
+          </button>
+          <button
+            type="button"
+            className="auth-submit-btn flex-1"
+            onClick={verifyLoginOtp}
+            disabled={pending || otp.length < 4}
+          >
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+            {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
+          </button>
+        </div>
+        <div className="flex items-center justify-between text-sm">
+          <span />
+          {otpLoginTimer.canResend ? (
+            <button
+              type="button"
+              className="text-[color:var(--auth-accent)] hover:underline disabled:opacity-50"
+              onClick={() => { sendLoginOtp(); otpLoginTimer.start(); }}
+              disabled={pending}
+            >
+              {t("auth.resendOtp")}
+            </button>
+          ) : (
+            <span className="tabular-nums text-xs text-muted-foreground">
+              {t("auth.resendIn")} {otpLoginTimer.formatted}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Main login form ──────────────────────────────────────────────────
   const identifierBlock = (
     <div className="space-y-3">
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => { setLoginMethod("email"); setValue("identifier", email); }}
-          className={cn(
-            "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-            loginMethod === "email"
-              ? "border-(--theme-primary) bg-(--theme-primary-subtle) text-(--theme-primary)"
-              : "border-slate-200 bg-card dark:hover:bg-slate-900"
-          )}
-        >
-          <Mail className="h-4 w-4" />
-          {t("auth.email")}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setLoginMethod("phone");
-            if (phoneNumber) {
-              const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-              setValue("identifier", getFullPhoneNumber(cleaned, selectedCountry));
-            }
-          }}
-          className={cn(
-            "flex flex-1 items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-            loginMethod === "phone"
-              ? "border-(--theme-primary) bg-(--theme-primary-subtle) text-(--theme-primary)"
-              : "border-slate-200 bg-card dark:hover:bg-slate-900"
-          )}
-        >
-          <Phone className="h-4 w-4" />
-          {t("auth.phone")}
-        </button>
+      {/* Email / Phone switcher — same pill style as mode toggle */}
+      <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+        {(["email", "phone"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => {
+              setLoginMethod(m);
+              if (m === "email") setValue("identifier", email);
+              if (m === "phone" && phoneNumber) {
+                const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+                setValue("identifier", getFullPhoneNumber(cleaned, selectedCountry));
+              }
+            }}
+            className={cn(
+              "flex items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors",
+              loginMethod === m
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {m === "email" ? <Mail className="h-3.5 w-3.5" /> : <Phone className="h-3.5 w-3.5" />}
+            {m === "email" ? t("auth.email") : t("auth.phone")}
+          </button>
+        ))}
       </div>
 
       {loginMethod === "email" ? (
@@ -355,15 +426,16 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-2 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
+    <div>
+      {/* Mode toggle — exact admin style */}
+      <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
         {(["password", "otp"] as const).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => { setAuthMode(m); setOtpLoginSent(false); setOtp(""); setError(null); }}
             className={cn(
-              "rounded-md py-2 text-sm font-medium transition-colors",
+              "rounded-md py-1.5 text-xs font-medium transition-colors",
               authMode === m
                 ? "bg-card text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -375,10 +447,11 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
       </div>
 
       {authMode === "password" ? (
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-5" noValidate>
           {identifierBlock}
 
-          <div>
+          {/* Password field + forgot link */}
+          <div className="space-y-2">
             <div className="relative">
               <input
                 id="password"
@@ -404,78 +477,69 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>
+              <p className="text-xs text-destructive">{errors.password.message}</p>
             )}
+            <div className="text-start">
+              <Link
+                href={buildPath("/auth/forgot-password")}
+                className="text-xs text-[color:var(--auth-accent)] hover:underline"
+              >
+                {t("auth.forgotPassword")}
+              </Link>
+            </div>
           </div>
 
           {errorBlock}
-          <Button type="submit" className="w-full" loading={pending}>
+
+          <button type="submit" className="auth-submit-btn" disabled={pending}>
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />}
             {pending ? t("auth.signingIn") : t("auth.signIn")}
-          </Button>
+          </button>
         </form>
-      ) : otpLoginSent ? (
-        <div className="space-y-6">
-          <div className="space-y-1">
-            <p className="text-sm font-medium">{t("auth.otpVerification")}</p>
-            <p className="text-sm text-muted-foreground">
-              {t("auth.enterVerificationCode").replace("{phone}", resolveOtpTarget()?.value ?? "")}
-            </p>
-            <Input
-              id="otp-login"
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              placeholder={t("auth.otpCodePlaceholder")}
-              value={otp}
-              onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
-              autoFocus
-            />
-          </div>
-          {errorBlock}
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => { setOtpLoginSent(false); setOtp(""); setError(null); }}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t("common.back")}
-            </Button>
-            <Button
-              type="button"
-              className="flex-1"
-              loading={pending}
-              onClick={verifyLoginOtp}
-              disabled={otp.length < 4}
-            >
-              {pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
-            </Button>
-          </div>
-          {otpLoginTimer.canResend ? (
-            <button
-              type="button"
-              className="w-full text-center text-sm text-(--theme-primary) hover:underline"
-              onClick={() => { sendLoginOtp(); otpLoginTimer.start(); }}
-              disabled={pending}
-            >
-              {t("auth.resendOtp")}
-            </button>
-          ) : (
-            <p className="text-center text-sm text-muted-foreground tabular-nums">
-              {t("auth.resendIn")} {otpLoginTimer.formatted}
-            </p>
-          )}
-        </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {identifierBlock}
           {errorBlock}
-          <Button type="button" className="w-full" loading={pending} onClick={sendLoginOtp}>
+          <button
+            type="button"
+            className="auth-submit-btn"
+            disabled={pending}
+            onClick={sendLoginOtp}
+          >
+            {pending && <Loader2 className="h-4 w-4 animate-spin" />}
             {pending ? t("auth.signingIn") : t("auth.sendLoginCode")}
-          </Button>
+          </button>
         </div>
       )}
+
+      {/* Divider + Google — exact admin layout */}
+      <div className="mt-6 space-y-5">
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">{t("auth.orContinueWith")}</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+
+        <button
+          type="button"
+          onClick={() => alert(t("auth.googleSoon"))}
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-[color:var(--auth-card-bg)] text-sm font-medium text-[color:var(--auth-card-ink)] transition-colors hover:bg-muted"
+        >
+          <GoogleIcon className="h-4 w-4" />
+          {t("auth.continueWithGoogle")}
+        </button>
+      </div>
+
+      {/* Sign-up link */}
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        {t("auth.dontHaveAccountYet")}{" "}
+        <Link
+          href={buildPath("/auth/register")}
+          className="font-semibold text-[color:var(--auth-accent)] hover:underline"
+        >
+          {t("auth.signUp")}
+        </Link>
+      </p>
     </div>
   );
 };

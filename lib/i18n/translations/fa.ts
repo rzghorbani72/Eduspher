@@ -429,6 +429,10 @@ export const fa = {
     passwordMinLength: 'رمز عبور باید حداقل ۶ کاراکتر باشد',
     showPassword: 'نمایش رمز عبور',
     hidePassword: 'پنهان کردن رمز عبور',
+    orContinueWith: 'یا',
+    continueWithGoogle: 'ادامه با گوگل',
+    googleSoon: 'ورود با گوگل به زودی',
+    dontHaveAccountYet: 'حساب کاربری ندارید؟',
   },
   account: {
     title: 'حساب کاربری من',
