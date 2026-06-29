@@ -789,6 +789,8 @@ export interface PreviewPreset {
   theme: Record<string, unknown> | null;
   academy_stats?: { courseCount: number; studentCount: number } | null;
   academy_id?: string | null;
+  academy_name?: string | null;
+  academy_slug?: string | null;
 }
 
 // Single template/preset by key, for the standalone /preview/blocks renderer.

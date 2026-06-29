@@ -49,6 +49,19 @@ export default async function PreviewBlocksPage({
     : selected;
   const themeVars = buildThemeCssVariables(preset.theme ?? null);
 
+  // Real-data mode renders the academy's actual identity (name, slug, stats) so
+  // branding, course links and live counts all reflect the real site. Sample
+  // mode keeps everything null/placeholder so the design shows neutral content.
+  const storeContext = realData
+    ? {
+        id: null,
+        slug: preset.academy_slug ?? null,
+        name: preset.academy_name ?? null,
+        stats: preset.academy_stats ?? null,
+        academyId: preset.academy_id ?? null,
+      }
+    : { id: null, slug: null, name: null, stats: null, academyId: null };
+
   // The wrapper owns the full themed canvas (background + text color) so dark
   // presets never show the host layout's light gaps behind a section.
   // The font-family declaration only lives on `body` (globals.css), which is
@@ -87,13 +100,7 @@ export default async function PreviewBlocksPage({
             <BlocksRenderer
               blocks={[block]}
               includeHeaderFooter
-              storeContext={{
-                id: null,
-                slug: null,
-                name: null,
-                stats: preset.academy_stats ?? null,
-                academyId: realData ? preset.academy_id ?? null : null,
-              }}
+              storeContext={storeContext}
             />
           </div>
         );
