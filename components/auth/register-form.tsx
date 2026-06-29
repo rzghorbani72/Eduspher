@@ -2,13 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Lock, CheckCircle } from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
-import { 
+import {
   sendEmailOtp,
   sendPhoneOtp,
   verifyEmailOtp,
@@ -18,7 +18,6 @@ import {
 import { OtpType } from "@/lib/constants";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -27,38 +26,26 @@ import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/cou
 import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
+import { cn } from "@/lib/utils";
 
-const createRegisterSchema = (primaryMethod: 'phone' | 'email') => z
-  .object({
-    name: z.string({ required_error: "Full name is required" }).min(2, "Enter your full name"),
-    email: primaryMethod === 'email' 
-      ? z.string({ required_error: "Email is required" }).email("Enter a valid email address")
-      : z.string().email("Enter a valid email address").optional().or(z.literal("")),
-    phone_number: primaryMethod === 'phone'
-      ? z.string({ required_error: "Phone number is required" }).min(6, "Enter a valid phone number")
-      : z.string().min(6, "Enter a valid phone number").optional().or(z.literal("")),
-    display_name: z
-      .string({ required_error: "Display name is required" })
-      .min(2, "Display name is required"),
-    password: z.string({ required_error: "Password is required" }).min(6, "Minimum 6 characters"),
-    confirmed_password: z
-      .string({ required_error: "Please confirm your password" })
-      .min(6, "Minimum 6 characters"),
-    bio: z.string().max(300, "Maximum 300 characters").optional(),
-  })
-  .refine((values) => values.password === values.confirmed_password, {
-    path: ["confirmed_password"],
-    message: "Passwords must match",
-  });
+type RegisterValues = {
+  name: string;
+  email?: string;
+  phone_number?: string;
+  display_name: string;
+  password: string;
+  confirmed_password: string;
+  bio?: string;
+};
 
 type Step = "verification" | "form";
 
 interface RegisterFormProps {
   defaultCountryCode?: string;
-  primaryVerificationMethod?: 'phone' | 'email';
+  primaryVerificationMethod?: "phone" | "email";
 }
 
-export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
+export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFormProps) => {
   const router = useRouter();
   useAuthContext();
   const buildPath = useStorePath();
@@ -72,12 +59,36 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   const [phoneOtpVerified, setPhoneOtpVerified] = useState(false);
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const isSubmittingRef = useRef(false);
   const phoneOtpTimer = useOtpTimer();
   const emailOtpTimer = useOtpTimer();
 
-  const registerSchema = createRegisterSchema(primaryVerificationMethod);
-  type RegisterValues = z.infer<typeof registerSchema>;
+  const registerSchema = useMemo(
+    () =>
+      z
+        .object({
+          name: z.string().min(2, t("auth.enterFullName")),
+          email:
+            primaryVerificationMethod === "email"
+              ? z.string().email(t("auth.invalidEmail"))
+              : z.string().email(t("auth.invalidEmail")).optional().or(z.literal("")),
+          phone_number:
+            primaryVerificationMethod === "phone"
+              ? z.string().min(6, t("auth.invalidPhone"))
+              : z.string().min(6, t("auth.invalidPhone")).optional().or(z.literal("")),
+          display_name: z.string().min(2, t("auth.displayNameRequired")),
+          password: z.string().min(6, t("auth.passwordMinLength")),
+          confirmed_password: z.string().min(6, t("auth.passwordMinLength")),
+          bio: z.string().max(300, t("auth.maxBioLength")).optional(),
+        })
+        .refine((v) => v.password === v.confirmed_password, {
+          path: ["confirmed_password"],
+          message: t("auth.passwordsDoNotMatch"),
+        }),
+    [t, primaryVerificationMethod]
+  );
 
   const {
     register,
@@ -99,47 +110,37 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     },
   });
 
-  const getInitialCountry = () => {
-    return getCountryByCode('IR') ?? getDefaultCountry();
-  };
+  const getInitialCountry = () => getCountryByCode("IR") ?? getDefaultCountry();
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneOtp, setPhoneOtp] = useState("");
   const [emailOtp, setEmailOtp] = useState("");
 
-  const isValidPhone = (phone: string) => {
-    const cleaned = cleanPhoneNumber(phone, selectedCountry);
-    return isValidPhoneNumber(cleaned, selectedCountry);
-  };
+  const isValidPhone = (phone: string) =>
+    isValidPhoneNumber(cleanPhoneNumber(phone, selectedCountry), selectedCountry);
 
-  const isValidEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSendPhoneOtp = async () => {
     if (!phoneNumber || !isValidPhone(phoneNumber)) {
-      setError("Please enter a valid phone number first");
+      setError(t("auth.invalidPhone"));
       return;
     }
-
     setOtpLoading(true);
     setError(null);
     setMessage(null);
-
     try {
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
-      const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as { otp?: string };
+      const response = (await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION)) as { otp?: string };
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
-      // TODO: Remove when real SMS/email provider is integrated
-      if (response?.otp) {
-        setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
-      } else {
-        setMessage("OTP sent to your phone number");
-      }
+      setMessage(
+        response?.otp
+          ? `${t("auth.otpSentToPhone")}\n\n🔐 Code: ${response.otp}`
+          : t("auth.otpSentToPhone")
+      );
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
       setOtpLoading(false);
     }
@@ -147,56 +148,48 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
 
   const handleVerifyPhoneOtp = async () => {
     if (!phoneOtp.trim()) {
-      setError("Please enter the OTP");
+      setError(t("auth.enterOtpFirst"));
       return;
     }
-
     setOtpLoading(true);
     setError(null);
     setMessage(null);
-
     try {
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
       const result = await verifyPhoneOtp(fullPhone, phoneOtp, OtpType.REGISTER_PHONE_VERIFICATION);
-      
       if (result.success !== false) {
         setPhoneOtpVerified(true);
-        setMessage("Phone verified successfully");
+        setMessage(t("auth.phoneVerified"));
       } else {
-        setError("Invalid OTP. Please try again.");
+        setError(t("auth.invalidOtp"));
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Invalid OTP";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.invalidOtp"));
     } finally {
       setOtpLoading(false);
     }
   };
 
   const handleSendEmailOtp = async () => {
-    const email = getValues("email");
-    if (!email || !isValidEmail(email)) {
-      setError("Please enter a valid email address first");
+    const emailVal = getValues("email");
+    if (!emailVal || !isValidEmail(emailVal)) {
+      setError(t("auth.invalidEmail"));
       return;
     }
-
     setOtpLoading(true);
     setError(null);
     setMessage(null);
-
     try {
-      const response = await sendEmailOtp(email as string, OtpType.REGISTER_EMAIL_VERIFICATION) as { otp?: string };
+      const response = (await sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION)) as { otp?: string };
       setEmailOtpSent(true);
       emailOtpTimer.start();
-      // TODO: Remove when real SMS/email provider is integrated
-      if (response?.otp) {
-        setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
-      } else {
-        setMessage("OTP sent to your email address");
-      }
+      setMessage(
+        response?.otp
+          ? `${t("auth.otpSentToEmail")}\n\n🔐 Code: ${response.otp}`
+          : t("auth.otpSentToEmail")
+      );
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
       setOtpLoading(false);
     }
@@ -204,32 +197,27 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
 
   const handleVerifyEmailOtp = async () => {
     if (!emailOtp.trim()) {
-      setError("Please enter the OTP");
+      setError(t("auth.enterOtpFirst"));
       return;
     }
-
-    const email = getValues("email");
-    if (!email || !isValidEmail(email)) {
-      setError("Email is required for verification");
+    const emailVal = getValues("email");
+    if (!emailVal || !isValidEmail(emailVal)) {
+      setError(t("auth.emailRequired"));
       return;
     }
-
     setOtpLoading(true);
     setError(null);
     setMessage(null);
-
     try {
-      const result = await verifyEmailOtp(email as string, emailOtp, OtpType.REGISTER_EMAIL_VERIFICATION);
-      
+      const result = await verifyEmailOtp(emailVal, emailOtp, OtpType.REGISTER_EMAIL_VERIFICATION);
       if (result.success !== false) {
         setEmailOtpVerified(true);
-        setMessage("Email verified successfully");
+        setMessage(t("auth.emailVerified"));
       } else {
-        setError("Invalid OTP. Please try again.");
+        setError(t("auth.invalidOtp"));
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Invalid OTP";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.invalidOtp"));
     } finally {
       setOtpLoading(false);
     }
@@ -237,51 +225,28 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Only verify primary method during registration
-    if (primaryVerificationMethod === 'phone') {
-      if (!phoneOtpSent) {
-        await handleSendPhoneOtp();
-        return;
-      }
-      if (!phoneOtpVerified) {
-        setError("Please verify your phone OTP first");
-        return;
-      }
+    if (primaryVerificationMethod === "phone") {
+      if (!phoneOtpSent) { await handleSendPhoneOtp(); return; }
+      if (!phoneOtpVerified) { setError(t("auth.phoneVerifyFirst")); return; }
     } else {
-      // Email is primary
-      if (!emailOtpSent) {
-        await handleSendEmailOtp();
-        return;
-      }
-      if (!emailOtpVerified) {
-        setError("Please verify your email OTP first");
-        return;
-      }
+      if (!emailOtpSent) { await handleSendEmailOtp(); return; }
+      if (!emailOtpVerified) { setError(t("auth.emailVerifyFirst")); return; }
     }
-
-    // All verifications complete, move to form step
     setStep("form");
     setError(null);
     setMessage(null);
   };
 
   const onFormSubmit = handleSubmit(async (values) => {
-    if (isLoading || isSubmittingRef.current) {
-      return;
-    }
-
+    if (isLoading || isSubmittingRef.current) return;
     setIsLoading(true);
     isSubmittingRef.current = true;
     setError(null);
     setMessage(null);
-
     try {
-      // Ensure primary method OTP is verified
-      const primaryVerified = primaryVerificationMethod === 'phone' ? phoneOtpVerified : emailOtpVerified;
+      const primaryVerified = primaryVerificationMethod === "phone" ? phoneOtpVerified : emailOtpVerified;
       if (!primaryVerified) {
-        const methodName = primaryVerificationMethod === 'phone' ? 'phone' : 'email';
-        setError(`Please verify ${methodName} OTP first`);
+        setError(primaryVerificationMethod === "phone" ? t("auth.phoneVerifyFirst") : t("auth.emailVerifyFirst"));
         return;
       }
 
@@ -290,14 +255,11 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
         return match ? decodeURIComponent(match[1]) : null;
       };
-      
-      // Academy ids are cuid strings — never coerce to Number.
+
       const academyIdCookie = getCookieValue(env.academyIdCookie);
       const finalAcademyId =
-        academyIdCookie ??
-        (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
+        academyIdCookie ?? (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
 
-      // Build user data based on primary method
       const userData: {
         name?: string;
         display_name?: string;
@@ -320,36 +282,30 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         academy_id: finalAcademyId,
       };
 
-      // Add primary method (required) - only one method is shown and verified during registration
-      if (primaryVerificationMethod === 'phone') {
+      if (primaryVerificationMethod === "phone") {
         if (!phoneNumber || !isValidPhone(phoneNumber)) {
-          setError("Phone number is required");
+          setError(t("auth.phoneRequired"));
           return;
         }
-        const cleanedPhone = cleanPhoneNumber(phoneNumber, selectedCountry);
-        const fullPhone = getFullPhoneNumber(cleanedPhone, selectedCountry);
-        userData.phone_number = fullPhone;
+        userData.phone_number = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
         userData.phone_otp = phoneOtpVerified && phoneOtp.trim() ? phoneOtp.trim() : undefined;
       } else {
         if (!values.email || !isValidEmail(values.email)) {
-          setError("Email is required");
+          setError(t("auth.emailRequired"));
           return;
         }
         userData.email = values.email;
         userData.email_otp = emailOtpVerified && emailOtp.trim() ? emailOtp.trim() : undefined;
       }
-      // Note: Secondary method (email or phone) can be verified later in account settings
 
       await postJson("/auth/register", userData);
-      
-      setMessage("Registration successful! Redirecting to login...");
+      setMessage(t("auth.registrationSuccess"));
       setTimeout(() => {
         router.push(buildPath("/auth/login"));
         router.refresh();
       }, 2000);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t("auth.unableToCreateAccount");
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.unableToCreateAccount"));
     } finally {
       setIsLoading(false);
       isSubmittingRef.current = false;
@@ -357,37 +313,45 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   });
 
   const watchedEmail = watch("email");
-  const hasEmail = watchedEmail && isValidEmail(watchedEmail);
+  const hasEmail = Boolean(watchedEmail && isValidEmail(watchedEmail));
+
+  const errorBlock = error ? (
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+      {error}
+    </div>
+  ) : null;
+
+  const messageBlock =
+    message && !error ? (
+      <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+        {message}
+      </div>
+    ) : null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {step === "verification" && (
-        <form onSubmit={handleVerificationSubmit} className="space-y-6">
-          {/* Show only primary verification method */}
-          {primaryVerificationMethod === 'email' ? (
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-5 w-5 text-muted opacity-60" />
-                </div>
-                <Input
-                  id="email"
-                  type="email"
-                  dir="ltr"
-                  autoComplete="email"
-                  {...register("email")}
-                  className="pl-10"
-                  onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("email").onChange(e); }}
-                />
-              </div>
-              {errors.email ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">{errors.email.message}</p>
-              ) : null}
+        <form onSubmit={handleVerificationSubmit} className="space-y-5">
+          {/* Primary identifier input */}
+          {primaryVerificationMethod === "email" ? (
+            <div>
+              <input
+                id="email"
+                type="email"
+                dir="ltr"
+                autoComplete="email"
+                placeholder={t("auth.enterEmail")}
+                className={cn("auth-input", errors.email && "has-error")}
+                {...register("email")}
+                onChange={(e) => {
+                  e.target.value = toEnglishDigits(e.target.value);
+                  register("email").onChange(e);
+                }}
+              />
+              {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>}
             </div>
           ) : (
-            <div className="space-y-2">
-              <Label htmlFor="phone_number">Phone number</Label>
+            <div>
               <PhoneInput
                 id="phone_number"
                 lockCountryCode="IR"
@@ -395,249 +359,244 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                 onChange={(value) => {
                   setPhoneNumber(value);
                   const cleaned = cleanPhoneNumber(value, selectedCountry);
-                  const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-                  setValue("phone_number", fullPhone, { shouldValidate: true });
+                  setValue("phone_number", getFullPhoneNumber(cleaned, selectedCountry), { shouldValidate: true });
                 }}
                 onCountryChange={(country) => {
                   setSelectedCountry(country);
                   if (phoneNumber) {
                     const cleaned = cleanPhoneNumber(phoneNumber, country);
-                    const fullPhone = getFullPhoneNumber(cleaned, country);
-                    setValue("phone_number", fullPhone, { shouldValidate: true });
+                    setValue("phone_number", getFullPhoneNumber(cleaned, country), { shouldValidate: true });
                   }
                 }}
                 defaultCountry={selectedCountry}
-                placeholder="09121234567"
+                placeholder={t("auth.enterPhone")}
               />
-              {errors.phone_number ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">
-                  {errors.phone_number.message}
-                </p>
-              ) : null}
+              {errors.phone_number && (
+                <p className="mt-1 text-xs text-destructive">{errors.phone_number.message}</p>
+              )}
             </div>
           )}
 
-          {/* Show only primary method OTP section */}
-          {(
-            primaryVerificationMethod === 'phone' ? (
-              <div className="space-y-2">
-                <Label htmlFor="phoneOtp">Phone OTP</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="phoneOtp"
-                    type="text"
-                    placeholder="Enter phone OTP"
-                    value={phoneOtp}
-                    onChange={(e) => {
-                      setPhoneOtp(toEnglishDigits(e.target.value));
-                      setError(null);
-                    }}
-                    maxLength={6}
-                    autoComplete="one-time-code"
-                    disabled={isLoading || otpLoading}
-                    className="flex-1"
-                  />
-                  {phoneOtpSent && !phoneOtpTimer.canResend ? (
-                    <span className="whitespace-nowrap text-sm text-muted-foreground tabular-nums px-2">
-                      {phoneOtpTimer.formatted}
-                    </span>
-                  ) : (
-                    <Button
-                      type="button"
-                      onClick={handleSendPhoneOtp}
-                      disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
-                      variant="outline"
-                      className="whitespace-nowrap"
-                    >
-                      {otpLoading ? "Sending..." : phoneOtpSent ? "Resend OTP" : "Send Phone OTP"}
-                    </Button>
-                  )}
+          {/* OTP row */}
+          {primaryVerificationMethod === "phone" ? (
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">{t("auth.phoneOtp")}</Label>
+              <div className="flex items-end gap-2">
+                <input
+                  id="phoneOtp"
+                  type="text"
+                  placeholder={t("auth.enterPhoneOtpPlaceholder")}
+                  value={phoneOtp}
+                  onChange={(e) => { setPhoneOtp(toEnglishDigits(e.target.value)); setError(null); }}
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  disabled={isLoading || otpLoading}
+                  className="auth-input min-w-0 flex-1"
+                />
+                {phoneOtpSent && !phoneOtpTimer.canResend ? (
+                  <span className="shrink-0 whitespace-nowrap pb-2 text-xs tabular-nums text-muted-foreground">
+                    {phoneOtpTimer.formatted}
+                  </span>
+                ) : (
                   <Button
                     type="button"
-                    onClick={handleVerifyPhoneOtp}
-                    disabled={otpLoading || !phoneOtp.trim() || phoneOtpVerified}
+                    onClick={handleSendPhoneOtp}
+                    disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
                     variant="outline"
-                    className="whitespace-nowrap"
+                    size="sm"
+                    className="shrink-0"
                   >
-                    {otpLoading ? "Verifying..." : phoneOtpVerified ? "✓ Verified" : "Verify Phone OTP"}
+                    {otpLoading ? t("auth.sending") : phoneOtpSent ? t("auth.resendOtp") : t("auth.sendPhoneOtp")}
                   </Button>
-                </div>
+                )}
+                <Button
+                  type="button"
+                  onClick={handleVerifyPhoneOtp}
+                  disabled={otpLoading || !phoneOtp.trim() || phoneOtpVerified}
+                  variant={phoneOtpVerified ? "ghost" : "outline"}
+                  size="sm"
+                  className="shrink-0"
+                >
+                  {otpLoading ? t("auth.verifying") : phoneOtpVerified ? `✓ ${t("auth.verified")}` : t("auth.verifyPhoneOtp")}
+                </Button>
               </div>
-            ) : (
-              <div className="space-y-2">
-                <Label htmlFor="emailOtp">Email OTP</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="emailOtp"
-                    type="text"
-                    placeholder="Enter email OTP"
-                    value={emailOtp}
-                    onChange={(e) => {
-                      setEmailOtp(toEnglishDigits(e.target.value));
-                      setError(null);
-                    }}
-                    maxLength={6}
-                    autoComplete="one-time-code"
-                    disabled={isLoading || otpLoading}
-                    className="flex-1"
-                  />
-                  {emailOtpSent && !emailOtpTimer.canResend ? (
-                    <span className="whitespace-nowrap text-sm text-muted-foreground tabular-nums px-2">
-                      {emailOtpTimer.formatted}
-                    </span>
-                  ) : (
-                    <Button
-                      type="button"
-                      onClick={handleSendEmailOtp}
-                      disabled={otpLoading || !hasEmail}
-                      variant="outline"
-                      className="whitespace-nowrap"
-                    >
-                      {otpLoading ? "Sending..." : emailOtpSent ? "Resend OTP" : "Send Email OTP"}
-                    </Button>
-                  )}
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">{t("auth.emailOtp")}</Label>
+              <div className="flex items-end gap-2">
+                <input
+                  id="emailOtp"
+                  type="text"
+                  placeholder={t("auth.enterEmailOtpPlaceholder")}
+                  value={emailOtp}
+                  onChange={(e) => { setEmailOtp(toEnglishDigits(e.target.value)); setError(null); }}
+                  maxLength={6}
+                  autoComplete="one-time-code"
+                  disabled={isLoading || otpLoading}
+                  className="auth-input min-w-0 flex-1"
+                />
+                {emailOtpSent && !emailOtpTimer.canResend ? (
+                  <span className="shrink-0 whitespace-nowrap pb-2 text-xs tabular-nums text-muted-foreground">
+                    {emailOtpTimer.formatted}
+                  </span>
+                ) : (
                   <Button
                     type="button"
-                    onClick={handleVerifyEmailOtp}
-                    disabled={otpLoading || !emailOtp.trim() || emailOtpVerified}
+                    onClick={handleSendEmailOtp}
+                    disabled={otpLoading || !hasEmail}
                     variant="outline"
-                    className="whitespace-nowrap"
+                    size="sm"
+                    className="shrink-0"
                   >
-                    {otpLoading ? "Verifying..." : emailOtpVerified ? "✓ Verified" : "Verify Email OTP"}
+                    {otpLoading ? t("auth.sending") : emailOtpSent ? t("auth.resendOtp") : t("auth.sendEmailOtp")}
                   </Button>
-                </div>
+                )}
+                <Button
+                  type="button"
+                  onClick={handleVerifyEmailOtp}
+                  disabled={otpLoading || !emailOtp.trim() || emailOtpVerified}
+                  variant={emailOtpVerified ? "ghost" : "outline"}
+                  size="sm"
+                  className="shrink-0"
+                >
+                  {otpLoading ? t("auth.verifying") : emailOtpVerified ? `✓ ${t("auth.verified")}` : t("auth.verifyEmailOtp")}
+                </Button>
               </div>
-            )
+            </div>
           )}
 
-          {error ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-              {error}
-            </div>
-          ) : null}
+          {errorBlock}
+          {messageBlock}
 
-          {message && !error ? (
-            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-              {message}
-            </div>
-          ) : null}
-
-          <Button type="submit" className="w-full" disabled={isLoading || otpLoading}>
-            {isLoading || otpLoading ? "Processing..." : "Continue to Form"}
-          </Button>
+          <button type="submit" className="auth-submit-btn" disabled={isLoading || otpLoading}>
+            {(isLoading || otpLoading) && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isLoading || otpLoading ? t("auth.processing") : t("auth.continueToForm")}
+          </button>
         </form>
       )}
 
       {step === "form" && (
-        <form onSubmit={onFormSubmit} className="space-y-6">
+        <form onSubmit={onFormSubmit} className="space-y-5">
+          {/* Verification badge */}
           <div className="rounded-xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950/70">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
-                <CheckCircle className="h-4 w-4" />
-                {primaryVerificationMethod === 'phone' ? t("auth.phoneVerified") : t("auth.emailVerified")}
-              </div>
-              <p className="text-xs text-green-600 dark:text-green-400">
-                {primaryVerificationMethod === 'phone' ? t("auth.verifyEmailLater") : t("auth.verifyPhoneLater")}
-              </p>
+            <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-300">
+              <CheckCircle className="h-4 w-4" />
+              {primaryVerificationMethod === "phone" ? t("auth.phoneVerified") : t("auth.emailVerified")}
+            </div>
+            <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+              {primaryVerificationMethod === "phone" ? t("auth.verifyEmailLater") : t("auth.verifyPhoneLater")}
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <Label className="text-xs text-muted-foreground">{t("account.fullName")}</Label>
+              <input
+                id="name"
+                autoComplete="name"
+                placeholder={t("auth.enterFullName")}
+                className={cn("auth-input", errors.name && "has-error")}
+                {...register("name")}
+              />
+              {errors.name && <p className="mt-1 text-xs text-destructive">{errors.name.message}</p>}
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">{t("account.displayName")}</Label>
+              <input
+                id="display_name"
+                placeholder={t("account.displayName")}
+                className={cn("auth-input", errors.display_name && "has-error")}
+                {...register("display_name")}
+              />
+              {errors.display_name && (
+                <p className="mt-1 text-xs text-destructive">{errors.display_name.message}</p>
+              )}
             </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full name</Label>
-              <Input id="name" autoComplete="name" {...register("name")} />
-              {errors.name ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">{errors.name.message}</p>
-              ) : null}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="display_name">Display name</Label>
-              <Input id="display_name" {...register("display_name")} />
-              {errors.display_name ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">
-                  {errors.display_name.message}
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div>
+              <Label className="text-xs text-muted-foreground">{t("auth.password")}</Label>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-muted opacity-60" />
-                </div>
-                <Input
+                <input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   dir="ltr"
                   autoComplete="new-password"
+                  placeholder={t("auth.password")}
+                  className={cn("auth-input with-toggle", errors.password && "has-error")}
                   {...register("password")}
-                  className="pl-10"
-                  onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("password").onChange(e); }}
+                  onChange={(e) => {
+                    e.target.value = toEnglishDigits(e.target.value);
+                    register("password").onChange(e);
+                  }}
                 />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-              {errors.password ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">{errors.password.message}</p>
-              ) : null}
+              {errors.password && <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmed_password">Confirm password</Label>
+            <div>
+              <Label className="text-xs text-muted-foreground">{t("auth.confirmPassword")}</Label>
               <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Lock className="h-5 w-5 text-muted opacity-60" />
-                </div>
-                <Input
+                <input
                   id="confirmed_password"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   dir="ltr"
                   autoComplete="new-password"
+                  placeholder={t("auth.confirmPassword")}
+                  className={cn("auth-input with-toggle", errors.confirmed_password && "has-error")}
                   {...register("confirmed_password")}
-                  className="pl-10"
-                  onChange={(e) => { e.target.value = toEnglishDigits(e.target.value); register("confirmed_password").onChange(e); }}
+                  onChange={(e) => {
+                    e.target.value = toEnglishDigits(e.target.value);
+                    register("confirmed_password").onChange(e);
+                  }}
                 />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={showConfirmPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-              {errors.confirmed_password ? (
-                <p className="text-sm text-amber-600 dark:text-amber-400">
-                  {errors.confirmed_password.message}
-                </p>
-              ) : null}
+              {errors.confirmed_password && (
+                <p className="mt-1 text-xs text-destructive">{errors.confirmed_password.message}</p>
+              )}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio (optional)</Label>
-            <Textarea id="bio" rows={3} {...register("bio")} />
-            {errors.bio ? (
-              <p className="text-sm text-amber-600 dark:text-amber-400">{errors.bio.message}</p>
-            ) : null}
+          <div>
+            <Label className="text-xs text-muted-foreground">{t("auth.bioOptional")}</Label>
+            <Textarea id="bio" rows={3} className="mt-1" {...register("bio")} />
+            {errors.bio && <p className="mt-1 text-xs text-destructive">{errors.bio.message}</p>}
           </div>
 
-          {error ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-              {error}
-            </div>
-          ) : null}
-
-          {message && !error ? (
-            <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-              {message}
-            </div>
-          ) : null}
+          {errorBlock}
+          {messageBlock}
 
           <div className="flex gap-2">
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={() => setStep("verification")}
-              className="flex-1"
+              className="flex flex-1 items-center justify-center rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Back to Verification
-            </Button>
-            <Button type="submit" className="flex-1" disabled={isLoading} loading={isLoading}>
-              {isLoading ? "Registering..." : "Register"}
-            </Button>
+              {t("auth.backToVerification")}
+            </button>
+            <button type="submit" className="auth-submit-btn flex-1" disabled={isLoading}>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? t("auth.registering") : t("auth.register")}
+            </button>
           </div>
         </form>
       )}

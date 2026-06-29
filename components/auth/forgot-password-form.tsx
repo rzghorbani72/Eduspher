@@ -4,32 +4,26 @@ import { useState } from "react";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useRouter } from "next/navigation";
 import Link from "@/components/ui/link";
-import { Mail, Lock, ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
-import { 
+import {
   validatePhoneAndEmail,
-  sendEmailOtp, 
-  sendPhoneOtp, 
-  verifyEmailOtp, 
-  verifyPhoneOtp, 
-  forgetPassword 
+  sendEmailOtp,
+  sendPhoneOtp,
+  verifyEmailOtp,
+  verifyPhoneOtp,
+  forgetPassword,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
+import { useTranslation } from "@/lib/i18n/hooks";
+import { cn } from "@/lib/utils";
 
-const isValidEmail = (email: string) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
-
-const isValidPhone = (phone: string) => {
-  return /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
-};
+const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidPhone = (phone: string) => /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
 
 type Step = "identifier" | "otp" | "password" | "success";
 
@@ -40,13 +34,17 @@ interface ForgotPasswordFormProps {
 export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormProps) => {
   const router = useRouter();
   const buildPath = useStorePath();
+  const { t } = useTranslation();
   const [step, setStep] = useState<Step>("identifier");
   const [authMethod, setAuthMethod] = useState<"email" | "phone">("email");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
   const otpTimer = useOtpTimer();
+
   const getInitialCountry = () => {
     if (defaultCountryCode) {
       const country = getCountryByCode(defaultCountryCode);
@@ -57,7 +55,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
-  
+
   const [formData, setFormData] = useState({
     identifier: "",
     password: "",
@@ -73,8 +71,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
     const cleaned = cleanPhoneNumber(value, selectedCountry);
-    const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-    setFormData((prev) => ({ ...prev, identifier: fullPhone }));
+    setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, selectedCountry) }));
     setError(null);
   };
 
@@ -86,132 +83,74 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   };
 
   const validateIdentifier = () => {
-    if (!formData.identifier.trim()) {
-      setError("Email or phone number is required");
-      return false;
-    }
-
-    if (authMethod === "email" && !isValidEmail(formData.identifier)) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-
-    if (authMethod === "phone" && !isValidPhone(formData.identifier)) {
-      setError("Please enter a valid phone number");
-      return false;
-    }
-
+    if (!formData.identifier.trim()) { setError(t("auth.identifierRequired")); return false; }
+    if (authMethod === "email" && !isValidEmail(formData.identifier)) { setError(t("auth.invalidEmail")); return false; }
+    if (authMethod === "phone" && !isValidPhone(formData.identifier)) { setError(t("auth.invalidPhone")); return false; }
     return true;
   };
 
   const validatePassword = () => {
-    if (!formData.password.trim()) {
-      setError("Password is required");
-      return false;
-    }
-
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return false;
-    }
-
-    if (formData.password !== formData.confirmed_password) {
-      setError("Passwords do not match");
-      return false;
-    }
-
+    if (!formData.password.trim()) { setError(t("auth.passwordRequired")); return false; }
+    if (formData.password.length < 6) { setError(t("auth.passwordTooShort")); return false; }
+    if (formData.password !== formData.confirmed_password) { setError(t("auth.passwordsDoNotMatch")); return false; }
     return true;
   };
 
   const handleValidate = async () => {
     if (!validateIdentifier()) return;
-
     setIsLoading(true);
     setError(null);
     setMessage(null);
-
     try {
       const phone = authMethod === "phone" ? formData.identifier : undefined;
-      const email = authMethod === "email" ? formData.identifier : undefined;
-
-      await validatePhoneAndEmail(phone, email);
+      const emailVal = authMethod === "email" ? formData.identifier : undefined;
+      await validatePhoneAndEmail(phone, emailVal);
       setValidated(true);
-      setMessage("Account found. Send OTP to continue.");
+      setMessage(t("auth.accountFound"));
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Account not found. Please check your phone number.";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.invalidPhone"));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSendOtp = async () => {
-    if (!validated) {
-      await handleValidate();
-      return;
-    }
-
+    if (!validated) { await handleValidate(); return; }
     setIsLoading(true);
     setError(null);
     setMessage(null);
-
     try {
       if (authMethod === "email") {
         const response = await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL) as { otp?: string };
-        // TODO: Remove when real SMS/email provider is integrated
-        if (response?.otp) {
-          setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
-        } else {
-          setMessage("OTP sent to your email address");
-        }
+        setMessage(response?.otp ? `${t("auth.otpSentToEmail")}\n\n🔐 Code: ${response.otp}` : t("auth.otpSentToEmail"));
       } else {
         const response = await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE) as { otp?: string };
-        // TODO: Remove when real SMS/email provider is integrated
-        if (response?.otp) {
-          setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
-        } else {
-          setMessage("OTP sent to your phone number");
-        }
+        setMessage(response?.otp ? `${t("auth.otpSentToPhone")}\n\n🔐 Code: ${response.otp}` : t("auth.otpSentToPhone"));
       }
       setStep("otp");
       otpTimer.start();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
-    if (!formData.otp.trim()) {
-      setError("OTP is required");
-      return;
-    }
-
+    if (!formData.otp.trim()) { setError(t("auth.enterOtpFirst")); return; }
     setIsLoading(true);
     setError(null);
     setMessage(null);
-
     try {
       if (authMethod === "email") {
-        await verifyEmailOtp(
-          formData.identifier,
-          formData.otp,
-          OtpType.RESET_PASSWORD_BY_EMAIL
-        );
+        await verifyEmailOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_EMAIL);
       } else {
-        await verifyPhoneOtp(
-          formData.identifier,
-          formData.otp,
-          OtpType.RESET_PASSWORD_BY_PHONE
-        );
+        await verifyPhoneOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_PHONE);
       }
       setStep("password");
-      setMessage("OTP verified successfully");
+      setMessage(t("auth.otpVerifiedSuccess"));
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Invalid OTP";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.invalidOtp"));
     } finally {
       setIsLoading(false);
     }
@@ -219,11 +158,9 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
   const handleResetPassword = async () => {
     if (!validatePassword()) return;
-
     setIsLoading(true);
     setError(null);
     setMessage(null);
-
     try {
       await forgetPassword({
         identifier: formData.identifier,
@@ -231,12 +168,9 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
         confirmed_password: formData.confirmed_password,
         otp: formData.otp,
       });
-
       setStep("success");
-      setMessage("Password reset successfully");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to reset password";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
       setIsLoading(false);
     }
@@ -244,12 +178,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
   const resetForm = () => {
     setStep("identifier");
-    setFormData({
-      identifier: "",
-      password: "",
-      confirmed_password: "",
-      otp: "",
-    });
+    setFormData({ identifier: "", password: "", confirmed_password: "", otp: "" });
     setPhoneNumber("");
     setEmail("");
     setValidated(false);
@@ -257,161 +186,147 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     setMessage(null);
   };
 
-  return (
-    <div className="space-y-6">
-      {step === "identifier" && (
-        <div className="space-y-4">
-          <div className="flex gap-2 rounded-lg border border-slate-200 p-1 ">
-            <button
-              type="button"
-              onClick={() => {
-                setAuthMethod("email");
-                setError(null);
-                if (email) {
-                  setFormData((prev) => ({ ...prev, identifier: email }));
-                }
-              }}
-              className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                authMethod === "email"
-                  ? "bg-(--theme-primary) text-(--theme-on-primary)"
-                  : "text-muted hover:bg-surface"
-              }`}
-            >
-              Email
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setAuthMethod("phone");
-                setError(null);
-                if (phoneNumber) {
-                  const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-                  const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-                  setFormData((prev) => ({ ...prev, identifier: fullPhone }));
-                }
-              }}
-              className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                authMethod === "phone"
-                  ? "bg-(--theme-primary) text-(--theme-on-primary)"
-                  : "text-muted hover:bg-surface"
-              }`}
-            >
-              Phone
-            </button>
-          </div>
+  const errorBlock = error && (
+    <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+      {error}
+    </div>
+  );
 
-          <div className="space-y-2">
-            <Label htmlFor="identifier">
-              {authMethod === "email" ? "Email Address" : "Phone Number"}
-            </Label>
-            {authMethod === "email" ? (
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Mail className="h-5 w-5 text-muted opacity-60" />
-                </div>
-                <Input
-                  id="identifier"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => handleEmailChange(e.target.value)}
-                  className="pl-10"
-                  autoComplete="email"
-                />
-              </div>
-            ) : (
-              <PhoneInput
-                id="identifier"
-                value={phoneNumber}
-                onChange={handlePhoneChange}
-                onCountryChange={(country) => {
-                  setSelectedCountry(country);
-                  if (phoneNumber) {
-                    const cleaned = cleanPhoneNumber(phoneNumber, country);
-                    const fullPhone = getFullPhoneNumber(cleaned, country);
-                    setFormData((prev) => ({ ...prev, identifier: fullPhone }));
+  const messageBlock = message && !error && (
+    <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+      {message}
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      {step === "identifier" && (
+        <div className="space-y-5">
+          {/* Method switcher — same pill style as login form */}
+          <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+            {(["email", "phone"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => {
+                  setAuthMethod(m);
+                  setError(null);
+                  setValidated(false);
+                  if (m === "email" && email) setFormData((prev) => ({ ...prev, identifier: email }));
+                  else if (m === "phone" && phoneNumber) {
+                    const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
+                    setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, selectedCountry) }));
                   }
                 }}
-                defaultCountry={selectedCountry}
-                placeholder="09121234567"
-                autoComplete="tel"
-              />
-            )}
+                className={cn(
+                  "rounded-md py-1.5 text-xs font-medium transition-colors",
+                  authMethod === m
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {m === "email" ? t("auth.email") : t("auth.phone")}
+              </button>
+            ))}
           </div>
 
-          {!validated ? (
-            <Button
-              type="button"
-              onClick={handleValidate}
-              disabled={isLoading}
-              className="w-full"
-              loading={isLoading}
-            >
-              {isLoading ? "Validating..." : "Validate"}
-            </Button>
+          {authMethod === "email" ? (
+            <input
+              id="identifier"
+              type="email"
+              dir="ltr"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => handleEmailChange(e.target.value)}
+              placeholder={t("auth.enterEmail")}
+              className="auth-input"
+            />
           ) : (
-            <Button
-              type="button"
-              onClick={handleSendOtp}
-              disabled={isLoading}
-              className="w-full"
-              loading={isLoading}
-            >
-              {isLoading ? "Sending..." : "Send OTP"}
-            </Button>
+            <PhoneInput
+              id="identifier"
+              value={phoneNumber}
+              onChange={handlePhoneChange}
+              onCountryChange={(country) => {
+                setSelectedCountry(country);
+                if (phoneNumber) {
+                  const cleaned = cleanPhoneNumber(phoneNumber, country);
+                  setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, country) }));
+                }
+              }}
+              defaultCountry={selectedCountry}
+              placeholder={t("auth.enterPhone")}
+              autoComplete="tel"
+            />
+          )}
+
+          {errorBlock}
+          {messageBlock}
+
+          {!validated ? (
+            <button type="button" className="auth-submit-btn" onClick={handleValidate} disabled={isLoading}>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? t("auth.validating") : t("auth.validate")}
+            </button>
+          ) : (
+            <button type="button" className="auth-submit-btn" onClick={handleSendOtp} disabled={isLoading}>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? t("auth.sending") : t("auth.sendOtp")}
+            </button>
           )}
         </div>
       )}
 
       {step === "otp" && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="otp">Verification Code</Label>
-            <Input
-              id="otp"
-              type="text"
-              placeholder="Enter 6-digit code"
-              value={formData.otp}
-              onChange={(e) => handleInputChange("otp", e.target.value)}
-              maxLength={6}
-              autoComplete="one-time-code"
-            />
-          </div>
+        <div className="space-y-5">
+          <input
+            id="otp"
+            type="text"
+            inputMode="numeric"
+            placeholder={t("auth.otpCodePlaceholder")}
+            value={formData.otp}
+            onChange={(e) => handleInputChange("otp", e.target.value)}
+            maxLength={6}
+            autoComplete="one-time-code"
+            className="auth-input"
+            autoFocus
+          />
+
+          {errorBlock}
+          {messageBlock}
 
           <div className="flex gap-2">
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={() => setStep("identifier")}
-              className="flex-1"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            <Button
+              <ArrowLeft className="h-4 w-4" />
+              {t("common.back")}
+            </button>
+            <button
               type="button"
+              className="auth-submit-btn flex-1"
               onClick={handleVerifyOtp}
               disabled={isLoading}
-              className="flex-1"
-              loading={isLoading}
             >
-              {isLoading ? "Verifying..." : "Verify OTP"}
-            </Button>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? t("auth.verifying") : t("auth.verifyOtp")}
+            </button>
           </div>
 
           <div className="text-center">
             {otpTimer.canResend ? (
               <button
                 type="button"
-                className="text-sm text-(--theme-primary) hover:underline"
+                className="text-sm text-(--auth-accent) hover:underline"
                 onClick={handleSendOtp}
                 disabled={isLoading}
               >
-                Resend code
+                {t("auth.resendOtp")}
               </button>
             ) : (
-              <p className="text-sm text-muted-foreground tabular-nums">
-                Resend in {otpTimer.formatted}
+              <p className="tabular-nums text-xs text-muted-foreground">
+                {t("auth.resendIn")} {otpTimer.formatted}
               </p>
             )}
           </div>
@@ -419,62 +334,73 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
       )}
 
       {step === "password" && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="password">New Password</Label>
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Lock className="h-5 w-5 text-muted opacity-60" />
-              </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter new password"
-                value={formData.password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                className="pl-10"
-                autoComplete="new-password"
-              />
-            </div>
+        <div className="space-y-5">
+          {messageBlock}
+
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder={t("auth.enterNewPassword")}
+              value={formData.password}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              className="auth-input with-toggle"
+              autoComplete="new-password"
+              dir="ltr"
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmed_password">Confirm Password</Label>
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Lock className="h-5 w-5 text-muted opacity-60" />
-              </div>
-              <Input
-                id="confirmed_password"
-                type="password"
-                placeholder="Confirm new password"
-                value={formData.confirmed_password}
-                onChange={(e) => handleInputChange("confirmed_password", e.target.value)}
-                className="pl-10"
-                autoComplete="new-password"
-              />
-            </div>
+          <div className="relative">
+            <input
+              id="confirmed_password"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder={t("auth.confirmNewPasswordPlaceholder")}
+              value={formData.confirmed_password}
+              onChange={(e) => handleInputChange("confirmed_password", e.target.value)}
+              className="auth-input with-toggle"
+              autoComplete="new-password"
+              dir="ltr"
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowConfirmPassword((v) => !v)}
+              className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
+              aria-label={showConfirmPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+            >
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
+
+          {errorBlock}
 
           <div className="flex gap-2">
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={() => setStep("otp")}
-              className="flex-1"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-            <Button
+              <ArrowLeft className="h-4 w-4" />
+              {t("common.back")}
+            </button>
+            <button
               type="button"
+              className="auth-submit-btn flex-1"
               onClick={handleResetPassword}
               disabled={isLoading}
-              className="flex-1"
-              loading={isLoading}
             >
-              {isLoading ? "Resetting..." : "Reset Password"}
-            </Button>
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? t("auth.resetting") : t("auth.resetPassword")}
+            </button>
           </div>
         </div>
       )}
@@ -485,54 +411,39 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-              Password Reset Successfully!
-            </h3>
-            <p className="mt-2 text-sm text-muted ">
-              Your password has been reset. You can now login with your new password.
-            </p>
+            <h3 className="text-lg font-semibold">{t("auth.passwordResetSuccess")}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{t("auth.passwordResetDesc")}</p>
           </div>
           <div className="flex gap-2">
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={resetForm}
-              className="flex-1"
+              className="flex flex-1 items-center justify-center rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Reset Another Password
-            </Button>
-            <Button
+              {t("auth.resetAnotherPassword")}
+            </button>
+            <button
               type="button"
+              className="auth-submit-btn flex-1"
               onClick={() => router.push(buildPath("/auth/login"))}
-              className="flex-1"
             >
-              Go to Login
-            </Button>
+              {t("auth.goToLogin")}
+            </button>
           </div>
         </div>
       )}
 
-      {error && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-          {error}
-        </div>
-      )}
-
-      {message && !error && (
-        <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-          {message}
-        </div>
-      )}
+      {errorBlock}
+      {messageBlock}
 
       <div className="text-center text-sm">
         <Link
           href={buildPath("/auth/login")}
-          className="font-semibold text-(--theme-primary) hover:underline"
+          className="font-semibold text-(--auth-accent) hover:underline"
         >
-          Back to Login
+          {t("auth.backToLogin")}
         </Link>
       </div>
     </div>
   );
 };
-
