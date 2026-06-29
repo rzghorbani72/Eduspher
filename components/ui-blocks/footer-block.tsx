@@ -1,7 +1,14 @@
 import Link from "@/components/ui/link";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
-import { Mail, Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
+import {
+  Mail,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+} from "lucide-react";
 import { t } from "@/lib/i18n/server-translations";
 
 interface FooterBlockProps {
@@ -57,13 +64,21 @@ const socialLinks = [
   { name: "YouTube", icon: Youtube, href: "#" },
 ];
 
-const footerStyle = { backgroundColor: 'var(--theme-surface-alt)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' };
-const dividerStyle = { borderColor: 'var(--theme-border-color)' };
+const footerStyle = {
+  backgroundColor: "var(--theme-surface-alt)",
+  borderColor: "var(--theme-border-color)",
+  color: "var(--theme-foreground)",
+};
+const dividerStyle = { borderColor: "var(--theme-border-color)" };
 
 const LogoBadge = () => (
   <div
     className="flex h-10 w-10 items-center justify-center rounded-xl shadow-lg"
-    style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)', boxShadow: 'var(--theme-shadow)' }}
+    style={{
+      backgroundColor: "var(--theme-primary)",
+      color: "var(--theme-on-primary)",
+      boxShadow: "var(--theme-shadow)",
+    }}
   >
     <span className="text-lg font-semibold">ES</span>
   </div>
@@ -74,7 +89,12 @@ const SocialLinks = ({ max }: { max?: number }) => (
     {(max ? socialLinks.slice(0, max) : socialLinks).map((social) => {
       const Icon = social.icon;
       return (
-        <Link key={social.name} href={social.href} className="opacity-40 transition-all hover:opacity-100 hover:text-[var(--theme-primary)]" aria-label={social.name}>
+        <Link
+          key={social.name}
+          href={social.href}
+          className="opacity-40 transition-all hover:opacity-100 hover:text-[var(--theme-primary)]"
+          aria-label={social.name}
+        >
           <Icon className="h-5 w-5" />
         </Link>
       );
@@ -82,8 +102,16 @@ const SocialLinks = ({ max }: { max?: number }) => (
   </div>
 );
 
-const Copyright = ({ name, rightsText }: { name: string; rightsText: string }) => (
-  <p className="text-xs opacity-40">&copy; {new Date().getFullYear()} {name}. {rightsText}</p>
+const Copyright = ({
+  name,
+  rightsText,
+}: {
+  name: string;
+  rightsText: string;
+}) => (
+  <p className="text-xs opacity-40">
+    &copy; {new Date().getFullYear()} {name}. {rightsText}
+  </p>
 );
 
 export async function FooterBlock({ id, config }: FooterBlockProps) {
@@ -91,7 +119,13 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
   const buildPath = (path: string) => buildAcademyPath(store.slug, path);
 
   if (config?.style === "creative") {
-    return <CreativeFooter id={id} name={store.name ?? "منتوریار"} buildPath={buildPath} />;
+    return (
+      <CreativeFooter
+        id={id}
+        name={store.name ?? "منتوما"}
+        buildPath={buildPath}
+      />
+    );
   }
 
   const showSocialLinks = config?.showSocialLinks !== false;
@@ -103,7 +137,9 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
 
   const footerLinks = getFooterLinks();
   const displayLinks = minimal ? footerLinks.slice(0, 2) : footerLinks;
-  const gridCols = minimal ? "sm:grid-cols-2" : `sm:grid-cols-${Math.min(columns, 3)}`;
+  const gridCols = minimal
+    ? "sm:grid-cols-2"
+    : `sm:grid-cols-${Math.min(columns, 3)}`;
   const rightsText = t("footer.allRightsReserved");
 
   if (minimal) {
@@ -117,13 +153,17 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
           <div className="flex flex-wrap items-center gap-6 text-sm opacity-60">
             {displayLinks.flatMap((section) =>
               section.items.slice(0, 2).map((item) => (
-                <Link key={item.href} href={buildPath(item.href)} className="transition-opacity hover:opacity-100 hover:text-[var(--theme-primary)]">
+                <Link
+                  key={item.href}
+                  href={buildPath(item.href)}
+                  className="transition-opacity hover:opacity-100 hover:text-[var(--theme-primary)]"
+                >
                   {item.label}
                 </Link>
-              ))
+              )),
             )}
           </div>
-          <Copyright name={store.name ?? ''} rightsText={rightsText} />
+          <Copyright name={store.name ?? ""} rightsText={rightsText} />
         </div>
       </footer>
     );
@@ -138,16 +178,23 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
               <LogoBadge />
               <p className="text-lg font-semibold">{store.name}</p>
             </div>
-            <p className="text-sm leading-relaxed opacity-55">{t("footer.description")}</p>
+            <p className="text-sm leading-relaxed opacity-55">
+              {t("footer.description")}
+            </p>
           </div>
           <div className={`grid flex-1 gap-4 ${gridCols}`}>
             {displayLinks.map((section) => (
               <div key={section.title} className="space-y-3">
-                <p className="text-sm font-semibold uppercase tracking-wide">{section.title}</p>
+                <p className="text-sm font-semibold uppercase tracking-wide">
+                  {section.title}
+                </p>
                 <ul className="space-y-2 text-sm opacity-55">
                   {section.items.map((item) => (
                     <li key={item.label}>
-                      <Link className="transition-opacity hover:opacity-100 hover:text-[var(--theme-primary)]" href={buildPath(item.href)}>
+                      <Link
+                        className="transition-opacity hover:opacity-100 hover:text-[var(--theme-primary)]"
+                        href={buildPath(item.href)}
+                      >
                         {item.label}
                       </Link>
                     </li>
@@ -157,9 +204,12 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
             ))}
           </div>
         </div>
-        <div className="mx-auto w-full max-w-6xl border-t px-6 py-4" style={dividerStyle}>
+        <div
+          className="mx-auto w-full max-w-6xl border-t px-6 py-4"
+          style={dividerStyle}
+        >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Copyright name={store.name ?? ''} rightsText={rightsText} />
+            <Copyright name={store.name ?? ""} rightsText={rightsText} />
             {showSocialLinks && <SocialLinks max={4} />}
           </div>
         </div>
@@ -176,7 +226,9 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
             <LogoBadge />
             <p className="text-lg font-semibold">{store.name}</p>
           </div>
-          <p className="text-sm leading-relaxed opacity-55">{t("footer.description")}</p>
+          <p className="text-sm leading-relaxed opacity-55">
+            {t("footer.description")}
+          </p>
           {showSocialLinks && <SocialLinks />}
           {showNewsletter && (
             <div className="space-y-2">
@@ -186,13 +238,19 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
                   type="email"
                   placeholder={t("footer.emailPlaceholder")}
                   className="flex-1 rounded-lg border border-(--theme-border-strong) px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)]/20"
-                  style={{ backgroundColor: 'var(--theme-surface)', color: 'var(--theme-foreground)' }}
+                  style={{
+                    backgroundColor: "var(--theme-surface)",
+                    color: "var(--theme-foreground)",
+                  }}
                 />
                 <button
                   type="submit"
                   aria-label={t("footer.newsletter")}
                   className="rounded-lg px-4 py-2 text-sm font-semibold shadow-lg transition-all hover:opacity-90"
-                  style={{ backgroundColor: 'var(--theme-primary)', color: 'var(--theme-on-primary)' }}
+                  style={{
+                    backgroundColor: "var(--theme-primary)",
+                    color: "var(--theme-on-primary)",
+                  }}
                 >
                   <Mail className="h-4 w-4" />
                 </button>
@@ -203,11 +261,16 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
         <div className={`grid flex-1 gap-6 ${gridCols}`}>
           {displayLinks.map((section) => (
             <div key={section.title} className="space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-wide">{section.title}</p>
+              <p className="text-sm font-semibold uppercase tracking-wide">
+                {section.title}
+              </p>
               <ul className="space-y-3 text-sm opacity-55">
                 {section.items.map((item) => (
                   <li key={item.label}>
-                    <Link className="transition-opacity hover:opacity-100 hover:text-[var(--theme-primary)]" href={buildPath(item.href)}>
+                    <Link
+                      className="transition-opacity hover:opacity-100 hover:text-[var(--theme-primary)]"
+                      href={buildPath(item.href)}
+                    >
                       {item.label}
                     </Link>
                   </li>
@@ -217,14 +280,32 @@ export async function FooterBlock({ id, config }: FooterBlockProps) {
           ))}
         </div>
       </div>
-      <div className="mx-auto w-full max-w-6xl border-t px-6 py-4" style={dividerStyle}>
+      <div
+        className="mx-auto w-full max-w-6xl border-t px-6 py-4"
+        style={dividerStyle}
+      >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Copyright name={store.name ?? ''} rightsText={rightsText} />
+          <Copyright name={store.name ?? ""} rightsText={rightsText} />
           {showLegal && (
             <div className="flex flex-wrap items-center gap-4 text-xs opacity-55">
-              <Link href={buildPath("/legal/terms")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">{t("footer.termsOfService")}</Link>
-              <Link href={buildPath("/legal/privacy")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">{t("footer.privacy")}</Link>
-              <Link href={buildPath("/legal/cookies")} className="hover:opacity-100 hover:text-[var(--theme-primary)]">{t("footer.cookies")}</Link>
+              <Link
+                href={buildPath("/legal/terms")}
+                className="hover:opacity-100 hover:text-[var(--theme-primary)]"
+              >
+                {t("footer.termsOfService")}
+              </Link>
+              <Link
+                href={buildPath("/legal/privacy")}
+                className="hover:opacity-100 hover:text-[var(--theme-primary)]"
+              >
+                {t("footer.privacy")}
+              </Link>
+              <Link
+                href={buildPath("/legal/cookies")}
+                className="hover:opacity-100 hover:text-[var(--theme-primary)]"
+              >
+                {t("footer.cookies")}
+              </Link>
             </div>
           )}
         </div>
@@ -264,20 +345,36 @@ const CREATIVE_FOOTER_COLS = [
   },
 ];
 
-function CreativeFooter({ id, name, buildPath }: { id?: string; name: string; buildPath: (path: string) => string }) {
+function CreativeFooter({
+  id,
+  name,
+  buildPath,
+}: {
+  id?: string;
+  name: string;
+  buildPath: (path: string) => string;
+}) {
   return (
-    <footer id={id || "footer"} className="bg-(--theme-secondary) px-[40px] pb-[32px] pt-[64px] text-(--theme-on-secondary)">
+    <footer
+      id={id || "footer"}
+      className="bg-(--theme-secondary) px-[40px] pb-[32px] pt-[64px] text-(--theme-on-secondary)"
+    >
       <div className="mx-auto max-w-[1200px]">
         <div className="mb-[48px] grid gap-[48px] md:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
-            <div className="mb-[12px] text-[22px] font-black text-(--theme-on-secondary)">{name}</div>
+            <div className="mb-[12px] text-[22px] font-black text-(--theme-on-secondary)">
+              {name}
+            </div>
             <p className="max-w-[280px] text-[13px] leading-[1.8] text-(--theme-on-secondary)/55">
-              جامعه یادگیری خلاق که هر کسی می‌تواند کلاس بگیرد، کار به اشتراک بذارد، و با هم رشد کند.
+              جامعه یادگیری خلاق که هر کسی می‌تواند کلاس بگیرد، کار به اشتراک
+              بذارد، و با هم رشد کند.
             </p>
           </div>
           {CREATIVE_FOOTER_COLS.map((col) => (
             <div key={col.title}>
-              <h5 className="mb-[16px] text-[11px] font-black text-(--theme-on-secondary)">{col.title}</h5>
+              <h5 className="mb-[16px] text-[11px] font-black text-(--theme-on-secondary)">
+                {col.title}
+              </h5>
               {col.items.map((item) => (
                 <Link
                   key={item.label}
@@ -292,7 +389,9 @@ function CreativeFooter({ id, name, buildPath }: { id?: string; name: string; bu
         </div>
         <div className="flex flex-col gap-2 border-t-[1.5px] border-(--theme-on-secondary)/15 pt-[24px] text-[13px] font-semibold text-(--theme-on-secondary)/45 sm:flex-row sm:justify-between">
           <span>© ۱۴۰۵ {name}</span>
-          <span className="text-(--theme-primary)">👩‍🎨 ساخته شده برای خلاقان، توسط خلاقان</span>
+          <span className="text-(--theme-primary)">
+            👩‍🎨 ساخته شده برای خلاقان، توسط خلاقان
+          </span>
         </div>
       </div>
     </footer>

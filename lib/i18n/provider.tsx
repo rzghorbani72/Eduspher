@@ -2,7 +2,15 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { LanguageCode, TextDirection, LanguageConfig } from "./config";
-import { DEFAULT_LANGUAGE, getLanguageConfig, getDefaultLanguageForCountry, isRTL } from "./config";
+import { DEFAULT_LANGUAGE, LANGUAGES, getLanguageConfig, getDefaultLanguageForCountry, isRTL } from "./config";
+
+const PREFERRED_LANGUAGE_KEY = "preferred_language";
+
+function readSavedLanguage(): LanguageCode | null {
+  if (typeof window === "undefined") return null;
+  const saved = localStorage.getItem(PREFERRED_LANGUAGE_KEY);
+  return saved && saved in LANGUAGES ? (saved as LanguageCode) : null;
+}
 
 interface I18nContextValue {
   language: LanguageCode;
@@ -37,8 +45,11 @@ export function I18nProvider({
   const resolved = resolveLanguage(initialLanguage, countryCode);
   const [language, setLanguageState] = useState<LanguageCode>(resolved);
 
+  // Apply the user's saved choice after mount so it survives reloads and
+  // overrides the server-resolved default. Done in an effect to keep the
+  // first client render identical to the server HTML (no hydration mismatch).
   useEffect(() => {
-    setLanguageState(resolveLanguage(initialLanguage, countryCode));
+    setLanguageState(readSavedLanguage() ?? resolveLanguage(initialLanguage, countryCode));
   }, [initialLanguage, countryCode]);
 
   const config = useMemo(() => getLanguageConfig(language), [language]);
@@ -47,9 +58,9 @@ export function I18nProvider({
 
   const setLanguage = (next: LanguageCode) => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("preferred_language", next);
+      localStorage.setItem(PREFERRED_LANGUAGE_KEY, next);
     }
-    window.location.reload();
+    setLanguageState(next);
   };
 
   return (

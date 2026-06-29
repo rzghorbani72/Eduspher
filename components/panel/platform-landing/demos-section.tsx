@@ -17,7 +17,7 @@ function CodingDemoPreview() {
       <circle cx="29" cy="17" r="5" fill="#FEBC2E" />
       <circle cx="43" cy="17" r="5" fill="#28C840" />
       <rect x="118" y="9" width="184" height="16" rx="4" fill="rgba(0,0,0,.05)" />
-      <text x="210" y="21" textAnchor="middle" fill="rgba(0,0,0,.3)" fontSize="9" fontFamily="monospace">kodnevis-academy.ir</text>
+      <text x="210" y="21" textAnchor="middle" fill="rgba(0,0,0,.3)" fontSize="9" fontFamily="monospace">kodnevis-.com</text>
       <text x="402" y="60" textAnchor="end" fill="#2A50CC" fontSize="16" fontWeight="bold" fontFamily="sans-serif">کدنویسی نوین</text>
       <rect x="234" y="72" width="130" height="12" rx="3" fill="rgba(42,80,204,.6)" />
       <rect x="254" y="91" width="110" height="9" rx="3" fill="rgba(42,80,204,.35)" />
