@@ -91,7 +91,13 @@ export function TicketThread({ ticketId, onBack }: Props) {
 
       <ul className="space-y-3">
         {ticket.Message.map((m) => (
-          <MessageItem key={m.id} message={m} authorIsMe={m.author_id === ticket.CreatedBy?.id} systemText={formatSystemEvent(m, t)} />
+          <MessageItem
+            key={m.id}
+            ticketId={ticketId}
+            message={m}
+            authorIsMe={m.author_id === ticket.CreatedBy?.id}
+            systemText={formatSystemEvent(m, t)}
+          />
         ))}
       </ul>
 
@@ -128,7 +134,17 @@ export function TicketThread({ ticketId, onBack }: Props) {
   );
 }
 
-function MessageItem({ message, authorIsMe, systemText }: { message: TicketMessageView; authorIsMe: boolean; systemText: string }) {
+function MessageItem({
+  ticketId,
+  message,
+  authorIsMe,
+  systemText,
+}: {
+  ticketId: string;
+  message: TicketMessageView;
+  authorIsMe: boolean;
+  systemText: string;
+}) {
   if (message.kind === "SYSTEM_EVENT") {
     return <li className="flex items-center justify-center gap-1 text-center text-xs text-muted">{systemText}</li>;
   }
@@ -145,9 +161,9 @@ function MessageItem({ message, authorIsMe, systemText }: { message: TicketMessa
       {message.Attachment.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
           {message.Attachment.map((a) => (
-            <a key={a.id} href={attachmentUrl(a.image_id)} target="_blank" rel="noreferrer">
+            <a key={a.id} href={attachmentUrl(ticketId, a.id)} target="_blank" rel="noreferrer">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={attachmentUrl(a.image_id)} alt="" className="h-20 w-20 rounded border border-theme object-cover" />
+              <img src={attachmentUrl(ticketId, a.id)} alt="" className="h-20 w-20 rounded border border-theme object-cover" />
             </a>
           ))}
         </div>

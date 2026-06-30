@@ -3,9 +3,14 @@ import { backendApiBaseUrl } from "@/lib/env";
 
 type Translate = (key: string) => string;
 
-/** Build the backend retrieval URL for an attachment image. */
-export function attachmentUrl(imageId: string): string {
-  return `${backendApiBaseUrl}/images/get-image?id=${encodeURIComponent(imageId)}`;
+/**
+ * Build the retrieval URL for a ticket attachment via the capability-checked
+ * proxy — NOT the public-by-id `/images/get-image` endpoint. The browser sends
+ * the auth cookie automatically on this same-origin-credentialed request, so a
+ * plain <img src> works without custom headers.
+ */
+export function attachmentUrl(ticketId: string, attachmentId: string): string {
+  return `${backendApiBaseUrl}/support/tickets/${encodeURIComponent(ticketId)}/attachments/${encodeURIComponent(attachmentId)}`;
 }
 
 /** Localized text for a SYSTEM_EVENT message (e.g. responsible changed). */
