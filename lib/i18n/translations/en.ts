@@ -373,6 +373,13 @@ export const en = {
     gatewayResponseDetails: "Gateway Response Details",
     additionalInformation: "Additional Information",
   },
+  legal: {
+    acceptPrefix: "By creating an account, I agree to the",
+    and: "and",
+    acceptSuffix: ".",
+    privacyPolicy: "Privacy Policy",
+    mustAcceptTerms: "You must accept the Terms and Privacy Policy to continue.",
+  },
   auth: {
     login: "Login",
     register: "Register",

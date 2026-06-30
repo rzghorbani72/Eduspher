@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,6 +14,7 @@ import {
   verifyEmailOtp,
   verifyPhoneOtp,
   postJson,
+  getLegalDocuments,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
 import { useAuthContext } from "@/components/providers/auth-provider";
@@ -61,6 +62,24 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
   const [otpLoading, setOtpLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
+  const [legalVersions, setLegalVersions] = useState<{ terms: string; privacy: string }>({
+    terms: "1.0",
+    privacy: "1.0",
+  });
+
+  useEffect(() => {
+    getLegalDocuments("fa")
+      .then((docs) => {
+        const terms = docs.find((d) => d.type === "TERMS")?.version;
+        const privacy = docs.find((d) => d.type === "PRIVACY")?.version;
+        setLegalVersions((prev) => ({
+          terms: terms ?? prev.terms,
+          privacy: privacy ?? prev.privacy,
+        }));
+      })
+      .catch(() => {});
+  }, []);
   const isSubmittingRef = useRef(false);
   const phoneOtpTimer = useOtpTimer();
   const emailOtpTimer = useOtpTimer();
@@ -250,6 +269,11 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
         return;
       }
 
+      if (!acceptedLegal) {
+        setError(t("legal.mustAcceptTerms"));
+        return;
+      }
+
       const getCookieValue = (name: string) => {
         if (typeof document === "undefined") return null;
         const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -272,6 +296,8 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
         phone_otp?: string;
         email?: string;
         email_otp?: string;
+        accepted_terms_version?: string;
+        accepted_privacy_version?: string;
       } = {
         name: values.name,
         display_name: values.display_name,
@@ -280,6 +306,8 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
         bio: values.bio,
         role: "USER",
         academy_id: finalAcademyId,
+        accepted_terms_version: legalVersions.terms,
+        accepted_privacy_version: legalVersions.privacy,
       };
 
       if (primaryVerificationMethod === "phone") {
@@ -581,6 +609,26 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
             <Textarea id="bio" rows={3} className="mt-1" {...register("bio")} />
             {errors.bio && <p className="mt-1 text-xs text-destructive">{errors.bio.message}</p>}
           </div>
+
+          <label className="flex items-start gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={acceptedLegal}
+              onChange={(e) => { setAcceptedLegal(e.target.checked); setError(null); }}
+              className="mt-0.5 h-4 w-4 shrink-0"
+            />
+            <span>
+              {t("legal.acceptPrefix")}{" "}
+              <a href={buildPath("/terms")} target="_blank" rel="noreferrer" className="underline">
+                {t("auth.termsOfService")}
+              </a>{" "}
+              {t("legal.and")}{" "}
+              <a href={buildPath("/privacy")} target="_blank" rel="noreferrer" className="underline">
+                {t("legal.privacyPolicy")}
+              </a>{" "}
+              {t("legal.acceptSuffix")}
+            </span>
+          </label>
 
           {errorBlock}
           {messageBlock}

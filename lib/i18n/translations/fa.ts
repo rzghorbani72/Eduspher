@@ -377,6 +377,13 @@ export const fa = {
     gatewayResponseDetails: "جزئیات پاسخ درگاه",
     additionalInformation: "اطلاعات اضافی",
   },
+  legal: {
+    acceptPrefix: "با ساخت حساب، با",
+    and: "و",
+    acceptSuffix: "موافقت می‌کنم.",
+    privacyPolicy: "سیاست حریم خصوصی",
+    mustAcceptTerms: "برای ادامه باید قوانین و سیاست حریم خصوصی را بپذیرید.",
+  },
   auth: {
     login: "ورود",
     register: "ثبت‌نام",
