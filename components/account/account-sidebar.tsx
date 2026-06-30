@@ -2,7 +2,7 @@
 
 import Link from "@/components/ui/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, Calendar, History, Receipt, Settings, Home } from "lucide-react";
+import { GraduationCap, Calendar, History, Receipt, Settings, Home, LifeBuoy } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { useStorePath } from "@/components/providers/store-provider";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,7 @@ export function AccountSidebar({ displayName, email, isVerified, role }: Account
     { href: buildPath("/account?tab=history"), label: t("account.pastSessions") || "جلسات گذشته", icon: History, key: "history" },
     { href: buildPath("/account?tab=transactions"), label: t("account.transactions") || "تراکنش‌ها", icon: Receipt, key: "transactions" },
     { href: buildPath("/account?tab=settings"), label: t("account.settings") || "تنظیمات", icon: Settings, key: "settings" },
+    { href: buildPath("/account/support"), label: t("support.title"), icon: LifeBuoy, key: "support" },
   ];
 
   return (

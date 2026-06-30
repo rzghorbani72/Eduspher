@@ -49,6 +49,7 @@ export function I18nProvider({
   // overrides the server-resolved default. Done in an effect to keep the
   // first client render identical to the server HTML (no hydration mismatch).
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage is only readable post-mount; the server-resolved value must render first to avoid a hydration mismatch.
     setLanguageState(readSavedLanguage() ?? resolveLanguage(initialLanguage, countryCode));
   }, [initialLanguage, countryCode]);
 

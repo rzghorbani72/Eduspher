@@ -1846,13 +1846,6 @@ const CREATIVE_STATS = [
   { value: "۴.۸★", label: "امتیاز اپ" },
 ];
 
-const CREATIVE_MINI_CARDS = [
-  { title: "پروکریت برای مبتدیان", instructor: "لیسا باردوت · ۲.۱هزار دانشجو" },
-  { title: "موشن دیزاین پایه", instructor: "درک الیوت · ۳.۴هزار دانشجو" },
-  { title: "طراحی هویت برند", instructor: "آرون درپلین · ۵.۲هزار دانشجو" },
-  { title: "آبرنگ — منظره", instructor: "زانینا نبیل · ۱.۸هزار دانشجو" },
-];
-
 function CreativeHero({ id, config, storeContext }: HeroBlockProps) {
   const tag = config?.tag || "🎨 جامعه یادگیری خلاق";
   const title = config?.title || "کلاس‌های خلاقانه از بهترین";

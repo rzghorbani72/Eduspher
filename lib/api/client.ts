@@ -803,3 +803,136 @@ export const postDiscussionMessage = async (
   body: string,
   options?: RequestOptions,
 ) => (await postJson<Envelope<DiscussionMessage>>(`/discussions/messages`, { ...parent, body }, options)).data;
+
+// ----- Support tickets -----
+
+export type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING_ON_USER" | "RESOLVED" | "CLOSED" | "REOPENED";
+export type TicketPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
+export type TicketCategory =
+  | "BILLING" | "PAYMENT" | "COURSE_ACCESS" | "LIVE_CLASS" | "TECHNICAL" | "CONTENT" | "OTHER";
+
+export interface TicketPerson {
+  id: string;
+  display_name: string;
+}
+
+export interface TicketResponsible extends TicketPerson {
+  role: string;
+}
+
+export interface TicketListItem {
+  id: string;
+  subject: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  category: TicketCategory;
+  created_at: string;
+  last_activity_at: string;
+  CreatedBy: TicketPerson | null;
+  AssignedTo: TicketPerson | null;
+  _count: { Message: number };
+}
+
+export interface TicketAttachmentView {
+  id: string;
+  image_id: string;
+  mime: string;
+}
+
+export interface TicketMessageView {
+  id: string;
+  kind: "USER_MESSAGE" | "INTERNAL_NOTE" | "SYSTEM_EVENT";
+  body: string;
+  author_id: string;
+  author_role: string;
+  created_at: string;
+  system_event_type?: string | null;
+  system_meta?: Record<string, string | null> | null;
+  Author: TicketPerson | null;
+  Attachment: TicketAttachmentView[];
+}
+
+export interface TicketCapabilities {
+  canView: boolean;
+  canReply: boolean;
+  canManage: boolean;
+  canReassign: boolean;
+  canInternalNote: boolean;
+  isAuthor: boolean;
+  isPlatformStaff: boolean;
+}
+
+export interface TicketDetail {
+  id: string;
+  subject: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  category: TicketCategory;
+  scope: "ACADEMY" | "PLATFORM";
+  created_at: string;
+  CreatedBy: TicketPerson | null;
+  AssignedTo: TicketPerson | null;
+  Message: TicketMessageView[];
+  CallRequest: Array<{ id: string; status: string; phone: string; outcome_note: string | null; called_at: string | null }>;
+  Rating: { score: number; comment: string | null } | null;
+  capabilities: TicketCapabilities;
+}
+
+export interface CreateTicketPayload {
+  subject: string;
+  category: TicketCategory;
+  priority?: TicketPriority;
+  responsible_id: string;
+  body: string;
+  image_ids?: string[];
+  request_call?: boolean;
+  phone?: string;
+  preferred_time?: string;
+}
+
+export const listSupportResponsibles = async (options?: RequestOptions) =>
+  (await getJson<Envelope<TicketResponsible[]>>(`/support/responsibles`, options)).data;
+
+export const listMySupportTickets = async (params?: { status?: TicketStatus }, options?: RequestOptions) => {
+  const qs = params?.status ? `?status=${params.status}` : "";
+  return (await getJson<Envelope<{ items: TicketListItem[]; total: number }>>(`/support/tickets/mine${qs}`, options)).data;
+};
+
+export const getSupportTicket = async (id: string, options?: RequestOptions) =>
+  (await getJson<Envelope<TicketDetail>>(`/support/tickets/${id}`, options)).data;
+
+export const createSupportTicket = async (payload: CreateTicketPayload, options?: RequestOptions) =>
+  (await postJson<Envelope<TicketDetail>>(`/support/tickets`, { ...payload }, options)).data;
+
+export const replySupportTicket = async (
+  id: string,
+  payload: { body: string; image_ids?: string[] },
+  options?: RequestOptions,
+) => (await postJson<Envelope<{ id: string }>>(`/support/tickets/${id}/reply`, { ...payload }, options)).data;
+
+export const requestSupportCall = async (
+  id: string,
+  payload: { phone: string; preferred_time?: string },
+  options?: RequestOptions,
+) => (await postJson<Envelope<TicketDetail>>(`/support/tickets/${id}/request-call`, { ...payload }, options)).data;
+
+export const rateSupportTicket = async (
+  id: string,
+  payload: { score: number; comment?: string },
+  options?: RequestOptions,
+) => (await postJson<Envelope<{ ticket_id: string; score: number }>>(`/support/tickets/${id}/rate`, { ...payload }, options)).data;
+
+export const uploadSupportAttachment = async (file: File, options?: RequestOptions) => {
+  const form = new FormData();
+  form.append("file", file);
+  // No Content-Type: the browser sets the multipart boundary itself.
+  const headers = buildHeaders();
+  const response = await fetch(`${baseUrl}/support/attachments`, {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: form,
+    signal: options?.signal,
+  });
+  return (await handleResponse<Envelope<{ id: string; mime: string; size: number }>>(response, undefined, true)).data;
+};
