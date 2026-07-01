@@ -3,8 +3,24 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { isPaymentEnabled } from "@/lib/payment";
 
 export default function BankRedirectPage() {
+  if (!isPaymentEnabled) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="max-w-sm space-y-3 text-center">
+          <h1 className="text-xl font-bold">Payment Coming Soon</h1>
+          <p className="text-sm text-muted-foreground">
+            Payment processing is coming soon. Contact us to get early access.
+          </p>
+          <a href="mailto:support@mentoma.com" className="inline-block text-sm text-primary underline">
+            Contact Us
+          </a>
+        </div>
+      </div>
+    );
+  }
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("payment_id");
   const basketId = searchParams.get("basket_id");

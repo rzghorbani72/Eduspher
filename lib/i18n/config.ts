@@ -154,6 +154,7 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   PK: { countryCode: 'PK', defaultLanguage: 'ur', supportedLanguages: ['ur', 'en'] }, // Pakistan - Urdu (RTL)
   
   // LTR Countries
+  EE: { countryCode: 'EE', defaultLanguage: 'en', supportedLanguages: ['en'] }, // Estonia - English (EU beachhead)
   US: { countryCode: 'US', defaultLanguage: 'en', supportedLanguages: ['en', 'es'] }, // USA - English
   GB: { countryCode: 'GB', defaultLanguage: 'en', supportedLanguages: ['en'] }, // UK - English
   CA: { countryCode: 'CA', defaultLanguage: 'en', supportedLanguages: ['en', 'fr'] }, // Canada - English
