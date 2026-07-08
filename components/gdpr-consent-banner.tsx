@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useSyncExternalStore } from 'react';
+import Link from '@/components/ui/link';
 import { logger } from '@/lib/logging/app-logger';
 
 const COOKIE_NAME = 'gdpr_consent';
@@ -16,25 +17,29 @@ function setCookie(name: string, value: string, maxAge: number): void {
   document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
 }
 
-export function GdprConsentBanner() {
-  const [visible, setVisible] = useState(false);
+function cookieConsentNeeded(): boolean {
+  return typeof document !== 'undefined' && !getCookie(COOKIE_NAME);
+}
 
-  useEffect(() => {
-    if (!getCookie(COOKIE_NAME)) {
-      setVisible(true);
-    }
-  }, []);
+export function GdprConsentBanner() {
+  const [dismissed, setDismissed] = useState(false);
+  const needsConsent = useSyncExternalStore(
+    () => () => {},
+    cookieConsentNeeded,
+    () => false
+  );
+  const visible = needsConsent && !dismissed;
 
   function accept() {
     setCookie(COOKIE_NAME, 'accepted', COOKIE_MAX_AGE);
     logger.event('gdpr', 'consent_accepted', { surface: 'website' });
-    setVisible(false);
+    setDismissed(true);
   }
 
   function decline() {
     setCookie(COOKIE_NAME, 'declined', COOKIE_MAX_AGE);
     logger.event('gdpr', 'consent_declined', { surface: 'website' });
-    setVisible(false);
+    setDismissed(true);
   }
 
   if (!visible) return null;
@@ -47,9 +52,9 @@ export function GdprConsentBanner() {
     >
       <p className="text-sm text-muted-foreground">
         We use cookies to deliver this service and to improve your experience.{' '}
-        <a href="/privacy" className="underline hover:text-foreground">
+        <Link href="/privacy" className="underline hover:text-foreground">
           Learn more
-        </a>
+        </Link>
       </p>
       <div className="flex shrink-0 gap-2">
         <button

@@ -62,7 +62,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
   const [otpLoading, setOtpLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [acceptedLegal, setAcceptedLegal] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(true);
   const [legalVersions, setLegalVersions] = useState<{ terms: string; privacy: string }>({
     terms: "1.0",
     privacy: "1.0",
