@@ -28,6 +28,7 @@ import { CreativeBackground } from "@/components/motion/creative-background";
 import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
 import { resolveAssetUrl } from "@/lib/utils";
+import { GdprConsentBanner } from "@/components/gdpr-consent-banner";
 
 export const metadata: Metadata = {
   title: {
@@ -148,7 +149,7 @@ export default async function RootLayout({
     : undefined;
 
   return (
-    <html 
+    <html
       lang={language}
       dir={direction}
       suppressHydrationWarning
@@ -158,6 +159,11 @@ export default async function RootLayout({
         colorScheme: "light dark", // Support both, let system decide
       } as React.CSSProperties}
     >
+      <head>
+        <link rel="alternate" hrefLang="fa-IR" href={process.env.NEXT_PUBLIC_IR_DOMAIN ?? ''} />
+        <link rel="alternate" hrefLang="en" href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''} />
+        <link rel="alternate" hrefLang="x-default" href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''} />
+      </head>
       <body
         suppressHydrationWarning
         className="antialiased"
@@ -214,6 +220,7 @@ export default async function RootLayout({
                   {!bareLayout && <SiteFooter />}
                 </div>
               </ScrollAnimationProvider>
+              {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && <GdprConsentBanner />}
             </I18nProvider>
             </ThemeProvider>
           </StoreProvider>

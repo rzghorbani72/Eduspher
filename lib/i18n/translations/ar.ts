@@ -274,6 +274,13 @@ export const ar = {
     gatewayResponseDetails: 'تفاصيل استجابة البوابة',
     additionalInformation: 'معلومات إضافية',
   },
+  legal: {
+    acceptPrefix: 'بإنشاء حساب، أوافق على',
+    and: 'و',
+    acceptSuffix: '.',
+    privacyPolicy: 'سياسة الخصوصية',
+    mustAcceptTerms: 'يجب قبول الشروط وسياسة الخصوصية للمتابعة.',
+  },
   auth: {
     login: 'تسجيل الدخول',
     register: 'التسجيل',

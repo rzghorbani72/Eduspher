@@ -289,6 +289,13 @@ export const tr = {
     gatewayResponseDetails: "Ağ Geçidi Yanıt Detayları",
     additionalInformation: "Ek Bilgiler",
   },
+  legal: {
+    acceptPrefix: "Hesap oluşturarak şunları kabul ediyorum:",
+    and: "ve",
+    acceptSuffix: ".",
+    privacyPolicy: "Gizlilik Politikası",
+    mustAcceptTerms: "Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.",
+  },
   auth: {
     login: "Giriş Yap",
     register: "Kayıt Ol",

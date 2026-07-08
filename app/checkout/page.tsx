@@ -50,6 +50,24 @@ export default async function CheckoutPage({
   const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   const translate = (key: string) => t(key, language);
 
+  if (process.env.NEXT_PUBLIC_PAYMENT_ENABLED !== 'true') {
+    return (
+      <div className="mx-auto max-w-lg space-y-4 py-16 text-center">
+        <h1 className="text-2xl font-bold">{translate('payment.comingSoon') || 'Payment Coming Soon'}</h1>
+        <p className="text-muted-foreground">
+          {translate('payment.comingSoonDescription') ||
+            'Payment processing is coming soon. Contact us to get early access.'}
+        </p>
+        <a
+          href={`mailto:support@${typeof window !== 'undefined' ? window.location.hostname : 'mentoma.com'}`}
+          className="inline-flex h-10 items-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground hover:opacity-90"
+        >
+          {translate('payment.contactUs') || 'Contact Us'}
+        </a>
+      </div>
+    );
+  }
+
   // If no course ID, show cart checkout
   if (!courseId) {
     return (

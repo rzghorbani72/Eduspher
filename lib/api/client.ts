@@ -386,6 +386,17 @@ export const me = (options?: RequestOptions) => {
   return getJson<{ id?: number; status?: string; data?: unknown }>("/auth/me", options);
 };
 
+export type LegalDocumentSummary = {
+  type: string;
+  version: string;
+  title: string;
+  published_at: string;
+};
+
+export const getLegalDocuments = (locale = "fa", options?: RequestOptions) => {
+  return getJson<LegalDocumentSummary[]>(`/legal/documents?locale=${locale}`, options);
+};
+
 export type SendOtpPayload = {
   email?: string;
   phone_number?: string;

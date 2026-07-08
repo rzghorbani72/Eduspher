@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { isPaymentEnabled } from "@/lib/payment";
 
 export default function BankRedirectPage() {
   const searchParams = useSearchParams();
@@ -12,20 +13,22 @@ export default function BankRedirectPage() {
   const callbackUrl = searchParams.get("callback_url");
 
   useEffect(() => {
-    // Simulate bank payment processing
-    // In production, this would be handled by the bank's payment gateway
+    if (!isPaymentEnabled) return;
+
     const timer = setTimeout(() => {
-      // Simulate successful payment (80% success rate for demo)
       const isSuccess = Math.random() > 0.2;
-      
+
       const resultUrl = new URL(callbackUrl || "/payment/callback");
       resultUrl.searchParams.set("payment_id", paymentId || "");
       resultUrl.searchParams.set("basket_id", basketId || "");
       resultUrl.searchParams.set("amount", amount || "");
       resultUrl.searchParams.set("status", isSuccess ? "success" : "failed");
       resultUrl.searchParams.set("transaction_id", `TXN${Date.now()}`);
-      resultUrl.searchParams.set("reference", `REF${Math.random().toString(36).substr(2, 9).toUpperCase()}`);
-      
+      resultUrl.searchParams.set(
+        "reference",
+        `REF${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+      );
+
       if (isSuccess) {
         resultUrl.searchParams.set("message", "Payment successful");
       } else {
@@ -38,6 +41,25 @@ export default function BankRedirectPage() {
 
     return () => clearTimeout(timer);
   }, [paymentId, basketId, amount, callbackUrl]);
+
+  if (!isPaymentEnabled) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="max-w-sm space-y-3 text-center">
+          <h1 className="text-xl font-bold">Payment Coming Soon</h1>
+          <p className="text-sm text-muted-foreground">
+            Payment processing is coming soon. Contact us to get early access.
+          </p>
+          <a
+            href="mailto:support@mentoma.com"
+            className="inline-block text-sm text-primary underline"
+          >
+            Contact Us
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -53,4 +75,3 @@ export default function BankRedirectPage() {
     </div>
   );
 }
-
