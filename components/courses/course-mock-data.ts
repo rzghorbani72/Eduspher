@@ -36,18 +36,6 @@ export const ENROLLMENT_METHODS: readonly EnrollmentMethod[] = [
     ctaKey: "courses.ctaBuy",
   },
   {
-    key: "subscription",
-    icon: "card",
-    titleKey: "courses.methodSubscription",
-    descKey: "courses.methodSubscriptionDesc",
-    badgeKey: "courses.badgeAnnualDiscount",
-    badgeTone: "save",
-    priceFactor: 0.12,
-    interval: "month",
-    featureKeys: ["courses.featAllLessons", "courses.featNewContent", "courses.featCancelAnytime"],
-    ctaKey: "courses.ctaSubscribe",
-  },
-  {
     key: "live",
     icon: "video",
     titleKey: "courses.methodLive",

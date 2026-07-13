@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
 import { CourseEnrollmentSidebar } from "@/components/courses/course-enrollment-sidebar";
+import { TutoringOfferCard } from "@/components/courses/tutoring-offer-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   getCourseById,
@@ -13,6 +14,7 @@ import {
   getCurrentUser,
   getAcademyBySlug,
   getCurrentAcademy,
+  getTutoringOffersPublic,
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import {
@@ -34,9 +36,10 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const [course, user] = await Promise.all([
+  const [course, user, tutoringOffers] = await Promise.all([
     getCourseById(id),
     getCurrentUser().catch(() => null),
+    getTutoringOffersPublic(id).catch(() => []),
   ]);
 
   let currentAcademy = await getCurrentAcademy().catch(() => null);
@@ -278,6 +281,12 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             language={language}
             currencyConfig={storeConfig}
             freePriceLabel={priceDisplay}
+          />
+          <TutoringOfferCard
+            offers={tutoringOffers}
+            language={language}
+            currencyConfig={storeConfig}
+            loginHref={buildPath(`/login?redirect=/courses/${course.id}`)}
           />
         </aside>
       </div>
