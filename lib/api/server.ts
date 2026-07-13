@@ -542,6 +542,27 @@ export async function getAcademyPlansPublic(kind?: "SUBSCRIPTION" | "PACKAGE") {
   return result.data ?? [];
 }
 
+export interface PublicTutoringOffer {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  currency: string;
+  duration_days: number | null;
+  sessions_included: number | null;
+  Tutor: { id: string; display_name: string | null } | null;
+}
+
+export async function getTutoringOffersPublic(courseId: string): Promise<PublicTutoringOffer[]> {
+  const result = await serverFetchRaw<{
+    status: string;
+    data: PublicTutoringOffer[];
+  }>(`/tutoring/offers/public?course_id=${encodeURIComponent(courseId)}`, {
+    method: "GET",
+  });
+  return result.data ?? [];
+}
+
 export async function initiateAcademyPlanPayment(data: {
   academy_plan_id: string;
   amount: number;

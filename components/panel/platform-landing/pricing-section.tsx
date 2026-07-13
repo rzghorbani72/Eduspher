@@ -12,28 +12,34 @@ const plans = [
     priceM: "رایگان",
     priceY: "رایگان",
     note: "برای همیشه",
+    commission: "کارمزد ۸٪ از هر ثبت‌نام",
+    hasCommission: true,
     cta: "شروع رایگان",
     featured: false,
     features: ["۱ آکادمی", "تا ۳ دوره", "تا ۵۰ دانشجو", "پشتیبانی انجمن"],
   },
   {
-    id: "pro",
-    name: "پرو",
+    id: "growth",
+    name: "رشد",
     desc: "برای سازندگان جدی محتوا",
     priceM: "۳۲۵,۰۰۰",
     priceY: "۲۷۰,۰۰۰",
     note: null,
+    commission: "بدون کارمزد فروش (۰٪)",
+    hasCommission: false,
     cta: "شروع آزمایش رایگان",
     featured: true,
     features: ["۳ آکادمی", "دوره نامحدود", "دانشجوی نامحدود", "دامنه اختصاصی + حذف برند منتوما", "درگاه پرداخت و کد تخفیف", "پشتیبانی اولویت‌دار"],
   },
   {
-    id: "business",
-    name: "بیزینس",
+    id: "pro",
+    name: "پرو",
     desc: "برای تیم‌ها و سازمان‌ها",
     priceM: "۸۲۵,۰۰۰",
     priceY: "۶۸۰,۰۰۰",
     note: null,
+    commission: "بدون کارمزد فروش (۰٪)",
+    hasCommission: false,
     cta: "تماس با فروش",
     featured: false,
     features: ["آکادمی نامحدود", "مدیریت تیم و مدرسان", "سطح دسترسی پیشرفته", "گزارش و API اختصاصی", "مدیر موفقیت اختصاصی"],
@@ -100,6 +106,22 @@ export function PricingSection() {
             <div style={{ fontSize: 13, color: "var(--ink-3)", marginTop: 6, minHeight: 18 }}>
               {plan.note ?? (yearly ? "پرداخت سالانه — ۲ ماه رایگان" : "")}
             </div>
+            <div
+              style={{
+                marginTop: 12,
+                display: "inline-flex",
+                alignSelf: "flex-start",
+                padding: "5px 11px",
+                borderRadius: 999,
+                fontSize: 12.5,
+                fontWeight: 700,
+                background: plan.hasCommission ? "var(--bg-2)" : "rgba(26,164,114,.16)",
+                color: plan.hasCommission ? "var(--ink-2)" : "#1aa472",
+                border: plan.hasCommission ? "1px solid var(--bd)" : "none",
+              }}
+            >
+              {plan.commission}
+            </div>
             <a
               href="#"
               style={{
@@ -123,6 +145,10 @@ export function PricingSection() {
           </div>
         ))}
       </div>
+
+      <p style={{ maxWidth: 720, margin: "26px auto 0", textAlign: "center", fontSize: 13, color: "var(--ink-3)", lineHeight: 1.9 }}>
+        در پلن رایگان، منتوما بابت خدمت واسطه‌گریِ وصول وجه، ۸٪ از هر ثبت‌نام را به‌عنوان کارمزد کسر می‌کند؛ در پلن‌های پولی کارمزدی وجود ندارد و تنها حق اشتراک ماهانه/سالانه پرداخت می‌شود. قیمت دوره درآمد آکادمی است و منتوما آن را به نمایندگی وصول می‌کند.
+      </p>
     </section>
   );
 }

@@ -191,15 +191,22 @@ export function AccountLearningTab({
       return <Unavailable text={t("account.learningDataUnavailable")} />;
     }
 
-    const active = (tutoring ?? []).filter(
-      (item) => item.status === "ACTIVE" || item.status === "PENDING",
-    );
+    const engagements = tutoring ?? [];
+    const statusLabels: Record<string, string> = {
+      ACTIVE: t("account.tutoringActive"),
+      PENDING: t("account.tutoringPending"),
+      COMPLETED: t("account.tutoringCompleted"),
+      EXPIRED: t("account.tutoringExpired"),
+      CANCELLED: t("account.tutoringCancelled"),
+    };
 
     return (
       <TabSection title={t("account.privateTutoring")} icon={UserRoundCheck}>
-        {active.length ? (
+        {engagements.length ? (
           <div className="space-y-3">
-            {active.map((engagement) => {
+            {engagements.map((engagement) => {
+              const isLive =
+                engagement.status === "ACTIVE" || engagement.status === "PENDING";
               const endsAt = engagement.ends_at
                 ? new Intl.DateTimeFormat(language, {
                     dateStyle: "medium",
@@ -225,20 +232,28 @@ export function AccountLearningTab({
                         </p>
                       ) : null}
                     </div>
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                      {engagement.status === "ACTIVE"
-                        ? t("account.tutoringActive")
-                        : t("account.tutoringPending")}
+                    <span
+                      className={
+                        isLive
+                          ? "rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+                          : "rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground"
+                      }
+                    >
+                      {statusLabels[engagement.status] ?? engagement.status}
                     </span>
                   </div>
                   <Link
                     href={buildAcademyPath(
                       storeSlug,
-                      `/learn/${engagement.course_id}`,
+                      isLive
+                        ? `/learn/${engagement.course_id}`
+                        : `/courses/${engagement.course_id}`,
                     )}
                     className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary underline-offset-4 hover:underline"
                   >
-                    {t("account.openTutoringCourse")}
+                    {isLive
+                      ? t("account.openTutoringCourse")
+                      : t("account.tutoringRenew")}
                     <ExternalLink className="size-3.5" aria-hidden="true" />
                   </Link>
                 </div>
