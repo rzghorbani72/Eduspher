@@ -30,11 +30,11 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
   if (!course) return null;
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/window.svg";
-  const href = buildAcademyPath(storeSlug, `/courses/${course.id}`);
+  const href = buildAcademyPath(storeSlug, `/learn/${course.id}`);
   const progress = Math.min(Math.round(enrollment.progress_percent), 100);
 
   return (
-    <div className="flex flex-col rounded-2xl border border-theme bg-card shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-[var(--theme-primary)]/30">
+    <div className="flex flex-col rounded-2xl border border-theme bg-card shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-(--theme-primary)/30">
       {/* Cover */}
       <div className="relative h-44 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -60,7 +60,7 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         </div>
 
         {/* Title */}
-        <p className="font-bold text-[var(--theme-foreground)] leading-snug line-clamp-2">{course.title}</p>
+        <p className="font-bold text-(--theme-foreground) leading-snug line-clamp-2">{course.title}</p>
 
         {/* Author */}
         {course.author && (
@@ -71,11 +71,11 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         <div className="space-y-1.5 mt-auto">
           <div className="flex items-center justify-between text-xs text-muted">
             <span>{t("account.progress") || "پیشرفت دوره"}</span>
-            <span className="font-semibold text-[var(--theme-primary)]">{progress}%</span>
+            <span className="font-semibold text-(--theme-primary)">{progress}%</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-surface-alt overflow-hidden">
             <div
-              className="h-1.5 rounded-full bg-[var(--theme-primary)] transition-all duration-500"
+              className="h-1.5 rounded-full bg-(--theme-primary) transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -84,7 +84,7 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         {/* CTA */}
         <Link
           href={href}
-          className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-full bg-[var(--theme-primary)] text-[var(--theme-on-primary)] text-sm font-semibold shadow-sm transition-all hover:opacity-90 hover:scale-[1.02]"
+          className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-full bg-(--theme-primary) text-(--theme-on-primary) text-sm font-semibold shadow-sm transition-all hover:opacity-90 hover:scale-[1.02]"
         >
           {t("account.continueLearning") || "ادامه یادگیری"} →
         </Link>

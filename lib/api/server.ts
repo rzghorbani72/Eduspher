@@ -2,7 +2,8 @@ import "server-only";
 
 import { cookies, headers as nextHeaders } from "next/headers";
 
-import { backendApiBaseUrl, env } from "@/lib/env";
+import { getBackendApiBaseUrl, env } from "@/lib/env";
+import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
 
 /**
  * Custom error class for 401 Unauthorized errors
@@ -46,11 +47,14 @@ type FetchOptions = RequestInit & {
   includeAuth?: boolean;
 };
 
-const buildUrl = (path: string, query?: FetchOptions["query"]) => {
+const buildUrl = (
+  path: string,
+  query?: FetchOptions["query"],
+  lang: string = DEFAULT_LANGUAGE
+) => {
   const cleanedPath = path.replace(/^\//, "");
-  const base = backendApiBaseUrl.endsWith("/")
-    ? backendApiBaseUrl
-    : `${backendApiBaseUrl}/`;
+  const baseRoot = getBackendApiBaseUrl(lang);
+  const base = baseRoot.endsWith("/") ? baseRoot : `${baseRoot}/`;
   const url = new URL(cleanedPath, base);
   if (query) {
     Object.entries(query).forEach(([key, value]) => {
@@ -128,7 +132,10 @@ const baseFetch = async (
   path: string,
   { query, includeAuth = true, ...init }: FetchOptions = {}
 ) => {
-  const url = buildUrl(path, query);
+  const cookieStore = await cookies();
+  const lang =
+    cookieStore.get("preferred_language")?.value ?? DEFAULT_LANGUAGE;
+  const url = buildUrl(path, query, lang);
   const headers = await buildHeaders(includeAuth, init.headers);
 
   const response = await fetch(url, {
@@ -408,14 +415,16 @@ export async function getEnrollments(params?: {
   page?: number;
   limit?: number;
   status?: string;
-  course_id?: number;
+  course_id?: string | number;
 }) {
   try {
     const result = await serverFetchRaw<{
       message: string;
       status: string;
       data: {
-        enrollments: EnrollmentSummary[];
+        enrollments: Array<
+          EnrollmentSummary & { Course?: EnrollmentSummary["course"] }
+        >;
         pagination: Pagination;
       };
     }>("/enrollments", {
@@ -423,7 +432,13 @@ export async function getEnrollments(params?: {
         ...params,
       },
     });
-    return result.data;
+    return {
+      ...result.data,
+      enrollments: result.data.enrollments.map((enrollment) => ({
+        ...enrollment,
+        course: enrollment.course ?? enrollment.Course ?? null,
+      })),
+    };
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
       return null;

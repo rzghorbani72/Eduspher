@@ -5,6 +5,14 @@ import type { StoreSummary } from "@/lib/api/types";
 import { env } from "@/lib/env";
 import { buildAcademySubdomainUrl } from "@/lib/utils";
 
+const platformHost = (() => {
+  try {
+    return new URL(env.appUrl).hostname.replace(/^www\./, "");
+  } catch {
+    return "mentoma.com";
+  }
+})();
+
 const GRADIENTS = [
   "linear-gradient(135deg,#7c6cff,#4f8cff)",
   "linear-gradient(135deg,#34e1a3,#15b8c4)",
@@ -142,7 +150,7 @@ export function ExamplesSection({ academies = [] }: Props) {
                   <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>{academy.name}</h3>
                   {slug && (
                     <p style={{ margin: "6px 0 0", fontSize: 12, color: "var(--ink-3)", direction: "ltr", textAlign: "right", fontFamily: "monospace" }}>
-                      {slug}.mentoma.com
+                      {slug}.{platformHost}
                     </p>
                   )}
                   <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "flex-end" }}>

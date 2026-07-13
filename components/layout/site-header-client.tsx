@@ -24,12 +24,14 @@ interface SiteHeaderClientProps {
   displayName: string | null;
   isAuthenticated: boolean;
   isPanelRoot: boolean;
+  requestHost: string | null;
 }
 
 export function SiteHeaderClient({
   displayName,
   isAuthenticated: initialAuth,
   isPanelRoot,
+  requestHost,
 }: SiteHeaderClientProps) {
   const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
@@ -42,7 +44,7 @@ export function SiteHeaderClient({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const adminLoginUrl = getAdminPanelUrl("/login");
+  const adminLoginUrl = getAdminPanelUrl("/login", requestHost);
 
   const showPanelNav = isPanelRoot && !onAcademySite;
 

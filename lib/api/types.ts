@@ -41,6 +41,7 @@ export interface LessonSummary {
   description?: string | null;
   duration?: number | null;
   is_free?: boolean;
+  is_published?: boolean;
   order?: number | null;
   lesson_type?: string | null;
   LiveSession?: LiveSessionSummary | null;

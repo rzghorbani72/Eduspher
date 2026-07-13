@@ -188,6 +188,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "bundles",
   "checkout",
   "courses",
+  "learn",
   "payment",
   "preview",
   "roadmap",
@@ -216,7 +217,7 @@ const PLATFORM_PATHS = new Set([
 ]);
 
 // Define protected routes that require authentication
-const protectedRoutes = ["/account"];
+const protectedRoutes = ["/account", "/learn"];
 
 // Define public routes that don't require authentication
 const publicRoutes = ["/", "/courses", "/articles", "/about", "/auth/login", "/auth/register", "/auth/forgot-password"];
@@ -360,6 +361,10 @@ export async function proxy(request: NextRequest) {
   }
 
   const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-public-pathname", requestUrl.pathname);
+  if (requestUrl.search) {
+    requestHeaders.set("x-public-search", requestUrl.search);
+  }
   const applyPreviewEmbed = shouldApplyPreviewEmbed(request, isAcademyHomePath);
   const previewEmbed = applyPreviewEmbed
     ? applyPreviewEmbedRequest(request, requestHeaders)

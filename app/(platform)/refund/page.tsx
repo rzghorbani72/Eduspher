@@ -1,9 +1,9 @@
 import { PlatformRefundPage } from "@/components/panel/platform-refund/platform-refund-page";
-import { getAdminPanelUrl } from "@/lib/admin-panel-url";
+import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 
 export const dynamic = "force-dynamic";
 
-export default function RefundPage() {
-  const adminRegisterUrl = getAdminPanelUrl("/register");
+export default async function RefundPage() {
+  const adminRegisterUrl = await getServerAdminPanelUrl("/register");
   return <PlatformRefundPage adminRegisterUrl={adminRegisterUrl} />;
 }

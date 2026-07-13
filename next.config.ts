@@ -8,6 +8,8 @@ const PRODUCTION_PUBLIC_DEFAULTS = {
   BACKEND_API_PATH: "/v1",
   APP_URL: "https://mentoma.com",
   ADMIN_PANEL_URL: "https://admin.mentoma.com",
+  IR_DOMAIN: "https://mentoma.ir",
+  COM_DOMAIN: "https://mentoma.com",
 } as const;
 
 const SECURITY_HEADERS = [
@@ -58,6 +60,10 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_ADMIN_PANEL_URL:
       process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ||
       PRODUCTION_PUBLIC_DEFAULTS.ADMIN_PANEL_URL,
+    NEXT_PUBLIC_IR_DOMAIN:
+      process.env.NEXT_PUBLIC_IR_DOMAIN || PRODUCTION_PUBLIC_DEFAULTS.IR_DOMAIN,
+    NEXT_PUBLIC_COM_DOMAIN:
+      process.env.NEXT_PUBLIC_COM_DOMAIN || PRODUCTION_PUBLIC_DEFAULTS.COM_DOMAIN,
   },
   // Security headers
   async headers() {

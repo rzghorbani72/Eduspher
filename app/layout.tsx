@@ -7,6 +7,7 @@ import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { getUserDisplayName } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ShellProvider } from "@/components/providers/shell-provider";
+import { getRequestHost } from "@/lib/request-host";
 import { StoreProvider } from "@/components/providers/store-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
@@ -15,7 +16,6 @@ import { ThemeToggleButton } from "@/components/theme/theme-toggle-button";
 import { ThemeStyleSync } from "@/components/theme/theme-style-sync";
 import { I18nProvider } from "@/lib/i18n/provider";
 import { DocumentLangSync } from "@/lib/i18n/document-lang-sync";
-import { env } from "@/lib/env";
 import { getAcademyContext } from "@/lib/store-context";
 import { getSession } from "@/lib/auth/session";
 import {
@@ -29,24 +29,11 @@ import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
 import { resolveAssetUrl } from "@/lib/utils";
 import { GdprConsentBanner } from "@/components/gdpr-consent-banner";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 
-export const metadata: Metadata = {
-  title: {
-    default: env.siteName,
-    template: `%s | ${env.siteName}`,
-  },
-  description: env.siteDescription,
-  openGraph: {
-    title: env.siteName,
-    description: env.siteDescription,
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: env.siteName,
-    description: env.siteDescription,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildSiteMetadata();
+}
 
 export default async function RootLayout({
   children,
@@ -57,6 +44,7 @@ export default async function RootLayout({
   const session = await getSession();
   const isAuthenticated = Boolean(session?.userId);
   const headersList = await headers();
+  const requestHost = await getRequestHost();
   const pathname = headersList.get("x-pathname") || "";
   const urlPathname = headersList.get("x-url-pathname") || pathname;
   // Trust the middleware signal; fall back to URL check when middleware is not running.
@@ -159,11 +147,6 @@ export default async function RootLayout({
         colorScheme: "light dark", // Support both, let system decide
       } as React.CSSProperties}
     >
-      <head>
-        <link rel="alternate" hrefLang="fa-IR" href={process.env.NEXT_PUBLIC_IR_DOMAIN ?? ''} />
-        <link rel="alternate" hrefLang="en" href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''} />
-        <link rel="alternate" hrefLang="x-default" href={process.env.NEXT_PUBLIC_COM_DOMAIN ?? ''} />
-      </head>
       <body
         suppressHydrationWarning
         className="antialiased"
@@ -183,6 +166,7 @@ export default async function RootLayout({
             isPanelRoot={isPanelRoot}
             headerDisplayName={headerDisplayName}
             headerIsAuthenticated={isAuthenticated}
+            requestHost={requestHost}
           >
           <StoreProvider key={shellKey} initialValue={storeContext}>
             <ThemeProvider key={themeKey} initialTheme={theme}>
