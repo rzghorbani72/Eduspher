@@ -1,12 +1,12 @@
 "use client";
 
 import type { AuthResponse } from "@/lib/api/types";
-import { backendApiBaseUrl, env } from "@/lib/env";
+import { getClientBackendApiBaseUrl, env } from "@/lib/env";
 
 const withTrailingSlash = (value: string) =>
   value.endsWith("/") ? value.slice(0, -1) : value;
 
-const baseUrl = withTrailingSlash(backendApiBaseUrl);
+const getBaseUrl = () => withTrailingSlash(getClientBackendApiBaseUrl());
 
 type RequestOptions = {
   signal?: AbortSignal;
@@ -71,7 +71,7 @@ async function refreshToken(): Promise<boolean> {
   isRefreshing = true;
   refreshPromise = (async () => {
     try {
-      const response = await fetch(`${baseUrl}/auth/refresh`, {
+      const response = await fetch(`${getBaseUrl()}/auth/refresh`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -200,7 +200,7 @@ export const postJson = async <T>(
       Accept: "application/json",
     });
 
-    const response = await fetch(`${baseUrl}${path}`, {
+    const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "POST",
       credentials: "include",
       headers,
@@ -225,13 +225,13 @@ export const postJson = async <T>(
   return makeRequest(options?.skipRefresh);
 };
 
-const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
+export const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
   const makeRequest = async (skipRefresh = false): Promise<T> => {
     const headers = buildHeaders({
       Accept: "application/json",
     });
 
-    const response = await fetch(`${baseUrl}${path}`, {
+    const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "GET",
       credentials: "include",
       headers,
@@ -258,7 +258,7 @@ const putJson = async <T>(
       Accept: "application/json",
     });
 
-    const response = await fetch(`${baseUrl}${path}`, {
+    const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "PUT",
       credentials: "include",
       headers,
@@ -275,7 +275,7 @@ const putJson = async <T>(
   return makeRequest(options?.skipRefresh);
 };
 
-const patchJson = async <T>(
+export const patchJson = async <T>(
   path: string,
   body: Record<string, unknown>,
   options?: RequestOptions
@@ -286,7 +286,7 @@ const patchJson = async <T>(
       Accept: "application/json",
     });
 
-    const response = await fetch(`${baseUrl}${path}`, {
+    const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "PATCH",
       credentials: "include",
       headers,
@@ -312,7 +312,7 @@ const deleteJson = async <T>(
       Accept: "application/json",
     });
 
-    const response = await fetch(`${baseUrl}${path}`, {
+    const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "DELETE",
       credentials: "include",
       headers,
@@ -393,8 +393,8 @@ export type LegalDocumentSummary = {
   published_at: string;
 };
 
-export const getLegalDocuments = (locale = "fa", options?: RequestOptions) => {
-  return getJson<LegalDocumentSummary[]>(`/legal/documents?locale=${locale}`, options);
+export const getLegalDocuments = (options?: RequestOptions) => {
+  return getJson<LegalDocumentSummary[]>(`/legal/documents`, options);
 };
 
 export type SendOtpPayload = {
@@ -531,7 +531,7 @@ export type LessonLiveSession = {
   updated_at: string;
 };
 
-export const getLesson = async (lessonId: number, options?: RequestOptions) => {
+export const getLesson = async (lessonId: string | number, options?: RequestOptions) => {
   const raw = await getJson<{
     status?: string;
     data?: Record<string, unknown> | null;
@@ -543,7 +543,7 @@ export const getLesson = async (lessonId: number, options?: RequestOptions) => {
 };
 
 export const getLessonLiveSession = async (
-  lessonId: number,
+  lessonId: string | number,
   options?: RequestOptions
 ): Promise<LessonLiveSession | null> => {
   const raw = await getJson<{
@@ -938,7 +938,7 @@ export const uploadSupportAttachment = async (file: File, options?: RequestOptio
   form.append("file", file);
   // No Content-Type: the browser sets the multipart boundary itself.
   const headers = buildHeaders();
-  const response = await fetch(`${baseUrl}/support/attachments`, {
+  const response = await fetch(`${getBaseUrl()}/support/attachments`, {
     method: "POST",
     credentials: "include",
     headers,

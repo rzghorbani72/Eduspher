@@ -63,22 +63,25 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(true);
-  const [legalVersions, setLegalVersions] = useState<{ terms: string; privacy: string }>({
-    terms: "1.0",
-    privacy: "1.0",
+  const [legalVersions, setLegalVersions] = useState<{
+    terms: string | null;
+    privacy: string | null;
+  }>({
+    terms: null,
+    privacy: null,
   });
 
   useEffect(() => {
-    getLegalDocuments("fa")
+    getLegalDocuments()
       .then((docs) => {
-        const terms = docs.find((d) => d.type === "TERMS")?.version;
-        const privacy = docs.find((d) => d.type === "PRIVACY")?.version;
-        setLegalVersions((prev) => ({
-          terms: terms ?? prev.terms,
-          privacy: privacy ?? prev.privacy,
-        }));
+        setLegalVersions({
+          terms: docs.find((d) => d.type === "TERMS")?.version ?? null,
+          privacy: docs.find((d) => d.type === "PRIVACY")?.version ?? null,
+        });
       })
-      .catch(() => {});
+      .catch(() => {
+        setLegalVersions({ terms: null, privacy: null });
+      });
   }, []);
   const isSubmittingRef = useRef(false);
   const phoneOtpTimer = useOtpTimer();
@@ -271,6 +274,11 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
 
       if (!acceptedLegal) {
         setError(t("legal.mustAcceptTerms"));
+        return;
+      }
+
+      if (!legalVersions.terms || !legalVersions.privacy) {
+        setError(t("legal.documentsUnavailable"));
         return;
       }
 

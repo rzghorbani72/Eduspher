@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
+
+import { MarketAlternateLink } from "@/components/seo/market-alternate-link";
 
 const BrandLogo = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -60,7 +63,12 @@ export function HomeFooter() {
 
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: 22, borderTop: "1px solid var(--bd)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <span style={{ fontSize: 13, color: "var(--ink-3)" }}>© ۱۴۰۴ منتوما — همه حقوق محفوظ است.</span>
-        <span style={{ fontSize: 13, color: "var(--ink-3)" }}>ساخته‌شده با ❤ در ایران</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <Suspense fallback={null}>
+            <MarketAlternateLink />
+          </Suspense>
+          <span style={{ fontSize: 13, color: "var(--ink-3)" }}>ساخته‌شده با ❤ در ایران</span>
+        </div>
       </div>
     </footer>
   );

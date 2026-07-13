@@ -1,9 +1,9 @@
 import { PlatformContactPage } from "@/components/panel/platform-contact/platform-contact-page";
-import { getAdminPanelUrl } from "@/lib/admin-panel-url";
+import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 
 export const dynamic = "force-dynamic";
 
-export default function ContactPage() {
-  const adminRegisterUrl = getAdminPanelUrl("/register");
+export default async function ContactPage() {
+  const adminRegisterUrl = await getServerAdminPanelUrl("/register");
   return <PlatformContactPage adminRegisterUrl={adminRegisterUrl} />;
 }

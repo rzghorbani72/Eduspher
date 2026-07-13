@@ -16,6 +16,7 @@ import {
   type AnswerInput,
 } from '@/lib/api/client';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface LessonQuizProps {
   lessonId: string;
@@ -30,6 +31,8 @@ type AnswerState = Record<string, { selected_option_id?: string; answer_boolean?
  * the contextual discussion thread.
  */
 export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
+  const { t } = useTranslation();
+  const quizUnavailable = t('learning.quizUnavailable');
   const [quiz, setQuiz] = useState<StudentQuiz | null>(null);
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
   const [answers, setAnswers] = useState<AnswerState>({});
@@ -44,12 +47,12 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
       setQuiz(q);
       const a = await startQuizAttempt(q.id);
       setAttempt(a);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Quiz unavailable');
+    } catch {
+      setError(quizUnavailable);
     } finally {
       setLoading(false);
     }
-  }, [lessonId]);
+  }, [lessonId, quizUnavailable]);
 
   useEffect(() => {
     void load();
@@ -67,14 +70,14 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
       if (payload.length) await saveQuizAnswers(attempt.id, payload);
       const result = await submitQuizAttempt(attempt.id);
       setAttempt(result);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to submit');
+    } catch {
+      setError(t('learning.quizSubmitFailed'));
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading) return <p className="text-sm text-muted-foreground">Loading quiz…</p>;
+  if (loading) return <p className="text-sm text-muted-foreground">{t('learning.loadingQuiz')}</p>;
   if (error && !quiz) return <p className="text-sm text-destructive">{error}</p>;
   if (!quiz || !attempt) return null;
 
@@ -89,17 +92,17 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
             <h3 className="text-lg font-semibold">{quiz.title}</h3>
             <Badge variant={attempt.passed ? 'success' : pending ? 'warning' : 'outline'}>
               {pending ? (
-                <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> Awaiting review</span>
+                <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {t('learning.awaitingReview')}</span>
               ) : attempt.passed ? (
-                <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Passed</span>
+                <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> {t('learning.passed')}</span>
               ) : (
-                'Not passed'
+                t('learning.notPassed')
               )}
             </Badge>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Score: <span className="font-medium text-foreground">{attempt.score}</span> / {attempt.max_score}
-            {pending && ' (short answers still being reviewed)'}
+            {t('learning.score')}: <span className="font-medium text-foreground">{attempt.score}</span> / {attempt.max_score}
+            {pending && ` (${t('learning.shortAnswersPending')})`}
           </p>
           {attempt.feedback && <p className="mt-3 rounded-md bg-muted p-3 text-sm">{attempt.feedback}</p>}
         </Card>
@@ -148,7 +151,7 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
                     checked={answers[q.id]?.answer_boolean === val}
                     onChange={() => setAnswer(q.id, { answer_boolean: val })}
                   />
-                  {val ? 'True' : 'False'}
+                  {val ? t('learning.true') : t('learning.false')}
                 </label>
               ))}
             </div>
@@ -160,7 +163,8 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
               maxLength={5000}
               value={answers[q.id]?.answer_text ?? ''}
               onChange={(e) => setAnswer(q.id, { answer_text: e.target.value })}
-              placeholder="Your answer…"
+              placeholder={t('learning.yourAnswer')}
+              aria-label={t('learning.yourAnswer')}
             />
           )}
         </Card>
@@ -168,7 +172,7 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button onClick={submit} disabled={submitting}>
-        {submitting ? 'Submitting…' : 'Submit quiz'}
+        {submitting ? t('learning.submittingQuiz') : t('learning.submitQuiz')}
       </Button>
     </div>
   );

@@ -6,6 +6,7 @@ type ShellContextValue = {
   isPanelRoot: boolean;
   headerDisplayName: string | null;
   headerIsAuthenticated: boolean;
+  requestHost: string | null;
 };
 
 const ShellContext = createContext<ShellContextValue | undefined>(undefined);
@@ -16,11 +17,12 @@ export function ShellProvider({
   isPanelRoot,
   headerDisplayName,
   headerIsAuthenticated,
+  requestHost,
   children,
 }: ShellProviderProps) {
   return (
     <ShellContext.Provider
-      value={{ isPanelRoot, headerDisplayName, headerIsAuthenticated }}
+      value={{ isPanelRoot, headerDisplayName, headerIsAuthenticated, requestHost }}
     >
       {children}
     </ShellContext.Provider>

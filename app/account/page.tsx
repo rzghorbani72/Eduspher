@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Plus } from "lucide-react";
 
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCurrentUser, getEnrollments, getAcademyBySlug, getCurrentAcademy, UnauthorizedError } from "@/lib/api/server";
+import { getCurrentUser, getEnrollments, getAcademyBySlug, getCurrentAcademy, getCourseById, UnauthorizedError } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
@@ -15,6 +15,10 @@ import { ChangePasswordForm } from "@/components/account/change-password-form";
 import { AddContactForm } from "@/components/account/add-contact-form";
 import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
 import { ActiveSessions } from "@/components/account/active-sessions";
+import {
+  AccountLearningTab,
+  type LearningAccountTab,
+} from "@/components/account/account-learning-tab";
 
 type SearchParams = Promise<{ tab?: string }>;
 
@@ -77,6 +81,36 @@ export default async function AccountPage({ searchParams }: { searchParams: Sear
     const activeTab = tab ?? "courses";
 
     const enrollments = enrollmentsData?.enrollments ?? [];
+    const learningTabs: LearningAccountTab[] = [
+      "progress",
+      "work",
+      "classes",
+      "results",
+      "tutoring",
+    ];
+    const learningTab = learningTabs.find((item) => item === activeTab);
+    const learningCourses =
+      activeTab === "classes"
+        ? await Promise.all(
+            enrollments.map((enrollment) =>
+              getCourseById(enrollment.course_id).catch(() => null),
+            ),
+          )
+        : [];
+    const liveLessons = learningCourses.flatMap((course) =>
+      course
+        ? (course.Season ?? []).flatMap((season) =>
+            (season.Lesson ?? [])
+              .filter((lesson) => lesson.lesson_type === "LIVE")
+              .map((lesson) => ({
+                id: String(lesson.id),
+                title: lesson.title,
+                courseId: String(course.id),
+                courseTitle: course.title,
+              })),
+          )
+        : [],
+    );
 
     const primaryMethod = store?.primary_verification_method || "phone";
     const secondaryMethod = primaryMethod === "phone" ? "email" : "phone";
@@ -98,6 +132,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Sear
             email={userData.email || userData.phone_number}
             isVerified={userData.email_confirmed || userData.phone_confirmed}
             role={userData.role}
+            activeTab={activeTab}
           />
         </div>
 
@@ -154,25 +189,16 @@ export default async function AccountPage({ searchParams }: { searchParams: Sear
           )}
 
           {/* Classes tab (live classes) */}
-          {activeTab === "classes" && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h1 className="text-2xl font-bold text-[var(--theme-foreground)]">
-                {translate("account.myClasses") || "کلاس‌های من"}
-              </h1>
-              <EmptyState
-                title={translate("account.noClasses") || "کلاس فعالی ندارید"}
-                description={translate("account.browseClassesDescription") || "کلاس‌های آنلاین زنده را مرور کنید."}
-                action={
-                  <Link
-                    href={buildPath("/courses")}
-                    className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105"
-                  >
-                    {translate("account.browseCourses")}
-                  </Link>
-                }
+          {learningTab ? (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <AccountLearningTab
+                tab={learningTab}
+                enrollments={enrollments}
+                liveLessons={liveLessons}
+                storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
               />
             </div>
-          )}
+          ) : null}
 
           {/* Past sessions tab */}
           {activeTab === "history" && (

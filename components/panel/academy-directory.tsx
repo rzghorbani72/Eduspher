@@ -1,5 +1,5 @@
 import { getAcademiesPublic } from "@/lib/api/server";
-import { getAdminPanelUrl } from "@/lib/admin-panel-url";
+import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/server-translations";
 import { AcademyDirectoryClient } from "./academy-directory-client";
@@ -22,8 +22,8 @@ export async function AcademyDirectory() {
       </div>
 
       <PlatformRoleCards
-        adminLoginUrl={getAdminPanelUrl("/login")}
-        teacherRegisterUrl={getAdminPanelUrl("/register")}
+        adminLoginUrl={await getServerAdminPanelUrl("/login")}
+        teacherRegisterUrl={await getServerAdminPanelUrl("/register")}
       />
 
       <AcademyDirectoryClient academies={activeAcademies} />

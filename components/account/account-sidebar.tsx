@@ -2,7 +2,7 @@
 
 import Link from "@/components/ui/link";
 import { usePathname } from "next/navigation";
-import { GraduationCap, Calendar, History, Receipt, Settings, Home, LifeBuoy } from "lucide-react";
+import { GraduationCap, Calendar, Receipt, Settings, Home, LifeBuoy, BookOpenCheck, ClipboardList, CheckCircle2, UserRoundCheck } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { useStorePath } from "@/components/providers/store-provider";
 import { cn } from "@/lib/utils";
@@ -12,9 +12,10 @@ interface AccountSidebarProps {
   email?: string | null;
   isVerified?: boolean;
   role?: string;
+  activeTab: string;
 }
 
-export function AccountSidebar({ displayName, email, isVerified, role }: AccountSidebarProps) {
+export function AccountSidebar({ displayName, email, isVerified, role, activeTab }: AccountSidebarProps) {
   const { t } = useTranslation();
   const buildPath = useStorePath();
   const pathname = usePathname();
@@ -28,8 +29,11 @@ export function AccountSidebar({ displayName, email, isVerified, role }: Account
 
   const navItems = [
     { href: buildPath("/account"), label: t("account.myCourses") || "دوره‌های من", icon: GraduationCap, key: "courses" },
+    { href: buildPath("/account?tab=progress"), label: t("account.myProgress"), icon: BookOpenCheck, key: "progress" },
+    { href: buildPath("/account?tab=work"), label: t("account.myWork"), icon: ClipboardList, key: "work" },
     { href: buildPath("/account?tab=classes"), label: t("account.myClasses") || "کلاس‌های من", icon: Calendar, key: "classes" },
-    { href: buildPath("/account?tab=history"), label: t("account.pastSessions") || "جلسات گذشته", icon: History, key: "history" },
+    { href: buildPath("/account?tab=results"), label: t("account.results"), icon: CheckCircle2, key: "results" },
+    { href: buildPath("/account?tab=tutoring"), label: t("account.privateTutoring"), icon: UserRoundCheck, key: "tutoring" },
     { href: buildPath("/account?tab=transactions"), label: t("account.transactions") || "تراکنش‌ها", icon: Receipt, key: "transactions" },
     { href: buildPath("/account?tab=settings"), label: t("account.settings") || "تنظیمات", icon: Settings, key: "settings" },
     { href: buildPath("/account/support"), label: t("support.title"), icon: LifeBuoy, key: "support" },
@@ -39,11 +43,11 @@ export function AccountSidebar({ displayName, email, isVerified, role }: Account
     <aside className="flex flex-col gap-4 w-full">
       {/* Avatar & info */}
       <div className="flex flex-col items-center gap-3 rounded-xl border border-theme bg-card p-5 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--theme-primary)] text-2xl font-bold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--theme-primary) text-2xl font-bold text-(--theme-on-primary) shadow-lg shadow-(--theme-primary)/30">
           {initials}
         </div>
         <div className="space-y-0.5">
-          <p className="font-semibold text-[var(--theme-foreground)]">{displayName}</p>
+          <p className="font-semibold text-(--theme-foreground)">{displayName}</p>
           {email && <p className="text-xs text-muted break-all">{email}</p>}
           {role && (
             <span
@@ -65,9 +69,9 @@ export function AccountSidebar({ displayName, email, isVerified, role }: Account
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
-            item.key === "courses"
-              ? pathname === buildPath("/account") || pathname.endsWith("/account")
-              : pathname.includes(`tab=${item.key}`);
+            item.key === "support"
+              ? pathname.endsWith("/account/support")
+              : pathname.endsWith("/account") && activeTab === item.key;
 
           return (
             <Link
@@ -76,7 +80,7 @@ export function AccountSidebar({ displayName, email, isVerified, role }: Account
               className={cn(
                 "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] font-semibold"
+                  ? "bg-(--theme-primary)/10 text-(--theme-primary) font-semibold"
                   : "text-muted hover:bg-surface hover:text-foreground"
               )}
             >
