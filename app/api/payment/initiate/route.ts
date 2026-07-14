@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { course_id, amount, coupon_code, mobile, provider } = body;
+    const { course_id, amount, coupon_code, mobile, provider, offering_id } = body;
 
     if (!course_id || !amount) {
       return NextResponse.json(
@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         course_id,
         amount,
         callback_url: callbackUrl,
+        ...(offering_id && { offering_id }),
         ...(coupon_code && { coupon_code }),
         ...(mobile && { mobile }),
         ...(provider && { provider }),

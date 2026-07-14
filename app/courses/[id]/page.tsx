@@ -7,6 +7,7 @@ import { CourseCard } from "@/components/courses/course-card";
 import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
 import { CourseEnrollmentSidebar } from "@/components/courses/course-enrollment-sidebar";
 import { TutoringOfferCard } from "@/components/courses/tutoring-offer-card";
+import { CourseOfferingsCard } from "@/components/courses/course-offerings-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   getCourseById,
@@ -15,6 +16,7 @@ import {
   getAcademyBySlug,
   getCurrentAcademy,
   getTutoringOffersPublic,
+  getCourseOfferingsPublic,
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import {
@@ -36,10 +38,11 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const [course, user, tutoringOffers] = await Promise.all([
+  const [course, user, tutoringOffers, courseOfferings] = await Promise.all([
     getCourseById(id),
     getCurrentUser().catch(() => null),
     getTutoringOffersPublic(id).catch(() => []),
+    getCourseOfferingsPublic(id).catch(() => []),
   ]);
 
   let currentAcademy = await getCurrentAcademy().catch(() => null);
@@ -281,6 +284,13 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             language={language}
             currencyConfig={storeConfig}
             freePriceLabel={priceDisplay}
+          />
+          <CourseOfferingsCard
+            courseId={String(course.id)}
+            offerings={courseOfferings}
+            language={language}
+            currencyConfig={storeConfig}
+            loginHref={buildPath(`/login?redirect=/courses/${course.id}`)}
           />
           <TutoringOfferCard
             offers={tutoringOffers}

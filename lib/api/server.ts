@@ -563,6 +563,35 @@ export async function getTutoringOffersPublic(courseId: string): Promise<PublicT
   return result.data ?? [];
 }
 
+export type PublicOfferingType =
+  | "FREE"
+  | "ONE_TIME"
+  | "SUBSCRIPTION"
+  | "PRIVATE"
+  | "PAYMENT_PLAN";
+
+export interface PublicCourseOffering {
+  id: string;
+  course_id: string;
+  type: PublicOfferingType;
+  price: number;
+  currency: string;
+  access_duration_days: number | null;
+  is_active: boolean;
+}
+
+// Storefront: active offerings for a course. The endpoint returns the array
+// directly (no envelope).
+export async function getCourseOfferingsPublic(
+  courseId: string
+): Promise<PublicCourseOffering[]> {
+  const result = await serverFetchRaw<PublicCourseOffering[]>(
+    `/course-offerings/course/${encodeURIComponent(courseId)}`,
+    { method: "GET" }
+  );
+  return Array.isArray(result) ? result : [];
+}
+
 export async function initiateAcademyPlanPayment(data: {
   academy_plan_id: string;
   amount: number;
