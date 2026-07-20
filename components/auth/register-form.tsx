@@ -656,6 +656,16 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
           </div>
         </form>
       )}
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        <button
+          type="button"
+          onClick={() => router.push(buildPath("/auth/login"))}
+          className="font-medium text-[color:var(--auth-accent)] hover:underline"
+        >
+          {t("auth.backToLogin")}
+        </button>
+      </p>
     </div>
   );
 };

@@ -427,19 +427,14 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
 
   return (
     <div>
-      {/* Mode toggle — exact admin style */}
-      <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+      {/* Mode toggle — underline tabs (matches Figma login) */}
+      <div className="auth-tabs">
         {(["password", "otp"] as const).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => { setAuthMode(m); setOtpLoginSent(false); setOtp(""); setError(null); }}
-            className={cn(
-              "rounded-md py-1.5 text-xs font-medium transition-colors",
-              authMode === m
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
+            className={cn("auth-tab", authMode === m && "on")}
           >
             {m === "password" ? t("auth.loginWithPassword") : t("auth.loginWithOtp")}
           </button>
