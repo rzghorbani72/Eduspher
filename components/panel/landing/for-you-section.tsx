@@ -14,7 +14,6 @@ export function ForYouSection() {
     >
       <Container>
         <SectionHeading
-          eyebrow={LANDING.forYou.eyebrow}
           title={
             <>
               <CircledWord>{LANDING.forYou.titleCircled}</CircledWord>

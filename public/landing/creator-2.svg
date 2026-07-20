@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="560" viewBox="0 0 420 560" fill="none" role="img" aria-label="creator2">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#5a7fc0"/><stop offset="100%" stop-color="#1f2937"/></linearGradient></defs>
+  <rect width="420" height="560" fill="url(#g)"/>
+  <circle cx="210" cy="201" r="60" fill="#ffffff" fill-opacity=".5"/>
+  <ellipse cx="210" cy="548" rx="140" ry="140" fill="#ffffff" fill-opacity=".4"/>
+</svg>

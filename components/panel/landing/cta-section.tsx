@@ -1,3 +1,5 @@
+import { ChevronLeft } from "lucide-react";
+
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 
@@ -22,8 +24,13 @@ export function CtaSection({ registerUrl, demoUrl }: Props) {
             <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
               <a
                 href={registerUrl}
-                className="flex h-14 items-center justify-center rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
+                className="group flex h-14 items-center justify-center gap-2 rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
               >
+                <ChevronLeft
+                  size={17}
+                  aria-hidden="true"
+                  className="transition-transform group-hover:-translate-x-0.5"
+                />
                 {LANDING.cta.primary}
               </a>
               <a

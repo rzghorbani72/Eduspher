@@ -1,18 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" fill="none" role="img" aria-label="گزارش‌های مالی">
-  <rect width="1200" height="900" fill="#F4F6FA"/>
-  <rect x="0" y="0" width="1200" height="75" fill="#FFFFFF"/>
-  <circle cx="26" cy="37" r="6" fill="#FF5F57"/>
-  <circle cx="48" cy="37" r="6" fill="#FEBC2E"/>
-  <circle cx="70" cy="37" r="6" fill="#28C840"/>
-  <rect x="940" y="115" width="220" height="745" rx="14" fill="#FFFFFF"/>
-  <rect x="964" y="147" width="140" height="14" rx="7" fill="#1B98E0"/>
-  <rect x="964" y="183" width="172" height="10" rx="5" fill="#DFE4EC"/>
-  <rect x="964" y="211" width="120" height="10" rx="5" fill="#DFE4EC"/>
-  <rect x="964" y="251" width="172" height="10" rx="5" fill="#DFE4EC"/>
-  <rect x="40" y="115" width="860" height="225" rx="16" fill="#1B98E0" fill-opacity=".18"/>
-  <rect x="72" y="155" width="400" height="20" rx="10" fill="#1B98E0"/>
-  <rect x="72" y="195" width="600" height="12" rx="6" fill="#C9D1DE"/>
-  <rect x="40" y="370" width="273" height="180" rx="14" fill="#FFFFFF"/>
-  <rect x="337" y="370" width="273" height="180" rx="14" fill="#FFFFFF"/>
-  <rect x="634" y="370" width="273" height="180" rx="14" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900" fill="none" role="img" aria-label="کلاس درس">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#8a6f4a"/><stop offset="100%" stop-color="#1f2937"/></linearGradient></defs>
+  <rect width="900" height="900" fill="url(#g)"/>
+  <circle cx="450" cy="324" r="128" fill="#ffffff" fill-opacity=".5"/>
+  <ellipse cx="450" cy="882" rx="300" ry="225" fill="#ffffff" fill-opacity=".4"/>
 </svg>

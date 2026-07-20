@@ -1,15 +1,15 @@
 import type { StoreSummary } from "@/lib/api/types";
 
+import { CreatorsSection } from "./creators-section";
 import { CtaSection } from "./cta-section";
 import { FaqSection } from "./faq-section";
 import { ForYouSection } from "./for-you-section";
 import { HeroSection } from "./hero-section";
 import { LandingMotion } from "./landing-motion";
 import { LogosStrip } from "./logos-strip";
-import { ProofSection } from "./proof-section";
+import { PricingSection } from "./pricing-section";
 import { PublishSection } from "./publish-section";
 import { SectionReveal } from "./section-reveal";
-import { ShowcaseSection } from "./showcase-section";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 import { StepsSection } from "./steps-section";
@@ -29,22 +29,32 @@ export function LandingPage({
   return (
     <div
       dir="rtl"
+      data-theme="light"
       className="lp-root min-h-screen bg-lp-surface font-[Vazirmatn,system-ui,sans-serif] text-lp-ink antialiased"
     >
+      {/* Restores the saved theme before first paint so a returning dark-mode
+          visitor never sees a white flash. Runs ahead of hydration, which is
+          why ThemeToggle reads the DOM instead of holding React state. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `try{var t=localStorage.getItem('landing-theme');if(t==='dark'){document.currentScript.parentElement.dataset.theme='dark'}}catch(e){}`,
+        }}
+      />
+
       <SiteHeader loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl} />
 
       <main>
         <HeroSection registerUrl={adminRegisterUrl} demoUrl="#examples" />
         <LogosStrip academies={academies} />
         <ForYouSection />
-        <PublishSection
-          registerUrl={adminRegisterUrl}
-          pricingUrl="/pricing"
-        />
+        <PublishSection registerUrl={adminRegisterUrl} pricingUrl="#pricing" />
         <WhySection />
         <StepsSection />
-        <ShowcaseSection />
-        <ProofSection academies={academies} />
+        <CreatorsSection academies={academies} />
+        <PricingSection
+          registerUrl={adminRegisterUrl}
+          contactUrl="/contact"
+        />
         <FaqSection />
         <CtaSection registerUrl={adminRegisterUrl} demoUrl="#examples" />
       </main>

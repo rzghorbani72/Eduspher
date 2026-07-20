@@ -73,13 +73,12 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
 
   return (
     <section
-      id="pricing"
+      id="publish"
       data-lp-reveal
       className="scroll-mt-32 bg-lp-surface py-20 lg:py-28"
     >
       <Container>
         <SectionHeading
-          eyebrow={LANDING.publish.eyebrow}
           title={LANDING.publish.title}
           subtitle={LANDING.publish.subtitle}
         />

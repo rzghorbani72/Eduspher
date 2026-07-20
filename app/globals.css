@@ -1067,6 +1067,37 @@ select[class*="rounded-sm"] {
   }
 }
 
+/* Dark landing: re-point the same `--color-lp-*` variables the Tailwind
+   utilities already reference, so the whole page flips without a single
+   `dark:` variant. Scoped to .lp-root so academy pages are unaffected. */
+.lp-root[data-theme="dark"] {
+  --color-lp-ink: #f2f4f8;
+  --color-lp-ink-2: #b6bad4;
+  --color-lp-ink-3: #f2f4f8;
+  --color-lp-muted: #9aa0b4;
+  --color-lp-surface: #0b0e18;
+  --color-lp-surface-2: #111524;
+  --color-lp-line: rgba(255, 255, 255, 0.1);
+  --color-lp-line-2: rgba(255, 255, 255, 0.16);
+}
+/* Only one theme icon shows; CSS picks it so the button needs no React state. */
+.lp-root .lp-icon-dark {
+  display: none;
+}
+.lp-root[data-theme="dark"] .lp-icon-dark {
+  display: block;
+}
+.lp-root[data-theme="dark"] .lp-icon-light {
+  display: none;
+}
+
+.lp-root[data-theme="dark"] .bg-white,
+.lp-root[data-theme="dark"] .bg-white\/66,
+.lp-root[data-theme="dark"] .bg-white\/60,
+.lp-root[data-theme="dark"] .bg-white\/80 {
+  background-color: #151a2b;
+}
+
 .lp-header {
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;

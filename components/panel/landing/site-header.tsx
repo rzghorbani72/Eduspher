@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { ThemeToggle } from "./theme-toggle";
 import { useHideOnScroll } from "./use-hide-on-scroll";
 
 type Props = {
@@ -61,6 +62,7 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
             <a
               href={loginUrl}
               className="rounded-full px-4 py-2.5 text-[15px] font-semibold leading-6 text-lp-ink-2 transition-colors hover:text-lp-ink"

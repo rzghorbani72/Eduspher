@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="470" height="420" viewBox="0 0 470 420" fill="none" role="img" aria-label="Online class">
+  <rect width="470" height="420" rx="10" fill="#FFFFFF"/>
+  <g>
+    <rect x="8" y="8" width="148" height="185" rx="6" fill="#c9d6e4"/><circle cx="82" cy="80" r="30" fill="#fff" fill-opacity=".75"/><ellipse cx="82" cy="205" rx="52" ry="60" fill="#fff" fill-opacity=".6"/>
+    <rect x="161" y="8" width="148" height="185" rx="6" fill="#d8cfc4"/><circle cx="235" cy="80" r="30" fill="#fff" fill-opacity=".75"/><ellipse cx="235" cy="205" rx="52" ry="60" fill="#fff" fill-opacity=".6"/>
+    <rect x="314" y="8" width="148" height="185" rx="6" fill="#cfd8c4"/><circle cx="388" cy="80" r="30" fill="#fff" fill-opacity=".75"/><ellipse cx="388" cy="205" rx="52" ry="60" fill="#fff" fill-opacity=".6"/>
+    <rect x="8" y="198" width="148" height="185" rx="6" fill="#d4c4d8"/><circle cx="82" cy="270" r="30" fill="#fff" fill-opacity=".75"/><ellipse cx="82" cy="395" rx="52" ry="60" fill="#fff" fill-opacity=".6"/>
+    <rect x="161" y="198" width="148" height="185" rx="6" fill="#c4d2d8"/><circle cx="235" cy="270" r="30" fill="#fff" fill-opacity=".75"/><ellipse cx="235" cy="395" rx="52" ry="60" fill="#fff" fill-opacity=".6"/>
+    <rect x="314" y="198" width="148" height="185" rx="6" fill="#d8d0c4"/><circle cx="388" cy="270" r="30" fill="#fff" fill-opacity=".75"/><ellipse cx="388" cy="395" rx="52" ry="60" fill="#fff" fill-opacity=".6"/>
+  </g>
+  <rect x="0" y="388" width="470" height="32" rx="6" fill="#F1F3F7"/>
+  <rect x="176" y="399" width="22" height="11" rx="5" fill="#9AA3B2"/>
+  <circle cx="216" cy="404" r="6" fill="#9AA3B2"/>
+  <circle cx="238" cy="404" r="6" fill="#9AA3B2"/>
+  <rect x="256" y="398" width="26" height="13" rx="6" fill="#EF4444"/>
+</svg>
