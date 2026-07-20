@@ -13,9 +13,13 @@ export function SectionReveal() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // Skip anything GSAP drives (`data-lp`). Pinning applies its own transform
+    // to the section, which fights the reveal's translateY: the element gets
+    // moved out of the observer's way, never intersects, and would stay stuck
+    // at opacity 0 — an invisible section. Reveal or pin, never both.
     const targets = Array.from(
       document.querySelectorAll<HTMLElement>("[data-lp-reveal]")
-    );
+    ).filter((el) => !el.hasAttribute("data-lp"));
     if (targets.length === 0) return;
 
     targets.forEach((el) => el.classList.add("lp-reveal"));

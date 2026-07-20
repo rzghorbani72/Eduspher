@@ -9,6 +9,7 @@ export function ForYouSection() {
   return (
     <section
       id="features"
+      data-lp="for-you"
       data-lp-reveal
       className="scroll-mt-32 bg-lp-surface py-20 lg:py-28"
     >
@@ -25,7 +26,7 @@ export function ForYouSection() {
 
         <div
           data-lp="grow-rail"
-          className="mt-14 flex h-[300px] items-stretch gap-3 sm:h-[420px] lg:h-[560px] lg:gap-4"
+          className="mt-14 flex h-[300px] items-stretch gap-3 sm:h-[420px] lg:h-[62vh] lg:max-h-[560px] lg:min-h-[380px] lg:gap-4"
         >
           {LANDING.forYou.slides.map((slide, index) => (
             <div
