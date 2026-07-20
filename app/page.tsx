@@ -1,4 +1,4 @@
-import { PlatformLandingPage } from "@/components/panel/platform-landing-page";
+import { LandingPage } from "@/components/panel/landing/landing-page";
 import { PlatformOrganizationJsonLd } from "@/components/seo/platform-organization-json-ld";
 import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { getAcademiesPublic } from "@/lib/api/server";
@@ -13,7 +13,7 @@ export default async function Home() {
   return (
     <>
       <PlatformOrganizationJsonLd />
-      <PlatformLandingPage
+      <LandingPage
         adminLoginUrl={adminLoginUrl}
         adminRegisterUrl={adminRegisterUrl}
         academies={academies}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" fill="none" role="img" aria-label="مدیریت دانش‌آموزان">
+  <rect width="1200" height="900" fill="#F4F6FA"/>
+  <rect x="0" y="0" width="1200" height="75" fill="#FFFFFF"/>
+  <circle cx="26" cy="37" r="6" fill="#FF5F57"/>
+  <circle cx="48" cy="37" r="6" fill="#FEBC2E"/>
+  <circle cx="70" cy="37" r="6" fill="#28C840"/>
+  <rect x="940" y="115" width="220" height="745" rx="14" fill="#FFFFFF"/>
+  <rect x="964" y="147" width="140" height="14" rx="7" fill="#4F8CFF"/>
+  <rect x="964" y="183" width="172" height="10" rx="5" fill="#DFE4EC"/>
+  <rect x="964" y="211" width="120" height="10" rx="5" fill="#DFE4EC"/>
+  <rect x="964" y="251" width="172" height="10" rx="5" fill="#DFE4EC"/>
+  <rect x="40" y="115" width="860" height="225" rx="16" fill="#4F8CFF" fill-opacity=".18"/>
+  <rect x="72" y="155" width="400" height="20" rx="10" fill="#4F8CFF"/>
+  <rect x="72" y="195" width="600" height="12" rx="6" fill="#C9D1DE"/>
+  <rect x="40" y="370" width="273" height="180" rx="14" fill="#FFFFFF"/>
+  <rect x="337" y="370" width="273" height="180" rx="14" fill="#FFFFFF"/>
+  <rect x="634" y="370" width="273" height="180" rx="14" fill="#FFFFFF"/>
+</svg>

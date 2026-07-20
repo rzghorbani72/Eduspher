@@ -5,6 +5,33 @@
 @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Markazi+Text:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Lalezar&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
+/* ── Platform landing design tokens (Figma "Landing" frame) ───────────────────
+   Prefixed `lp-` and intentionally NOT bound to the academy `--theme-*` vars:
+   the marketing site must look identical no matter which tenant theme is
+   cached in the browser. */
+@theme {
+  --color-lp-mint: #30ffb4;
+  --color-lp-ink: #111827;
+  --color-lp-ink-2: #4c4f6e;
+  --color-lp-ink-3: #121430;
+  --color-lp-muted: #6b7280;
+  --color-lp-surface: #ffffff;
+  --color-lp-surface-2: #fafbfc;
+  --color-lp-line: rgba(18, 20, 50, 0.09);
+  --color-lp-line-2: #e5e7eb;
+  --color-lp-blue: #1b98e0;
+  --color-lp-green: #10b981;
+
+  --radius-lp: 24px;
+  --radius-lp-lg: 34px;
+
+  --shadow-lp-mint: 0 12px 31px -12px rgba(48, 255, 180, 0.6);
+  --shadow-lp-nav: 0 1px 1px 0 rgba(20, 22, 55, 0.04),
+    0 1px 2px 0 rgba(20, 22, 55, 0.06);
+  --shadow-lp-card: 0 14px 40px -12px rgba(40, 40, 90, 0.18);
+  --shadow-lp-hero: 0 40px 90px -28px rgba(45, 42, 110, 0.32);
+}
+
 /* Hide scrollbar on all devices while keeping scroll functional */
 html {
   scrollbar-width: none;        /* Firefox */
@@ -130,7 +157,7 @@ html::-webkit-scrollbar {
   --theme-border-strong: color-mix(in srgb, var(--theme-foreground) 18%, transparent);
   --theme-muted: color-mix(in srgb, var(--theme-foreground) 55%, var(--theme-background));
 
-  /* Accent-surface vars — use these for icon containers, badges, and coloured UI spots */
+  /* Accent-surface vars — use these for icon containers, badges, and colored UI spots */
   --theme-primary-subtle: color-mix(in srgb, var(--theme-primary) 15%, var(--theme-background));
   --theme-secondary-subtle: color-mix(in srgb, var(--theme-secondary) 12%, var(--theme-background));
   --theme-accent-subtle: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-background));
@@ -271,7 +298,7 @@ button a,
 [role="button"] a,
 a[class*="text-white"],
 /* When asChild is used, the Link becomes the button element - target links with button-like styling */
-a[class*="rounded-full"][class*="bg-"],
+a[class*="rounded-full"][class*="bg-"]:not(.lp-root a),
 a[class*="bg-\[var\(--theme-primary\)\]"],
 a[class*="bg-sky-600"],
 a[class*="bg-sky-500"],
@@ -282,7 +309,7 @@ a[class*="bg-slate-900"] {
 button a:hover,
 [role="button"] a:hover,
 a[class*="text-white"]:hover,
-a[class*="rounded-full"][class*="bg-"]:hover,
+a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):hover,
 a[class*="bg-\[var\(--theme-primary\)\]"]:hover,
 a[class*="bg-sky-600"]:hover,
 a[class*="bg-sky-500"]:hover,
@@ -923,7 +950,7 @@ select[class*="rounded-sm"] {
 
 /* ── Course catalog — precise design tokens (CourseCatalog.dc.html) ──────────
    Neutral surfaces/text match the design 1:1; the accent (--cc-brand / --cc-grad)
-   stays bound to the academy theme so per-academy white-label colour is kept. */
+   stays bound to the academy theme so per-academy white-label color is kept. */
 .course-catalog {
   color-scheme: light; /* native controls (select) follow the academy theme, not the OS */
   --cc-bg:#ffffff; --cc-card:#ffffff; --cc-card-2:#fbfbff;
@@ -1007,6 +1034,72 @@ select[class*="rounded-sm"] {
 .landing-page .mt-cta-btn:hover { transform: translateY(-1px); }
 .landing-page .mt-cta-white:hover { transform: translateY(-2px); }
 
+/* ── Platform landing behavior classes ────────────────────────────────────────
+   Only what Tailwind utilities cannot express: the sticky-header transform and
+   the JS-driven reveal base state. Everything else is utilities. */
+/* The landing is not an academy page, so academy link theming must not reach it.
+   Layered (like the `a { color: var(--theme-primary) }` rule it neutralizes) so
+   the landing's own text utilities still win — an unlayered rule here would beat
+   every utility regardless of specificity. */
+@layer base {
+  .lp-root a {
+    color: inherit;
+  }
+}
+
+/* Fade-in for swapped-in content (publish panel screenshot). Uses an animation
+   rather than a transition so it replays on remount; if it fails to load the
+   element is still fully visible, never hidden. */
+@keyframes lp-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.lp-fade-in {
+  animation: lp-fade-in 0.4s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-fade-in {
+    animation: none;
+  }
+}
+
+.lp-header {
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.lp-header[data-hidden="true"] {
+  transform: translateY(-120%);
+}
+
+.lp-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lp-reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-header {
+    transition: none;
+  }
+  .lp-header[data-hidden="true"] {
+    transform: none;
+  }
+  .lp-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ── Design-system size tokens — applied uniformly to every rendered block ─────
    These let the draft design system (section_spacing, container_width,
    heading_scale) control all sections regardless of which template they came
@@ -1031,7 +1124,7 @@ select[class*="rounded-sm"] {
    ── Changing the accent ──
    The whole red tone is driven by ONE token: --auth-accent. It inherits the
    academy's --theme-primary, so each academy recolors automatically from the
-   admin theme settings. To pin a fixed colour regardless of theme, set
+   admin theme settings. To pin a fixed color regardless of theme, set
    --auth-accent on .auth-page (e.g. style={{ '--auth-accent': '#d64545' }}).
    ───────────────────────────────────────────────────────────────────────── */
 .auth-page {
