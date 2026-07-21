@@ -37,6 +37,7 @@ export default async function PricingPage() {
         <p className="mx-auto mt-2 max-w-3xl text-xs text-muted-foreground">
           {PRICING.unlimitedSignups}
         </p>
+        <p className="mt-3 text-sm font-semibold">{PRICING.trialLine}</p>
       </section>
 
       {plans.length > 0 ? (

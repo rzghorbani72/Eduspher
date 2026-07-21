@@ -50,11 +50,18 @@ export function PlanCard({ plan, ctaLabel }: Props) {
         </p>
       ) : null}
 
-      <p className="mt-3">
-        <span className="inline-flex rounded-full bg-muted px-3 py-1 text-xs font-semibold">
-          {PRICING.trialBadge}
-        </span>
-      </p>
+      {/* Announced-but-not-applied price: the public half of the 30-day notice
+          the academy agreement promises before any increase. */}
+      {plan.upcoming_price ? (
+        <p className="mt-3 rounded-lg bg-muted p-2 text-xs leading-6 text-muted-foreground">
+          {PRICING.upcomingPrice
+            .replace("{price}", formatToman(plan.upcoming_price.price_monthly_toman))
+            .replace(
+              "{date}",
+              new Date(plan.upcoming_price.effective_at).toLocaleDateString("fa-IR"),
+            )}
+        </p>
+      ) : null}
 
       <dl className="mt-5 space-y-2 text-sm">
         {limitRows.map((row) => (

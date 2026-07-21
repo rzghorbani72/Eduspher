@@ -412,6 +412,13 @@ export type PublicPlan = {
   is_most_popular: boolean;
   annual_months_included: number;
   free_trial_days: number;
+  /** Announced-but-not-yet-applied price, so the site can warn before it lands. */
+  upcoming_price?: {
+    price_monthly_toman: number;
+    price_yearly_toman: number | null;
+    effective_at: string;
+    is_increase: boolean;
+  } | null;
 };
 
 export async function getPublicPlans(): Promise<PublicPlan[]> {

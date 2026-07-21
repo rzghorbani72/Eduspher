@@ -1,4 +1,5 @@
 import type { StoreSummary } from "@/lib/api/types";
+import type { PublicPlan } from "@/lib/api/server";
 
 import { CreatorsSection } from "./creators-section";
 import { CtaSection } from "./cta-section";
@@ -19,12 +20,14 @@ type Props = {
   adminLoginUrl: string;
   adminRegisterUrl: string;
   academies: StoreSummary[];
+  plans: PublicPlan[];
 };
 
 export function LandingPage({
   adminLoginUrl,
   adminRegisterUrl,
   academies,
+  plans,
 }: Props) {
   return (
     <div
@@ -51,7 +54,7 @@ export function LandingPage({
         <WhySection />
         <StepsSection />
         <CreatorsSection academies={academies} />
-        <PricingSection registerUrl={adminRegisterUrl} />
+        <PricingSection registerUrl={adminRegisterUrl} plans={plans} />
         <FaqSection />
         <CtaSection registerUrl={adminRegisterUrl} demoUrl="#examples" />
       </main>

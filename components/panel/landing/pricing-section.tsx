@@ -3,6 +3,7 @@
 import { Check } from "lucide-react";
 import { useState } from "react";
 
+import type { PublicPlan } from "@/lib/api/server";
 import { cn } from "@/lib/utils";
 
 import { Container } from "./landing-container";
@@ -13,10 +14,15 @@ type Cycle = "yearly" | "monthly";
 
 type Props = {
   registerUrl: string;
+  /** Live plans. Prices come from here; the tagline and feature list stay curated. */
+  plans?: PublicPlan[];
 };
 
-export function PricingSection({ registerUrl }: Props) {
+const faNumber = (value: number) => value.toLocaleString("fa-IR");
+
+export function PricingSection({ registerUrl, plans = [] }: Props) {
   const [cycle, setCycle] = useState<Cycle>("yearly");
+  const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
   return (
     <section
@@ -35,6 +41,9 @@ export function PricingSection({ registerUrl }: Props) {
         </p>
         <p className="mx-auto mt-2 max-w-xl text-center text-[12px] text-lp-muted">
           {LANDING.pricing.unlimitedSignups}
+        </p>
+        <p className="mt-2 text-center text-[13px] font-bold text-lp-ink">
+          {LANDING.pricing.trialLine}
         </p>
 
         <div className="mt-9 flex justify-center">
@@ -61,14 +70,27 @@ export function PricingSection({ registerUrl }: Props) {
           </div>
         </div>
 
+        <p className="mt-3 text-center text-[12px] text-lp-muted">
+          {cycle === "yearly"
+            ? LANDING.pricing.cycleNoteYearly
+            : LANDING.pricing.cycleNoteMonthly}
+        </p>
+
         <div className="mt-12 grid items-start gap-5 lg:grid-cols-3">
           {LANDING.pricing.plans.map((plan) => {
+            const live = livePlans.get(plan.id);
+            const yearlyPerMonth =
+              live?.price_yearly_toman != null
+                ? Math.round(live.price_yearly_toman / 12)
+                : null;
+
+            // Live price wins; the static copy is only a fallback for when the
+            // API is unreachable, so the page never shows a blank price.
             const price =
-              cycle === "yearly" ? plan.priceYearly : plan.priceMonthly;
-            const priceNote =
               cycle === "yearly"
-                ? LANDING.pricing.noteYearly
-                : LANDING.pricing.noteMonthly;
+                ? (yearlyPerMonth != null ? faNumber(yearlyPerMonth) : plan.priceYearly)
+                : (live ? faNumber(live.price_monthly_toman) : plan.priceMonthly);
+            const upcoming = live?.upcoming_price ?? null;
 
             return (
               <article
@@ -95,14 +117,19 @@ export function PricingSection({ registerUrl }: Props) {
                     {LANDING.pricing.perMonth}
                   </span>
                 </p>
-                <p className="mt-2 text-center text-[12px] text-lp-muted">
-                  {priceNote}
-                </p>
-                <p className="mt-3 text-center">
-                  <span className="inline-flex rounded-full bg-lp-mint/20 px-3 py-1 text-[12px] font-bold text-lp-ink">
-                    {LANDING.pricing.trialBadge}
-                  </span>
-                </p>
+
+                {/* Announced-but-not-applied price. Showing it here is the
+                    public half of the 30-day notice the agreement promises. */}
+                {upcoming ? (
+                  <p className="mt-2 text-center text-[11px] leading-[1.7] text-lp-muted">
+                    {LANDING.pricing.upcomingPrice
+                      .replace("{price}", faNumber(upcoming.price_monthly_toman))
+                      .replace(
+                        "{date}",
+                        new Date(upcoming.effective_at).toLocaleDateString("fa-IR"),
+                      )}
+                  </p>
+                ) : null}
 
                 <a
                   href={registerUrl}
