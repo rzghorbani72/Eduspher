@@ -33,6 +33,9 @@ export function PricingSection({ registerUrl }: Props) {
         <p className="mt-3 text-center text-[13px] font-bold text-lp-blue">
           {LANDING.pricing.noCommission}
         </p>
+        <p className="mx-auto mt-2 max-w-xl text-center text-[12px] text-lp-muted">
+          {LANDING.pricing.unlimitedSignups}
+        </p>
 
         <div className="mt-9 flex justify-center">
           <div

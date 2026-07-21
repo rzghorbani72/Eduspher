@@ -34,6 +34,9 @@ export default async function PricingPage() {
         <p className="mt-4 text-sm font-semibold text-primary">
           {PRICING.noCommission}
         </p>
+        <p className="mx-auto mt-2 max-w-3xl text-xs text-muted-foreground">
+          {PRICING.unlimitedSignups}
+        </p>
       </section>
 
       {plans.length > 0 ? (
