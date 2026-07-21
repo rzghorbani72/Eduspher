@@ -57,7 +57,7 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   "/pricing": {
     title: "Pricing",
     description:
-      "Transparent plans for academies and mentors — from starter to growth with clear commission and storage.",
+      "Transparent subscription plans for academies — one free month, no commission on enrollments, clear storage limits.",
   },
   "/privacy": {
     title: "Privacy Policy",

@@ -13,10 +13,9 @@ type Cycle = "yearly" | "monthly";
 
 type Props = {
   registerUrl: string;
-  contactUrl: string;
 };
 
-export function PricingSection({ registerUrl, contactUrl }: Props) {
+export function PricingSection({ registerUrl }: Props) {
   const [cycle, setCycle] = useState<Cycle>("yearly");
 
   return (
@@ -30,6 +29,10 @@ export function PricingSection({ registerUrl, contactUrl }: Props) {
           title={LANDING.pricing.title}
           subtitle={LANDING.pricing.subtitle}
         />
+
+        <p className="mt-3 text-center text-[13px] font-bold text-lp-blue">
+          {LANDING.pricing.noCommission}
+        </p>
 
         <div className="mt-9 flex justify-center">
           <div
@@ -59,7 +62,10 @@ export function PricingSection({ registerUrl, contactUrl }: Props) {
           {LANDING.pricing.plans.map((plan) => {
             const price =
               cycle === "yearly" ? plan.priceYearly : plan.priceMonthly;
-            const isFree = price === LANDING.pricing.plans[0].priceYearly;
+            const priceNote =
+              cycle === "yearly"
+                ? LANDING.pricing.noteYearly
+                : LANDING.pricing.noteMonthly;
 
             return (
               <article
@@ -82,18 +88,21 @@ export function PricingSection({ registerUrl, contactUrl }: Props) {
                   <span className="text-[34px] font-black leading-none text-lp-ink">
                     {price}
                   </span>
-                  {!isFree ? (
-                    <span className="ms-2 text-[13px] text-lp-muted">
-                      {LANDING.pricing.perMonth}
-                    </span>
-                  ) : null}
+                  <span className="ms-2 text-[13px] text-lp-muted">
+                    {LANDING.pricing.perMonth}
+                  </span>
                 </p>
                 <p className="mt-2 text-center text-[12px] text-lp-muted">
-                  {plan.priceNote}
+                  {priceNote}
+                </p>
+                <p className="mt-3 text-center">
+                  <span className="inline-flex rounded-full bg-lp-mint/20 px-3 py-1 text-[12px] font-bold text-lp-ink">
+                    {LANDING.pricing.trialBadge}
+                  </span>
                 </p>
 
                 <a
-                  href={plan.id === "business" ? contactUrl : registerUrl}
+                  href={registerUrl}
                   className={cn(
                     "mt-7 flex h-12 items-center justify-center rounded-xl text-[14px] font-bold transition-transform hover:-translate-y-0.5",
                     plan.featured

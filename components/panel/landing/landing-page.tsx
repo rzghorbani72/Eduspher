@@ -51,10 +51,7 @@ export function LandingPage({
         <WhySection />
         <StepsSection />
         <CreatorsSection academies={academies} />
-        <PricingSection
-          registerUrl={adminRegisterUrl}
-          contactUrl="/contact"
-        />
+        <PricingSection registerUrl={adminRegisterUrl} />
         <FaqSection />
         <CtaSection registerUrl={adminRegisterUrl} demoUrl="#examples" />
       </main>

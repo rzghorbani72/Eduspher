@@ -395,6 +395,35 @@ export async function getPublicPricingConfig() {
   }
 }
 
+export type PublicPlan = {
+  slug: string;
+  name: string;
+  price_monthly_toman: number;
+  price_yearly_toman: number | null;
+  storage_gb: number;
+  limits: {
+    managers: number;
+    teachers: number;
+    courses: number;
+    active_students: number;
+    storage_gb: number;
+  };
+  features: string[];
+  is_most_popular: boolean;
+  annual_months_included: number;
+  free_trial_days: number;
+};
+
+export async function getPublicPlans(): Promise<PublicPlan[]> {
+  try {
+    return await serverFetchRaw<PublicPlan[]>("/platform-settings/plans/active", {
+      includeAuth: false,
+    });
+  } catch {
+    return [];
+  }
+}
+
 export async function getUserProfiles() {
   try {
     const result = await serverFetchRaw<UserProfilesResponse>("/auth/profiles", {

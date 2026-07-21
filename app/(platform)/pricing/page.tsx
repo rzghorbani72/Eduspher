@@ -1,8 +1,11 @@
 import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 
-import { getPublicPricingConfig } from "@/lib/api/server";
+import { getPublicPlans, getPublicPricingConfig } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
+
+import { PRICING } from "./pricing.messages";
+import { PlanCard } from "./plan-card";
 
 export default async function PricingPage() {
   const storeContext = await getAcademyContext();
@@ -10,12 +13,14 @@ export default async function PricingPage() {
     notFound();
   }
 
-  const pricingConfig = await getPublicPricingConfig();
-  const pageTitle = pricingConfig?.title || "Pricing Plans";
-  const pageSubtitle =
-    pricingConfig?.subtitle ||
-    "Clear pricing for creators, mentors, and academy businesses. Built for scalable education on Mentomaacademy.com style operations.";
-  const ctaLabel = pricingConfig?.cta_label || "Start With Your Plan";
+  const [pricingConfig, plans] = await Promise.all([
+    getPublicPricingConfig(),
+    getPublicPlans(),
+  ]);
+
+  const pageTitle = pricingConfig?.title || PRICING.title;
+  const pageSubtitle = pricingConfig?.subtitle || PRICING.subtitle;
+  const ctaLabel = pricingConfig?.cta_label || PRICING.cta;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
@@ -26,91 +31,40 @@ export default async function PricingPage() {
         <p className="mx-auto mt-3 max-w-3xl text-sm text-muted-foreground sm:text-base">
           {pageSubtitle}
         </p>
+        <p className="mt-4 text-sm font-semibold text-primary">
+          {PRICING.noCommission}
+        </p>
       </section>
 
-      <section className="grid gap-5 md:grid-cols-2">
-        <article className="rounded-xl border bg-card p-6 shadow-sm">
-          <h2 className="text-xl font-semibold">Group 1: Mentors & Creators</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Publish and sell online courses and optionally physical products.
-          </p>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>- Public storefront and checkout</li>
-            <li>- Course + product cart and payments</li>
-            <li>- Platform revenue share on sales</li>
-          </ul>
-          <div className="mt-5 rounded-lg bg-muted p-3 text-sm">
-            <p className="font-medium">Monetization</p>
-            <p className="text-muted-foreground">
-              Platform fee from transactions (based on plan).
-            </p>
-          </div>
-        </article>
+      {plans.length > 0 ? (
+        <section className="grid gap-5 md:grid-cols-3">
+          {plans.map((plan) => (
+            <PlanCard key={plan.slug} plan={plan} ctaLabel={ctaLabel} />
+          ))}
+        </section>
+      ) : (
+        <p className="rounded-xl border bg-card p-6 text-center text-sm text-muted-foreground">
+          {PRICING.plansUnavailable}
+        </p>
+      )}
 
-        <article className="rounded-xl border bg-card p-6 shadow-sm">
-          <h2 className="text-xl font-semibold">
-            Group 2: Academy & Institute Businesses
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Manage teachers/students with external payment methods and academy
-            operations.
-          </p>
-          <ul className="mt-4 space-y-2 text-sm">
-            <li>- Monthly/annual subscription plan</li>
-            <li>- Manual enrollment and subscription renewals</li>
-            <li>- Per-student lesson lock/unlock and progress workflows</li>
-          </ul>
-          <div className="mt-5 rounded-lg bg-muted p-3 text-sm">
-            <p className="font-medium">Monetization</p>
-            <p className="text-muted-foreground">
-              Subscription fee + upload overage fee when storage exceeds plan.
-            </p>
-          </div>
-        </article>
+      <section className="mt-8 rounded-xl border bg-card p-6 shadow-sm">
+        <h2 className="text-lg font-semibold">{PRICING.storageTitle}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {PRICING.storageBody}
+        </p>
+        <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+          <li>• {PRICING.storagePoints.included}</li>
+          <li>• {PRICING.storagePoints.overage}</li>
+          <li>• {PRICING.storagePoints.upgrade}</li>
+        </ul>
       </section>
 
       <section className="mt-8 rounded-xl border bg-card p-6 shadow-sm">
-        <h3 className="text-lg font-semibold">
-          Upload / Storage Overage Policy
-        </h3>
+        <h2 className="text-lg font-semibold">{PRICING.trialTitle}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Each plan includes a storage quota. If academy usage exceeds included
-          GB, an automatic overage fee is added at renewal.
+          {PRICING.trialBody}
         </p>
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="py-2 pr-3">Plan</th>
-                <th className="py-2 pr-3">Included Storage</th>
-                <th className="py-2 pr-3">Overage Fee</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b">
-                <td className="py-2 pr-3">Starter / Basic</td>
-                <td className="py-2 pr-3">100 GB</td>
-                <td className="py-2 pr-3">
-                  Per GB, configured by academy policy
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2 pr-3">Builder / Standard</td>
-                <td className="py-2 pr-3">300 GB</td>
-                <td className="py-2 pr-3">
-                  Per GB, configured by academy policy
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-3">Growth / Premium</td>
-                <td className="py-2 pr-3">1000 GB</td>
-                <td className="py-2 pr-3">
-                  Per GB, configured by academy policy
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </section>
 
       <section className="mt-8 text-center">
