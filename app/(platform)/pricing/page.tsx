@@ -37,7 +37,16 @@ export default async function PricingPage() {
         <p className="mx-auto mt-2 max-w-3xl text-xs text-muted-foreground">
           {PRICING.unlimitedSignups}
         </p>
-        <p className="mt-3 text-sm font-semibold">{PRICING.trialLine}</p>
+      </section>
+
+      {/* The trial is one universal offer, not a feature of any plan: every
+          account starts with a month, then chooses a plan. Stated once, above
+          the grid, instead of repeated in each card's checklist. */}
+      <section className="mb-8 rounded-2xl border border-primary/40 bg-primary/5 p-6 text-center">
+        <h2 className="text-lg font-bold">{PRICING.trialTitle}</h2>
+        <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-7 text-muted-foreground">
+          {PRICING.trialBody}
+        </p>
       </section>
 
       {plans.length > 0 ? (
@@ -62,13 +71,6 @@ export default async function PricingPage() {
           <li>• {PRICING.storagePoints.overage}</li>
           <li>• {PRICING.storagePoints.upgrade}</li>
         </ul>
-      </section>
-
-      <section className="mt-8 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="text-lg font-semibold">{PRICING.trialTitle}</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {PRICING.trialBody}
-        </p>
       </section>
 
       <section className="mt-8 text-center">

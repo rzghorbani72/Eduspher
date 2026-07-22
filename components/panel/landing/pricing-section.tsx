@@ -47,6 +47,19 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
         <p className="mx-auto mt-2 max-w-xl text-center text-[12px] text-lp-muted">
           {LANDING.pricing.unlimitedSignups}
         </p>
+
+        {/* The trial is one universal offer, not a feature of any one plan:
+            every account gets a month, then picks a plan. Stated once here so a
+            per-card bullet does not imply it belongs to a specific tier. */}
+        <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-lp-mint/50 bg-lp-mint/10 px-6 py-5 text-center">
+          <p className="text-[15px] font-bold text-lp-ink">
+            {LANDING.pricing.trialBannerTitle}
+          </p>
+          <p className="mx-auto mt-1.5 max-w-xl text-[12.5px] leading-[1.9] text-lp-ink-2">
+            {LANDING.pricing.trialBannerBody}
+          </p>
+        </div>
+
         <div className="mt-9 flex justify-center">
           <div
             role="group"
@@ -93,6 +106,10 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                 : (live ? faNumber(live.price_monthly_toman) : plan.priceMonthly);
             const upcoming = live?.upcoming_price ?? null;
             const isSelected = selectedId === plan.id;
+            // Recommendation is editorial and fixed on the featured plan;
+            // selection is the visitor's interaction. They are independent, so
+            // Growth keeps its badge even when another card is selected.
+            const isRecommended = plan.featured;
 
             // The "hidden discount": a year billed at ten months' price, shown
             // as the real Toman saved so the annual value is explicit.
@@ -100,9 +117,6 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
               live?.price_yearly_toman != null
                 ? live.price_monthly_toman * 12 - live.price_yearly_toman
                 : null;
-
-            // Trial is a per-plan promise, so it leads each checklist.
-            const features = [LANDING.pricing.trialFeature, ...plan.features];
 
             return (
               <article
@@ -116,7 +130,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                     : "border-lp-line hover:border-lp-mint/40"
                 )}
               >
-                {isSelected ? (
+                {isRecommended ? (
                   <span className="mx-auto -mt-11 mb-3 inline-flex rounded-full bg-lp-mint px-3 py-1 text-[11px] font-bold text-lp-ink shadow-lp-mint">
                     {LANDING.pricing.mostPopular}
                   </span>
@@ -164,22 +178,16 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                 ) : null}
 
                 <ul className="mt-7 flex flex-col gap-3.5">
-                  {features.map((feature, i) => (
+                  {plan.features.map((feature) => (
                     <li
                       key={feature}
-                      className={cn(
-                        "flex items-start gap-2.5 text-[13.5px] leading-[1.7]",
-                        i === 0 ? "font-bold text-lp-ink" : "text-lp-ink-2"
-                      )}
+                      className="flex items-start gap-2.5 text-[13.5px] leading-[1.7] text-lp-ink-2"
                     >
                       <Check
                         size={15}
                         strokeWidth={3}
                         aria-hidden="true"
-                        className={cn(
-                          "mt-1 shrink-0",
-                          i === 0 ? "text-lp-mint" : "text-lp-blue"
-                        )}
+                        className="mt-1 shrink-0 text-lp-blue"
                       />
                       {feature}
                     </li>

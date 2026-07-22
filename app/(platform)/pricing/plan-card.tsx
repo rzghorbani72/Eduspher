@@ -93,11 +93,6 @@ export function PlanCard({ plan, ctaLabel }: Props) {
       </dl>
 
       <ul className="mt-5 space-y-2 text-sm">
-        {/* Trial leads the checklist on every plan. */}
-        <li className="flex items-start gap-2 font-semibold text-foreground">
-          <Check size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
-          {PRICING.trialFeature}
-        </li>
         {plan.features.map((feature) => (
           <li
             key={feature}
