@@ -405,7 +405,7 @@ export type PublicPlan = {
     managers: number;
     teachers: number;
     courses: number;
-    active_students: number;
+    active_learners: number;
     storage_gb: number;
   };
   features: string[];

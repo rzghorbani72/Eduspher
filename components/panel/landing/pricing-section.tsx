@@ -22,6 +22,11 @@ const faNumber = (value: number) => value.toLocaleString("fa-IR");
 
 export function PricingSection({ registerUrl, plans = [] }: Props) {
   const [cycle, setCycle] = useState<Cycle>("yearly");
+  const cards = LANDING.pricing.plans;
+  // The growth plan is highlighted by default; clicking another card moves the
+  // highlight so a visitor can compare tiers as the one they are considering.
+  const featuredId = cards.find((p) => p.featured)?.id ?? cards[0]?.id;
+  const [selectedId, setSelectedId] = useState<string>(featuredId);
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
   return (
@@ -42,10 +47,6 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
         <p className="mx-auto mt-2 max-w-xl text-center text-[12px] text-lp-muted">
           {LANDING.pricing.unlimitedSignups}
         </p>
-        <p className="mt-2 text-center text-[13px] font-bold text-lp-ink">
-          {LANDING.pricing.trialLine}
-        </p>
-
         <div className="mt-9 flex justify-center">
           <div
             role="group"
@@ -76,7 +77,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
             : LANDING.pricing.cycleNoteMonthly}
         </p>
 
-        <div className="mt-12 grid items-start gap-5 lg:grid-cols-3">
+        <div className="mt-12 grid items-stretch gap-5 lg:grid-cols-3">
           {LANDING.pricing.plans.map((plan) => {
             const live = livePlans.get(plan.id);
             const yearlyPerMonth =
@@ -91,17 +92,36 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                 ? (yearlyPerMonth != null ? faNumber(yearlyPerMonth) : plan.priceYearly)
                 : (live ? faNumber(live.price_monthly_toman) : plan.priceMonthly);
             const upcoming = live?.upcoming_price ?? null;
+            const isSelected = selectedId === plan.id;
+
+            // The "hidden discount": a year billed at ten months' price, shown
+            // as the real Toman saved so the annual value is explicit.
+            const yearlySaving =
+              live?.price_yearly_toman != null
+                ? live.price_monthly_toman * 12 - live.price_yearly_toman
+                : null;
+
+            // Trial is a per-plan promise, so it leads each checklist.
+            const features = [LANDING.pricing.trialFeature, ...plan.features];
 
             return (
               <article
                 key={plan.id}
+                onClick={() => setSelectedId(plan.id)}
+                data-selected={isSelected}
                 className={cn(
-                  "flex flex-col rounded-2xl border bg-white p-8",
-                  plan.featured
-                    ? "border-lp-mint/60 shadow-lp-card lg:-my-4 lg:py-12"
-                    : "border-lp-line"
+                  "flex h-full cursor-pointer flex-col rounded-2xl border bg-white p-8 transition-all",
+                  isSelected
+                    ? "border-lp-mint ring-2 ring-lp-mint/50 shadow-lp-card"
+                    : "border-lp-line hover:border-lp-mint/40"
                 )}
               >
+                {isSelected ? (
+                  <span className="mx-auto -mt-11 mb-3 inline-flex rounded-full bg-lp-mint px-3 py-1 text-[11px] font-bold text-lp-ink shadow-lp-mint">
+                    {LANDING.pricing.mostPopular}
+                  </span>
+                ) : null}
+
                 <h3 className="text-center text-lg font-bold text-lp-ink">
                   {plan.name}
                 </h3>
@@ -118,8 +138,20 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   </span>
                 </p>
 
-                {/* Announced-but-not-applied price. Showing it here is the
-                    public half of the 30-day notice the agreement promises. */}
+                {/* Hidden discount, right under the price. */}
+                <p className="mt-2 h-4 text-center text-[12px] font-bold text-lp-mint">
+                  {cycle === "yearly"
+                    ? yearlySaving && yearlySaving > 0
+                      ? LANDING.pricing.savingYearly.replace(
+                          "{amount}",
+                          faNumber(yearlySaving),
+                        )
+                      : ""
+                    : LANDING.pricing.savingHintMonthly}
+                </p>
+
+                {/* Announced-but-not-applied price — the public half of the
+                    30-day notice the agreement promises. */}
                 {upcoming ? (
                   <p className="mt-2 text-center text-[11px] leading-[1.7] text-lp-muted">
                     {LANDING.pricing.upcomingPrice
@@ -131,34 +163,43 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   </p>
                 ) : null}
 
+                <ul className="mt-7 flex flex-col gap-3.5">
+                  {features.map((feature, i) => (
+                    <li
+                      key={feature}
+                      className={cn(
+                        "flex items-start gap-2.5 text-[13.5px] leading-[1.7]",
+                        i === 0 ? "font-bold text-lp-ink" : "text-lp-ink-2"
+                      )}
+                    >
+                      <Check
+                        size={15}
+                        strokeWidth={3}
+                        aria-hidden="true"
+                        className={cn(
+                          "mt-1 shrink-0",
+                          i === 0 ? "text-lp-mint" : "text-lp-blue"
+                        )}
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* mt-auto pins the CTA to the bottom, so it aligns across
+                    cards whatever the feature-list length. */}
                 <a
                   href={registerUrl}
+                  onClick={(e) => e.stopPropagation()}
                   className={cn(
-                    "mt-7 flex h-12 items-center justify-center rounded-xl text-[14px] font-bold transition-transform hover:-translate-y-0.5",
-                    plan.featured
+                    "mt-8 flex h-12 items-center justify-center rounded-xl text-[14px] font-bold transition-transform hover:-translate-y-0.5",
+                    isSelected
                       ? "bg-lp-mint text-lp-ink shadow-lp-mint"
                       : "border border-lp-line bg-lp-surface-2 text-lp-ink"
                   )}
                 >
                   {plan.cta}
                 </a>
-
-                <ul className="mt-8 flex flex-col gap-3.5">
-                  {plan.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-start gap-2.5 text-[13.5px] leading-[1.7] text-lp-ink-2"
-                    >
-                      <Check
-                        size={15}
-                        strokeWidth={3}
-                        aria-hidden="true"
-                        className="mt-1 shrink-0 text-lp-blue"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
               </article>
             );
           })}

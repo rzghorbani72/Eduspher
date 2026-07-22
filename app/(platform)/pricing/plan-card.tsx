@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Check } from "lucide-react";
 
 import type { PublicPlan } from "@/lib/api/server";
 
@@ -15,13 +16,20 @@ export function PlanCard({ plan, ctaLabel }: Props) {
   const limitRows = [
     { label: PRICING.limits.teachers, value: plan.limits.teachers },
     { label: PRICING.limits.courses, value: plan.limits.courses },
-    { label: PRICING.limits.students, value: plan.limits.active_students },
+    { label: PRICING.limits.students, value: plan.limits.active_learners },
     { label: PRICING.limits.storage, value: plan.storage_gb },
   ];
 
+  // The "hidden discount": a year billed at ten months' price, shown as the
+  // real Toman saved so the annual value is explicit rather than implied.
+  const yearlySaving =
+    plan.price_yearly_toman != null
+      ? plan.price_monthly_toman * 12 - plan.price_yearly_toman
+      : null;
+
   return (
     <article
-      className={`flex flex-col rounded-xl border bg-card p-6 shadow-sm ${
+      className={`flex h-full flex-col rounded-xl border bg-card p-6 shadow-sm ${
         plan.is_most_popular ? "border-primary ring-1 ring-primary" : ""
       }`}
     >
@@ -43,10 +51,17 @@ export function PlanCard({ plan, ctaLabel }: Props) {
         </span>
       </p>
 
+      {/* Hidden discount, right under the price. */}
+      {yearlySaving && yearlySaving > 0 ? (
+        <p className="mt-1 text-sm font-semibold text-primary">
+          {PRICING.savingYearly.replace("{amount}", formatToman(yearlySaving))}
+        </p>
+      ) : null}
+
       {plan.price_yearly_toman != null ? (
         <p className="mt-1 text-xs text-muted-foreground">
-          {formatToman(plan.price_yearly_toman)} {PRICING.perYear} —{" "}
-          {PRICING.yearlyHint}
+          {formatToman(Math.round(plan.price_yearly_toman / 12))}{" "}
+          {PRICING.perMonth} {PRICING.yearlyHint}
         </p>
       ) : null}
 
@@ -55,10 +70,15 @@ export function PlanCard({ plan, ctaLabel }: Props) {
       {plan.upcoming_price ? (
         <p className="mt-3 rounded-lg bg-muted p-2 text-xs leading-6 text-muted-foreground">
           {PRICING.upcomingPrice
-            .replace("{price}", formatToman(plan.upcoming_price.price_monthly_toman))
+            .replace(
+              "{price}",
+              formatToman(plan.upcoming_price.price_monthly_toman),
+            )
             .replace(
               "{date}",
-              new Date(plan.upcoming_price.effective_at).toLocaleDateString("fa-IR"),
+              new Date(plan.upcoming_price.effective_at).toLocaleDateString(
+                "fa-IR",
+              ),
             )}
         </p>
       ) : null}
@@ -72,14 +92,28 @@ export function PlanCard({ plan, ctaLabel }: Props) {
         ))}
       </dl>
 
-      {plan.features.length > 0 ? (
-        <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
-          {plan.features.map((feature) => (
-            <li key={feature}>• {feature}</li>
-          ))}
-        </ul>
-      ) : null}
+      <ul className="mt-5 space-y-2 text-sm">
+        {/* Trial leads the checklist on every plan. */}
+        <li className="flex items-start gap-2 font-semibold text-foreground">
+          <Check size={16} className="mt-0.5 shrink-0 text-primary" aria-hidden />
+          {PRICING.trialFeature}
+        </li>
+        {plan.features.map((feature) => (
+          <li
+            key={feature}
+            className="flex items-start gap-2 text-muted-foreground"
+          >
+            <Check
+              size={16}
+              className="mt-0.5 shrink-0 text-muted-foreground"
+              aria-hidden
+            />
+            {feature}
+          </li>
+        ))}
+      </ul>
 
+      {/* mt-auto pins the CTA to the bottom so it aligns across cards. */}
       <Link
         href="/auth/register"
         className="mt-6 inline-flex justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
