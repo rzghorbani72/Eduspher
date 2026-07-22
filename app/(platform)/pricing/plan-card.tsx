@@ -13,11 +13,13 @@ interface Props {
 }
 
 export function PlanCard({ plan, ctaLabel }: Props) {
+  // The plan's headline caps: teachers, private-tutoring students, and storage.
+  // Public course/subscription sales are unlimited and shown as a note below.
   const limitRows = [
     { label: PRICING.limits.teachers, value: plan.limits.teachers },
-    { label: PRICING.limits.courses, value: plan.limits.courses },
-    { label: PRICING.limits.students, value: plan.limits.active_learners },
+    { label: PRICING.limits.students, value: plan.limits.tutoring_students },
     { label: PRICING.limits.storage, value: plan.storage_gb },
+    { label: PRICING.limits.courses, value: plan.limits.courses },
   ];
 
   // The "hidden discount": a year billed at ten months' price, shown as the
@@ -90,9 +92,12 @@ export function PlanCard({ plan, ctaLabel }: Props) {
             <dd className="font-medium">{row.value.toLocaleString("fa-IR")}</dd>
           </div>
         ))}
+        <div className="flex justify-between gap-3 pt-1 text-primary">
+          <dt>{PRICING.limits.unlimitedPublic}</dt>
+        </div>
       </dl>
 
-      <ul className="mt-5 space-y-2 text-sm">
+      <ul className="mt-5 flex-1 space-y-2 text-sm">
         {plan.features.map((feature) => (
           <li
             key={feature}
@@ -108,10 +113,11 @@ export function PlanCard({ plan, ctaLabel }: Props) {
         ))}
       </ul>
 
-      {/* mt-auto pins the CTA to the bottom so it aligns across cards. */}
+      {/* flex-1 on the list above pushes the CTA to the bottom with a fixed gap,
+          so buttons align across cards whatever the feature-list length. */}
       <Link
         href="/auth/register"
-        className="mt-6 inline-flex justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+        className="mt-8 inline-flex justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
       >
         {ctaLabel}
       </Link>

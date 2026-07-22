@@ -19,8 +19,9 @@ export const PRICING = {
   limits: {
     teachers: "معلم",
     courses: "دوره",
-    students: "دانشجوی دارای دسترسی",
+    students: "دانشجوی تدریس خصوصی",
     storage: "گیگابایت فضا",
+    unlimitedPublic: "دانشجوی فروش عمومی: نامحدود",
   },
 
   storageTitle: "فضای ذخیره‌سازی و هزینهٔ مازاد",

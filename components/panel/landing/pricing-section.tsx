@@ -177,7 +177,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   </p>
                 ) : null}
 
-                <ul className="mt-7 flex flex-col gap-3.5">
+                <ul className="mt-7 flex flex-1 flex-col gap-3.5">
                   {plan.features.map((feature) => (
                     <li
                       key={feature}
