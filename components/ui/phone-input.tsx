@@ -12,6 +12,7 @@ interface PhoneInputProps {
   onCountryChange?: (country: CountryCode) => void;
   defaultCountry?: CountryCode;
   className?: string;
+  inputClassName?: string;
   id?: string;
   autoComplete?: string;
   placeholder?: string;
@@ -25,6 +26,7 @@ export const PhoneInput = ({
   onCountryChange,
   defaultCountry,
   className,
+  inputClassName,
   id,
   autoComplete = "tel",
   placeholder = "09121234567",
@@ -137,7 +139,8 @@ export const PhoneInput = ({
             disabled={disabled}
             className={cn(
               "flex h-11 w-full rounded-r-theme border border-theme bg-card",
-              disabled && "opacity-50 cursor-not-allowed"
+              disabled && "opacity-50 cursor-not-allowed",
+              inputClassName
             )}
           />
         </div>

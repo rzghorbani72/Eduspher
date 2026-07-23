@@ -406,6 +406,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
                 }}
                 defaultCountry={selectedCountry}
                 placeholder={t("auth.enterPhone")}
+                inputClassName="text-center"
               />
               {errors.phone_number && (
                 <p className="mt-1 text-xs text-destructive">{errors.phone_number.message}</p>

@@ -1469,6 +1469,7 @@ select[class*="rounded-sm"] {
   padding: 0 0.75rem;
   color: var(--auth-card-ink);
   font-size: 1rem;
+  text-align: center;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .auth-input::placeholder {
@@ -1484,6 +1485,7 @@ select[class*="rounded-sm"] {
 }
 .auth-input.with-toggle {
   padding-left: 2.75rem;
+  padding-right: 2.75rem;
 }
 .auth-input.has-error {
   border-color: hsl(var(--destructive));

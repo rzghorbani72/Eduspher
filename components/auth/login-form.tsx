@@ -266,6 +266,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           placeholder={t("auth.otpCodePlaceholder")}
           value={otp}
           onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
+          className="text-center"
           autoFocus
         />
         {errorBlock}
@@ -327,6 +328,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           placeholder={t("auth.otpCodePlaceholder")}
           value={otp}
           onChange={(e) => setOtp(toEnglishDigits(e.target.value))}
+          className="text-center"
           autoFocus
         />
         {errorBlock}
@@ -440,6 +442,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           defaultCountry={selectedCountry}
           placeholder={t("auth.enterPhone")}
           autoComplete="tel"
+          inputClassName="text-center"
         />
       )}
     </div>
