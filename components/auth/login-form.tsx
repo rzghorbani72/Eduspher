@@ -45,6 +45,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [authMode, setAuthMode] = useState<"password" | "otp">("password");
   const [otpLoginSent, setOtpLoginSent] = useState(false);
   const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
@@ -111,9 +112,14 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     if (!otpGate) return;
     setOtpResending(true);
     setError(null);
+    setMessage(null);
     try {
-      await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION);
+      const response = (await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION)) as { otp?: string };
       otpGateTimer.start();
+      // TODO: Remove debug OTP display when real SMS provider is integrated
+      if (response?.otp) {
+        setMessage(`${t("auth.resendOtp")}\n\n🔐 Code: ${response.otp}`);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
@@ -138,15 +144,20 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
       return;
     }
     setError(null);
+    setMessage(null);
     startTransition(async () => {
       try {
-        if (target.channel === "phone") {
-          await sendPhoneOtp(target.value, OtpType.LOGIN_BY_PHONE);
-        } else {
-          await sendEmailOtp(target.value, OtpType.LOGIN_BY_EMAIL);
-        }
+        const response =
+          target.channel === "phone"
+            ? ((await sendPhoneOtp(target.value, OtpType.LOGIN_BY_PHONE)) as { otp?: string })
+            : ((await sendEmailOtp(target.value, OtpType.LOGIN_BY_EMAIL)) as { otp?: string });
         setOtpLoginSent(true);
         otpLoginTimer.start();
+        // TODO: Remove debug OTP display when real SMS provider is integrated
+        if (response?.otp) {
+          const sentKey = target.channel === "phone" ? "auth.otpSentToPhone" : "auth.otpSentToEmail";
+          setMessage(`${t(sentKey)}\n\n🔐 Code: ${response.otp}`);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
       }
@@ -230,6 +241,13 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     </div>
   ) : null;
 
+  const messageBlock =
+    message && !error ? (
+      <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+        {message}
+      </div>
+    ) : null;
+
   // ── Phone-verification OTP gate (after password login) ──────────────
   if (otpGate) {
     return (
@@ -251,10 +269,11 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           autoFocus
         />
         {errorBlock}
+        {messageBlock}
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => { setOtpGate(null); setOtp(""); setError(null); }}
+            onClick={() => { setOtpGate(null); setOtp(""); setError(null); setMessage(null); }}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -311,10 +330,11 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           autoFocus
         />
         {errorBlock}
+        {messageBlock}
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => { setOtpLoginSent(false); setOtp(""); setError(null); }}
+            onClick={() => { setOtpLoginSent(false); setOtp(""); setError(null); setMessage(null); }}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -433,7 +453,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           <button
             key={m}
             type="button"
-            onClick={() => { setAuthMode(m); setOtpLoginSent(false); setOtp(""); setError(null); }}
+            onClick={() => { setAuthMode(m); setOtpLoginSent(false); setOtp(""); setError(null); setMessage(null); }}
             className={cn("auth-tab", authMode === m && "on")}
           >
             {m === "password" ? t("auth.loginWithPassword") : t("auth.loginWithOtp")}
