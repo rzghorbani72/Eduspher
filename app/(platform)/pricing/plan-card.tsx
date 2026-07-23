@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 
 import type { PublicPlan } from "@/lib/api/server";
+import { env } from "@/lib/env";
 
 import { PRICING } from "./pricing.messages";
 
@@ -115,8 +116,11 @@ export function PlanCard({ plan, ctaLabel }: Props) {
 
       {/* flex-1 on the list above pushes the CTA to the bottom with a fixed gap,
           so buttons align across cards whatever the feature-list length. */}
+      {/* Plan purchase only exists in the manager panel, so "enroll" jumps
+          apps straight to its own register flow, carrying the chosen plan
+          through as a query param all the way to checkout. */}
       <Link
-        href="/auth/register"
+        href={`${env.adminPanelOrigin}/register?plan=${encodeURIComponent(plan.slug)}`}
         className="mt-8 inline-flex justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
       >
         {ctaLabel}
