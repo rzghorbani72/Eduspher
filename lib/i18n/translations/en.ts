@@ -35,6 +35,13 @@ export const en = {
     dollar: "Dollar",
     euro: "Euro",
   },
+  academyStatus: {
+    enrollmentClosed: "This academy is not accepting new enrollments right now.",
+    currentStudentsKeepAccess:
+      "If you are already enrolled, your access continues as normal.",
+    reopensOn: "Reopens on",
+    enrollmentClosedShort: "Enrollment closed",
+  },
   navigation: {
     home: "Home",
     courses: "Courses",

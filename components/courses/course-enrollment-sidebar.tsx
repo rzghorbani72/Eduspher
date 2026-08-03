@@ -6,6 +6,7 @@ import { Box, CreditCard, Video, Package, Check, Lock } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from "@/lib/utils";
+import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
 import { ENROLLMENT_METHODS, type MethodIcon } from "@/components/courses/course-mock-data";
 
 interface CurrencyConfig {
@@ -33,6 +34,33 @@ const ICONS: Record<MethodIcon, typeof Box> = {
   bundle: Package,
 };
 
+const CTA_CLASS =
+  "cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white";
+
+/** The buy/enroll call to action — inert while the academy takes no new students. */
+function EnrollCta({ href, label }: { href: string; label: string }) {
+  const { t } = useTranslation();
+  const closed = useEnrollmentClosed();
+
+  if (closed) {
+    return (
+      <span
+        aria-disabled="true"
+        title={t("academyStatus.enrollmentClosed")}
+        className={cn(CTA_CLASS, "cursor-not-allowed opacity-60")}
+      >
+        {t("academyStatus.enrollmentClosedShort")}
+      </span>
+    );
+  }
+
+  return (
+    <a href={href} className={cn(CTA_CLASS, "transition-all hover:-translate-y-0.5")}>
+      {label}
+    </a>
+  );
+}
+
 export function CourseEnrollmentSidebar({
   isFree,
   basePrice,
@@ -56,9 +84,9 @@ export function CourseEnrollmentSidebar({
     return (
       <div className="cd-side-card rounded-2xl border p-6 text-center shadow-2xl">
         <div className="text-3xl font-black text-(--theme-foreground)">{freePriceLabel}</div>
-        <a href={enrollHref} className="cd-cta-btn mt-5 flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white">
-          {t("courses.enrollFree")}
-        </a>
+        <div className="mt-5">
+          <EnrollCta href={enrollHref} label={t("courses.enrollFree")} />
+        </div>
         <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-(--theme-muted)">
           <Lock className="h-3.5 w-3.5" />
           {t("courses.securePaymentNote")}
@@ -187,12 +215,12 @@ export function CourseEnrollmentSidebar({
       </div>
 
       <div className="px-5 pb-5">
-        <a
+        <EnrollCta
           href={enrollHref}
-          className="cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all hover:-translate-y-0.5"
-        >
-          {t(ENROLLMENT_METHODS.find((m) => m.key === selectedKey)?.ctaKey ?? "courses.ctaBuy")}
-        </a>
+          label={t(
+            ENROLLMENT_METHODS.find((m) => m.key === selectedKey)?.ctaKey ?? "courses.ctaBuy",
+          )}
+        />
         <p className="mt-3.5 flex items-center justify-center gap-1.5 text-xs text-(--theme-muted)">
           <Lock className="h-3.5 w-3.5" />
           {t("courses.securePaymentNote")}

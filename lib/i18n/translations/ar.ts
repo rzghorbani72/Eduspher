@@ -34,6 +34,13 @@ export const ar = {
     dollar: 'دولار',
     euro: 'يورو',
   },
+  academyStatus: {
+    enrollmentClosed: 'هذه الأكاديمية لا تقبل تسجيلات جديدة حالياً.',
+    currentStudentsKeepAccess:
+      'إذا كنت مسجلاً بالفعل، فسيستمر وصولك كالمعتاد.',
+    reopensOn: 'يُعاد الفتح في',
+    enrollmentClosedShort: 'التسجيل مغلق',
+  },
   navigation: {
     home: 'الرئيسية',
     courses: 'الدورات',

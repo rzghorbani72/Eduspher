@@ -22,7 +22,13 @@ import {
   getStoreThemeAndTemplate,
   generateThemeCSSVariables,
 } from "@/lib/theme-config";
-import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
+import {
+  getCurrentAcademy,
+  getAcademyBySlug,
+  getAcademyEnrollmentStatus,
+} from "@/lib/api/server";
+import { EnrollmentClosedBanner } from "@/components/academy/enrollment-closed-banner";
+import { EnrollmentStatusProvider } from "@/components/academy/enrollment-status-provider";
 import { getAcademyLanguage, getAcademyDirection } from "@/lib/i18n/server";
 import { CreativeBackground } from "@/components/motion/creative-background";
 import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
@@ -82,6 +88,12 @@ export default async function RootLayout({
   if (!currentAcademy && storeContext.slug) {
     currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
+
+  // Closed to new enrollments: the site stays up, so the banner explains it once
+  // at the top for visitors and students alike.
+  const enrollmentStatus = storeContext.slug
+    ? await getAcademyEnrollmentStatus(storeContext.slug)
+    : null;
 
   // Extract store icons for flying animation
   const storeIcons: string[] = [];
@@ -180,6 +192,9 @@ export default async function RootLayout({
               countryCode={countryCode || undefined}
             >
               <DocumentLangSync />
+              <EnrollmentStatusProvider
+                closed={Boolean(enrollmentStatus?.disabled)}
+              >
               <ScrollAnimationProvider>
                 <div
                   className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-x-clip"
@@ -191,6 +206,14 @@ export default async function RootLayout({
                   )}
 
                   {!bareLayout && <PreviewModeBanner />}
+                  {!bareLayout && enrollmentStatus?.disabled && (
+                    <EnrollmentClosedBanner
+                      message={enrollmentStatus.message}
+                      reopensAt={enrollmentStatus.disabled_until}
+                      contactPhone={enrollmentStatus.contact_phone}
+                      contactEmail={enrollmentStatus.contact_email}
+                    />
+                  )}
                   {!bareLayout && <SiteHeaderShell />}
                   <main className="relative flex-1 z-10">
                     {useTemplateLayout ? (
@@ -204,6 +227,7 @@ export default async function RootLayout({
                   {!bareLayout && <SiteFooter />}
                 </div>
               </ScrollAnimationProvider>
+              </EnrollmentStatusProvider>
               {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && <GdprConsentBanner />}
             </I18nProvider>
             </ThemeProvider>

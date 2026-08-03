@@ -6,6 +6,7 @@ import { Tag } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from "@/lib/utils";
+import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
 import type { PublicCourseOffering } from "@/lib/api/server";
 
 interface CurrencyConfig {
@@ -36,6 +37,7 @@ export function CourseOfferingsCard({
 }: CourseOfferingsCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
+  const enrollmentClosed = useEnrollmentClosed();
   const [pendingId, setPendingId] = useState<string | null>(null);
 
   if (offerings.length === 0) return null;
@@ -98,15 +100,25 @@ export function CourseOfferingsCard({
               </div>
               <button
                 type="button"
-                disabled={pendingId === o.id}
+                disabled={pendingId === o.id || enrollmentClosed}
+                title={
+                  enrollmentClosed
+                    ? t("academyStatus.enrollmentClosed")
+                    : undefined
+                }
                 onClick={() => buy(o)}
                 className={cn(
                   "rounded-lg px-4 py-2 text-sm font-medium",
                   "bg-primary text-primary-foreground hover:opacity-90",
-                  pendingId === o.id && "opacity-60",
+                  (pendingId === o.id || enrollmentClosed) && "opacity-60",
+                  enrollmentClosed && "cursor-not-allowed",
                 )}
               >
-                {free ? t("courses.offeringFree") : t("courses.offeringBuy")}
+                {enrollmentClosed
+                  ? t("academyStatus.enrollmentClosedShort")
+                  : free
+                    ? t("courses.offeringFree")
+                    : t("courses.offeringBuy")}
               </button>
             </li>
           );

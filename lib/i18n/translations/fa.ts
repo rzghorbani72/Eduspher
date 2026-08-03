@@ -34,6 +34,13 @@ export const fa = {
     dollar: "دلار",
     euro: "یورو",
   },
+  academyStatus: {
+    enrollmentClosed: "این آکادمی فعلاً ثبت‌نام جدید نمی‌پذیرد.",
+    currentStudentsKeepAccess:
+      "اگر قبلاً ثبت‌نام کرده‌اید، دسترسی شما مثل قبل برقرار است.",
+    reopensOn: "بازگشایی در",
+    enrollmentClosedShort: "ثبت‌نام بسته است",
+  },
   navigation: {
     home: "خانه",
     courses: "دوره‌ها",

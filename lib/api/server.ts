@@ -337,6 +337,38 @@ export async function getAcademyBySlug(slug: string): Promise<StoreSummary | nul
   }
 }
 
+export type AcademyEnrollmentStatus = {
+  /** True while the academy is closed to NEW enrollments. */
+  disabled: boolean;
+  disabled_until: string | null;
+  message: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
+  academy_name: string;
+};
+
+/**
+ * Whether this academy still takes new students. Closed means the buy/enroll
+ * buttons are refused — students who already paid keep their access.
+ */
+export async function getAcademyEnrollmentStatus(
+  slug: string
+): Promise<AcademyEnrollmentStatus | null> {
+  if (!slug) return null;
+  try {
+    const result = await serverFetchRaw<{
+      status: string;
+      data: AcademyEnrollmentStatus;
+    }>("/academies/public/site-status", {
+      includeAuth: false,
+      query: { slug },
+    });
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getCurrentUser() {
   try {
     const result = await serverFetchRaw<{

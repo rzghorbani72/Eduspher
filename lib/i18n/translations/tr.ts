@@ -34,6 +34,13 @@ export const tr = {
     dollar: "Dolar",
     euro: "Euro",
   },
+  academyStatus: {
+    enrollmentClosed: "Bu akademi şu anda yeni kayıt almıyor.",
+    currentStudentsKeepAccess:
+      "Zaten kayıtlıysanız erişiminiz her zamanki gibi devam eder.",
+    reopensOn: "Yeniden açılış",
+    enrollmentClosedShort: "Kayıtlar kapalı",
+  },
   navigation: {
     home: "Ana Sayfa",
     courses: "Kurslar",

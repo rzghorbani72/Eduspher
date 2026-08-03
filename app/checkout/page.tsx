@@ -5,7 +5,7 @@ import { OrderSummary } from "@/components/checkout/order-summary";
 import { CartCheckout } from "@/components/checkout/cart-checkout";
 import { EmptyState } from "@/components/ui/empty-state";
 import Image from "next/image";
-import { getCourseById, getCurrentUser, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import { getCourseById, getCurrentUser, getAcademyBySlug, getCurrentAcademy, getAcademyEnrollmentStatus } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
@@ -49,6 +49,28 @@ export default async function CheckoutPage({
   }
   const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
   const translate = (key: string) => t(key, language);
+
+  // Closed to new enrollments: the server refuses the checkout anyway, so say why
+  // here instead of letting a deep link walk into a payment form.
+  const enrollmentStatus = storeContext.slug
+    ? await getAcademyEnrollmentStatus(storeContext.slug)
+    : null;
+  if (enrollmentStatus?.disabled) {
+    return (
+      <div className="mx-auto max-w-lg space-y-4 py-16 text-center">
+        <h1 className="text-2xl font-bold">
+          {translate('academyStatus.enrollmentClosedShort')}
+        </h1>
+        <p className="text-muted-foreground">
+          {enrollmentStatus.message ??
+            translate('academyStatus.enrollmentClosed')}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {translate('academyStatus.currentStudentsKeepAccess')}
+        </p>
+      </div>
+    );
+  }
 
   if (process.env.NEXT_PUBLIC_PAYMENT_ENABLED !== 'true') {
     return (
