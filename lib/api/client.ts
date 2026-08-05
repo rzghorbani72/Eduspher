@@ -124,11 +124,17 @@ async function handleResponse<T>(
   // Check if response is not in 2xx range
   if (!response.ok) {
     let errorMessage = response.statusText || "Request failed";
+    let errorCode: string | undefined;
 
     if (isJson) {
       try {
         const parsed = (await response.json()) as unknown;
         if (typeof parsed === "object" && parsed !== null) {
+          // The stable code is what callers branch on (e.g. CAPTCHA_REQUIRED);
+          // the message is already translated and is only for display.
+          if ("code" in parsed && typeof parsed.code === "string") {
+            errorCode = parsed.code;
+          }
           // Try to extract error message from various possible fields
           if ("message" in parsed && typeof parsed.message === "string") {
             errorMessage = parsed.message;
@@ -176,7 +182,7 @@ async function handleResponse<T>(
         return null as unknown as T;
     }
 
-    throw new Error(errorMessage);
+    throw Object.assign(new Error(errorMessage), { code: errorCode, status: response.status });
   }
 
   // Response is successful (2xx), parse and return
@@ -353,6 +359,9 @@ export const login = async (payload: LoginPayload, options?: RequestOptions) => 
   );
 };
 
+export const isCaptchaRequiredError = (error: unknown): boolean =>
+  typeof error === "object" && error !== null && (error as { code?: string }).code === "CAPTCHA_REQUIRED";
+
 export type AccountIdentity = {
   exists: boolean;
   channel: "phone" | "email";
@@ -366,7 +375,11 @@ export type AccountIdentity = {
  * THIS academy. Lets an unknown visitor be sent to signup instead of failing a
  * password they never had.
  */
-export const identifyAccount = async (identifier: string, options?: RequestOptions) => {
+export const identifyAccount = async (
+  identifier: string,
+  captchaToken?: string,
+  options?: RequestOptions
+) => {
   const cookieId = getCookieValue(env.academyIdCookie);
   const finalAcademyId =
     cookieId ?? (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
@@ -377,7 +390,7 @@ export const identifyAccount = async (identifier: string, options?: RequestOptio
 
   return postJson<AccountIdentity>(
     "/auth/public/identify",
-    { identifier, academy_id: finalAcademyId },
+    { identifier, academy_id: finalAcademyId, ...(captchaToken ? { captcha_token: captchaToken } : {}) },
     options
   );
 };

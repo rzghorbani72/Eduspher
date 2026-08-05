@@ -7,6 +7,7 @@ import Link from "@/components/ui/link";
 import { toEnglishDigits } from "@/lib/phone-utils";
 import { cn } from "@/lib/utils";
 import { AuthError, AuthMessage } from "@/components/auth/auth-notice";
+import { HCaptchaWidget } from "@/components/auth/hcaptcha-widget";
 import type { useLogin } from "@/hooks/use-login";
 
 type Login = ReturnType<typeof useLogin>;
@@ -83,6 +84,8 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
           </Link>
         </div>
       )}
+
+      {login.captchaRequired && <HCaptchaWidget onVerify={login.setCaptchaToken} />}
 
       <AuthError>{login.error}</AuthError>
       <AuthMessage>{!login.error ? login.message : null}</AuthMessage>

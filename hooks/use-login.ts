@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 
 import {
   identifyAccount,
+  isCaptchaRequiredError,
   loginByEmailOtp,
   loginByPhoneOtp,
   postJson,
@@ -56,6 +57,9 @@ export function useLogin(defaultCountryCode?: string) {
     (defaultCountryCode ? getCountryByCode(defaultCountryCode) : null) ?? getDefaultCountry()
   );
   const [password, setPassword] = useState("");
+  // Shown only after repeated failures — the API demands a token from then on.
+  const [captchaRequired, setCaptchaRequired] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const [otp, setOtp] = useState("");
   const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string; phone: string } | null>(null);
@@ -84,6 +88,8 @@ export function useLogin(defaultCountryCode?: string) {
   }
 
   function failed(err: unknown) {
+    if (isCaptchaRequiredError(err)) setCaptchaRequired(true);
+    setCaptchaToken("");
     setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
   }
 
@@ -122,7 +128,9 @@ export function useLogin(defaultCountryCode?: string) {
     setNotRegistered(false);
     startTransition(async () => {
       try {
-        const result = await identifyAccount(identifier);
+        const result = await identifyAccount(identifier, captchaToken || undefined);
+        setCaptchaRequired(result.captcha_required);
+        setCaptchaToken("");
         const next = nextStepFor(result);
         if (next === "register") {
           setNotRegistered(true);
@@ -161,7 +169,12 @@ export function useLogin(defaultCountryCode?: string) {
           temp_token?: string;
           phone?: string;
           full_phone?: string;
-        }>("/auth/public/login", { identifier, password, academy_id: academyId });
+        }>("/auth/public/login", {
+          identifier,
+          password,
+          academy_id: academyId,
+          ...(captchaToken ? { captcha_token: captchaToken } : {}),
+        });
 
         if (result?.phone_verification_required) {
           setOtpGate({
@@ -244,6 +257,8 @@ export function useLogin(defaultCountryCode?: string) {
     error,
     message,
     notRegistered,
+    captchaRequired,
+    setCaptchaToken,
     canUseOtp: identity?.can_use_otp ?? false,
     channel,
     changeChannel,

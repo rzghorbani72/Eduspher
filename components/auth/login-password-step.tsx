@@ -6,6 +6,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "@/components/ui/link";
 import { cn } from "@/lib/utils";
 import { AuthError } from "@/components/auth/auth-notice";
+import { HCaptchaWidget } from "@/components/auth/hcaptcha-widget";
 import type { useLogin } from "@/hooks/use-login";
 
 type Login = ReturnType<typeof useLogin>;
@@ -72,6 +73,8 @@ export function LoginPasswordStep({ login }: { login: Login }) {
           </Link>
         </div>
       </div>
+
+      {login.captchaRequired && <HCaptchaWidget onVerify={login.setCaptchaToken} />}
 
       <AuthError>{login.error}</AuthError>
 
