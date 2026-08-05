@@ -24,6 +24,8 @@ test.describe('edusphere student journey @backend', () => {
     ]);
     await page.goto('/auth/login');
     await page.locator('#identifier').fill(email!);
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('#password')).toBeVisible({ timeout: 15_000 });
     await page.locator('#password').click();
     await page.locator('#password').pressSequentially(password!);
     await page.locator('button[type="submit"]').click();

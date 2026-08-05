@@ -353,6 +353,35 @@ export const login = async (payload: LoginPayload, options?: RequestOptions) => 
   );
 };
 
+export type AccountIdentity = {
+  exists: boolean;
+  channel: "phone" | "email";
+  can_use_password: boolean;
+  can_use_otp: boolean;
+  captcha_required: boolean;
+};
+
+/**
+ * Identifier-first login step 1: which sign-in methods this identifier has in
+ * THIS academy. Lets an unknown visitor be sent to signup instead of failing a
+ * password they never had.
+ */
+export const identifyAccount = async (identifier: string, options?: RequestOptions) => {
+  const cookieId = getCookieValue(env.academyIdCookie);
+  const finalAcademyId =
+    cookieId ?? (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
+
+  if (!finalAcademyId) {
+    throw new Error("Academy ID is required for login");
+  }
+
+  return postJson<AccountIdentity>(
+    "/auth/public/identify",
+    { identifier, academy_id: finalAcademyId },
+    options
+  );
+};
+
 export type RegisterPayload = {
   name: string;
   phone_number: string;

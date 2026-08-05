@@ -6,10 +6,11 @@ import { test, expect } from '@playwright/test';
  * shell is intact before any API-dependent journey runs.
  */
 test.describe('edusphere public pages (smoke)', () => {
-  test('login page renders identifier + password + submit', async ({ page }) => {
+  // Login is identifier-first: step 1 shows the identifier only, no password.
+  test('login page renders its identifier step', async ({ page }) => {
     await page.goto('/auth/login');
     await expect(page.locator('#identifier')).toBeVisible();
-    await expect(page.locator('#password')).toBeVisible();
+    await expect(page.locator('#password')).toHaveCount(0);
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 

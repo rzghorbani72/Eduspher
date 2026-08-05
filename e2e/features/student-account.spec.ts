@@ -101,6 +101,8 @@ test.describe('Student login — happy path @backend', () => {
     await setAcademyCookie(page.context(), baseURL!);
     await page.goto('/auth/login');
     await page.locator('#identifier').fill(STUDENT_EMAIL);
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator('#password')).toBeVisible({ timeout: 15_000 });
     await page.locator('#password').click();
     await page.locator('#password').pressSequentially('definitely-wrong-pw!');
     await page.locator('button[type="submit"]').click();

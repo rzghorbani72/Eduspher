@@ -1,40 +1,25 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * edusphere `/auth/login` — STUDENT login (email or phone + password).
- * The form uses t() for validation messages (translated to the academy's language),
- * so we assert on the `has-error` CSS class added by the form, not message text.
+ * edusphere `/auth/login` — STUDENT login, identifier-first: step 1 looks the
+ * email/phone up, step 2 asks only for the method that account really has.
  */
-test.describe('edusphere student login — validation', () => {
-  test('requires an identifier (empty submit)', async ({ page }) => {
+test.describe('edusphere student login — step 1', () => {
+  test('asks for the identifier only, never a password up front', async ({ page }) => {
     await page.goto('/auth/login');
 
-    await page.locator('button[type="submit"]').click();
-
-    // In password mode the identifier input gets has-error when blank.
-    await expect(page.locator('#identifier')).toHaveClass(/has-error/);
-  });
-
-  test('rejects a too-short password', async ({ page }) => {
-    await page.goto('/auth/login');
-
-    await page.locator('#identifier').fill('student@example.com');
-    await page.locator('#password').fill('123');
-    await page.locator('button[type="submit"]').click();
-
-    // The password input gets has-error when validation fails.
-    await expect(page.locator('#password')).toHaveClass(/has-error/);
-  });
-
-  test('OTP method removes the password field', async ({ page }) => {
-    await page.goto('/auth/login');
-
-    // Password is the default method.
-    await expect(page.locator('#password')).toBeVisible();
-
-    // Second button in the method toggle switches to one-time-code login.
-    await page.locator('.bg-slate-100 button').nth(1).click();
+    await expect(page.locator('#identifier')).toBeVisible();
     await expect(page.locator('#password')).toHaveCount(0);
+  });
+
+  test('refuses to continue with an empty identifier', async ({ page }) => {
+    await page.goto('/auth/login');
+
+    await page.locator('button[type="submit"]').click();
+
+    // Stays on step 1 and surfaces the "identifier required" notice.
+    await expect(page.locator('#password')).toHaveCount(0);
+    await expect(page.locator('#identifier')).toBeVisible();
   });
 });
 
@@ -53,7 +38,7 @@ test.describe('edusphere student login — happy path @backend', () => {
     test.skip(!academyId, 'E2E_ACADEMY_ID required (the cuid the student belongs to)');
 
     // The student belongs to a specific academy; the login form reads the
-    // selected-academy cookie to send academy_id to public login.
+    // selected-academy cookie to scope both the lookup and the login.
     await page.context().addCookies([
       {
         name: 'skillforge_selected_academy_id',
@@ -64,12 +49,30 @@ test.describe('edusphere student login — happy path @backend', () => {
 
     await page.goto('/auth/login');
     await page.locator('#identifier').fill(email!);
-    // The password input is react-hook-form registered with a custom onChange
-    // transform; type key-by-key so the value is captured reliably.
-    await page.locator('#password').click();
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.locator('#password')).toBeVisible({ timeout: 15_000 });
     await page.locator('#password').pressSequentially(password!);
     await page.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL(/\/courses/, { timeout: 15_000 });
+  });
+
+  test('an unknown account is offered signup, not a password box', async ({ page, baseURL }) => {
+    const academyId = process.env.E2E_ACADEMY_ID;
+    test.skip(!academyId, 'E2E_ACADEMY_ID required');
+
+    await page.context().addCookies([
+      { name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! },
+    ]);
+
+    await page.goto('/auth/login');
+    await page.locator('#identifier').fill('nobody-e2e@example.com');
+    await page.locator('button[type="submit"]').click();
+
+    await expect(page.locator('a[href*="/auth/register"]').first()).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.locator('#password')).toHaveCount(0);
   });
 });

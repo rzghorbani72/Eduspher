@@ -34,7 +34,10 @@ export async function studentLogin(
 ): Promise<void> {
   await setAcademyCookie(page.context(), baseURL);
   await page.goto('/auth/login');
+  // Identifier-first: the account is looked up before any password is asked for.
   await page.locator('#identifier').fill(email);
+  await page.locator('button[type="submit"]').click();
+  await expect(page.locator('#password')).toBeVisible({ timeout: 20_000 });
   await page.locator('#password').click();
   await page.locator('#password').pressSequentially(password);
   await page.locator('button[type="submit"]').click();

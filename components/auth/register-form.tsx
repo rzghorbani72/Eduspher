@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useRef, useMemo, useEffect } from "react";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useForm } from "react-hook-form";
@@ -48,6 +48,9 @@ interface RegisterFormProps {
 
 export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFormProps) => {
   const router = useRouter();
+  // Login sends the identifier it could not find, so signup never asks for it twice.
+  const prefilledIdentifier = useSearchParams().get("identifier") ?? "";
+  const prefilledIsEmail = prefilledIdentifier.includes("@");
   useAuthContext();
   const buildPath = useStorePath();
   const { t } = useTranslation();
@@ -123,8 +126,8 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
-      email: "",
-      phone_number: "",
+      email: prefilledIsEmail ? prefilledIdentifier : "",
+      phone_number: prefilledIsEmail ? "" : prefilledIdentifier,
       password: "",
       confirmed_password: "",
       display_name: "",
@@ -134,7 +137,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
 
   const getInitialCountry = () => getCountryByCode("IR") ?? getDefaultCountry();
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(prefilledIsEmail ? "" : prefilledIdentifier);
   const [phoneOtp, setPhoneOtp] = useState("");
   const [emailOtp, setEmailOtp] = useState("");
 
