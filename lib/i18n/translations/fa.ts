@@ -488,6 +488,11 @@ export const fa = {
     passwordMinLength: "رمز عبور باید حداقل ۶ کاراکتر باشد",
     showPassword: "نمایش رمز عبور",
     hidePassword: "پنهان کردن رمز عبور",
+    newPassword: "رمز عبور جدید",
+    setNewPasswordDescription:
+      "مدیر برای شما یک رمز عبور موقت تنظیم کرده است. برای ادامه، رمز عبور خودتان را انتخاب کنید.",
+    settingPassword: "در حال ثبت رمز عبور...",
+    setPasswordAndContinue: "ثبت رمز عبور و ادامه",
     orContinueWith: "یا",
     continueWithGoogle: "ادامه با گوگل",
     googleSoon: "ورود با گوگل به زودی",

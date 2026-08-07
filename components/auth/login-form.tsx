@@ -5,6 +5,7 @@ import { useLogin } from "@/hooks/use-login";
 import { LoginIdentifyStep } from "@/components/auth/login-identify-step";
 import { LoginPasswordStep } from "@/components/auth/login-password-step";
 import { LoginOtpStep } from "@/components/auth/login-otp-step";
+import { SetNewPasswordStep } from "@/components/auth/set-new-password-step";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface LoginFormProps {
@@ -37,6 +38,10 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
 
   if (login.step === "password") {
     return <LoginPasswordStep login={login} />;
+  }
+
+  if (login.step === "passwordReset") {
+    return <SetNewPasswordStep login={login} />;
   }
 
   return (

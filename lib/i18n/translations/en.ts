@@ -484,6 +484,11 @@ export const en = {
     passwordMinLength: "Minimum 6 characters",
     showPassword: "Show password",
     hidePassword: "Hide password",
+    newPassword: "New Password",
+    setNewPasswordDescription:
+      "An admin set a temporary password for you. Choose your own password to continue.",
+    settingPassword: "Setting password...",
+    setPasswordAndContinue: "Set password & continue",
     orContinueWith: "or",
     continueWithGoogle: "Continue with Google",
     googleSoon: "Google sign-in is coming soon",

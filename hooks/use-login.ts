@@ -24,7 +24,7 @@ import { useTranslation } from "@/lib/i18n/hooks";
 import { OtpType } from "@/lib/constants";
 
 export type LoginChannel = "email" | "phone";
-export type LoginStep = "identify" | "password" | "otpLogin" | "otpGate";
+export type LoginStep = "identify" | "password" | "otpLogin" | "otpGate" | "passwordReset";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -66,6 +66,12 @@ export function useLogin(defaultCountryCode?: string) {
   const [otpResending, setOtpResending] = useState(false);
   const otpGateTimer = useOtpTimer();
   const otpLoginTimer = useOtpTimer();
+
+  // Admin created this account with a one-time password — the user must pick
+  // their own before a real session is granted.
+  const [resetTempToken, setResetTempToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const identifier =
     channel === "phone"
@@ -166,6 +172,7 @@ export function useLogin(defaultCountryCode?: string) {
 
         const result = await postJson<{
           phone_verification_required?: boolean;
+          password_reset_required?: boolean;
           temp_token?: string;
           phone?: string;
           full_phone?: string;
@@ -187,6 +194,11 @@ export function useLogin(defaultCountryCode?: string) {
           otpGateTimer.start();
           return;
         }
+        if (result?.password_reset_required) {
+          setResetTempToken(result.temp_token ?? "");
+          setStep("passwordReset");
+          return;
+        }
         await finishLogin();
       } catch (err) {
         setAuthenticated(false);
@@ -200,12 +212,44 @@ export function useLogin(defaultCountryCode?: string) {
     startTransition(async () => {
       try {
         if (step === "otpGate") {
-          await postJson("/auth/confirm-phone", { temp_token: otpGate?.tempToken ?? "", otp });
+          const result = await postJson<{
+            password_reset_required?: boolean;
+            temp_token?: string;
+          }>("/auth/confirm-phone", { temp_token: otpGate?.tempToken ?? "", otp });
+          if (result?.password_reset_required) {
+            setResetTempToken(result.temp_token ?? "");
+            setStep("passwordReset");
+            return;
+          }
         } else if (channel === "phone") {
           await loginByPhoneOtp(identifier, otp);
         } else {
           await loginByEmailOtp(identifier, otp);
         }
+        await finishLogin();
+      } catch (err) {
+        setAuthenticated(false);
+        failed(err);
+      }
+    });
+  }
+
+  function submitNewPassword() {
+    if (newPassword.length < 6) {
+      setError(t("auth.passwordMinLength"));
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setError(t("auth.passwordsDoNotMatch"));
+      return;
+    }
+    clearFeedback();
+    startTransition(async () => {
+      try {
+        await postJson("/auth/set-new-password", {
+          temp_token: resetTempToken,
+          new_password: newPassword,
+        });
         await finishLogin();
       } catch (err) {
         setAuthenticated(false);
@@ -282,5 +326,11 @@ export function useLogin(defaultCountryCode?: string) {
     resendOtp,
     useOtpInstead: sendLoginOtp,
     changeIdentifier,
+
+    newPassword,
+    setNewPassword: (v: string) => setNewPassword(toEnglishDigits(v)),
+    confirmNewPassword,
+    setConfirmNewPassword: (v: string) => setConfirmNewPassword(toEnglishDigits(v)),
+    submitNewPassword,
   };
 }
