@@ -4,7 +4,11 @@ import { Check } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { toPersianDigits } from "@/lib/utils";
-import { getAboutDemo, getLearnPoints } from "@/components/courses/course-detail-demo";
+import { renderMarkdown } from "@/lib/markdown";
+import {
+  getAboutDemo,
+  getLearnPoints,
+} from "@/components/courses/course-detail-demo";
 
 interface CourseOverviewProps {
   description?: string | null;
@@ -12,18 +16,28 @@ interface CourseOverviewProps {
   durationHours: number | null;
 }
 
-export function CourseOverview({ description, lessonCount, durationHours }: CourseOverviewProps) {
+export function CourseOverview({
+  description,
+  lessonCount,
+  durationHours,
+}: CourseOverviewProps) {
   const { t, language } = useTranslation();
   const learnPoints = getLearnPoints(language);
 
   const stats = [
-    { value: toPersianDigits(lessonCount, language), label: t("courses.lesson") },
+    {
+      value: toPersianDigits(lessonCount, language),
+      label: t("courses.lesson"),
+    },
     {
       value: durationHours ? toPersianDigits(durationHours, language) : "—",
       label: t("courses.statHoursLabel"),
     },
     { value: t("courses.statLiveValue"), label: t("courses.statLiveLabel") },
-    { value: t("courses.statAccessValue"), label: t("courses.statAccessLabel") },
+    {
+      value: t("courses.statAccessValue"),
+      label: t("courses.statAccessLabel"),
+    },
   ];
 
   return (
@@ -32,9 +46,12 @@ export function CourseOverview({ description, lessonCount, durationHours }: Cour
         <h2 className="mb-3 text-xl font-black text-(--theme-foreground)">
           {t("courses.aboutCourse")}
         </h2>
-        <p className="whitespace-pre-line text-sm leading-loose text-(--theme-muted)">
-          {description || getAboutDemo(language)}
-        </p>
+        <div
+          className="prose-description text-sm leading-loose text-(--theme-muted)"
+          dangerouslySetInnerHTML={{
+            __html: renderMarkdown(description || getAboutDemo(language)),
+          }}
+        />
       </div>
 
       <div>
@@ -62,8 +79,12 @@ export function CourseOverview({ description, lessonCount, durationHours }: Cour
             key={stat.label}
             className="cd-review-card rounded-2xl border p-4 text-center"
           >
-            <div className="cd-price text-2xl font-black text-(--theme-primary)">{stat.value}</div>
-            <div className="mt-1 text-xs text-(--theme-muted)">{stat.label}</div>
+            <div className="cd-price text-2xl font-black text-(--theme-primary)">
+              {stat.value}
+            </div>
+            <div className="mt-1 text-xs text-(--theme-muted)">
+              {stat.label}
+            </div>
           </div>
         ))}
       </div>
