@@ -297,6 +297,10 @@ export const tr = {
     bankGatewayParameters: "Banka Ağ Geçidi Parametreleri",
     gatewayResponseDetails: "Ağ Geçidi Yanıt Detayları",
     additionalInformation: "Ek Bilgiler",
+    comingSoon: "Ödeme Yakında",
+    comingSoonDescription:
+      "Ödeme işlemleri yakında etkinleştirilecek. Erken erişim için bizimle iletişime geçin.",
+    contactUs: "Bize Ulaşın",
   },
   legal: {
     acceptPrefix: "Hesap oluşturarak şunları kabul ediyorum:",

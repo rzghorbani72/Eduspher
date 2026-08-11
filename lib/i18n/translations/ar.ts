@@ -282,6 +282,10 @@ export const ar = {
     bankGatewayParameters: 'معاملات بوابة البنك',
     gatewayResponseDetails: 'تفاصيل استجابة البوابة',
     additionalInformation: 'معلومات إضافية',
+    comingSoon: 'الدفع قريباً',
+    comingSoonDescription:
+      'ستتوفر معالجة الدفع قريباً. تواصل معنا للحصول على وصول مبكر.',
+    contactUs: 'تواصل معنا',
   },
   legal: {
     acceptPrefix: 'بإنشاء حساب، أوافق على',

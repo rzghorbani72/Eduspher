@@ -392,6 +392,10 @@ export const en = {
     bankGatewayParameters: "Bank Gateway Parameters",
     gatewayResponseDetails: "Gateway Response Details",
     additionalInformation: "Additional Information",
+    comingSoon: "Payment Coming Soon",
+    comingSoonDescription:
+      "Payment processing is coming soon. Contact us to get early access.",
+    contactUs: "Contact Us",
   },
   legal: {
     acceptPrefix: "By creating an account, I agree to the",

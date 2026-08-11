@@ -396,6 +396,10 @@ export const fa = {
     bankGatewayParameters: "پارامترهای درگاه بانکی",
     gatewayResponseDetails: "جزئیات پاسخ درگاه",
     additionalInformation: "اطلاعات اضافی",
+    comingSoon: "پرداخت به‌زودی",
+    comingSoonDescription:
+      "امکان پرداخت به‌زودی فعال می‌شود. برای دسترسی زودهنگام با ما تماس بگیرید.",
+    contactUs: "تماس با ما",
   },
   legal: {
     acceptPrefix: "با ساخت حساب، با",
