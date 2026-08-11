@@ -14,7 +14,6 @@ import {
   useAcademyContext,
   useStorePath,
 } from "@/components/providers/store-provider";
-import { CartIcon } from "@/components/cart/cart-icon";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { ThemeToggle } from "@/components/theme/theme-toggle-button";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -184,7 +183,6 @@ export function SiteHeaderClient({
             </Link>
           )}
           {!showPanelNav ? <NotificationBell isAuthenticated={authStatus} /> : null}
-          {!showPanelNav ? <CartIcon isAuthenticated={authStatus} /> : null}
         </div>
         <button
           type="button"

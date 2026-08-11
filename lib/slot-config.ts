@@ -26,12 +26,12 @@ export const SLOT_STYLE_BOUNDS: Record<keyof SlotStyle, { min: number; max: numb
 
 export type ResolvedSlot<T> =
   | { kind: "live"; data: T }
-  | { kind: "placeholder"; text?: string };
+  | { kind: "placeholder"; text: string };
 
-// Builds the final render list for a fixed-count grid. Live slots consume real
-// data in order; when data runs out a live slot gracefully falls back to a
-// placeholder so the container never collapses. Hidden slots are omitted so the
-// remaining cards expand proportionally.
+// Builds the final render list for a grid. Live slots consume real data in
+// order; when data runs out the slot is dropped, so a storefront never shows
+// filler cards. Hidden slots are omitted and a placeholder slot only renders
+// when the owner wrote its text. Remaining cards expand proportionally.
 export function resolveSlots<T>(
   liveItems: readonly T[],
   slots: SlotConfig[] | undefined,
@@ -43,14 +43,13 @@ export function resolveSlots<T>(
   for (let i = 0; i < expectedCount; i++) {
     const visibility = slots?.[i]?.visibility ?? "live";
     if (visibility === "hidden") continue;
+    const placeholderText = slots?.[i]?.placeholderText;
     if (visibility === "placeholder") {
-      out.push({ kind: "placeholder", text: slots?.[i]?.placeholderText });
+      if (placeholderText) out.push({ kind: "placeholder", text: placeholderText });
       continue;
     }
     if (dataIdx < liveItems.length) {
       out.push({ kind: "live", data: liveItems[dataIdx++] });
-    } else {
-      out.push({ kind: "placeholder", text: slots?.[i]?.placeholderText });
     }
   }
 

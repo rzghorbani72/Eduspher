@@ -57,9 +57,9 @@ export function SectionEmptyState({ title, subtitle }: { title: string; subtitle
   );
 }
 
-// Styled empty/placeholder slot — never raw empty space. Shows optional static
-// text supplied by the owner via the slot's three-way visibility toggle.
-export function PlaceholderCard({ text }: { text?: string }) {
+// Static card the owner authored via the slot's visibility toggle. Slots with
+// no text are dropped in resolveSlots, so this never renders as filler.
+export function PlaceholderCard({ text }: { text: string }) {
   return (
     <div className="flex h-full min-h-[140px] flex-col items-center justify-center gap-2 rounded-(--theme-border-radius) border border-dashed border-(--theme-border-strong) bg-(--theme-surface-alt) p-6 text-center">
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-(--theme-primary)">
@@ -67,11 +67,7 @@ export function PlaceholderCard({ text }: { text?: string }) {
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
         </svg>
       </span>
-      {text ? (
-        <p className="text-sm font-medium text-(--theme-muted)">{text}</p>
-      ) : (
-        <p className="text-xs text-(--theme-muted)/70">Coming soon</p>
-      )}
+      <p className="text-sm font-medium text-(--theme-muted)">{text}</p>
     </div>
   );
 }

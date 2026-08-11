@@ -5,6 +5,7 @@ import "./globals.css";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { LegalConsentGate } from "@/components/legal/legal-consent-gate";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
+import { MainContainer } from "@/components/layout/main-container";
 import { getUserDisplayName } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ShellProvider } from "@/components/providers/shell-provider";
@@ -132,15 +133,13 @@ export default async function RootLayout({
   // can set direction independently (e.g. English content in an RTL layout).
   const direction = (theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? getAcademyDirection(storeLanguage, countryCode);
 
-  const isAcademyHome = headersList.get("x-academy-home") === "1";
-  const isHomePage = pathname === "" || pathname === "/" || isAcademyHome;
-  
   const bareLayout = isPanelRoot || isPreview || isSamplePreview || isAuth;
-  const useTemplateLayout =
-    isPreview || isSamplePreview || (!isPanelRoot && isHomePage);
-  const mainClassName = bareLayout
-    ? "w-full"
-    : "mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12";
+  // Paths that render the full-bleed academy home template, as the BROWSER sees
+  // them (subdomain academies live at "/", path-based ones at "/{slug}").
+  // MainContainer re-checks these on every client navigation.
+  const academyHomePaths = isPanelRoot
+    ? ["/"]
+    : ["/", ...(storeContext.slug ? [`/${storeContext.slug}`] : [])];
 
   // Determine data-theme attribute based on dark_mode setting
   const dataTheme = theme?.dark_mode === false 
@@ -217,13 +216,12 @@ export default async function RootLayout({
                   )}
                   {!bareLayout && <SiteHeaderShell />}
                   <main className="relative flex-1 z-10">
-                    {useTemplateLayout ? (
-                      <>{children}</>
-                    ) : (
-                      <div className={mainClassName}>
-                        {children}
-                      </div>
-                    )}
+                    <MainContainer
+                      fullWidth={isPanelRoot || isSamplePreview}
+                      homePaths={academyHomePaths}
+                    >
+                      {children}
+                    </MainContainer>
                   </main>
                   {!bareLayout && <SiteFooter />}
                   {/* Pending terms 403 every authenticated call site-wide, not

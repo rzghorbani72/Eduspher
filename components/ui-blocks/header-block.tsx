@@ -13,7 +13,6 @@ import {
   useStorePath,
 } from "@/components/providers/store-provider";
 import { useAuthContext } from "@/components/providers/auth-provider";
-import { CartIcon } from "@/components/cart/cart-icon";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface HeaderBlockProps {
@@ -141,7 +140,6 @@ function CreativeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          <CartIcon isAuthenticated={isAuthenticated} />
           {isAuthenticated ? (
             <Link
               href={buildPath("/account")}
@@ -273,7 +271,6 @@ function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
         </form>
 
         <div className="mr-auto flex shrink-0 items-center gap-2.5">
-          <CartIcon isAuthenticated={isAuthenticated} />
           {isAuthenticated ? (
             <Link
               href={buildPath("/account")}
