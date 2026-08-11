@@ -1,51 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { CourseSummary } from "@/lib/api/types";
+import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
 import { CourseOverview } from "@/components/courses/course-overview";
-import { CourseCurriculum } from "@/components/courses/course-curriculum";
+import { CourseCurriculum } from "@/components/courses/curriculum";
+import { CourseLiveSchedule } from "@/components/courses/course-live-schedule";
 import { CourseInstructor } from "@/components/courses/course-instructor";
 import { CourseReviews } from "@/components/courses/course-reviews";
 
 interface CourseDetailTabsProps {
   course: CourseSummary;
   isLoggedIn: boolean;
-  lessonCount: number;
-  durationHours: number | null;
+  previewBasePath: string;
+  prerequisiteHref: string | null;
+  instructorAvatarUrl: string | null;
 }
 
-type TabKey = "overview" | "curriculum" | "instructor" | "reviews";
+type TabKey = "overview" | "curriculum" | "live" | "instructor" | "reviews";
 
 export function CourseDetailTabs({
   course,
   isLoggedIn,
-  lessonCount,
-  durationHours,
+  previewBasePath,
+  prerequisiteHref,
+  instructorAvatarUrl,
 }: CourseDetailTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabKey>("curriculum");
   const { t } = useTranslation();
+  const seasons = useMemo(() => buildCurriculum(course), [course]);
+  const stats = useMemo(
+    () => buildContentStats(seasons, course.lessons_count, course.duration),
+    [seasons, course.lessons_count, course.duration],
+  );
 
-  const tabs: { key: TabKey; label: string }[] = [
-    { key: "overview", label: t("courses.tabIntro") },
-    { key: "curriculum", label: t("courses.tabCurriculum") },
-    { key: "instructor", label: t("courses.tabInstructor") },
-    { key: "reviews", label: t("courses.tabReviews") },
-  ];
+  const tabs = useMemo(() => {
+    const list: { key: TabKey; label: string }[] = [
+      { key: "overview", label: t("courses.tabIntro") },
+      { key: "curriculum", label: t("courses.tabCurriculum") },
+    ];
+    if (stats.liveCount > 0) {
+      list.push({ key: "live", label: t("courses.tabLive") });
+    }
+    list.push(
+      { key: "instructor", label: t("courses.tabInstructor") },
+      { key: "reviews", label: t("courses.tabReviews") },
+    );
+    return list;
+  }, [stats.liveCount, t]);
+
+  const [activeTab, setActiveTab] = useState<TabKey>("curriculum");
 
   return (
     <div className="space-y-7">
-      {/* Pill tab bar — sliding indicator follows the active tab */}
-      <div className="sticky top-[70px] z-30 flex gap-1 rounded-full border border-(--theme-border-color) bg-(--theme-surface) p-[5px]">
+      <div
+        role="tablist"
+        className="sticky top-[70px] z-30 flex gap-1 overflow-x-auto rounded-full border border-(--theme-border-color) bg-(--theme-surface) p-[5px]"
+      >
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           return (
             <button
               key={tab.key}
               type="button"
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setActiveTab(tab.key)}
-              className={`relative flex-1 rounded-full px-3 py-2.5 text-sm font-extrabold transition-colors duration-200 ${
+              className={`relative min-w-fit flex-1 whitespace-nowrap rounded-full px-3 py-2.5 text-sm font-extrabold transition-colors duration-200 ${
                 isActive
                   ? "text-(--theme-foreground)"
                   : "text-(--theme-muted) hover:text-(--theme-foreground)"
@@ -66,18 +89,29 @@ export function CourseDetailTabs({
 
       {activeTab === "overview" && (
         <CourseOverview
-          description={course.description}
-          lessonCount={lessonCount}
-          durationHours={durationHours}
+          course={course}
+          stats={stats}
+          prerequisiteHref={prerequisiteHref}
         />
       )}
 
       {activeTab === "curriculum" && (
-        <CourseCurriculum lessonCount={lessonCount} durationHours={durationHours} />
+        <CourseCurriculum
+          seasons={seasons}
+          stats={stats}
+          previewBasePath={previewBasePath}
+        />
       )}
 
+      {activeTab === "live" && <CourseLiveSchedule seasons={seasons} />}
+
       {activeTab === "instructor" && (
-        <CourseInstructor name={course.author?.display_name} />
+        <CourseInstructor
+          author={course.author ?? course.Profile ?? null}
+          avatarUrl={instructorAvatarUrl}
+          rating={course.rating ?? null}
+          studentsCount={course.students_count ?? null}
+        />
       )}
 
       {activeTab === "reviews" && (

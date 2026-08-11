@@ -32,16 +32,16 @@ export function t(key: string, language: LanguageCode = DEFAULT_LANGUAGE): strin
     if (value && typeof value === 'object' && k in value) {
       value = value[k as keyof typeof value];
     } else {
-      // Fallback to English if key not found
-      value = translations.en;
+      // Fallback to English if the key is missing from this bundle.
+      let fallback: unknown = translations.en;
       for (const fallbackKey of keys) {
-        if (value && typeof value === 'object' && fallbackKey in value) {
-          value = value[fallbackKey as keyof typeof value];
+        if (fallback && typeof fallback === 'object' && fallbackKey in fallback) {
+          fallback = fallback[fallbackKey as keyof typeof fallback];
         } else {
           return key; // Return key if translation not found
         }
       }
-      return key;
+      return typeof fallback === 'string' ? fallback : key;
     }
   }
   

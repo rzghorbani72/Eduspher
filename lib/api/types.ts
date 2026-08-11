@@ -18,6 +18,10 @@ export interface CategorySummary {
 export interface AuthorSummary {
   id: string;
   display_name: string;
+  bio?: string | null;
+  expertise?: string | null;
+  courses_count?: number;
+  Image?: MediaAsset | null;
 }
 
 export interface LiveSessionSummary {
@@ -35,6 +39,24 @@ export interface LiveSessionSummary {
   notes?: string | null;
 }
 
+export type LessonType = "VIDEO" | "AUDIO" | "TEXT" | "QUIZ" | "ASSIGNMENT" | "LIVE";
+
+export interface LessonQuizSummary {
+  id: string;
+  title: string;
+  passing_score: number;
+  is_published: boolean;
+  _count?: { Question: number };
+}
+
+export interface LessonAssignmentSummary {
+  id: string;
+  title: string;
+  due_date?: string | null;
+  max_score: number;
+  is_required: boolean;
+}
+
 export interface LessonSummary {
   id: string;
   title: string;
@@ -43,8 +65,18 @@ export interface LessonSummary {
   is_free?: boolean;
   is_published?: boolean;
   order?: number | null;
-  lesson_type?: string | null;
+  lesson_type?: LessonType | null;
+  /** Absolute date the lesson unlocks, regardless of enrollment date. */
+  available_at?: string | null;
+  /** Unlocks this many days after the student enrolls (drip content). */
+  drip_days_after_enrollment?: number | null;
+  allow_download_free?: boolean;
+  allow_download_enrollment?: boolean;
+  allow_download_subscription?: boolean;
+  allow_download_tutoring?: boolean;
   LiveSession?: LiveSessionSummary | null;
+  Quiz?: LessonQuizSummary | null;
+  Assignment?: LessonAssignmentSummary | null;
   Video?: MediaAsset | null;
   Audio?: MediaAsset | null;
   Document?: MediaAsset | null;
@@ -59,6 +91,9 @@ export interface SeasonSummary {
   Lesson?: LessonSummary[];
 }
 
+export type CourseDifficulty = "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
+export type CoursePricingType = "FREE" | "ONE_TIME" | "PAYMENT_PLAN" | "SUBSCRIPTION";
+
 export interface CourseSummary {
   id: string;
   title: string;
@@ -72,6 +107,20 @@ export interface CourseSummary {
   is_published: boolean;
   is_featured: boolean;
   is_certificate: boolean;
+  pricing_type?: CoursePricingType | null;
+  /** null = lifetime access; otherwise access expires this many days after purchase. */
+  access_duration_days?: number | null;
+  difficulty?: CourseDifficulty | null;
+  language?: string | null;
+  /** Newline-separated list authored in the panel. */
+  requirements?: string | null;
+  /** Newline-separated list authored in the panel. */
+  learning_outcomes?: string | null;
+  published_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  total_reviews?: number;
+  PrerequisiteCourse?: { id: string; title: string; slug: string } | null;
   rating?: number;
   rating_count?: number;
   students_count?: number;
@@ -145,6 +194,9 @@ export interface StoreSummary {
   is_active?: boolean;
   country_code?: string;
   language?: string;
+  currency?: string;
+  currency_symbol?: string;
+  currency_position?: "before" | "after";
   primary_verification_method?: 'phone' | 'email';
   domain?: {
     public_address?: string | null;

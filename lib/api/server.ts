@@ -333,6 +333,18 @@ export async function getCourseById(id: string | number) {
   }
 }
 
+/**
+ * Storefront course page. Always reads the public endpoint so the payload shape
+ * is the same for a guest and a signed-in student — the authed `/courses/:id`
+ * is the panel's editor view and returns a different, narrower shape.
+ */
+export async function getPublicCourseDetail(id: string) {
+  const result = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
+    includeAuth: false,
+  }).catch(() => null);
+  return result?.data ?? null;
+}
+
 export async function getArticleById(id: string | number) {
   const result = await serverFetch<ArticleSummary>(`/articles/${id}`, {
     includeAuth: false,

@@ -1,90 +1,166 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Dot } from "lucide-react";
+import Link from "@/components/ui/link";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { toPersianDigits } from "@/lib/utils";
 import { renderMarkdown } from "@/lib/markdown";
+import type { CourseSummary } from "@/lib/api/types";
+import type { CourseContentStats } from "@/lib/courses/curriculum";
+import { parseAuthoredList } from "@/lib/courses/curriculum";
 import {
-  getAboutDemo,
-  getLearnPoints,
-} from "@/components/courses/course-detail-demo";
+  formatAccessTerm,
+  formatMinutes,
+} from "@/components/courses/curriculum/format";
 
 interface CourseOverviewProps {
-  description?: string | null;
-  lessonCount: number;
-  durationHours: number | null;
+  course: CourseSummary;
+  stats: CourseContentStats;
+  prerequisiteHref: string | null;
 }
 
+const DIFFICULTY_KEY: Record<string, string> = {
+  BEGINNER: "courses.beginner",
+  INTERMEDIATE: "courses.intermediate",
+  ADVANCED: "courses.advanced",
+  EXPERT: "courses.expert",
+};
+
 export function CourseOverview({
-  description,
-  lessonCount,
-  durationHours,
+  course,
+  stats,
+  prerequisiteHref,
 }: CourseOverviewProps) {
   const { t, language } = useTranslation();
-  const learnPoints = getLearnPoints(language);
+  const outcomes = parseAuthoredList(course.learning_outcomes);
+  const requirements = parseAuthoredList(course.requirements);
 
-  const stats = [
+  const facts = [
     {
-      value: toPersianDigits(lessonCount, language),
+      key: "lessons",
+      value: toPersianDigits(stats.lessonCount, language),
       label: t("courses.lesson"),
     },
-    {
-      value: durationHours ? toPersianDigits(durationHours, language) : "—",
+    stats.totalMinutes > 0 && {
+      key: "duration",
+      value: formatMinutes(stats.totalMinutes, language, t),
       label: t("courses.statHoursLabel"),
     },
-    { value: t("courses.statLiveValue"), label: t("courses.statLiveLabel") },
+    stats.liveCount > 0 && {
+      key: "live",
+      value: toPersianDigits(stats.liveCount, language),
+      label: t("courses.statLiveLabel"),
+    },
+    stats.quizCount > 0 && {
+      key: "quiz",
+      value: toPersianDigits(stats.quizCount, language),
+      label: t("courses.statQuizLabel"),
+    },
+    stats.assignmentCount > 0 && {
+      key: "assignment",
+      value: toPersianDigits(stats.assignmentCount, language),
+      label: t("courses.statAssignmentLabel"),
+    },
     {
-      value: t("courses.statAccessValue"),
+      key: "access",
+      value: formatAccessTerm(course.access_duration_days, language, t),
       label: t("courses.statAccessLabel"),
     },
-  ];
+    course.difficulty && {
+      key: "difficulty",
+      value: t(DIFFICULTY_KEY[course.difficulty] ?? "courses.beginner"),
+      label: t("courses.difficulty"),
+    },
+    {
+      key: "certificate",
+      value: course.is_certificate
+        ? t("courses.certificateAwarded")
+        : t("courses.certificateNotIncluded"),
+      label: t("courses.certificate"),
+    },
+  ].filter((fact): fact is { key: string; value: string; label: string } =>
+    Boolean(fact),
+  );
 
   return (
     <section className="animate-in fade-in slide-in-from-bottom-3 space-y-8 duration-300">
-      <div>
-        <h2 className="mb-3 text-xl font-black text-(--theme-foreground)">
-          {t("courses.aboutCourse")}
-        </h2>
-        <div
-          className="prose-description text-sm leading-loose text-(--theme-muted)"
-          dangerouslySetInnerHTML={{
-            __html: renderMarkdown(description || getAboutDemo(language)),
-          }}
-        />
-      </div>
+      {course.description && (
+        <div>
+          <h2 className="mb-3 text-xl font-black text-(--theme-foreground)">
+            {t("courses.aboutCourse")}
+          </h2>
+          <div
+            className="prose-description text-sm leading-loose text-(--theme-muted)"
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(course.description) }}
+          />
+        </div>
+      )}
 
-      <div>
-        <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
-          {t("courses.whatYouWillLearn")}
-        </h2>
-        <ul className="grid gap-x-8 gap-y-3 md:grid-cols-2">
-          {learnPoints.map((point) => (
-            <li
-              key={point}
-              className="flex items-center justify-end gap-2 text-sm text-(--theme-foreground)"
-            >
-              {point}
-              <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,#22c55e_15%,transparent)]">
-                <Check className="h-3 w-3 text-[#16a34a]" />
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {outcomes.length > 0 && (
+        <div>
+          <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
+            {t("courses.whatYouWillLearn")}
+          </h2>
+          <ul className="grid gap-x-8 gap-y-3 md:grid-cols-2">
+            {outcomes.map((point) => (
+              <li
+                key={point}
+                className="flex items-start gap-2 text-sm text-(--theme-foreground)"
+              >
+                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,#22c55e_15%,transparent)]">
+                  <Check className="h-3 w-3 text-[#16a34a]" />
+                </span>
+                {point}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {(requirements.length > 0 || prerequisiteHref) && (
+        <div>
+          <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
+            {t("courses.requirements")}
+          </h2>
+          <ul className="space-y-2">
+            {requirements.map((item) => (
+              <li
+                key={item}
+                className="flex items-start gap-1 text-sm text-(--theme-muted)"
+              >
+                <Dot className="h-5 w-5 shrink-0 text-(--theme-primary)" />
+                {item}
+              </li>
+            ))}
+            {prerequisiteHref && course.PrerequisiteCourse && (
+              <li className="flex items-start gap-1 text-sm text-(--theme-muted)">
+                <Dot className="h-5 w-5 shrink-0 text-(--theme-primary)" />
+                <span>
+                  {t("courses.prerequisiteCourse")}{" "}
+                  <Link
+                    href={prerequisiteHref}
+                    className="font-bold text-(--theme-primary) hover:underline"
+                  >
+                    {course.PrerequisiteCourse.title}
+                  </Link>
+                </span>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {stats.map((stat) => (
+        {facts.map((fact) => (
           <div
-            key={stat.label}
+            key={fact.key}
             className="cd-review-card rounded-2xl border p-4 text-center"
           >
-            <div className="cd-price text-2xl font-black text-(--theme-primary)">
-              {stat.value}
+            <div className="cd-price text-lg font-black text-(--theme-primary)">
+              {fact.value}
             </div>
-            <div className="mt-1 text-xs text-(--theme-muted)">
-              {stat.label}
-            </div>
+            <div className="mt-1 text-xs text-(--theme-muted)">{fact.label}</div>
           </div>
         ))}
       </div>
