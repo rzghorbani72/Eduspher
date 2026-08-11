@@ -65,6 +65,29 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_COM_DOMAIN:
       process.env.NEXT_PUBLIC_COM_DOMAIN || PRODUCTION_PUBLIC_DEFAULTS.COM_DOMAIN,
   },
+  /**
+   * Browser API calls go to our own origin and are proxied to the backend here,
+   * so the auth cookies are set on the academy's hostname instead of the API's.
+   * See getClientBackendApiBaseUrl() in lib/env.ts for why that matters.
+   * Server-side fetches keep using the absolute backend origin directly.
+   */
+  async rewrites() {
+    const backendOrigin = (
+      process.env.NEXT_PUBLIC_BACKEND_ORIGIN ||
+      PRODUCTION_PUBLIC_DEFAULTS.BACKEND_ORIGIN
+    ).replace(/\/$/, "");
+    return [
+      {
+        source: "/:lang(fa|en|ar|tr)/v1/:path*",
+        destination: `${backendOrigin}/:lang/v1/:path*`,
+      },
+      {
+        source: "/v1/:path*",
+        destination: `${backendOrigin}/v1/:path*`,
+      },
+    ];
+  },
+
   // Security headers
   async headers() {
     return [

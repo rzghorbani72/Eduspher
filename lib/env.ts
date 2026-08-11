@@ -72,9 +72,19 @@ function readClientPreferredLanguage(): string {
   return window.localStorage.getItem("preferred_language") || "fa";
 }
 
-/** Client-side base URL using preferred_language (defaults fa). */
+/**
+ * Client-side base URL — deliberately SAME-ORIGIN (e.g. "/fa/v1"), proxied to the
+ * backend by the rewrite in next.config.ts.
+ *
+ * Calling the backend origin directly would set the auth cookies on that host
+ * (they are host-only), so an academy served on its own hostname —
+ * `mehr.localhost:5000` in dev, `mehr.example.com` in production — would never
+ * send them back on its own page requests. The Next server would then read no
+ * session and bounce every /account route to login. Going through our own
+ * origin keeps `jwt` / `refresh_token` / `csrf-token` on the academy host.
+ */
 export function getClientBackendApiBaseUrl(): string {
-  return getBackendApiBaseUrl(readClientPreferredLanguage());
+  return langApiVersionPath(readClientPreferredLanguage());
 }
 
 /** @deprecated Prefer getBackendApiBaseUrl(lang) — defaults to fa. */

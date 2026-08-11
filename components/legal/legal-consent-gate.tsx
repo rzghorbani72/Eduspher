@@ -29,7 +29,7 @@ const DOCUMENT_LINKS: Record<string, string> = {
  * this gate a student is locked out of the whole site with no way back in, so
  * the gate is the only in-app path to recover: read what changed, accept, reload.
  */
-export function LegalConsentGate({ children }: { children: ReactNode }) {
+export function LegalConsentGate({ children }: { children?: ReactNode }) {
   const { t, language } = useTranslation();
   const buildPath = useStorePath();
   const [submitting, setSubmitting] = useState(false);
@@ -38,7 +38,7 @@ export function LegalConsentGate({ children }: { children: ReactNode }) {
 
   const { data: pending, mutate } = useSWR<LegalPendingDocument[]>(
     "legal-acceptance-status",
-    async () => (await getLegalAcceptanceStatus())?.data?.pending ?? [],
+    async () => (await getLegalAcceptanceStatus())?.pending ?? [],
     { revalidateOnFocus: false, fallbackData: [] },
   );
 
@@ -54,7 +54,7 @@ export function LegalConsentGate({ children }: { children: ReactNode }) {
   // The diff is a nice-to-have: a failure here must never block acceptance.
   const { data: diffs } = useSWR<LegalDocumentDiff[]>(
     pending?.length ? "legal-acceptance-diff" : null,
-    async () => (await getLegalAcceptanceDiff())?.data ?? [],
+    async () => (await getLegalAcceptanceDiff()) ?? [],
     { revalidateOnFocus: false, fallbackData: [] },
   );
 
@@ -123,8 +123,22 @@ export function LegalConsentGate({ children }: { children: ReactNode }) {
                       </Link>
                     ) : null}
                   </div>
-                  {diff?.summary ? (
-                    <p className="mt-2 text-xs whitespace-pre-wrap text-muted">{diff.summary}</p>
+                  {diff?.diff?.length ? (
+                    <ul className="mt-2 space-y-1 text-xs">
+                      {diff.diff.slice(0, 12).map((line, index) => (
+                        <li
+                          key={`${doc.type}-${index}`}
+                          className={
+                            line.added
+                              ? "text-green-700 dark:text-green-400"
+                              : "text-red-700 line-through dark:text-red-400"
+                          }
+                        >
+                          <span aria-hidden="true">{line.added ? "+ " : "− "}</span>
+                          {line.value}
+                        </li>
+                      ))}
+                    </ul>
                   ) : null}
                 </li>
               );

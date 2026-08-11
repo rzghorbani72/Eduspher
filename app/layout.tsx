@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 
 import { SiteFooter } from "@/components/layout/site-footer";
+import { LegalConsentGate } from "@/components/legal/legal-consent-gate";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { getUserDisplayName } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
@@ -225,6 +226,9 @@ export default async function RootLayout({
                     )}
                   </main>
                   {!bareLayout && <SiteFooter />}
+                  {/* Pending terms 403 every authenticated call site-wide, not
+                      just under /account, so the only way back in lives here. */}
+                  {isAuthenticated && !bareLayout && <LegalConsentGate />}
                 </div>
               </ScrollAnimationProvider>
               </EnrollmentStatusProvider>

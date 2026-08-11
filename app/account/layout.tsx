@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { AccountSidebar } from "@/components/account/account-sidebar";
-import { LegalConsentGate } from "@/components/legal/legal-consent-gate";
 import { getProfile } from "@/lib/api/account-server";
 import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
@@ -35,8 +34,11 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     redirect(`${buildPath("/auth/login")}?redirect=${encodeURIComponent(returnTo)}`);
   }
 
+  // A failing /auth/me does NOT mean "signed out" — pending legal consent 403s
+  // it too. Redirecting on that would ping-pong: this layout sends you to login,
+  // and the edge sends an authenticated visitor straight back out again.
   const [user, profile, academy] = await Promise.all([
-    getCurrentUser(),
+    getCurrentUser().catch(() => null),
     getProfile(String(session.profileId)),
     getCurrentAcademy()
       .catch(() => null)
@@ -45,29 +47,23 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       ),
   ]);
 
-  if (!user) {
-    redirect(`${buildPath("/auth/login")}?redirect=${encodeURIComponent(returnTo)}`);
-  }
-
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 lg:px-8">
-      <LegalConsentGate>
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-          <div className="w-full lg:w-64 lg:shrink-0">
-            <AccountSidebar
-              displayName={profile?.display_name || user.display_name}
-              contact={user.email ?? user.phone_number}
-              avatarUrl={profile?.avatar?.url ?? null}
-              roleLabel={profile?.role_label ?? user.role}
-              isVerified={user.email_confirmed || user.phone_confirmed}
-              academyName={academy?.name ?? academyContext.name}
-              currentPath={currentPath}
-              basePath={buildPath("/account")}
-            />
-          </div>
-          <div className="min-w-0 flex-1 space-y-6">{children}</div>
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+        <div className="w-full lg:w-64 lg:shrink-0">
+          <AccountSidebar
+            displayName={profile?.display_name || user?.display_name || ""}
+            contact={user?.email ?? user?.phone_number}
+            avatarUrl={profile?.avatar?.url ?? null}
+            roleLabel={profile?.role_label ?? user?.role}
+            isVerified={Boolean(user?.email_confirmed || user?.phone_confirmed)}
+            academyName={academy?.name ?? academyContext.name}
+            currentPath={currentPath}
+            basePath={buildPath("/account")}
+          />
         </div>
-      </LegalConsentGate>
+        <div className="min-w-0 flex-1 space-y-6">{children}</div>
+      </div>
     </div>
   );
 }

@@ -21,6 +21,25 @@ export class UnauthorizedError extends Error {
   }
 }
 
+/**
+ * The backend's global LegalConsentGuard 403s every authenticated request once a
+ * new TERMS/PRIVACY version is published. That is "signed in but blocked", not
+ * "signed out" — treating it as the latter bounces the visitor to login, which
+ * the edge then bounces back, so it must stay distinguishable.
+ */
+export class LegalConsentRequiredError extends Error {
+  status = 403;
+  code = "LEGAL_CONSENT_REQUIRED";
+
+  constructor() {
+    super("Legal consent required");
+    this.name = "LegalConsentRequiredError";
+  }
+}
+
+export const isLegalConsentError = (error: unknown): boolean =>
+  error instanceof LegalConsentRequiredError;
+
 const isUnauthorizedError = (error: unknown): boolean => {
   if (error instanceof UnauthorizedError) return true;
   if (error && typeof error === "object" && "status" in error) {
@@ -176,12 +195,16 @@ const baseFetch = async (
     
     // Try to extract error message from response body
     let errorMessage = `${response.status} ${response.statusText}`;
+    let errorCode: string | null = null;
     try {
       const contentType = response.headers.get("Content-Type") ?? "";
       if (contentType.includes("application/json")) {
         const errorData = await response.json().catch(() => null);
         if (errorData) {
           if (typeof errorData === "object" && errorData !== null) {
+            if ("code" in errorData && typeof errorData.code === "string") {
+              errorCode = errorData.code;
+            }
             if ("message" in errorData && typeof errorData.message === "string") {
               errorMessage = errorData.message;
             } else if ("error" in errorData) {
@@ -200,7 +223,11 @@ const baseFetch = async (
     } catch {
       // If parsing fails, use default message
     }
-    
+
+    if (errorCode === "LEGAL_CONSENT_REQUIRED") {
+      throw new LegalConsentRequiredError();
+    }
+
     const message = `API request failed: ${errorMessage}`;
     const error = new Error(message);
     (error as Error & { status?: number }).status = response.status;

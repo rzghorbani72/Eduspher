@@ -455,38 +455,41 @@ export type LegalPendingDocument = {
   title: string;
 };
 
+export type LegalChangeLine = {
+  value: string;
+  added?: boolean;
+  removed?: boolean;
+};
+
 export type LegalDocumentDiff = {
   type: string;
   title: string;
   version: string;
-  previous_version: string | null;
-  summary: string | null;
+  previousVersion: string | null;
+  /** null when there is nothing to compare against (first acceptance). */
+  diff: LegalChangeLine[] | null;
 };
 
-export const getLegalAcceptanceStatus = (options?: RequestOptions) => {
-  return getJson<{
-    status: string;
-    data: { up_to_date: boolean; pending: LegalPendingDocument[] };
-  }>("/legal/acceptances/status", options);
-};
+// The /legal endpoints answer with bare objects — no {status,data} envelope.
 
-export const getLegalAcceptanceDiff = (options?: RequestOptions) => {
-  return getJson<{ status: string; data: LegalDocumentDiff[] }>(
-    "/legal/acceptances/diff",
+export const getLegalAcceptanceStatus = (options?: RequestOptions) =>
+  getJson<{ up_to_date: boolean; pending: LegalPendingDocument[] }>(
+    "/legal/acceptances/status",
     options,
   );
-};
+
+export const getLegalAcceptanceDiff = (options?: RequestOptions) =>
+  getJson<LegalDocumentDiff[]>("/legal/acceptances/diff", options);
 
 export const acceptPlatformLegalDocuments = (
   locale?: string,
   options?: RequestOptions,
-) => {
-  return postJson<{ status: string; message: string }>(
+) =>
+  postJson<{ accepted: string[] }>(
     "/legal/acceptances/platform",
     locale ? { locale } : {},
     options,
   );
-};
 
 // ----- Notifications -----
 
@@ -547,17 +550,10 @@ export const requestRefund = (
   );
 };
 
-export const getMyLegalAcceptances = (options?: RequestOptions) => {
-  return getJson<{
-    status: string;
-    data: Array<{
-      type: string;
-      version: string;
-      accepted_at: string;
-      locale: string;
-    }>;
-  }>("/legal/acceptances/me", options);
-};
+export const getMyLegalAcceptances = (options?: RequestOptions) =>
+  getJson<
+    Array<{ type: string; version: string; accepted_at: string; locale: string }>
+  >("/legal/acceptances/me", options);
 
 export type SendOtpPayload = {
   email?: string;

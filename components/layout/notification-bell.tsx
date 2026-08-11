@@ -15,11 +15,20 @@ export function NotificationBell({ isAuthenticated }: { isAuthenticated: boolean
   const { t } = useTranslation();
   const buildPath = useStorePath();
 
-  const { data } = useSWR(
+  const { data, error } = useSWR(
     isAuthenticated ? "notifications-unread-count" : null,
     async () => (await getUnreadNotificationCount())?.data?.count ?? 0,
-    { refreshInterval: REFRESH_MS, revalidateOnFocus: true },
+    {
+      refreshInterval: REFRESH_MS,
+      revalidateOnFocus: true,
+      // Pending legal consent 403s this endpoint on every poll. Retrying would
+      // just re-fire the consent event forever, so stop and let the gate lead.
+      shouldRetryOnError: false,
+    },
   );
+
+  // Hide rather than show a wrong count when the badge cannot be read.
+  if (error) return null;
 
   if (!isAuthenticated) return null;
 

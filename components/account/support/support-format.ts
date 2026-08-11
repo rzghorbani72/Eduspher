@@ -1,5 +1,5 @@
 import type { TicketMessageView, TicketStatus } from "@/lib/api/client";
-import { backendApiBaseUrl } from "@/lib/env";
+import { getClientBackendApiBaseUrl } from "@/lib/env";
 
 type Translate = (key: string) => string;
 
@@ -10,7 +10,7 @@ type Translate = (key: string) => string;
  * plain <img src> works without custom headers.
  */
 export function attachmentUrl(ticketId: string, attachmentId: string): string {
-  return `${backendApiBaseUrl}/support/tickets/${encodeURIComponent(ticketId)}/attachments/${encodeURIComponent(attachmentId)}`;
+  return `${getClientBackendApiBaseUrl()}/support/tickets/${encodeURIComponent(ticketId)}/attachments/${encodeURIComponent(attachmentId)}`;
 }
 
 /** Localized text for a SYSTEM_EVENT message (e.g. responsible changed). */
