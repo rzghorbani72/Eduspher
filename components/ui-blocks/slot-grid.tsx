@@ -10,17 +10,19 @@ interface SlotGridProps {
   children: ReactNode;
 }
 
-// Fixed-container grid for slot-based sections. Children flow in a flex-wrap so
-// that when slots are hidden the remaining cards expand proportionally. Owner
-// size overrides arrive as clamped CSS custom properties; styling is
-// theme-variable-only per the design-system contract.
+// Grid for slot-based sections. Children flow in a flex-wrap so a short row
+// still expands proportionally, but each card is capped near its natural width
+// so one lonely card never stretches across the whole section. Partial rows are
+// centered so the result reads as intentional. Owner size overrides arrive as
+// clamped CSS custom properties; styling is theme-variable-only per the
+// design-system contract.
 export function SlotGrid({ config, minBasisFallback = "280px", className, children }: SlotGridProps) {
   const vars = buildSlotStyleVars(config?.slotStyle, minBasisFallback);
   const items = Children.toArray(children);
 
   return (
     <div
-      className={cn("flex flex-wrap", className)}
+      className={cn("flex flex-wrap justify-center", className)}
       style={{ gap: "var(--slot-gap, 1.5rem)", ...vars }}
     >
       {items.map((child, i) => (
@@ -29,6 +31,7 @@ export function SlotGrid({ config, minBasisFallback = "280px", className, childr
           className="min-w-0"
           style={{
             flex: "1 1 var(--slot-basis, 280px)",
+            maxWidth: "min(100%, calc(var(--slot-basis, 280px) * 1.35))",
             minHeight: "var(--slot-h, auto)",
             padding: "var(--slot-pad, 0px)",
           }}
