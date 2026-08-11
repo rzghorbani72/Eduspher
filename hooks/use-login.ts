@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import {
@@ -16,6 +16,7 @@ import {
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { env } from "@/lib/env";
 import { nextStepFor } from "@/lib/auth-identify";
+import { safeRedirectPath } from "@/lib/auth/redirect-target";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
@@ -39,6 +40,7 @@ function readCookie(name: string): string | null {
  */
 export function useLogin(defaultCountryCode?: string) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
   const { t } = useTranslation();
@@ -89,7 +91,8 @@ export function useLogin(defaultCountryCode?: string) {
     setAuthenticated(true);
     const { loadAndMergeCart } = await import("@/app/actions/cart");
     loadAndMergeCart().catch(() => {});
-    router.push(buildPath("/courses"));
+    // The route guard sent us here with the page the visitor actually wanted.
+    router.push(safeRedirectPath(searchParams.get("redirect"), buildPath("/courses")));
     router.refresh();
   }
 
@@ -296,6 +299,8 @@ export function useLogin(defaultCountryCode?: string) {
   return {
     t,
     buildPath,
+    // Kept so a detour through signup still ends on the page the visitor wanted.
+    redirectParam: searchParams.get("redirect"),
     step,
     pending,
     error,

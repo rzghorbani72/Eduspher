@@ -51,7 +51,9 @@ export async function POST(request: NextRequest) {
         course_id,
         amount,
         callback_url: callbackUrl,
-        ...(offering_id && { offering_id }),
+        // CheckoutDto's field is `offer_id`; sending `offering_id` was silently
+        // dropped, so every purchase fell back to the course's default offer.
+        ...(offering_id && { offer_id: offering_id }),
         ...(coupon_code && { coupon_code }),
         ...(mobile && { mobile }),
         ...(provider && { provider }),

@@ -20,25 +20,7 @@ import {
   type ActiveSession 
 } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
-
-interface ActiveSessionsProps {
-  translations?: {
-    title?: string;
-    description?: string;
-    currentSession?: string;
-    lastUsed?: string;
-    createdAt?: string;
-    revokeSession?: string;
-    logoutAllDevices?: string;
-    refresh?: string;
-    noSessions?: string;
-    sessionRevoked?: string;
-    allSessionsRevoked?: string;
-    errorLoadingSessions?: string;
-    errorRevokingSession?: string;
-    confirmRevokeAll?: string;
-  };
-}
+import { useTranslation } from "@/lib/i18n/hooks";
 
 const getDeviceIcon = (deviceInfo: string) => {
   const info = deviceInfo.toLowerCase();
@@ -68,7 +50,8 @@ const formatDate = (dateString: string) => {
   });
 };
 
-export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
+export const ActiveSessions = () => {
+  const { t: translate } = useTranslation();
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRevoking, setIsRevoking] = useState<number | null>(null);
@@ -76,21 +59,23 @@ export const ActiveSessions = ({ translations = {} }: ActiveSessionsProps) => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
+  // This is a client component, so it reads the message bundle itself instead of
+  // taking a prop per string.
   const t = {
-    title: translations.title ?? "Active Sessions",
-    description: translations.description ?? "Manage your active sessions across devices. You can revoke access to any session you don't recognize.",
-    currentSession: translations.currentSession ?? "Current Session",
-    lastUsed: translations.lastUsed ?? "Last used",
-    createdAt: translations.createdAt ?? "Created",
-    revokeSession: translations.revokeSession ?? "Revoke",
-    logoutAllDevices: translations.logoutAllDevices ?? "Logout from all devices",
-    refresh: translations.refresh ?? "Refresh",
-    noSessions: translations.noSessions ?? "No active sessions found",
-    sessionRevoked: translations.sessionRevoked ?? "Session revoked successfully",
-    allSessionsRevoked: translations.allSessionsRevoked ?? "All sessions have been revoked. Please log in again.",
-    errorLoadingSessions: translations.errorLoadingSessions ?? "Failed to load sessions",
-    errorRevokingSession: translations.errorRevokingSession ?? "Failed to revoke session",
-    confirmRevokeAll: translations.confirmRevokeAll ?? "Are you sure you want to logout from all devices? You will need to log in again.",
+    title: translate("account.activeSessions"),
+    description: translate("account.activeSessionsDescription"),
+    currentSession: translate("account.currentSession"),
+    lastUsed: translate("account.lastUsed"),
+    createdAt: translate("account.createdAt"),
+    revokeSession: translate("account.revokeSession"),
+    logoutAllDevices: translate("account.logoutAllDevices"),
+    refresh: translate("account.refresh"),
+    noSessions: translate("account.noSessions"),
+    sessionRevoked: translate("account.sessionRevoked"),
+    allSessionsRevoked: translate("account.allSessionsRevoked"),
+    errorLoadingSessions: translate("account.errorLoadingSessions"),
+    errorRevokingSession: translate("account.errorRevokingSession"),
+    confirmRevokeAll: translate("account.confirmRevokeAll"),
   };
 
   const loadSessions = useCallback(async () => {

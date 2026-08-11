@@ -48,11 +48,20 @@ interface RegisterFormProps {
 
 export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFormProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   // Login sends the identifier it could not find, so signup never asks for it twice.
-  const prefilledIdentifier = useSearchParams().get("identifier") ?? "";
+  const prefilledIdentifier = searchParams.get("identifier") ?? "";
+  // Signup does not sign you in, so the page you originally wanted is handed
+  // back to login to complete the round trip.
+  const redirectParam = searchParams.get("redirect");
   const prefilledIsEmail = prefilledIdentifier.includes("@");
   useAuthContext();
   const buildPath = useStorePath();
+  const loginHref = buildPath(
+    redirectParam
+      ? `/auth/login?redirect=${encodeURIComponent(redirectParam)}`
+      : "/auth/login",
+  );
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -340,7 +349,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
       await postJson("/auth/register", userData);
       setMessage(t("auth.registrationSuccess"));
       setTimeout(() => {
-        router.push(buildPath("/auth/login"));
+        router.push(loginHref);
         router.refresh();
       }, 2000);
     } catch (err) {
@@ -664,7 +673,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
       <p className="mt-6 text-center text-sm text-muted-foreground">
         <button
           type="button"
-          onClick={() => router.push(buildPath("/auth/login"))}
+          onClick={() => router.push(loginHref)}
           className="font-medium text-[color:var(--auth-accent)] hover:underline"
         >
           {t("auth.backToLogin")}

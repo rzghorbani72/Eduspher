@@ -113,8 +113,11 @@ function redirectToLogin(): void {
   }
 }
 
+export const LEGAL_CONSENT_REQUIRED_CODE = "LEGAL_CONSENT_REQUIRED";
+export const LEGAL_CONSENT_REQUIRED_EVENT = "mentoma:legal-consent-required";
+
 async function handleResponse<T>(
-  response: Response, 
+  response: Response,
   retryFn?: () => Promise<T>,
   skipRefresh?: boolean
 ): Promise<T> {
@@ -180,6 +183,13 @@ async function handleResponse<T>(
     if (response.status === 401) {
       redirectToLogin();
         return null as unknown as T;
+    }
+
+    // A new terms/privacy version 403s every authenticated call. Announce it once
+    // so the consent gate can open, instead of letting the whole account area
+    // fail with an unexplained error.
+    if (errorCode === LEGAL_CONSENT_REQUIRED_CODE && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent(LEGAL_CONSENT_REQUIRED_EVENT));
     }
 
     throw Object.assign(new Error(errorMessage), { code: errorCode, status: response.status });
@@ -439,6 +449,116 @@ export const getLegalDocuments = (options?: RequestOptions) => {
   return getJson<LegalDocumentSummary[]>(`/legal/documents`, options);
 };
 
+export type LegalPendingDocument = {
+  type: string;
+  version: string;
+  title: string;
+};
+
+export type LegalDocumentDiff = {
+  type: string;
+  title: string;
+  version: string;
+  previous_version: string | null;
+  summary: string | null;
+};
+
+export const getLegalAcceptanceStatus = (options?: RequestOptions) => {
+  return getJson<{
+    status: string;
+    data: { up_to_date: boolean; pending: LegalPendingDocument[] };
+  }>("/legal/acceptances/status", options);
+};
+
+export const getLegalAcceptanceDiff = (options?: RequestOptions) => {
+  return getJson<{ status: string; data: LegalDocumentDiff[] }>(
+    "/legal/acceptances/diff",
+    options,
+  );
+};
+
+export const acceptPlatformLegalDocuments = (
+  locale?: string,
+  options?: RequestOptions,
+) => {
+  return postJson<{ status: string; message: string }>(
+    "/legal/acceptances/platform",
+    locale ? { locale } : {},
+    options,
+  );
+};
+
+// ----- Notifications -----
+
+export type NotificationRow = {
+  id: string;
+  title: string;
+  message: string;
+  type: string;
+  is_read: boolean;
+  created_at: string;
+};
+
+export const listNotifications = (
+  params?: { page?: number; limit?: number },
+  options?: RequestOptions,
+) => {
+  const query = new URLSearchParams();
+  query.set("page", String(params?.page ?? 1));
+  query.set("limit", String(params?.limit ?? 30));
+  return getJson<{
+    status: string;
+    data: { notifications: NotificationRow[]; pagination: { total: number } };
+  }>(`/notifications?${query}`, options);
+};
+
+export const getUnreadNotificationCount = (options?: RequestOptions) =>
+  getJson<{ status: string; data: { count: number } }>(
+    "/notifications/unread-count",
+    options,
+  );
+
+export const markNotificationRead = (id: string, options?: RequestOptions) =>
+  patchJson<{ status: string; data: { id: string } }>(
+    `/notifications/${id}/read`,
+    {},
+    options,
+  );
+
+export const markAllNotificationsRead = (options?: RequestOptions) =>
+  postJson<{ status: string; data: { updated_count: number } }>(
+    "/notifications/read-all",
+    {},
+    options,
+  );
+
+/**
+ * The academy's refund window is enforced server-side, so a rejection comes back
+ * as a stable error `code` rather than being pre-judged in the UI.
+ */
+export const requestRefund = (
+  payload: { payment_id: string; amount?: number; reason?: string },
+  options?: RequestOptions,
+) => {
+  return postJson<{ status: string; message: string; data: { id: string } }>(
+    "/refunds/requests",
+    payload,
+    options,
+  );
+};
+
+export const getMyLegalAcceptances = (options?: RequestOptions) => {
+  return getJson<{
+    status: string;
+    data: Array<{
+      type: string;
+      version: string;
+      accepted_at: string;
+      locale: string;
+    }>;
+  }>("/legal/acceptances/me", options);
+};
+
 export type SendOtpPayload = {
   email?: string;
   phone_number?: string;
@@ -511,7 +631,7 @@ export const forgetPassword = (payload: ForgetPasswordPayload, options?: Request
 };
 
 export const changePassword = (payload: {
-  profile_id: number;
+  profile_id: string;
   current_password: string;
   new_password: string;
   confirm_new_password: string;
@@ -520,24 +640,49 @@ export const changePassword = (payload: {
 };
 
 export const updateProfile = async (
-  profileId: number,
-  data: { display_name?: string; image_id?: number },
+  profileId: string,
+  data: { display_name?: string; image_id?: string },
   options?: RequestOptions
 ) => {
   const response = await patchJson<{
     message: string;
     status: string;
     data: {
-      id: number;
+      id: string;
       display_name: string;
-      avatar?: {
-        id: number;
-        filename: string;
-        publicUrl: string;
-      };
+      avatar_id: string | null;
+      avatar: { id: string; url: string; alt: string | null } | null;
     };
   }>(`/profiles/${profileId}`, data, options);
   return response.data;
+};
+
+/**
+ * Uploads an image and returns its id. The backend field name is `imagefile`;
+ * Content-Type must be left to the browser so the multipart boundary is set.
+ */
+export const uploadImage = async (
+  file: File,
+  alt: string,
+  options?: RequestOptions
+): Promise<{ id: string; url: string; publicUrl: string | null }> => {
+  const body = new FormData();
+  body.append("imagefile", file);
+  body.append("alt", alt);
+
+  const response = await fetch(`${getBaseUrl()}/images/upload`, {
+    method: "POST",
+    credentials: "include",
+    headers: buildHeaders({ Accept: "application/json" }),
+    body,
+    signal: options?.signal,
+  });
+
+  const parsed = await handleResponse<{
+    status: string;
+    data: { id: string; url: string; publicUrl: string | null };
+  }>(response);
+  return parsed.data;
 };
 
 export const updateStore = async (

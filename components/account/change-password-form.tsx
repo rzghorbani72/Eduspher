@@ -23,7 +23,7 @@ const changePasswordSchema = z.object({
 type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 
 interface ChangePasswordFormProps {
-  profileId: number;
+  profileId: string;
   onSuccess?: () => void;
 }
 

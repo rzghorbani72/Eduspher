@@ -10,7 +10,7 @@ import { updateProfile } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
 
 interface EditDisplayNameFormProps {
-  profileId: number;
+  profileId: string;
   currentDisplayName: string;
   onSuccess?: () => void;
 }

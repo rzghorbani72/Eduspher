@@ -19,8 +19,11 @@ type Login = ReturnType<typeof useLogin>;
  */
 export function LoginIdentifyStep({ login }: { login: Login }) {
   const { t, buildPath } = login;
+  const registerQuery = new URLSearchParams();
+  if (login.identifier) registerQuery.set("identifier", login.identifier);
+  if (login.redirectParam) registerQuery.set("redirect", login.redirectParam);
   const registerHref = buildPath(
-    login.identifier ? `/auth/register?identifier=${encodeURIComponent(login.identifier)}` : "/auth/register"
+    registerQuery.size ? `/auth/register?${registerQuery}` : "/auth/register",
   );
 
   return (

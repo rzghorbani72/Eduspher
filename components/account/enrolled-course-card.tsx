@@ -6,12 +6,12 @@ import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
 
 interface EnrolledCourseCardProps {
   enrollment: {
-    id: number;
+    id: string | number;
     status: string;
     progress_percent: number;
     last_accessed: string;
     course?: {
-      id: number;
+      id: string | number;
       title: string;
       slug: string;
       is_free: boolean;
@@ -42,7 +42,7 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         {enrollment.status === "COMPLETED" && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
             <span className="rounded-full bg-green-500 px-3 py-1 text-xs font-bold text-white">
-              {t("account.completed") || "تمام‌شده"}
+              {t("account.statusCompleted")}
             </span>
           </div>
         )}
@@ -70,7 +70,7 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         {/* Progress */}
         <div className="space-y-1.5 mt-auto">
           <div className="flex items-center justify-between text-xs text-muted">
-            <span>{t("account.progress") || "پیشرفت دوره"}</span>
+            <span>{t("account.progress")}</span>
             <span className="font-semibold text-(--theme-primary)">{progress}%</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-surface-alt overflow-hidden">
@@ -86,7 +86,7 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
           href={href}
           className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-full bg-(--theme-primary) text-(--theme-on-primary) text-sm font-semibold shadow-sm transition-all hover:opacity-90 hover:scale-[1.02]"
         >
-          {t("account.continueLearning") || "ادامه یادگیری"} →
+          {t("account.continueLearning")} →
         </Link>
       </div>
     </div>

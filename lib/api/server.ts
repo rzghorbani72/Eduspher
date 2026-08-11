@@ -210,7 +210,7 @@ const baseFetch = async (
   return response;
 };
 
-async function serverFetch<T>(
+export async function serverFetch<T>(
   path: string,
   config?: FetchOptions
 ): Promise<ApiEnvelope<T>> {
@@ -218,7 +218,7 @@ async function serverFetch<T>(
   return response.json();
 }
 
-const serverFetchRaw = async <T>(
+export const serverFetchRaw = async <T>(
   path: string,
   config?: FetchOptions
 ): Promise<T> => {
@@ -642,22 +642,37 @@ export interface PublicCourseOffering {
   id: string;
   course_id: string;
   type: PublicOfferingType;
+  title: string | null;
+  description: string | null;
   price: number;
   currency: string;
   access_duration_days: number | null;
   is_active: boolean;
+  payment_plan_id: string | null;
 }
 
-// Storefront: active offerings for a course. The endpoint returns the array
-// directly (no envelope).
+type OfferRow = Omit<PublicCourseOffering, "course_id"> & {
+  Courses?: Array<{ Course: { id: string } }>;
+};
+
+/**
+ * Storefront: what a student can actually buy for this course. `Offer` is the
+ * single source of price and access term — the course's own price is published
+ * as its DEFAULT offer. The endpoint returns the array directly (no envelope).
+ */
 export async function getCourseOfferingsPublic(
   courseId: string
 ): Promise<PublicCourseOffering[]> {
-  const result = await serverFetchRaw<PublicCourseOffering[]>(
-    `/course-offerings/course/${encodeURIComponent(courseId)}`,
+  const result = await serverFetchRaw<OfferRow[]>(
+    `/offers/course/${encodeURIComponent(courseId)}`,
     { method: "GET" }
-  );
-  return Array.isArray(result) ? result : [];
+  ).catch(() => []);
+  if (!Array.isArray(result)) return [];
+  // An offer can span several courses (a bundle); flatten it onto the one asked for.
+  return result.map((offer) => ({
+    ...offer,
+    course_id: offer.Courses?.[0]?.Course?.id ?? courseId,
+  }));
 }
 
 export async function initiateAcademyPlanPayment(data: {

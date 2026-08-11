@@ -217,6 +217,26 @@ export const toPersianDigits = (value: string | number, language?: string): stri
   return text.replace(/[0-9]/g, (digit) => PERSIAN_DIGITS[Number(digit)]);
 };
 
+/**
+ * Dates in the account area are rendered on the server, so they must not depend
+ * on the viewer's locale. `fa` gets the Persian calendar the academy actually
+ * uses; everything else gets the ISO-ish medium form.
+ */
+export const formatDate = (
+  value: string | Date | null | undefined,
+  language = "fa",
+  withTime = false,
+): string => {
+  if (!value) return "—";
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  const locale = language === "fa" ? "fa-IR" : language;
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: "medium",
+    ...(withTime ? { timeStyle: "short" as const } : {}),
+  }).format(date);
+};
+
 export const truncate = (value: string, length = 150) =>
   value.length > length ? `${value.slice(0, length).trimEnd()}…` : value;
 
