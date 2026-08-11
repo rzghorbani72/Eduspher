@@ -275,3 +275,13 @@ export const buildAcademyPath = (slug: string | null, path: string): string => {
   return `/${slug}${normalized}`;
 };
 
+
+/** Stable index from a cuid, so the same record always gets the same variant. */
+export const hashToIndex = (value: string, buckets: number): number => {
+  if (buckets <= 0) return 0;
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) % 1_000_000_007;
+  }
+  return hash % buckets;
+};

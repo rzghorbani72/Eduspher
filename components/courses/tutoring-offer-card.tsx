@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { GraduationCap, Lock } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
+import { usePurchase } from "@/components/purchase/use-purchase";
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from "@/lib/utils";
 import type { PublicTutoringOffer } from "@/lib/api/server";
 
@@ -29,7 +29,7 @@ export function TutoringOfferCard({
   loginHref,
 }: TutoringOfferCardProps) {
   const { t } = useTranslation();
-  const [pendingId, setPendingId] = useState<string | null>(null);
+  const { purchase, pendingKey, error } = usePurchase({ loginHref });
 
   if (offers.length === 0) return null;
 
@@ -39,28 +39,8 @@ export function TutoringOfferCard({
       language,
     );
 
-  const subscribe = async (offer: PublicTutoringOffer) => {
-    setPendingId(offer.id);
-    try {
-      const res = await fetch("/api/payment/tutoring/initiate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tutoring_offer_id: offer.id, amount: offer.price }),
-      });
-      if (res.status === 401) {
-        window.location.assign(loginHref);
-        return;
-      }
-      const data = await res.json();
-      if (data?.success && data.redirect_url) {
-        window.location.assign(data.redirect_url);
-        return;
-      }
-      setPendingId(null);
-    } catch {
-      setPendingId(null);
-    }
-  };
+  const subscribe = (offer: PublicTutoringOffer) =>
+    purchase({ tutoring_offer_id: offer.id }, offer.price, offer.id);
 
   return (
     <div className="cd-side-card mt-4 overflow-hidden rounded-2xl border shadow-2xl">
@@ -105,14 +85,15 @@ export function TutoringOfferCard({
             ) : null}
             <button
               type="button"
-              disabled={pendingId === offer.id}
+              disabled={pendingKey === offer.id}
               onClick={() => void subscribe(offer)}
               className="cd-cta-btn mt-3 flex h-11 w-full items-center justify-center rounded-full text-sm font-extrabold text-white transition-all hover:-translate-y-0.5 disabled:opacity-60"
             >
-              {pendingId === offer.id ? t("common.loading") : t("courses.ctaSubscribe")}
+              {pendingKey === offer.id ? t("common.loading") : t("courses.ctaSubscribe")}
             </button>
           </div>
         ))}
+        {error && <p className="text-center text-xs text-red-600">{error}</p>}
         <p className="mt-1 flex items-center justify-center gap-1.5 text-xs text-(--theme-muted)">
           <Lock className="h-3.5 w-3.5" />
           {t("courses.securePaymentNote")}

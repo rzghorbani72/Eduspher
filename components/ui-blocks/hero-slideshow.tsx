@@ -26,7 +26,7 @@ interface HeroSlideshowProps {
   showDots?: boolean;
   autoplay?: boolean;
   interval?: number;
-  storeContext?: { id: number | null; slug: string | null; name: string | null; isSubdomain?: boolean };
+  storeContext?: { id: string | null; slug: string | null; name: string | null; isSubdomain?: boolean };
   /** Override text/button colours when needed (e.g. dark slide) */
   dark?: boolean;
   className?: string;

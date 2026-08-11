@@ -17,7 +17,7 @@ import {
 } from "@/lib/academy-path";
 
 type StoreState = {
-  id: number | null;
+  id: string | null;
   slug: string | null;
   name: string;
   isSubdomain: boolean;

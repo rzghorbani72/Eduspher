@@ -83,7 +83,6 @@ export default async function RoadmapPage() {
         }))}
         store={store}
         language={language}
-        buildPath={buildPath}
       />
     </div>
   );

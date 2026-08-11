@@ -8,7 +8,7 @@ import type { CategorySummary } from "@/lib/api/types";
 
 interface CourseFiltersProps {
   categories: CategorySummary[];
-  initialCategoryId?: number;
+  initialCategoryId?: string;
   initialOrderBy?: string;
   initialIsFree?: boolean;
 }

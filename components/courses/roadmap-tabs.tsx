@@ -4,10 +4,11 @@ import { useState } from "react";
 import Link from "@/components/ui/link";
 import { BookOpen, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { useStorePath } from "@/components/providers/store-provider";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
 
 interface RoadmapCourse {
-  id: number;
+  id: string;
   step: number;
   title: string;
   short_description: string;
@@ -19,7 +20,7 @@ interface RoadmapCourse {
 }
 
 interface Roadmap {
-  id: number;
+  id: string;
   name: string;
   icon: string;
   description: string;
@@ -27,7 +28,7 @@ interface Roadmap {
 }
 
 interface Article {
-  id: number;
+  id: string;
   title: string;
   excerpt: string;
   read_time: number | null;
@@ -42,12 +43,12 @@ interface RoadmapTabsProps {
   articles: Article[];
   store: Parameters<typeof formatCurrencyWithAcademy>[1];
   language: string;
-  buildPath: (path: string) => string;
 }
 
-export function RoadmapTabs({ roadmaps, articles, store, language, buildPath }: RoadmapTabsProps) {
+export function RoadmapTabs({ roadmaps, articles, store, language }: RoadmapTabsProps) {
+  const buildPath = useStorePath();
   const [activeTab, setActiveTab] = useState<"roadmaps" | "articles">("roadmaps");
-  const [activeRoadmap, setActiveRoadmap] = useState<number>(roadmaps[0]?.id ?? 0);
+  const [activeRoadmap, setActiveRoadmap] = useState<string>(roadmaps[0]?.id ?? "");
   const { t } = useTranslation();
 
   const selectedRoadmap = roadmaps.find((r) => r.id === activeRoadmap);

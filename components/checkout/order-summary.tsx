@@ -9,19 +9,19 @@ import type { CourseSummary } from "@/lib/api/types";
 interface OrderSummaryProps {
   course: CourseSummary;
   user: {
-    id: number;
+    id: string;
     email: string | null;
     phone_number: string | null;
     name: string;
     display_name?: string;
     currentProfile?: {
-      id: number;
-      academyId: number;
+      id: string;
+      academyId: string;
       role: string;
       displayName: string;
     };
     currentAcademy?: {
-      id: number;
+      id: string;
       name: string;
       slug: string;
       domain: string | null;
@@ -30,9 +30,9 @@ interface OrderSummaryProps {
     } | null;
   };
   session: {
-    userId: number;
-    profileId: number;
-    academyId: number | null;
+    userId: string;
+    profileId: string;
+    academyId: string | null;
   };
   onDiscountChange?: (discount: {
     discount_amount: number;

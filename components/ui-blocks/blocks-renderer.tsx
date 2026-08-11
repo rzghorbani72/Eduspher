@@ -17,7 +17,7 @@ import { ProjectsBlock } from "./projects-block";
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
   storeContext?: {
-    id: number | null;
+    id: string | null;
     slug: string | null;
     isSubdomain?: boolean;
     name: string | null;

@@ -3,7 +3,7 @@
 const CART_STORAGE_KEY = "edusphere_cart";
 
 export interface CartItem {
-  course_id: number;
+  course_id: string;
   course_title: string;
   course_price: number;
   course_cover?: string;
@@ -45,7 +45,7 @@ export function addToCart(item: Omit<CartItem, "added_at">): boolean {
   }
 }
 
-export function removeFromCart(course_id: number): boolean {
+export function removeFromCart(course_id: string): boolean {
   if (typeof window === "undefined") return false;
   
   try {
@@ -73,7 +73,7 @@ export function getCartItemCount(): number {
   return getCart().length;
 }
 
-export function isInCart(course_id: number): boolean {
+export function isInCart(course_id: string): boolean {
   return getCart().some((item) => item.course_id === course_id);
 }
 

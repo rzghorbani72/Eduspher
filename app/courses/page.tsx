@@ -49,7 +49,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const query = params?.q ?? "";
   const page = parseNumber(params?.page) ?? 1;
   const orderBy = params?.order_by;
-  const categoryId = parseNumber(params?.category_id);
+  const categoryId = params?.category_id || undefined;
   const isFree = parseBoolean(params?.is_free);
 
   const [coursePayload, categories, user, currentAcademy] = await Promise.all([

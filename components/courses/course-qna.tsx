@@ -14,7 +14,7 @@ import {
 } from '@/lib/api/client';
 
 interface CourseQnAProps {
-  courseId: number;
+  courseId: string;
   isLoggedIn: boolean;
   userRole?: string;
 }
@@ -26,9 +26,9 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
   const [question, setQuestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [answeringQnaId, setAnsweringQnaId] = useState<number | null>(null);
-  const [answerText, setAnswerText] = useState<Record<number, string>>({});
-  const [processingQnaId, setProcessingQnaId] = useState<number | null>(null);
+  const [answeringQnaId, setAnsweringQnaId] = useState<string | null>(null);
+  const [answerText, setAnswerText] = useState<Record<string, string>>({});
+  const [processingQnaId, setProcessingQnaId] = useState<string | null>(null);
 
   const isModerator = userRole === 'ADMIN' || userRole === 'TEACHER' || userRole === 'MANAGER';
 
@@ -76,7 +76,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
     }
   };
 
-  const handleApprove = async (qnaId: number, isApproved: boolean) => {
+  const handleApprove = async (qnaId: string, isApproved: boolean) => {
     try {
       setProcessingQnaId(qnaId);
       const updatedQnA = await approveCourseQnA(courseId, qnaId, isApproved);
@@ -95,7 +95,7 @@ export function CourseQnA({ courseId, isLoggedIn, userRole }: CourseQnAProps) {
     }
   };
 
-  const handleAnswer = async (qnaId: number) => {
+  const handleAnswer = async (qnaId: string) => {
     const answer = answerText[qnaId]?.trim();
     if (!answer || answer.length < 10) {
       setMessage({ type: 'error', text: 'Answer must be at least 10 characters long' });

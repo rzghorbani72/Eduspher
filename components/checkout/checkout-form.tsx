@@ -15,19 +15,19 @@ import { useTranslation } from "@/lib/i18n/hooks";
 interface CheckoutFormProps {
   course: CourseSummary;
   user: {
-    id: number;
+    id: string;
     email: string | null;
     phone_number: string | null;
     name: string;
     display_name?: string;
     currentProfile?: {
-      id: number;
-      academyId: number;
+      id: string;
+      academyId: string;
       role: string;
       displayName: string;
     };
     currentAcademy?: {
-      id: number;
+      id: string;
       name: string;
       slug: string;
       domain: string | null;
@@ -36,9 +36,9 @@ interface CheckoutFormProps {
     } | null;
   };
   session: {
-    userId: number;
-    profileId: number;
-    academyId: number | null;
+    userId: string;
+    profileId: string;
+    academyId: string | null;
   };
   onDiscountChange?: (discount: {
     discount_amount: number;
@@ -59,7 +59,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
   const [discount, setDiscount] = useState<{
     discount_amount: number;
     final_amount: number;
-    discount_code_id: number;
+    discount_code_id: string;
   } | null>(null);
 
   const handleApplyVoucher = async () => {
@@ -86,7 +86,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
         const discountData = {
           discount_amount: result.discount_amount,
           final_amount: result.final_amount ?? Math.round(course.price * 100) - result.discount_amount,
-          discount_code_id: result.discount_code_id ?? 0,
+          discount_code_id: result.discount_code_id ?? "",
         };
         setDiscount(discountData);
         setVoucherError(null);

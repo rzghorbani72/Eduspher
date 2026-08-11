@@ -22,14 +22,15 @@ export const SiteFooter = async () => {
   // Translation function with language
   const translate = (key: string) => t(key, language);
 
+  // Every href below must resolve to a real route: unknown paths render the
+  // academy home page instead of the page the label promises.
   const footerLinks = [
     {
       title: translate("footer.product"),
       items: [
         { label: translate("navigation.courses"), href: "/courses" },
-        { label: translate("footer.learningPaths"), href: "/paths" },
-        { label: translate("footer.pricing"), href: "/pricing" },
-        { label: translate("footer.scholarships"), href: "/scholarships" },
+        { label: translate("navigation.bundles"), href: "/bundles" },
+        { label: translate("navigation.roadmap"), href: "/roadmap" },
       ],
     },
     {
@@ -37,17 +38,16 @@ export const SiteFooter = async () => {
       items: [
         { label: translate("footer.about"), href: "/about" },
         { label: translate("footer.blog"), href: "/articles" },
-        { label: translate("footer.careers"), href: "/careers" },
-        { label: translate("footer.press"), href: "/press" },
+        { label: translate("footer.contact"), href: "/contact" },
       ],
     },
     {
       title: translate("footer.support"),
       items: [
-        { label: translate("footer.helpCenter"), href: "/support" },
-        { label: translate("footer.contact"), href: "/contact" },
-        { label: translate("footer.status"), href: "/status" },
-        { label: translate("footer.terms"), href: "/legal/terms" },
+        { label: translate("footer.helpCenter"), href: "/account/support" },
+        { label: translate("footer.terms"), href: "/terms" },
+        { label: translate("footer.privacy"), href: "/privacy" },
+        { label: translate("footer.refund"), href: "/refund" },
       ],
     },
   ];

@@ -7,7 +7,7 @@ import Link from "@/components/ui/link";
 import { ChevronDown, ChevronRight, Filter, X } from "lucide-react";
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
   slug?: string;
 }

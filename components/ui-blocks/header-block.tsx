@@ -44,8 +44,10 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
     return <CreativeHeader id={id} sticky={sticky} />;
   }
 
+  // A plain wrapper, not a <header>: SiteHeaderShell renders the banner
+  // landmark itself, and nesting two would announce the header twice.
   return (
-    <header
+    <div
       id={id || "header"}
       className={cn(
         sticky && "sticky top-0 z-50",
@@ -70,7 +72,7 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
       >
         <SiteHeaderShell />
       </div>
-    </header>
+    </div>
   );
 }
 

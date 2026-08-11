@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Tag } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from "@/lib/utils";
 import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
-import type { PublicCourseOffering } from "@/lib/api/server";
+import { usePurchase } from "@/components/purchase/use-purchase";
+import type { PublicCourseOffering, PublicPaymentPlan } from "@/lib/api/server";
 
 interface CurrencyConfig {
   currency?: string;
@@ -18,63 +17,35 @@ interface CurrencyConfig {
 }
 
 interface CourseOfferingsCardProps {
-  courseId: string;
   offerings: PublicCourseOffering[];
+  /** Empty unless the deployment has installments enabled. */
+  paymentPlans: PublicPaymentPlan[];
   language: string;
   currencyConfig: CurrencyConfig | null;
   loginHref: string;
 }
 
 // Storefront: lists every active offering for a course (a course can be sold as
-// one-time AND subscription AND private at once). "Buy" drives the offering-aware
-// checkout via /api/payment/initiate with the chosen offering_id.
+// one-time AND subscription AND private at once). The offer carries the price
+// and the access term, so checkout is driven by offer_id, never by the course.
 export function CourseOfferingsCard({
-  courseId,
   offerings,
+  paymentPlans,
   language,
   currencyConfig,
   loginHref,
 }: CourseOfferingsCardProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const enrollmentClosed = useEnrollmentClosed();
-  const [pendingId, setPendingId] = useState<string | null>(null);
+  const { purchase, pendingKey, error } = usePurchase({ loginHref });
 
-  if (offerings.length === 0) return null;
+  if (offerings.length === 0 && paymentPlans.length === 0) return null;
 
   const fmt = (amount: number) =>
     toPersianDigits(
       formatCurrencyWithAcademy(Math.round(amount), currencyConfig, undefined, language),
       language,
     );
-
-  const buy = async (offering: PublicCourseOffering) => {
-    setPendingId(offering.id);
-    try {
-      const res = await fetch("/api/payment/initiate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          course_id: courseId,
-          offering_id: offering.id,
-          amount: offering.price,
-        }),
-      });
-      if (res.status === 401) {
-        router.push(loginHref);
-        return;
-      }
-      const data = await res.json();
-      if (data?.redirect_url) {
-        window.location.href = data.redirect_url;
-      } else {
-        // Free / subscription-covered enrollment resolves without a gateway.
-        router.refresh();
-      }
-    } finally {
-      setPendingId(null);
-    }
-  };
 
   return (
     <div className="rounded-2xl border bg-card p-5">
@@ -100,17 +71,17 @@ export function CourseOfferingsCard({
               </div>
               <button
                 type="button"
-                disabled={pendingId === o.id || enrollmentClosed}
+                disabled={pendingKey === o.id || enrollmentClosed}
                 title={
                   enrollmentClosed
                     ? t("academyStatus.enrollmentClosed")
                     : undefined
                 }
-                onClick={() => buy(o)}
+                onClick={() => purchase({ offer_id: o.id }, o.price, o.id)}
                 className={cn(
                   "rounded-lg px-4 py-2 text-sm font-medium",
                   "bg-primary text-primary-foreground hover:opacity-90",
-                  (pendingId === o.id || enrollmentClosed) && "opacity-60",
+                  (pendingKey === o.id || enrollmentClosed) && "opacity-60",
                   enrollmentClosed && "cursor-not-allowed",
                 )}
               >
@@ -123,7 +94,38 @@ export function CourseOfferingsCard({
             </li>
           );
         })}
+        {paymentPlans.map((plan) => (
+          <li
+            key={plan.id}
+            className="flex items-center justify-between gap-3 rounded-xl border p-3"
+          >
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">{t("courses.offeringPAYMENT_PLAN")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">
+                {toPersianDigits(String(plan.installment_count), language)} ×{" "}
+                {fmt(plan.installment_amount)}
+              </span>
+            </div>
+            <button
+              type="button"
+              disabled={pendingKey === plan.id || enrollmentClosed}
+              onClick={() =>
+                purchase({ payment_plan_id: plan.id }, plan.installment_amount, plan.id)
+              }
+              className={cn(
+                "rounded-lg px-4 py-2 text-sm font-medium",
+                "bg-primary text-primary-foreground hover:opacity-90",
+                (pendingKey === plan.id || enrollmentClosed) && "opacity-60",
+              )}
+            >
+              {enrollmentClosed
+                ? t("academyStatus.enrollmentClosedShort")
+                : t("courses.offeringBuy")}
+            </button>
+          </li>
+        ))}
       </ul>
+      {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
     </div>
   );
 }

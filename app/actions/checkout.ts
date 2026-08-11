@@ -8,19 +8,19 @@ import {
 } from "@/lib/api/server";
 
 interface CheckoutRequest {
-  course_id?: number;
-  course_ids?: number[];
-  user_id: number;
-  profile_id: number;
+  course_id?: string;
+  course_ids?: string[];
+  user_id: string;
+  profile_id: string;
   voucher_code?: string;
 }
 
 interface CheckoutResult {
   success: boolean;
   error?: string;
-  enrollmentId?: number;
-  paymentId?: number;
-  basketId?: number;
+  enrollmentId?: string;
+  paymentId?: string;
+  basketId?: string;
   bankRedirectUrl?: string;
 }
 
@@ -48,7 +48,7 @@ export async function processCheckout(
       const { getCourseById, getCart } = await import("@/lib/api/server");
       
       // Determine course IDs - from request or cart
-      let courseIds: number[] = [];
+      let courseIds: string[] = [];
       if (request.course_ids && request.course_ids.length > 0) {
         courseIds = request.course_ids;
       } else if (request.course_id) {
@@ -57,7 +57,7 @@ export async function processCheckout(
         // Get from server cart (hybrid approach - server is source of truth at checkout)
         const cart = await getCart();
         if (cart && cart.items) {
-          courseIds = cart.items.map((item: { course_id: number }) => item.course_id);
+          courseIds = cart.items.map((item: { course_id: string }) => item.course_id);
         }
         
         // If no server cart, try to sync local cart first

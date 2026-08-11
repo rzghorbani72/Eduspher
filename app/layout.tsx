@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 
-import { SiteFooter } from "@/components/layout/site-footer";
 import { LegalConsentGate } from "@/components/legal/legal-consent-gate";
-import { SiteHeaderShell } from "@/components/layout/site-header-shell";
+import { TemplateFooter, TemplateHeader } from "@/components/layout/template-chrome";
 import { MainContainer } from "@/components/layout/main-container";
 import { getUserDisplayName } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
@@ -214,7 +213,7 @@ export default async function RootLayout({
                       contactEmail={enrollmentStatus.contact_email}
                     />
                   )}
-                  {!bareLayout && <SiteHeaderShell />}
+                  {!bareLayout && <TemplateHeader />}
                   <main className="relative flex-1 z-10">
                     <MainContainer
                       fullWidth={isPanelRoot || isSamplePreview}
@@ -223,7 +222,7 @@ export default async function RootLayout({
                       {children}
                     </MainContainer>
                   </main>
-                  {!bareLayout && <SiteFooter />}
+                  {!bareLayout && <TemplateFooter />}
                   {/* Pending terms 403 every authenticated call site-wide, not
                       just under /account, so the only way back in lives here. */}
                   {isAuthenticated && !bareLayout && <LegalConsentGate />}

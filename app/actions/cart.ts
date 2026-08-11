@@ -28,7 +28,7 @@ export function getCartItems(): CartItem[] {
 }
 
 export function addCourseToCart(item: {
-  course_id: number;
+  course_id: string;
   course_title: string;
   course_price: number;
   course_cover?: string;
@@ -51,7 +51,7 @@ export function addCourseToCart(item: {
   return success;
 }
 
-export function removeCourseFromCart(course_id: number): boolean {
+export function removeCourseFromCart(course_id: string): boolean {
   const success = removeFromLocalCart(course_id);
   
   // Sync immediately after removal (don't wait for background)
@@ -82,7 +82,7 @@ export function getCartItemCount(): number {
   return getCartItems().length;
 }
 
-export function isInCart(course_id: number): boolean {
+export function isInCart(course_id: string): boolean {
   return getCartItems().some((item) => item.course_id === course_id);
 }
 

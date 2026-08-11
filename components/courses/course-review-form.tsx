@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { createCourseReview, type CourseReview } from "@/lib/api/client";
 
 interface CourseReviewFormProps {
-  courseId: number;
+  courseId: string;
   onSubmitted: (review: CourseReview) => void;
 }
 

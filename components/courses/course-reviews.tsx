@@ -14,7 +14,7 @@ import {
 } from "@/lib/api/client";
 
 interface CourseReviewsProps {
-  courseId: number;
+  courseId: string;
   isLoggedIn: boolean;
 }
 

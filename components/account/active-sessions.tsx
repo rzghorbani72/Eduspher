@@ -54,7 +54,7 @@ export const ActiveSessions = () => {
   const { t: translate } = useTranslation();
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRevoking, setIsRevoking] = useState<number | null>(null);
+  const [isRevoking, setIsRevoking] = useState<string | null>(null);
   const [isRevokingAll, setIsRevokingAll] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -95,7 +95,7 @@ export const ActiveSessions = () => {
     loadSessions();
   }, [loadSessions]);
 
-  const handleRevokeSession = async (sessionId: number) => {
+  const handleRevokeSession = async (sessionId: string) => {
     setIsRevoking(sessionId);
     setError(null);
     setMessage(null);

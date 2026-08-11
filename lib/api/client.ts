@@ -347,7 +347,7 @@ const deleteJson = async <T>(
 export type LoginPayload = {
   identifier: string;
   password: string;
-  academy_id?: number;
+  academy_id?: string;
   role?: string;
 };
 
@@ -412,7 +412,7 @@ export type RegisterPayload = {
   password: string;
   confirmed_password: string;
   role?: string;
-  academy_id?: number;
+  academy_id?: string;
   display_name: string;
   bio?: string;
   website?: string;
@@ -435,7 +435,7 @@ export const logout = async (options?: RequestOptions) => {
 };
 
 export const me = (options?: RequestOptions) => {
-  return getJson<{ id?: number; status?: string; data?: unknown }>("/auth/me", options);
+  return getJson<{ id?: string; status?: string; data?: unknown }>("/auth/me", options);
 };
 
 export type LegalDocumentSummary = {
@@ -571,7 +571,7 @@ export type ForgetPasswordPayload = {
   password: string;
   confirmed_password: string;
   otp: string;
-  academy_id?: number;
+  academy_id?: string;
 };
 
 export const validatePhoneAndEmail = (phone_number?: string, email?: string, options?: RequestOptions) => {
@@ -689,7 +689,7 @@ export const updateStore = async (
     message: string;
     status: string;
     data: {
-      id: number;
+      id: string;
       name: string;
       description?: string;
     };
@@ -698,8 +698,8 @@ export const updateStore = async (
 };
 
 export type LessonLiveSession = {
-  id: number;
-  lesson_id: number;
+  id: string;
+  lesson_id: string;
   meeting_url: string | null;
   playback_url?: string | null;
   starts_at: string;
@@ -741,32 +741,32 @@ export const getLessonLiveSession = async (
 };
 
 export interface CourseQnA {
-  id: number;
-  course_id: number;
-  user_id: number;
-  profile_id: number;
+  id: string;
+  course_id: string;
+  user_id: string;
+  profile_id: string;
   question: string;
   answer: string | null;
   is_approved: boolean;
-  answered_by: number | null;
+  answered_by: string | null;
   answered_at: string | null;
   created_at: string;
   updated_at: string;
   user?: {
-    id: number;
+    id: string;
     name: string;
   };
   profile?: {
-    id: number;
+    id: string;
     display_name: string;
   };
   answerer?: {
-    id: number;
+    id: string;
     display_name: string;
   } | null;
 }
 
-export const getCourseQnAs = async (courseId: number, options?: RequestOptions) => {
+export const getCourseQnAs = async (courseId: string, options?: RequestOptions) => {
   const response = await getJson<{
     message: string;
     status: string;
@@ -776,7 +776,7 @@ export const getCourseQnAs = async (courseId: number, options?: RequestOptions) 
 };
 
 export const createCourseQnA = async (
-  courseId: number,
+  courseId: string,
   question: string,
   options?: RequestOptions
 ) => {
@@ -789,8 +789,8 @@ export const createCourseQnA = async (
 };
 
 export const approveCourseQnA = async (
-  courseId: number,
-  qnaId: number,
+  courseId: string,
+  qnaId: string,
   isApproved: boolean,
   options?: RequestOptions
 ) => {
@@ -803,8 +803,8 @@ export const approveCourseQnA = async (
 };
 
 export const answerCourseQnA = async (
-  courseId: number,
-  qnaId: number,
+  courseId: string,
+  qnaId: string,
   answer: string,
   options?: RequestOptions
 ) => {
@@ -836,7 +836,7 @@ export interface CourseReviewsResponse {
 }
 
 export const getCourseReviews = async (
-  courseId: number,
+  courseId: string,
   options?: RequestOptions
 ) => {
   const response = await getJson<{
@@ -848,7 +848,7 @@ export const getCourseReviews = async (
 };
 
 export const createCourseReview = async (
-  courseId: number,
+  courseId: string,
   review: { rating: number; title?: string; content?: string },
   options?: RequestOptions
 ) => {
@@ -865,7 +865,7 @@ export const createCourseReview = async (
 // ============================================================================
 
 export interface ActiveSession {
-  id: number;
+  id: string;
   device_info: string;
   ip_address: string;
   created_at: string;
@@ -887,7 +887,7 @@ export const getActiveSessions = async (options?: RequestOptions) => {
 /**
  * Revoke a specific session by ID
  */
-export const revokeSession = async (sessionId: number, options?: RequestOptions) => {
+export const revokeSession = async (sessionId: string, options?: RequestOptions) => {
   return deleteJson<{
     success: boolean;
     message: string;

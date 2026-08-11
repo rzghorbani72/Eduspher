@@ -15,19 +15,19 @@ import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CartCheckoutProps {
   user: {
-    id: number;
+    id: string;
     email: string | null;
     phone_number: string | null;
     name: string;
     display_name?: string;
     currentProfile?: {
-      id: number;
-      academyId: number;
+      id: string;
+      academyId: string;
       role: string;
       displayName: string;
     };
     currentAcademy?: {
-      id: number;
+      id: string;
       name: string;
       slug: string;
       domain: string | null;
@@ -36,9 +36,9 @@ interface CartCheckoutProps {
     } | null;
   };
   session: {
-    userId: number;
-    profileId: number;
-    academyId: number | null;
+    userId: string;
+    profileId: string;
+    academyId: string | null;
   };
 }
 

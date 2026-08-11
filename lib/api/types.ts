@@ -1,12 +1,12 @@
 export interface MediaAsset {
-  id: number;
+  id: string;
   publicUrl: string;
   title?: string | null;
   alt?: string | null;
 }
 
 export interface CategorySummary {
-  id: number;
+  id: string;
   name: string;
   slug?: string;
   description?: string | null;
@@ -16,13 +16,13 @@ export interface CategorySummary {
 }
 
 export interface AuthorSummary {
-  id: number;
+  id: string;
   display_name: string;
 }
 
 export interface LiveSessionSummary {
-  id?: number;
-  lesson_id?: number;
+  id?: string;
+  lesson_id?: string;
   meeting_url?: string | null;
   playback_url?: string | null;
   starts_at: string;
@@ -36,7 +36,7 @@ export interface LiveSessionSummary {
 }
 
 export interface LessonSummary {
-  id: number;
+  id: string;
   title: string;
   description?: string | null;
   duration?: number | null;
@@ -52,7 +52,7 @@ export interface LessonSummary {
 }
 
 export interface SeasonSummary {
-  id: number;
+  id: string;
   title: string;
   order?: number | null;
   description?: string | null;
@@ -60,7 +60,7 @@ export interface SeasonSummary {
 }
 
 export interface CourseSummary {
-  id: number;
+  id: string;
   title: string;
   short_description?: string | null;
   description?: string | null;
@@ -87,9 +87,9 @@ export interface CourseSummary {
   Profile?: AuthorSummary | null;
   Document?: MediaAsset | null;
   productCourses?: Array<{
-    id: number;
-    product_id: number;
-    course_id: number;
+    id: string;
+    product_id: string;
+    course_id: string;
     relation_type: string;
   }>;
 }
@@ -117,7 +117,7 @@ export interface ApiEnvelope<T> {
 }
 
 export interface ArticleSummary {
-  id: number;
+  id: string;
   title: string;
   slug: string;
   description?: string | null;
@@ -128,18 +128,18 @@ export interface ArticleSummary {
   meta_title?: string | null;
   meta_description?: string | null;
   author?: {
-    id: number;
+    id: string;
     display_name: string;
   } | null;
   category?: {
-    id: number;
+    id: string;
     name: string;
   } | null;
   featured_image?: MediaAsset | null;
 }
 
 export interface StoreSummary {
-  id: number;
+  id: string;
   name: string;
   slug?: string;
   is_active?: boolean;
@@ -164,14 +164,14 @@ export interface StoreDetail extends StoreSummary {
 }
 
 export interface UserProfileSummary {
-  id: number;
+  id: string;
   display_name: string;
   role: string;
   has_password: boolean;
   email_confirmed?: boolean;
   phone_confirmed?: boolean;
   Academy: {
-    id: number;
+    id: string;
     name: string;
     slug: string;
   };
@@ -183,7 +183,7 @@ export interface UserProfilesResponse {
 }
 
 export interface AuthAcademyBrief {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   domain?: string;
@@ -199,7 +199,7 @@ export interface AuthResponse {
   access_token: string;
   roles: string[];
   user: {
-    id: number;
+    id: string;
     email?: string | null;
     phone_number: string;
     name: string;
@@ -207,15 +207,15 @@ export interface AuthResponse {
     preferred_currency?: string | null;
   } | null;
   currentProfile: {
-    id: number;
-    academyId: number;
+    id: string;
+    academyId: string;
     role: string;
     displayName: string;
     isActive: boolean;
     isVerified: boolean;
   } | null;
   currentAcademy: {
-    id: number;
+    id: string;
     name: string;
     slug: string;
     domain: string;
@@ -225,8 +225,8 @@ export interface AuthResponse {
   } | null;
   availableAcademies: AuthAcademyBrief[];
   availableProfiles: {
-    id: number;
-    academyId: number;
+    id: string;
+    academyId: string;
     role: string;
     displayName: string;
     isActive: boolean;
@@ -237,21 +237,21 @@ export interface AuthResponse {
 }
 
 export interface ProgressSummary {
-  id: number;
-  lesson_id: number;
-  enrollment_id: number;
+  id: string;
+  lesson_id: string;
+  enrollment_id: string;
   status: string;
   completed_at?: string | null;
   watch_time: number;
   last_position: number;
   lesson?: {
-    id: number;
+    id: string;
     title: string;
     season?: {
-      id: number;
+      id: string;
       title: string;
       course?: {
-        id: number;
+        id: string;
         title: string;
       } | null;
     } | null;
@@ -259,10 +259,10 @@ export interface ProgressSummary {
 }
 
 export interface EnrollmentSummary {
-  id: number;
-  user_id: number;
-  course_id: number;
-  profile_id: number;
+  id: string;
+  user_id: string;
+  course_id: string;
+  profile_id: string;
   status: string;
   enrolled_at: string;
   completed_at?: string | null;

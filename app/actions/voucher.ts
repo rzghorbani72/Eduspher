@@ -13,7 +13,7 @@ interface ValidateVoucherResult {
   error?: string;
   discount_amount?: number;
   final_amount?: number;
-  discount_code_id?: number;
+  discount_code_id?: string;
 }
 
 export async function validateVoucher(

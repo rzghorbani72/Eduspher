@@ -5,7 +5,7 @@ import { cookies, headers as nextHeaders } from "next/headers";
 import { env } from "@/lib/env";
 
 export type ResolvedAcademy = {
-  id: number | null;
+  id: string | null;
   slug: string | null;
   name: string;
   isSubdomain: boolean;
@@ -63,7 +63,7 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
     : cookieAcademyName ?? env.siteName;
 
   return {
-    id: resolvedId ? Number(resolvedId) : null,
+    id: resolvedId ?? null,
     slug: resolvedSlug,
     name: resolvedName,
     isSubdomain: headerStore.get("x-academy-subdomain") === "1",

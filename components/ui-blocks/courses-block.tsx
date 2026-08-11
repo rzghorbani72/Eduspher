@@ -24,7 +24,7 @@ interface CoursesBlockProps {
     text?: Record<string, string>;
   };
   storeContext?: {
-    id: number | null;
+    id: string | null;
     slug: string | null;
     isSubdomain?: boolean;
     name: string | null;

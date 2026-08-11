@@ -4,7 +4,7 @@ const CART_STORAGE_KEY = "edusphere_cart";
 const CART_SYNC_KEY = "edusphere_cart_synced";
 
 export interface CartItem {
-  course_id: number;
+  course_id: string;
   course_title?: string;
   course_price?: number;
   course_cover?: string;
@@ -13,12 +13,12 @@ export interface CartItem {
 
 function normalizeRawCart(raw: unknown[]): CartItem[] {
   const out: CartItem[] = [];
-  const seen = new Set<number>();
+  const seen = new Set<string>();
   for (const row of raw) {
     if (!row || typeof row !== "object") continue;
     const r = row as Record<string, unknown>;
     const cid = r.course_id;
-    if (typeof cid !== "number" || !Number.isFinite(cid)) continue;
+    if (typeof cid !== "string" || cid.length === 0) continue;
     if (seen.has(cid)) continue;
     seen.add(cid);
     out.push({
@@ -33,7 +33,7 @@ function normalizeRawCart(raw: unknown[]): CartItem[] {
 }
 
 function deduplicateCart(cart: CartItem[]): CartItem[] {
-  const seen = new Set<number>();
+  const seen = new Set<string>();
   const deduplicated: CartItem[] = [];
   for (const item of cart) {
     if (!item.course_id) continue;
@@ -90,7 +90,7 @@ export function addToLocalCart(item: Omit<CartItem, "added_at">): boolean {
   }
 }
 
-export function removeFromLocalCart(course_id: number): boolean {
+export function removeFromLocalCart(course_id: string): boolean {
   if (typeof window === "undefined") return false;
 
   try {
@@ -195,7 +195,7 @@ export async function loadCartFromServer(): Promise<CartItem[]> {
       })
       .map(
         (item: {
-          course_id?: number;
+          course_id?: string;
           course?: { title?: string; price?: number; Image?: { publicUrl?: string } };
           course_title?: string;
           course_price?: number;

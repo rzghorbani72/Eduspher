@@ -10,7 +10,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
-import { formatCurrencyWithAcademy, formatDate, toPersianDigits } from "@/lib/utils";
+import { buildAcademyPath, formatCurrencyWithAcademy, formatDate, toPersianDigits } from "@/lib/utils";
 
 const STATUS_KEY: Record<string, string> = {
   ACTIVE: "account.statusActive",
@@ -28,6 +28,10 @@ export default async function AccountSubscriptionsPage() {
     academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
   ]);
 
+  const loginHref = buildAcademyPath(
+    academyContext.isSubdomain ? null : academyContext.slug,
+    "/auth/login?redirect=/account/subscriptions",
+  );
   const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
   const translate = (key: string) => t(key, language);
   const money = (value: number) =>
@@ -98,7 +102,7 @@ export default async function AccountSubscriptionsPage() {
                   {activeIds.has(plan.id) ? (
                     <StatusPill label={translate("account.statusActive")} tone="success" />
                   ) : (
-                    <SubscribeButton planId={plan.id} amount={plan.price} />
+                    <SubscribeButton planId={plan.id} amount={plan.price} loginHref={loginHref} />
                   )}
                 </div>
               </div>

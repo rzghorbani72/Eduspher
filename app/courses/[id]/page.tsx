@@ -17,6 +17,7 @@ import {
   getCurrentAcademy,
   getTutoringOffersPublic,
   getCourseOfferingsPublic,
+  getCoursePaymentPlans,
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import {
@@ -38,11 +39,12 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const [course, user, tutoringOffers, courseOfferings] = await Promise.all([
+  const [course, user, tutoringOffers, courseOfferings, paymentPlans] = await Promise.all([
     getCourseById(id),
     getCurrentUser().catch(() => null),
     getTutoringOffersPublic(id).catch(() => []),
     getCourseOfferingsPublic(id).catch(() => []),
+    getCoursePaymentPlans(id),
   ]);
 
   let currentAcademy = await getCurrentAcademy().catch(() => null);
@@ -286,17 +288,17 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             freePriceLabel={priceDisplay}
           />
           <CourseOfferingsCard
-            courseId={String(course.id)}
             offerings={courseOfferings}
+            paymentPlans={paymentPlans}
             language={language}
             currencyConfig={storeConfig}
-            loginHref={buildPath(`/login?redirect=/courses/${course.id}`)}
+            loginHref={buildPath(`/auth/login?redirect=/courses/${course.id}`)}
           />
           <TutoringOfferCard
             offers={tutoringOffers}
             language={language}
             currencyConfig={storeConfig}
-            loginHref={buildPath(`/login?redirect=/courses/${course.id}`)}
+            loginHref={buildPath(`/auth/login?redirect=/courses/${course.id}`)}
           />
         </aside>
       </div>

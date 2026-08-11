@@ -4,10 +4,17 @@ import { cookies } from "next/headers";
 import { decodeJwt } from "jose";
 
 export type SessionPayload = {
-  userId: number | null;
-  profileId: number | null;
-  academyId: number | null;
+  userId: string | null;
+  profileId: string | null;
+  academyId: string | null;
   roles: string[];
+};
+
+// Ids are cuid strings; older tokens carried numbers, so both are accepted.
+const readId = (value: unknown): string | null => {
+  if (typeof value === "string" && value.length > 0) return value;
+  if (typeof value === "number") return String(value);
+  return null;
 };
 
 export const getSession = async (): Promise<SessionPayload | null> => {
@@ -20,15 +27,13 @@ export const getSession = async (): Promise<SessionPayload | null> => {
       typeof payload.exp === "number" && payload.exp < Date.now() / 1000;
     if (isExpired) return null;
 
-    // Token contains profileId (primary), use it for both userId and profileId for backward compatibility
-    const profileId = typeof payload.profileId === "number" ? payload.profileId : 
-                     (typeof payload.userId === "number" ? payload.userId : null);
-    const p = payload as Record<string, unknown>;
-    const rawAcademy = typeof p.academyId === "number" ? p.academyId : null;
+    const profileId = readId(payload.profileId) ?? readId(payload.userId);
+    if (!profileId) return null;
+
     return {
-      userId: profileId, // Use profileId as userId for backward compatibility
-      profileId: profileId,
-      academyId: rawAcademy,
+      userId: readId(payload.userId) ?? profileId,
+      profileId,
+      academyId: readId(payload.academyId),
       roles: Array.isArray(payload.roles) ? (payload.roles as string[]) : [],
     };
   } catch {

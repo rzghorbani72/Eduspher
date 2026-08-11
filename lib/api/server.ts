@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import { cookies, headers as nextHeaders } from "next/headers";
 
 import { getBackendApiBaseUrl, env } from "@/lib/env";
@@ -292,7 +293,7 @@ export async function getCourses(params?: {
   published?: boolean;
   is_featured?: boolean;
   is_free?: boolean;
-  category_id?: number;
+  category_id?: string;
   academy_id?: string;
 }) {
   try {
@@ -351,17 +352,31 @@ export async function getCurrentAcademy() {
   }
 }
 
+/**
+ * The public academy list is read several times per render (layout, footer,
+ * page). `cache` collapses those into one backend call per request, which also
+ * keeps the render under the endpoint's rate limit.
+ *
+ * Returns `null` when the list could not be fetched, so callers can tell
+ * "no such academy" apart from "backend unavailable".
+ */
+export const getPublicAcademies = cache(
+  async (): Promise<StoreSummary[] | null> => {
+    try {
+      const result = await serverFetchRaw<{ status: string; data: StoreSummary[] }>(
+        "/academies/public",
+        { includeAuth: false },
+      );
+      return result.data ?? null;
+    } catch {
+      return null;
+    }
+  },
+);
+
 export async function getAcademyBySlug(slug: string): Promise<StoreSummary | null> {
-  try {
-    const result = await serverFetchRaw<{ status: string; data: StoreSummary[] }>("/academies/public", {
-      includeAuth: false,
-    });
-    const academies = result.data || [];
-    const academy = academies.find((s) => s.slug === slug);
-    return academy || null;
-  } catch {
-    return null;
-  }
+  const academies = await getPublicAcademies();
+  return academies?.find((s) => s.slug === slug) ?? null;
 }
 
 export type AcademyEnrollmentStatus = {
@@ -401,21 +416,21 @@ export async function getCurrentUser() {
     const result = await serverFetchRaw<{
       status: string;
       data: {
-        id: number;
+        id: string;
         email: string | null;
         phone_number: string | null;
         display_name: string;
         has_password: boolean;
         last_login: Date | null;
         login_count: number;
-        academyId: number;
+        academyId: string;
         role: string;
         email_confirmed: boolean;
         phone_confirmed: boolean;
         isActive: boolean;
         isVerified: boolean;
         currentAcademy: {
-          id: number;
+          id: string;
           name: string;
           slug: string;
           domain: string | null;
@@ -543,9 +558,9 @@ export async function getEnrollments(params?: {
 }
 
 export async function createPayment(data: {
-  course_id: number;
-  user_id: number;
-  profile_id: number;
+  course_id: string;
+  user_id: string;
+  profile_id: string;
   amount: number;
   payment_method: string;
   status?: string;
@@ -557,10 +572,10 @@ export async function createPayment(data: {
       message: string;
       status: string;
       data: {
-        id: number;
-        course_id: number;
-        user_id: number;
-        profile_id: number;
+        id: string;
+        course_id: string;
+        user_id: string;
+        profile_id: string;
         amount: number;
         currency: string;
         status: string;
@@ -583,7 +598,7 @@ export async function createPayment(data: {
 }
 
 export async function initiateCheckoutPayment(data: {
-  course_id: number;
+  course_id: string;
   amount: number;
   coupon_code?: string;
   mobile?: string;
@@ -606,7 +621,7 @@ export async function initiateCheckoutPayment(data: {
   const result = await serverFetchRaw<{
     status: string;
     data: {
-      payment_id: number;
+      payment_id: string;
       amount: number;
       redirect_url: string;
     };
@@ -635,6 +650,50 @@ export async function getAcademyPlansPublic(kind?: "SUBSCRIPTION" | "PACKAGE") {
     method: "GET",
   });
   return result.data ?? [];
+}
+
+/**
+ * Bundles authored in the panel are `Offer` rows spanning several courses,
+ * which is a different model from an AcademyPlan PACKAGE. The storefront shows
+ * both, so it reads both.
+ */
+export interface PublicBundleOffer {
+  id: string;
+  type: PublicOfferingType;
+  title: string | null;
+  description: string | null;
+  price: number;
+  currency: string;
+  access_duration_days: number | null;
+  Courses: Array<{ Course: { id: string; title: string } }>;
+}
+
+export async function getAcademyBundlesPublic(): Promise<PublicBundleOffer[]> {
+  const result = await serverFetchRaw<PublicBundleOffer[]>("/offers/public/bundles", {
+    method: "GET",
+  }).catch(() => []);
+  return Array.isArray(result) ? result : [];
+}
+
+export interface PublicPaymentPlan {
+  id: string;
+  name: string;
+  total_amount: number;
+  installment_count: number;
+  installment_amount: number;
+  interval_days: number;
+}
+
+/**
+ * Installments are behind a deployment flag; when it is off the endpoint is
+ * unavailable and the storefront simply offers no installment option.
+ */
+export async function getCoursePaymentPlans(courseId: string): Promise<PublicPaymentPlan[]> {
+  const result = await serverFetchRaw<PublicPaymentPlan[]>(
+    `/payment-plans/courses/${encodeURIComponent(courseId)}`,
+    { method: "GET" },
+  ).catch(() => []);
+  return Array.isArray(result) ? result : [];
 }
 
 export interface PublicTutoringOffer {
@@ -731,10 +790,10 @@ export async function initiateAcademyPlanPayment(data: {
 }
 
 export async function createEnrollment(data: {
-  course_id: number;
-  user_id: number;
-  profile_id: number;
-  payment_id?: number;
+  course_id: string;
+  user_id: string;
+  profile_id: string;
+  payment_id?: string;
   status?: string;
   progress_percent?: number;
 }) {
@@ -743,14 +802,14 @@ export async function createEnrollment(data: {
       message: string;
       status: string;
       data: {
-        id: number;
-        course_id: number;
-        user_id: number;
-        profile_id: number;
+        id: string;
+        course_id: string;
+        user_id: string;
+        profile_id: string;
         status: string;
         enrolled_at: string;
         progress_percent: number;
-        payment_id?: number | null;
+        payment_id?: string | null;
       };
     }>("/enrollments", {
       method: "POST",
@@ -784,7 +843,7 @@ export async function getStoreThemeConfig(
       message: string;
       status: string;
       data: {
-        themeId?: number;
+        themeId?: string;
         name?: string;
         primary_color?: string;
         secondary_color?: string;
@@ -847,8 +906,8 @@ export async function getCurrentUITemplate() {
       message: string;
       status: string;
       data: {
-        id?: number;
-        academy_id?: number;
+        id?: string;
+        academy_id?: string;
         blocks?: Array<{
           id: string;
           type: string;
@@ -900,8 +959,8 @@ export async function getStoreUITemplate(
       message: string;
       status: string;
       data: {
-        id?: number;
-        academy_id?: number;
+        id?: string;
+        academy_id?: string;
         blocks?: Array<{
           id: string;
           type: string;
@@ -997,10 +1056,10 @@ export async function getPreviewPreset(
 }
 
 export interface CourseQnA {
-  id: number;
-  course_id: number;
-  user_id: number;
-  profile_id: number;
+  id: string;
+  course_id: string;
+  user_id: string;
+  profile_id: string;
   question: string;
   answer: string | null;
   is_approved: boolean;
@@ -1009,15 +1068,15 @@ export interface CourseQnA {
   created_at: string;
   updated_at: string;
   user?: {
-    id: number;
+    id: string;
     name: string;
   };
   profile?: {
-    id: number;
+    id: string;
     display_name: string;
   };
   answerer?: {
-    id: number;
+    id: string;
     display_name: string;
   } | null;
 }
@@ -1051,7 +1110,7 @@ export async function createCourseQnA(courseId: number, question: string) {
 export async function validateDiscount(data: {
   code: string;
   amount: number;
-  profile_id?: number;
+  profile_id?: string;
 }) {
   try {
     const result = await serverFetchRaw<{
@@ -1060,7 +1119,7 @@ export async function validateDiscount(data: {
       data: {
         discount_amount: number;
         final_amount: number;
-        discount_code_id: number;
+        discount_code_id: string;
       };
     }>("/discounts/validate", {
       method: "POST",
@@ -1080,12 +1139,12 @@ export async function getCart() {
       message: string;
       status: string;
       data: {
-        id: number;
-        profile_id: number;
+        id: string;
+        profile_id: string;
         items: Array<{
-          id: number;
-          cart_id: number;
-          course_id: number;
+          id: string;
+          cart_id: string;
+          course_id: string;
           course: CourseSummary;
           created_at: string;
         }>;
@@ -1106,8 +1165,8 @@ export async function getCart() {
 
 export async function syncCart(items: Array<{
   item_type: 'COURSE' | 'PRODUCT';
-  course_id?: number;
-  product_id?: number;
+  course_id?: string;
+  product_id?: string;
   course_title?: string;
   product_title?: string;
   course_price?: number;
@@ -1121,18 +1180,18 @@ export async function syncCart(items: Array<{
       message: string;
       status: string;
       data: {
-        id: number;
-        profile_id: number;
+        id: string;
+        profile_id: string;
         items: Array<{
-          id: number;
-          cart_id: number;
-          course_id: number;
+          id: string;
+          cart_id: string;
+          course_id: string;
           created_at: string;
         }>;
       };
       removedItems?: Array<{
         type: string;
-        id: number;
+        id: string;
         reason: string;
       }>;
     }>("/cart/sync", {
@@ -1145,15 +1204,15 @@ export async function syncCart(items: Array<{
   }
 }
 
-export async function addToCart(course_id: number) {
+export async function addToCart(course_id: string) {
   try {
     const result = await serverFetchRaw<{
       message: string;
       status: string;
       data: {
-        id: number;
-        cart_id: number;
-        course_id: number;
+        id: string;
+        cart_id: string;
+        course_id: string;
         created_at: string;
       };
     }>("/cart/items", {
@@ -1195,8 +1254,8 @@ export async function clearCart() {
 }
 
 export async function createBasket(data: {
-  profile_id: number;
-  course_ids: number[];
+  profile_id: string;
+  course_ids: string[];
   voucher_code?: string;
 }) {
   try {
@@ -1204,14 +1263,14 @@ export async function createBasket(data: {
       message: string;
       status: string;
       data: {
-        id: number;
-        profile_id: number;
+        id: string;
+        profile_id: string;
         total_amount: number;
         discount_amount: number;
         final_amount: number;
         voucher_code?: string;
         items: Array<{
-          course_id: number;
+          course_id: string;
           course_price: number;
         }>;
         created_at: string;

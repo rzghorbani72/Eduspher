@@ -1,5 +1,7 @@
 import "server-only";
 
+import { cache } from "react";
+
 import { getAcademyContext } from "./store-context";
 import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
 import { getPreviewToken } from "./preview-token";
@@ -81,7 +83,9 @@ export interface UITemplateConfig {
   template_preset?: string;
 }
 
-export async function getStoreThemeAndTemplate() {
+// Read by the layout, the chrome and the home page on every render; `cache`
+// collapses those into one fetch per request.
+export const getStoreThemeAndTemplate = cache(async () => {
   try {
     const storeContext = await getAcademyContext();
     const previewToken = await getPreviewToken();
@@ -239,7 +243,7 @@ export async function getStoreThemeAndTemplate() {
       template: null,
     };
   }
-}
+});
 
 export function generateThemeCSSVariables(theme: ThemeConfig | null): string {
   if (theme?.css_block) {

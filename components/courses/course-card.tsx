@@ -4,7 +4,7 @@ import Link from "@/components/ui/link";
 import { Star, BookOpen, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";
-import { buildAcademyPath, formatCurrencyWithAcademy, resolveAssetUrl, toPersianDigits } from "@/lib/utils";
+import { buildAcademyPath, formatCurrencyWithAcademy, hashToIndex, resolveAssetUrl, toPersianDigits } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CourseCardProps {
@@ -35,7 +35,7 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
   const { t, language } = useTranslation();
   const detailHref = buildAcademyPath(storeSlug, `/courses/${course.id}`);
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl);
-  const thumbGradient = THUMB_GRADIENTS[course.id % THUMB_GRADIENTS.length];
+  const thumbGradient = THUMB_GRADIENTS[hashToIndex(course.id, THUMB_GRADIENTS.length)];
   const monogram = course.title.trim().charAt(0);
   const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
 
