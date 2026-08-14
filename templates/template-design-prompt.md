@@ -94,8 +94,7 @@ temperature.
   one intentionally off-grid element.
 - Vary section rhythm: sections must differ in height, background, and density. Never
   stack five identical padded white sections.
-- Real copy: specific numbers, testimonials with full Persian names and cities, honest
-  FAQ answers, actual prices and durations.
+- Real copy: specific numbers, honest FAQ answers, actual prices and durations.
 - Include the "real website" details: hover and focus states, breadcrumbs on inner
   pages, a footer with 4 real column groups and a legal line, and at least one dense
   data area (class schedule table, syllabus accordion, or price comparison).
@@ -114,10 +113,9 @@ onto the platform's block types. Use this order, adapting the content to your ve
    rating, price in Toman
 6. `categories` or `projects` — a vertical-specific browse or showcase section
 7. teachers / instructors band
-8. `testimonials` — student results with names, cities, and concrete outcomes
-9. `pricing` or `membership` — 3 plans in Toman, one highlighted
-10. `cta` — closing conversion band
-11. `footer` — 4 column groups, contact info, socials, legal line
+8. `pricing` or `membership` — 3 plans in Toman, one highlighted
+9. `cta` — closing conversion band
+10. `footer` — 4 column groups, contact info, socials, legal line
 
 ### 5. The four secondary pages
 
@@ -128,8 +126,8 @@ about|contact"`, JS toggles `display`). They reuse the same nav, footer, and pal
 - **Courses** — filter rail (level, format, price, duration), result count, sort
   control, 9+ cards, and an empty state.
 - **Single course** — hero with price + enrol CTA, sticky enrol panel, syllabus
-  accordion with real module titles, instructor block, what-you-get list, reviews, FAQ,
-  related courses.
+  accordion with real module titles, instructor block, what-you-get list, FAQ, related
+  courses.
 - **About us** — founding story with dates, team grid with real bios, a numbers band,
   values written as sentences not buzzwords, location.
 - **Contact us** — validated form (name, phone, email, topic, message) with success and
@@ -144,7 +142,7 @@ They are reference views, not part of the template's block list.
 2. Design brief
 3. The HTML file with **home page only** — then stop for my review
 4. On my go-ahead: the same file extended with the four secondary page views
-5. A closing note: the section→block mapping (which of the 11 sections above you used),
+5. A closing note: the section→block mapping (which of the 10 sections above you used),
    the final palette token table (light + dark hex), and one paragraph on what makes
    this template different from a generic AI-generated site
 
