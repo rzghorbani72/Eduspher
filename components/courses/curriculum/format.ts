@@ -1,5 +1,6 @@
 import { toPersianDigits } from "@/lib/utils";
 import type { LiveView, UnlockRule } from "@/lib/courses/curriculum";
+import { sortWeekdays, weekdayLabelKey } from "@/lib/courses/weekly-rule";
 
 type Translate = (key: string) => string;
 
@@ -41,6 +42,20 @@ export const formatDateTime = (
   }
 };
 
+/**
+ * "Every Saturday, Monday" for a group class, or the plain "Repeats" label when
+ * the rule carries no weekdays (it then follows the start day).
+ */
+export const formatLiveRepeat = (live: LiveView, t: Translate): string => {
+  if (!live.isRecurring) return "";
+  const names = sortWeekdays(live.weekdays)
+    .map((day) => weekdayLabelKey(day))
+    .filter((key): key is string => Boolean(key))
+    .map((key) => t(key));
+  if (names.length === 0) return t("courses.liveRecurring");
+  return t("courses.liveWeekdays").replace("{days}", names.join("، "));
+};
+
 export const formatLiveWindow = (
   live: LiveView,
   language: string,
@@ -51,7 +66,8 @@ export const formatLiveWindow = (
     ? formatMinutes(live.durationMinutes, language, t)
     : "";
   const parts = [start, length].filter(Boolean);
-  if (live.isRecurring) parts.push(t("courses.liveRecurring"));
+  const repeat = formatLiveRepeat(live, t);
+  if (repeat) parts.push(repeat);
   return parts.join(" · ");
 };
 

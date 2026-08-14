@@ -4,6 +4,7 @@ import type {
   LessonType,
   SeasonSummary,
 } from "@/lib/api/types";
+import { parseWeeklyRule } from "./weekly-rule";
 
 /**
  * Turns the raw course payload into the rows the curriculum UI renders.
@@ -20,6 +21,8 @@ export interface LiveView {
   durationMinutes: number | null;
   timezone: string;
   isRecurring: boolean;
+  /** Weekdays a group class repeats on, as Date.getDay() values. */
+  weekdays: readonly number[];
   recurrenceUntil: string | null;
   providerLabel: string | null;
 }
@@ -114,6 +117,7 @@ const toLessonView = (lesson: LessonSummary): CurriculumLessonView => ({
         durationMinutes: lesson.LiveSession.duration_minutes ?? null,
         timezone: lesson.LiveSession.timezone,
         isRecurring: Boolean(lesson.LiveSession.recurrence_rule),
+        weekdays: parseWeeklyRule(lesson.LiveSession.recurrence_rule),
         recurrenceUntil: lesson.LiveSession.recurrence_until ?? null,
         providerLabel: lesson.LiveSession.provider_label ?? null,
       }

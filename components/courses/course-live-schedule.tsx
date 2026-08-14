@@ -9,6 +9,7 @@ import type { CurriculumSeasonView } from "@/lib/courses/curriculum";
 import { liveStateAt } from "@/lib/courses/curriculum";
 import {
   formatDateTime,
+  formatLiveRepeat,
   formatMinutes,
 } from "@/components/courses/curriculum/format";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -103,7 +104,7 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
                   {live.isRecurring && (
                     <span className="flex items-center gap-1 text-[11px] font-bold text-(--theme-primary)">
                       <Repeat className="h-3 w-3" />
-                      {t("courses.liveRecurring")}
+                      {formatLiveRepeat(live, t)}
                     </span>
                   )}
                 </div>
