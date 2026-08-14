@@ -56,7 +56,7 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         id: "testimonials",
         type: "testimonials",
         order: 6,
-        isVisible: true,
+        isVisible: false,
         config: { style: "flow" },
       },
       { id: "pricing", type: "pricing", order: 7, isVisible: true, config: {} },
@@ -135,7 +135,7 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         id: "testimonials",
         type: "testimonials",
         order: 6,
-        isVisible: true,
+        isVisible: false,
         config: {
           style: "code",
           label: "نظرات دانش‌آموزان",
@@ -237,7 +237,7 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         id: "testimonials",
         type: "testimonials",
         order: 7,
-        isVisible: true,
+        isVisible: false,
         config: { style: "creative" },
       },
       {
