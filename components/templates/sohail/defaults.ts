@@ -7,12 +7,6 @@
  */
 
 export const SOHAIL_DEFAULTS = {
-  header: {
-    brandName: 'سُهیل',
-    brandTagline: 'آکادمی نجوم و فضا',
-    ctaText: 'ثبت‌نام دوره',
-    loginText: 'ورود دانش‌آموز',
-  },
   hero: {
     kicker: 'کرمان · ارتفاع ۱٬۷۵۵ متر · بورتل ۲',
     title: 'آسمان را',
