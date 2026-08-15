@@ -56,7 +56,7 @@ const DEFAULT_COLUMNS: readonly FooterColumn[] = [
  * short "about" and social row, three link columns, and a contact column. One
  * component keeps that consistent while every label stays editable per academy.
  */
-export async function TemplateFooter({ id, config, defaults }: TemplateFooterProps) {
+export async function TemplateSiteFooter({ id, config, defaults }: TemplateFooterProps) {
   const academy = await getCurrentAcademy().catch(() => null);
   const academyName = academy?.name ?? 'آکادمی';
   const columns = list<FooterColumn>(config, 'columns', defaults.columns ?? DEFAULT_COLUMNS);

@@ -1,6 +1,7 @@
 import type { TemplateSectionMap } from '../registry-types';
+import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
-import { TemplateFooter } from '../_shared/footer';
+import { TemplateSiteFooter } from '../_shared/footer';
 import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
@@ -15,7 +16,16 @@ import styles from './havan.module.css';
 const HAVAN_THUMBS = [styles.t1, styles.t2, styles.t3, styles.t4];
 
 /** Havan — working kitchen: warm paper, chalk service board, printed hairlines. */
+const HAVAN_HEADER = headerDefaults({
+  tagline: 'کارگاه آموزش آشپزی',
+  ctaText: 'ثبت‌نام دوره',
+  nav: FULL_NAV,
+});
+
 export const HAVAN_SECTIONS: TemplateSectionMap = {
+  header: ({ id, config }) => (
+    <TemplateTopBar id={id} config={config} defaults={HAVAN_HEADER} spec={{ tone: 'page', height: 78, navStyle: 'border', markClassName: styles.logoMark }} />
+  ),
   hero: HavanHero,
   marquee: ({ id, config }) => (
     <TemplateMarquee
@@ -49,5 +59,5 @@ export const HAVAN_SECTIONS: TemplateSectionMap = {
     <TemplatePricing id={id} config={config} defaults={HAVAN_DEFAULTS.pricing} tone="surface" />
   ),
   cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={HAVAN_DEFAULTS.cta} tone="brand" />,
-  footer: ({ id, config }) => <TemplateFooter id={id} config={config} defaults={HAVAN_DEFAULTS.footer} />,
+  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={HAVAN_DEFAULTS.footer} />,
 };

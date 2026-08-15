@@ -1,6 +1,7 @@
 import type { TemplateSectionMap } from '../registry-types';
+import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
-import { TemplateFooter } from '../_shared/footer';
+import { TemplateSiteFooter } from '../_shared/footer';
 import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
@@ -15,7 +16,16 @@ import styles from './tondak.module.css';
 const TONDAK_THUMBS = [styles.t1, styles.t2, styles.t3, styles.t4];
 
 /** Tondak — playful but measured: outlined squircles, tilted flashcards. */
+const TONDAK_HEADER = headerDefaults({
+  tagline: 'چرتکه · محاسبات ذهنی',
+  ctaText: 'جلسهٔ آزمایشی رایگان',
+  nav: FULL_NAV,
+});
+
 export const TONDAK_SECTIONS: TemplateSectionMap = {
+  header: ({ id, config }) => (
+    <TemplateTopBar id={id} config={config} defaults={TONDAK_HEADER} spec={{ tone: 'page', height: 84, navStyle: 'pill', markClassName: styles.logoMark, thickBorder: true }} />
+  ),
   hero: TondakHero,
   marquee: ({ id, config }) => (
     <TemplateMarquee
@@ -50,5 +60,5 @@ export const TONDAK_SECTIONS: TemplateSectionMap = {
   cta: ({ id, config }) => (
     <TemplateCta id={id} config={config} defaults={TONDAK_DEFAULTS.cta} tone="accent" boxed />
   ),
-  footer: ({ id, config }) => <TemplateFooter id={id} config={config} defaults={TONDAK_DEFAULTS.footer} />,
+  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={TONDAK_DEFAULTS.footer} />,
 };

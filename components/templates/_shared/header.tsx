@@ -1,0 +1,212 @@
+import Link from '@/components/ui/link';
+import { getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { Container } from './section';
+import { Button } from './primitives';
+import { list, text, type SectionConfig } from './types';
+
+export interface HeaderNavItem {
+  label: string;
+  href: string;
+}
+
+export interface HeaderDefaults {
+  /** Small tracked line under the academy name. */
+  tagline: string;
+  ctaText: string;
+  loginText: string;
+  accountText: string;
+  nav: readonly HeaderNavItem[];
+}
+
+/**
+ * Presentation knobs that make each template's header pixel-accurate. Everything
+ * here is layout/tone only — the behaviour (auth, nav, mobile disclosure) is
+ * identical across templates so it lives in one place.
+ */
+export interface HeaderSpec {
+  tone: 'page' | 'surface' | 'deep';
+  /** Bar height in px, matching the source design. */
+  height: number;
+  navStyle: 'plain' | 'underline' | 'border' | 'pill';
+  /** Per-template CSS-module class drawing the logo mark. Omitted = no mark. */
+  markClassName?: string;
+  /** Setigh draws a short accent rule along the bottom edge. */
+  accentBar?: boolean;
+  /** Tondak/Setigh use a heavier bottom rule. */
+  thickBorder?: boolean;
+  /** Sohail's translucent, blurred bar. */
+  translucent?: boolean;
+  /** Monospace tagline (Momas). */
+  monoTagline?: boolean;
+}
+
+interface TemplateHeaderProps {
+  id?: string;
+  config?: SectionConfig;
+  defaults: HeaderDefaults;
+  spec: HeaderSpec;
+}
+
+const TONE_CLASS = {
+  page: 'bg-(--theme-background) text-(--theme-foreground)',
+  surface: 'bg-(--theme-surface) text-(--theme-foreground)',
+  deep: 'bg-(--theme-deep) text-(--theme-on-deep)',
+} as const;
+
+const NAV_LINK_CLASS = {
+  plain: 'px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100',
+  underline:
+    'border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)',
+  border:
+    'border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)',
+  pill: 'rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)',
+} as const;
+
+/**
+ * One header for all seven templates.
+ *
+ * It is a server component: the signed-in state comes from `getCurrentUser()`
+ * rather than a client provider, and the mobile menu is a native `<details>`
+ * disclosure. That keeps the whole bar at zero client JS while still showing the
+ * right account link — the legacy `SiteHeaderClient` stays untouched for
+ * academies on older styles.
+ */
+export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHeaderProps) {
+  const [academy, user] = await Promise.all([
+    getCurrentAcademy().catch(() => null),
+    getCurrentUser().catch(() => null),
+  ]);
+
+  const brandName = text(config, 'brandName', academy?.name ?? 'آکادمی');
+  const tagline = text(config, 'tagline', defaults.tagline);
+  const nav = list<HeaderNavItem>(config, 'nav', defaults.nav);
+  const isAuthenticated = Boolean(user);
+  const accountLabel = user?.display_name?.trim() || defaults.accountText;
+
+  const borderClass = spec.thickBorder
+    ? 'border-b-2 border-(--theme-border-color)'
+    : spec.tone === 'deep'
+      ? 'border-b border-current/12'
+      : 'border-b border-(--theme-border-color)';
+
+  return (
+    <header
+      id={id || 'header'}
+      className={`sticky top-0 z-50 ${
+        spec.translucent
+          ? 'bg-(--theme-background)/88 text-(--theme-foreground) backdrop-blur-md'
+          : TONE_CLASS[spec.tone]
+      } ${borderClass}`}
+    >
+      {spec.accentBar ? (
+        <span
+          aria-hidden="true"
+          className="absolute -bottom-px start-0 h-[3px] w-[38%] bg-(--theme-primary)"
+        />
+      ) : null}
+
+      <Container>
+        <div className="flex items-center gap-6" style={{ minHeight: `${spec.height}px` }}>
+          <Link href="/" className="flex flex-none items-center gap-3">
+            {spec.markClassName ? <span aria-hidden="true" className={spec.markClassName} /> : null}
+            <span>
+              <b className="block text-[19px] font-bold leading-[1.2] tracking-[-0.02em] whitespace-nowrap">
+                {brandName}
+              </b>
+              <span
+                className={`block text-[10.5px] tracking-[0.22em] whitespace-nowrap ${
+                  spec.tone === 'deep' ? 'text-current/60' : 'text-(--theme-muted)'
+                } ${spec.monoTagline ? 'font-mono' : ''}`}
+              >
+                {tagline}
+              </span>
+            </span>
+          </Link>
+
+          <nav aria-label="ناوبری اصلی" className="hidden flex-1 items-center gap-1 lg:flex">
+            {nav.map((item) => (
+              <a key={item.href} href={item.href} className={NAV_LINK_CLASS[spec.navStyle]}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="ms-auto flex flex-none items-center gap-3">
+            <a
+              href={isAuthenticated ? '/account' : '/auth/login'}
+              className="hidden text-[14.5px] font-medium opacity-80 hover:opacity-100 sm:inline"
+            >
+              {isAuthenticated ? accountLabel : defaults.loginText}
+            </a>
+
+            <Button tone="primary" size="sm" href="/courses">
+              {text(config, 'ctaText', defaults.ctaText)}
+            </Button>
+
+            {/* CSS-only mobile menu: native disclosure, no JavaScript. */}
+            <details className="relative lg:hidden">
+              <summary
+                aria-label="منو"
+                className="grid size-10 cursor-pointer list-none place-items-center rounded-(--theme-border-radius) border border-current/25 [&::-webkit-details-marker]:hidden"
+              >
+                <span aria-hidden="true">☰</span>
+              </summary>
+              <div
+                className={`absolute end-0 top-[calc(100%+8px)] z-50 w-56 rounded-(--theme-border-radius) border p-2 shadow-(--theme-shadow) ${
+                  spec.tone === 'deep'
+                    ? 'border-current/18 bg-(--theme-deep)'
+                    : 'border-(--theme-border-color) bg-(--theme-surface)'
+                }`}
+              >
+                {nav.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="block rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+                <a
+                  href={isAuthenticated ? '/account' : '/auth/login'}
+                  className="block rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
+                >
+                  {isAuthenticated ? accountLabel : defaults.loginText}
+                </a>
+              </div>
+            </details>
+          </div>
+        </div>
+      </Container>
+    </header>
+  );
+}
+
+/** Nav shared by templates that expose the full section set. */
+export const FULL_NAV: readonly HeaderNavItem[] = [
+  { label: 'خانه', href: '/' },
+  { label: 'دوره‌ها', href: '/courses' },
+  { label: 'دسته‌ها', href: '#categories' },
+  { label: 'مدرسان', href: '#teachers' },
+  { label: 'تعرفه‌ها', href: '#pricing' },
+];
+
+/** Nav for templates without a category wall. */
+export const COMPACT_NAV: readonly HeaderNavItem[] = [
+  { label: 'خانه', href: '/' },
+  { label: 'دوره‌ها', href: '/courses' },
+  { label: 'مسیر یادگیری', href: '#showcase' },
+  { label: 'مدرسان', href: '#teachers' },
+  { label: 'تعرفه‌ها', href: '#pricing' },
+];
+
+export function headerDefaults(overrides: Partial<HeaderDefaults> = {}): HeaderDefaults {
+  return {
+    tagline: '',
+    ctaText: 'ثبت‌نام در دوره',
+    loginText: 'ورود',
+    accountText: 'حساب من',
+    nav: FULL_NAV,
+    ...overrides,
+  };
+}
