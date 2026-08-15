@@ -24,6 +24,10 @@ export default async function PreviewBlocksPage({
   // Real-data mode renders dynamic blocks (e.g. courses) with the editing
   // academy's own records instead of placeholder/sample content.
   const realData = sp.data === "real";
+  // Preview-only sample top-up. This route IS the preview surface, so it is on
+  // by default and can be turned off with `sample=0` to inspect true empty
+  // states. The published storefront never reaches this file.
+  const sampleData = sp.sample !== "0";
   // Live hero-variant thumbnails: force the hero's `style` so the picker can
   // preview every design with the academy's real theme and content.
   const heroStyle = typeof sp.heroStyle === "string" ? sp.heroStyle : undefined;
@@ -59,8 +63,9 @@ export default async function PreviewBlocksPage({
         name: preset.academy_name ?? null,
         stats: preset.academy_stats ?? null,
         academyId: preset.academy_id ?? null,
+        sampleData,
       }
-    : { id: null, slug: null, name: null, stats: null, academyId: null };
+    : { id: null, slug: null, name: null, stats: null, academyId: null, sampleData };
 
   // The wrapper owns the full themed canvas (background + text color) so dark
   // presets never show the host layout's light gaps behind a section.

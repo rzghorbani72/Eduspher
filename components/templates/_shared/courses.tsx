@@ -3,6 +3,7 @@ import { Button, Initials } from './primitives';
 import { loadTemplateCourses, type TemplateCourse } from './courses-data';
 import { SectionEmptyState } from '@/components/ui-blocks/slot-grid';
 import { text, type SectionConfig, type TemplateStoreContext } from './types';
+import { isSampleRecord } from './sample-data';
 
 export interface CoursesDefaults {
   eyebrow: string;
@@ -103,6 +104,11 @@ function TemplateCourseCard({
     <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
       <a href={course.href} className="block">
         <div className={thumbClassName}>
+          {isSampleRecord(course.id) ? (
+            <span className="absolute top-3 end-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-deep)/85 px-2.5 py-1 text-[11px] font-bold text-(--theme-on-deep)">
+              نمونهٔ پیش‌نمایش
+            </span>
+          ) : null}
           {course.levelLabel ? (
             <span className="absolute top-3 start-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-surface)/90 px-2.5 py-1 text-[11px] font-bold text-(--theme-foreground)">
               {course.levelLabel}

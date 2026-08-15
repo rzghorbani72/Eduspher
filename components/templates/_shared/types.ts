@@ -20,6 +20,12 @@ export interface TemplateStoreContext {
   name: string | null;
   stats?: { courseCount: number; studentCount: number } | null;
   academyId?: string | null;
+  /**
+   * Preview surfaces only. When true, sections may top their live records up
+   * with clearly-marked sample rows so an empty academy still previews as a
+   * finished site. The published storefront never sets this.
+   */
+  sampleData?: boolean;
 }
 
 /**

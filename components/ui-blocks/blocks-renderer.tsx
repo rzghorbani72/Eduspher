@@ -26,6 +26,8 @@ interface BlocksRendererProps {
     // Cuid academy scope used by preview real-data mode so dynamic blocks fetch
     // the editing academy's own records instead of the ambient/default one.
     academyId?: string | null;
+    // Preview-only: lets sections top thin data up with labelled sample rows.
+    sampleData?: boolean;
   };
   includeHeaderFooter?: boolean; // Option to include header/footer in blocks renderer
 }

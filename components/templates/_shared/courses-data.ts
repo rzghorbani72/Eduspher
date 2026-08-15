@@ -2,6 +2,7 @@ import { getCourses, getCurrentAcademy } from '@/lib/api/server';
 import { buildAcademyPath, formatCurrencyWithAcademy, toPersianDigits } from '@/lib/utils';
 import type { CourseSummary } from '@/lib/api/types';
 import type { TemplateStoreContext } from './types';
+import { withSampleCourses } from './sample-data';
 
 /**
  * One live-data path shared by all seven templates' course sections.
@@ -74,7 +75,11 @@ export async function loadTemplateCourses(
   const storeSlug = storeContext?.isSubdomain ? null : (storeContext?.slug ?? null);
   const currencyStore = toCurrencyStore(academy);
 
-  return courses.map((course) => toTemplateCourse(course, storeSlug, currencyStore));
+  const live = courses.map((course) => toTemplateCourse(course, storeSlug, currencyStore));
+
+  // Preview only: pad a thin catalogue with labelled samples so the design can
+  // be judged. Real courses always come first and are never substituted.
+  return storeContext?.sampleData ? withSampleCourses(live) : live;
 }
 
 function toTemplateCourse(
