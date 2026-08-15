@@ -13,6 +13,7 @@ import { PricingBlock } from "./pricing-block";
 import { CtaBlock } from "./cta-block";
 import { CategoriesBlock } from "./categories-block";
 import { ProjectsBlock } from "./projects-block";
+import { resolveTemplateSection } from "@/components/templates/registry";
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -58,6 +59,21 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
     <div className="ui-blocks-root">
       {visibleBlocks.map((block) => {
         try {
+          // One of the seven gallery templates owns this section type — render
+          // its own design. Anything it does not implement falls through to the
+          // shared blocks below, so legacy styles keep working unchanged.
+          const TemplateSection = resolveTemplateSection(block.config?.style, block.type);
+          if (TemplateSection) {
+            return (
+              <TemplateSection
+                key={block.id}
+                id={block.id}
+                config={block.config}
+                storeContext={storeContext}
+              />
+            );
+          }
+
           switch (block.type) {
             case "header":
               return <HeaderBlock key={block.id} id={block.id} config={block.config} />;

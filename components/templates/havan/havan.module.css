@@ -1,0 +1,102 @@
+/*
+ * Havan — "working kitchen" motifs: a chalk menu board, a ruled stamp, and
+ * editorial hairlines. Warm and printed rather than glossy.
+ */
+
+.board {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--theme-border-radius);
+  background-image: linear-gradient(
+    140deg,
+    var(--theme-deep) 0%,
+    var(--theme-deep) 55%,
+    color-mix(in srgb, var(--theme-deep) 78%, var(--theme-primary)) 100%
+  );
+  color: var(--theme-on-deep);
+}
+/* Fine vertical ruling, like a chalked service board. */
+.board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--theme-accent) 6%, transparent) 0 1px,
+    transparent 1px 7px
+  );
+}
+/* Inset keyline frame. */
+.board::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--theme-accent) 28%, transparent);
+  border-radius: calc(var(--theme-border-radius) / 2);
+}
+.boardInner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dotted leader between a dish and its time — the menu-typography detail. */
+.leader {
+  flex: 1;
+  border-bottom: 1px dotted color-mix(in srgb, var(--theme-on-deep) 25%, transparent);
+  transform: translateY(-4px);
+}
+
+/* Rotated capacity stamp overlapping the board. */
+.stamp {
+  position: absolute;
+  inset-inline-start: -18px;
+  bottom: 42px;
+  z-index: 3;
+  transform: rotate(-9deg);
+  border: 2px solid var(--theme-deep);
+  border-radius: 3px;
+  background: var(--theme-accent);
+  color: var(--theme-on-accent);
+  padding: 12px 18px;
+  text-align: center;
+  box-shadow: 6px 6px 0 color-mix(in srgb, var(--theme-deep) 18%, transparent);
+}
+
+/* Feature columns carry a heavy top rule that changes colour per column. */
+.featRule {
+  border-top: 2px solid var(--theme-foreground);
+}
+.featRule2 { border-top-color: var(--theme-primary); }
+.featRule3 { border-top-color: var(--theme-accent); }
+
+.thumb {
+  position: relative;
+  height: 132px;
+  overflow: hidden;
+}
+.thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    color-mix(in srgb, #ffffff 10%, transparent) 0 2px,
+    transparent 2px 11px
+  );
+}
+.thumb::after {
+  content: '';
+  position: absolute;
+  top: -34px;
+  inset-inline-end: -24px;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, #ffffff 22%, transparent);
+}
+.t1 { background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-accent)); }
+.t2 { background-image: linear-gradient(200deg, var(--theme-deep), var(--theme-primary)); }
+.t3 { background-image: linear-gradient(75deg, var(--theme-accent), color-mix(in srgb, var(--theme-accent) 40%, var(--theme-deep))); }
+.t4 { background-image: linear-gradient(165deg, color-mix(in srgb, var(--theme-primary) 60%, var(--theme-deep)), var(--theme-accent)); }

@@ -1,0 +1,113 @@
+import { Container } from '../_shared/section';
+import { Button, Pill } from '../_shared/primitives';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
+import { TONDAK_DEFAULTS } from './defaults';
+import styles from './tondak.module.css';
+
+interface Drill {
+  question: string;
+  answer: string;
+}
+
+interface HeroStat {
+  value: string;
+  label: string;
+}
+
+/** Static hero with a tilted flashcard stack — CSS only, no image requests. */
+export function TondakHero({ id, config }: TemplateSectionProps) {
+  const d = TONDAK_DEFAULTS.hero;
+  const drills = list<Drill>(config, 'drills', d.drills);
+  const stats = list<HeroStat>(config, 'stats', d.stats);
+
+  return (
+    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <span className={styles.blobA} aria-hidden="true" />
+      <span className={styles.blobB} aria-hidden="true" />
+
+      <Container className="relative z-[2] py-(--theme-section-padding-y)">
+        <div className="grid items-center gap-14 lg:grid-cols-[1.03fr_0.97fr]">
+          <div>
+            <Pill>
+              <span aria-hidden="true" className="size-2 rounded-[3px] bg-current" />
+              {text(config, 'pill', d.pill)}
+            </Pill>
+
+            <h1 className="mt-5 text-[clamp(36px,5.6vw,66px)] font-bold leading-[1.08] tracking-[-0.035em]">
+              <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
+              <em
+                className="relative not-italic text-(--theme-primary) [background:linear-gradient(var(--theme-accent),var(--theme-accent))_0_88%/100%_14px_no-repeat]"
+                data-editable="titleEm"
+              >
+                {text(config, 'titleEm', d.titleEm)}
+              </em>{' '}
+              <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
+            </h1>
+
+            <p data-editable="subtitle" className="mt-6 max-w-[54ch] text-[18px] leading-[1.85] text-(--theme-ink-2)">
+              {text(config, 'subtitle', d.subtitle)}
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3.5">
+              <Button tone="primary" size="lg" editableKey="ctaText">
+                {text(config, 'ctaText', d.ctaText)}
+              </Button>
+              <Button tone="outline" size="lg" href="#showcase">
+                {text(config, 'ctaSecondary', d.ctaSecondary)}
+              </Button>
+            </div>
+
+            <dl className="mt-9 flex flex-wrap gap-x-9 gap-y-5 border-t-2 border-dashed border-(--theme-border-strong) pt-7">
+              {stats.map((stat) => (
+                <div key={stat.label}>
+                  <dt className="sr-only">{stat.label}</dt>
+                  <dd>
+                    <b className="block text-[30px] font-bold leading-[1.15] tracking-[-0.04em] tabular-nums">
+                      {stat.value}
+                    </b>
+                    <span className="text-[13.5px] font-medium text-(--theme-muted)">{stat.label}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className={styles.stack} aria-hidden="true">
+            <div className={`${styles.card3d} ${styles.c1}`}>
+              <span className="absolute top-4 start-5 text-[14px] font-bold opacity-85">{d.flashLabel}</span>
+              <span className="text-[clamp(90px,14vw,170px)] font-bold leading-none tracking-[-0.06em]">
+                {d.flashValue}
+              </span>
+            </div>
+
+            <div className={`${styles.card3d} ${styles.c2}`}>
+              {drills.map((drill, index) => (
+                <div
+                  key={drill.question}
+                  className={`flex items-baseline justify-between border-b border-dashed border-(--theme-border-strong) py-2 text-[15px] font-bold last:border-0 ${
+                    index === drills.length - 1 ? 'text-(--theme-accent)' : 'text-(--theme-ink-2)'
+                  }`}
+                >
+                  <span>{drill.question}</span>
+                  <span>{drill.answer}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className={`${styles.card3d} ${styles.c3} flex flex-col justify-between`}>
+              <b className="text-[38px] font-bold tracking-[-0.04em]">{d.timerValue}</b>
+              <span className="text-[13px] opacity-80">{d.timerLabel}</span>
+            </div>
+
+            <div className={styles.badge}>
+              <span>
+                <b className="block text-[27px] font-bold leading-none tracking-[-0.03em]">{d.badgeValue}</b>
+                <span className="text-[11.5px] font-bold">{d.badgeLabel}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}

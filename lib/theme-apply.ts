@@ -160,6 +160,15 @@ export function buildThemeCssVariables(
     "--theme-primary-subtle": `color-mix(in srgb, ${primary} 15%, ${background})`,
     "--theme-secondary-subtle": `color-mix(in srgb, ${secondary} 12%, ${background})`,
     "--theme-accent-subtle": `color-mix(in srgb, ${accent} 15%, ${background})`,
+    // Dark anchor band. Every new template inverts at least one section onto a
+    // near-black surface; deriving it (instead of trusting the raw secondary)
+    // guarantees the band stays dark even when a manager picks a pale colour.
+    "--theme-deep": `color-mix(in srgb, ${secondary} 22%, #0a0d12)`,
+    "--theme-on-deep": "#f4f6fa",
+    // Secondary body text — softer than foreground, stronger than muted.
+    "--theme-ink-2": `color-mix(in srgb, ${foreground} 78%, ${background})`,
+    // Thin structural rule used by the editorial templates.
+    "--theme-hairline": `color-mix(in srgb, ${foreground} 14%, transparent)`,
     "--theme-border-radius":
       BORDER_RADIUS_MAP[t.border_radius_style || "rounded"] || "16px",
     "--theme-shadow": SHADOW_MAP[t.shadow_style || "medium"] || SHADOW_MAP.medium,
