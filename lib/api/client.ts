@@ -39,7 +39,43 @@ const getAcademySlug = (): string | null => {
   return getCookieValue(env.academySlugCookie);
 };
 
-const buildHeaders = (additionalHeaders: HeadersInit = {}): HeadersInit => {
+let csrfBootstrap: Promise<string | null> | null = null;
+
+/** Quietly mint a csrf-token cookie for fresh / private windows. */
+async function ensureCsrfToken(force = false): Promise<string | null> {
+  if (typeof window === "undefined") return null;
+  if (!force) {
+    const existing = getCookieValue("csrf-token");
+    if (existing) return existing;
+  }
+  if (csrfBootstrap) return csrfBootstrap;
+
+  csrfBootstrap = (async () => {
+    try {
+      const response = await fetch(`${getBaseUrl()}/auth/csrf`, {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+      });
+      if (!response.ok) return getCookieValue("csrf-token");
+      const data = (await response.json().catch(() => null)) as {
+        csrf_token?: string;
+      } | null;
+      return data?.csrf_token ?? getCookieValue("csrf-token");
+    } catch {
+      return getCookieValue("csrf-token");
+    } finally {
+      csrfBootstrap = null;
+    }
+  })();
+
+  return csrfBootstrap;
+}
+
+const buildHeaders = async (
+  additionalHeaders: HeadersInit = {},
+  options?: { mutate?: boolean }
+): Promise<HeadersInit> => {
   const headers = new Headers(additionalHeaders);
   headers.set("X-Academy-ID", getAcademyId());
 
@@ -48,9 +84,16 @@ const buildHeaders = (additionalHeaders: HeadersInit = {}): HeadersInit => {
     headers.set("X-Academy-Slug", academySlug);
   }
 
-  const csrfToken = getCookieValue("csrf-token");
-  if (csrfToken) {
-    headers.set("X-CSRF-Token", csrfToken);
+  if (options?.mutate) {
+    const csrfToken = await ensureCsrfToken();
+    if (csrfToken) {
+      headers.set("X-CSRF-Token", csrfToken);
+    }
+  } else {
+    const csrfToken = getCookieValue("csrf-token");
+    if (csrfToken) {
+      headers.set("X-CSRF-Token", csrfToken);
+    }
   }
 
   return headers;
@@ -119,7 +162,8 @@ export const LEGAL_CONSENT_REQUIRED_EVENT = "mentoma:legal-consent-required";
 async function handleResponse<T>(
   response: Response,
   retryFn?: () => Promise<T>,
-  skipRefresh?: boolean
+  skipRefresh?: boolean,
+  retriedCsrf = false
 ): Promise<T> {
   const contentType = response.headers.get("Content-Type") ?? "";
   const isJson = contentType.includes("application/json");
@@ -192,6 +236,12 @@ async function handleResponse<T>(
       window.dispatchEvent(new CustomEvent(LEGAL_CONSENT_REQUIRED_EVENT));
     }
 
+    // Fresh tab / rotated cookie — mint CSRF once and retry without toasting.
+    if (errorCode === "CSRF_REQUIRED" && retryFn && !retriedCsrf) {
+      await ensureCsrfToken(true);
+      return retryFn();
+    }
+
     throw Object.assign(new Error(errorMessage), { code: errorCode, status: response.status });
   }
 
@@ -210,11 +260,17 @@ export const postJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions
 ): Promise<T> => {
-  const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers = buildHeaders({
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    });
+  const makeRequest = async (
+    skipRefresh = false,
+    retriedCsrf = false
+  ): Promise<T> => {
+    const headers = await buildHeaders(
+      {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      { mutate: true }
+    );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "POST",
@@ -233,8 +289,11 @@ export const postJson = async <T>(
     
     return handleResponse<T>(
       response, 
-      isAuthEndpoint ? undefined : () => makeRequest(true),
-      skipRefresh || isAuthEndpoint
+      isAuthEndpoint
+        ? undefined
+        : () => makeRequest(true, true),
+      skipRefresh || isAuthEndpoint,
+      retriedCsrf
     );
   };
   
@@ -242,8 +301,11 @@ export const postJson = async <T>(
 };
 
 export const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
-  const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers = buildHeaders({
+  const makeRequest = async (
+    skipRefresh = false,
+    retriedCsrf = false
+  ): Promise<T> => {
+    const headers = await buildHeaders({
       Accept: "application/json",
     });
 
@@ -255,8 +317,9 @@ export const getJson = async <T>(path: string, options?: RequestOptions): Promis
     });
     return handleResponse<T>(
       response, 
-      () => makeRequest(true),
-      skipRefresh
+      () => makeRequest(true, true),
+      skipRefresh,
+      retriedCsrf
     );
   };
   
@@ -268,11 +331,17 @@ const putJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions
 ): Promise<T> => {
-  const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers = buildHeaders({
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    });
+  const makeRequest = async (
+    skipRefresh = false,
+    retriedCsrf = false
+  ): Promise<T> => {
+    const headers = await buildHeaders(
+      {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      { mutate: true }
+    );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "PUT",
@@ -283,8 +352,9 @@ const putJson = async <T>(
     });
     return handleResponse<T>(
       response, 
-      () => makeRequest(true),
-      skipRefresh
+      () => makeRequest(true, true),
+      skipRefresh,
+      retriedCsrf
     );
   };
   
@@ -296,11 +366,17 @@ export const patchJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions
 ): Promise<T> => {
-  const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers = buildHeaders({
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    });
+  const makeRequest = async (
+    skipRefresh = false,
+    retriedCsrf = false
+  ): Promise<T> => {
+    const headers = await buildHeaders(
+      {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      { mutate: true }
+    );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "PATCH",
@@ -311,8 +387,9 @@ export const patchJson = async <T>(
     });
     return handleResponse<T>(
       response, 
-      () => makeRequest(true),
-      skipRefresh
+      () => makeRequest(true, true),
+      skipRefresh,
+      retriedCsrf
     );
   };
   
@@ -323,10 +400,16 @@ const deleteJson = async <T>(
   path: string,
   options?: RequestOptions
 ): Promise<T> => {
-  const makeRequest = async (skipRefresh = false): Promise<T> => {
-    const headers = buildHeaders({
-      Accept: "application/json",
-    });
+  const makeRequest = async (
+    skipRefresh = false,
+    retriedCsrf = false
+  ): Promise<T> => {
+    const headers = await buildHeaders(
+      {
+        Accept: "application/json",
+      },
+      { mutate: true }
+    );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
       method: "DELETE",
@@ -335,12 +418,13 @@ const deleteJson = async <T>(
       signal: options?.signal,
     });
     return handleResponse<T>(
-      response, 
-      () => makeRequest(true),
-      skipRefresh
+      response,
+      () => makeRequest(true, true),
+      skipRefresh,
+      retriedCsrf
     );
   };
-  
+
   return makeRequest(options?.skipRefresh);
 };
 
@@ -669,7 +753,7 @@ export const uploadImage = async (
   const response = await fetch(`${getBaseUrl()}/images/upload`, {
     method: "POST",
     credentials: "include",
-    headers: buildHeaders({ Accept: "application/json" }),
+    headers: await buildHeaders({ Accept: "application/json" }, { mutate: true }),
     body,
     signal: options?.signal,
   });
@@ -1120,7 +1204,7 @@ export const uploadSupportAttachment = async (file: File, options?: RequestOptio
   const form = new FormData();
   form.append("file", file);
   // No Content-Type: the browser sets the multipart boundary itself.
-  const headers = buildHeaders();
+  const headers = await buildHeaders({}, { mutate: true });
   const response = await fetch(`${getBaseUrl()}/support/attachments`, {
     method: "POST",
     credentials: "include",
