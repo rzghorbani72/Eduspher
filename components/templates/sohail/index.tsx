@@ -23,8 +23,8 @@ const SOHAIL_HEADER = headerDefaults({
 });
 
 export const SOHAIL_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={SOHAIL_HEADER} spec={{ tone: 'page', height: 72, navStyle: 'plain', markClassName: styles.logoMark, translucent: true }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={SOHAIL_HEADER} spec={{ tone: 'page', height: 72, navStyle: 'plain', markClassName: styles.logoMark, translucent: true }} />
   ),
   hero: SohailHero,
   marquee: ({ id, config }) => (

@@ -23,8 +23,8 @@ const SETIGH_HEADER = headerDefaults({
 });
 
 export const SETIGH_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={SETIGH_HEADER} spec={{ tone: 'deep', height: 80, navStyle: 'plain', markClassName: styles.logoMark, accentBar: true }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={SETIGH_HEADER} spec={{ tone: 'deep', height: 80, navStyle: 'plain', markClassName: styles.logoMark, accentBar: true }} />
   ),
   hero: SetighHero,
   marquee: ({ id, config }) => (

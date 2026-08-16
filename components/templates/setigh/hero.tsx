@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SETIGH_DEFAULTS } from './defaults';
 import styles from './setigh.module.css';
 
@@ -11,8 +12,9 @@ interface HeroStat {
   label: string;
 }
 
-export function SetighHero({ id, config }: TemplateSectionProps) {
+export function SetighHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = SETIGH_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const stats = list<HeroStat>(config, 'stats', d.stats);
   const percent = typeof config?.cyclePercent === 'number' ? config.cyclePercent : d.cyclePercent;
 
@@ -39,19 +41,25 @@ export function SetighHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3.5">
-              <Button tone="primary" size="lg" editableKey="ctaText" href="#pricing">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary" href="#courses">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+                <Button tone="primary" size="lg" editableKey="ctaText" href="#pricing">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+                <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary" href="#courses">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
-            {featureVisible(config, 'showStats') && (
-              <dl
-                data-removable="showStats"
-                className="mt-10 flex flex-wrap gap-x-10 gap-y-5 border-t border-current/18 pt-7"
-              >
+            <RemovableSlot
+              config={config}
+              flagKey="showStats"
+              editMode={editMode}
+              className="mt-10 flex flex-wrap gap-x-10 gap-y-5 border-t border-current/18 pt-7"
+            >
+              <dl className="contents">
                 {stats.map((stat) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
@@ -64,39 +72,37 @@ export function SetighHero({ id, config }: TemplateSectionProps) {
                   </div>
                 ))}
               </dl>
-            )}
+            </RemovableSlot>
           </div>
 
-          {featureVisible(config, 'showSideVisual') && (
-            <div data-removable="showSideVisual" className="grid gap-5">
-              <HeroVisualSlot
-                config={config}
-                className={`${styles.slab} min-h-[260px] overflow-hidden rounded-(--theme-border-radius)`}
-              >
-                <div className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}>
-                  <b
-                    data-editable="recordValue"
-                    className="text-[60px] font-bold leading-none tracking-[-0.05em] tabular-nums"
-                  >
-                    {text(config, 'recordValue', d.recordValue)}
-                  </b>
-                  <span data-editable="recordLabel" className="mt-2 text-[13.5px] text-current/70">
-                    {text(config, 'recordLabel', d.recordLabel)}
-                  </span>
-                </div>
-              </HeroVisualSlot>
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="grid gap-5">
+            <HeroVisualSlot
+              config={config}
+              className={`${styles.slab} min-h-[260px] overflow-hidden rounded-(--theme-border-radius)`}
+            >
+              <div className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}>
+                <b
+                  data-editable="recordValue"
+                  className="text-[60px] font-bold leading-none tracking-[-0.05em] tabular-nums"
+                >
+                  {text(config, 'recordValue', d.recordValue)}
+                </b>
+                <span data-editable="recordLabel" className="mt-2 text-[13.5px] text-current/70">
+                  {text(config, 'recordLabel', d.recordLabel)}
+                </span>
+              </div>
+            </HeroVisualSlot>
 
-              <div className="rounded-(--theme-border-radius) border border-current/18 p-5">
-                <div className="mb-2.5 flex items-baseline justify-between text-[13px] text-current/70">
-                  <span data-editable="cycleLabel">{text(config, 'cycleLabel', d.cycleLabel)}</span>
-                  <span className="font-bold tabular-nums">{percent}٪</span>
-                </div>
-                <div className={styles.track}>
-                  <span className={styles.trackFill} style={{ width: `${percent}%` }} />
-                </div>
+            <div className="rounded-(--theme-border-radius) border border-current/18 p-5">
+              <div className="mb-2.5 flex items-baseline justify-between text-[13px] text-current/70">
+                <span data-editable="cycleLabel">{text(config, 'cycleLabel', d.cycleLabel)}</span>
+                <span className="font-bold tabular-nums">{percent}٪</span>
+              </div>
+              <div className={styles.track}>
+                <span className={styles.trackFill} style={{ width: `${percent}%` }} />
               </div>
             </div>
-          )}
+          </RemovableSlot>
         </div>
       </Container>
     </section>

@@ -8,6 +8,7 @@ import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
 import { Container } from "./section";
 import { Button } from "./primitives";
+import { RemovableSlot } from "./removable-slot";
 import { list, text, type SectionConfig } from "./types";
 
 export interface HeaderNavItem {
@@ -51,6 +52,7 @@ interface TemplateHeaderProps {
   config?: SectionConfig;
   defaults: HeaderDefaults;
   spec: HeaderSpec;
+  editMode?: boolean;
 }
 
 const TONE_CLASS = {
@@ -85,6 +87,7 @@ export async function TemplateTopBar({
   config,
   defaults,
   spec,
+  editMode = false,
 }: TemplateHeaderProps) {
   const [currentAcademy, user, storeContext] = await Promise.all([
     getCurrentAcademy().catch(() => null),
@@ -180,16 +183,30 @@ export async function TemplateTopBar({
           </nav>
 
           <div className="ms-auto flex flex-none items-center gap-3">
-            <a
-              href={isAuthenticated ? "/account" : "/auth/login"}
-              className="hidden text-[14.5px] font-medium opacity-80 hover:opacity-100 sm:inline"
+            <RemovableSlot
+              config={config}
+              flagKey="showLogin"
+              editMode={editMode}
+              className="hidden sm:inline-flex"
             >
-              {isAuthenticated ? accountLabel : defaults.loginText}
-            </a>
+              <a
+                href={isAuthenticated ? "/account" : "/auth/login"}
+                className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
+              >
+                {isAuthenticated ? accountLabel : defaults.loginText}
+              </a>
+            </RemovableSlot>
 
-            <Button tone="primary" size="sm" href="/courses" editableKey="ctaText">
-              {text(config, "ctaText", defaults.ctaText)}
-            </Button>
+            <RemovableSlot
+              config={config}
+              flagKey="showHeaderCta"
+              editMode={editMode}
+              className="inline-flex"
+            >
+              <Button tone="primary" size="sm" href="/courses" editableKey="ctaText">
+                {text(config, "ctaText", defaults.ctaText)}
+              </Button>
+            </RemovableSlot>
 
             {/* CSS-only mobile menu: native disclosure, no JavaScript. */}
             <details className="relative lg:hidden">

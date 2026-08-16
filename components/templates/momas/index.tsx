@@ -23,8 +23,8 @@ const MOMAS_HEADER = headerDefaults({
 });
 
 export const MOMAS_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={MOMAS_HEADER} spec={{ tone: 'page', height: 76, navStyle: 'plain', markClassName: styles.logoMark, monoTagline: true }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={MOMAS_HEADER} spec={{ tone: 'page', height: 76, navStyle: 'plain', markClassName: styles.logoMark, monoTagline: true }} />
   ),
   hero: MomasHero,
   marquee: ({ id, config }) => (

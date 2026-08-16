@@ -83,8 +83,17 @@ export default async function PreviewBlocksPage({
         stats: preset.academy_stats ?? null,
         academyId: preset.academy_id ?? null,
         sampleData,
+        editMode: edit,
       }
-    : { id: null, slug: null, name: null, stats: null, academyId: null, sampleData };
+    : {
+        id: null,
+        slug: null,
+        name: null,
+        stats: null,
+        academyId: null,
+        sampleData,
+        editMode: edit,
+      };
 
   // The wrapper owns the full themed canvas (background + text color) so dark
   // presets never show the host layout's light gaps behind a section.

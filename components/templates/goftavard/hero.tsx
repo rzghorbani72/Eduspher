@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { GOFTAVARD_DEFAULTS } from './defaults';
 import styles from './goftavard.module.css';
 
@@ -21,8 +22,9 @@ interface HeroStat {
  * Static hero. The proof is a real lesson transcript, not a rotating banner —
  * it shows what a class actually looks like in one glance.
  */
-export function GoftavardHero({ id, config }: TemplateSectionProps) {
+export function GoftavardHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = GOFTAVARD_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const transcript = list<TranscriptLine>(config, 'transcript', d.transcript);
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
@@ -60,12 +62,16 @@ export function GoftavardHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <Button tone="primary" size="lg" editableKey="ctaText">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#courses">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+                <Button tone="primary" size="lg" editableKey="ctaText">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+                <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#courses">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
             <p data-editable="micro" className="mt-6 text-[13px] text-(--theme-muted)">
@@ -73,64 +79,64 @@ export function GoftavardHero({ id, config }: TemplateSectionProps) {
             </p>
           </div>
 
-          {featureVisible(config, 'showSideVisual') && (
-            <div className="relative grid gap-5" data-removable="showSideVisual">
-              {featureVisible(config, 'showStamp') && (
-                <span className={styles.stamp} data-removable="showStamp" data-editable="stamp">
-                  {text(config, 'stamp', d.stamp)}
-                </span>
-              )}
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="relative grid gap-5">
+            <RemovableSlot config={config} flagKey="showStamp" editMode={editMode} className="inline-flex">
+              <span className={styles.stamp} data-editable="stamp">
+                {text(config, 'stamp', d.stamp)}
+              </span>
+            </RemovableSlot>
 
-              <div className={`${styles.card3d} ${styles.cardA} p-4`}>
-                <HeroVisualSlot
-                  config={config}
-                  mode="fill"
-                  className="aspect-video overflow-hidden rounded-[calc(var(--theme-border-radius)/1.5)]"
-                >
-                  <div className={styles.photoSlot}>
-                    <span data-editable="photoCaption" className="text-[15px] font-bold">
-                      {text(config, 'photoCaption', d.photoCaption)}
-                    </span>
-                  </div>
-                </HeroVisualSlot>
-              </div>
-
-              {featureVisible(config, 'showTranscript') && (
-                <div className={`${styles.card3d} ${styles.cardB} p-6`} data-removable="showTranscript">
-                  <span
-                    data-editable="transcriptLabel"
-                    className="inline-block rounded-full bg-(--theme-primary-subtle) px-3 py-1 text-[12.5px] font-bold text-(--theme-primary)"
-                  >
-                    {text(config, 'transcriptLabel', d.transcriptLabel)}
+            <div className={`${styles.card3d} ${styles.cardA} p-4`}>
+              <HeroVisualSlot
+                config={config}
+                mode="fill"
+                className="aspect-video overflow-hidden rounded-[calc(var(--theme-border-radius)/1.5)]"
+              >
+                <div className={styles.photoSlot}>
+                  <span data-editable="photoCaption" className="text-[15px] font-bold">
+                    {text(config, 'photoCaption', d.photoCaption)}
                   </span>
-
-                  <div className="mt-4 grid gap-3.5">
-                    {transcript.map((row) => (
-                      <p key={row.line} className="flex gap-3 text-[14.5px] leading-[1.8]">
-                        <span
-                          className={`grid size-8 flex-none place-items-center rounded-full text-[11px] font-bold ${
-                            row.teacher
-                              ? 'bg-(--theme-primary) text-(--theme-on-primary)'
-                              : 'bg-(--theme-surface-alt) text-(--theme-foreground)'
-                          }`}
-                        >
-                          {row.who}
-                        </span>
-                        <span className="text-(--theme-ink-2)">{row.line}</span>
-                      </p>
-                    ))}
-                  </div>
                 </div>
-              )}
+              </HeroVisualSlot>
             </div>
-          )}
+
+            <RemovableSlot config={config} flagKey="showTranscript" editMode={editMode}>
+              <div className={`${styles.card3d} ${styles.cardB} p-6`}>
+                <span
+                  data-editable="transcriptLabel"
+                  className="inline-block rounded-full bg-(--theme-primary-subtle) px-3 py-1 text-[12.5px] font-bold text-(--theme-primary)"
+                >
+                  {text(config, 'transcriptLabel', d.transcriptLabel)}
+                </span>
+
+                <div className="mt-4 grid gap-3.5">
+                  {transcript.map((row) => (
+                    <p key={row.line} className="flex gap-3 text-[14.5px] leading-[1.8]">
+                      <span
+                        className={`grid size-8 flex-none place-items-center rounded-full text-[11px] font-bold ${
+                          row.teacher
+                            ? 'bg-(--theme-primary) text-(--theme-on-primary)'
+                            : 'bg-(--theme-surface-alt) text-(--theme-foreground)'
+                        }`}
+                      >
+                        {row.who}
+                      </span>
+                      <span className="text-(--theme-ink-2)">{row.line}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </RemovableSlot>
+          </RemovableSlot>
         </div>
 
-        {featureVisible(config, 'showStats') && (
-          <dl
-            data-removable="showStats"
-            className="mt-14 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-border-color) sm:grid-cols-2 lg:grid-cols-4"
-          >
+        <RemovableSlot
+          config={config}
+          flagKey="showStats"
+          editMode={editMode}
+          className="mt-14 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-border-color) sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <dl className="contents">
             {stats.map((stat) => (
               <div key={stat.label} className="bg-(--theme-surface) p-6">
                 <dt className="sr-only">{stat.label}</dt>
@@ -143,7 +149,7 @@ export function GoftavardHero({ id, config }: TemplateSectionProps) {
               </div>
             ))}
           </dl>
-        )}
+        </RemovableSlot>
       </Container>
     </section>
   );

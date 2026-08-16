@@ -28,6 +28,7 @@ interface BlocksRendererProps {
     academyId?: string | null;
     // Preview-only: lets sections top thin data up with labelled sample rows.
     sampleData?: boolean;
+    editMode?: boolean;
   };
   includeHeaderFooter?: boolean; // Option to include header/footer in blocks renderer
 }

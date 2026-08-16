@@ -23,8 +23,8 @@ const HAVAN_HEADER = headerDefaults({
 });
 
 export const HAVAN_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={HAVAN_HEADER} spec={{ tone: 'page', height: 78, navStyle: 'border', markClassName: styles.logoMark }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={HAVAN_HEADER} spec={{ tone: 'page', height: 78, navStyle: 'border', markClassName: styles.logoMark }} />
   ),
   hero: HavanHero,
   marquee: ({ id, config }) => (

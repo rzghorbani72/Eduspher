@@ -26,6 +26,8 @@ export interface TemplateStoreContext {
    * finished site. The published storefront never sets this.
    */
   sampleData?: boolean;
+  /** Template editor canvas (`?edit=1`) — shows dashed placeholders for removed slots. */
+  editMode?: boolean;
 }
 
 /**

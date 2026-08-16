@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { RASADANEH_DEFAULTS } from './defaults';
 import styles from './rasadaneh.module.css';
 
@@ -31,8 +32,9 @@ const CONST_LINES = [
 ] as const;
 
 /** Static hero with a printed star chart — pure CSS, no image request. */
-export function RasadanehHero({ id, config }: TemplateSectionProps) {
+export function RasadanehHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = RASADANEH_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
@@ -58,19 +60,25 @@ export function RasadanehHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#showcase">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+                <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+                <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#showcase">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
-            {featureVisible(config, 'showStats') && (
-              <dl
-                data-removable="showStats"
-                className="mt-10 grid gap-6 border-t border-(--theme-border-color) pt-7 sm:grid-cols-2 lg:grid-cols-4"
-              >
+            <RemovableSlot
+              config={config}
+              flagKey="showStats"
+              editMode={editMode}
+              className="mt-10 grid gap-6 border-t border-(--theme-border-color) pt-7 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              <dl className="contents">
                 {stats.map((stat) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
@@ -81,71 +89,69 @@ export function RasadanehHero({ id, config }: TemplateSectionProps) {
                   </div>
                 ))}
               </dl>
-            )}
+            </RemovableSlot>
           </div>
 
-          {featureVisible(config, 'showSideVisual') && (
-            <div data-removable="showSideVisual">
-              <HeroVisualSlot config={config} className={`${styles.chart} overflow-hidden`}>
-                <div className={styles.chart}>
-                  <span className={styles.chartDisc} aria-hidden="true" />
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+            <HeroVisualSlot config={config} className={`${styles.chart} overflow-hidden`}>
+              <div className={styles.chart}>
+                <span className={styles.chartDisc} aria-hidden="true" />
 
-                  {CONST_LINES.map((line) => (
-                    <span
-                      key={`${line.x}-${line.y}`}
-                      aria-hidden="true"
-                      className={styles.constLine}
-                      style={{
-                        insetInlineStart: `${line.x}%`,
-                        top: `${line.y}%`,
-                        width: `${line.width}%`,
-                        transform: `rotate(${line.angle}deg)`,
-                      }}
-                    />
-                  ))}
+                {CONST_LINES.map((line) => (
+                  <span
+                    key={`${line.x}-${line.y}`}
+                    aria-hidden="true"
+                    className={styles.constLine}
+                    style={{
+                      insetInlineStart: `${line.x}%`,
+                      top: `${line.y}%`,
+                      width: `${line.width}%`,
+                      transform: `rotate(${line.angle}deg)`,
+                    }}
+                  />
+                ))}
 
-                  {STARS.map((star) => (
-                    <span
-                      key={`${star.x}-${star.y}`}
-                      aria-hidden="true"
-                      className={`${styles.star} ${star.bright ? styles.starBright : ''}`}
-                      style={{
-                        insetInlineStart: `${star.x}%`,
-                        top: `${star.y}%`,
-                        width: `${star.size}px`,
-                        height: `${star.size}px`,
-                      }}
-                    />
-                  ))}
+                {STARS.map((star) => (
+                  <span
+                    key={`${star.x}-${star.y}`}
+                    aria-hidden="true"
+                    className={`${styles.star} ${star.bright ? styles.starBright : ''}`}
+                    style={{
+                      insetInlineStart: `${star.x}%`,
+                      top: `${star.y}%`,
+                      width: `${star.size}px`,
+                      height: `${star.size}px`,
+                    }}
+                  />
+                ))}
 
-                  <span className={styles.chartLabel} style={{ insetInlineStart: '50%', top: '20%' }}>
-                    <span data-editable="chartLabelConstellation">
-                      {text(config, 'chartLabelConstellation', d.chartLabels.constellation)}
-                    </span>
+                <span className={styles.chartLabel} style={{ insetInlineStart: '50%', top: '20%' }}>
+                  <span data-editable="chartLabelConstellation">
+                    {text(config, 'chartLabelConstellation', d.chartLabels.constellation)}
                   </span>
-                  <span className={styles.chartLabel} style={{ insetInlineStart: '14%', top: '83%' }}>
-                    <span data-editable="chartLabelHorizon">
-                      {text(config, 'chartLabelHorizon', d.chartLabels.horizon)}
-                    </span>
+                </span>
+                <span className={styles.chartLabel} style={{ insetInlineStart: '14%', top: '83%' }}>
+                  <span data-editable="chartLabelHorizon">
+                    {text(config, 'chartLabelHorizon', d.chartLabels.horizon)}
                   </span>
-                  <span className={styles.chartLabel} style={{ insetInlineEnd: '8%', top: '50%' }}>
-                    <span data-editable="chartLabelMagnitude">
-                      {text(config, 'chartLabelMagnitude', d.chartLabels.magnitude)}
-                    </span>
+                </span>
+                <span className={styles.chartLabel} style={{ insetInlineEnd: '8%', top: '50%' }}>
+                  <span data-editable="chartLabelMagnitude">
+                    {text(config, 'chartLabelMagnitude', d.chartLabels.magnitude)}
                   </span>
+                </span>
 
-                  <div className={styles.chartTag}>
-                    <b data-editable="chartTagTitle" className="block text-[14px] font-bold">
-                      {text(config, 'chartTagTitle', d.chartTagTitle)}
-                    </b>
-                    <span data-editable="chartTagNote" className="mt-1 block text-[12.5px] text-(--theme-muted)">
-                      {text(config, 'chartTagNote', d.chartTagNote)}
-                    </span>
-                  </div>
+                <div className={styles.chartTag}>
+                  <b data-editable="chartTagTitle" className="block text-[14px] font-bold">
+                    {text(config, 'chartTagTitle', d.chartTagTitle)}
+                  </b>
+                  <span data-editable="chartTagNote" className="mt-1 block text-[12.5px] text-(--theme-muted)">
+                    {text(config, 'chartTagNote', d.chartTagNote)}
+                  </span>
                 </div>
-              </HeroVisualSlot>
-            </div>
-          )}
+              </div>
+            </HeroVisualSlot>
+          </RemovableSlot>
         </div>
       </Container>
     </section>

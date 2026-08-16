@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { MOMAS_DEFAULTS } from './defaults';
 import styles from './momas.module.css';
 
@@ -17,8 +18,9 @@ interface HeroStat {
 }
 
 /** Static hero: the claim on one side, a worked example on the other. */
-export function MomasHero({ id, config }: TemplateSectionProps) {
+export function MomasHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = MOMAS_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const steps = list<BoardStep>(config, 'boardSteps', d.boardSteps);
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
@@ -47,23 +49,29 @@ export function MomasHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="outline" size="lg" editableKey="ctaSecondary">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+                <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+                <Button tone="outline" size="lg" editableKey="ctaSecondary">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
             <p data-editable="note" className="mt-6 text-[13.5px] text-(--theme-muted)">
               {text(config, 'note', d.note)}
             </p>
 
-            {featureVisible(config, 'showStats') && (
-              <dl
-                data-removable="showStats"
-                className="mt-9 grid gap-6 border-t border-(--theme-border-color) pt-7 sm:grid-cols-2 lg:grid-cols-4"
-              >
+            <RemovableSlot
+              config={config}
+              flagKey="showStats"
+              editMode={editMode}
+              className="mt-9 grid gap-6 border-t border-(--theme-border-color) pt-7 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              <dl className="contents">
                 {stats.map((stat) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
@@ -74,54 +82,52 @@ export function MomasHero({ id, config }: TemplateSectionProps) {
                   </div>
                 ))}
               </dl>
-            )}
+            </RemovableSlot>
           </div>
 
-          {featureVisible(config, 'showBoard') && (
-            <div data-removable="showBoard">
-              <HeroVisualSlot
-                config={config}
-                className={`${styles.board} min-h-[320px] overflow-hidden`}
-              >
-                <div className={styles.board}>
-                  <div className={styles.paperGrid} aria-hidden="true" />
-                  <div className={`${styles.boardInner} p-7`}>
-                    <div className="flex items-baseline justify-between gap-4 border-b border-(--theme-border-color) pb-4">
-                      <h2 data-editable="boardTitle" className="text-[17px] font-bold">
-                        {text(config, 'boardTitle', d.boardTitle)}
-                      </h2>
-                      <span data-editable="boardCode" className={`text-[13px] text-(--theme-muted) ${styles.mono}`}>
-                        {text(config, 'boardCode', d.boardCode)}
-                      </span>
-                    </div>
+          <RemovableSlot config={config} flagKey="showBoard" editMode={editMode}>
+            <HeroVisualSlot
+              config={config}
+              className={`${styles.board} min-h-[320px] overflow-hidden`}
+            >
+              <div className={styles.board}>
+                <div className={styles.paperGrid} aria-hidden="true" />
+                <div className={`${styles.boardInner} p-7`}>
+                  <div className="flex items-baseline justify-between gap-4 border-b border-(--theme-border-color) pb-4">
+                    <h2 data-editable="boardTitle" className="text-[17px] font-bold">
+                      {text(config, 'boardTitle', d.boardTitle)}
+                    </h2>
+                    <span data-editable="boardCode" className={`text-[13px] text-(--theme-muted) ${styles.mono}`}>
+                      {text(config, 'boardCode', d.boardCode)}
+                    </span>
+                  </div>
 
-                    <div className={`py-6 text-[16px] ${styles.mono}`} dir="ltr">
-                      {steps.map((step) => (
-                        <span
-                          key={step.text}
-                          className={`${styles.step} ${step.highlight ? styles.stepHi : 'text-(--theme-ink-2)'}`}
-                        >
-                          {step.text}
-                        </span>
-                      ))}
-                    </div>
+                  <div className={`py-6 text-[16px] ${styles.mono}`} dir="ltr">
+                    {steps.map((step) => (
+                      <span
+                        key={step.text}
+                        className={`${styles.step} ${step.highlight ? styles.stepHi : 'text-(--theme-ink-2)'}`}
+                      >
+                        {step.text}
+                      </span>
+                    ))}
+                  </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--theme-border-color) pt-4 text-[13.5px]">
-                      <span className="text-(--theme-muted)">
-                        الگوی حل:{' '}
-                        <b data-editable="boardPattern" className="font-bold text-(--theme-foreground)">
-                          {text(config, 'boardPattern', d.boardPattern)}
-                        </b>
-                      </span>
-                      <span data-editable="boardTime" className={`text-(--theme-muted) ${styles.mono}`}>
-                        {text(config, 'boardTime', d.boardTime)}
-                      </span>
-                    </div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--theme-border-color) pt-4 text-[13.5px]">
+                    <span className="text-(--theme-muted)">
+                      الگوی حل:{' '}
+                      <b data-editable="boardPattern" className="font-bold text-(--theme-foreground)">
+                        {text(config, 'boardPattern', d.boardPattern)}
+                      </b>
+                    </span>
+                    <span data-editable="boardTime" className={`text-(--theme-muted) ${styles.mono}`}>
+                      {text(config, 'boardTime', d.boardTime)}
+                    </span>
                   </div>
                 </div>
-              </HeroVisualSlot>
-            </div>
-          )}
+              </div>
+            </HeroVisualSlot>
+          </RemovableSlot>
         </div>
       </Container>
     </section>

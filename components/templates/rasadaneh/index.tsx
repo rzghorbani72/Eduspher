@@ -22,8 +22,8 @@ const RASADANEH_HEADER = headerDefaults({
 });
 
 export const RASADANEH_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={RASADANEH_HEADER} spec={{ tone: 'page', height: 74, navStyle: 'underline', markClassName: styles.logoMark }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={RASADANEH_HEADER} spec={{ tone: 'page', height: 74, navStyle: 'underline', markClassName: styles.logoMark }} />
   ),
   hero: RasadanehHero,
   marquee: ({ id, config }) => (

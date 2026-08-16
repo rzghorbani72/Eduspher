@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { HAVAN_DEFAULTS } from './defaults';
 import styles from './havan.module.css';
 
@@ -17,8 +18,9 @@ interface HeroStat {
   label: string;
 }
 
-export function HavanHero({ id, config }: TemplateSectionProps) {
+export function HavanHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = HAVAN_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const boardItems = list<BoardItem>(config, 'boardItems', d.boardItems);
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
@@ -48,19 +50,35 @@ export function HavanHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <Button tone="primary" editableKey="ctaText" href="#courses">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="outline" editableKey="ctaSecondary" href="#showcase">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button tone="primary" editableKey="ctaText" href="#courses">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button tone="outline" editableKey="ctaSecondary" href="#showcase">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
-            {featureVisible(config, 'showStats') && (
-              <dl
-                data-removable="showStats"
-                className="mt-10 flex flex-wrap gap-x-9 gap-y-5 border-t border-(--theme-border-color) pt-5"
-              >
+            <RemovableSlot
+              config={config}
+              flagKey="showStats"
+              editMode={editMode}
+              className="mt-10 flex flex-wrap gap-x-9 gap-y-5 border-t border-(--theme-border-color) pt-5"
+            >
+              <dl className="contents">
                 {stats.map((stat) => (
                   <div key={stat.label} className="border-e border-(--theme-border-color) pe-9 last:border-0 last:pe-0">
                     <dt className="sr-only">{stat.label}</dt>
@@ -71,11 +89,11 @@ export function HavanHero({ id, config }: TemplateSectionProps) {
                   </div>
                 ))}
               </dl>
-            )}
+            </RemovableSlot>
           </div>
 
-          {featureVisible(config, 'showSideVisual') && (
-            <div className="relative" data-removable="showSideVisual">
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+            <div className="relative">
               <HeroVisualSlot
                 config={config}
                 className={`${styles.board} min-h-[320px] overflow-hidden`}
@@ -113,8 +131,8 @@ export function HavanHero({ id, config }: TemplateSectionProps) {
                 </div>
               </HeroVisualSlot>
 
-              {featureVisible(config, 'showStamp') && (
-                <div className={styles.stamp} data-removable="showStamp">
+              <RemovableSlot config={config} flagKey="showStamp" editMode={editMode}>
+                <div className={styles.stamp}>
                   <b data-editable="stampValue" className="block text-[22px] font-bold leading-[1.1]">
                     {text(config, 'stampValue', d.stampValue)}
                   </b>
@@ -122,9 +140,9 @@ export function HavanHero({ id, config }: TemplateSectionProps) {
                     {text(config, 'stampLabel', d.stampLabel)}
                   </span>
                 </div>
-              )}
+              </RemovableSlot>
             </div>
-          )}
+          </RemovableSlot>
         </div>
       </Container>
     </section>

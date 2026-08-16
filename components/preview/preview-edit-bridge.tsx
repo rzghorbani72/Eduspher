@@ -132,6 +132,31 @@ function attachMediaUploadButtons(
   });
 }
 
+function attachRemovableRestoreButtons(root: ParentNode = document) {
+  root.querySelectorAll<HTMLElement>("[data-removable-restore]").forEach((el) => {
+    if (el.dataset.restoreBound === "1") return;
+    el.dataset.restoreBound = "1";
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const flagKey = el.dataset.removableRestore!;
+      const blockEl = el.closest<HTMLElement>("[data-block-id]");
+      const blockId = blockEl?.dataset.blockId;
+      if (!blockId) return;
+      window.parent?.postMessage(
+        {
+          source: "template-editor",
+          type: "toggle-removable",
+          blockId,
+          fieldKey: flagKey,
+          restore: true,
+        },
+        "*",
+      );
+    });
+  });
+}
+
 function attachRemovableButtons(root: ParentNode = document) {
   root.querySelectorAll<HTMLElement>("[data-removable]").forEach((el) => {
     if (el.querySelector(`.${REMOVE_BTN_CLASS}`)) return;
@@ -170,7 +195,7 @@ function attachRemovableButtons(root: ParentNode = document) {
       const blockId = blockEl?.dataset.blockId;
       if (!blockId) return;
       window.parent?.postMessage(
-        { source: "template-editor", type: "toggle-removable", blockId, fieldKey: flagKey },
+        { source: "template-editor", type: "toggle-removable", blockId, fieldKey: flagKey, restore: false },
         "*",
       );
     });
@@ -444,6 +469,7 @@ export function PreviewEditBridge() {
       if (target.closest?.(`#${BLOCK_TOOLBAR_ID}`)) return;
       if (target.closest?.(`.${MEDIA_BTN_CLASS}`)) return;
       if (target.closest?.(`.${REMOVE_BTN_CLASS}`)) return;
+      if (target.closest?.("[data-removable-restore]")) return;
 
       // Toolbar buttons prevent blur themselves via their own mousedown handler
       if (target.closest?.(`#${TOOLBAR_ID}`)) return;
@@ -490,6 +516,7 @@ export function PreviewEditBridge() {
       if (target.closest?.(`#${BLOCK_TOOLBAR_ID}`)) return;
       if (target.closest?.(`.${MEDIA_BTN_CLASS}`)) return;
       if (target.closest?.(`.${REMOVE_BTN_CLASS}`)) return;
+      if (target.closest?.("[data-removable-restore]")) return;
 
       // Inside the active editable: only block link navigation
       if (activeEdit && activeEdit.el.contains(target)) {
@@ -686,6 +713,7 @@ export function PreviewEditBridge() {
 
     attachMediaUploadButtons(document, requestMediaPick);
     attachRemovableButtons();
+    attachRemovableRestoreButtons();
 
     document.addEventListener("mouseover",  onOver);
     document.addEventListener("mousedown",  onMouseDown, true);  // capture
@@ -742,6 +770,7 @@ export function PreviewEditBridge() {
 
       /* Removable decoration */
       [data-removable]:hover { outline: 1px dashed rgba(239,68,68,0.45); outline-offset: 2px; }
+      [data-removable-restore] { cursor: pointer; pointer-events: all; }
 
       /* Live / dynamic content */
       [data-dynamic] * { cursor: default !important; }

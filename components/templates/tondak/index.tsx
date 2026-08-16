@@ -23,8 +23,8 @@ const TONDAK_HEADER = headerDefaults({
 });
 
 export const TONDAK_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={TONDAK_HEADER} spec={{ tone: 'page', height: 84, navStyle: 'pill', markClassName: styles.logoMark, thickBorder: true }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={TONDAK_HEADER} spec={{ tone: 'page', height: 84, navStyle: 'pill', markClassName: styles.logoMark, thickBorder: true }} />
   ),
   hero: TondakHero,
   marquee: ({ id, config }) => (

@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SOHAIL_DEFAULTS } from './defaults';
 import styles from './sohail.module.css';
 
@@ -13,8 +14,9 @@ interface HeroStat {
   note: string;
 }
 
-export function SohailHero({ id, config }: TemplateSectionProps) {
+export function SohailHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = SOHAIL_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
@@ -49,12 +51,16 @@ export function SohailHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3.5">
-              <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary" href="#missions">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+                <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+                <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary" href="#missions">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
             <p className="mt-9 flex flex-wrap items-center gap-3 text-[14px] text-current/70">
@@ -68,32 +74,32 @@ export function SohailHero({ id, config }: TemplateSectionProps) {
             </p>
           </div>
 
-          {featureVisible(config, 'showSideVisual') && (
-            <div data-removable="showSideVisual">
-              <HeroVisualSlot
-                config={config}
-                className={`${styles.orbit} min-h-[280px] overflow-hidden rounded-(--theme-border-radius)`}
-              >
-                <div className={styles.orbit} aria-hidden="true">
-                  <span className={styles.ring} />
-                  <span className={`${styles.ring} ${styles.ring2}`} />
-                  <span className={`${styles.ring} ${styles.ring3}`} />
-                  <span className={`${styles.ring} ${styles.ring4}`} />
-                  <span className={styles.sweep} />
-                  <span className={styles.planet} />
-                  <span className={styles.moon} />
-                  <span className={`${styles.moon} ${styles.moon2}`} />
-                </div>
-              </HeroVisualSlot>
-            </div>
-          )}
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+            <HeroVisualSlot
+              config={config}
+              className={`${styles.orbit} min-h-[280px] overflow-hidden rounded-(--theme-border-radius)`}
+            >
+              <div className={styles.orbit} aria-hidden="true">
+                <span className={styles.ring} />
+                <span className={`${styles.ring} ${styles.ring2}`} />
+                <span className={`${styles.ring} ${styles.ring3}`} />
+                <span className={`${styles.ring} ${styles.ring4}`} />
+                <span className={styles.sweep} />
+                <span className={styles.planet} />
+                <span className={styles.moon} />
+                <span className={`${styles.moon} ${styles.moon2}`} />
+              </div>
+            </HeroVisualSlot>
+          </RemovableSlot>
         </div>
 
-        {featureVisible(config, 'showStats') && (
-          <dl
-            data-removable="showStats"
-            className="mt-16 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-current/15 bg-current/15 sm:grid-cols-2 lg:grid-cols-4"
-          >
+        <RemovableSlot
+          config={config}
+          flagKey="showStats"
+          editMode={editMode}
+          className="mt-16 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-current/15 bg-current/15 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          <dl className="contents">
             {stats.map((stat) => (
               <div key={stat.label} className={`p-6 ${styles.void}`}>
                 <dt className="text-[12px] font-medium tracking-[0.1em] text-current/55">{stat.label}</dt>
@@ -109,7 +115,7 @@ export function SohailHero({ id, config }: TemplateSectionProps) {
               </div>
             ))}
           </dl>
-        )}
+        </RemovableSlot>
       </Container>
     </section>
   );

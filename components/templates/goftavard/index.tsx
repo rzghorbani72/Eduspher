@@ -22,8 +22,8 @@ const GOFTAVARD_HEADER = headerDefaults({
 });
 
 export const GOFTAVARD_SECTIONS: TemplateSectionMap = {
-  header: ({ id, config }) => (
-    <TemplateTopBar id={id} config={config} defaults={GOFTAVARD_HEADER} spec={{ tone: 'surface', height: 74, navStyle: 'underline' }} />
+  header: ({ id, config, storeContext }) => (
+    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={GOFTAVARD_HEADER} spec={{ tone: 'surface', height: 74, navStyle: 'underline' }} />
   ),
   hero: GoftavardHero,
   marquee: ({ id, config }) => (

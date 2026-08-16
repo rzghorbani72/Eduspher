@@ -2,7 +2,8 @@ import { Container } from '../_shared/section';
 import { Button, Pill } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
-import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
+import { RemovableSlot } from '../_shared/removable-slot';
+import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { TONDAK_DEFAULTS } from './defaults';
 import styles from './tondak.module.css';
 
@@ -17,8 +18,9 @@ interface HeroStat {
 }
 
 /** Static hero with a tilted flashcard stack — CSS only, no image requests. */
-export function TondakHero({ id, config }: TemplateSectionProps) {
+export function TondakHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = TONDAK_DEFAULTS.hero;
+  const editMode = storeContext?.editMode ?? false;
   const drills = list<Drill>(config, 'drills', d.drills);
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
@@ -51,19 +53,25 @@ export function TondakHero({ id, config }: TemplateSectionProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <Button tone="primary" size="lg" editableKey="ctaText">
-                {text(config, 'ctaText', d.ctaText)}
-              </Button>
-              <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#showcase">
-                {text(config, 'ctaSecondary', d.ctaSecondary)}
-              </Button>
+              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+                <Button tone="primary" size="lg" editableKey="ctaText">
+                  {text(config, 'ctaText', d.ctaText)}
+                </Button>
+              </RemovableSlot>
+              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+                <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#showcase">
+                  {text(config, 'ctaSecondary', d.ctaSecondary)}
+                </Button>
+              </RemovableSlot>
             </div>
 
-            {featureVisible(config, 'showStats') && (
-              <dl
-                data-removable="showStats"
-                className="mt-9 flex flex-wrap gap-x-9 gap-y-5 border-t-2 border-dashed border-(--theme-border-strong) pt-7"
-              >
+            <RemovableSlot
+              config={config}
+              flagKey="showStats"
+              editMode={editMode}
+              className="mt-9 flex flex-wrap gap-x-9 gap-y-5 border-t-2 border-dashed border-(--theme-border-strong) pt-7"
+            >
+              <dl className="contents">
                 {stats.map((stat) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
@@ -76,68 +84,66 @@ export function TondakHero({ id, config }: TemplateSectionProps) {
                   </div>
                 ))}
               </dl>
-            )}
+            </RemovableSlot>
           </div>
 
-          {featureVisible(config, 'showSideVisual') && (
-            <div data-removable="showSideVisual">
-              <HeroVisualSlot
-                config={config}
-                className={`${styles.stack} min-h-[320px] overflow-hidden rounded-(--theme-border-radius)`}
-              >
-                <div className={styles.stack} aria-hidden="true">
-                  <div className={`${styles.card3d} ${styles.c1}`}>
-                    <span
-                      data-editable="flashLabel"
-                      className="absolute top-4 start-5 text-[14px] font-bold opacity-85"
-                    >
-                      {text(config, 'flashLabel', d.flashLabel)}
-                    </span>
-                    <span
-                      data-editable="flashValue"
-                      className="text-[clamp(90px,14vw,170px)] font-bold leading-none tracking-[-0.06em]"
-                    >
-                      {text(config, 'flashValue', d.flashValue)}
-                    </span>
-                  </div>
-
-                  <div className={`${styles.card3d} ${styles.c2}`}>
-                    {drills.map((drill, index) => (
-                      <div
-                        key={drill.question}
-                        className={`flex items-baseline justify-between border-b border-dashed border-(--theme-border-strong) py-2 text-[15px] font-bold last:border-0 ${
-                          index === drills.length - 1 ? 'text-(--theme-accent)' : 'text-(--theme-ink-2)'
-                        }`}
-                      >
-                        <span>{drill.question}</span>
-                        <span>{drill.answer}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className={`${styles.card3d} ${styles.c3} flex flex-col justify-between`}>
-                    <b data-editable="timerValue" className="text-[38px] font-bold tracking-[-0.04em]">
-                      {text(config, 'timerValue', d.timerValue)}
-                    </b>
-                    <span data-editable="timerLabel" className="text-[13px] opacity-80">
-                      {text(config, 'timerLabel', d.timerLabel)}
-                    </span>
-                  </div>
-
-                  <div className={styles.badge}>
-                    <span>
-                      <b data-editable="badgeValue" className="block text-[27px] font-bold leading-none tracking-[-0.03em]">
-                        {text(config, 'badgeValue', d.badgeValue)}
-                      </b>
-                      <span data-editable="badgeLabel" className="text-[11.5px] font-bold">
-                        {text(config, 'badgeLabel', d.badgeLabel)}
-                      </span>
-                    </span>
-                  </div>
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+            <HeroVisualSlot
+              config={config}
+              className={`${styles.stack} min-h-[320px] overflow-hidden rounded-(--theme-border-radius)`}
+            >
+              <div className={styles.stack} aria-hidden="true">
+                <div className={`${styles.card3d} ${styles.c1}`}>
+                  <span
+                    data-editable="flashLabel"
+                    className="absolute top-4 start-5 text-[14px] font-bold opacity-85"
+                  >
+                    {text(config, 'flashLabel', d.flashLabel)}
+                  </span>
+                  <span
+                    data-editable="flashValue"
+                    className="text-[clamp(90px,14vw,170px)] font-bold leading-none tracking-[-0.06em]"
+                  >
+                    {text(config, 'flashValue', d.flashValue)}
+                  </span>
                 </div>
-              </HeroVisualSlot>
-            </div>
-          )}
+
+                <div className={`${styles.card3d} ${styles.c2}`}>
+                  {drills.map((drill, index) => (
+                    <div
+                      key={drill.question}
+                      className={`flex items-baseline justify-between border-b border-dashed border-(--theme-border-strong) py-2 text-[15px] font-bold last:border-0 ${
+                        index === drills.length - 1 ? 'text-(--theme-accent)' : 'text-(--theme-ink-2)'
+                      }`}
+                    >
+                      <span>{drill.question}</span>
+                      <span>{drill.answer}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className={`${styles.card3d} ${styles.c3} flex flex-col justify-between`}>
+                  <b data-editable="timerValue" className="text-[38px] font-bold tracking-[-0.04em]">
+                    {text(config, 'timerValue', d.timerValue)}
+                  </b>
+                  <span data-editable="timerLabel" className="text-[13px] opacity-80">
+                    {text(config, 'timerLabel', d.timerLabel)}
+                  </span>
+                </div>
+
+                <div className={styles.badge}>
+                  <span>
+                    <b data-editable="badgeValue" className="block text-[27px] font-bold leading-none tracking-[-0.03em]">
+                      {text(config, 'badgeValue', d.badgeValue)}
+                    </b>
+                    <span data-editable="badgeLabel" className="text-[11.5px] font-bold">
+                      {text(config, 'badgeLabel', d.badgeLabel)}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </HeroVisualSlot>
+          </RemovableSlot>
         </div>
       </Container>
     </section>
