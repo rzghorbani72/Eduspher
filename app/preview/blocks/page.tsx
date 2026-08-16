@@ -45,11 +45,29 @@ export default async function PreviewBlocksPage({
     ? preset.blocks.filter((block) => block.id === only)
     : preset.blocks;
   const blocks = heroStyle
-    ? selected.map((block) =>
-        block.type === "hero"
-          ? { ...block, config: { ...block.config, style: heroStyle } }
-          : block,
-      )
+    ? selected.map((block) => {
+        if (block.type !== "hero") return block;
+        const currentStyle =
+          typeof block.config?.style === "string" ? block.config.style : null;
+        // Variant-picker thumbnails force a design. Keep uploaded media only on
+        // the thumbnail that matches the block's real style — otherwise every
+        // card in "طراحی بنر" inherits the selected banner's image.
+        const keepMedia = currentStyle === heroStyle;
+        return {
+          ...block,
+          config: {
+            ...block.config,
+            style: heroStyle,
+            ...(keepMedia
+              ? {}
+              : {
+                  bgImage: undefined,
+                  illustration: undefined,
+                  backgroundImage: undefined,
+                }),
+          },
+        };
+      })
     : selected;
   const themeVars = buildThemeCssVariables(preset.theme ?? null);
 

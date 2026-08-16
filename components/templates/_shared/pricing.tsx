@@ -62,7 +62,7 @@ export function TemplatePricing({
         <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
           <div>
             <Eyebrow className={`mb-3 ${onDeep ? 'text-(--theme-accent)' : ''}`}>
-              {text(config, 'eyebrow', defaults.eyebrow)}
+              <span data-editable="eyebrow">{text(config, 'eyebrow', defaults.eyebrow)}</span>
             </Eyebrow>
             <h2
               data-editable="title"
@@ -134,7 +134,10 @@ export function TemplatePricing({
           ))}
         </div>
 
-        <p className={`mt-6 text-[13.5px] ${onDeep ? 'text-current/55' : 'text-(--theme-muted)'}`}>
+        <p
+          data-editable="note"
+          className={`mt-6 text-[13.5px] ${onDeep ? 'text-current/55' : 'text-(--theme-muted)'}`}
+        >
           {text(config, 'note', defaults.note)}
         </p>
       </Container>

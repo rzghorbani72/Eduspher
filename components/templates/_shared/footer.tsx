@@ -70,7 +70,7 @@ export async function TemplateSiteFooter({ id, config, defaults }: TemplateFoote
         <div className="grid gap-10 pb-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]">
           <div>
             <p className="text-[19px] font-bold">{academyName}</p>
-            <p className="mt-4 max-w-[36ch] text-[14px] leading-[1.85] text-current/62">
+            <p data-editable="about" className="mt-4 max-w-[36ch] text-[14px] leading-[1.85] text-current/62">
               {text(config, 'about', defaults.about)}
             </p>
             {socials.length > 0 ? (
@@ -127,7 +127,7 @@ export async function TemplateSiteFooter({ id, config, defaults }: TemplateFoote
 
         <div className="flex flex-wrap justify-between gap-4 border-t border-current/14 py-6 text-[13px] text-current/55">
           <span>
-            © {year} {academyName}. {text(config, 'legal', defaults.legal)}
+            © {year} {academyName}. <span data-editable="legal">{text(config, 'legal', defaults.legal)}</span>
           </span>
         </div>
       </Container>

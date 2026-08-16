@@ -33,7 +33,7 @@ export function TemplateCta({ id, config, defaults, tone = 'deep', boxed = false
   const body = (
     <div className="grid items-center gap-10 lg:grid-cols-[1.4fr_auto]">
       <div>
-        <span className="text-[13px] font-bold tracking-[0.14em] text-current/70">
+        <span className="text-[13px] font-bold tracking-[0.14em] text-current/70" data-editable="label">
           {text(config, 'label', defaults.label)}
         </span>
         <h2
@@ -51,7 +51,7 @@ export function TemplateCta({ id, config, defaults, tone = 'deep', boxed = false
         <Button tone={tone === 'brand' ? 'deep' : 'primary'} size="lg" editableKey="ctaText">
           {text(config, 'ctaText', defaults.ctaText)}
         </Button>
-        <Button tone="ghost-on-deep" size="lg">
+        <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary">
           {text(config, 'ctaSecondary', defaults.ctaSecondary)}
         </Button>
       </div>

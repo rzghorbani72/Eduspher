@@ -61,3 +61,11 @@ export function flag(
   const value = config?.[key];
   return typeof value === 'boolean' ? value : fallback;
 }
+
+/** Decoration / sub-block visibility — hidden when config flag is explicitly false. */
+export function featureVisible(
+  config: SectionConfig | undefined,
+  flagKey: string
+): boolean {
+  return config?.[flagKey] !== false;
+}

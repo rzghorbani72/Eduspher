@@ -152,6 +152,7 @@ export async function TemplateTopBar({
                 {brandName}
               </b>
               <span
+                data-editable="tagline"
                 className={`block text-[10.5px] tracking-[0.22em] whitespace-nowrap ${
                   spec.tone === "deep"
                     ? "text-current/60"
@@ -186,7 +187,7 @@ export async function TemplateTopBar({
               {isAuthenticated ? accountLabel : defaults.loginText}
             </a>
 
-            <Button tone="primary" size="sm" href="/courses">
+            <Button tone="primary" size="sm" href="/courses" editableKey="ctaText">
               {text(config, "ctaText", defaults.ctaText)}
             </Button>
 

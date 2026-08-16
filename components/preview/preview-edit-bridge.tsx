@@ -10,8 +10,174 @@ const HOVER = "me-hover";
 const SELECTED = "me-selected";
 const EDITING = "me-editing";
 const TOOLBAR_ID = "me-format-toolbar";
+const BLOCK_TOOLBAR_ID = "me-block-toolbar";
+const MEDIA_BTN_CLASS = "me-media-upload-btn";
+const REMOVE_BTN_CLASS = "me-remove-btn";
 
-function buildToolbar(target: HTMLElement): HTMLElement {
+function removeBlockToolbar() {
+  document.getElementById(BLOCK_TOOLBAR_ID)?.remove();
+}
+
+function showBlockToolbar(blockEl: HTMLElement) {
+  removeBlockToolbar();
+  const blockId = blockEl.dataset.blockId;
+  if (!blockId) return;
+
+  const bar = document.createElement("div");
+  bar.id = BLOCK_TOOLBAR_ID;
+  Object.assign(bar.style, {
+    position: "absolute",
+    zIndex: "99998",
+    top: "8px",
+    insetInlineEnd: "8px",
+    display: "flex",
+    gap: "4px",
+    background: "#18181b",
+    border: "1px solid #3f3f46",
+    borderRadius: "8px",
+    padding: "4px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.45)",
+    pointerEvents: "all",
+  });
+
+  const actions = [
+    { action: "move-up", label: "↑" },
+    { action: "move-down", label: "↓" },
+    { action: "hide", label: "◌" },
+    { action: "delete", label: "×" },
+  ];
+
+  for (const { action, label } of actions) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.title = action;
+    btn.textContent = label;
+    Object.assign(btn.style, {
+      padding: "4px 8px",
+      background: "transparent",
+      border: "none",
+      borderRadius: "4px",
+      color: action === "delete" ? "#f87171" : "#e4e4e7",
+      fontSize: "13px",
+      cursor: "pointer",
+      lineHeight: "1",
+    });
+    btn.addEventListener("mousedown", (e) => e.preventDefault());
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      window.parent?.postMessage(
+        { source: "template-editor", type: "block-action", blockId, action },
+        "*",
+      );
+    });
+    bar.appendChild(btn);
+  }
+
+  if (getComputedStyle(blockEl).position === "static") {
+    blockEl.style.position = "relative";
+  }
+  blockEl.appendChild(bar);
+}
+
+function attachMediaUploadButtons(root: ParentNode = document) {
+  root.querySelectorAll<HTMLElement>("[data-media-editable]").forEach((slot) => {
+    if (slot.querySelector(`.${MEDIA_BTN_CLASS}`)) return;
+    const fieldKey = slot.dataset.mediaEditable!;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = MEDIA_BTN_CLASS;
+    btn.title = "Upload";
+    btn.textContent = "↑";
+    Object.assign(btn.style, {
+      position: "absolute",
+      zIndex: "20",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "40px",
+      height: "40px",
+      borderRadius: "9999px",
+      border: "2px solid #fff",
+      background: "rgba(24,24,27,0.82)",
+      color: "#fff",
+      fontSize: "18px",
+      cursor: "pointer",
+      opacity: "0",
+      transition: "opacity 0.15s",
+      pointerEvents: "all",
+    });
+    btn.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const blockEl = slot.closest<HTMLElement>("[data-block-id]");
+      const blockId = blockEl?.dataset.blockId;
+      if (!blockId) return;
+      window.parent?.postMessage(
+        { source: "template-editor", type: "open-media-picker", blockId, fieldKey },
+        "*",
+      );
+    });
+    slot.addEventListener("mouseenter", () => { btn.style.opacity = "1"; });
+    slot.addEventListener("mouseleave", () => { btn.style.opacity = "0"; });
+    if (getComputedStyle(slot).position === "static") slot.style.position = "relative";
+    slot.appendChild(btn);
+  });
+}
+
+function attachRemovableButtons(root: ParentNode = document) {
+  root.querySelectorAll<HTMLElement>("[data-removable]").forEach((el) => {
+    if (el.querySelector(`.${REMOVE_BTN_CLASS}`)) return;
+    const flagKey = el.dataset.removable!;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = REMOVE_BTN_CLASS;
+    btn.title = "Remove";
+    btn.textContent = "×";
+    Object.assign(btn.style, {
+      position: "absolute",
+      zIndex: "21",
+      top: "4px",
+      insetInlineEnd: "4px",
+      width: "22px",
+      height: "22px",
+      borderRadius: "9999px",
+      border: "none",
+      background: "rgba(239,68,68,0.9)",
+      color: "#fff",
+      fontSize: "14px",
+      lineHeight: "1",
+      cursor: "pointer",
+      opacity: "0",
+      transition: "opacity 0.15s",
+      pointerEvents: "all",
+    });
+    btn.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const blockEl = el.closest<HTMLElement>("[data-block-id]");
+      const blockId = blockEl?.dataset.blockId;
+      if (!blockId) return;
+      window.parent?.postMessage(
+        { source: "template-editor", type: "toggle-removable", blockId, fieldKey: flagKey },
+        "*",
+      );
+    });
+    el.addEventListener("mouseenter", () => { btn.style.opacity = "1"; });
+    el.addEventListener("mouseleave", () => { btn.style.opacity = "0"; });
+    if (getComputedStyle(el).position === "static") el.style.position = "relative";
+    el.appendChild(btn);
+  });
+}
+
+function buildToolbar(target: HTMLElement, blockId: string): HTMLElement {
   document.getElementById(TOOLBAR_ID)?.remove();
 
   const bar = document.createElement("div");
@@ -64,9 +230,69 @@ function buildToolbar(target: HTMLElement): HTMLElement {
     bar.appendChild(btn);
   }
 
+  const accentField = target.dataset.accentColorField;
+  if (accentField) {
+    const colorInput = document.createElement("input");
+    colorInput.type = "color";
+    colorInput.title = "accent";
+    const current = target.style.color || getComputedStyle(target).color;
+    if (current) colorInput.value = rgbToHex(current);
+    Object.assign(colorInput.style, {
+      width: "28px",
+      height: "28px",
+      padding: "0",
+      border: "none",
+      background: "transparent",
+      cursor: "pointer",
+    });
+    colorInput.addEventListener("mousedown", (e) => e.preventDefault());
+    colorInput.addEventListener("input", () => {
+      target.style.color = colorInput.value;
+      window.parent?.postMessage(
+        {
+          source: "template-editor",
+          type: "accent-color-update",
+          blockId,
+          fieldKey: accentField,
+          value: colorInput.value,
+        },
+        "*",
+      );
+    });
+    bar.appendChild(colorInput);
+  }
+
+  const clearBtn = document.createElement("button");
+  clearBtn.type = "button";
+  clearBtn.title = "clear";
+  clearBtn.textContent = "⌫";
+  Object.assign(clearBtn.style, {
+    padding: "4px 8px",
+    background: "transparent",
+    border: "none",
+    borderRadius: "4px",
+    color: "#e4e4e7",
+    fontSize: "13px",
+    cursor: "pointer",
+  });
+  clearBtn.addEventListener("mousedown", (e) => e.preventDefault());
+  clearBtn.addEventListener("click", () => {
+    target.innerText = "";
+    target.focus();
+  });
+  bar.appendChild(clearBtn);
+
   placeToolbar(bar, target);
   document.body.appendChild(bar);
   return bar;
+}
+
+function rgbToHex(color: string): string {
+  if (color.startsWith("#")) return color.slice(0, 7);
+  const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!m) return "#3b82f6";
+  const hex = (n: string) => Number(n).toString(16).padStart(2, "0");
+  return `#${hex(m[1])}${hex(m[2])}${hex(m[3])}`;
 }
 
 function placeToolbar(bar: HTMLElement, target: HTMLElement) {
@@ -180,8 +406,9 @@ export function PreviewEditBridge() {
       editableEl.classList.add(EDITING);
       activeEdit = { el: editableEl, blockId, fieldKey, isRich, original };
 
-      if (isRich) {
-        const bar = buildToolbar(editableEl);
+      const accentField = editableEl.dataset.accentColorField;
+      if (isRich || accentField) {
+        const bar = buildToolbar(editableEl, blockId);
         editableEl.addEventListener("keyup", () => placeToolbar(bar, editableEl));
       }
 
@@ -209,6 +436,10 @@ export function PreviewEditBridge() {
     // clicking into any contenteditable in a real editor (Medium, Notion, etc.).
     const onMouseDown = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+
+      if (target.closest?.(`#${BLOCK_TOOLBAR_ID}`)) return;
+      if (target.closest?.(`.${MEDIA_BTN_CLASS}`)) return;
+      if (target.closest?.(`.${REMOVE_BTN_CLASS}`)) return;
 
       // Toolbar buttons prevent blur themselves via their own mousedown handler
       if (target.closest?.(`#${TOOLBAR_ID}`)) return;
@@ -252,6 +483,7 @@ export function PreviewEditBridge() {
       const target = e.target as HTMLElement;
 
       if (target.closest?.(`#${TOOLBAR_ID}`)) return;
+      if (target.closest?.(`#${BLOCK_TOOLBAR_ID}`)) return;
 
       // Inside the active editable: only block link navigation
       if (activeEdit && activeEdit.el.contains(target)) {
@@ -280,6 +512,7 @@ export function PreviewEditBridge() {
       if (isInsideDynamic(target, blockEl)) {
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
         blockEl.classList.add(SELECTED);
+        showBlockToolbar(blockEl);
         window.parent?.postMessage(
           { source: "template-editor", type: "select", blockId }, "*",
         );
@@ -291,6 +524,7 @@ export function PreviewEditBridge() {
       document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
       blockEl.classList.remove(HOVER);
       blockEl.classList.add(SELECTED);
+      showBlockToolbar(blockEl);
       window.parent?.postMessage(
         { source: "template-editor", type: "select", blockId }, "*",
       );
@@ -363,9 +597,11 @@ export function PreviewEditBridge() {
 
         if (activeEdit) commitEdit();
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
+        removeBlockToolbar();
         if (data.blockId) {
           const el = document.querySelector<HTMLElement>(`[data-block-id="${data.blockId}"]`);
           el?.classList.add(SELECTED);
+          if (el) showBlockToolbar(el);
           // Only jump when the user picked a different section. Re-painting the
           // ring after a save-triggered reload must leave scroll where it was.
           if (data.scroll) el?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -404,6 +640,9 @@ export function PreviewEditBridge() {
 
     // ── Register ──────────────────────────────────────────────────────────────
 
+    attachMediaUploadButtons();
+    attachRemovableButtons();
+
     document.addEventListener("mouseover",  onOver);
     document.addEventListener("mousedown",  onMouseDown, true);  // capture
     document.addEventListener("click",      onClick,     true);  // capture
@@ -422,6 +661,7 @@ export function PreviewEditBridge() {
       document.removeEventListener("keydown",    onKeyDown);
       window.removeEventListener("message",      onMessage);
       document.getElementById(TOOLBAR_ID)?.remove();
+      removeBlockToolbar();
       liveToast?.remove();
     };
   }, []);
@@ -450,6 +690,13 @@ export function PreviewEditBridge() {
         caret-color: #3b82f6;
         min-width: 4px;
       }
+
+      /* Media upload overlay target */
+      [data-media-editable] { position: relative; }
+      [data-media-editable]:hover { outline: 2px dashed rgba(59,130,246,0.55); outline-offset: 2px; }
+
+      /* Removable decoration */
+      [data-removable]:hover { outline: 1px dashed rgba(239,68,68,0.45); outline-offset: 2px; }
 
       /* Live / dynamic content */
       [data-dynamic] * { cursor: default !important; }
