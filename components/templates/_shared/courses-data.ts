@@ -94,7 +94,9 @@ function toTemplateCourse(
     id: course.id,
     title: course.title,
     href: buildAcademyPath(storeSlug, `/courses/${course.id}`),
-    priceLabel: course.is_free ? 'رایگان' : formatCurrencyWithAcademy(course.price, currencyStore),
+    priceLabel: course.is_free
+      ? 'رایگان'
+      : toPersianDigits(formatCurrencyWithAcademy(course.price, currencyStore), 'fa'),
     isFree: course.is_free,
     teacherName,
     teacherInitials: initialsOf(teacherName),
