@@ -673,6 +673,13 @@ export async function proxy(request: NextRequest) {
     cleanedUrl.search = requestUrl.search;
     cleanedUrl.searchParams.delete("academy");
     const academyRedirect = NextResponse.redirect(cleanedUrl);
+    // The redirect is a NEW response, so the academy cookies written above are
+    // not on it. Without this the visitor lands on the clean URL with no
+    // academy resolved, which is what made "?academy=<slug>" links open the
+    // default academy instead of the one they named.
+    for (const cookie of response.cookies.getAll()) {
+      academyRedirect.cookies.set(cookie);
+    }
     if (applyPreviewEmbed) {
       applyPreviewEmbedResponse(
         academyRedirect,
