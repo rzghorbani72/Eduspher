@@ -1723,6 +1723,9 @@ select[class*="rounded-sm"] {
 
 /* Rendered Markdown descriptions (course, season, lesson). Kept small and
    local so no typography plugin is needed. */
+.prose-description > * {
+  unicode-bidi: plaintext;
+}
 .prose-description > *:first-child {
   margin-top: 0;
 }
