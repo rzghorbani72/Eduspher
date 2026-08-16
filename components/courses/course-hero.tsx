@@ -116,14 +116,18 @@ export function CourseHero({
             </div>
           )}
 
-          {course.students_count ? (
+          {course.students_count != null && course.students_count > 0 ? (
             <div className="cd-hero-stat-dim flex items-center gap-1.5 text-sm">
               <span className="cd-price">
                 {toPersianDigits(course.students_count.toLocaleString("en-US"), language)}
               </span>
               <span>{translate("courses.students")}</span>
             </div>
-          ) : null}
+          ) : (
+            <div className="cd-hero-stat-dim text-sm">
+              {translate("courses.beFirstStudent")}
+            </div>
+          )}
 
           {stats.lessonCount > 0 && (
             <div className="cd-hero-stat-dim flex items-center gap-1.5 text-sm">

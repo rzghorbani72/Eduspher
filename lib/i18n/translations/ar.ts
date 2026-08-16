@@ -85,6 +85,7 @@ export const ar = {
     price: 'السعر',
     originalPrice: 'السعر الأصلي',
     students: 'الطلاب',
+    beFirstStudent: 'كن أول المنضمين',
     lessons: 'الدروس',
     duration: 'المدة',
     difficulty: 'الصعوبة',

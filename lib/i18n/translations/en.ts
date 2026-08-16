@@ -97,6 +97,7 @@ export const en = {
     price: "Price",
     originalPrice: "Original Price",
     students: "Students",
+    beFirstStudent: "Be the first to join",
     lessons: "Lessons",
     duration: "Duration",
     difficulty: "Difficulty",

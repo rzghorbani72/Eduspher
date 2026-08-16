@@ -86,6 +86,7 @@ export const tr = {
     price: "Fiyat",
     originalPrice: "Orijinal Fiyat",
     students: "Öğrenciler",
+    beFirstStudent: "İlk katılan sen ol",
     lessons: "Dersler",
     duration: "Süre",
     difficulty: "Zorluk",

@@ -96,6 +96,7 @@ export const fa = {
     price: "قیمت",
     originalPrice: "قیمت اصلی",
     students: "دانشجویان",
+    beFirstStudent: "اولین نفر باش",
     lessons: "درس‌ها",
     duration: "مدت زمان",
     difficulty: "سطح",

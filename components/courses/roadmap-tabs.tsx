@@ -5,7 +5,8 @@ import Link from "@/components/ui/link";
 import { BookOpen, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { useStorePath } from "@/components/providers/store-provider";
-import { formatCurrencyWithAcademy } from "@/lib/utils";
+import { formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
+import { formatMinutes } from "@/components/courses/curriculum/format";
 
 interface RoadmapCourse {
   id: string;
@@ -144,15 +145,14 @@ export function RoadmapTabs({ roadmaps, articles, store, language }: RoadmapTabs
                             {course.lessons_count && course.lessons_count > 0 && (
                               <span className="flex items-center gap-1">
                                 <BookOpen size={12} />
-                                {course.lessons_count} {t("courses.lessons") || "درس"}
+                                {toPersianDigits(course.lessons_count, language)}{" "}
+                                {t("courses.lessons") || "درس"}
                               </span>
                             )}
                             {course.duration && course.duration > 0 && (
                               <span className="flex items-center gap-1">
                                 <Clock size={12} />
-                                {course.duration >= 60
-                                  ? `${Math.floor(course.duration / 60)} ${t("courses.hours") || "ساعت"}`
-                                  : `${course.duration} ${t("courses.minutes") || "دقیقه"}`}
+                                {formatMinutes(course.duration, language, t)}
                               </span>
                             )}
                           </div>

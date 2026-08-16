@@ -82,6 +82,18 @@ export async function loadTemplateCourses(
   return storeContext?.sampleData ? withSampleCourses(live) : live;
 }
 
+function formatDurationLabel(minutes: number | null): string | null {
+  if (minutes == null || minutes <= 0) return null;
+  if (minutes < 60) {
+    return `${toPersianDigits(String(minutes), 'fa')} دقیقه`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const hoursLabel = `${toPersianDigits(String(hours), 'fa')} ساعت`;
+  if (rest === 0) return hoursLabel;
+  return `${hoursLabel} ${toPersianDigits(String(rest), 'fa')} دقیقه`;
+}
+
 function toTemplateCourse(
   course: CourseSummary,
   storeSlug: string | null,
@@ -104,9 +116,7 @@ function toTemplateCourse(
     lessonsLabel: course.lessons_count
       ? `${toPersianDigits(String(course.lessons_count), 'fa')} جلسه`
       : null,
-    durationLabel: minutes
-      ? `${toPersianDigits(String(Math.round(minutes / 60)), 'fa')} ساعت`
-      : null,
+    durationLabel: formatDurationLabel(minutes),
     ratingLabel: course.rating ? toPersianDigits(course.rating.toFixed(1), 'fa') : null,
     coverUrl: course.Image?.publicUrl ?? null,
   };

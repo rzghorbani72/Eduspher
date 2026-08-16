@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "@/components/ui/link";
-import { Star, BookOpen, Clock } from "lucide-react";
+import { BookOpen, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";
 import { buildAcademyPath, formatCurrencyWithAcademy, hashToIndex, resolveAssetUrl, toPersianDigits } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { formatMinutes } from "@/components/courses/curriculum/format";
 
 interface CourseCardProps {
   course: CourseSummary;
@@ -41,15 +42,14 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
 
   const num = (value: number, opts?: Intl.NumberFormatOptions) =>
     toPersianDigits(value.toLocaleString("en-US", opts), language);
-  const durationLabel =
-    course.duration && course.duration >= 60
-      ? toPersianDigits(`${Math.floor(course.duration / 60)}h ${course.duration % 60}m`, language)
-      : course.duration
-        ? toPersianDigits(`${course.duration}m`, language)
-        : null;
+  const durationLabel = formatMinutes(course.duration, language, t) || null;
   const priceLabel = course.is_free
     ? t("courses.free")
     : toPersianDigits(formatCurrencyWithAcademy(course.price || 0, store, undefined, language), language);
+  const studentsLabel =
+    course.students_count && course.students_count > 0
+      ? `${num(course.students_count)} ${t("courses.students")}`
+      : t("courses.beFirstStudent");
 
   const chips = [
     course.is_free ? { label: t("courses.free"), color: FREE_GREEN } : null,
@@ -138,19 +138,7 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
         </div>
 
         <div className="flex items-center justify-between gap-2.5 border-t border-(--cc-bd-2) pt-[13px]">
-          <div className="flex items-center gap-2.5">
-            {course.rating ? (
-              <span className="inline-flex items-center gap-1 text-sm font-extrabold text-(--cc-ink)">
-                <Star className="h-3.5 w-3.5 fill-[#f5a623] text-[#f5a623]" />
-                {num(course.rating, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-              </span>
-            ) : null}
-            {course.students_count ? (
-              <span className="text-xs font-semibold text-(--cc-ink-3)">
-                {num(course.students_count)} {t("courses.students")}
-              </span>
-            ) : null}
-          </div>
+          <span className="text-xs font-semibold text-(--cc-ink-3)">{studentsLabel}</span>
           <span
             className="whitespace-nowrap text-[15px] font-black"
             style={{ color: course.is_free ? FREE_GREEN : "var(--cc-brand)" }}
