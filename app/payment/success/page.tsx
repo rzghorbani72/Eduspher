@@ -207,19 +207,6 @@ export default function PaymentSuccessPage() {
                 </div>
               )}
 
-              {/* Payment ID */}
-              {paymentDetails.id && (
-                <div className="flex justify-between items-center py-3 border-b border-theme">
-                  <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                    <Hash className="h-4 w-4" />
-                    {t("payment.paymentId")}
-                  </span>
-                  <span className="font-mono text-sm text-slate-900 dark:text-white">
-                    #{paymentDetails.id}
-                  </span>
-                </div>
-              )}
-
               {/* Transaction ID */}
               {(latestResponse?.transaction_id || paymentDetails?.transaction_id || transactionId) && (
                 <div className="flex justify-between items-center py-3 border-b border-theme">
