@@ -54,7 +54,7 @@ export function TemplateTracks({
           {items.map((item) => (
             <article
               key={item.title}
-              className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7"
+              className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7 shadow-(--theme-shadow)"
             >
               <span className="text-[38px] font-bold leading-none tracking-[-0.05em] text-(--theme-primary) tabular-nums">
                 {item.index}

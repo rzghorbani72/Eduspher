@@ -61,7 +61,7 @@ export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: Te
           subtitle={text(config, 'subtitle', defaults.subtitle)}
         />
 
-        <div className="overflow-x-auto rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface)">
+        <div className="overflow-x-auto rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow)">
           <table className="w-full min-w-[720px] border-collapse text-[15px]">
             <thead>
               <tr>

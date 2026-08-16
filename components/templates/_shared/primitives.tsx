@@ -63,7 +63,7 @@ export function Pill({ children, className = '' }: { children: ReactNode; classN
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
   return (
     <div
-      className={`flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-border-strong) ${className}`}
+      className={`flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-border-strong) ${className}`}
     >
       {children}
     </div>

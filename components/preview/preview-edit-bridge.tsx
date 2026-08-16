@@ -321,6 +321,17 @@ export function PreviewEditBridge() {
       };
       if (!data || data.source !== "template-admin") return;
 
+      // This edit cannot be expressed against the current DOM (a field the
+      // section does not mark editable, a section the server filtered out, a
+      // layout prop rendered server-side). Ask for a rebuild rather than
+      // silently dropping the change — the same fallback HMR makes.
+      const requestReload = () => {
+        window.parent?.postMessage(
+          { source: "template-editor", type: "needs-reload" },
+          "*",
+        );
+      };
+
       // Style change — repaint the CSS variables in place, no navigation.
       if (data.type === "sync-theme" && data.theme) {
         applyLiveTheme(data.theme, data.direction);
@@ -330,16 +341,20 @@ export function PreviewEditBridge() {
       // the nodes instead of asking the server to render the same HTML again.
       if (data.type === "sync-order" && data.order) {
         const canvas = document.querySelector<HTMLElement>("[data-theme-canvas]");
-        if (canvas) {
-          const present = new Set(data.order);
-          for (const el of canvas.querySelectorAll<HTMLElement>("[data-block-id]")) {
-            if (!present.has(el.dataset.blockId ?? "")) el.remove();
-          }
-          for (const blockId of data.order) {
-            const el = canvas.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
-            if (el) canvas.appendChild(el);
-          }
+        if (!canvas) return;
+        const present = new Set(data.order);
+        for (const el of canvas.querySelectorAll<HTMLElement>("[data-block-id]")) {
+          if (!present.has(el.dataset.blockId ?? "")) el.remove();
         }
+        let missing = false;
+        for (const blockId of data.order) {
+          const el = canvas.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
+          // A hidden section is filtered out server-side, so it is absent here
+          // and cannot be re-ordered into place without a rebuild.
+          if (el) canvas.appendChild(el);
+          else missing = true;
+        }
+        if (missing) requestReload();
       }
 
       if (data.type === "highlight") {
@@ -359,7 +374,10 @@ export function PreviewEditBridge() {
 
       if (data.type === "toggle-visible" && data.blockId) {
         const el = document.querySelector<HTMLElement>(`[data-block-id="${data.blockId}"]`);
+        // Re-showing a section the server already filtered out needs a rebuild:
+        // its markup was never sent, so there is no node to un-hide.
         if (el) el.style.display = data.visible ? "" : "none";
+        else requestReload();
       }
 
       // Sidebar-driven field sync (keeps preview text in sync with any sidebar controls)
@@ -367,7 +385,11 @@ export function PreviewEditBridge() {
         const el = document.querySelector<HTMLElement>(
           `[data-block-id="${data.blockId}"] [data-editable="${data.fieldKey}"]`,
         );
-        if (el && el !== activeEdit?.el) {
+        if (!el) {
+          // Not a marked-up text node: a toggle, an alignment, a column count,
+          // an image — all rendered server-side. Only a rebuild can show it.
+          requestReload();
+        } else if (el !== activeEdit?.el) {
           if (el.dataset.editableKind === "rich") el.innerHTML = data.value ?? "";
           else                                    el.innerText  = data.value ?? "";
         }

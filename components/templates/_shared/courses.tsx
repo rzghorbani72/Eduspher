@@ -101,7 +101,7 @@ function TemplateCourseCard({
   footer: 'rating' | 'action';
 }) {
   return (
-    <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
+    <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
       <a href={course.href} className="block">
         <div className={thumbClassName}>
           {isSampleRecord(course.id) ? (
