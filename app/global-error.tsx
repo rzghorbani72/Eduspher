@@ -12,7 +12,13 @@ export default function GlobalError({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap');
+          @font-face {
+            font-family: 'Vazirmatn';
+            src: url('/fonts/vazirmatn.woff2') format('woff2-variations');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+          }
           *{box-sizing:border-box;margin:0;padding:0}
           body{
             font-family:'Vazirmatn',system-ui,sans-serif;

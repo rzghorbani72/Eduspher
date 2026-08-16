@@ -2,7 +2,16 @@
    so switching font_family renders instantly and consistently on the public
    site. Stacks live in Backend theme-css.util.ts / edusphere theme-apply.ts.
    Must precede @import "tailwindcss" so PostCSS doesn't emit rules before it. */
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&family=Markazi+Text:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;500;700&family=Lalezar&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
+/* Self-hosted (no external CDN): font files live in public/fonts. */
+@import "./styles/gfonts.css";
+
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/vazirmatn.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 @import "tailwindcss";
 
 /* ── Platform landing design tokens (Figma "Landing" frame) ───────────────────

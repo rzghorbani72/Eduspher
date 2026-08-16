@@ -174,6 +174,7 @@ const shouldBypass = (req: NextRequest) => {
     pathname.startsWith("/api/") ||
     isBackendProxyPath(pathname) ||
     pathname.startsWith("/images/") ||
+    pathname.startsWith("/fonts/") ||
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/robots.txt") ||
     pathname.startsWith("/sitemap") ||
@@ -182,7 +183,9 @@ const shouldBypass = (req: NextRequest) => {
     pathname.endsWith(".ico") ||
     pathname.endsWith(".png") ||
     pathname.endsWith(".jpg") ||
-    pathname.endsWith(".svg")
+    pathname.endsWith(".svg") ||
+    pathname.endsWith(".woff") ||
+    pathname.endsWith(".woff2")
   );
 };
 
