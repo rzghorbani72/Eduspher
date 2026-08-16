@@ -39,7 +39,8 @@ export interface LiveSessionSummary {
   notes?: string | null;
 }
 
-export type LessonType = "VIDEO" | "AUDIO" | "TEXT" | "QUIZ" | "ASSIGNMENT" | "LIVE";
+export type LessonType =
+  "VIDEO" | "AUDIO" | "TEXT" | "QUIZ" | "ASSIGNMENT" | "LIVE";
 
 export interface LessonQuizSummary {
   id: string;
@@ -91,8 +92,10 @@ export interface SeasonSummary {
   Lesson?: LessonSummary[];
 }
 
-export type CourseDifficulty = "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
-export type CoursePricingType = "FREE" | "ONE_TIME" | "PAYMENT_PLAN" | "SUBSCRIPTION";
+export type CourseDifficulty =
+  "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
+export type CoursePricingType =
+  "FREE" | "ONE_TIME" | "PAYMENT_PLAN" | "SUBSCRIPTION";
 
 export interface CourseSummary {
   id: string;
@@ -197,7 +200,7 @@ export interface StoreSummary {
   currency?: string;
   currency_symbol?: string;
   currency_position?: "before" | "after";
-  primary_verification_method?: 'phone' | 'email';
+  primary_verification_method?: "phone" | "email";
   domain?: {
     public_address?: string | null;
     private_address?: string | null;
@@ -205,6 +208,8 @@ export interface StoreSummary {
   images?: { id: number; filename: string }[];
   profiles?: { id: number; role: { name: string } }[];
   cover?: MediaAsset | null;
+  logo?: MediaAsset | null;
+  favicon?: MediaAsset | null;
 }
 
 export interface StoreDetail extends StoreSummary {
@@ -323,4 +328,3 @@ export interface EnrollmentSummary {
   course?: CourseSummary | null;
   progress?: ProgressSummary[];
 }
-

@@ -1,8 +1,14 @@
-import Link from '@/components/ui/link';
-import { getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
-import { Container } from './section';
-import { Button } from './primitives';
-import { list, text, type SectionConfig } from './types';
+import Link from "@/components/ui/link";
+import {
+  getAcademyBySlug,
+  getCurrentAcademy,
+  getCurrentUser,
+} from "@/lib/api/server";
+import { getAcademyContext } from "@/lib/store-context";
+import { resolveAssetUrl } from "@/lib/utils";
+import { Container } from "./section";
+import { Button } from "./primitives";
+import { list, text, type SectionConfig } from "./types";
 
 export interface HeaderNavItem {
   label: string;
@@ -24,10 +30,10 @@ export interface HeaderDefaults {
  * identical across templates so it lives in one place.
  */
 export interface HeaderSpec {
-  tone: 'page' | 'surface' | 'deep';
+  tone: "page" | "surface" | "deep";
   /** Bar height in px, matching the source design. */
   height: number;
-  navStyle: 'plain' | 'underline' | 'border' | 'pill';
+  navStyle: "plain" | "underline" | "border" | "pill";
   /** Per-template CSS-module class drawing the logo mark. Omitted = no mark. */
   markClassName?: string;
   /** Setigh draws a short accent rule along the bottom edge. */
@@ -48,18 +54,18 @@ interface TemplateHeaderProps {
 }
 
 const TONE_CLASS = {
-  page: 'bg-(--theme-background) text-(--theme-foreground)',
-  surface: 'bg-(--theme-surface) text-(--theme-foreground)',
-  deep: 'bg-(--theme-deep) text-(--theme-on-deep)',
+  page: "bg-(--theme-background) text-(--theme-foreground)",
+  surface: "bg-(--theme-surface) text-(--theme-foreground)",
+  deep: "bg-(--theme-deep) text-(--theme-on-deep)",
 } as const;
 
 const NAV_LINK_CLASS = {
-  plain: 'px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100',
+  plain: "px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
   underline:
-    'border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)',
+    "border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
   border:
-    'border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)',
-  pill: 'rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)',
+    "border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
+  pill: "rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)",
 } as const;
 
 /**
@@ -71,30 +77,44 @@ const NAV_LINK_CLASS = {
  * right account link — the legacy `SiteHeaderClient` stays untouched for
  * academies on older styles.
  */
-export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHeaderProps) {
-  const [academy, user] = await Promise.all([
+export async function TemplateTopBar({
+  id,
+  config,
+  defaults,
+  spec,
+}: TemplateHeaderProps) {
+  const [currentAcademy, user, storeContext] = await Promise.all([
     getCurrentAcademy().catch(() => null),
     getCurrentUser().catch(() => null),
+    getAcademyContext(),
   ]);
+  // Visitors are anonymous, so /academies/current is empty for them — fall back
+  // to the public record or the header renders unbranded for everyone signed out.
+  const academy =
+    currentAcademy ??
+    (storeContext.slug ? await getAcademyBySlug(storeContext.slug) : null);
 
-  const brandName = text(config, 'brandName', academy?.name ?? 'آکادمی');
-  const tagline = text(config, 'tagline', defaults.tagline);
-  const nav = list<HeaderNavItem>(config, 'nav', defaults.nav);
+  const brandName = text(config, "brandName", academy?.name ?? "آکادمی");
+  // The academy's uploaded logo replaces the template's decorative mark; without
+  // one the template mark stays, so no header ever renders an empty slot.
+  const logoUrl = resolveAssetUrl(academy?.logo?.publicUrl);
+  const tagline = text(config, "tagline", defaults.tagline);
+  const nav = list<HeaderNavItem>(config, "nav", defaults.nav);
   const isAuthenticated = Boolean(user);
   const accountLabel = user?.display_name?.trim() || defaults.accountText;
 
   const borderClass = spec.thickBorder
-    ? 'border-b-2 border-(--theme-border-color)'
-    : spec.tone === 'deep'
-      ? 'border-b border-current/12'
-      : 'border-b border-(--theme-border-color)';
+    ? "border-b-2 border-(--theme-border-color)"
+    : spec.tone === "deep"
+      ? "border-b border-current/12"
+      : "border-b border-(--theme-border-color)";
 
   return (
     <header
-      id={id || 'header'}
+      id={id || "header"}
       className={`sticky top-0 z-50 ${
         spec.translucent
-          ? 'bg-(--theme-background)/88 text-(--theme-foreground) backdrop-blur-md'
+          ? "bg-(--theme-background)/88 text-(--theme-foreground) backdrop-blur-md"
           : TONE_CLASS[spec.tone]
       } ${borderClass}`}
     >
@@ -106,26 +126,47 @@ export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHea
       ) : null}
 
       <Container>
-        <div className="flex items-center gap-6" style={{ minHeight: `${spec.height}px` }}>
+        <div
+          className="flex items-center gap-6"
+          style={{ minHeight: `${spec.height}px` }}
+        >
           <Link href="/" className="flex flex-none items-center gap-3">
-            {spec.markClassName ? <span aria-hidden="true" className={spec.markClassName} /> : null}
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logoUrl}
+                alt={brandName}
+                className="h-9 w-auto max-w-[160px] flex-none object-contain"
+              />
+            ) : spec.markClassName ? (
+              <span aria-hidden="true" className={spec.markClassName} />
+            ) : null}
             <span>
               <b className="block text-[19px] font-bold leading-[1.2] tracking-[-0.02em] whitespace-nowrap">
                 {brandName}
               </b>
               <span
                 className={`block text-[10.5px] tracking-[0.22em] whitespace-nowrap ${
-                  spec.tone === 'deep' ? 'text-current/60' : 'text-(--theme-muted)'
-                } ${spec.monoTagline ? 'font-mono' : ''}`}
+                  spec.tone === "deep"
+                    ? "text-current/60"
+                    : "text-(--theme-muted)"
+                } ${spec.monoTagline ? "font-mono" : ""}`}
               >
                 {tagline}
               </span>
             </span>
           </Link>
 
-          <nav aria-label="ناوبری اصلی" className="hidden flex-1 items-center gap-1 lg:flex">
+          <nav
+            aria-label="ناوبری اصلی"
+            className="hidden flex-1 items-center gap-1 lg:flex"
+          >
             {nav.map((item) => (
-              <a key={item.href} href={item.href} className={NAV_LINK_CLASS[spec.navStyle]}>
+              <a
+                key={item.href}
+                href={item.href}
+                className={NAV_LINK_CLASS[spec.navStyle]}
+              >
                 {item.label}
               </a>
             ))}
@@ -133,14 +174,14 @@ export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHea
 
           <div className="ms-auto flex flex-none items-center gap-3">
             <a
-              href={isAuthenticated ? '/account' : '/auth/login'}
+              href={isAuthenticated ? "/account" : "/auth/login"}
               className="hidden text-[14.5px] font-medium opacity-80 hover:opacity-100 sm:inline"
             >
               {isAuthenticated ? accountLabel : defaults.loginText}
             </a>
 
             <Button tone="primary" size="sm" href="/courses">
-              {text(config, 'ctaText', defaults.ctaText)}
+              {text(config, "ctaText", defaults.ctaText)}
             </Button>
 
             {/* CSS-only mobile menu: native disclosure, no JavaScript. */}
@@ -153,9 +194,9 @@ export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHea
               </summary>
               <div
                 className={`absolute end-0 top-[calc(100%+8px)] z-50 w-56 rounded-(--theme-border-radius) border p-2 shadow-(--theme-shadow) ${
-                  spec.tone === 'deep'
-                    ? 'border-current/18 bg-(--theme-deep)'
-                    : 'border-(--theme-border-color) bg-(--theme-surface)'
+                  spec.tone === "deep"
+                    ? "border-current/18 bg-(--theme-deep)"
+                    : "border-(--theme-border-color) bg-(--theme-surface)"
                 }`}
               >
                 {nav.map((item) => (
@@ -168,7 +209,7 @@ export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHea
                   </a>
                 ))}
                 <a
-                  href={isAuthenticated ? '/account' : '/auth/login'}
+                  href={isAuthenticated ? "/account" : "/auth/login"}
                   className="block rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
                 >
                   {isAuthenticated ? accountLabel : defaults.loginText}
@@ -184,28 +225,30 @@ export async function TemplateTopBar({ id, config, defaults, spec }: TemplateHea
 
 /** Nav shared by templates that expose the full section set. */
 export const FULL_NAV: readonly HeaderNavItem[] = [
-  { label: 'خانه', href: '/' },
-  { label: 'دوره‌ها', href: '/courses' },
-  { label: 'دسته‌ها', href: '#categories' },
-  { label: 'مدرسان', href: '#teachers' },
-  { label: 'تعرفه‌ها', href: '#pricing' },
+  { label: "خانه", href: "/" },
+  { label: "دوره‌ها", href: "/courses" },
+  { label: "دسته‌ها", href: "#categories" },
+  { label: "مدرسان", href: "#teachers" },
+  { label: "تعرفه‌ها", href: "#pricing" },
 ];
 
 /** Nav for templates without a category wall. */
 export const COMPACT_NAV: readonly HeaderNavItem[] = [
-  { label: 'خانه', href: '/' },
-  { label: 'دوره‌ها', href: '/courses' },
-  { label: 'مسیر یادگیری', href: '#showcase' },
-  { label: 'مدرسان', href: '#teachers' },
-  { label: 'تعرفه‌ها', href: '#pricing' },
+  { label: "خانه", href: "/" },
+  { label: "دوره‌ها", href: "/courses" },
+  { label: "مسیر یادگیری", href: "#showcase" },
+  { label: "مدرسان", href: "#teachers" },
+  { label: "تعرفه‌ها", href: "#pricing" },
 ];
 
-export function headerDefaults(overrides: Partial<HeaderDefaults> = {}): HeaderDefaults {
+export function headerDefaults(
+  overrides: Partial<HeaderDefaults> = {},
+): HeaderDefaults {
   return {
-    tagline: '',
-    ctaText: 'ثبت‌نام در دوره',
-    loginText: 'ورود',
-    accountText: 'حساب من',
+    tagline: "",
+    ctaText: "ثبت‌نام در دوره",
+    loginText: "ورود",
+    accountText: "حساب من",
     nav: FULL_NAV,
     ...overrides,
   };

@@ -70,7 +70,7 @@ type FetchOptions = RequestInit & {
 const buildUrl = (
   path: string,
   query?: FetchOptions["query"],
-  lang: string = DEFAULT_LANGUAGE
+  lang: string = DEFAULT_LANGUAGE,
 ) => {
   const cleanedPath = path.replace(/^\//, "");
   const baseRoot = getBackendApiBaseUrl(lang);
@@ -87,7 +87,7 @@ const buildUrl = (
 
 const buildHeaders = async (
   includeAuth: boolean,
-  initHeaders?: HeadersInit
+  initHeaders?: HeadersInit,
 ): Promise<HeadersInit> => {
   const headers = new Headers(initHeaders);
   const headerStore = await nextHeaders();
@@ -99,9 +99,13 @@ const buildHeaders = async (
   }
   const cookieStore = await cookies();
   const headerAcademyId =
-    headerStore?.get?.("x-academy-id") ?? headerStore?.get?.("X-Academy-ID") ?? null;
+    headerStore?.get?.("x-academy-id") ??
+    headerStore?.get?.("X-Academy-ID") ??
+    null;
   const headerAcademySlug =
-    headerStore?.get?.("x-academy-slug") ?? headerStore?.get?.("X-Academy-Slug") ?? null;
+    headerStore?.get?.("x-academy-slug") ??
+    headerStore?.get?.("X-Academy-Slug") ??
+    null;
   const cookieAcademyId = cookieStore.get(env.academyIdCookie)?.value;
   const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
   const resolvedAcademySlug =
@@ -109,7 +113,11 @@ const buildHeaders = async (
   const resolvedAcademyId =
     headerAcademyId ??
     cookieAcademyId ??
-    (resolvedAcademySlug ? null : env.defaultAcademyId ? String(env.defaultAcademyId) : null);
+    (resolvedAcademySlug
+      ? null
+      : env.defaultAcademyId
+        ? String(env.defaultAcademyId)
+        : null);
   if (resolvedAcademyId && !headers.has("X-Academy-ID")) {
     headers.set("X-Academy-ID", resolvedAcademyId);
   }
@@ -120,8 +128,11 @@ const buildHeaders = async (
     headerStore?.get?.("x-forwarded-proto") ??
     (process.env.NODE_ENV === "development" ? "http" : "https");
   const forwardedHost =
-    headerStore?.get?.("x-forwarded-host") ?? headerStore?.get?.("host") ?? null;
-  const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? null;
+    headerStore?.get?.("x-forwarded-host") ??
+    headerStore?.get?.("host") ??
+    null;
+  const publicAppUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? null;
   const isInternalHost = (host: string) => {
     const hostname = host.split(":")[0];
     return (
@@ -150,11 +161,10 @@ const buildHeaders = async (
 
 const baseFetch = async (
   path: string,
-  { query, includeAuth = true, ...init }: FetchOptions = {}
+  { query, includeAuth = true, ...init }: FetchOptions = {},
 ) => {
   const cookieStore = await cookies();
-  const lang =
-    cookieStore.get("preferred_language")?.value ?? DEFAULT_LANGUAGE;
+  const lang = cookieStore.get("preferred_language")?.value ?? DEFAULT_LANGUAGE;
   const url = buildUrl(path, query, lang);
   const headers = await buildHeaders(includeAuth, init.headers);
 
@@ -171,11 +181,12 @@ const baseFetch = async (
     // Other endpoints (theme, template, courses, etc.) should fail gracefully
     if (response.status === 401) {
       // Check if this is an account/profile-related endpoint
-      const isAccountOrProfileEndpoint = path.includes('/auth/me') || 
-                                         path.includes('/auth/profiles') || 
-                                         path.includes('/enrollments') ||
-                                         path.includes('/account');
-      
+      const isAccountOrProfileEndpoint =
+        path.includes("/auth/me") ||
+        path.includes("/auth/profiles") ||
+        path.includes("/enrollments") ||
+        path.includes("/account");
+
       if (isAccountOrProfileEndpoint) {
         // Get store context to build proper login path
         const cookieStore = await cookies();
@@ -184,16 +195,25 @@ const baseFetch = async (
         const headerAcademySlug = headerStore?.get?.("x-academy-slug") ?? null;
         const isSubdomain = headerStore?.get?.("x-academy-subdomain") === "1";
         const storeSlug =
-          headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
+          headerAcademySlug ??
+          cookieAcademySlug ??
+          env.defaultAcademySlug ??
+          null;
 
         // In subdomain mode the slug is already in the hostname — paths must be bare
-        const loginPath = !isSubdomain && storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
-        
-        throw new UnauthorizedError(`Unauthorized (401): ${response.statusText}`, loginPath);
+        const loginPath =
+          !isSubdomain && storeSlug
+            ? `/${storeSlug}/auth/login`
+            : "/auth/login";
+
+        throw new UnauthorizedError(
+          `Unauthorized (401): ${response.statusText}`,
+          loginPath,
+        );
       }
       // For non-account/profile endpoints, just throw a regular error (no redirect)
     }
-    
+
     // Try to extract error message from response body
     let errorMessage = `${response.status} ${response.statusText}`;
     let errorCode: string | null = null;
@@ -206,12 +226,18 @@ const baseFetch = async (
             if ("code" in errorData && typeof errorData.code === "string") {
               errorCode = errorData.code;
             }
-            if ("message" in errorData && typeof errorData.message === "string") {
+            if (
+              "message" in errorData &&
+              typeof errorData.message === "string"
+            ) {
               errorMessage = errorData.message;
             } else if ("error" in errorData) {
               if (typeof errorData.error === "string") {
                 errorMessage = errorData.error;
-              } else if (typeof errorData.error === "object" && errorData.error !== null) {
+              } else if (
+                typeof errorData.error === "object" &&
+                errorData.error !== null
+              ) {
                 const errorObj = errorData.error as { message?: string };
                 if (errorObj.message) {
                   errorMessage = errorObj.message;
@@ -240,7 +266,7 @@ const baseFetch = async (
 
 export async function serverFetch<T>(
   path: string,
-  config?: FetchOptions
+  config?: FetchOptions,
 ): Promise<ApiEnvelope<T>> {
   const response = await baseFetch(path, config);
   return response.json();
@@ -248,7 +274,7 @@ export async function serverFetch<T>(
 
 export const serverFetchRaw = async <T>(
   path: string,
-  config?: FetchOptions
+  config?: FetchOptions,
 ): Promise<T> => {
   const response = await baseFetch(path, config);
   return response.json() as Promise<T>;
@@ -324,9 +350,12 @@ export async function getCourseById(id: string | number) {
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      const fallback = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
-        includeAuth: false,
-      }).catch(() => null);
+      const fallback = await serverFetch<CourseSummary>(
+        `/courses/public/${id}`,
+        {
+          includeAuth: false,
+        },
+      ).catch(() => null);
       return fallback?.data ?? null;
     }
     throw error;
@@ -375,10 +404,10 @@ export async function getCurrentAcademy() {
 export const getPublicAcademies = cache(
   async (): Promise<StoreSummary[] | null> => {
     try {
-      const result = await serverFetchRaw<{ status: string; data: StoreSummary[] }>(
-        "/academies/public",
-        { includeAuth: false },
-      );
+      const result = await serverFetchRaw<{
+        status: string;
+        data: StoreSummary[];
+      }>("/academies/public", { includeAuth: false });
       return result.data ?? null;
     } catch {
       return null;
@@ -386,10 +415,26 @@ export const getPublicAcademies = cache(
   },
 );
 
-export async function getAcademyBySlug(slug: string): Promise<StoreSummary | null> {
-  const academies = await getPublicAcademies();
-  return academies?.find((s) => s.slug === slug) ?? null;
-}
+/**
+ * Public branding/identity for one academy. Asks the directory for this slug
+ * only — the unfiltered list is capped, so scanning it would silently miss any
+ * academy past the cap.
+ */
+export const getAcademyBySlug = cache(
+  async (slug: string): Promise<StoreSummary | null> => {
+    try {
+      const result = await serverFetchRaw<{
+        status: string;
+        data: StoreSummary[];
+      }>(`/academies/public?slug=${encodeURIComponent(slug)}`, {
+        includeAuth: false,
+      });
+      return result.data?.[0] ?? null;
+    } catch {
+      return null;
+    }
+  },
+);
 
 export type AcademyEnrollmentStatus = {
   /** True while the academy is closed to NEW enrollments. */
@@ -406,7 +451,7 @@ export type AcademyEnrollmentStatus = {
  * buttons are refused — students who already paid keep their access.
  */
 export async function getAcademyEnrollmentStatus(
-  slug: string
+  slug: string,
 ): Promise<AcademyEnrollmentStatus | null> {
   if (!slug) return null;
   try {
@@ -471,7 +516,7 @@ export async function getPublicPricingConfig() {
         subtitle: string;
         cta_label: string;
       };
-    }>('/academies/public/pricing-config', {
+    }>("/academies/public/pricing-config", {
       includeAuth: false,
     });
 
@@ -509,9 +554,12 @@ export type PublicPlan = {
 
 export async function getPublicPlans(): Promise<PublicPlan[]> {
   try {
-    return await serverFetchRaw<PublicPlan[]>("/platform-settings/plans/active", {
-      includeAuth: false,
-    });
+    return await serverFetchRaw<PublicPlan[]>(
+      "/platform-settings/plans/active",
+      {
+        includeAuth: false,
+      },
+    );
   } catch {
     return [];
   }
@@ -519,10 +567,13 @@ export async function getPublicPlans(): Promise<PublicPlan[]> {
 
 export async function getUserProfiles() {
   try {
-    const result = await serverFetchRaw<UserProfilesResponse>("/auth/profiles", {
-      method: "POST",
-      body: JSON.stringify({}),
-    });
+    const result = await serverFetchRaw<UserProfilesResponse>(
+      "/auth/profiles",
+      {
+        method: "POST",
+        body: JSON.stringify({}),
+      },
+    );
 
     return result.profiles ?? [];
   } catch (error) {
@@ -681,9 +732,12 @@ export interface PublicBundleOffer {
 }
 
 export async function getAcademyBundlesPublic(): Promise<PublicBundleOffer[]> {
-  const result = await serverFetchRaw<PublicBundleOffer[]>("/offers/public/bundles", {
-    method: "GET",
-  }).catch(() => []);
+  const result = await serverFetchRaw<PublicBundleOffer[]>(
+    "/offers/public/bundles",
+    {
+      method: "GET",
+    },
+  ).catch(() => []);
   return Array.isArray(result) ? result : [];
 }
 
@@ -700,7 +754,9 @@ export interface PublicPaymentPlan {
  * Installments are behind a deployment flag; when it is off the endpoint is
  * unavailable and the storefront simply offers no installment option.
  */
-export async function getCoursePaymentPlans(courseId: string): Promise<PublicPaymentPlan[]> {
+export async function getCoursePaymentPlans(
+  courseId: string,
+): Promise<PublicPaymentPlan[]> {
   const result = await serverFetchRaw<PublicPaymentPlan[]>(
     `/payment-plans/courses/${encodeURIComponent(courseId)}`,
     { method: "GET" },
@@ -719,7 +775,9 @@ export interface PublicTutoringOffer {
   Tutor: { id: string; display_name: string | null } | null;
 }
 
-export async function getTutoringOffersPublic(courseId: string): Promise<PublicTutoringOffer[]> {
+export async function getTutoringOffersPublic(
+  courseId: string,
+): Promise<PublicTutoringOffer[]> {
   const result = await serverFetchRaw<{
     status: string;
     data: PublicTutoringOffer[];
@@ -730,11 +788,7 @@ export async function getTutoringOffersPublic(courseId: string): Promise<PublicT
 }
 
 export type PublicOfferingType =
-  | "FREE"
-  | "ONE_TIME"
-  | "SUBSCRIPTION"
-  | "PRIVATE"
-  | "PAYMENT_PLAN";
+  "FREE" | "ONE_TIME" | "SUBSCRIPTION" | "PRIVATE" | "PAYMENT_PLAN";
 
 export interface PublicCourseOffering {
   id: string;
@@ -759,11 +813,11 @@ type OfferRow = Omit<PublicCourseOffering, "course_id"> & {
  * as its DEFAULT offer. The endpoint returns the array directly (no envelope).
  */
 export async function getCourseOfferingsPublic(
-  courseId: string
+  courseId: string,
 ): Promise<PublicCourseOffering[]> {
   const result = await serverFetchRaw<OfferRow[]>(
     `/offers/course/${encodeURIComponent(courseId)}`,
-    { method: "GET" }
+    { method: "GET" },
   ).catch(() => []);
   if (!Array.isArray(result)) return [];
   // An offer can span several courses (a bundle); flatten it onto the one asked for.
@@ -784,7 +838,8 @@ export async function initiateAcademyPlanPayment(data: {
     headerStore?.get?.("x-forwarded-proto") ??
     (process.env.NODE_ENV === "development" ? "http" : "https");
   const host = headerStore?.get?.("host");
-  const fallbackBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+  const fallbackBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
   const baseUrl = host ? `${proto}://${host}` : fallbackBaseUrl;
 
   const result = await serverFetchRaw<{
@@ -892,10 +947,10 @@ export async function getStoreThemeConfig(
     if (error instanceof UnauthorizedError) {
       return null;
     }
-    if (process.env.NODE_ENV === 'development' && error instanceof Error) {
+    if (process.env.NODE_ENV === "development" && error instanceof Error) {
       const status = (error as Error & { status?: number }).status;
-      if (status !== 404 && !error.message.includes('404')) {
-        console.error('Failed to fetch theme config:', error);
+      if (status !== 404 && !error.message.includes("404")) {
+        console.error("Failed to fetch theme config:", error);
       }
     }
     return null;
@@ -944,7 +999,9 @@ export async function getCurrentUITemplate() {
     // Return the data object with blocks sorted by order
     const templateData = result.data;
     if (templateData.blocks && Array.isArray(templateData.blocks)) {
-      templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
+      templateData.blocks = templateData.blocks.sort(
+        (a, b) => a.order - b.order,
+      );
     }
 
     return templateData;
@@ -996,7 +1053,9 @@ export async function getStoreUITemplate(
     // Return the data object with blocks sorted by order
     const templateData = result.data;
     if (templateData.blocks && Array.isArray(templateData.blocks)) {
-      templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
+      templateData.blocks = templateData.blocks.sort(
+        (a, b) => a.order - b.order,
+      );
     }
 
     return templateData;
@@ -1007,12 +1066,12 @@ export async function getStoreUITemplate(
       const status = (error as Error & { status?: number }).status;
       // Only log non-404 errors to avoid noise
       // 404 means store/template doesn't exist, which is acceptable
-      if (status !== 404 && !error.message.includes('404')) {
+      if (status !== 404 && !error.message.includes("404")) {
         // Log with more context in development
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.error(
             `Failed to fetch UI template for store "${storeSlug}":`,
-            error.message
+            error.message,
           );
         }
       }
@@ -1113,7 +1172,7 @@ export async function createCourseQnA(courseId: number, question: string) {
     status: string;
     data: CourseQnA;
   }>(`/courses/${courseId}/qna`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify({ question }),
   });
   return result.data;
@@ -1175,18 +1234,20 @@ export async function getCart() {
   }
 }
 
-export async function syncCart(items: Array<{
-  item_type: 'COURSE' | 'PRODUCT';
-  course_id?: string;
-  product_id?: string;
-  course_title?: string;
-  product_title?: string;
-  course_price?: number;
-  product_price?: number;
-  course_cover?: string;
-  product_cover?: string;
-  added_at: string;
-}>) {
+export async function syncCart(
+  items: Array<{
+    item_type: "COURSE" | "PRODUCT";
+    course_id?: string;
+    product_id?: string;
+    course_title?: string;
+    product_title?: string;
+    course_price?: number;
+    product_price?: number;
+    course_cover?: string;
+    product_cover?: string;
+    added_at: string;
+  }>,
+) {
   try {
     const result = await serverFetchRaw<{
       message: string;
@@ -1296,4 +1357,3 @@ export async function createBasket(data: {
     throw error;
   }
 }
-
