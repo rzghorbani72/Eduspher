@@ -18,23 +18,32 @@ type BuildMetadataOptions = {
   ctx?: SeoRequestContext;
 };
 
+type AcademyBranding = { name: string | null; iconUrl: string | null };
+
 /**
- * The academy's own favicon, so a visitor's browser tab shows the academy brand
- * instead of the platform default. Null on the platform site and whenever the
- * academy has not uploaded one — Next then falls back to the static icon.
+ * The academy's own name and favicon, so a visitor's tab shows the academy's
+ * brand rather than the platform's. Empty on the platform site, and whenever
+ * the academy is unreachable — callers then fall back to the platform values.
+ *
+ * `getAcademyBySlug` is request-cached, so asking for both costs one fetch.
  */
-async function resolveAcademyIcon(
+async function resolveAcademyBranding(
   ctx: SeoRequestContext,
-): Promise<string | null> {
-  if (ctx.isPlatform) return null;
+): Promise<AcademyBranding> {
+  const none: AcademyBranding = { name: null, iconUrl: null };
+  if (ctx.isPlatform) return none;
   try {
     const { slug } = await getAcademyContext();
-    if (!slug) return null;
+    if (!slug) return none;
     const academy = await getAcademyBySlug(slug);
-    const url = academy?.favicon?.publicUrl;
-    return url ? resolveAssetUrl(url) : null;
+    if (!academy) return none;
+    const url = academy.favicon?.publicUrl;
+    return {
+      name: academy.name?.trim() || null,
+      iconUrl: url ? resolveAssetUrl(url) : null,
+    };
   } catch {
-    return null;
+    return none;
   }
 }
 
@@ -44,14 +53,18 @@ export async function buildSiteMetadata(
   const ctx = options.ctx ?? (await getSeoRequestContext());
   const platformPage = ctx.isPlatform ? getPlatformPageSeo(ctx.pathname) : null;
 
-  const title = options.title ?? platformPage?.title ?? seoDomains.siteName;
+  const { name: academyName, iconUrl } = await resolveAcademyBranding(ctx);
+
+  // On an academy site the brand is the academy the manager named — the
+  // platform name is our internal identity and must never surface there.
+  const brandName = academyName ?? seoDomains.siteName;
+  const title = options.title ?? platformPage?.title ?? brandName;
   const description =
     options.description ??
     platformPage?.description ??
     seoDomains.siteDescription;
 
   const noIndex = shouldNoIndexPath(ctx.pathname);
-  const iconUrl = await resolveAcademyIcon(ctx);
   const openGraphLocale = ctx.region === "ir" ? "fa_IR" : "en_US";
   const alternateLocale = ctx.region === "ir" ? "en_US" : "fa_IR";
 
@@ -59,7 +72,7 @@ export async function buildSiteMetadata(
     metadataBase: new URL(env.appUrl),
     title: {
       default: title,
-      template: `%s | ${seoDomains.siteName}`,
+      template: `%s | ${brandName}`,
     },
     description,
     alternates: {
@@ -75,7 +88,7 @@ export async function buildSiteMetadata(
       description,
       type: "website",
       url: ctx.canonicalUrl,
-      siteName: seoDomains.siteName,
+      siteName: brandName,
       locale: openGraphLocale,
       alternateLocale: [alternateLocale],
     },

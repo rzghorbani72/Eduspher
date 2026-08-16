@@ -19,13 +19,22 @@ import { nextStepFor } from "@/lib/auth-identify";
 import { safeRedirectPath } from "@/lib/auth/redirect-target";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useStorePath } from "@/components/providers/store-provider";
-import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
+import {
+  getDefaultCountry,
+  getCountryByCode,
+  type CountryCode,
+} from "@/lib/country-codes";
+import {
+  getFullPhoneNumber,
+  cleanPhoneNumber,
+  toEnglishDigits,
+} from "@/lib/phone-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { OtpType } from "@/lib/constants";
 
 export type LoginChannel = "email" | "phone";
-export type LoginStep = "identify" | "password" | "otpLogin" | "otpGate" | "passwordReset";
+export type LoginStep =
+  "identify" | "password" | "otpLogin" | "otpGate" | "passwordReset";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -56,7 +65,8 @@ export function useLogin(defaultCountryCode?: string) {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [country, setCountry] = useState<CountryCode>(
-    (defaultCountryCode ? getCountryByCode(defaultCountryCode) : null) ?? getDefaultCountry()
+    (defaultCountryCode ? getCountryByCode(defaultCountryCode) : null) ??
+      getDefaultCountry(),
   );
   const [password, setPassword] = useState("");
   // Shown only after repeated failures — the API demands a token from then on.
@@ -64,7 +74,11 @@ export function useLogin(defaultCountryCode?: string) {
   const [captchaToken, setCaptchaToken] = useState("");
 
   const [otp, setOtp] = useState("");
-  const [otpGate, setOtpGate] = useState<{ tempToken: string; maskedPhone: string; phone: string } | null>(null);
+  const [otpGate, setOtpGate] = useState<{
+    tempToken: string;
+    maskedPhone: string;
+    phone: string;
+  } | null>(null);
   const [otpResending, setOtpResending] = useState(false);
   const otpGateTimer = useOtpTimer();
   const otpLoginTimer = useOtpTimer();
@@ -92,7 +106,9 @@ export function useLogin(defaultCountryCode?: string) {
     const { loadAndMergeCart } = await import("@/app/actions/cart");
     loadAndMergeCart().catch(() => {});
     // The route guard sent us here with the page the visitor actually wanted.
-    router.push(safeRedirectPath(searchParams.get("redirect"), buildPath("/courses")));
+    router.push(
+      safeRedirectPath(searchParams.get("redirect"), buildPath("/courses")),
+    );
     router.refresh();
   }
 
@@ -116,12 +132,19 @@ export function useLogin(defaultCountryCode?: string) {
       try {
         const response =
           channel === "phone"
-            ? ((await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE)) as { otp?: string })
-            : ((await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL)) as { otp?: string });
+            ? ((await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE)) as {
+                otp?: string;
+              })
+            : ((await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL)) as {
+                otp?: string;
+              });
         setOtp("");
         setStep("otpLogin");
         otpLoginTimer.start();
-        showSentCode(response, channel === "phone" ? "auth.otpSentToPhone" : "auth.otpSentToEmail");
+        showSentCode(
+          response,
+          channel === "phone" ? "auth.otpSentToPhone" : "auth.otpSentToEmail",
+        );
       } catch (err) {
         failed(err);
       }
@@ -130,18 +153,26 @@ export function useLogin(defaultCountryCode?: string) {
 
   function submitIdentify() {
     if (!identifier) {
-      setError(channel === "phone" ? t("auth.phoneRequired") : t("auth.emailRequired"));
+      setError(
+        channel === "phone" ? t("auth.phoneRequired") : t("auth.emailRequired"),
+      );
       return;
     }
     clearFeedback();
     setNotRegistered(false);
     startTransition(async () => {
       try {
-        const result = await identifyAccount(identifier, captchaToken || undefined);
+        const result = await identifyAccount(
+          identifier,
+          captchaToken || undefined,
+        );
         setCaptchaRequired(result.captcha_required);
         setCaptchaToken("");
         const next = nextStepFor(result);
-        if (next === "register") {
+        // "member_elsewhere" cannot happen on an academy site (the lookup is
+        // already scoped to this academy), but it means "no account here" all
+        // the same, so it must never fall through to a password box.
+        if (next === "register" || next === "member_elsewhere") {
           setNotRegistered(true);
           return;
         }
@@ -171,7 +202,9 @@ export function useLogin(defaultCountryCode?: string) {
       try {
         const academyId =
           readCookie(env.academyIdCookie) ??
-          (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
+          (env.defaultAcademyId != null
+            ? String(env.defaultAcademyId)
+            : undefined);
 
         const result = await postJson<{
           phone_verification_required?: boolean;
@@ -218,7 +251,10 @@ export function useLogin(defaultCountryCode?: string) {
           const result = await postJson<{
             password_reset_required?: boolean;
             temp_token?: string;
-          }>("/auth/confirm-phone", { temp_token: otpGate?.tempToken ?? "", otp });
+          }>("/auth/confirm-phone", {
+            temp_token: otpGate?.tempToken ?? "",
+            otp,
+          });
           if (result?.password_reset_required) {
             setResetTempToken(result.temp_token ?? "");
             setStep("passwordReset");
@@ -271,7 +307,10 @@ export function useLogin(defaultCountryCode?: string) {
     setOtpResending(true);
     clearFeedback();
     try {
-      const response = (await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION)) as { otp?: string };
+      const response = (await sendPhoneOtp(
+        otpGate.phone,
+        OtpType.REGISTER_PHONE_VERIFICATION,
+      )) as { otp?: string };
       otpGateTimer.start();
       showSentCode(response, "auth.resendOtp");
     } catch (err) {
@@ -335,7 +374,8 @@ export function useLogin(defaultCountryCode?: string) {
     newPassword,
     setNewPassword: (v: string) => setNewPassword(toEnglishDigits(v)),
     confirmNewPassword,
-    setConfirmNewPassword: (v: string) => setConfirmNewPassword(toEnglishDigits(v)),
+    setConfirmNewPassword: (v: string) =>
+      setConfirmNewPassword(toEnglishDigits(v)),
     submitNewPassword,
   };
 }

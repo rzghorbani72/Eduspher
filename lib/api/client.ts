@@ -31,7 +31,7 @@ const getAcademyId = (): string => {
     return String(env.defaultAcademyId);
   }
   throw new Error(
-    "Academy ID is required but not found in cookies or environment variables"
+    "Academy ID is required but not found in cookies or environment variables",
   );
 };
 
@@ -74,7 +74,7 @@ async function ensureCsrfToken(force = false): Promise<string | null> {
 
 const buildHeaders = async (
   additionalHeaders: HeadersInit = {},
-  options?: { mutate?: boolean }
+  options?: { mutate?: boolean },
 ): Promise<HeadersInit> => {
   const headers = new Headers(additionalHeaders);
   headers.set("X-Academy-ID", getAcademyId());
@@ -149,7 +149,7 @@ function redirectToLogin(): void {
     const currentPath = window.location.pathname + window.location.search;
     const storeSlug = getAcademySlug();
     const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
-    if (!currentPath.includes('/login')) {
+    if (!currentPath.includes("/login")) {
       const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
       window.location.href = redirectUrl;
     }
@@ -163,7 +163,7 @@ async function handleResponse<T>(
   response: Response,
   retryFn?: () => Promise<T>,
   skipRefresh?: boolean,
-  retriedCsrf = false
+  retriedCsrf = false,
 ): Promise<T> {
   const contentType = response.headers.get("Content-Type") ?? "";
   const isJson = contentType.includes("application/json");
@@ -187,7 +187,11 @@ async function handleResponse<T>(
             errorMessage = parsed.message;
           } else if ("error" in parsed && typeof parsed.error === "string") {
             errorMessage = parsed.error;
-          } else if ("error" in parsed && typeof parsed.error === "object" && parsed.error !== null) {
+          } else if (
+            "error" in parsed &&
+            typeof parsed.error === "object" &&
+            parsed.error !== null
+          ) {
             const errorObj = parsed.error as { message?: string };
             if (errorObj.message) {
               errorMessage = errorObj.message;
@@ -212,12 +216,12 @@ async function handleResponse<T>(
     if (response.status === 401 && !skipRefresh && retryFn) {
       console.log("[Auth] Access token expired, attempting refresh...");
       const refreshSuccess = await refreshToken();
-      
+
       if (refreshSuccess) {
         // Retry the original request
         return retryFn();
       }
-      
+
       // Refresh failed - redirect to login
       redirectToLogin();
       return null as unknown as T;
@@ -226,13 +230,16 @@ async function handleResponse<T>(
     // Handle 401 without retry (already retried or auth endpoint)
     if (response.status === 401) {
       redirectToLogin();
-        return null as unknown as T;
+      return null as unknown as T;
     }
 
     // A new terms/privacy version 403s every authenticated call. Announce it once
     // so the consent gate can open, instead of letting the whole account area
     // fail with an unexplained error.
-    if (errorCode === LEGAL_CONSENT_REQUIRED_CODE && typeof window !== "undefined") {
+    if (
+      errorCode === LEGAL_CONSENT_REQUIRED_CODE &&
+      typeof window !== "undefined"
+    ) {
       window.dispatchEvent(new CustomEvent(LEGAL_CONSENT_REQUIRED_EVENT));
     }
 
@@ -242,7 +249,10 @@ async function handleResponse<T>(
       return retryFn();
     }
 
-    throw Object.assign(new Error(errorMessage), { code: errorCode, status: response.status });
+    throw Object.assign(new Error(errorMessage), {
+      code: errorCode,
+      status: response.status,
+    });
   }
 
   // Response is successful (2xx), parse and return
@@ -258,18 +268,18 @@ async function handleResponse<T>(
 export const postJson = async <T>(
   path: string,
   body: Record<string, unknown>,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<T> => {
   const makeRequest = async (
     skipRefresh = false,
-    retriedCsrf = false
+    retriedCsrf = false,
   ): Promise<T> => {
     const headers = await buildHeaders(
       {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      { mutate: true }
+      { mutate: true },
     );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
@@ -279,31 +289,33 @@ export const postJson = async <T>(
       body: JSON.stringify(body),
       signal: options?.signal,
     });
-    
+
     // Skip refresh for auth endpoints
-    const isAuthEndpoint = path.includes('/auth/public/login') || 
-                           path.includes('/auth/staff/login') ||
-                           path.includes('/auth/admin/login') ||
-                           path.includes('/auth/register') ||
-                           path.includes('/auth/refresh');
-    
+    const isAuthEndpoint =
+      path.includes("/auth/public/login") ||
+      path.includes("/auth/staff/login") ||
+      path.includes("/auth/admin/login") ||
+      path.includes("/auth/register") ||
+      path.includes("/auth/refresh");
+
     return handleResponse<T>(
-      response, 
-      isAuthEndpoint
-        ? undefined
-        : () => makeRequest(true, true),
+      response,
+      isAuthEndpoint ? undefined : () => makeRequest(true, true),
       skipRefresh || isAuthEndpoint,
-      retriedCsrf
+      retriedCsrf,
     );
   };
-  
+
   return makeRequest(options?.skipRefresh);
 };
 
-export const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
+export const getJson = async <T>(
+  path: string,
+  options?: RequestOptions,
+): Promise<T> => {
   const makeRequest = async (
     skipRefresh = false,
-    retriedCsrf = false
+    retriedCsrf = false,
   ): Promise<T> => {
     const headers = await buildHeaders({
       Accept: "application/json",
@@ -316,31 +328,31 @@ export const getJson = async <T>(path: string, options?: RequestOptions): Promis
       signal: options?.signal,
     });
     return handleResponse<T>(
-      response, 
+      response,
       () => makeRequest(true, true),
       skipRefresh,
-      retriedCsrf
+      retriedCsrf,
     );
   };
-  
+
   return makeRequest(options?.skipRefresh);
 };
 
 const putJson = async <T>(
   path: string,
   body: Record<string, unknown>,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<T> => {
   const makeRequest = async (
     skipRefresh = false,
-    retriedCsrf = false
+    retriedCsrf = false,
   ): Promise<T> => {
     const headers = await buildHeaders(
       {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      { mutate: true }
+      { mutate: true },
     );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
@@ -351,31 +363,31 @@ const putJson = async <T>(
       signal: options?.signal,
     });
     return handleResponse<T>(
-      response, 
+      response,
       () => makeRequest(true, true),
       skipRefresh,
-      retriedCsrf
+      retriedCsrf,
     );
   };
-  
+
   return makeRequest(options?.skipRefresh);
 };
 
 export const patchJson = async <T>(
   path: string,
   body: Record<string, unknown>,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<T> => {
   const makeRequest = async (
     skipRefresh = false,
-    retriedCsrf = false
+    retriedCsrf = false,
   ): Promise<T> => {
     const headers = await buildHeaders(
       {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      { mutate: true }
+      { mutate: true },
     );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
@@ -386,29 +398,29 @@ export const patchJson = async <T>(
       signal: options?.signal,
     });
     return handleResponse<T>(
-      response, 
+      response,
       () => makeRequest(true, true),
       skipRefresh,
-      retriedCsrf
+      retriedCsrf,
     );
   };
-  
+
   return makeRequest(options?.skipRefresh);
 };
 
 const deleteJson = async <T>(
   path: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<T> => {
   const makeRequest = async (
     skipRefresh = false,
-    retriedCsrf = false
+    retriedCsrf = false,
   ): Promise<T> => {
     const headers = await buildHeaders(
       {
         Accept: "application/json",
       },
-      { mutate: true }
+      { mutate: true },
     );
 
     const response = await fetch(`${getBaseUrl()}${path}`, {
@@ -421,7 +433,7 @@ const deleteJson = async <T>(
       response,
       () => makeRequest(true, true),
       skipRefresh,
-      retriedCsrf
+      retriedCsrf,
     );
   };
 
@@ -435,7 +447,10 @@ export type LoginPayload = {
   role?: string;
 };
 
-export const login = async (payload: LoginPayload, options?: RequestOptions) => {
+export const login = async (
+  payload: LoginPayload,
+  options?: RequestOptions,
+) => {
   const cookieId = getCookieValue(env.academyIdCookie);
   const finalAcademyId = cookieId ? Number(cookieId) : env.defaultAcademyId;
 
@@ -449,12 +464,14 @@ export const login = async (payload: LoginPayload, options?: RequestOptions) => 
       ...payload,
       academy_id: payload.academy_id ?? finalAcademyId,
     },
-    options
+    options,
   );
 };
 
 export const isCaptchaRequiredError = (error: unknown): boolean =>
-  typeof error === "object" && error !== null && (error as { code?: string }).code === "CAPTCHA_REQUIRED";
+  typeof error === "object" &&
+  error !== null &&
+  (error as { code?: string }).code === "CAPTCHA_REQUIRED";
 
 export type AccountIdentity = {
   exists: boolean;
@@ -462,6 +479,8 @@ export type AccountIdentity = {
   can_use_password: boolean;
   can_use_otp: boolean;
   captcha_required: boolean;
+  /** Member of some other academy, but not of this one (the panel uses it). */
+  member_elsewhere?: boolean;
 };
 
 /**
@@ -472,11 +491,12 @@ export type AccountIdentity = {
 export const identifyAccount = async (
   identifier: string,
   captchaToken?: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const cookieId = getCookieValue(env.academyIdCookie);
   const finalAcademyId =
-    cookieId ?? (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
+    cookieId ??
+    (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
 
   if (!finalAcademyId) {
     throw new Error("Academy ID is required for login");
@@ -484,8 +504,12 @@ export const identifyAccount = async (
 
   return postJson<AccountIdentity>(
     "/auth/public/identify",
-    { identifier, academy_id: finalAcademyId, ...(captchaToken ? { captcha_token: captchaToken } : {}) },
-    options
+    {
+      identifier,
+      academy_id: finalAcademyId,
+      ...(captchaToken ? { captcha_token: captchaToken } : {}),
+    },
+    options,
   );
 };
 
@@ -503,15 +527,22 @@ export type RegisterPayload = {
   location?: string;
 };
 
-export const register = async (payload: RegisterPayload, options?: RequestOptions) => {
+export const register = async (
+  payload: RegisterPayload,
+  options?: RequestOptions,
+) => {
   const cookieId = getCookieValue(env.academyIdCookie);
   const finalAcademyId = cookieId ? Number(cookieId) : env.defaultAcademyId;
 
-  return postJson<AuthResponse>("/auth/register", {
-    role: "USER",
-    academy_id: finalAcademyId,
-    ...payload,
-  }, options);
+  return postJson<AuthResponse>(
+    "/auth/register",
+    {
+      role: "USER",
+      academy_id: finalAcademyId,
+      ...payload,
+    },
+    options,
+  );
 };
 
 export const logout = async (options?: RequestOptions) => {
@@ -519,7 +550,10 @@ export const logout = async (options?: RequestOptions) => {
 };
 
 export const me = (options?: RequestOptions) => {
-  return getJson<{ id?: string; status?: string; data?: unknown }>("/auth/me", options);
+  return getJson<{ id?: string; status?: string; data?: unknown }>(
+    "/auth/me",
+    options,
+  );
 };
 
 export type LegalDocumentSummary = {
@@ -636,7 +670,12 @@ export const requestRefund = (
 
 export const getMyLegalAcceptances = (options?: RequestOptions) =>
   getJson<
-    Array<{ type: string; version: string; accepted_at: string; locale: string }>
+    Array<{
+      type: string;
+      version: string;
+      accepted_at: string;
+      locale: string;
+    }>
   >("/legal/acceptances/me", options);
 
 export type SendOtpPayload = {
@@ -658,71 +697,148 @@ export type ForgetPasswordPayload = {
   academy_id?: string;
 };
 
-export const validatePhoneAndEmail = (phone_number?: string, email?: string, options?: RequestOptions) => {
-  return postJson<{ success: boolean; message: string; phone_number: string; email: string }>("/auth/otp/validate-phone-email", {
-    ...(phone_number ? { phone_number } : {}),
-    ...(email ? { email } : {}),
-  }, options);
+export const validatePhoneAndEmail = (
+  phone_number?: string,
+  email?: string,
+  options?: RequestOptions,
+) => {
+  return postJson<{
+    success: boolean;
+    message: string;
+    phone_number: string;
+    email: string;
+  }>(
+    "/auth/otp/validate-phone-email",
+    {
+      ...(phone_number ? { phone_number } : {}),
+      ...(email ? { email } : {}),
+    },
+    options,
+  );
 };
 
-export const sendEmailOtp = (email: string, type: string, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string; otp?: string }>("/auth/otp/send-email", {
-    email,
-    type,
-  }, options);
+export const sendEmailOtp = (
+  email: string,
+  type: string,
+  options?: RequestOptions,
+) => {
+  return postJson<{ message: string; status: string; otp?: string }>(
+    "/auth/otp/send-email",
+    {
+      email,
+      type,
+    },
+    options,
+  );
 };
 
-export const sendPhoneOtp = (phone_number: string, type: string, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string; otp?: string }>("/auth/otp/send-phone", {
-    phone_number,
-    type,
-  }, options);
+export const sendPhoneOtp = (
+  phone_number: string,
+  type: string,
+  options?: RequestOptions,
+) => {
+  return postJson<{ message: string; status: string; otp?: string }>(
+    "/auth/otp/send-phone",
+    {
+      phone_number,
+      type,
+    },
+    options,
+  );
 };
 
-export const loginByPhoneOtp = (phone_number: string, otp: string, options?: RequestOptions) => {
-  return postJson<AuthResponse>("/auth/login-by-phone-otp", { phone_number, otp }, options);
+export const loginByPhoneOtp = (
+  phone_number: string,
+  otp: string,
+  options?: RequestOptions,
+) => {
+  return postJson<AuthResponse>(
+    "/auth/login-by-phone-otp",
+    { phone_number, otp },
+    options,
+  );
 };
 
-export const loginByEmailOtp = (email: string, otp: string, options?: RequestOptions) => {
-  return postJson<AuthResponse>("/auth/login-by-email-otp", { email, otp }, options);
+export const loginByEmailOtp = (
+  email: string,
+  otp: string,
+  options?: RequestOptions,
+) => {
+  return postJson<AuthResponse>(
+    "/auth/login-by-email-otp",
+    { email, otp },
+    options,
+  );
 };
 
-export const verifyEmailOtp = (email: string, otp: string, type: string, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-email", {
-    email,
-    otp,
-    type,
-  }, options);
+export const verifyEmailOtp = (
+  email: string,
+  otp: string,
+  type: string,
+  options?: RequestOptions,
+) => {
+  return postJson<{ message: string; status: string; success?: boolean }>(
+    "/auth/otp/verify-email",
+    {
+      email,
+      otp,
+      type,
+    },
+    options,
+  );
 };
 
-export const verifyPhoneOtp = (phone_number: string, otp: string, type: string, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string; success?: boolean }>("/auth/otp/verify-phone", {
-    phone_number,
-    otp,
-    type,
-  }, options);
+export const verifyPhoneOtp = (
+  phone_number: string,
+  otp: string,
+  type: string,
+  options?: RequestOptions,
+) => {
+  return postJson<{ message: string; status: string; success?: boolean }>(
+    "/auth/otp/verify-phone",
+    {
+      phone_number,
+      otp,
+      type,
+    },
+    options,
+  );
 };
 
-export const forgetPassword = (payload: ForgetPasswordPayload, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string }>("/auth/forget-password", {
-    ...payload,
-    academy_id: payload.academy_id ?? env.defaultAcademyId,
-  }, options);
+export const forgetPassword = (
+  payload: ForgetPasswordPayload,
+  options?: RequestOptions,
+) => {
+  return postJson<{ message: string; status: string }>(
+    "/auth/forget-password",
+    {
+      ...payload,
+      academy_id: payload.academy_id ?? env.defaultAcademyId,
+    },
+    options,
+  );
 };
 
-export const changePassword = (payload: {
-  profile_id: string;
-  current_password: string;
-  new_password: string;
-  confirm_new_password: string;
-}, options?: RequestOptions) => {
-  return postJson<{ message: string; status: string; success?: boolean }>("/auth/change-password", payload, options);
+export const changePassword = (
+  payload: {
+    profile_id: string;
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
+  },
+  options?: RequestOptions,
+) => {
+  return postJson<{ message: string; status: string; success?: boolean }>(
+    "/auth/change-password",
+    payload,
+    options,
+  );
 };
 
 export const updateProfile = async (
   profileId: string,
   data: { display_name?: string; image_id?: string },
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await patchJson<{
     message: string;
@@ -744,7 +860,7 @@ export const updateProfile = async (
 export const uploadImage = async (
   file: File,
   alt: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<{ id: string; url: string; publicUrl: string | null }> => {
   const body = new FormData();
   body.append("imagefile", file);
@@ -753,7 +869,10 @@ export const uploadImage = async (
   const response = await fetch(`${getBaseUrl()}/images/upload`, {
     method: "POST",
     credentials: "include",
-    headers: await buildHeaders({ Accept: "application/json" }, { mutate: true }),
+    headers: await buildHeaders(
+      { Accept: "application/json" },
+      { mutate: true },
+    ),
     body,
     signal: options?.signal,
   });
@@ -767,7 +886,7 @@ export const uploadImage = async (
 
 export const updateStore = async (
   data: { name?: string; description?: string },
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await patchJson<{
     message: string;
@@ -798,12 +917,15 @@ export type LessonLiveSession = {
   updated_at: string;
 };
 
-export const getLesson = async (lessonId: string | number, options?: RequestOptions) => {
+export const getLesson = async (
+  lessonId: string | number,
+  options?: RequestOptions,
+) => {
   const raw = await getJson<{
     status?: string;
     data?: Record<string, unknown> | null;
   }>(`/lessons/${lessonId}`, options);
-  if (raw && typeof raw === 'object' && raw.status === 'ok' && raw.data) {
+  if (raw && typeof raw === "object" && raw.status === "ok" && raw.data) {
     return raw.data;
   }
   return null;
@@ -811,14 +933,14 @@ export const getLesson = async (lessonId: string | number, options?: RequestOpti
 
 export const getLessonLiveSession = async (
   lessonId: string | number,
-  options?: RequestOptions
+  options?: RequestOptions,
 ): Promise<LessonLiveSession | null> => {
   const raw = await getJson<{
     status?: string;
     data?: LessonLiveSession | null;
     message?: string;
   }>(`/lessons/${lessonId}/live-session`, options);
-  if (raw && typeof raw === 'object' && raw.status === 'ok' && raw.data) {
+  if (raw && typeof raw === "object" && raw.status === "ok" && raw.data) {
     return raw.data;
   }
   return null;
@@ -850,7 +972,10 @@ export interface CourseQnA {
   } | null;
 }
 
-export const getCourseQnAs = async (courseId: string, options?: RequestOptions) => {
+export const getCourseQnAs = async (
+  courseId: string,
+  options?: RequestOptions,
+) => {
   const response = await getJson<{
     message: string;
     status: string;
@@ -862,7 +987,7 @@ export const getCourseQnAs = async (courseId: string, options?: RequestOptions) 
 export const createCourseQnA = async (
   courseId: string,
   question: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await postJson<{
     message: string;
@@ -876,13 +1001,17 @@ export const approveCourseQnA = async (
   courseId: string,
   qnaId: string,
   isApproved: boolean,
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await putJson<{
     message: string;
     status: string;
     data: CourseQnA;
-  }>(`/courses/${courseId}/qna/${qnaId}/approve`, { is_approved: isApproved }, options);
+  }>(
+    `/courses/${courseId}/qna/${qnaId}/approve`,
+    { is_approved: isApproved },
+    options,
+  );
   return response.data;
 };
 
@@ -890,7 +1019,7 @@ export const answerCourseQnA = async (
   courseId: string,
   qnaId: string,
   answer: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await putJson<{
     message: string;
@@ -921,7 +1050,7 @@ export interface CourseReviewsResponse {
 
 export const getCourseReviews = async (
   courseId: string,
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await getJson<{
     message: string;
@@ -934,7 +1063,7 @@ export const getCourseReviews = async (
 export const createCourseReview = async (
   courseId: string,
   review: { rating: number; title?: string; content?: string },
-  options?: RequestOptions
+  options?: RequestOptions,
 ) => {
   const response = await postJson<{
     message: string;
@@ -971,7 +1100,10 @@ export const getActiveSessions = async (options?: RequestOptions) => {
 /**
  * Revoke a specific session by ID
  */
-export const revokeSession = async (sessionId: string, options?: RequestOptions) => {
+export const revokeSession = async (
+  sessionId: string,
+  options?: RequestOptions,
+) => {
   return deleteJson<{
     success: boolean;
     message: string;
@@ -987,7 +1119,6 @@ export const logoutAllDevices = async (options?: RequestOptions) => {
     revokedCount: number;
   }>("/auth/logout-all", {}, options);
 };
-
 
 // =====================================================================
 // Quiz, Assessment & Discussion (checklist 5.19)
@@ -1058,36 +1189,99 @@ export interface DiscussionMessage {
 
 type Envelope<T> = { message: string; status: string; data: T };
 
-export const getLessonQuiz = async (lessonId: string, options?: RequestOptions) =>
-  (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options)).data;
+export const getLessonQuiz = async (
+  lessonId: string,
+  options?: RequestOptions,
+) =>
+  (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options))
+    .data;
 
-export const startQuizAttempt = async (quizId: string, options?: RequestOptions) =>
-  (await postJson<Envelope<QuizAttempt>>(`/quizzes/${quizId}/attempt`, {}, options)).data;
+export const startQuizAttempt = async (
+  quizId: string,
+  options?: RequestOptions,
+) =>
+  (
+    await postJson<Envelope<QuizAttempt>>(
+      `/quizzes/${quizId}/attempt`,
+      {},
+      options,
+    )
+  ).data;
 
-export const saveQuizAnswers = async (attemptId: string, answers: AnswerInput[], options?: RequestOptions) =>
-  (await patchJson<Envelope<{ attempt_id: string }>>(`/quiz-attempts/${attemptId}/answers`, { answers }, options)).data;
+export const saveQuizAnswers = async (
+  attemptId: string,
+  answers: AnswerInput[],
+  options?: RequestOptions,
+) =>
+  (
+    await patchJson<Envelope<{ attempt_id: string }>>(
+      `/quiz-attempts/${attemptId}/answers`,
+      { answers },
+      options,
+    )
+  ).data;
 
-export const submitQuizAttempt = async (attemptId: string, options?: RequestOptions) =>
-  (await postJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}/submit`, {}, options)).data;
+export const submitQuizAttempt = async (
+  attemptId: string,
+  options?: RequestOptions,
+) =>
+  (
+    await postJson<Envelope<QuizAttempt>>(
+      `/quiz-attempts/${attemptId}/submit`,
+      {},
+      options,
+    )
+  ).data;
 
-export const getQuizAttempt = async (attemptId: string, options?: RequestOptions) =>
-  (await getJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}`, options)).data;
+export const getQuizAttempt = async (
+  attemptId: string,
+  options?: RequestOptions,
+) =>
+  (await getJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}`, options))
+    .data;
 
-export const getDiscussionThread = async (threadId: string, options?: RequestOptions) =>
-  (await getJson<Envelope<{ thread: unknown; messages: DiscussionMessage[] }>>(`/discussions/threads/${threadId}`, options)).data;
+export const getDiscussionThread = async (
+  threadId: string,
+  options?: RequestOptions,
+) =>
+  (
+    await getJson<Envelope<{ thread: unknown; messages: DiscussionMessage[] }>>(
+      `/discussions/threads/${threadId}`,
+      options,
+    )
+  ).data;
 
 export const postDiscussionMessage = async (
   parent: { attempt_id?: string; submission_id?: string },
   body: string,
   options?: RequestOptions,
-) => (await postJson<Envelope<DiscussionMessage>>(`/discussions/messages`, { ...parent, body }, options)).data;
+) =>
+  (
+    await postJson<Envelope<DiscussionMessage>>(
+      `/discussions/messages`,
+      { ...parent, body },
+      options,
+    )
+  ).data;
 
 // ----- Support tickets -----
 
-export type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING_ON_USER" | "RESOLVED" | "CLOSED" | "REOPENED";
+export type TicketStatus =
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "WAITING_ON_USER"
+  | "RESOLVED"
+  | "CLOSED"
+  | "REOPENED";
 export type TicketPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
 export type TicketCategory =
-  | "BILLING" | "PAYMENT" | "COURSE_ACCESS" | "LIVE_CLASS" | "TECHNICAL" | "CONTENT" | "OTHER";
+  | "BILLING"
+  | "PAYMENT"
+  | "COURSE_ACCESS"
+  | "LIVE_CLASS"
+  | "TECHNICAL"
+  | "CONTENT"
+  | "OTHER";
 
 export interface TicketPerson {
   id: string;
@@ -1151,7 +1345,13 @@ export interface TicketDetail {
   CreatedBy: TicketPerson | null;
   AssignedTo: TicketPerson | null;
   Message: TicketMessageView[];
-  CallRequest: Array<{ id: string; status: string; phone: string; outcome_note: string | null; called_at: string | null }>;
+  CallRequest: Array<{
+    id: string;
+    status: string;
+    phone: string;
+    outcome_note: string | null;
+    called_at: string | null;
+  }>;
   Rating: { score: number; comment: string | null } | null;
   capabilities: TicketCapabilities;
 }
@@ -1169,38 +1369,85 @@ export interface CreateTicketPayload {
 }
 
 export const listSupportResponsibles = async (options?: RequestOptions) =>
-  (await getJson<Envelope<TicketResponsible[]>>(`/support/responsibles`, options)).data;
+  (
+    await getJson<Envelope<TicketResponsible[]>>(
+      `/support/responsibles`,
+      options,
+    )
+  ).data;
 
-export const listMySupportTickets = async (params?: { status?: TicketStatus }, options?: RequestOptions) => {
+export const listMySupportTickets = async (
+  params?: { status?: TicketStatus },
+  options?: RequestOptions,
+) => {
   const qs = params?.status ? `?status=${params.status}` : "";
-  return (await getJson<Envelope<{ items: TicketListItem[]; total: number }>>(`/support/tickets/mine${qs}`, options)).data;
+  return (
+    await getJson<Envelope<{ items: TicketListItem[]; total: number }>>(
+      `/support/tickets/mine${qs}`,
+      options,
+    )
+  ).data;
 };
 
 export const getSupportTicket = async (id: string, options?: RequestOptions) =>
-  (await getJson<Envelope<TicketDetail>>(`/support/tickets/${id}`, options)).data;
+  (await getJson<Envelope<TicketDetail>>(`/support/tickets/${id}`, options))
+    .data;
 
-export const createSupportTicket = async (payload: CreateTicketPayload, options?: RequestOptions) =>
-  (await postJson<Envelope<TicketDetail>>(`/support/tickets`, { ...payload }, options)).data;
+export const createSupportTicket = async (
+  payload: CreateTicketPayload,
+  options?: RequestOptions,
+) =>
+  (
+    await postJson<Envelope<TicketDetail>>(
+      `/support/tickets`,
+      { ...payload },
+      options,
+    )
+  ).data;
 
 export const replySupportTicket = async (
   id: string,
   payload: { body: string; image_ids?: string[] },
   options?: RequestOptions,
-) => (await postJson<Envelope<{ id: string }>>(`/support/tickets/${id}/reply`, { ...payload }, options)).data;
+) =>
+  (
+    await postJson<Envelope<{ id: string }>>(
+      `/support/tickets/${id}/reply`,
+      { ...payload },
+      options,
+    )
+  ).data;
 
 export const requestSupportCall = async (
   id: string,
   payload: { phone: string; preferred_time?: string },
   options?: RequestOptions,
-) => (await postJson<Envelope<TicketDetail>>(`/support/tickets/${id}/request-call`, { ...payload }, options)).data;
+) =>
+  (
+    await postJson<Envelope<TicketDetail>>(
+      `/support/tickets/${id}/request-call`,
+      { ...payload },
+      options,
+    )
+  ).data;
 
 export const rateSupportTicket = async (
   id: string,
   payload: { score: number; comment?: string },
   options?: RequestOptions,
-) => (await postJson<Envelope<{ ticket_id: string; score: number }>>(`/support/tickets/${id}/rate`, { ...payload }, options)).data;
+) =>
+  (
+    await postJson<Envelope<{ ticket_id: string; score: number }>>(
+      `/support/tickets/${id}/rate`,
+      { ...payload },
+      options,
+    )
+  ).data;
 
-export const uploadSupportAttachment = async (file: File, options?: RequestOptions) => {
+export const uploadSupportAttachment = async (
+  file: File,
+  options?: RequestOptions,
+) => {
   const form = new FormData();
   form.append("file", file);
   // No Content-Type: the browser sets the multipart boundary itself.
@@ -1212,5 +1459,11 @@ export const uploadSupportAttachment = async (file: File, options?: RequestOptio
     body: form,
     signal: options?.signal,
   });
-  return (await handleResponse<Envelope<{ id: string; mime: string; size: number }>>(response, undefined, true)).data;
+  return (
+    await handleResponse<Envelope<{ id: string; mime: string; size: number }>>(
+      response,
+      undefined,
+      true,
+    )
+  ).data;
 };

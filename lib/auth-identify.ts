@@ -8,10 +8,18 @@ import type { AccountIdentity } from "@/lib/api/client";
  * Mirrored in AdminPanel (`lib/auth-identify.ts`) — keep both copies
  * semantically identical.
  */
-export type IdentifyOutcome = "register" | "password" | "otp" | "blocked";
+export type IdentifyOutcome =
+  | "register"
+  | "password"
+  | "otp"
+  | "blocked"
+  /** Real account, wrong door: a member of some academy, but not of this one. */
+  | "member_elsewhere";
 
 export function nextStepFor(identity: AccountIdentity): IdentifyOutcome {
-  if (!identity.exists) return "register";
+  if (!identity.exists) {
+    return identity.member_elsewhere ? "member_elsewhere" : "register";
+  }
   if (identity.can_use_password) return "password";
   if (identity.can_use_otp) return "otp";
   return "blocked";
