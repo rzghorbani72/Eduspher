@@ -3,6 +3,7 @@ import { getPreviewPreset } from "@/lib/api/server";
 import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
 import { buildThemeCssVariables } from "@/lib/theme-apply";
 import { PreviewEditBridge } from "@/components/preview/preview-edit-bridge";
+import { PlaceholderSection } from "@/components/preview/placeholder-section";
 
 // Standalone render surface embedded (scaled) by AdminPanel as gallery-card and
 // section-picker thumbnails. Renders a specific preset's blocks — or a single
@@ -105,9 +106,6 @@ export default async function PreviewBlocksPage({
     <div style={canvasStyle} dir={canvasDir} data-theme-canvas>
       {edit && <PreviewEditBridge />}
       {blocks.map((block, index) => {
-        // Header stays un-animated so its sticky positioning is preserved; every
-        // other section fades up in sequence for a lively showcase. In edit mode
-        // animation is skipped so a freshly selected section doesn't re-animate.
         const animate = !edit && block.type !== "header";
         return (
           <div
@@ -120,11 +118,15 @@ export default async function PreviewBlocksPage({
                 : undefined
             }
           >
-            <BlocksRenderer
-              blocks={[block]}
-              includeHeaderFooter
-              storeContext={storeContext}
-            />
+            {block.type === "placeholder" ? (
+              <PlaceholderSection />
+            ) : (
+              <BlocksRenderer
+                blocks={[block]}
+                includeHeaderFooter
+                storeContext={storeContext}
+              />
+            )}
           </div>
         );
       })}

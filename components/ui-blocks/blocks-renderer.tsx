@@ -43,6 +43,7 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
   const visibleBlocks = blocks
     .filter((block) => {
       if (block.isVisible === false) return false;
+      if (block.type === 'placeholder') return false;
       if (!includeHeaderFooter && (block.type === "header" || block.type === "footer")) {
         return false;
       }
