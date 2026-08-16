@@ -142,7 +142,10 @@ export async function TemplateTopBar({
               <span aria-hidden="true" className={spec.markClassName} />
             ) : null}
             <span>
-              <b className="block text-[19px] font-bold leading-[1.2] tracking-[-0.02em] whitespace-nowrap">
+              <b
+                data-editable="brandName"
+                className="block text-[19px] font-bold leading-[1.2] tracking-[-0.02em] whitespace-nowrap"
+              >
                 {brandName}
               </b>
               <span
