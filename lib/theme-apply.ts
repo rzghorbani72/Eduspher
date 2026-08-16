@@ -49,7 +49,19 @@ const SHADOW_MAP: Record<string, string> = {
   strong: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
 };
 
-const ELEMENT_ANIMATION_STYLES = ["subtle", "moderate", "dynamic"];
+// Motion presets. A string CSS variable cannot be branched on in plain CSS, so
+// the manager's choice is emitted as NUMBERS the stylesheet can use directly.
+// Looking the value up here also sanitizes it: this string is interpolated into
+// a served <style> block, so an unmapped value must never reach the output.
+const ELEMENT_ANIMATION_MAP: Record<
+  string,
+  { distance: string; duration: string; stagger: string }
+> = {
+  none: { distance: "0px", duration: "0ms", stagger: "0ms" },
+  subtle: { distance: "10px", duration: "420ms", stagger: "60ms" },
+  moderate: { distance: "20px", duration: "560ms", stagger: "90ms" },
+  dynamic: { distance: "34px", duration: "720ms", stagger: "120ms" },
+};
 
 // Design-system size tokens. These map the manager's coarse choices onto the
 // CSS vars that globals.css already consumes (.ui-blocks-root rules), so a size
@@ -142,6 +154,10 @@ export function buildThemeCssVariables(
   const heading = HEADING_SCALE_MAP[t.heading_scale || "standard"] ||
     HEADING_SCALE_MAP.standard;
 
+  const animationStyle = String(t.element_animation_style || "subtle");
+  const motion =
+    ELEMENT_ANIMATION_MAP[animationStyle] || ELEMENT_ANIMATION_MAP.subtle;
+
   return {
     "--theme-primary": primary,
     "--theme-secondary": secondary,
@@ -172,14 +188,12 @@ export function buildThemeCssVariables(
     "--theme-border-radius":
       BORDER_RADIUS_MAP[t.border_radius_style || "rounded"] || "16px",
     "--theme-shadow": SHADOW_MAP[t.shadow_style || "medium"] || SHADOW_MAP.medium,
-    // Allowlist this value: it is the only free-form string interpolated into the
-    // emitted <style> block, so an unconstrained value could break out of it
-    // (`</style><script>…`). Map any unknown value back to a safe default.
-    "--theme-element-animation": ELEMENT_ANIMATION_STYLES.includes(
-      t.element_animation_style as string,
-    )
-      ? (t.element_animation_style as string)
+    "--theme-element-animation": ELEMENT_ANIMATION_MAP[animationStyle]
+      ? animationStyle
       : "subtle",
+    "--theme-motion-distance": motion.distance,
+    "--theme-motion-duration": motion.duration,
+    "--theme-motion-stagger": motion.stagger,
     "--theme-font-family":
       FONT_STACK_MAP[t.font_family || "vazirmatn"] || DEFAULT_FONT_STACK,
     "--theme-section-padding-y":

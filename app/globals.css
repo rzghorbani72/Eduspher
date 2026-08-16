@@ -173,6 +173,9 @@ html::-webkit-scrollbar {
   --theme-heading-size-sm: 1.5rem;
   --theme-heading-size-md: 2.25rem;
   --theme-heading-size-lg: 3rem;
+  --theme-motion-distance: 10px;
+  --theme-motion-duration: 420ms;
+  --theme-motion-stagger: 60ms;
 
   /* Base colors - Light mode (default) */
   --background: 255 255 255;
@@ -1146,6 +1149,45 @@ select[class*="rounded-sm"] {
 }
 .ui-blocks-root section h2 {
   font-size: var(--theme-heading-size-md);
+}
+
+/* ── Element motion — the manager's "motion" choice, applied to every block ────
+   Sections ease in on load, staggered down the page. The first section never
+   animates: it holds the largest contentful paint, and fading it in would delay
+   the very content the visitor came for.
+
+   Distance/duration/stagger come from the theme as NUMBERS (see
+   ELEMENT_ANIMATION_MAP), so "none" resolves to a 0ms/0px no-op rather than
+   needing a separate rule. */
+@keyframes ui-block-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--theme-motion-distance));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ui-blocks-root > section:not(:first-child) {
+  animation: ui-block-enter var(--theme-motion-duration)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--theme-motion-stagger) * 1);
+}
+.ui-blocks-root > section:nth-child(3) {
+  animation-delay: calc(var(--theme-motion-stagger) * 2);
+}
+.ui-blocks-root > section:nth-child(4) {
+  animation-delay: calc(var(--theme-motion-stagger) * 3);
+}
+.ui-blocks-root > section:nth-child(n + 5) {
+  animation-delay: calc(var(--theme-motion-stagger) * 4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-blocks-root > section:not(:first-child) {
+    animation: none;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
