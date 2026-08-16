@@ -1142,13 +1142,29 @@ select[class*="rounded-sm"] {
   padding-top: var(--theme-section-padding-y);
   padding-bottom: var(--theme-section-padding-y);
 }
+/* Every container-tier width a block might use (~1150-1280px). Inner
+   constraints like max-w-2xl are deliberate prose widths and stay untouched —
+   if a new block introduces another container width, add it here or that
+   section will ignore the manager's width setting. */
 .ui-blocks-root .max-w-7xl,
 .ui-blocks-root .max-w-6xl,
-.ui-blocks-root .max-w-\[1240px\] {
+.ui-blocks-root .max-w-\[1240px\],
+.ui-blocks-root .max-w-\[1200px\] {
   max-width: var(--theme-container-max-width);
 }
-.ui-blocks-root section h2 {
-  font-size: var(--theme-heading-size-md);
+/* Heading scale applies from the medium breakpoint up. On phones the template's
+   own responsive classes win: a "large" scale is ~3.75rem, which would overflow
+   a narrow screen, and the manager is choosing a desktop typographic scale. */
+@media (min-width: 768px) {
+  .ui-blocks-root section h1 {
+    font-size: var(--theme-heading-size-lg);
+  }
+  .ui-blocks-root section h2 {
+    font-size: var(--theme-heading-size-md);
+  }
+  .ui-blocks-root section h3 {
+    font-size: var(--theme-heading-size-sm);
+  }
 }
 
 /* ── Element motion — the manager's "motion" choice, applied to every block ────
