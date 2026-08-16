@@ -22,14 +22,35 @@
 **Existing verticals, do not repeat:** flow (general), marketplace, elite, creative,
 artisan, code (programming). Shipped presets: `flow`, `code`, `creative`.
 
+**This batch — run once per row, in a fresh chat each time:**
+
+| # | Vertical | Slug |
+|---|---|---|
+| 7 | English language school | `english` |
+| 8 | High-school math & exam prep | `mathprep` |
+| 9 | Strength & fitness coaching | `workout` |
+| 10 | Astronomy & space science | `aerospace` |
+| 11 | Chef / cooking academy | `cooking` |
+| 12 | Kids' fast mental-math academy (abacus / speed calculation) — **modern, playful direction, not the editorial/textbook feel of the other rows** | `kidsmath` |
+
+⚠️ **Backend generation gap — flag, don't block on it.** The AI-generate-a-template
+flow (`Backend/src/ui-template/templates/template-content.ts`, `ACADEMY_FIELDS`) only
+knows `language | exam | coding | arts | business | general`. `workout`, `aerospace`,
+`cooking`, and `kidsmath` have no matching field yet. This doesn't affect the design
+step below — these presets are hand-authored blocks, not AI-generated per-academy —
+but whoever ports and wires these in later must add `FieldContent` entries for those
+four, or the "generate my site" wizard will keep recommending the wrong preset for
+those academies.
+
 ---
 
 You are a senior product designer building a website template for an online academy
 platform. Output **one** template per run, as a **single self-contained HTML file**.
 
 ```
-TEMPLATE NUMBER: 1
-ALREADY USED (do not repeat these verticals or visual directions): none
+TEMPLATE NUMBER: 7
+VERTICAL: English language school (see table above — use the row matching TEMPLATE NUMBER)
+ALREADY USED (do not repeat these verticals or visual directions): flow (general), marketplace, elite, creative, artisan, code (programming)
 ```
 
 ### 0. Non-negotiable technical shape
@@ -57,12 +78,32 @@ must follow this shape exactly:
 - Responsive: 1440 / 1024 / 390 breakpoints, no horizontal scroll at any width.
 - RTL done properly: text right-aligned, mirrored margins/padding, arrows pointing `←`.
 
-### 1. Pick the vertical yourself
+### 0b. How images actually work here — design both states, don't skip this
 
-Choose one online-teaching vertical clearly different from everything in
-`ALREADY USED`. The space: English language school · high-school math & exam prep ·
-chef / cooking academy · strength & fitness coaching · astronomy & space science ·
-software development · music school · photography · medical exam prep · design school.
+The platform draws a hard line between two kinds of image, and mixing them up is the
+most common porting bug:
+
+- **Course cards have NO image slot at all — ever.** `course-grid`/`courses` blocks
+  render title/teacher/level/price only; the thumbnail is always a **theme-derived CSS
+  gradient**, cycled per card from a fixed palette-based list
+  (`edusphere/components/ui-blocks/course-grid-block.tsx`). There is no upload, no
+  fallback-vs-real-photo branch — just design the gradient thumbnail well. **Do not
+  draw course-card cover photos** in the mockup; it will not port to anything real.
+- **Hero, features, header/footer, and slideshow DO have real, owner-uploadable image
+  slots — and they default to `null`.** An academy owner may never upload anything, so
+  every one of these sections must be designed **twice in your head** (only one needs
+  to render in the HTML, but note both in your design brief): once as it looks with a
+  gradient/pattern in place of the image, and once as it looks with a real photo. The
+  gradient state is not a loading placeholder — for most academies it's the permanent
+  state, so it must look finished, not "empty."
+- Practical rule: any section you design around a large photograph must still look
+  complete with that photograph removed and replaced with a themed gradient block. If
+  it collapses without the photo, redesign it — that's the state most academies ship.
+
+### 1. The vertical is assigned — invent the academy around it
+
+Use the `VERTICAL` given above (do not pick a different one — it's fixed so the batch
+covers 5 distinct worlds without collision).
 
 State in 2 lines: the vertical, and the fictional Iranian academy — name, city, who it
 teaches, what makes it different. Invent real-sounding Persian course titles, teacher
@@ -110,7 +151,8 @@ onto the platform's block types. Use this order, adapting the content to your ve
 3. `marquee` — scrolling strip of logos / topics / stats
 4. `features` — why this academy (differentiated, not 3 clone cards)
 5. `courses` / `course-grid` — 6–9 course cards: title, teacher, level, duration,
-   rating, price in Toman
+   rating, price in Toman. **Thumbnail is a themed CSS gradient only — no photo** (see
+   §0b); vary the gradient angle/stops per card so the grid doesn't look monotonous.
 6. `categories` or `projects` — a vertical-specific browse or showcase section
 7. teachers / instructors band
 8. `pricing` or `membership` — 3 plans in Toman, one highlighted
@@ -124,8 +166,9 @@ same file**, switched by a small top bar of buttons (`data-page="home|courses|co
 about|contact"`, JS toggles `display`). They reuse the same nav, footer, and palette:
 
 - **Courses** — filter rail (level, format, price, duration), result count, sort
-  control, 9+ cards, and an empty state.
-- **Single course** — hero with price + enrol CTA, sticky enrol panel, syllabus
+  control, 9+ cards (same gradient-only thumbnail rule as §4.5), and an empty state.
+- **Single course** — hero with price + enrol CTA (gradient/pattern banner, no cover
+  photo — the `Course` model has no cover image field), sticky enrol panel, syllabus
   accordion with real module titles, instructor block, what-you-get list, FAQ, related
   courses.
 - **About us** — founding story with dates, team grid with real bios, a numbers band,
@@ -159,3 +202,17 @@ They are reference views, not part of the template's block list.
   in `blocks-renderer.tsx`, `BLOCK_LABELS` (`Backend/src/ui-template/section-catalog.ts`),
   `SECTION_SCHEMAS` (`AdminPanel/components/ui-template/section-schema.ts`), and the
   `BLOCK_STYLE` map (`AdminPanel/components/ui-template/template-preview.tsx`).
+- **Image-slot check (§0b):** every hero/features/header/footer/slideshow section that
+  shows a photo must still look complete with `config.<imageField>: null` — that is the
+  real default (`template-content.ts:1-6`, "images default `null`"). Course/course-grid
+  cards must have **zero** photo elements — `deriveImageSlots()`
+  (`Backend/src/ui-template/section-catalog.ts`) returns no slots for `courses`, so a
+  photo there has nothing to bind to and the port would have to invent new plumbing.
+- **What actually gets persisted:** porting this preset writes its `blocks[]` (with your
+  `null` image defaults) into `TEMPLATE_PRESETS` in both
+  `Backend/src/ui-template/templates/template-presets.ts` and
+  `edusphere/lib/template-presets.ts`, plus a `DESIGN_SYSTEMS[<id>]` palette entry in
+  `AdminPanel/lib/design-systems.ts`. Nothing about the mockup's course/instructor
+  *content* is stored per-academy — an owner who adopts this preset gets your
+  seed copy until they edit it in the customizer; their real `Course` rows never
+  populate these cards automatically.
