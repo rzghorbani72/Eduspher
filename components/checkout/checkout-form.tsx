@@ -80,6 +80,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
       const result = await validateVoucher({
         code: voucherCode.trim(),
         amount: Math.round(course.price * 100),
+        academyId: session.academyId,
       });
 
       if (result.success && result.discount_amount !== undefined) {

@@ -1182,6 +1182,7 @@ export async function validateDiscount(data: {
   code: string;
   amount: number;
   profile_id?: string;
+  academy_id?: string;
 }) {
   try {
     const result = await serverFetchRaw<{

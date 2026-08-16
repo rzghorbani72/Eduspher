@@ -123,6 +123,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
       const result = await validateVoucher({
         code: voucherCode.trim(),
         amount: totalAmount,
+        academyId: session.academyId,
       });
 
       if (result.success && result.discount_amount !== undefined) {

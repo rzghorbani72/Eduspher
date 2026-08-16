@@ -6,6 +6,8 @@ import { getSession } from "@/lib/auth/session";
 interface ValidateVoucherRequest {
   code: string;
   amount: number;
+  /** Student coupons live inside one academy — the code is looked up there. */
+  academyId?: string | null;
 }
 
 interface ValidateVoucherResult {
@@ -27,6 +29,7 @@ export async function validateVoucher(
       code: request.code,
       amount: request.amount,
       profile_id: profileId ?? undefined,
+      academy_id: request.academyId ?? session?.academyId ?? undefined,
     });
 
     return {
