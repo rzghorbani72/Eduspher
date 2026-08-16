@@ -84,7 +84,7 @@ export default async function PreviewBlocksPage({
   const canvasDir = (preset.theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? 'rtl';
 
   return (
-    <div style={canvasStyle} dir={canvasDir}>
+    <div style={canvasStyle} dir={canvasDir} data-theme-canvas>
       {edit && <PreviewEditBridge />}
       {blocks.map((block, index) => {
         // Header stays un-animated so its sticky positioning is preserved; every

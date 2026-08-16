@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 
 import { usePreviewScrollMemory } from "./use-preview-scroll-memory";
+import { applyLiveTheme } from "./apply-live-theme";
+import type { ThemeConfigInput } from "@/lib/theme-apply";
 
 const HOVER = "me-hover";
 const SELECTED = "me-selected";
@@ -314,8 +316,31 @@ export function PreviewEditBridge() {
         source?: string; type?: string;
         blockId?: string; fieldKey?: string; value?: string;
         visible?: boolean; scroll?: boolean;
+        theme?: ThemeConfigInput; direction?: "ltr" | "rtl";
+        order?: string[];
       };
       if (!data || data.source !== "template-admin") return;
+
+      // Style change — repaint the CSS variables in place, no navigation.
+      if (data.type === "sync-theme" && data.theme) {
+        applyLiveTheme(data.theme, data.direction);
+      }
+
+      // Reorder / delete — the sections are already in the DOM, so move or drop
+      // the nodes instead of asking the server to render the same HTML again.
+      if (data.type === "sync-order" && data.order) {
+        const canvas = document.querySelector<HTMLElement>("[data-theme-canvas]");
+        if (canvas) {
+          const present = new Set(data.order);
+          for (const el of canvas.querySelectorAll<HTMLElement>("[data-block-id]")) {
+            if (!present.has(el.dataset.blockId ?? "")) el.remove();
+          }
+          for (const blockId of data.order) {
+            const el = canvas.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
+            if (el) canvas.appendChild(el);
+          }
+        }
+      }
 
       if (data.type === "highlight") {
         // Same block as active edit → just ignore (don't commit mid-edit)
