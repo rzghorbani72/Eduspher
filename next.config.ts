@@ -6,8 +6,8 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const PRODUCTION_PUBLIC_DEFAULTS = {
   BACKEND_ORIGIN: "https://api.mentoma.com",
   BACKEND_API_PATH: "/v1",
-  APP_URL: "https://mentoma.com",
-  ADMIN_PANEL_URL: "https://admin.mentoma.com",
+  APP_URL: "https://mentoma.ir",
+  ADMIN_PANEL_URL: "https://admin.mentoma.ir",
   IR_DOMAIN: "https://mentoma.ir",
   COM_DOMAIN: "https://mentoma.com",
 } as const;
@@ -63,7 +63,8 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_IR_DOMAIN:
       process.env.NEXT_PUBLIC_IR_DOMAIN || PRODUCTION_PUBLIC_DEFAULTS.IR_DOMAIN,
     NEXT_PUBLIC_COM_DOMAIN:
-      process.env.NEXT_PUBLIC_COM_DOMAIN || PRODUCTION_PUBLIC_DEFAULTS.COM_DOMAIN,
+      process.env.NEXT_PUBLIC_COM_DOMAIN ||
+      PRODUCTION_PUBLIC_DEFAULTS.COM_DOMAIN,
   },
   /**
    * Browser API calls go to our own origin and are proxied to the backend here,
