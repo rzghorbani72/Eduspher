@@ -300,8 +300,12 @@ body {
 button a,
 [role="button"] a,
 a[class*="text-white"],
-/* When asChild is used, the Link becomes the button element - target links with button-like styling */
-a[class*="rounded-full"][class*="bg-"]:not(.lp-root a),
+/* When asChild is used, the Link becomes the button element - target links with
+   button-like styling.
+   `[class*="bg-"]` also matches a `hover:bg-*` utility, so a pill-shaped link
+   that only tints on hover (template nav) was being forced to permanent white.
+   Template sections set their own on-* colors, so they opt out like .lp-root. */
+a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):not(.ui-blocks-root a),
 a[class*="bg-\[var\(--theme-primary\)\]"],
 a[class*="bg-sky-600"],
 a[class*="bg-sky-500"],
@@ -312,7 +316,7 @@ a[class*="bg-slate-900"] {
 button a:hover,
 [role="button"] a:hover,
 a[class*="text-white"]:hover,
-a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):hover,
+a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):not(.ui-blocks-root a):hover,
 a[class*="bg-\[var\(--theme-primary\)\]"]:hover,
 a[class*="bg-sky-600"]:hover,
 a[class*="bg-sky-500"]:hover,

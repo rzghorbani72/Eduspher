@@ -59,13 +59,16 @@ const TONE_CLASS = {
   deep: "bg-(--theme-deep) text-(--theme-on-deep)",
 } as const;
 
+// `text-current` keeps every link on the header's own tone (page/surface use the
+// foreground, deep uses on-deep). Without it the global `a { color: primary }`
+// base rule wins and the nav renders in the brand colour on a light bar.
 const NAV_LINK_CLASS = {
-  plain: "px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
+  plain: "text-current px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
   underline:
-    "border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
+    "text-current border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
   border:
-    "border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
-  pill: "rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)",
+    "text-current border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
+  pill: "text-current rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)",
 } as const;
 
 /**
