@@ -4,7 +4,9 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 
 /** Baked at build time when CI/build-args omit these (same idea as AdminPanel). */
 const PRODUCTION_PUBLIC_DEFAULTS = {
-  BACKEND_ORIGIN: "https://api.mentoma.com",
+  // v1 runs on the Iran (.ir) rail. api.mentoma.com has no DNS record, so a .com
+  // fallback silently breaks every backend call when the build args are missing.
+  BACKEND_ORIGIN: "https://api.mentoma.ir",
   BACKEND_API_PATH: "/v1",
   APP_URL: "https://mentoma.ir",
   ADMIN_PANEL_URL: "https://admin.mentoma.ir",
