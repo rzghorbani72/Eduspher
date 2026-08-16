@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
-import { useRouter } from "next/navigation";
 import Link from "@/components/ui/link";
 import { ArrowLeft, CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -32,7 +31,6 @@ interface ForgotPasswordFormProps {
 }
 
 export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormProps) => {
-  const router = useRouter();
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>("identifier");
@@ -423,13 +421,9 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             >
               {t("auth.resetAnotherPassword")}
             </button>
-            <button
-              type="button"
-              className="auth-submit-btn flex-1"
-              onClick={() => router.push(buildPath("/auth/login"))}
-            >
+            <Link href={buildPath("/auth/login")} className="auth-submit-btn flex-1">
               {t("auth.goToLogin")}
-            </button>
+            </Link>
           </div>
         </div>
       )}

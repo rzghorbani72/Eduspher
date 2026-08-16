@@ -7,6 +7,7 @@ import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import Link from "@/components/ui/link";
 
 import {
   sendEmailOtp,
@@ -671,13 +672,12 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
       )}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        <button
-          type="button"
-          onClick={() => router.push(loginHref)}
+        <Link
+          href={loginHref}
           className="font-medium text-[color:var(--auth-accent)] hover:underline"
         >
           {t("auth.backToLogin")}
-        </button>
+        </Link>
       </p>
     </div>
   );
