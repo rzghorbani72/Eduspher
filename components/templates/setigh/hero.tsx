@@ -68,37 +68,33 @@ export function SetighHero({ id, config }: TemplateSectionProps) {
           </div>
 
           {featureVisible(config, 'showSideVisual') && (
-            <div data-removable="showSideVisual">
+            <div data-removable="showSideVisual" className="grid gap-5">
               <HeroVisualSlot
                 config={config}
-                className="min-h-[320px] overflow-hidden rounded-(--theme-border-radius)"
+                className={`${styles.slab} min-h-[260px] overflow-hidden rounded-(--theme-border-radius)`}
               >
-                <div className="grid gap-5">
-                  <div className={styles.slab}>
-                    <div className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}>
-                      <b
-                        data-editable="recordValue"
-                        className="text-[60px] font-bold leading-none tracking-[-0.05em] tabular-nums"
-                      >
-                        {text(config, 'recordValue', d.recordValue)}
-                      </b>
-                      <span data-editable="recordLabel" className="mt-2 text-[13.5px] text-current/70">
-                        {text(config, 'recordLabel', d.recordLabel)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="rounded-(--theme-border-radius) border border-current/18 p-5">
-                    <div className="mb-2.5 flex items-baseline justify-between text-[13px] text-current/70">
-                      <span data-editable="cycleLabel">{text(config, 'cycleLabel', d.cycleLabel)}</span>
-                      <span className="font-bold tabular-nums">{percent}٪</span>
-                    </div>
-                    <div className={styles.track}>
-                      <span className={styles.trackFill} style={{ width: `${percent}%` }} />
-                    </div>
-                  </div>
+                <div className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}>
+                  <b
+                    data-editable="recordValue"
+                    className="text-[60px] font-bold leading-none tracking-[-0.05em] tabular-nums"
+                  >
+                    {text(config, 'recordValue', d.recordValue)}
+                  </b>
+                  <span data-editable="recordLabel" className="mt-2 text-[13.5px] text-current/70">
+                    {text(config, 'recordLabel', d.recordLabel)}
+                  </span>
                 </div>
               </HeroVisualSlot>
+
+              <div className="rounded-(--theme-border-radius) border border-current/18 p-5">
+                <div className="mb-2.5 flex items-baseline justify-between text-[13px] text-current/70">
+                  <span data-editable="cycleLabel">{text(config, 'cycleLabel', d.cycleLabel)}</span>
+                  <span className="font-bold tabular-nums">{percent}٪</span>
+                </div>
+                <div className={styles.track}>
+                  <span className={styles.trackFill} style={{ width: `${percent}%` }} />
+                </div>
+              </div>
             </div>
           )}
         </div>

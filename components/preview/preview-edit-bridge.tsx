@@ -79,7 +79,12 @@ function showBlockToolbar(blockEl: HTMLElement) {
   blockEl.appendChild(bar);
 }
 
-function attachMediaUploadButtons(root: ParentNode = document) {
+type MediaPickRequest = { blockId: string; fieldKey: string };
+
+function attachMediaUploadButtons(
+  root: ParentNode,
+  requestPick: (target: MediaPickRequest) => void,
+) {
   root.querySelectorAll<HTMLElement>("[data-media-editable]").forEach((slot) => {
     if (slot.querySelector(`.${MEDIA_BTN_CLASS}`)) return;
     const fieldKey = slot.dataset.mediaEditable!;
@@ -116,10 +121,9 @@ function attachMediaUploadButtons(root: ParentNode = document) {
       const blockEl = slot.closest<HTMLElement>("[data-block-id]");
       const blockId = blockEl?.dataset.blockId;
       if (!blockId) return;
-      window.parent?.postMessage(
-        { source: "template-editor", type: "open-media-picker", blockId, fieldKey },
-        "*",
-      );
+      // File picker must open in this document — parent cannot call input.click()
+      // from postMessage (user-activation is lost across the iframe boundary).
+      requestPick({ blockId, fieldKey });
     });
     slot.addEventListener("mouseenter", () => { btn.style.opacity = "1"; });
     slot.addEventListener("mouseleave", () => { btn.style.opacity = "0"; });
@@ -484,6 +488,8 @@ export function PreviewEditBridge() {
 
       if (target.closest?.(`#${TOOLBAR_ID}`)) return;
       if (target.closest?.(`#${BLOCK_TOOLBAR_ID}`)) return;
+      if (target.closest?.(`.${MEDIA_BTN_CLASS}`)) return;
+      if (target.closest?.(`.${REMOVE_BTN_CLASS}`)) return;
 
       // Inside the active editable: only block link navigation
       if (activeEdit && activeEdit.el.contains(target)) {
@@ -638,9 +644,47 @@ export function PreviewEditBridge() {
       }
     };
 
+    // ── Canvas media picker (must live in iframe for user-activation) ─────────
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*,image/gif,image/webp";
+    fileInput.style.display = "none";
+    document.body.appendChild(fileInput);
+
+    let pendingMedia: MediaPickRequest | null = null;
+
+    const requestMediaPick = (target: MediaPickRequest) => {
+      pendingMedia = target;
+      fileInput.click();
+    };
+
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files?.[0];
+      const pending = pendingMedia;
+      pendingMedia = null;
+      fileInput.value = "";
+      if (!file || !pending) return;
+
+      const buffer = await file.arrayBuffer();
+      window.parent?.postMessage(
+        {
+          source: "template-editor",
+          type: "media-file-selected",
+          blockId: pending.blockId,
+          fieldKey: pending.fieldKey,
+          fileName: file.name,
+          mimeType: file.type || "image/jpeg",
+          buffer,
+        },
+        "*",
+        [buffer],
+      );
+    });
+
     // ── Register ──────────────────────────────────────────────────────────────
 
-    attachMediaUploadButtons();
+    attachMediaUploadButtons(document, requestMediaPick);
     attachRemovableButtons();
 
     document.addEventListener("mouseover",  onOver);
@@ -663,6 +707,7 @@ export function PreviewEditBridge() {
       document.getElementById(TOOLBAR_ID)?.remove();
       removeBlockToolbar();
       liveToast?.remove();
+      fileInput.remove();
     };
   }, []);
 

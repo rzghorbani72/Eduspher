@@ -84,6 +84,7 @@ export function GoftavardHero({ id, config }: TemplateSectionProps) {
               <div className={`${styles.card3d} ${styles.cardA} p-4`}>
                 <HeroVisualSlot
                   config={config}
+                  mode="fill"
                   className="aspect-video overflow-hidden rounded-[calc(var(--theme-border-radius)/1.5)]"
                 >
                   <div className={styles.photoSlot}>
