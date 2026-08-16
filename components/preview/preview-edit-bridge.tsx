@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 
+import { usePreviewScrollMemory } from "./use-preview-scroll-memory";
+
 const HOVER = "me-hover";
 const SELECTED = "me-selected";
 const EDITING = "me-editing";
@@ -73,6 +75,8 @@ function placeToolbar(bar: HTMLElement, target: HTMLElement) {
 }
 
 export function PreviewEditBridge() {
+  usePreviewScrollMemory();
+
   useEffect(() => {
     type ActiveEdit = {
       el: HTMLElement;
@@ -308,7 +312,8 @@ export function PreviewEditBridge() {
     const onMessage = (e: MessageEvent) => {
       const data = e.data as {
         source?: string; type?: string;
-        blockId?: string; fieldKey?: string; value?: string; visible?: boolean;
+        blockId?: string; fieldKey?: string; value?: string;
+        visible?: boolean; scroll?: boolean;
       };
       if (!data || data.source !== "template-admin") return;
 
@@ -321,7 +326,9 @@ export function PreviewEditBridge() {
         if (data.blockId) {
           const el = document.querySelector<HTMLElement>(`[data-block-id="${data.blockId}"]`);
           el?.classList.add(SELECTED);
-          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Only jump when the user picked a different section. Re-painting the
+          // ring after a save-triggered reload must leave scroll where it was.
+          if (data.scroll) el?.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }
 
@@ -349,6 +356,11 @@ export function PreviewEditBridge() {
     document.addEventListener("click",      onClick,     true);  // capture
     document.addEventListener("keydown",    onKeyDown);
     window.addEventListener("message",      onMessage);
+
+    // Announce that the listener above is live. The iframe's `load` event fires
+    // before React hydrates, so anything the editor sent then was dropped —
+    // this handshake is what makes the selection survive a reload.
+    window.parent?.postMessage({ source: "template-editor", type: "ready" }, "*");
 
     return () => {
       document.removeEventListener("mouseover",  onOver);
