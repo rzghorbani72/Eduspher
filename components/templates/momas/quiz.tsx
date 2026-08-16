@@ -34,7 +34,7 @@ export function MomasQuiz({ id, config }: TemplateSectionProps) {
           {items.map((item) => (
             <article
               key={item.code}
-              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6"
+              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6"
             >
               <div className={`flex items-center justify-between text-[12.5px] text-(--theme-muted) ${styles.mono}`}>
                 <span>{item.code}</span>

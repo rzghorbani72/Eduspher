@@ -28,7 +28,7 @@ export function SohailCategories({ id, config }: TemplateSectionProps) {
             <a
               key={item.title}
               href="#courses"
-              className={`group flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 transition-[transform,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary) ${
+              className={`group flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 transition-[transform,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary) ${
                 item.wide ? 'md:col-span-3 lg:col-span-3' : ''
               }`}
             >

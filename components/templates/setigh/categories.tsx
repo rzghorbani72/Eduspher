@@ -31,7 +31,7 @@ export function SetighCategories({ id, config }: TemplateSectionProps) {
           {items.map((item) => (
             <article
               key={item.title}
-              className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7"
+              className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-7"
             >
               <span className="text-[42px] font-bold leading-none tracking-[-0.05em] text-(--theme-primary) tabular-nums">
                 {item.index}

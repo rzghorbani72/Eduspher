@@ -374,10 +374,16 @@ export function PreviewEditBridge() {
 
       if (data.type === "toggle-visible" && data.blockId) {
         const el = document.querySelector<HTMLElement>(`[data-block-id="${data.blockId}"]`);
-        // Re-showing a section the server already filtered out needs a rebuild:
-        // its markup was never sent, so there is no node to un-hide.
-        if (el) el.style.display = data.visible ? "" : "none";
-        else requestReload();
+        if (!el) {
+          requestReload();
+        } else if (data.visible && el.children.length === 0) {
+          // The wrapper is always rendered, but a section hidden at render time
+          // has empty contents. Un-hiding it would reveal a blank gap, so the
+          // markup has to be fetched.
+          requestReload();
+        } else {
+          el.style.display = data.visible ? "" : "none";
+        }
       }
 
       // Sidebar-driven field sync (keeps preview text in sync with any sidebar controls)

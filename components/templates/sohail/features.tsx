@@ -31,7 +31,7 @@ export function SohailFeatures({ id, config }: TemplateSectionProps) {
 
         <div className="grid gap-5 lg:grid-cols-6">
           {lead ? (
-            <article className="grid gap-8 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7 md:grid-cols-[1.2fr_0.8fr] md:items-center lg:col-span-6">
+            <article className="grid gap-8 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-7 md:grid-cols-[1.2fr_0.8fr] md:items-center lg:col-span-6">
               <div>
                 <span className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)">{lead.index}</span>
                 <h3 className="mt-3 text-[24px] font-bold leading-[1.3]">{lead.title}</h3>
@@ -51,7 +51,7 @@ export function SohailFeatures({ id, config }: TemplateSectionProps) {
           {rest.map((item) => (
             <article
               key={item.title}
-              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 lg:col-span-3"
+              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 lg:col-span-3"
             >
               <span className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)">{item.index}</span>
               <h3 className="mt-3 text-[20px] font-bold leading-[1.35]">{item.title}</h3>

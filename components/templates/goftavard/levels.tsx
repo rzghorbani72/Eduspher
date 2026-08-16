@@ -32,7 +32,7 @@ export function GoftavardLevels({ id, config }: TemplateSectionProps) {
           {steps.map((step) => (
             <li
               key={step.code}
-              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6"
+              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6"
             >
               <span
                 dir="ltr"
@@ -51,7 +51,7 @@ export function GoftavardLevels({ id, config }: TemplateSectionProps) {
           ))}
         </ol>
 
-        <div className="mt-9 flex flex-col gap-4 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 md:flex-row md:items-center md:justify-between">
+        <div className="mt-9 flex flex-col gap-4 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 md:flex-row md:items-center md:justify-between">
           <p className="max-w-[62ch] text-[15px] leading-[1.85] text-(--theme-muted)">{d.footNote}</p>
           <a href="#cta" className="whitespace-nowrap text-[14.5px] font-bold text-(--theme-primary) hover:underline">
             {d.footCta} ←

@@ -40,7 +40,7 @@ export function SetighFeatures({ id, config }: TemplateSectionProps) {
           {items.map((item) => (
             <article
               key={item.title}
-              className={`flex flex-col rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 ${SPAN[item.size]}`}
+              className={`flex flex-col rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 ${SPAN[item.size]}`}
             >
               <span className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)">{item.kicker}</span>
               <h3 className="mt-3 text-[21px] font-bold leading-[1.35]">{item.title}</h3>
