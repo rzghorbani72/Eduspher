@@ -1,0 +1,86 @@
+/*
+ * Negatif — "film negative" motifs for a photography academy: sprocket-hole
+ * strips, a contact-sheet grid, and a lens mark. Every colour reads a
+ * --theme-* variable so the motifs re-tint with the academy palette.
+ */
+
+/* Sprocket-hole strip — the perforated edge of a 35mm film frame. */
+.sprockets {
+  height: 14px;
+  background-image: radial-gradient(circle, var(--theme-on-deep) 2.5px, transparent 3px);
+  background-size: 24px 14px;
+  background-position: center;
+  opacity: 0.4;
+}
+.sprocketsLight {
+  background-image: radial-gradient(circle, var(--theme-foreground) 2.5px, transparent 3px);
+  opacity: 0.22;
+}
+
+/* Contact-sheet grid — the light grid a proof sheet is laid out on. */
+.contactGrid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to left, color-mix(in srgb, var(--theme-foreground) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--theme-foreground) 8%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Frame corner ticks — like a negative sleeve edge around the visual slot. */
+.frame {
+  position: relative;
+  border: 2px solid var(--theme-foreground);
+}
+.frame::before,
+.frame::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--theme-background);
+  pointer-events: none;
+}
+.frame::before {
+  top: -2px;
+  inset-inline-start: -2px;
+  border-inline-end: none;
+  border-block-end: none;
+}
+.frame::after {
+  bottom: -2px;
+  inset-inline-end: -2px;
+  border-inline-start: none;
+  border-block-start: none;
+}
+
+/* Lens mark used as the header logo when the academy has no logo of its own. */
+.lensMark {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 38% 32%, var(--theme-on-primary) 0 3px, transparent 4px),
+    var(--theme-primary);
+}
+
+/* Frame index badge on feature/category cards. */
+.frameNo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+}
+
+/* Course thumbnail tones — four film-processing casts, applied round-robin. */
+.tSepia {
+  background: linear-gradient(155deg, color-mix(in srgb, var(--theme-accent) 55%, var(--theme-deep)) 0%, var(--theme-deep) 100%);
+}
+.tCross {
+  background: linear-gradient(155deg, color-mix(in srgb, var(--theme-primary) 60%, var(--theme-deep)) 0%, var(--theme-deep) 100%);
+}
+.tMagenta {
+  background: linear-gradient(155deg, color-mix(in srgb, var(--theme-primary) 35%, var(--theme-accent)) 0%, var(--theme-deep) 100%);
+}
+.tAmber {
+  background: linear-gradient(155deg, color-mix(in srgb, var(--theme-accent) 80%, transparent) 0%, var(--theme-deep) 100%);
+}
