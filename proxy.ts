@@ -153,6 +153,7 @@ const ACADEMY_NAME_COOKIE =
   process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? "eduspher_academy_name";
 const ACADEMY_HEADER_ID = "x-academy-id";
 const ACADEMY_HEADER_SLUG = "x-academy-slug";
+const ACADEMY_NOT_FOUND_PATH = "/academy-not-found";
 
 type PublicStore = {
   id: number;
@@ -199,6 +200,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "favicon.ico",
   "robots.txt",
   "sitemap.xml",
+  "academy-not-found",
   // Academy-scoped routes
   "account",
   "articles",
@@ -277,13 +279,38 @@ const BASE_DOMAIN = (() => {
   }
 })();
 
+// Infrastructure hosts that are never an academy — they must keep serving the
+// platform instead of being resolved as a tenant slug.
+const RESERVED_SUBDOMAINS = new Set([
+  "www",
+  "admin",
+  "panel",
+  "api",
+  "app",
+  "auth",
+  "cdn",
+  "static",
+  "assets",
+  "media",
+  "files",
+  "mail",
+  "smtp",
+  "blog",
+  "docs",
+  "status",
+  "support",
+  "dev",
+  "staging",
+  "test",
+]);
+
 const extractSubdomainSlug = (hostname: string | null): string | null => {
   if (!hostname) return null;
   if (hostname === BASE_DOMAIN || hostname === `www.${BASE_DOMAIN}`)
     return null;
   if (hostname.endsWith(`.${BASE_DOMAIN}`)) {
     const sub = hostname.slice(0, hostname.length - BASE_DOMAIN.length - 1);
-    if (sub && sub !== "www") return sub;
+    if (sub && !RESERVED_SUBDOMAINS.has(sub.toLowerCase())) return sub;
   }
   return null;
 };
@@ -428,6 +455,34 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // A subdomain names one academy and nothing else. If it resolves to no
+  // academy we must never fall through to the platform landing page — that
+  // would serve platform marketing under a tenant's own brand host.
+  if (isSubdomainRequest && !matchedStore) {
+    if (!stores) {
+      // Backend unreachable: this is an outage, not a missing academy. A 404
+      // here would tell search engines the academy is permanently gone.
+      return new NextResponse(null, {
+        status: 503,
+        headers: { "Retry-After": "30" },
+      });
+    }
+    const notFoundUrl = requestUrl.clone();
+    notFoundUrl.pathname = ACADEMY_NOT_FOUND_PATH;
+    notFoundUrl.search = "";
+    const notFoundResponse = NextResponse.rewrite(notFoundUrl);
+    // Drop any academy left in cookies from an earlier host, so the 404 never
+    // renders another academy's brand on this hostname.
+    for (const name of [
+      ACADEMY_ID_COOKIE,
+      ACADEMY_SLUG_COOKIE,
+      ACADEMY_NAME_COOKIE,
+    ]) {
+      notFoundResponse.cookies.set(name, "", { path: "/", maxAge: 0 });
+    }
+    return notFoundResponse;
+  }
+
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-public-pathname", requestUrl.pathname);
   if (requestUrl.search) {
@@ -483,6 +538,7 @@ export async function proxy(request: NextRequest) {
     }
   } else if (
     !isPanelRoot &&
+    !isSubdomainRequest &&
     !hasPathAcademy &&
     DEFAULT_ACADEMY_SLUG &&
     stores
