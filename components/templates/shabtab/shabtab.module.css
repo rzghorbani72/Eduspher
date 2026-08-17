@@ -1,0 +1,21 @@
+/*
+ * Shabtab — "glow at night": a deep gradient stage with one floating glass
+ * panel. Only the decorative geometry lives here; every colour reads a
+ * --theme-* variable so the glow re-tints with the academy palette.
+ */
+
+.stage {
+  background:
+    radial-gradient(90% 70% at 50% -10%, color-mix(in srgb, var(--theme-primary) 32%, transparent) 0%, transparent 60%),
+    var(--theme-deep);
+  color: var(--theme-on-deep);
+}
+
+.glass {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--theme-on-deep) 18%, transparent);
+  border-radius: var(--theme-border-radius);
+  background: color-mix(in srgb, var(--theme-on-deep) 6%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 30px 70px -25px color-mix(in srgb, var(--theme-primary) 55%, transparent);
+}

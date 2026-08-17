@@ -5,6 +5,9 @@ import { TONDAK_SECTIONS } from './tondak';
 import { MOMAS_SECTIONS } from './momas';
 import { GOFTAVARD_SECTIONS } from './goftavard';
 import { RASADANEH_SECTIONS } from './rasadaneh';
+import { RAUSHAN_SECTIONS } from './raushan';
+import { SHABTAB_SECTIONS } from './shabtab';
+import { SEPID_SECTIONS } from './sepid';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
 import type { ComponentType } from 'react';
@@ -27,6 +30,9 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   momas: MOMAS_SECTIONS,
   goftavard: GOFTAVARD_SECTIONS,
   rasadaneh: RASADANEH_SECTIONS,
+  raushan: RAUSHAN_SECTIONS,
+  shabtab: SHABTAB_SECTIONS,
+  sepid: SEPID_SECTIONS,
 };
 
 export function resolveTemplateSection(

@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import type { TemplateSectionProps } from './_shared/types';
 
-/** The seven templates shipped as the public gallery. */
+/** The templates shipped as the public gallery. */
 export const TEMPLATE_KEYS = [
   'sohail',
   'setigh',
@@ -10,6 +10,9 @@ export const TEMPLATE_KEYS = [
   'momas',
   'goftavard',
   'rasadaneh',
+  'raushan',
+  'shabtab',
+  'sepid',
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
