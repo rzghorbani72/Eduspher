@@ -1,49 +1,107 @@
 /*
- * Shafagh — "twilight glow": a warm coral wash, overlapping colour blocks
- * behind the visual slot, and a soft dotted texture. Every colour reads a
- * --theme-* variable so the motifs re-tint with the academy palette.
+ * Shafagh — "dawn": an editorial gallery voice for a photography academy.
+ *
+ * The look is carried by weight/scale contrast, hairline rules and offset
+ * colour plates behind every image — never by letter-spacing, which would
+ * break Persian letter joining. Every colour reads a --theme-* variable so the
+ * motifs re-tint with the academy palette.
  */
 
 .wash {
-  background: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--theme-accent) 22%, transparent) 0%,
-    var(--theme-background) 55%
-  );
+  background:
+    radial-gradient(70% 60% at 88% -5%, color-mix(in srgb, var(--theme-accent) 30%, transparent) 0%, transparent 62%),
+    radial-gradient(50% 45% at 0% 96%, color-mix(in srgb, var(--theme-primary) 14%, transparent) 0%, transparent 62%),
+    var(--theme-background);
 }
 
-/* Soft dotted texture, the quiet decoration behind the visual slot. */
-.dots {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  background-image: radial-gradient(1.6px 1.6px at 50% 50%, var(--theme-primary) 55%, transparent 56%);
-  background-size: 20px 20px;
+/*
+ * Hairline rule — the editorial separator this design leans on instead of
+ * boxes. `display: block` is load-bearing: these render as <span>s, and an
+ * inline element ignores height, which would make every rule invisible.
+ */
+.hair {
+  display: block;
+  height: 1px;
+  background: color-mix(in srgb, var(--theme-foreground) 16%, transparent);
 }
 
-/* Overlapping colour block behind the hero visual — offset, never centred. */
-.blockBehind {
+/* Offset colour plate sitting behind an image, pushed toward the page edge. */
+.plate {
   position: absolute;
-  inset-block-start: 8%;
-  inset-inline-end: -6%;
-  width: 78%;
-  height: 92%;
+  inset-block: 9% -9%;
+  inset-inline-end: -9%;
+  width: 70%;
   border-radius: var(--theme-border-radius);
   background: color-mix(in srgb, var(--theme-accent) 55%, transparent);
   z-index: 0;
 }
 
+/* Empty visual slot — warm tint, never stark white against the cream page. */
+.emptySlot {
+  background: color-mix(in srgb, var(--theme-accent) 10%, var(--theme-surface));
+}
+
 .frame {
   position: relative;
   z-index: 1;
+  overflow: hidden;
   border-radius: var(--theme-border-radius);
   box-shadow: var(--theme-shadow);
 }
 
-/* Feature/category cards get a soft coloured cap instead of a plain border. */
-.cap {
-  height: 6px;
-  border-radius: var(--theme-border-radius) var(--theme-border-radius) 0 0;
-  background: linear-gradient(90deg, var(--theme-primary), var(--theme-accent));
+/* Fine dotted texture inside an empty visual slot. */
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image: radial-gradient(1.5px 1.5px at 50% 50%, var(--theme-primary) 55%, transparent 56%);
+  background-size: 16px 16px;
 }
+
+/*
+ * Outlined index numeral. Latin digits only by design — the numerals in the
+ * copy are Persian, so tracking here never touches joined script.
+ */
+.numeral {
+  font-size: clamp(40px, 5vw, 68px);
+  font-weight: 800;
+  line-height: 0.85;
+  font-variant-numeric: tabular-nums;
+  /* Fallback: a tinted solid numeral where text-stroke is unsupported. */
+  color: color-mix(in srgb, var(--theme-primary) 40%, transparent);
+}
+@supports (-webkit-text-stroke: 1px red) {
+  .numeral {
+    color: transparent;
+    -webkit-text-stroke: 1.5px color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  }
+}
+
+/* Lead tracks: a warm tinted plate, inset from the rule so the row still reads. */
+.leadRow {
+  background: color-mix(in srgb, var(--theme-accent) 8%, transparent);
+  padding-inline: 20px;
+  border-radius: var(--theme-border-radius);
+}
+
+/* Hovering a row fills its outlined numeral in and nudges its arrow. */
+.row:hover .numeral {
+  color: var(--theme-primary);
+  -webkit-text-stroke: 0;
+}
+.row:hover .arrow {
+  transform: translateX(-6px);
+}
+
+/* Light display weight for the second headline line. */
+.display {
+  font-weight: 300;
+  color: var(--theme-primary);
+}
+
+/* Empty course thumbnails: flat tonal plates, no gradients. */
+.tA { background: color-mix(in srgb, var(--theme-accent) 38%, var(--theme-surface-alt)); }
+.tB { background: color-mix(in srgb, var(--theme-primary) 22%, var(--theme-surface-alt)); }
+.tC { background: var(--theme-deep); }
+.tD { background: color-mix(in srgb, var(--theme-accent) 62%, var(--theme-surface-alt)); }

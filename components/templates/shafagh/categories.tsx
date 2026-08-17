@@ -10,7 +10,13 @@ interface TrackItem {
   wide: boolean;
 }
 
-/** Genre wall — each track card carries the gradient cap for a cohesive gallery feel. */
+/**
+ * Track index — one full-width row per path, in the voice of a magazine
+ * contents page: outlined numeral, title, then the description in its own
+ * column. A single column on purpose: mixing full-width rows into a two-column
+ * grid tears holes in the auto-placement. `wide` marks the lead tracks, which
+ * get a tinted plate and a larger title instead of their own column span.
+ */
 export function ShafaghCategories({ id, config }: TemplateSectionProps) {
   const d = SHAFAGH_DEFAULTS.categories;
   const items = list<TrackItem>(config, 'items', d.items);
@@ -24,26 +30,46 @@ export function ShafaghCategories({ id, config }: TemplateSectionProps) {
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {items.map((item) => (
-            <a
-              key={item.title}
-              href="#courses"
-              className={`group flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform] duration-200 hover:-translate-y-1 ${
-                item.wide ? 'md:col-span-3 lg:col-span-3' : ''
-              }`}
-            >
-              <div className={styles.cap} aria-hidden="true" />
-              <div className="flex flex-1 flex-col gap-3 p-6">
-                <span className="text-[13px] font-bold tracking-[0.14em] text-(--theme-primary)">{item.count} دوره</span>
-                <h3 className="text-[21px] font-bold leading-[1.35]">{item.title}</h3>
-                <p className="text-[14.5px] leading-[1.8] text-(--theme-muted)">{item.body}</p>
-                <span className="mt-auto pt-2 text-[13.5px] font-bold text-(--theme-primary) transition-transform duration-200 group-hover:-translate-x-1">
-                  مشاهدهٔ دوره‌ها ←
+        <div>
+          {items.map((item, index) => (
+            <a key={item.title} href="#courses" className={`${styles.row} block`}>
+              <span className={styles.hair} aria-hidden="true" />
+              <div
+                className={`flex items-center gap-6 py-7 transition-[padding] duration-200 ${
+                  item.wide ? styles.leadRow : ''
+                }`}
+              >
+                <span aria-hidden="true" className={`${styles.numeral} flex-none transition-colors duration-200`}>
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+
+                <div className="min-w-0 flex-1 md:flex md:items-baseline md:gap-10">
+                  <div className="md:w-[34%] md:flex-none">
+                    {/* Terracotta on purpose — not the inherited `a` colour. */}
+                    <h3
+                      className={`font-bold leading-[1.3] text-(--theme-primary) ${
+                        item.wide ? 'text-[25px]' : 'text-[21px]'
+                      }`}
+                    >
+                      {item.title}
+                    </h3>
+                    <span className="mt-1.5 block text-[13px] font-bold text-(--theme-primary)">
+                      {item.count} دوره
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[14.5px] leading-[1.85] text-(--theme-muted) md:mt-0">{item.body}</p>
+                </div>
+
+                <span
+                  aria-hidden="true"
+                  className={`${styles.arrow} hidden flex-none text-[20px] text-(--theme-primary) transition-transform duration-200 sm:block`}
+                >
+                  ←
                 </span>
               </div>
             </a>
           ))}
+          <span className={styles.hair} aria-hidden="true" />
         </div>
       </Container>
     </section>

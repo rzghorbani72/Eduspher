@@ -41,7 +41,7 @@ export const NABZ_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={NABZ_DEFAULTS.courses}
-      thumbTones={[styles.stage, styles.stage, styles.stage, styles.stage]}
+      thumbTones={[styles.tA, styles.tB, styles.tC, styles.tD]}
       thumbClassName="relative aspect-video overflow-hidden"
       tone="surface"
     />
@@ -53,9 +53,12 @@ export const NABZ_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={NABZ_DEFAULTS.teachers} tone="page" />
   ),
+  // Only the hero, the closing band and the footer go dark — the body stays
+  // light so the page reads dark → light → dark instead of three dark bands
+  // stacking at the end.
   pricing: ({ id, config }) => (
-    <TemplatePricing id={id} config={config} defaults={NABZ_DEFAULTS.pricing} tone="deep" />
+    <TemplatePricing id={id} config={config} defaults={NABZ_DEFAULTS.pricing} tone="surface" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={NABZ_DEFAULTS.cta} tone="accent" boxed />,
+  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={NABZ_DEFAULTS.cta} tone="deep" boxed />,
   footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={NABZ_DEFAULTS.footer} />,
 };

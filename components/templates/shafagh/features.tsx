@@ -1,4 +1,4 @@
-import { Container, SectionHead } from '../_shared/section';
+import { Container, Eyebrow } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import styles from './shafagh.module.css';
@@ -9,53 +9,61 @@ interface FeatureItem {
   body: string;
 }
 
-/** Asymmetric bento with a gradient-capped lead card and a gallery caption tile. */
+/**
+ * Editorial manifesto: an oversized lead statement, then the reasons as
+ * hairline-separated rows with outlined numerals. No card boxes — the rules and
+ * the numerals do the structuring.
+ */
 export function ShafaghFeatures({ id, config }: TemplateSectionProps) {
   const d = SHAFAGH_DEFAULTS.features;
   const items = list<FeatureItem>(config, 'items', d.items);
-  const [lead, ...rest] = items;
 
   return (
     <section id={id || 'features'} className="bg-(--theme-surface-alt) text-(--theme-foreground)">
       <Container className="py-(--theme-section-padding-y)">
-        <SectionHead
-          eyebrow={text(config, 'eyebrow', d.eyebrow)}
-          title={text(config, 'title', d.title)}
-          subtitle={text(config, 'subtitle', d.subtitle)}
-        />
-
-        <div className="grid gap-5 lg:grid-cols-6">
-          {lead ? (
-            <article className="overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) lg:col-span-6">
-              <div className={styles.cap} aria-hidden="true" />
-              <div className="grid gap-8 p-7 md:grid-cols-[1.2fr_0.8fr] md:items-center">
-                <div>
-                  <span className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)">{lead.index}</span>
-                  <h3 className="mt-3 text-[24px] font-bold leading-[1.3]">{lead.title}</h3>
-                  <p className="mt-3 text-[15.5px] leading-[1.85] text-(--theme-muted)">{lead.body}</p>
-                </div>
-                <div className="grid place-items-center rounded-(--theme-border-radius) bg-(--theme-accent) p-6 text-center text-(--theme-on-accent)">
-                  <span className="text-[13px] font-bold tracking-[0.16em]">
-                    {text(config, 'frameCaption', d.frameCaption)}
-                  </span>
-                </div>
-              </div>
-            </article>
-          ) : null}
-
-          {rest.map((item) => (
-            <article
-              key={item.title}
-              className="overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) lg:col-span-3"
+        <div className="grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-end">
+          <div>
+            <Eyebrow className="mb-5">
+              <span data-editable="eyebrow">{text(config, 'eyebrow', d.eyebrow)}</span>
+            </Eyebrow>
+            <h2
+              data-editable="title"
+              className="max-w-[16ch] text-[clamp(30px,4.6vw,54px)] font-extrabold leading-[1.08] tracking-[-0.03em]"
             >
-              <div className={styles.cap} aria-hidden="true" />
-              <div className="p-6">
-                <span className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)">{item.index}</span>
-                <h3 className="mt-3 text-[20px] font-bold leading-[1.35]">{item.title}</h3>
-                <p className="mt-3 text-[15px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+              {text(config, 'title', d.title)}
+            </h2>
+          </div>
+          <p data-editable="subtitle" className="max-w-[46ch] text-[16.5px] leading-[1.9] text-(--theme-muted)">
+            {text(config, 'subtitle', d.subtitle)}
+          </p>
+        </div>
+
+        <div className="mt-14 grid gap-x-14 md:grid-cols-2">
+          {items.map((item, index) => (
+            <article key={item.title} className={styles.row}>
+              <span className={styles.hair} aria-hidden="true" />
+              <div className="flex gap-6 py-8">
+                <span aria-hidden="true" className={`${styles.numeral} flex-none transition-colors duration-200`}>
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <span className="text-[12px] font-bold text-(--theme-primary)">{item.index}</span>
+                  <h3 className="mt-2 text-[20px] font-bold leading-[1.35]">{item.title}</h3>
+                  <p className="mt-2.5 text-[14.5px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+                </div>
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mt-4 flex items-center gap-5">
+          <span className={`${styles.hair} flex-1`} aria-hidden="true" />
+          <span
+            data-editable="frameCaption"
+            className="text-[13px] font-bold text-(--theme-primary)"
+          >
+            {text(config, 'frameCaption', d.frameCaption)}
+          </span>
         </div>
       </Container>
     </section>

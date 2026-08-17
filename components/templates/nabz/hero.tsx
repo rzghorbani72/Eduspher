@@ -14,40 +14,48 @@ interface HeroStat {
   note: string;
 }
 
-// Up to four photos — the manager can upload more than one so the visual
-// slot cycles through a small run of project shots.
+// Up to four photos — uploading more than one turns the glass panel into a
+// slow slideshow of project shots.
 const SLIDE_KEYS = ['bgImage', 'bgImage2', 'bgImage3', 'bgImage4'] as const;
 
+/**
+ * Studio stage: a mesh field, one gradient-clipped word in the headline, and a
+ * single glass panel floating over soft colour orbs. The capability chips read
+ * as a spec strip rather than another row of cards.
+ */
 export function NabzHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = NABZ_DEFAULTS.hero;
   const editMode = storeContext?.editMode ?? false;
   const stats = list<HeroStat>(config, 'stats', d.stats);
+  const chips = list<string>(config, 'chips', d.chips);
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.stage}`}>
-      <div className={styles.signal} aria-hidden="true" />
+      <div className={styles.mesh} aria-hidden="true" />
 
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-current/20 px-4 py-1.5 text-[13px] font-bold text-current/85">
+            <span className={`${styles.chip} inline-flex items-center gap-2.5 px-4 py-1.5 text-[13px] font-bold`}>
               <span aria-hidden="true" className="size-2 rounded-full bg-(--theme-accent)" />
               <span data-editable="kicker">{text(config, 'kicker', d.kicker)}</span>
             </span>
 
-            <h1 className="mt-6 text-[clamp(34px,5.4vw,62px)] font-bold leading-[1.12] tracking-[-0.03em]">
+            <h1 className="mt-7 text-[clamp(38px,6vw,72px)] font-extrabold leading-[1.06] tracking-[-0.035em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
-              <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
+              <EditableAccent config={config} className={styles.gradWord}>
+                {text(config, 'titleEm', d.titleEm)}
+              </EditableAccent>{' '}
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/72">
+            <p data-editable="subtitle" className="mt-6 max-w-[52ch] text-[17px] leading-[1.9] text-current/70">
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-3.5">
+            <div className="mt-9 flex flex-wrap items-center gap-3.5">
               <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="accent" size="lg" editableKey="ctaText" href="#courses" className="!rounded-full">
+                <Button tone="primary" size="lg" editableKey="ctaText" href="#courses" className="!rounded-full">
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
@@ -63,20 +71,30 @@ export function NabzHero({ id, config, storeContext }: TemplateSectionProps) {
                 </Button>
               </RemovableSlot>
             </div>
+
+            <RemovableSlot config={config} flagKey="showChips" editMode={editMode} className="mt-9">
+              <ul className="flex flex-wrap gap-2">
+                {chips.map((chip) => (
+                  <li key={chip} className={`${styles.chip} px-3.5 py-1.5 text-[12.5px] text-current/75`}>
+                    {chip}
+                  </li>
+                ))}
+              </ul>
+            </RemovableSlot>
           </div>
 
           <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <div className="relative">
-              <span className={styles.ring} aria-hidden="true" />
-              <span className={styles.ring2} aria-hidden="true" />
+              <span className={`${styles.orb} ${styles.orbA}`} aria-hidden="true" />
+              <span className={`${styles.orb} ${styles.orbB}`} aria-hidden="true" />
               <HeroSlideshowSlot
                 config={config}
                 mediaKeys={SLIDE_KEYS}
                 editMode={editMode}
-                className="relative min-h-[300px] rounded-(--theme-border-radius) border border-current/20"
+                className={`${styles.glass} aspect-[5/4] min-h-[300px]`}
               >
-                <div className="flex min-h-[300px] items-center justify-center p-10 text-center">
-                  <span data-editable="photoCaption" className="text-[14px] font-medium text-current/60">
+                <div className="flex h-full w-full items-center justify-center p-10 text-center">
+                  <span data-editable="photoCaption" className="text-[14px] text-current/60">
                     {text(config, 'photoCaption', d.photoCaption)}
                   </span>
                 </div>
@@ -85,23 +103,18 @@ export function NabzHero({ id, config, storeContext }: TemplateSectionProps) {
           </RemovableSlot>
         </div>
 
-        <RemovableSlot
-          config={config}
-          flagKey="showStats"
-          editMode={editMode}
-          className="mt-16 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-current/14 bg-current/14 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          <dl className="contents">
+        <RemovableSlot config={config} flagKey="showStats" editMode={editMode} className="mt-16">
+          <dl className="grid gap-x-10 gap-y-8 border-t border-current/14 pt-8 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat) => (
-              <div key={stat.label} className={`p-6 ${styles.stage}`}>
-                <dt className="text-[12px] font-medium tracking-[0.1em] text-current/60">{stat.label}</dt>
+              <div key={stat.label}>
                 <dd>
-                  <span className="mt-2 block text-[30px] font-bold leading-none tracking-[-0.04em]">
+                  <span className="block text-[34px] font-extrabold leading-none tracking-[-0.04em]">
                     {stat.value}
-                    {stat.unit ? <small className="ms-1.5 text-[13px] font-medium text-current/60">{stat.unit}</small> : null}
+                    {stat.unit ? <small className="text-[15px] font-bold text-(--theme-accent)">{stat.unit}</small> : null}
                   </span>
-                  <span className="mt-2 block text-[12.5px] text-current/55">{stat.note}</span>
                 </dd>
+                <dt className="mt-3 text-[14px] font-bold">{stat.label}</dt>
+                <p className="mt-1 text-[12.5px] leading-[1.7] text-current/55">{stat.note}</p>
               </div>
             ))}
           </dl>

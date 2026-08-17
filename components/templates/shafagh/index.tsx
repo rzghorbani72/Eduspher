@@ -11,8 +11,9 @@ import { SHAFAGH_DEFAULTS } from './defaults';
 import { ShafaghHero } from './hero';
 import { ShafaghFeatures } from './features';
 import { ShafaghCategories } from './categories';
+import styles from './shafagh.module.css';
 
-const SHAFAGH_THUMBS = ['bg-(--theme-primary)', 'bg-(--theme-accent)', 'bg-(--theme-deep)', 'bg-(--theme-primary)'];
+const SHAFAGH_THUMBS = [styles.tA, styles.tB, styles.tC, styles.tD];
 
 /** Shafagh — photography academy: warm coral wash, colour-block visuals, gradient caps. */
 const SHAFAGH_HEADER = headerDefaults({
@@ -57,6 +58,6 @@ export const SHAFAGH_SECTIONS: TemplateSectionMap = {
   pricing: ({ id, config }) => (
     <TemplatePricing id={id} config={config} defaults={SHAFAGH_DEFAULTS.pricing} tone="surface" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={SHAFAGH_DEFAULTS.cta} tone="accent" boxed />,
+  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={SHAFAGH_DEFAULTS.cta} tone="deep" boxed />,
   footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={SHAFAGH_DEFAULTS.footer} />,
 };

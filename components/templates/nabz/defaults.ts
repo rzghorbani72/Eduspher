@@ -17,6 +17,8 @@ export const NABZ_DEFAULTS = {
     ctaText: 'مشاهدهٔ دوره‌ها',
     ctaSecondary: 'مسیرهای یادگیری',
     photoCaption: 'نمونه‌کار هنرجویان آکادمی',
+    // Four fits one line at desktop; a fifth orphans onto its own row.
+    chips: ['طراحی رابط کاربری', 'برندینگ', 'موشن گرافیک', 'بازاریابی محتوا'],
     stats: [
       { value: '۴۲', unit: '', label: 'دورهٔ فعال', note: 'در ۶ مسیر دیجیتال' },
       { value: '۳٬۴۰۰', unit: '+', label: 'فارغ‌التحصیل', note: 'از سال ۱۴۰۰ تا امروز' },

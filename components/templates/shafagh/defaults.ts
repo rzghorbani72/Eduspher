@@ -19,7 +19,9 @@ export const SHAFAGH_DEFAULTS = {
     stats: [
       { value: '۲٬۶۰۰', unit: '+', label: 'هنرجوی فعال', note: 'در ۵ مسیر عکاسی' },
       { value: '۹', unit: '', label: 'نمایشگاه سالانه', note: 'در گالری خود آکادمی' },
-      { value: '۴٫۹', unit: ' / ۵', label: 'رضایت هنرجویان', note: 'میانگین امتیاز دوره‌ها' },
+      // No `unit` on the rating: a leading "/ ۵" renders on the wrong side of a
+      // Persian numeral and reads as "۵/۴٫۹".
+      { value: '۴٫۹', unit: '', label: 'رضایت هنرجویان', note: 'میانگین امتیاز از ۵ در دوره‌ها' },
       { value: '۱۸', unit: '', label: 'مدرس فعال', note: 'همه شاغل در حرفهٔ عکاسی' },
     ],
   },
