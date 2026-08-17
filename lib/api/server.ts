@@ -797,8 +797,12 @@ export interface PublicCourseOffering {
   title: string | null;
   description: string | null;
   price: number;
+  /** Price before discount, shown struck through. Null = no discount shown. */
+  compare_at_price: number | null;
   currency: string;
   access_duration_days: number | null;
+  /** False sells the recorded course only — no live class link. */
+  includes_live: boolean;
   is_active: boolean;
   payment_plan_id: string | null;
 }

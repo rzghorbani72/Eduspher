@@ -37,6 +37,8 @@ export interface PurchaseOptionView {
   originalPrice: number | null;
   discountPercent: number | null;
   accessDurationDays: number | null;
+  /** False = recorded videos only, no live class. */
+  includesLive: boolean;
   installments: { count: number; amount: number; intervalDays: number } | null;
   tutorName: string | null;
   sessionsIncluded: number | null;
@@ -56,12 +58,21 @@ const fromOffering = (
   offering: PublicCourseOffering,
   course: CourseSummary,
 ): PurchaseOptionView => {
-  // The course's own struck-through price belongs to the offer that sells it at
-  // the course price — anything else would advertise a discount that is not real.
+  // Each offer carries its own "before discount" price. Older offers written
+  // before that field existed fall back to the course's own struck-through
+  // price, and only when this offer really sells at the course price.
+  const ownCompareAt =
+    (offering.compare_at_price ?? 0) > offering.price
+      ? (offering.compare_at_price ?? null)
+      : null;
   const carriesCourseDiscount =
+    ownCompareAt === null &&
     offering.type === "ONE_TIME" &&
     offering.price === course.price &&
     (course.original_price ?? 0) > course.price;
+  const originalPrice =
+    ownCompareAt ??
+    (carriesCourseDiscount ? (course.original_price ?? null) : null);
 
   return {
     key: offering.id,
@@ -70,10 +81,16 @@ const fromOffering = (
     title: offering.title,
     description: offering.description,
     price: offering.price,
-    originalPrice: carriesCourseDiscount ? (course.original_price ?? null) : null,
-    discountPercent: carriesCourseDiscount ? (course.discount_percent ?? null) : null,
+    originalPrice,
+    discountPercent:
+      originalPrice === null
+        ? null
+        : carriesCourseDiscount
+          ? (course.discount_percent ?? null)
+          : Math.round((1 - offering.price / originalPrice) * 100),
     accessDurationDays:
       offering.access_duration_days ?? course.access_duration_days ?? null,
+    includesLive: offering.includes_live ?? true,
     installments: null,
     tutorName: null,
     sessionsIncluded: null,
@@ -90,6 +107,7 @@ const fromPaymentPlan = (plan: PublicPaymentPlan): PurchaseOptionView => ({
   originalPrice: null,
   discountPercent: null,
   accessDurationDays: null,
+  includesLive: true,
   installments: {
     count: plan.installment_count,
     amount: plan.installment_amount,
@@ -109,6 +127,7 @@ const fromTutoringOffer = (offer: PublicTutoringOffer): PurchaseOptionView => ({
   originalPrice: null,
   discountPercent: null,
   accessDurationDays: offer.duration_days,
+  includesLive: true,
   installments: null,
   tutorName: offer.Tutor?.display_name ?? null,
   sessionsIncluded: offer.sessions_included,
@@ -125,11 +144,13 @@ const fallbackOption = (course: CourseSummary): PurchaseOptionView => ({
   title: null,
   description: null,
   price: course.is_free ? 0 : course.price,
-  originalPrice: (course.original_price ?? 0) > course.price
-    ? (course.original_price ?? null)
-    : null,
+  originalPrice:
+    (course.original_price ?? 0) > course.price
+      ? (course.original_price ?? null)
+      : null,
   discountPercent: course.discount_percent ?? null,
   accessDurationDays: course.access_duration_days ?? null,
+  includesLive: true,
   installments: null,
   tutorName: null,
   sessionsIncluded: null,

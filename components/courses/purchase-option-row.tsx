@@ -81,6 +81,7 @@ export function PurchaseOptionRow({
       ),
     );
   }
+  if (!option.includesLive) facts.push(t("courses.recordedOnly"));
   if (option.tutorName) facts.push(option.tutorName);
   facts.push(formatAccessTerm(option.accessDurationDays, language, t));
 
