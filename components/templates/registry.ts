@@ -10,7 +10,8 @@ import { SHABTAB_SECTIONS } from './shabtab';
 import { SEPID_SECTIONS } from './sepid';
 import { HAMRANG_SECTIONS } from './hamrang';
 import { BARAN_SECTIONS } from './baran';
-import { NEGATIF_SECTIONS } from './negatif';
+import { SHAFAGH_SECTIONS } from './shafagh';
+import { NABZ_SECTIONS } from './nabz';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
 import type { ComponentType } from 'react';
@@ -38,7 +39,8 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   sepid: SEPID_SECTIONS,
   hamrang: HAMRANG_SECTIONS,
   baran: BARAN_SECTIONS,
-  negatif: NEGATIF_SECTIONS,
+  shafagh: SHAFAGH_SECTIONS,
+  nabz: NABZ_SECTIONS,
 };
 
 export function resolveTemplateSection(

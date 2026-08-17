@@ -1,0 +1,49 @@
+/*
+ * Shafagh — "twilight glow": a warm coral wash, overlapping colour blocks
+ * behind the visual slot, and a soft dotted texture. Every colour reads a
+ * --theme-* variable so the motifs re-tint with the academy palette.
+ */
+
+.wash {
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--theme-accent) 22%, transparent) 0%,
+    var(--theme-background) 55%
+  );
+}
+
+/* Soft dotted texture, the quiet decoration behind the visual slot. */
+.dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(1.6px 1.6px at 50% 50%, var(--theme-primary) 55%, transparent 56%);
+  background-size: 20px 20px;
+}
+
+/* Overlapping colour block behind the hero visual — offset, never centred. */
+.blockBehind {
+  position: absolute;
+  inset-block-start: 8%;
+  inset-inline-end: -6%;
+  width: 78%;
+  height: 92%;
+  border-radius: var(--theme-border-radius);
+  background: color-mix(in srgb, var(--theme-accent) 55%, transparent);
+  z-index: 0;
+}
+
+.frame {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--theme-border-radius);
+  box-shadow: var(--theme-shadow);
+}
+
+/* Feature/category cards get a soft coloured cap instead of a plain border. */
+.cap {
+  height: 6px;
+  border-radius: var(--theme-border-radius) var(--theme-border-radius) 0 0;
+  background: linear-gradient(90deg, var(--theme-primary), var(--theme-accent));
+}

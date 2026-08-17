@@ -1,0 +1,54 @@
+/*
+ * Nabz — "pulse": a deep, saturated stage for a digital/media academy — a
+ * dotted signal grid, a pulsing scan ring, and a soft gradient wave divider.
+ * Every colour reads a --theme-* variable so the motifs re-tint with the
+ * academy palette.
+ */
+
+.stage {
+  background:
+    radial-gradient(85% 65% at 82% -8%, color-mix(in srgb, var(--theme-primary) 30%, transparent) 0%, transparent 60%),
+    radial-gradient(65% 55% at 5% 100%, color-mix(in srgb, var(--theme-accent) 22%, transparent) 0%, transparent 60%),
+    var(--theme-deep);
+  color: var(--theme-on-deep);
+}
+
+/* Dotted signal grid — a quiet field of pulse points. */
+.signal {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(1.4px 1.4px at 50% 50%, var(--theme-on-deep) 55%, transparent 56%);
+  background-size: 26px 26px;
+}
+
+/* Pulsing scan ring behind the visual slot. */
+.ring {
+  position: absolute;
+  inset: -14%;
+  border-radius: 9999px;
+  border: 1.5px solid color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  pointer-events: none;
+}
+.ring2 {
+  inset: -28%;
+  border-color: color-mix(in srgb, var(--theme-accent) 35%, transparent);
+}
+
+.card {
+  border-radius: var(--theme-border-radius);
+  border: 1px solid color-mix(in srgb, var(--theme-on-deep) 14%, transparent);
+  background: color-mix(in srgb, var(--theme-on-deep) 6%, transparent);
+}
+
+/* Soft gradient wave divider used above the closing CTA. */
+.wave {
+  height: 64px;
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--theme-primary) 65%, transparent),
+    color-mix(in srgb, var(--theme-accent) 55%, transparent)
+  );
+  clip-path: polygon(0 40%, 15% 55%, 30% 35%, 45% 60%, 60% 30%, 75% 58%, 90% 38%, 100% 50%, 100% 100%, 0 100%);
+}
