@@ -74,9 +74,10 @@ export function SohailHero({ id, config, storeContext }: TemplateSectionProps) {
             </p>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <HeroVisualSlot
               config={config}
+              mode="fill"
               className={`${styles.orbit} min-h-[280px] overflow-hidden rounded-(--theme-border-radius)`}
             >
               <div className={styles.orbit} aria-hidden="true">

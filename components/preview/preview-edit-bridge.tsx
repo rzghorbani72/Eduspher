@@ -13,6 +13,11 @@ const TOOLBAR_ID = "me-format-toolbar";
 const BLOCK_TOOLBAR_ID = "me-block-toolbar";
 const MEDIA_BTN_CLASS = "me-media-upload-btn";
 const REMOVE_BTN_CLASS = "me-remove-btn";
+// Canvas media (hero backgrounds, decorative visuals) renders above the fold
+// on every page view and counts against the academy's storage plan — capped
+// tighter than the platform's general 10MB upload limit on purpose. Keep in
+// sync with any server-side limit if one is added for this upload path.
+const MAX_CANVAS_MEDIA_BYTES = 4 * 1024 * 1024;
 
 function removeBlockToolbar() {
   document.getElementById(BLOCK_TOOLBAR_ID)?.remove();
@@ -79,7 +84,14 @@ function showBlockToolbar(blockEl: HTMLElement) {
   blockEl.appendChild(bar);
 }
 
-type MediaPickRequest = { blockId: string; fieldKey: string };
+type MediaPickRequest = {
+  blockId: string;
+  fieldKey: string;
+  // Set only for "restore with photo": the visibility flag to also turn on
+  // once the upload succeeds, so both changes land as one config patch and
+  // the slot restore never triggers a second, dialog-killing reload.
+  restoreKey?: string;
+};
 
 function attachMediaUploadButtons(
   root: ParentNode,
@@ -132,7 +144,10 @@ function attachMediaUploadButtons(
   });
 }
 
-function attachRemovableRestoreButtons(root: ParentNode = document) {
+function attachRemovableRestoreButtons(
+  root: ParentNode = document,
+  requestPick?: (target: MediaPickRequest) => void,
+) {
   root.querySelectorAll<HTMLElement>("[data-removable-restore]").forEach((el) => {
     if (el.dataset.restoreBound === "1") return;
     el.dataset.restoreBound = "1";
@@ -140,9 +155,23 @@ function attachRemovableRestoreButtons(root: ParentNode = document) {
       e.preventDefault();
       e.stopPropagation();
       const flagKey = el.dataset.removableRestore!;
+      const mediaKey = el.dataset.removableRestoreMedia;
       const blockEl = el.closest<HTMLElement>("[data-block-id]");
       const blockId = blockEl?.dataset.blockId;
       if (!blockId) return;
+
+      if (mediaKey) {
+        // "Restore with photo": open the upload dialog right here in the
+        // iframe — the parent cannot open a file picker from a
+        // postMessage-triggered click (user-activation does not cross the
+        // iframe boundary). The visibility flag is restored together with
+        // the uploaded URL once picked (see fileInput's change handler
+        // below), so a cancelled dialog leaves the slot untouched and a
+        // successful one only reloads the preview once.
+        requestPick?.({ blockId, fieldKey: mediaKey, restoreKey: flagKey });
+        return;
+      }
+
       window.parent?.postMessage(
         {
           source: "template-editor",
@@ -693,6 +722,18 @@ export function PreviewEditBridge() {
       fileInput.value = "";
       if (!file || !pending) return;
 
+      if (file.size > MAX_CANVAS_MEDIA_BYTES) {
+        window.parent?.postMessage(
+          {
+            source: "template-editor",
+            type: "media-error",
+            message: `حجم فایل باید کمتر از ${MAX_CANVAS_MEDIA_BYTES / (1024 * 1024)} مگابایت باشد.`,
+          },
+          "*",
+        );
+        return;
+      }
+
       const buffer = await file.arrayBuffer();
       window.parent?.postMessage(
         {
@@ -700,6 +741,7 @@ export function PreviewEditBridge() {
           type: "media-file-selected",
           blockId: pending.blockId,
           fieldKey: pending.fieldKey,
+          restoreKey: pending.restoreKey,
           fileName: file.name,
           mimeType: file.type || "image/jpeg",
           buffer,
@@ -713,7 +755,7 @@ export function PreviewEditBridge() {
 
     attachMediaUploadButtons(document, requestMediaPick);
     attachRemovableButtons();
-    attachRemovableRestoreButtons();
+    attachRemovableRestoreButtons(document, requestMediaPick);
 
     document.addEventListener("mouseover",  onOver);
     document.addEventListener("mousedown",  onMouseDown, true);  // capture

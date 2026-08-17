@@ -92,10 +92,11 @@ export function HavanHero({ id, config, storeContext }: TemplateSectionProps) {
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <div className="relative">
               <HeroVisualSlot
                 config={config}
+                mode="fill"
                 className={`${styles.board} min-h-[320px] overflow-hidden`}
               >
                 <div className={styles.board}>

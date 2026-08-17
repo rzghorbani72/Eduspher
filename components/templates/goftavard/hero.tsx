@@ -79,7 +79,7 @@ export function GoftavardHero({ id, config, storeContext }: TemplateSectionProps
             </p>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="relative grid gap-5">
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="relative grid gap-5" mediaKey="bgImage">
             <RemovableSlot config={config} flagKey="showStamp" editMode={editMode} className="inline-flex">
               <span className={styles.stamp} data-editable="stamp">
                 {text(config, 'stamp', d.stamp)}

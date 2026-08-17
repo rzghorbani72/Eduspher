@@ -92,8 +92,8 @@ export function RasadanehHero({ id, config, storeContext }: TemplateSectionProps
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
-            <HeroVisualSlot config={config} className={`${styles.chart} overflow-hidden`}>
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
+            <HeroVisualSlot config={config} mode="fill" className={`${styles.chart} overflow-hidden`}>
               <div className={styles.chart}>
                 <span className={styles.chartDisc} aria-hidden="true" />
 

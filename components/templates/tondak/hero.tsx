@@ -87,9 +87,10 @@ export function TondakHero({ id, config, storeContext }: TemplateSectionProps) {
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode}>
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <HeroVisualSlot
               config={config}
+              mode="fill"
               className={`${styles.stack} min-h-[320px] overflow-hidden rounded-(--theme-border-radius)`}
             >
               <div className={styles.stack} aria-hidden="true">

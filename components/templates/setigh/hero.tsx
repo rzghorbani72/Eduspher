@@ -75,9 +75,10 @@ export function SetighHero({ id, config, storeContext }: TemplateSectionProps) {
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="grid gap-5">
+          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="grid gap-5" mediaKey="bgImage">
             <HeroVisualSlot
               config={config}
+              mode="fill"
               className={`${styles.slab} min-h-[260px] overflow-hidden rounded-(--theme-border-radius)`}
             >
               <div className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}>

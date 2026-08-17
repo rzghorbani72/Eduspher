@@ -8,6 +8,11 @@ const PLACEHOLDER_CLASS =
  * Optional decoration inside a section (stats row, hero image, CTA button).
  * In the live site, hidden slots render nothing. In the template editor they
  * collapse to a dashed placeholder the manager can click to bring back.
+ *
+ * `mediaKey` marks a slot that is a photo replacement, not a decoration: its
+ * "restore" is a direct photo upload (see hero.tsx `mode="fill"` usage),
+ * which fully replaces the design's built-in visual — no separate design vs.
+ * photo choice.
  */
 export function RemovableSlot({
   config,
@@ -15,12 +20,14 @@ export function RemovableSlot({
   editMode = false,
   className = '',
   children,
+  mediaKey,
 }: {
   config?: SectionConfig;
   flagKey: string;
   editMode?: boolean;
   className?: string;
   children: ReactNode;
+  mediaKey?: string;
 }) {
   const visible = featureVisible(config, flagKey);
 
@@ -38,12 +45,15 @@ export function RemovableSlot({
     <button
       type="button"
       data-removable-restore={flagKey}
+      data-removable-restore-media={mediaKey}
       className={`${PLACEHOLDER_CLASS} ${className}`.trim()}
     >
       <span className="text-xl leading-none text-zinc-400" aria-hidden="true">
         +
       </span>
-      <span className="text-xs font-semibold text-zinc-600">بازگرداندن بلوک</span>
+      <span className="text-xs font-semibold text-zinc-600">
+        {mediaKey ? 'بارگذاری عکس' : 'بازگرداندن بلوک'}
+      </span>
     </button>
   );
 }

@@ -85,9 +85,10 @@ export function MomasHero({ id, config, storeContext }: TemplateSectionProps) {
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showBoard" editMode={editMode}>
+          <RemovableSlot config={config} flagKey="showBoard" editMode={editMode} mediaKey="bgImage">
             <HeroVisualSlot
               config={config}
+              mode="fill"
               className={`${styles.board} min-h-[320px] overflow-hidden`}
             >
               <div className={styles.board}>
