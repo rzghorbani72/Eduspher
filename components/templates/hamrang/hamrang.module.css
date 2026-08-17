@@ -1,0 +1,19 @@
+/*
+ * Hamrang — "same colour": one playful, slightly rotated tag of colour behind
+ * the headline's key word. Every colour reads a --theme-* variable so the tag
+ * re-tints with the academy palette.
+ */
+
+.tag {
+  display: inline-block;
+  transform: rotate(-2deg);
+  background: var(--theme-accent);
+  color: var(--theme-on-accent);
+  border-radius: calc(var(--theme-border-radius) / 1.4);
+  padding: 0.02em 0.22em;
+}
+
+.frame {
+  border: 3px solid var(--theme-foreground);
+  border-radius: calc(var(--theme-border-radius) * 1.4);
+}

@@ -1,10 +1,14 @@
 import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
-import { HeroVisualSlot } from '../_shared/hero-media';
+import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { RAUSHAN_DEFAULTS } from './defaults';
+
+// Up to four photos — the manager can upload more than one to turn the static
+// screenshot into an auto-rotating slideshow.
+const SLIDE_KEYS = ['bgImage', 'bgImage2', 'bgImage3', 'bgImage4'] as const;
 
 /**
  * Raushan — light, oversized headline on the left, a plain framed screenshot
@@ -57,17 +61,18 @@ export function RaushanHero({ id, config, storeContext }: TemplateSectionProps) 
           </div>
 
           <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
-            <HeroVisualSlot
+            <HeroSlideshowSlot
               config={config}
-              mode="fill"
-              className="min-h-[280px] overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) shadow-(--theme-shadow)"
+              mediaKeys={SLIDE_KEYS}
+              editMode={editMode}
+              className="min-h-[280px] rounded-(--theme-border-radius) border border-(--theme-border-color) shadow-(--theme-shadow)"
             >
               <div className="flex min-h-[280px] items-center justify-center bg-(--theme-surface-alt) p-10 text-center">
                 <span data-editable="photoCaption" className="text-[14px] font-medium text-(--theme-muted)">
                   {text(config, 'photoCaption', d.photoCaption)}
                 </span>
               </div>
-            </HeroVisualSlot>
+            </HeroSlideshowSlot>
           </RemovableSlot>
         </div>
       </Container>

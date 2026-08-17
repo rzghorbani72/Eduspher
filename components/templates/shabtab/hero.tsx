@@ -1,11 +1,15 @@
 import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
-import { HeroVisualSlot } from '../_shared/hero-media';
+import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { SHABTAB_DEFAULTS } from './defaults';
 import styles from './shabtab.module.css';
+
+// Up to four photos — the manager can upload more than one to turn the static
+// screenshot into an auto-rotating slideshow.
+const SLIDE_KEYS = ['bgImage', 'bgImage2', 'bgImage3', 'bgImage4'] as const;
 
 /**
  * Shabtab — dark gradient stage, oversized white headline, one floating glass
@@ -58,17 +62,18 @@ export function ShabtabHero({ id, config, storeContext }: TemplateSectionProps) 
           className="mx-auto mt-16 max-w-3xl"
           mediaKey="bgImage"
         >
-          <HeroVisualSlot
+          <HeroSlideshowSlot
             config={config}
-            mode="fill"
-            className={`${styles.glass} min-h-[300px] overflow-hidden`}
+            mediaKeys={SLIDE_KEYS}
+            editMode={editMode}
+            className={`${styles.glass} min-h-[300px]`}
           >
             <div className="flex min-h-[300px] items-center justify-center p-10">
               <span data-editable="photoCaption" className="text-[14px] font-medium text-current/60">
                 {text(config, 'photoCaption', d.photoCaption)}
               </span>
             </div>
-          </HeroVisualSlot>
+          </HeroSlideshowSlot>
         </RemovableSlot>
       </Container>
     </section>

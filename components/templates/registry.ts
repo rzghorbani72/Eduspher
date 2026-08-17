@@ -8,6 +8,8 @@ import { RASADANEH_SECTIONS } from './rasadaneh';
 import { RAUSHAN_SECTIONS } from './raushan';
 import { SHABTAB_SECTIONS } from './shabtab';
 import { SEPID_SECTIONS } from './sepid';
+import { HAMRANG_SECTIONS } from './hamrang';
+import { BARAN_SECTIONS } from './baran';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
 import type { ComponentType } from 'react';
@@ -33,6 +35,8 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   raushan: RAUSHAN_SECTIONS,
   shabtab: SHABTAB_SECTIONS,
   sepid: SEPID_SECTIONS,
+  hamrang: HAMRANG_SECTIONS,
+  baran: BARAN_SECTIONS,
 };
 
 export function resolveTemplateSection(

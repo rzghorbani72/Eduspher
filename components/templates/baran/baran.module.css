@@ -1,0 +1,12 @@
+/*
+ * Baran — "rain": a soft, pastel gradient wash behind an otherwise plain,
+ * centered hero. Every colour reads a --theme-* variable so the wash re-tints
+ * with the academy palette.
+ */
+
+.wash {
+  background:
+    radial-gradient(60% 55% at 18% 0%, color-mix(in srgb, var(--theme-primary) 16%, transparent) 0%, transparent 65%),
+    radial-gradient(55% 50% at 85% 8%, color-mix(in srgb, var(--theme-accent) 14%, transparent) 0%, transparent 65%),
+    var(--theme-background);
+}
