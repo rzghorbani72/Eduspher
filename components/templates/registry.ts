@@ -1,17 +1,17 @@
-import { SOHAIL_SECTIONS } from './sohail';
-import { SETIGH_SECTIONS } from './setigh';
-import { HAVAN_SECTIONS } from './havan';
-import { TONDAK_SECTIONS } from './tondak';
-import { MOMAS_SECTIONS } from './momas';
-import { GOFTAVARD_SECTIONS } from './goftavard';
-import { RASADANEH_SECTIONS } from './rasadaneh';
+import { KEYHAN_SECTIONS } from './keyhan';
+import { TAVAN_SECTIONS } from './tavan';
+import { DASTAN_SECTIONS } from './dastan';
+import { PARASTOO_SECTIONS } from './parastoo';
+import { NOKHBEH_SECTIONS } from './nokhbeh';
+import { ZABANEH_SECTIONS } from './zabaneh';
+import { BIKARAN_SECTIONS } from './bikaran';
 import { RAUSHAN_SECTIONS } from './raushan';
 import { SHABTAB_SECTIONS } from './shabtab';
 import { SEPID_SECTIONS } from './sepid';
 import { HAMRANG_SECTIONS } from './hamrang';
 import { BARAN_SECTIONS } from './baran';
 import { SHAFAGH_SECTIONS } from './shafagh';
-import { NABZ_SECTIONS } from './nabz';
+import { ELEKTRON_SECTIONS } from './elektron';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
 import type { ComponentType } from 'react';
@@ -27,20 +27,20 @@ import type { TemplateSectionProps } from './_shared/types';
  * untouched.
  */
 const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
-  sohail: SOHAIL_SECTIONS,
-  setigh: SETIGH_SECTIONS,
-  havan: HAVAN_SECTIONS,
-  tondak: TONDAK_SECTIONS,
-  momas: MOMAS_SECTIONS,
-  goftavard: GOFTAVARD_SECTIONS,
-  rasadaneh: RASADANEH_SECTIONS,
+  keyhan: KEYHAN_SECTIONS,
+  tavan: TAVAN_SECTIONS,
+  dastan: DASTAN_SECTIONS,
+  parastoo: PARASTOO_SECTIONS,
+  nokhbeh: NOKHBEH_SECTIONS,
+  zabaneh: ZABANEH_SECTIONS,
+  bikaran: BIKARAN_SECTIONS,
   raushan: RAUSHAN_SECTIONS,
   shabtab: SHABTAB_SECTIONS,
   sepid: SEPID_SECTIONS,
   hamrang: HAMRANG_SECTIONS,
   baran: BARAN_SECTIONS,
   shafagh: SHAFAGH_SECTIONS,
-  nabz: NABZ_SECTIONS,
+  elektron: ELEKTRON_SECTIONS,
 };
 
 export function resolveTemplateSection(

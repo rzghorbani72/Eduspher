@@ -1,0 +1,185 @@
+/*
+ * Keyhan — "observatory instrument" motifs.
+ *
+ * Only the decorative geometry lives here (star fields, orbit rings, plotter
+ * grid, radar sweep). Everything colour-bearing reads a --theme-* variable, so
+ * the motifs re-tint with the academy palette instead of pinning a hue.
+ */
+
+.void {
+  background:
+    radial-gradient(120% 80% at 80% -10%, color-mix(in srgb, var(--theme-primary) 26%, transparent) 0%, transparent 60%),
+    var(--theme-deep);
+  color: var(--theme-on-deep);
+}
+
+/* Star field: three offset dot layers, no image request. */
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(1.2px 1.2px at 20% 30%, var(--theme-on-deep) 50%, transparent 51%),
+    radial-gradient(1px 1px at 70% 15%, var(--theme-on-deep) 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 45% 70%, var(--theme-on-deep) 50%, transparent 51%);
+  background-size: 220px 180px, 160px 140px, 300px 260px;
+}
+.dense {
+  opacity: 0.8;
+  background-size: 120px 100px, 90px 80px, 170px 150px;
+}
+
+/* Plotter grid — the paper an observatory chart is drawn on. */
+.gridlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to left, color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px, transparent 1px);
+  background-size: 76px 76px;
+}
+.lightgrid {
+  background-image:
+    linear-gradient(to left, var(--theme-hairline) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--theme-hairline) 1px, transparent 1px);
+  opacity: 0.6;
+}
+
+/* Orbit diagram — concentric rings with a sweeping radius and two moons. */
+.orbit {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+}
+.ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--theme-on-deep) 16%, transparent);
+  border-radius: 50%;
+}
+.ring2 { inset: 12%; }
+.ring3 { inset: 24%; border-color: color-mix(in srgb, var(--theme-primary) 55%, transparent); }
+.ring4 { inset: 36%; border-style: dashed; }
+
+.sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, color-mix(in srgb, var(--theme-primary) 34%, transparent), transparent 28%);
+  animation: sweep 12s linear infinite;
+}
+@keyframes sweep {
+  to { transform: rotate(360deg); }
+}
+
+.planet {
+  position: absolute;
+  inset: 42%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, var(--theme-primary), color-mix(in srgb, var(--theme-primary) 30%, var(--theme-deep)));
+  box-shadow: 0 0 42px color-mix(in srgb, var(--theme-primary) 45%, transparent);
+}
+.moon {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  top: 24%;
+  inset-inline-start: 24%;
+}
+.moon2 {
+  background: var(--theme-on-deep);
+  top: auto;
+  bottom: 18%;
+  inset-inline-start: auto;
+  inset-inline-end: 22%;
+  width: 7px;
+  height: 7px;
+}
+
+/* Radar scope used in the features band. */
+.scope {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 40%, transparent);
+  border-radius: var(--theme-border-radius);
+  background: var(--theme-deep);
+  min-height: 200px;
+}
+.scope::before,
+.scope::after {
+  content: '';
+  position: absolute;
+  background: color-mix(in srgb, var(--theme-primary) 32%, transparent);
+}
+.scope::before { inset-inline: 0; top: 50%; height: 1px; }
+.scope::after { inset-block: 0; inset-inline-start: 50%; width: 1px; }
+
+.scopeRing {
+  position: absolute;
+  inset: 18%;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 30%, transparent);
+  border-radius: 50%;
+}
+.scopeRingInner { inset: 34%; }
+
+.blip {
+  position: absolute;
+  top: 34%;
+  inset-inline-end: 32%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--theme-accent) 25%, transparent);
+}
+
+/* Course thumbnails — deterministic gradients, no uploaded image required. */
+.thumb {
+  position: relative;
+  overflow: hidden;
+  height: 132px;
+  background: var(--theme-deep);
+}
+.thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 30% 40%, var(--theme-on-deep) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 72% 22%, var(--theme-on-deep) 50%, transparent 51%);
+  background-size: 90px 70px, 130px 110px;
+  opacity: 0.6;
+}
+.t1 { background-image: linear-gradient(140deg, color-mix(in srgb, var(--theme-primary) 70%, var(--theme-deep)), var(--theme-deep)); }
+.t2 { background-image: linear-gradient(200deg, color-mix(in srgb, var(--theme-accent) 55%, var(--theme-deep)), var(--theme-deep)); }
+.t3 { background-image: linear-gradient(80deg, var(--theme-deep), color-mix(in srgb, var(--theme-primary) 60%, var(--theme-deep))); }
+.t4 { background-image: linear-gradient(300deg, color-mix(in srgb, var(--theme-secondary) 55%, var(--theme-deep)), var(--theme-deep)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sweep { animation: none; }
+}
+
+/* Header logo mark: a planet disc inside a tilted orbit ring. */
+.logoMark {
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, var(--theme-accent), var(--theme-primary) 55%, var(--theme-deep) 100%);
+}
+.logoMark::after {
+  content: '';
+  position: absolute;
+  inset: -7px -13px;
+  border: 1px solid var(--theme-primary);
+  border-radius: 50%;
+  transform: rotate(-24deg);
+  opacity: 0.7;
+}

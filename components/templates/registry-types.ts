@@ -3,20 +3,20 @@ import type { TemplateSectionProps } from './_shared/types';
 
 /** The templates shipped as the public gallery. */
 export const TEMPLATE_KEYS = [
-  'sohail',
-  'setigh',
-  'havan',
-  'tondak',
-  'momas',
-  'goftavard',
-  'rasadaneh',
+  'keyhan',
+  'tavan',
+  'dastan',
+  'parastoo',
+  'nokhbeh',
+  'zabaneh',
+  'bikaran',
   'raushan',
   'shabtab',
   'sepid',
   'hamrang',
   'baran',
   'shafagh',
-  'nabz',
+  'elektron',
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];

@@ -37,13 +37,13 @@ export interface HeaderSpec {
   navStyle: "plain" | "underline" | "border" | "pill";
   /** Per-template CSS-module class drawing the logo mark. Omitted = no mark. */
   markClassName?: string;
-  /** Setigh draws a short accent rule along the bottom edge. */
+  /** Tavan draws a short accent rule along the bottom edge. */
   accentBar?: boolean;
-  /** Tondak/Setigh use a heavier bottom rule. */
+  /** Parastoo/Tavan use a heavier bottom rule. */
   thickBorder?: boolean;
-  /** Sohail's translucent, blurred bar. */
+  /** Keyhan's translucent, blurred bar. */
   translucent?: boolean;
-  /** Monospace tagline (Momas). */
+  /** Monospace tagline (Nokhbeh). */
   monoTagline?: boolean;
 }
 
