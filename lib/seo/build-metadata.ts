@@ -5,6 +5,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
 import { seoDomains } from "./domains";
+import { ENAMAD_CODE, isEnamadTitleVerification } from "./enamad";
 import { getPlatformPageSeo } from "./platform-pages";
 import {
   getSeoRequestContext,
@@ -58,7 +59,14 @@ export async function buildSiteMetadata(
   // On an academy site the brand is the academy the manager named — the
   // platform name is our internal identity and must never surface there.
   const brandName = academyName ?? seoDomains.siteName;
-  const title = options.title ?? platformPage?.title ?? brandName;
+  const baseTitle = options.title ?? platformPage?.title ?? brandName;
+  // Enamad verifies ownership of mentoma.ir by reading its code from the home
+  // page title; the flag stays on only while that check runs.
+  const isEnamadHome = ctx.isPlatform && ctx.region === "ir" && ctx.pathname === "/";
+  const title =
+    isEnamadHome && isEnamadTitleVerification
+      ? `${ENAMAD_CODE} | ${baseTitle}`
+      : baseTitle;
   const description =
     options.description ??
     platformPage?.description ??
@@ -100,6 +108,7 @@ export async function buildSiteMetadata(
     ...(iconUrl
       ? { icons: { icon: iconUrl, shortcut: iconUrl, apple: iconUrl } }
       : {}),
+    ...(isEnamadHome ? { other: { enamad: ENAMAD_CODE } } : {}),
     robots: noIndex
       ? { index: false, follow: false }
       : { index: true, follow: true },

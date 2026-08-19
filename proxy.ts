@@ -179,6 +179,7 @@ const shouldBypass = (req: NextRequest) => {
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/robots.txt") ||
     pathname.startsWith("/sitemap") ||
+    pathname.endsWith(".txt") ||
     pathname.endsWith(".js") ||
     pathname.endsWith(".css") ||
     pathname.endsWith(".ico") ||
