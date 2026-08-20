@@ -5,6 +5,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
 import { seoDomains } from "./domains";
+import { getTrustBadge } from "@/lib/api/trust-badge";
 import { ENAMAD_CODE, isEnamadTitleVerification } from "./enamad";
 import { getPlatformPageSeo } from "./platform-pages";
 import {
@@ -60,13 +61,23 @@ export async function buildSiteMetadata(
   // platform name is our internal identity and must never surface there.
   const brandName = academyName ?? seoDomains.siteName;
   const baseTitle = options.title ?? platformPage?.title ?? brandName;
-  // Enamad verifies ownership of mentoma.ir by reading its code from the home
-  // page title; the flag stays on only while that check runs.
-  const isEnamadHome = ctx.isPlatform && ctx.region === "ir" && ctx.pathname === "/";
+  const academyBadge =
+    !ctx.isPlatform && ctx.academySlug
+      ? await getTrustBadge(ctx.academySlug)
+      : null;
+  const isPlatformHome =
+    ctx.isPlatform && ctx.region === "ir" && ctx.pathname === "/";
+  const isAcademyHome = !ctx.isPlatform && ctx.pathname === "/";
+  const enamadCode = isPlatformHome
+    ? ENAMAD_CODE
+    : isAcademyHome
+      ? academyBadge?.enamad_code
+      : null;
+  const titleVerify = isPlatformHome
+    ? isEnamadTitleVerification
+    : Boolean(isAcademyHome && academyBadge?.enamad_title_verify);
   const title =
-    isEnamadHome && isEnamadTitleVerification
-      ? `${ENAMAD_CODE} | ${baseTitle}`
-      : baseTitle;
+    enamadCode && titleVerify ? `${enamadCode} | ${baseTitle}` : baseTitle;
   const description =
     options.description ??
     platformPage?.description ??
@@ -108,7 +119,7 @@ export async function buildSiteMetadata(
     ...(iconUrl
       ? { icons: { icon: iconUrl, shortcut: iconUrl, apple: iconUrl } }
       : {}),
-    ...(isEnamadHome ? { other: { enamad: ENAMAD_CODE } } : {}),
+    ...(enamadCode ? { other: { enamad: enamadCode } } : {}),
     robots: noIndex
       ? { index: false, follow: false }
       : { index: true, follow: true },

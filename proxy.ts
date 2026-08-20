@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { jwtVerify, decodeJwt, type JWTPayload } from "jose";
 
 import { env } from "./lib/env";
+import { maybeEnamadTxtResponse } from "./lib/seo/enamad-txt-response";
 
 let jwtSecretWarningLogged = false;
 
@@ -374,6 +375,9 @@ const fetchStores = async () => {
 };
 
 export async function proxy(request: NextRequest) {
+  const enamadTxt = await maybeEnamadTxtResponse(request);
+  if (enamadTxt) return enamadTxt;
+
   if (shouldBypass(request)) {
     return NextResponse.next();
   }

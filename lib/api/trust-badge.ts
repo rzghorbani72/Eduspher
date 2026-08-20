@@ -13,6 +13,8 @@ export type TrustBadge = {
   identity_verified: boolean;
   enamad_status: string;
   enamad_code: string | null;
+  enamad_seal_id: string | null;
+  enamad_title_verify: boolean;
   custom_domain: string | null;
   hosted_since: string | null;
 };
@@ -20,7 +22,8 @@ export type TrustBadge = {
 /**
  * Cached per request: the footer renders on every page, and the badge never
  * changes within a single render. A failure here must never take the page down
- * — the footer simply omits the block.
+ * — the footer simply omits the block. revalidate 0 so title-verify and the
+ * seal widget appear as soon as the manager saves them.
  */
 export const getTrustBadge = cache(
   async (slug: string): Promise<TrustBadge | null> => {
@@ -28,9 +31,15 @@ export const getTrustBadge = cache(
     try {
       const result = await serverFetch<TrustBadge | null>(
         `/compliance/public/trust-badge?slug=${encodeURIComponent(slug)}`,
-        { includeAuth: false },
+        { includeAuth: false, revalidate: 0 },
       );
-      return result.data ?? null;
+      if (result.data && typeof result.data === "object") {
+        return result.data;
+      }
+      if (result && "academy_name" in result) {
+        return result as unknown as TrustBadge;
+      }
+      return null;
     } catch {
       return null;
     }

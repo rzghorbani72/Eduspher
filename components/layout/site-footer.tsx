@@ -7,6 +7,7 @@ import { buildAcademyPath } from "@/lib/utils";
 import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
+import { PlatformTrustBadge } from "@/components/academy/platform-trust-badge";
 
 export const SiteFooter = async () => {
   const store = await getAcademyContext();
@@ -74,6 +75,9 @@ export const SiteFooter = async () => {
           <p className="text-xs text-muted opacity-60 dark:text-muted">
             &copy; {new Date().getFullYear()} {store.name}. {translate("footer.allRightsReserved")}
           </p>
+          {store.slug ? (
+            <PlatformTrustBadge slug={store.slug} academyId={store.id} />
+          ) : null}
         </div>
         <div className="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-3">
           {footerLinks.map((section) => (

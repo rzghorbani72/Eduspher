@@ -1,4 +1,5 @@
 import { getCurrentAcademy } from '@/lib/api/server';
+import { PlatformTrustBadge } from '@/components/academy/platform-trust-badge';
 import { Container } from './section';
 import { list, text, type SectionConfig } from './types';
 
@@ -125,10 +126,13 @@ export async function TemplateSiteFooter({ id, config, defaults }: TemplateFoote
           ) : null}
         </div>
 
-        <div className="flex flex-wrap justify-between gap-4 border-t border-current/14 py-6 text-[13px] text-current/55">
+        <div className="flex flex-wrap items-end justify-between gap-4 border-t border-current/14 py-6 text-[13px] text-current/55">
           <span>
             © {year} {academyName}. <span data-editable="legal">{text(config, 'legal', defaults.legal)}</span>
           </span>
+          {academy?.slug ? (
+            <PlatformTrustBadge slug={academy.slug} academyId={academy.id} />
+          ) : null}
         </div>
       </Container>
     </footer>

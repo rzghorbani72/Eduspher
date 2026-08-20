@@ -2,6 +2,7 @@ import { ShieldCheck } from "lucide-react";
 
 import { getTrustBadge } from "@/lib/api/trust-badge";
 import { ReportAbuseDialog } from "./report-abuse-dialog";
+import { EnamadSeal } from "./enamad-seal";
 
 /**
  * Identity disclosure for a public academy site.
@@ -52,7 +53,11 @@ export async function PlatformTrustBadge({
         </div>
       ) : null}
 
-      {badge.enamad_code ? (
+      {badge.enamad_seal_id && badge.enamad_code ? (
+        <div className="mt-3">
+          <EnamadSeal sealId={badge.enamad_seal_id} code={badge.enamad_code} />
+        </div>
+      ) : badge.enamad_code ? (
         <div className="mt-1">
           <span>نماد اعتماد الکترونیکی: {badge.enamad_code}</span>
         </div>
