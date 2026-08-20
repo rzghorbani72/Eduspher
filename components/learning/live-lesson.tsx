@@ -1,11 +1,15 @@
 "use client";
 
-import useSWR from "swr";
 import { CalendarClock, ExternalLink, Video } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { getLessonLiveSession } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { queryKeys } from "@/lib/query/keys";
+
+/** The join link is time-gated server-side, so re-poll to catch it opening. */
+const LIVE_SESSION_REFRESH_MS = 60_000;
 
 interface LiveLessonProps {
   lessonId: string;
@@ -13,14 +17,16 @@ interface LiveLessonProps {
 
 export function LiveLesson({ lessonId }: LiveLessonProps) {
   const { t, language } = useTranslation();
-  const { data, error, isLoading } = useSWR(
-    `live-session:${lessonId}`,
-    () => getLessonLiveSession(lessonId),
-    { refreshInterval: 60_000 },
-  );
+  const { data, error, isLoading } = useApiQuery({
+    queryKey: queryKeys.liveLesson(lessonId),
+    queryFn: (signal) => getLessonLiveSession(lessonId, { signal }),
+    refetchInterval: LIVE_SESSION_REFRESH_MS,
+  });
 
   if (isLoading) {
-    return <p className="text-sm text-muted-foreground">{t("common.loading")}</p>;
+    return (
+      <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+    );
   }
 
   if (error || !data) {
@@ -52,14 +58,23 @@ export function LiveLesson({ lessonId }: LiveLessonProps) {
         <div className="min-w-0 flex-1">
           <h2 className="font-semibold">{t("learning.liveClass")}</h2>
           <p className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
-            <CalendarClock className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <CalendarClock
+              className="mt-0.5 size-4 shrink-0"
+              aria-hidden="true"
+            />
             <span>{date}</span>
           </p>
-          {data.notes ? <p className="mt-3 whitespace-pre-wrap text-sm">{data.notes}</p> : null}
+          {data.notes ? (
+            <p className="mt-3 whitespace-pre-wrap text-sm">{data.notes}</p>
+          ) : null}
           <div className="mt-5 flex flex-wrap gap-3">
             {data.meeting_url ? (
               <Button asChild>
-                <a href={data.meeting_url} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={data.meeting_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {t("learning.joinClass")}
                   <ExternalLink className="size-4" aria-hidden="true" />
                 </a>
@@ -71,7 +86,11 @@ export function LiveLesson({ lessonId }: LiveLessonProps) {
             )}
             {data.playback_url ? (
               <Button asChild variant="outline">
-                <a href={data.playback_url} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={data.playback_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {t("courses.livePlayback")}
                 </a>
               </Button>

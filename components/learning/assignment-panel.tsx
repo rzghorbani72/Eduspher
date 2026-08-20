@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import useSWR from "swr";
 import { CheckCircle2, Clock3 } from "lucide-react";
 
 import { DiscussionThread } from "@/components/discussion/discussion-thread";
@@ -14,6 +13,8 @@ import {
   submitAssignment,
 } from "@/lib/api/learning";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { queryKeys } from "@/lib/query/keys";
 
 interface AssignmentPanelProps {
   lessonId: string;
@@ -31,15 +32,20 @@ export function AssignmentPanel({
   const [fileUrl, setFileUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const { data: assignmentData, error: assignmentError } = useSWR(
-    `assignment:${lessonId}`,
-    () => listAssignments({ lessonId, limit: 1 }),
-  );
+  const { data: assignmentData, error: assignmentError } = useApiQuery({
+    queryKey: queryKeys.assignments(lessonId),
+    queryFn: (signal) => listAssignments({ lessonId, limit: 1 }, { signal }),
+  });
   const assignment = assignmentData?.assignments[0];
-  const { data: submissionData, mutate } = useSWR(
-    assignment ? `submission:${assignment.id}:${enrollmentId}` : null,
-    () => listSubmissions({ assignmentId: assignment?.id, enrollmentId, limit: 1 }),
-  );
+  const { data: submissionData, refresh: refreshSubmission } = useApiQuery({
+    queryKey: ["submission", assignment?.id, enrollmentId],
+    queryFn: (signal) =>
+      listSubmissions(
+        { assignmentId: assignment?.id, enrollmentId, limit: 1 },
+        { signal },
+      ),
+    enabled: Boolean(assignment),
+  });
   const submission = submissionData?.submissions[0];
 
   const dueDate = useMemo(() => {
@@ -70,19 +76,15 @@ export function AssignmentPanel({
     setSubmitting(true);
     setFormError(null);
     try {
-      const created = await submitAssignment({
+      await submitAssignment({
         assignmentId: assignment.id,
         enrollmentId,
         content: content.trim() || undefined,
         fileUrl: fileUrl.trim() || undefined,
       });
-      await mutate(
-        (current) =>
-          current
-            ? { ...current, submissions: [created], pagination: current.pagination }
-            : current,
-        true,
-      );
+      // Re-read rather than patching the cache: what the server stored is the
+      // learning record, and that is what the student must see.
+      await refreshSubmission();
       setContent("");
       setFileUrl("");
     } catch {
@@ -93,10 +95,16 @@ export function AssignmentPanel({
   };
 
   if (assignmentError) {
-    return <p className="text-sm text-destructive">{t("learning.assignmentUnavailable")}</p>;
+    return (
+      <p className="text-sm text-destructive">
+        {t("learning.assignmentUnavailable")}
+      </p>
+    );
   }
   if (!assignmentData) {
-    return <p className="text-sm text-muted-foreground">{t("common.loading")}</p>;
+    return (
+      <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+    );
   }
   if (!assignment) {
     return (
@@ -132,18 +140,24 @@ export function AssignmentPanel({
         {submission ? (
           <div className="mt-6 rounded-xl bg-muted/50 p-4">
             <p className="flex items-center gap-2 font-medium">
-              <CheckCircle2 className="size-4 text-primary" aria-hidden="true" />
+              <CheckCircle2
+                className="size-4 text-primary"
+                aria-hidden="true"
+              />
               {submission.status === "GRADED"
                 ? t("learning.graded")
                 : t("learning.submitted")}
             </p>
             {submission.score !== null && submission.score !== undefined ? (
               <p className="mt-2 text-sm">
-                {t("learning.score")}: {submission.score} / {assignment.max_score}
+                {t("learning.score")}: {submission.score} /{" "}
+                {assignment.max_score}
               </p>
             ) : null}
             {submission.feedback ? (
-              <p className="mt-3 whitespace-pre-wrap text-sm">{submission.feedback}</p>
+              <p className="mt-3 whitespace-pre-wrap text-sm">
+                {submission.feedback}
+              </p>
             ) : null}
           </div>
         ) : null}
@@ -167,9 +181,17 @@ export function AssignmentPanel({
           <p className="text-xs text-muted-foreground">
             {t("learning.uploadUnavailableNote")}
           </p>
-          {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
-          <Button type="button" onClick={() => void handleSubmit()} disabled={submitting}>
-            {submitting ? t("learning.submittingAssignment") : t("learning.submitAssignment")}
+          {formError ? (
+            <p className="text-sm text-destructive">{formError}</p>
+          ) : null}
+          <Button
+            type="button"
+            onClick={() => void handleSubmit()}
+            disabled={submitting}
+          >
+            {submitting
+              ? t("learning.submittingAssignment")
+              : t("learning.submitAssignment")}
           </Button>
         </div>
       </section>

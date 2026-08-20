@@ -1,6 +1,5 @@
 "use client";
 
-import useSWR from "swr";
 import { CheckCircle2, Menu, PanelRightClose } from "lucide-react";
 import { useState } from "react";
 
@@ -14,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import type { LessonSummary, SeasonSummary } from "@/lib/api/types";
 import { getLearningLesson, getProgress } from "@/lib/api/learning";
 import { useLessonProgress } from "@/hooks/use-lesson-progress";
+import { useApiQuery } from "@/hooks/use-api-query";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn, resolveAssetUrl } from "@/lib/utils";
 
@@ -39,14 +39,18 @@ export function LearningShell({
   const { t } = useTranslation();
   const [curriculumOpen, setCurriculumOpen] = useState(false);
   const lessonId = String(selectedLesson.id);
-  const { data: lesson, error, isLoading } = useSWR(
-    `learning-lesson:${lessonId}`,
-    () => getLearningLesson(lessonId),
-  );
-  const { data: courseProgress, mutate: refreshCourseProgress } = useSWR(
-    `course-progress:${courseId}`,
-    () => getProgress({ courseId }),
-  );
+  const {
+    data: lesson,
+    error,
+    isLoading,
+  } = useApiQuery({
+    queryKey: ["learning-lesson", lessonId],
+    queryFn: (signal) => getLearningLesson(lessonId, { signal }),
+  });
+  const { data: courseProgress, refresh: refreshCourseProgress } = useApiQuery({
+    queryKey: ["course-progress", courseId],
+    queryFn: (signal) => getProgress({ courseId }, { signal }),
+  });
   const lessonType = (
     selectedLesson.lesson_type ??
     lesson?.lesson_type ??
@@ -68,7 +72,11 @@ export function LearningShell({
     if (saved) await refreshCourseProgress();
   };
 
-  const type = (lesson?.lesson_type ?? selectedLesson.lesson_type ?? "TEXT").toUpperCase();
+  const type = (
+    lesson?.lesson_type ??
+    selectedLesson.lesson_type ??
+    "TEXT"
+  ).toUpperCase();
   const documentUrl = resolveAssetUrl(lesson?.Document?.publicUrl);
   const canDownload =
     lesson?.can_download === true ||
@@ -81,7 +89,9 @@ export function LearningShell({
     <div className="mx-auto max-w-[1500px]">
       <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm text-muted-foreground">{courseTitle}</p>
+          <p className="truncate text-sm text-muted-foreground">
+            {courseTitle}
+          </p>
           <h1 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
             {selectedLesson.title}
           </h1>
@@ -129,7 +139,10 @@ export function LearningShell({
               ) : null}
               {type === "LIVE" ? <LiveLesson lessonId={lessonId} /> : null}
               {type === "QUIZ" ? (
-                <LessonQuiz lessonId={lessonId} currentProfileId={currentProfileId} />
+                <LessonQuiz
+                  lessonId={lessonId}
+                  currentProfileId={currentProfileId}
+                />
               ) : null}
               {type === "ASSIGNMENT" ? (
                 <AssignmentPanel
@@ -138,7 +151,9 @@ export function LearningShell({
                   currentProfileId={currentProfileId}
                 />
               ) : null}
-              {!["VIDEO", "TEXT", "LIVE", "QUIZ", "ASSIGNMENT"].includes(type) ? (
+              {!["VIDEO", "TEXT", "LIVE", "QUIZ", "ASSIGNMENT"].includes(
+                type,
+              ) ? (
                 <Unavailable message={t("learning.lessonTypeUnavailable")} />
               ) : null}
               {documentUrl ? (

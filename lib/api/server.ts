@@ -65,7 +65,18 @@ import type {
 type FetchOptions = RequestInit & {
   query?: Record<string, string | number | boolean | undefined>;
   includeAuth?: boolean;
+  /** Seconds to reuse a cached response. Public (`includeAuth: false`) calls only. */
+  revalidate?: number;
+  /**
+   * Cache tags, automatically prefixed with the academy scope. Nothing purges
+   * by tag yet — entries expire on the TTL — but tagging now means a future
+   * purge endpoint cannot accidentally clear another academy's cache.
+   */
+  tags?: string[];
 };
+
+/** Public data is shared by every visitor, so a short window is safe and cheap. */
+const PUBLIC_REVALIDATE_SECONDS = 60;
 
 const buildUrl = (
   path: string,
@@ -161,19 +172,44 @@ const buildHeaders = async (
 
 const baseFetch = async (
   path: string,
-  { query, includeAuth = true, ...init }: FetchOptions = {},
+  { query, includeAuth = true, revalidate, tags, ...init }: FetchOptions = {},
 ) => {
   const cookieStore = await cookies();
   const lang = cookieStore.get("preferred_language")?.value ?? DEFAULT_LANGUAGE;
   const url = buildUrl(path, query, lang);
   const headers = await buildHeaders(includeAuth, init.headers);
 
+  // SECURITY: only anonymous GETs may enter Next's shared data cache. Anything
+  // carrying a JWT is per-user, so it stays no-store — caching it could serve
+  // one visitor's data to another.
+  //
+  // Academy scope rides in the X-Academy-ID / X-Academy-Slug headers, and Next
+  // hashes the request headers into the fetch cache key, so two academies can
+  // never collide on one entry. Tags are additionally academy-scoped below so a
+  // mutation in one academy cannot revalidate another's cache.
+  const method = (init.method ?? "GET").toUpperCase();
+  const isCacheable = includeAuth === false && method === "GET";
+  const scopeHeaders = new Headers(headers);
+  const academyTagScope =
+    scopeHeaders.get("X-Academy-Slug") ??
+    scopeHeaders.get("X-Academy-ID") ??
+    "global";
+  const cacheOptions: Pick<RequestInit, "cache" | "next"> = isCacheable
+    ? {
+        next: {
+          revalidate: revalidate ?? PUBLIC_REVALIDATE_SECONDS,
+          ...(tags
+            ? { tags: tags.map((tag) => `${academyTagScope}:${tag}`) }
+            : {}),
+        },
+      }
+    : { cache: "no-store", next: { revalidate: 0 } };
+
   const response = await fetch(url, {
     ...init,
     headers,
     credentials: "include",
-    cache: "no-store",
-    next: { revalidate: 0 },
+    ...cacheOptions,
   });
 
   if (!response.ok) {
@@ -945,6 +981,7 @@ export async function getStoreThemeConfig(
       };
     }>(path, {
       includeAuth: false, // Always use public endpoint for theme config
+      tags: ["theme"],
     });
     return result.data;
   } catch (error) {

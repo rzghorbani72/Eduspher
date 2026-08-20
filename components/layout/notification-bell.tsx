@@ -1,31 +1,32 @@
 "use client";
 
-import useSWR from "swr";
 import { Bell } from "lucide-react";
 
 import Link from "@/components/ui/link";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getUnreadNotificationCount } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { queryKeys } from "@/lib/query/keys";
 
 /** Polls at a minute — notifications are not time-critical enough to stream. */
 const REFRESH_MS = 60_000;
 
-export function NotificationBell({ isAuthenticated }: { isAuthenticated: boolean }) {
+export function NotificationBell({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean;
+}) {
   const { t } = useTranslation();
   const buildPath = useStorePath();
 
-  const { data, error } = useSWR(
-    isAuthenticated ? "notifications-unread-count" : null,
-    async () => (await getUnreadNotificationCount())?.data?.count ?? 0,
-    {
-      refreshInterval: REFRESH_MS,
-      revalidateOnFocus: true,
-      // Pending legal consent 403s this endpoint on every poll. Retrying would
-      // just re-fire the consent event forever, so stop and let the gate lead.
-      shouldRetryOnError: false,
-    },
-  );
+  const { data, error } = useApiQuery<number>({
+    queryKey: queryKeys.notifications(),
+    queryFn: async (signal) =>
+      (await getUnreadNotificationCount({ signal }))?.data?.count ?? 0,
+    enabled: isAuthenticated,
+    refetchInterval: REFRESH_MS,
+  });
 
   // Hide rather than show a wrong count when the badge cannot be read.
   if (error) return null;

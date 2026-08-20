@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import useSWR from "swr";
 import { Loader2 } from "lucide-react";
 
 import Link from "@/components/ui/link";
 import { useStorePath } from "@/components/providers/store-provider";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { queryKeys } from "@/lib/query/keys";
 import {
   LEGAL_CONSENT_REQUIRED_EVENT,
   acceptPlatformLegalDocuments,
@@ -36,34 +37,39 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: pending, mutate } = useSWR<LegalPendingDocument[]>(
-    "legal-acceptance-status",
-    async () => (await getLegalAcceptanceStatus())?.pending ?? [],
-    { revalidateOnFocus: false, fallbackData: [] },
-  );
+  const { data: pending, refresh: refreshPending } = useApiQuery<
+    LegalPendingDocument[]
+  >({
+    queryKey: queryKeys.legalConsent(),
+    queryFn: async (signal) =>
+      (await getLegalAcceptanceStatus({ signal }))?.pending ?? [],
+  });
 
   // Any 403 from the API means a new version landed since this page loaded.
   useEffect(() => {
     const onRequired = () => {
-      void mutate();
+      void refreshPending();
     };
     window.addEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onRequired);
-    return () => window.removeEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onRequired);
-  }, [mutate]);
+    return () =>
+      window.removeEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onRequired);
+  }, [refreshPending]);
 
   // The diff is a nice-to-have: a failure here must never block acceptance.
-  const { data: diffs } = useSWR<LegalDocumentDiff[]>(
-    pending?.length ? "legal-acceptance-diff" : null,
-    async () => (await getLegalAcceptanceDiff()) ?? [],
-    { revalidateOnFocus: false, fallbackData: [] },
-  );
+  const { data: diffs } = useApiQuery<LegalDocumentDiff[]>({
+    queryKey: [...queryKeys.legalConsent(), "diff"],
+    queryFn: async (signal) => (await getLegalAcceptanceDiff({ signal })) ?? [],
+    enabled: Boolean(pending?.length),
+  });
 
   async function handleAccept() {
     setSubmitting(true);
     setError(null);
     try {
       await acceptPlatformLegalDocuments(language);
-      logger.ok("legal", "consent_accepted", { document_count: pending?.length ?? 0 });
+      logger.ok("legal", "consent_accepted", {
+        document_count: pending?.length ?? 0,
+      });
       window.location.reload();
     } catch (err) {
       logger.error("legal", "consent_accept_failed", {
@@ -95,7 +101,10 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
       >
         <div className="w-full max-w-2xl space-y-5 rounded-2xl border border-theme bg-card p-6 shadow-2xl">
           <div className="space-y-1">
-            <h2 id="legal-consent-title" className="text-xl font-bold text-(--theme-foreground)">
+            <h2
+              id="legal-consent-title"
+              className="text-xl font-bold text-(--theme-foreground)"
+            >
               {t("legal.reacceptTitle")}
             </h2>
             <p className="text-sm text-muted">{t("legal.reacceptSubtitle")}</p>
@@ -106,10 +115,15 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
               const diff = diffs?.find((entry) => entry.type === doc.type);
               const fullDocHref = DOCUMENT_LINKS[doc.type];
               return (
-                <li key={doc.type} className="rounded-lg border border-theme px-3 py-2.5">
+                <li
+                  key={doc.type}
+                  className="rounded-lg border border-theme px-3 py-2.5"
+                >
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <span className="font-medium text-(--theme-foreground)">{doc.title}</span>
+                      <span className="font-medium text-(--theme-foreground)">
+                        {doc.title}
+                      </span>
                       <span className="ms-2 text-muted">
                         ({t("legal.version")} {doc.version})
                       </span>
@@ -134,7 +148,9 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
                               : "text-red-700 line-through dark:text-red-400"
                           }
                         >
-                          <span aria-hidden="true">{line.added ? "+ " : "− "}</span>
+                          <span aria-hidden="true">
+                            {line.added ? "+ " : "− "}
+                          </span>
                           {line.value}
                         </li>
                       ))}

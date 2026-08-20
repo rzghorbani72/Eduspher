@@ -8,7 +8,7 @@ const withTrailingSlash = (value: string) =>
 
 const getBaseUrl = () => withTrailingSlash(getClientBackendApiBaseUrl());
 
-type RequestOptions = {
+export type RequestOptions = {
   signal?: AbortSignal;
   skipRefresh?: boolean; // Skip token refresh for this request
 };

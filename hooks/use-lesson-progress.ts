@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import useSWR from "swr";
 
 import {
   getProgress,
@@ -10,6 +9,10 @@ import {
   type LearningProgress,
   type ProgressStatus,
 } from "@/lib/api/learning";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { useApiQuery } from "@/hooks/use-api-query";
+import { queryKeys } from "@/lib/query/keys";
 
 const HEARTBEAT_SECONDS = 15;
 
@@ -19,10 +22,18 @@ export function useLessonProgress(
   options?: { useVideoHeartbeat?: boolean },
 ) {
   const useVideoHeartbeat = options?.useVideoHeartbeat ?? false;
-  const key = `progress:${enrollmentId}:${lessonId}`;
-  const { data, mutate } = useSWR(key, async () => {
-    const result = await getProgress({ enrollmentId, lessonId, limit: 1 });
-    return result.progress[0] ?? null;
+  const queryClient = useQueryClient();
+  const progressKey = queryKeys.lessonProgress(enrollmentId, lessonId);
+
+  const { data } = useApiQuery({
+    queryKey: progressKey,
+    queryFn: async (signal) => {
+      const result = await getProgress(
+        { enrollmentId, lessonId, limit: 1 },
+        { signal },
+      );
+      return result.progress[0] ?? null;
+    },
   });
   const [saving, setSaving] = useState(false);
   const [saveFailed, setSaveFailed] = useState(false);
@@ -60,7 +71,7 @@ export function useLessonProgress(
           watchTime: position,
         });
         lastSavedPosition.current = position;
-        await mutate(progress, false);
+        queryClient.setQueryData(progressKey, progress);
       })();
       pendingSave.current = request;
       try {
@@ -74,7 +85,8 @@ export function useLessonProgress(
         setSaving(false);
       }
     },
-    [awaitPending, enrollmentId, lessonId, mutate],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [awaitPending, enrollmentId, lessonId, queryClient],
   );
 
   const persistVideoHeartbeat = useCallback(
@@ -93,7 +105,8 @@ export function useLessonProgress(
         });
         lastSavedPosition.current = position;
         lastHeartbeatAt.current = position;
-        await mutate(
+        queryClient.setQueryData<LearningProgress | null>(
+          progressKey,
           (current) =>
             current
               ? {
@@ -101,10 +114,11 @@ export function useLessonProgress(
                   last_position: position,
                   watch_time: (current.watch_time ?? 0) + activeSeconds,
                   status:
-                    current.status === "COMPLETED" ? "COMPLETED" : "IN_PROGRESS",
+                    current.status === "COMPLETED"
+                      ? "COMPLETED"
+                      : "IN_PROGRESS",
                 }
               : current,
-          false,
         );
       })();
       pendingSave.current = request;
@@ -119,7 +133,8 @@ export function useLessonProgress(
         setSaving(false);
       }
     },
-    [awaitPending, enrollmentId, lessonId, mutate],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [awaitPending, enrollmentId, lessonId, queryClient],
   );
 
   const heartbeat = useCallback(

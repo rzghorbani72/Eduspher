@@ -14,6 +14,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.7)(react@19.2.1)
+      '@tanstack/react-query':
+        specifier: ^5.101.4
+        version: 5.101.4(react@19.2.1)
       '@types/dompurify':
         specifier: ^3.0.5
         version: 3.2.0
@@ -59,9 +62,6 @@ importers:
       react-hook-form:
         specifier: ^7.53.1
         version: 7.68.0(react@19.2.1)
-      swr:
-        specifier: ^2.3.0
-        version: 2.3.7(react@19.2.1)
       tailwind-merge:
         specifier: ^2.5.5
         version: 2.6.0
@@ -719,6 +719,14 @@ packages:
   '@tailwindcss/postcss@4.1.17':
     resolution: {integrity: sha512-+nKl9N9mN5uJ+M7dBOOCzINw94MPstNR/GtIhz1fpZysxL/4a+No64jCBD6CPN+bIHWFx3KWuu8XJRrj/572Dw==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@tailwindcss/postcss/-/postcss-4.1.17.tgz}
 
+  '@tanstack/query-core@5.101.4':
+    resolution: {integrity: sha512-gNwcvOJcRbLWPOLG/2OBm+zM+Yv+MKsXKEOWC57USuZDEsI71hEErQsiEGx5wX9rzWWkfwM0fVSPoiIFSsxfiw==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@tanstack/query-core/-/query-core-5.101.4.tgz}
+
+  '@tanstack/react-query@5.101.4':
+    resolution: {integrity: sha512-yRg2pfOCxIs4ZJW3XYYHU/WgtD04FHSnfHlpRT7h7pR77hwkdRG4wxbKe4aq6P0RvXUTBSQpQeadS1SUYUe+KA==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@tanstack/react-query/-/react-query-5.101.4.tgz}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@tsconfig/node10@1.0.12':
     resolution: {integrity: sha512-UCYBaeFvM11aU2y3YPZ//O5Rhj+xKyzy7mvcIoAjASbigy8mHMryP5cK7dgjlz2hWxh1g5pLw084E0a/wlUSFQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@tsconfig/node10/-/node10-1.0.12.tgz}
 
@@ -1154,10 +1162,6 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/delayed-stream/-/delayed-stream-1.0.0.tgz}
     engines: {node: '>=0.4.0'}
 
-  dequal@2.0.3:
-    resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/dequal/-/dequal-2.0.3.tgz}
-    engines: {node: '>=6'}
-
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/detect-libc/-/detect-libc-2.1.2.tgz}
     engines: {node: '>=8'}
@@ -1386,6 +1390,9 @@ packages:
     engines: {node: '>=12.0.0'}
     peerDependencies:
       picomatch: ^3 || ^4
+    peerDependenciesMeta:
+      picomatch:
+        optional: true
 
   file-entry-cache@8.0.0:
     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/file-entry-cache/-/file-entry-cache-8.0.0.tgz}
@@ -2225,11 +2232,6 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz}
     engines: {node: '>= 0.4'}
 
-  swr@2.3.7:
-    resolution: {integrity: sha512-ZEquQ82QvalqTxhBVv/DlAg2mbmUjF4UgpPg9wwk4ufb9rQnZXh1iKyyKBqV6bQGu1Ie7L1QwSYO07qFIa1p+g==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/swr/-/swr-2.3.7.tgz}
-    peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
   tailwind-merge@2.6.0:
     resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/tailwind-merge/-/tailwind-merge-2.6.0.tgz}
 
@@ -2324,11 +2326,6 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/uri-js/-/uri-js-4.4.1.tgz}
-
-  use-sync-external-store@1.6.0:
-    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/v8-compile-cache-lib/-/v8-compile-cache-lib-3.0.1.tgz}
@@ -2890,6 +2887,13 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.1.17
 
+  '@tanstack/query-core@5.101.4': {}
+
+  '@tanstack/react-query@5.101.4(react@19.2.1)':
+    dependencies:
+      '@tanstack/query-core': 5.101.4
+      react: 19.2.1
+
   '@tsconfig/node10@1.0.12': {}
 
   '@tsconfig/node12@1.0.11': {}
@@ -3329,8 +3333,6 @@ snapshots:
 
   delayed-stream@1.0.0: {}
 
-  dequal@2.0.3: {}
-
   detect-libc@2.1.2: {}
 
   diff@4.0.4: {}
@@ -3705,7 +3707,7 @@ snapshots:
       reusify: 1.1.0
 
   fdir@6.5.0(picomatch@4.0.3):
-    dependencies:
+    optionalDependencies:
       picomatch: 4.0.3
 
   file-entry-cache@8.0.0:
@@ -4572,12 +4574,6 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  swr@2.3.7(react@19.2.1):
-    dependencies:
-      dequal: 2.0.3
-      react: 19.2.1
-      use-sync-external-store: 1.6.0(react@19.2.1)
-
   tailwind-merge@2.6.0: {}
 
   tailwindcss@4.1.17: {}
@@ -4714,10 +4710,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  use-sync-external-store@1.6.0(react@19.2.1):
-    dependencies:
-      react: 19.2.1
 
   v8-compile-cache-lib@3.0.1: {}
 
