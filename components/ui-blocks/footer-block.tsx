@@ -1,6 +1,7 @@
 import Link from "@/components/ui/link";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
+import { PlatformTrustBadge } from "@/components/academy/platform-trust-badge";
 import {
   Mail,
   Facebook,
@@ -114,7 +115,25 @@ const Copyright = ({
   </p>
 );
 
-export async function FooterBlock({ id, config }: FooterBlockProps) {
+/**
+ * Identity disclosure has to appear on every academy site, so it wraps the
+ * footer rather than being pasted into each of its four style variants.
+ */
+export async function FooterBlock(props: FooterBlockProps) {
+  const store = await getAcademyContext();
+  return (
+    <>
+      <FooterBlockBody {...props} />
+      {store.slug ? (
+        <div className="mx-auto w-full max-w-6xl px-6 pb-6">
+          <PlatformTrustBadge slug={store.slug} />
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+async function FooterBlockBody({ id, config }: FooterBlockProps) {
   const store = await getAcademyContext();
   const buildPath = (path: string) => buildAcademyPath(store.slug, path);
 
