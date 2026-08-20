@@ -126,7 +126,7 @@ export async function FooterBlock(props: FooterBlockProps) {
       <FooterBlockBody {...props} />
       {store.slug ? (
         <div className="mx-auto w-full max-w-6xl px-6 pb-6">
-          <PlatformTrustBadge slug={store.slug} />
+          <PlatformTrustBadge slug={store.slug} academyId={store.id} />
         </div>
       ) : null}
     </>

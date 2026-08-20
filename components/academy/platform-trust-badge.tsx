@@ -1,6 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 
 import { getTrustBadge } from "@/lib/api/trust-badge";
+import { ReportAbuseDialog } from "./report-abuse-dialog";
 
 /**
  * Identity disclosure for a public academy site.
@@ -14,7 +15,13 @@ import { getTrustBadge } from "@/lib/api/trust-badge";
  * Server component on purpose: this text should be in the HTML for crawlers and
  * for anyone reading the page without JS.
  */
-export async function PlatformTrustBadge({ slug }: { slug: string }) {
+export async function PlatformTrustBadge({
+  slug,
+  academyId,
+}: {
+  slug: string;
+  academyId?: string | null;
+}) {
   const badge = await getTrustBadge(slug);
   if (!badge) return null;
 
@@ -58,7 +65,8 @@ export async function PlatformTrustBadge({ slug }: { slug: string }) {
       ) : null}
 
       <div className="mt-1">
-        گزارش تخلف:{" "}
+        <ReportAbuseDialog academyId={academyId} />
+        {" · "}
         <a className="underline" href="mailto:info@mentoma.ir">
           info@mentoma.ir
         </a>
