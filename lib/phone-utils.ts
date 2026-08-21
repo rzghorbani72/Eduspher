@@ -6,6 +6,57 @@ export function toEnglishDigits(str: string): string {
     .replace(/[٠-٩]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48));
 }
 
+export interface PhoneLengthRule {
+  min: number;
+  max: number;
+}
+
+export const DEFAULT_PHONE_LENGTH: PhoneLengthRule = { min: 7, max: 15 };
+
+export const PHONE_LENGTH_RULES: Record<string, PhoneLengthRule> = {
+  US: { min: 10, max: 10 },
+  CA: { min: 10, max: 10 },
+  GB: { min: 10, max: 11 },
+  AU: { min: 9, max: 10 },
+  DE: { min: 10, max: 12 },
+  FR: { min: 9, max: 10 },
+  IT: { min: 9, max: 10 },
+  ES: { min: 9, max: 9 },
+  IN: { min: 10, max: 10 },
+  CN: { min: 11, max: 11 },
+  JP: { min: 10, max: 11 },
+  KR: { min: 10, max: 11 },
+  BR: { min: 10, max: 11 },
+  MX: { min: 10, max: 10 },
+  RU: { min: 10, max: 10 },
+  IR: { min: 10, max: 10 },
+  PK: { min: 10, max: 10 },
+  BD: { min: 10, max: 10 },
+  TH: { min: 9, max: 10 },
+  VN: { min: 9, max: 10 },
+  ID: { min: 9, max: 12 },
+  MY: { min: 9, max: 10 },
+  SG: { min: 8, max: 8 },
+  PH: { min: 10, max: 10 },
+  TW: { min: 9, max: 10 },
+  HK: { min: 8, max: 8 },
+  NZ: { min: 8, max: 9 },
+  ZA: { min: 9, max: 9 },
+  EG: { min: 10, max: 10 },
+  NG: { min: 10, max: 11 },
+  KE: { min: 9, max: 10 },
+  MA: { min: 9, max: 10 },
+  TN: { min: 8, max: 8 },
+  DZ: { min: 9, max: 9 },
+  SA: { min: 9, max: 9 },
+  AE: { min: 9, max: 9 },
+  IL: { min: 9, max: 10 },
+  LK: { min: 9, max: 9 },
+};
+
+export const getPhoneLengthRule = (countryCode: CountryCode): PhoneLengthRule =>
+  PHONE_LENGTH_RULES[countryCode.code] ?? DEFAULT_PHONE_LENGTH;
+
 export const cleanPhoneNumber = (
   phoneNumber: string,
   countryCode: CountryCode
@@ -34,57 +85,10 @@ export const isValidPhoneNumber = (
 ): boolean => {
   if (!phoneNumber) return false;
 
-  if (phoneNumber.length < 7 || phoneNumber.length > 15) {
-    return false;
-  }
-
-  const patterns: Record<string, RegExp> = {
-    US: /^\d{10}$/,
-    CA: /^\d{10}$/,
-    GB: /^\d{10,11}$/,
-    AU: /^\d{9,10}$/,
-    DE: /^\d{10,12}$/,
-    FR: /^\d{9,10}$/,
-    IT: /^\d{9,10}$/,
-    ES: /^\d{9}$/,
-    IN: /^\d{10}$/,
-    CN: /^\d{11}$/,
-    JP: /^\d{10,11}$/,
-    KR: /^\d{10,11}$/,
-    BR: /^\d{10,11}$/,
-    MX: /^\d{10}$/,
-    RU: /^\d{10}$/,
-    IR: /^\d{10}$/,
-    PK: /^\d{10}$/,
-    BD: /^\d{10}$/,
-    TH: /^\d{9,10}$/,
-    VN: /^\d{9,10}$/,
-    ID: /^\d{9,12}$/,
-    MY: /^\d{9,10}$/,
-    SG: /^\d{8}$/,
-    PH: /^\d{10}$/,
-    TW: /^\d{9,10}$/,
-    HK: /^\d{8}$/,
-    NZ: /^\d{8,9}$/,
-    ZA: /^\d{9}$/,
-    EG: /^\d{10}$/,
-    NG: /^\d{10,11}$/,
-    KE: /^\d{9,10}$/,
-    MA: /^\d{9,10}$/,
-    TN: /^\d{8}$/,
-    DZ: /^\d{9}$/,
-    SA: /^\d{9}$/,
-    AE: /^\d{9}$/,
-    IL: /^\d{9,10}$/,
-    LK: /^\d{9}$/,
-  };
-
-  const pattern = patterns[countryCode.code];
-  if (pattern) {
-    return pattern.test(phoneNumber);
-  }
-
-  return phoneNumber.length >= 7 && phoneNumber.length <= 15;
+  const { min, max } = getPhoneLengthRule(countryCode);
+  return /^\d+$/.test(phoneNumber) &&
+    phoneNumber.length >= min &&
+    phoneNumber.length <= max;
 };
 
 export const getFullPhoneNumber = (

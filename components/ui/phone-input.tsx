@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Phone, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   COUNTRY_CODES,
   getCountryByCode,
   getDefaultCountry,
   type CountryCode,
 } from "@/lib/country-codes";
-import { toEnglishDigits } from "@/lib/phone-utils";
+import { toEnglishDigits, getPhoneLengthRule } from "@/lib/phone-utils";
 import { useLocaleDigits } from "@/hooks/use-locale-digits";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +35,7 @@ export const PhoneInput = ({
   inputClassName,
   id,
   autoComplete = "tel",
-  placeholder = "09121234567",
+  placeholder = "9120001234",
   disabled = false,
   lockCountryCode,
 }: PhoneInputProps) => {
@@ -86,8 +86,12 @@ export const PhoneInput = ({
     onCountryChange?.(country);
   };
 
+  const maxLength = getPhoneLengthRule(activeCountry).max;
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = toEnglishDigits(e.target.value).replace(/\D/g, "");
+    const inputValue = toEnglishDigits(e.target.value)
+      .replace(/\D/g, "")
+      .slice(0, maxLength);
     onChange?.(inputValue);
   };
 
@@ -145,9 +149,6 @@ export const PhoneInput = ({
           )}
         </div>
         <div className="relative flex-1">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Phone className="h-5 w-5 text-muted opacity-60" />
-          </div>
           <input
             id={id}
             type="tel"
@@ -157,8 +158,10 @@ export const PhoneInput = ({
             autoComplete={autoComplete}
             placeholder={localeDigits(placeholder)}
             disabled={disabled}
+            inputMode="numeric"
+            maxLength={maxLength}
             className={cn(
-              "flex h-11 w-full rounded-r-theme border border-theme bg-card",
+              "flex h-11 w-full rounded-r-theme border border-theme bg-card px-3",
               disabled && "opacity-50 cursor-not-allowed",
               inputClassName,
             )}

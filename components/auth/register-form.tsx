@@ -492,7 +492,6 @@ export const RegisterForm = ({
                   }
                 }}
                 defaultCountry={selectedCountry}
-                placeholder={t("auth.enterPhone")}
                 className="auth-phone"
               />
               {errors.phone_number && (

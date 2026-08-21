@@ -67,7 +67,6 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
           onChange={login.setPhoneNumber}
           onCountryChange={login.setCountry}
           defaultCountry={login.country}
-          placeholder={t("auth.enterPhone")}
           autoComplete="tel"
           className="auth-phone"
         />

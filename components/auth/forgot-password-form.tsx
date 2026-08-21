@@ -319,7 +319,6 @@ export const ForgotPasswordForm = ({
                 }
               }}
               defaultCountry={selectedCountry}
-              placeholder={t("auth.enterPhone")}
               autoComplete="tel"
               className="auth-phone"
             />
