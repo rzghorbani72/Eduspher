@@ -8,7 +8,12 @@ import {
   getDefaultCountry,
   type CountryCode,
 } from "@/lib/country-codes";
-import { toEnglishDigits, getPhoneLengthRule } from "@/lib/phone-utils";
+import {
+  toEnglishDigits,
+  getPhoneRule,
+  checkPhoneNumber,
+} from "@/lib/phone-utils";
+import { useTranslation } from "@/lib/i18n/hooks";
 import { useLocaleDigits } from "@/hooks/use-locale-digits";
 import { cn } from "@/lib/utils";
 
@@ -52,6 +57,7 @@ export const PhoneInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const localeDigits = useLocaleDigits();
+  const { t } = useTranslation();
 
   // Follow the defaultCountry prop without an effect (React's "adjust state on
   // prop change" pattern). A locked country always wins and is derived below.
@@ -86,11 +92,18 @@ export const PhoneInput = ({
     onCountryChange?.(country);
   };
 
-  const maxLength = getPhoneLengthRule(activeCountry).max;
+  const maxLength = getPhoneRule(activeCountry).max;
+  // The format is judged only after the length is complete, so a half-typed
+  // number never shows an error.
+  const showFormatError =
+    checkPhoneNumber(value, activeCountry) === "invalid";
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // A national number carries no leading zero here (09121... is typed out of
+    // habit), so dropping it keeps the digit budget for the real number.
     const inputValue = toEnglishDigits(e.target.value)
       .replace(/\D/g, "")
+      .replace(/^0+/, "")
       .slice(0, maxLength);
     onChange?.(inputValue);
   };
@@ -159,15 +172,18 @@ export const PhoneInput = ({
             placeholder={localeDigits(placeholder)}
             disabled={disabled}
             inputMode="numeric"
-            maxLength={maxLength}
             className={cn(
               "flex h-11 w-full rounded-r-theme border border-theme bg-card px-3",
               disabled && "opacity-50 cursor-not-allowed",
+              showFormatError && "border-destructive",
               inputClassName,
             )}
           />
         </div>
       </div>
+      {showFormatError && (
+        <p className="mt-1 text-xs text-destructive">{t("auth.invalidPhone")}</p>
+      )}
     </div>
   );
 };

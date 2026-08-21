@@ -17,6 +17,10 @@ import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useOtpNotifier } from "@/hooks/use-otp-notifier";
 import { env } from "@/lib/env";
 import { nextStepFor } from "@/lib/auth-identify";
+import {
+  isValidEmail,
+  isValidPhoneInput,
+} from "@/lib/auth/identifier-validation";
 import { safeRedirectPath } from "@/lib/auth/redirect-target";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useStorePath } from "@/components/providers/store-provider";
@@ -96,6 +100,13 @@ export function useLogin(defaultCountryCode?: string) {
         ? getFullPhoneNumber(cleanPhoneNumber(phoneNumber, country), country)
         : ""
       : email.trim();
+
+  // The identifier is only judged once it is complete, so the button turns on
+  // exactly when a whole phone number (or email) has been typed.
+  const identifierValid =
+    channel === "phone"
+      ? isValidPhoneInput(phoneNumber, country)
+      : isValidEmail(email);
 
   function clearFeedback() {
     setError(null);
@@ -353,6 +364,7 @@ export function useLogin(defaultCountryCode?: string) {
     country,
     setCountry,
     identifier,
+    identifierValid,
     password,
     setPassword: (v: string) => setPassword(toEnglishDigits(v)),
     otp,

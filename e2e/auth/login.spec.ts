@@ -12,14 +12,20 @@ test.describe('edusphere student login — step 1', () => {
     await expect(page.locator('#password')).toHaveCount(0);
   });
 
-  test('refuses to continue with an empty identifier', async ({ page }) => {
+  test('keeps continue disabled until the identifier is complete', async ({ page }) => {
     await page.goto('/auth/login');
 
-    await page.locator('button[type="submit"]').click();
+    const submit = page.locator('button[type="submit"]');
+    await expect(submit).toBeDisabled();
 
-    // Stays on step 1 and surfaces the "identifier required" notice.
+    await page.locator('#identifier').fill('half@');
+    await expect(submit).toBeDisabled();
+
+    await page.locator('#identifier').fill('someone@example.com');
+    await expect(submit).toBeEnabled();
+
+    // Still step 1 — no password box appears before the lookup.
     await expect(page.locator('#password')).toHaveCount(0);
-    await expect(page.locator('#identifier')).toBeVisible();
   });
 });
 

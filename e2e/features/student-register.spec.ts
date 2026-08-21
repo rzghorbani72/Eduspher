@@ -63,12 +63,12 @@ test.describe('Student registration — full OTP flow @backend', () => {
     ).toBeVisible({ timeout: 15_000 });
   });
 
-  test('blocks registration with an empty phone', async ({ page, baseURL }) => {
+  test('blocks registration with an incomplete phone', async ({ page, baseURL }) => {
     await setAcademyCookie(page.context(), baseURL!);
     await page.goto('/auth/register');
-    await page.locator('button[type="submit"]').click();
-    await expect(
-      page.getByText(/valid phone|شماره/i)
-    ).toBeVisible({ timeout: 5_000 });
+    const submit = page.locator('button[type="submit"]');
+    await expect(submit).toBeDisabled();
+    await page.locator('#phone_number').fill('91200');
+    await expect(submit).toBeDisabled();
   });
 });

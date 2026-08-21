@@ -86,7 +86,11 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
 
       <AuthError>{login.error}</AuthError>
 
-      <button type="submit" className="auth-submit-btn" disabled={login.pending}>
+      <button
+        type="submit"
+        className="auth-submit-btn"
+        disabled={login.pending || !login.identifierValid}
+      >
         {login.pending && <Loader2 className="h-4 w-4 animate-spin" />}
         {t("auth.continueLabel")}
       </button>

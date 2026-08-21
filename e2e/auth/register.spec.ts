@@ -5,15 +5,33 @@ import { test, expect } from '@playwright/test';
  * primary channel (phone here) via OTP, step 2 collects the account details.
  */
 test.describe('edusphere student register — validation', () => {
-  test('asks for a valid phone before sending an OTP', async ({ page }) => {
+  test('checks the phone length first, then its format', async ({ page }) => {
     await page.goto('/auth/register');
 
-    // "Continue to Form" with an empty phone triggers a client-side guard.
-    await page.locator('button[type="submit"]').click();
+    const submit = page.locator('button[type="submit"]');
+    const phone = page.locator('#phone_number');
+    const invalid = page.getByText('شماره تلفن نامعتبر');
 
-    await expect(
-      page.getByText('Please enter a valid phone number first'),
-    ).toBeVisible();
+    await expect(submit).toBeDisabled();
+
+    // Half-typed: not judged yet, so no error — just no way forward.
+    await phone.fill('91200');
+    await expect(invalid).toHaveCount(0);
+    await expect(submit).toBeDisabled();
+
+    // Full length but the wrong shape: now the format is judged.
+    await phone.fill('1234567890');
+    await expect(invalid).toBeVisible();
+    await expect(submit).toBeDisabled();
+
+    await phone.fill('9120001234');
+    await expect(invalid).toHaveCount(0);
+    await expect(submit).toBeEnabled();
+
+    // The habitual leading zero is dropped, not counted against the length.
+    await phone.fill('09120001234');
+    await expect(phone).toHaveValue('۹۱۲۰۰۰۱۲۳۴');
+    await expect(submit).toBeEnabled();
   });
 });
 

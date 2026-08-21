@@ -6,14 +6,16 @@ export function toEnglishDigits(str: string): string {
     .replace(/[٠-٩]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48));
 }
 
-export interface PhoneLengthRule {
+export interface PhoneRule {
   min: number;
   max: number;
+  /** Format of a valid national number, checked only once the length is met. */
+  prefix?: RegExp;
 }
 
-export const DEFAULT_PHONE_LENGTH: PhoneLengthRule = { min: 7, max: 15 };
+export const DEFAULT_PHONE_RULE: PhoneRule = { min: 7, max: 15 };
 
-export const PHONE_LENGTH_RULES: Record<string, PhoneLengthRule> = {
+export const PHONE_RULES: Record<string, PhoneRule> = {
   US: { min: 10, max: 10 },
   CA: { min: 10, max: 10 },
   GB: { min: 10, max: 11 },
@@ -29,7 +31,7 @@ export const PHONE_LENGTH_RULES: Record<string, PhoneLengthRule> = {
   BR: { min: 10, max: 11 },
   MX: { min: 10, max: 10 },
   RU: { min: 10, max: 10 },
-  IR: { min: 10, max: 10 },
+  IR: { min: 10, max: 10, prefix: /^9/ },
   PK: { min: 10, max: 10 },
   BD: { min: 10, max: 10 },
   TH: { min: 9, max: 10 },
@@ -54,8 +56,29 @@ export const PHONE_LENGTH_RULES: Record<string, PhoneLengthRule> = {
   LK: { min: 9, max: 9 },
 };
 
-export const getPhoneLengthRule = (countryCode: CountryCode): PhoneLengthRule =>
-  PHONE_LENGTH_RULES[countryCode.code] ?? DEFAULT_PHONE_LENGTH;
+export const getPhoneRule = (countryCode: CountryCode): PhoneRule =>
+  PHONE_RULES[countryCode.code] ?? DEFAULT_PHONE_RULE;
+
+/**
+ * Two stages, in order: a number is only judged on format once it is long
+ * enough to be a whole number. A half-typed number is "incomplete", never
+ * "invalid", so no error is shown while the user is still typing.
+ */
+export type PhoneCheck = "empty" | "incomplete" | "invalid" | "valid";
+
+export const checkPhoneNumber = (
+  phoneNumber: string,
+  countryCode: CountryCode
+): PhoneCheck => {
+  const digits = toEnglishDigits(phoneNumber).replace(/\D/g, '');
+  if (!digits) return 'empty';
+
+  const rule = getPhoneRule(countryCode);
+  if (digits.length < rule.min) return 'incomplete';
+  if (digits.length > rule.max) return 'invalid';
+  if (rule.prefix && !rule.prefix.test(digits)) return 'invalid';
+  return 'valid';
+};
 
 export const cleanPhoneNumber = (
   phoneNumber: string,
@@ -82,14 +105,7 @@ export const cleanPhoneNumber = (
 export const isValidPhoneNumber = (
   phoneNumber: string,
   countryCode: CountryCode
-): boolean => {
-  if (!phoneNumber) return false;
-
-  const { min, max } = getPhoneLengthRule(countryCode);
-  return /^\d+$/.test(phoneNumber) &&
-    phoneNumber.length >= min &&
-    phoneNumber.length <= max;
-};
+): boolean => checkPhoneNumber(phoneNumber, countryCode) === 'valid';
 
 export const getFullPhoneNumber = (
   phoneNumber: string,

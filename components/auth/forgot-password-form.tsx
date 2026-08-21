@@ -29,14 +29,14 @@ import {
   cleanPhoneNumber,
   toEnglishDigits,
 } from "@/lib/phone-utils";
+import {
+  isValidEmail,
+  isValidPhoneInput,
+} from "@/lib/auth/identifier-validation";
 import { sanitizePasswordInput } from "@/lib/password-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 
-const isValidEmail = (email: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const isValidPhone = (phone: string) =>
-  /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
 
 type Step = "identifier" | "otp" | "password" | "success";
 
@@ -119,7 +119,10 @@ export const ForgotPasswordForm = ({
       setError(t("auth.invalidEmail"));
       return false;
     }
-    if (authMethod === "phone" && !isValidPhone(formData.identifier)) {
+    if (
+      authMethod === "phone" &&
+      !isValidPhoneInput(phoneNumber, selectedCountry)
+    ) {
       setError(t("auth.invalidPhone"));
       return false;
     }
@@ -252,6 +255,11 @@ export const ForgotPasswordForm = ({
     setError(null);
   };
 
+  const identifierValid =
+    authMethod === "phone"
+      ? isValidPhoneInput(phoneNumber, selectedCountry)
+      : isValidEmail(email);
+
   const errorBlock = error && (
     <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
       {error}
@@ -331,7 +339,7 @@ export const ForgotPasswordForm = ({
               type="button"
               className="auth-submit-btn"
               onClick={handleValidate}
-              disabled={isLoading}
+              disabled={isLoading || !identifierValid}
             >
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               {isLoading ? t("auth.validating") : t("auth.validate")}
@@ -341,7 +349,7 @@ export const ForgotPasswordForm = ({
               type="button"
               className="auth-submit-btn"
               onClick={handleSendOtp}
-              disabled={isLoading}
+              disabled={isLoading || !identifierValid}
             >
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               {isLoading ? t("auth.sending") : t("auth.sendOtp")}

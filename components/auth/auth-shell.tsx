@@ -36,7 +36,7 @@ function AcademyLogo({
 }
 
 const HEADING_KEYS = [
-  { match: "/auth/register", title: "auth.registerTitle", subtitle: "auth.registerSubtitle" },
+  { match: "/auth/register", title: "auth.registerTitle" },
   { match: "/auth/forgot-password", title: "auth.forgotTitle", subtitle: "auth.forgotSubtitle" },
   { match: "/auth/login", title: "auth.loginTitle", subtitle: "auth.loginSubtitle" },
 ] as const;
@@ -65,7 +65,9 @@ export function AuthShell({
             {heading ? (
               <div className="auth-title-wrap">
                 <h1 className="auth-title">{t(heading.title)}</h1>
-                <p className="auth-subtitle">{t(heading.subtitle)}</p>
+                {"subtitle" in heading && (
+                  <p className="auth-subtitle">{t(heading.subtitle)}</p>
+                )}
               </div>
             ) : null}
             <div className="auth-card-body">{children}</div>

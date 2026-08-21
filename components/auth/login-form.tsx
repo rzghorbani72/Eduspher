@@ -12,6 +12,7 @@ interface LoginFormProps {
   defaultCountryCode?: string;
 }
 
+/* Kept for when Google sign-in is turned on — see the hidden button below.
 function GoogleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" aria-hidden>
@@ -22,6 +23,7 @@ function GoogleIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+*/
 
 /**
  * Identifier-first sign-in: step 1 looks the account up, step 2 asks only for
@@ -48,6 +50,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
     <div>
       <LoginIdentifyStep login={login} />
 
+      {/* Google sign-in is hidden until the provider is actually wired up.
       <div className="mt-6 space-y-5">
         <div className="flex items-center gap-3">
           <span className="h-px flex-1 bg-border" />
@@ -64,6 +67,7 @@ export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
           {t("auth.continueWithGoogle")}
         </button>
       </div>
+      */}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         {t("auth.dontHaveAccountYet")}{" "}

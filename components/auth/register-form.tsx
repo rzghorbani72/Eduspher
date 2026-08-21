@@ -31,9 +31,12 @@ import {
 import {
   getFullPhoneNumber,
   cleanPhoneNumber,
-  isValidPhoneNumber,
   toEnglishDigits,
 } from "@/lib/phone-utils";
+import {
+  isValidEmail,
+  isValidPhoneInput,
+} from "@/lib/auth/identifier-validation";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
@@ -173,13 +176,7 @@ export const RegisterForm = ({
   const [emailOtp, setEmailOtp] = useState("");
 
   const isValidPhone = (phone: string) =>
-    isValidPhoneNumber(
-      cleanPhoneNumber(phone, selectedCountry),
-      selectedCountry,
-    );
-
-  const isValidEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    isValidPhoneInput(phone, selectedCountry);
 
   const handleSendPhoneOtp = async () => {
     if (!phoneNumber || !isValidPhone(phoneNumber)) {
@@ -432,6 +429,16 @@ export const RegisterForm = ({
 
   const watchedEmail = watch("email");
   const hasEmail = Boolean(watchedEmail && isValidEmail(watchedEmail));
+  const identifierValid =
+    primaryVerificationMethod === "phone" ? isValidPhone(phoneNumber) : hasEmail;
+  // The single button walks send → verify → continue, so each step turns it on
+  // only once that step's own input is complete.
+  const canSubmitVerification = !primarySent
+    ? identifierValid
+    : primaryVerified ||
+      (primaryVerificationMethod === "phone"
+        ? phoneOtp.trim().length > 0
+        : emailOtp.trim().length > 0);
 
   const errorBlock = error ? (
     <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
@@ -477,7 +484,7 @@ export const RegisterForm = ({
                   setValue(
                     "phone_number",
                     getFullPhoneNumber(cleaned, selectedCountry),
-                    { shouldValidate: true },
+                    { shouldValidate: isValidPhone(value) },
                   );
                 }}
                 onCountryChange={(country) => {
@@ -487,7 +494,7 @@ export const RegisterForm = ({
                     setValue(
                       "phone_number",
                       getFullPhoneNumber(cleaned, country),
-                      { shouldValidate: true },
+                      { shouldValidate: isValidPhoneInput(phoneNumber, country) },
                     );
                   }
                 }}
@@ -550,7 +557,7 @@ export const RegisterForm = ({
           <button
             type="submit"
             className="auth-submit-btn"
-            disabled={isLoading || otpLoading}
+            disabled={isLoading || otpLoading || !canSubmitVerification}
           >
             {(isLoading || otpLoading) && (
               <Loader2 className="h-4 w-4 animate-spin" />
