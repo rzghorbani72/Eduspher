@@ -6,7 +6,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import Link from "@/components/ui/link";
 import { toEnglishDigits } from "@/lib/phone-utils";
 import { cn } from "@/lib/utils";
-import { AuthError, AuthMessage } from "@/components/auth/auth-notice";
+import { AuthError } from "@/components/auth/auth-notice";
 import { HCaptchaWidget } from "@/components/auth/hcaptcha-widget";
 import type { useLogin } from "@/hooks/use-login";
 
@@ -86,7 +86,6 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
       {login.captchaRequired && <HCaptchaWidget onVerify={login.setCaptchaToken} />}
 
       <AuthError>{login.error}</AuthError>
-      <AuthMessage>{!login.error ? login.message : null}</AuthMessage>
 
       <button type="submit" className="auth-submit-btn" disabled={login.pending}>
         {login.pending && <Loader2 className="h-4 w-4 animate-spin" />}

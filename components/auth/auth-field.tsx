@@ -44,7 +44,7 @@ export const AuthField = React.forwardRef<HTMLInputElement, AuthFieldProps>(
               tabIndex={-1}
               onClick={() => setShow((v) => !v)}
               aria-label={label}
-              className="absolute inset-y-0 end-4 flex items-center text-[color:var(--auth-card-ink)] transition-opacity hover:opacity-70"
+              className="auth-input-toggle"
             >
               {show ? (
                 <EyeOff className="h-5 w-5" />

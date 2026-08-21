@@ -5,7 +5,7 @@ import type { UseFormRegisterReturn } from "react-hook-form";
 
 import { AuthField } from "@/components/auth/auth-field";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { toEnglishDigits } from "@/lib/phone-utils";
+import { sanitizePasswordInput } from "@/lib/password-utils";
 
 export type RegisterFieldErrors = Partial<
   Record<
@@ -35,13 +35,13 @@ interface RegisterDetailsStepProps {
   onSubmit: (event: React.FormEvent) => void;
 }
 
-/** Rewrites Persian/Arabic digits to English while the user is typing. */
-const withEnglishDigits = (
+/** Passwords are English-only: Persian digits convert, Persian letters drop. */
+const withAsciiPassword = (
   field: UseFormRegisterReturn,
 ): UseFormRegisterReturn => ({
   ...field,
   onChange: (event: { target: HTMLInputElement }) => {
-    event.target.value = toEnglishDigits(event.target.value);
+    event.target.value = sanitizePasswordInput(event.target.value);
     return field.onChange(event);
   },
 });
@@ -99,7 +99,7 @@ export function RegisterDetailsStep({
         autoComplete="new-password"
         disabled={loading}
         error={errors.password}
-        {...withEnglishDigits(fields.password)}
+        {...withAsciiPassword(fields.password)}
       />
 
       <AuthField
@@ -109,7 +109,7 @@ export function RegisterDetailsStep({
         autoComplete="new-password"
         disabled={loading}
         error={errors.confirmed_password}
-        {...withEnglishDigits(fields.confirmed_password)}
+        {...withAsciiPassword(fields.confirmed_password)}
       />
 
       <div className="space-y-1">

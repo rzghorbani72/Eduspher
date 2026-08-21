@@ -14,6 +14,7 @@ import {
   type AccountIdentity,
 } from "@/lib/api/client";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
+import { useOtpNotifier } from "@/hooks/use-otp-notifier";
 import { env } from "@/lib/env";
 import { nextStepFor } from "@/lib/auth-identify";
 import { safeRedirectPath } from "@/lib/auth/redirect-target";
@@ -59,7 +60,6 @@ export function useLogin(defaultCountryCode?: string) {
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
   const [notRegistered, setNotRegistered] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
 
   const [channel, setChannel] = useState<LoginChannel>("email");
   const [email, setEmail] = useState("");
@@ -80,6 +80,7 @@ export function useLogin(defaultCountryCode?: string) {
     phone: string;
   } | null>(null);
   const [otpResending, setOtpResending] = useState(false);
+  const notifyOtpSent = useOtpNotifier();
   const otpGateTimer = useOtpTimer();
   const otpLoginTimer = useOtpTimer();
 
@@ -98,7 +99,6 @@ export function useLogin(defaultCountryCode?: string) {
 
   function clearFeedback() {
     setError(null);
-    setMessage(null);
   }
 
   async function finishLogin() {
@@ -119,10 +119,7 @@ export function useLogin(defaultCountryCode?: string) {
   }
 
   function showSentCode(response: { otp?: string }, sentKey: string) {
-    // TODO: Remove debug OTP display when real SMS provider is integrated
-    if (response?.otp) {
-      setMessage(`${t(sentKey)}\n\n🔐 Code: ${response.otp}`);
-    }
+    notifyOtpSent(response?.otp, t(sentKey), "login-otp");
   }
 
   function sendLoginOtp() {
@@ -343,7 +340,6 @@ export function useLogin(defaultCountryCode?: string) {
     step,
     pending,
     error,
-    message,
     notRegistered,
     captchaRequired,
     setCaptchaToken,

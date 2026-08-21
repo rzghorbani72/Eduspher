@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
+import { useLocaleDigits } from "@/hooks/use-locale-digits";
+
 const DURATION = 120;
 
 export function useOtpTimer() {
   const [seconds, setSeconds] = useState(DURATION);
+  const localeDigits = useLocaleDigits();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const clear = () => {
@@ -32,7 +35,7 @@ export function useOtpTimer() {
   const ss = String(seconds % 60).padStart(2, "0");
 
   return {
-    formatted: `${mm}:${ss}`,
+    formatted: localeDigits(`${mm}:${ss}`),
     canResend: seconds === 0,
     start,
   };

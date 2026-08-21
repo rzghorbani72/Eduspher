@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { sanitizePasswordInput } from "@/lib/password-utils";
 import { AuthError } from "@/components/auth/auth-notice";
 import type { useLogin } from "@/hooks/use-login";
 
@@ -40,14 +41,14 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
             autoFocus
             placeholder={t("auth.newPassword")}
             value={login.newPassword}
-            onChange={(e) => login.setNewPassword(e.target.value)}
+            onChange={(e) => login.setNewPassword(sanitizePasswordInput(e.target.value))}
             className={cn("auth-input with-toggle")}
           />
           <button
             type="button"
             tabIndex={-1}
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
+            className="auth-input-toggle"
             aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -61,7 +62,7 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
           autoComplete="new-password"
           placeholder={t("auth.confirmPassword")}
           value={login.confirmNewPassword}
-          onChange={(e) => login.setConfirmNewPassword(e.target.value)}
+          onChange={(e) => login.setConfirmNewPassword(sanitizePasswordInput(e.target.value))}
           className="auth-input"
         />
       </div>

@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef } from "react";
+
+import { useLocaleDigits } from "@/hooks/use-locale-digits";
+import { toEnglishDigits } from "@/lib/phone-utils";
 import { cn } from "@/lib/utils";
 
 interface OtpBoxInputProps {
@@ -12,6 +15,10 @@ interface OtpBoxInputProps {
   className?: string;
 }
 
+/**
+ * Boxed code field. The value handed to `onChange` is always English digits so
+ * it can go straight to the API, while a Persian page reads Persian digits.
+ */
 export function OtpBoxInput({
   length = 5,
   value,
@@ -21,11 +28,12 @@ export function OtpBoxInput({
   className,
 }: OtpBoxInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const localeDigits = useLocaleDigits();
 
   const digits = Array.from({ length }, (_, i) => value[i] ?? "");
 
   function handleChange(index: number, raw: string) {
-    const digit = raw.replace(/\D/g, "").slice(-1);
+    const digit = toEnglishDigits(raw).replace(/\D/g, "").slice(-1);
     const next = [...digits];
     next[index] = digit;
     onChange(next.join(""));
@@ -34,7 +42,10 @@ export function OtpBoxInput({
     }
   }
 
-  function handleKeyDown(index: number, e: React.KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) {
     if (e.key === "Backspace") {
       if (digits[index]) {
         const next = [...digits];
@@ -52,7 +63,9 @@ export function OtpBoxInput({
 
   function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault();
-    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
+    const text = toEnglishDigits(e.clipboardData.getData("text"))
+      .replace(/\D/g, "")
+      .slice(0, length);
     const next = Array.from({ length }, (_, i) => text[i] ?? "");
     onChange(next.join(""));
     const focusIdx = Math.min(text.length, length - 1);
@@ -60,7 +73,7 @@ export function OtpBoxInput({
   }
 
   return (
-    <div className={cn("flex justify-center gap-2", className)} dir="ltr">
+    <div className={cn("flex justify-center gap-2.5", className)} dir="ltr">
       {digits.map((digit, i) => (
         <input
           key={i}
@@ -69,18 +82,20 @@ export function OtpBoxInput({
           }}
           type="text"
           inputMode="numeric"
+          autoComplete="one-time-code"
           maxLength={1}
-          value={digit}
+          value={localeDigits(digit)}
           disabled={disabled}
           autoFocus={autoFocus && i === 0}
           onChange={(e) => handleChange(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
+          onFocus={(e) => e.currentTarget.select()}
           onPaste={handlePaste}
           className={cn(
-            "h-12 w-10 rounded-md border bg-card text-center font-mono text-lg font-semibold",
+            "h-14 w-14 rounded-2xl border bg-card text-center text-xl font-semibold tabular-nums",
             "outline-none transition-colors",
             "focus:border-(--theme-primary) focus:ring-2 focus:ring-(--theme-primary)/20",
-            "disabled:cursor-not-allowed disabled:opacity-50"
+            "disabled:cursor-not-allowed disabled:opacity-50",
           )}
         />
       ))}

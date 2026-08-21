@@ -38,7 +38,7 @@ import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
-import { notifyOtpSent } from "@/lib/otp-notify";
+import { useOtpNotifier } from "@/hooks/use-otp-notifier";
 
 type RegisterValues = {
   name: string;
@@ -106,6 +106,7 @@ export const RegisterForm = ({
       });
   }, []);
   const isSubmittingRef = useRef(false);
+  const notifyOtpSent = useOtpNotifier();
   const phoneOtpTimer = useOtpTimer();
   const emailOtpTimer = useOtpTimer();
 
@@ -198,12 +199,7 @@ export const RegisterForm = ({
       )) as { otp?: string };
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
-      notifyOtpSent(
-        response?.otp,
-        t("auth.otpSentToPhone"),
-        t("auth.otpCodeLabel"),
-        "register-phone-otp",
-      );
+      notifyOtpSent(response?.otp, t("auth.otpSentToPhone"), "register-phone-otp");
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
@@ -211,10 +207,10 @@ export const RegisterForm = ({
     }
   };
 
-  const handleVerifyPhoneOtp = async () => {
+  const handleVerifyPhoneOtp = async (): Promise<boolean> => {
     if (!phoneOtp.trim()) {
       setError(t("auth.enterOtpFirst"));
-      return;
+      return false;
     }
     setOtpLoading(true);
     setError(null);
@@ -231,14 +227,15 @@ export const RegisterForm = ({
       if (result.success !== false) {
         setPhoneOtpVerified(true);
         toast.success(t("auth.phoneVerified"));
-      } else {
-        setError(t("auth.invalidOtp"));
+        return true;
       }
+      setError(t("auth.invalidOtp"));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.invalidOtp"));
     } finally {
       setOtpLoading(false);
     }
+    return false;
   };
 
   const handleSendEmailOtp = async () => {
@@ -256,12 +253,7 @@ export const RegisterForm = ({
       )) as { otp?: string };
       setEmailOtpSent(true);
       emailOtpTimer.start();
-      notifyOtpSent(
-        response?.otp,
-        t("auth.otpSentToEmail"),
-        t("auth.otpCodeLabel"),
-        "register-email-otp",
-      );
+      notifyOtpSent(response?.otp, t("auth.otpSentToEmail"), "register-email-otp");
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
@@ -269,15 +261,15 @@ export const RegisterForm = ({
     }
   };
 
-  const handleVerifyEmailOtp = async () => {
+  const handleVerifyEmailOtp = async (): Promise<boolean> => {
     if (!emailOtp.trim()) {
       setError(t("auth.enterOtpFirst"));
-      return;
+      return false;
     }
     const emailVal = getValues("email");
     if (!emailVal || !isValidEmail(emailVal)) {
       setError(t("auth.emailRequired"));
-      return;
+      return false;
     }
     setOtpLoading(true);
     setError(null);
@@ -290,36 +282,32 @@ export const RegisterForm = ({
       if (result.success !== false) {
         setEmailOtpVerified(true);
         toast.success(t("auth.emailVerified"));
-      } else {
-        setError(t("auth.invalidOtp"));
+        return true;
       }
+      setError(t("auth.invalidOtp"));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.invalidOtp"));
     } finally {
       setOtpLoading(false);
     }
+    return false;
   };
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // One button, one step at a time: send the code, then verify it, then move on.
     if (primaryVerificationMethod === "phone") {
       if (!phoneOtpSent) {
         await handleSendPhoneOtp();
         return;
       }
-      if (!phoneOtpVerified) {
-        setError(t("auth.phoneVerifyFirst"));
-        return;
-      }
+      if (!phoneOtpVerified && !(await handleVerifyPhoneOtp())) return;
     } else {
       if (!emailOtpSent) {
         await handleSendEmailOtp();
         return;
       }
-      if (!emailOtpVerified) {
-        setError(t("auth.emailVerifyFirst"));
-        return;
-      }
+      if (!emailOtpVerified && !(await handleVerifyEmailOtp())) return;
     }
     setStep("form");
     setError(null);
@@ -432,6 +420,16 @@ export const RegisterForm = ({
     }
   });
 
+  const primarySent = primaryVerificationMethod === "phone" ? phoneOtpSent : emailOtpSent;
+  const primaryVerified =
+    primaryVerificationMethod === "phone" ? phoneOtpVerified : emailOtpVerified;
+  // The one button carries the step it actually performs: send, verify, continue.
+  const primaryStepLabel = !primarySent
+    ? t("auth.sendVerificationCode")
+    : !primaryVerified
+      ? t("auth.verifyAndContinue")
+      : t("auth.continueLabel");
+
   const watchedEmail = watch("email");
   const hasEmail = Boolean(watchedEmail && isValidEmail(watchedEmail));
 
@@ -524,6 +522,7 @@ export const RegisterForm = ({
               countdown={phoneOtpTimer.formatted}
               onSend={handleSendPhoneOtp}
               onVerify={handleVerifyPhoneOtp}
+              showActions={false}
             />
           ) : (
             <AuthOtpField
@@ -543,6 +542,7 @@ export const RegisterForm = ({
               countdown={emailOtpTimer.formatted}
               onSend={handleSendEmailOtp}
               onVerify={handleVerifyEmailOtp}
+              showActions={false}
             />
           )}
 
@@ -556,9 +556,7 @@ export const RegisterForm = ({
             {(isLoading || otpLoading) && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            {isLoading || otpLoading
-              ? t("auth.processing")
-              : t("auth.continueToForm")}
+            {isLoading || otpLoading ? t("auth.processing") : primaryStepLabel}
           </button>
         </form>
       )}

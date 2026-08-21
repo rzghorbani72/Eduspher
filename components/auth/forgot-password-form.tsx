@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import Link from "@/components/ui/link";
-import { ArrowLeft, CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 import {
   validatePhoneAndEmail,
@@ -15,22 +16,39 @@ import {
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { OtpBoxInput } from "@/components/ui/otp-box-input";
+import { useOtpNotifier } from "@/hooks/use-otp-notifier";
 import { useStorePath } from "@/components/providers/store-provider";
-import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
+import {
+  getDefaultCountry,
+  getCountryByCode,
+  type CountryCode,
+} from "@/lib/country-codes";
+import {
+  getFullPhoneNumber,
+  cleanPhoneNumber,
+  toEnglishDigits,
+} from "@/lib/phone-utils";
+import { sanitizePasswordInput } from "@/lib/password-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 
-const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const isValidPhone = (phone: string) => /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
+const isValidEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidPhone = (phone: string) =>
+  /^\+?[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ""));
 
 type Step = "identifier" | "otp" | "password" | "success";
+
+const OTP_LENGTH = 5;
 
 interface ForgotPasswordFormProps {
   defaultCountryCode?: string;
 }
 
-export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormProps) => {
+export const ForgotPasswordForm = ({
+  defaultCountryCode,
+}: ForgotPasswordFormProps) => {
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>("identifier");
@@ -39,9 +57,9 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [validated, setValidated] = useState(false);
   const otpTimer = useOtpTimer();
+  const notifyOtpSent = useOtpNotifier();
 
   const getInitialCountry = () => {
     if (defaultCountryCode) {
@@ -50,7 +68,8 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     }
     return getDefaultCountry();
   };
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const [selectedCountry, setSelectedCountry] =
+    useState<CountryCode>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
@@ -66,10 +85,21 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     setError(null);
   };
 
+  const handlePasswordChange = (
+    field: "password" | "confirmed_password",
+    value: string,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: sanitizePasswordInput(value) }));
+    setError(null);
+  };
+
   const handlePhoneChange = (value: string) => {
     setPhoneNumber(value);
     const cleaned = cleanPhoneNumber(value, selectedCountry);
-    setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, selectedCountry) }));
+    setFormData((prev) => ({
+      ...prev,
+      identifier: getFullPhoneNumber(cleaned, selectedCountry),
+    }));
     setError(null);
   };
 
@@ -81,16 +111,34 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   };
 
   const validateIdentifier = () => {
-    if (!formData.identifier.trim()) { setError(t("auth.identifierRequired")); return false; }
-    if (authMethod === "email" && !isValidEmail(formData.identifier)) { setError(t("auth.invalidEmail")); return false; }
-    if (authMethod === "phone" && !isValidPhone(formData.identifier)) { setError(t("auth.invalidPhone")); return false; }
+    if (!formData.identifier.trim()) {
+      setError(t("auth.identifierRequired"));
+      return false;
+    }
+    if (authMethod === "email" && !isValidEmail(formData.identifier)) {
+      setError(t("auth.invalidEmail"));
+      return false;
+    }
+    if (authMethod === "phone" && !isValidPhone(formData.identifier)) {
+      setError(t("auth.invalidPhone"));
+      return false;
+    }
     return true;
   };
 
   const validatePassword = () => {
-    if (!formData.password.trim()) { setError(t("auth.passwordRequired")); return false; }
-    if (formData.password.length < 6) { setError(t("auth.passwordTooShort")); return false; }
-    if (formData.password !== formData.confirmed_password) { setError(t("auth.passwordsDoNotMatch")); return false; }
+    if (!formData.password.trim()) {
+      setError(t("auth.passwordRequired"));
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError(t("auth.passwordTooShort"));
+      return false;
+    }
+    if (formData.password !== formData.confirmed_password) {
+      setError(t("auth.passwordsDoNotMatch"));
+      return false;
+    }
     return true;
   };
 
@@ -98,13 +146,12 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     if (!validateIdentifier()) return;
     setIsLoading(true);
     setError(null);
-    setMessage(null);
     try {
       const phone = authMethod === "phone" ? formData.identifier : undefined;
       const emailVal = authMethod === "email" ? formData.identifier : undefined;
       await validatePhoneAndEmail(phone, emailVal);
       setValidated(true);
-      setMessage(t("auth.accountFound"));
+      toast.success(t("auth.accountFound"));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.invalidPhone"));
     } finally {
@@ -113,17 +160,25 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   };
 
   const handleSendOtp = async () => {
-    if (!validated) { await handleValidate(); return; }
+    if (!validated) {
+      await handleValidate();
+      return;
+    }
     setIsLoading(true);
     setError(null);
-    setMessage(null);
     try {
       if (authMethod === "email") {
-        const response = await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL) as { otp?: string };
-        setMessage(response?.otp ? `${t("auth.otpSentToEmail")}\n\n🔐 Code: ${response.otp}` : t("auth.otpSentToEmail"));
+        const response = (await sendEmailOtp(
+          formData.identifier,
+          OtpType.RESET_PASSWORD_BY_EMAIL,
+        )) as { otp?: string };
+        notifyOtpSent(response?.otp, t("auth.otpSentToEmail"), "forgot-otp");
       } else {
-        const response = await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE) as { otp?: string };
-        setMessage(response?.otp ? `${t("auth.otpSentToPhone")}\n\n🔐 Code: ${response.otp}` : t("auth.otpSentToPhone"));
+        const response = (await sendPhoneOtp(
+          formData.identifier,
+          OtpType.RESET_PASSWORD_BY_PHONE,
+        )) as { otp?: string };
+        notifyOtpSent(response?.otp, t("auth.otpSentToPhone"), "forgot-otp");
       }
       setStep("otp");
       otpTimer.start();
@@ -135,18 +190,28 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
   };
 
   const handleVerifyOtp = async () => {
-    if (!formData.otp.trim()) { setError(t("auth.enterOtpFirst")); return; }
+    if (!formData.otp.trim()) {
+      setError(t("auth.enterOtpFirst"));
+      return;
+    }
     setIsLoading(true);
     setError(null);
-    setMessage(null);
     try {
       if (authMethod === "email") {
-        await verifyEmailOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_EMAIL);
+        await verifyEmailOtp(
+          formData.identifier,
+          formData.otp,
+          OtpType.RESET_PASSWORD_BY_EMAIL,
+        );
       } else {
-        await verifyPhoneOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_PHONE);
+        await verifyPhoneOtp(
+          formData.identifier,
+          formData.otp,
+          OtpType.RESET_PASSWORD_BY_PHONE,
+        );
       }
       setStep("password");
-      setMessage(t("auth.otpVerifiedSuccess"));
+      toast.success(t("auth.otpVerifiedSuccess"));
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.invalidOtp"));
     } finally {
@@ -158,7 +223,6 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
     if (!validatePassword()) return;
     setIsLoading(true);
     setError(null);
-    setMessage(null);
     try {
       await forgetPassword({
         identifier: formData.identifier,
@@ -176,23 +240,21 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
   const resetForm = () => {
     setStep("identifier");
-    setFormData({ identifier: "", password: "", confirmed_password: "", otp: "" });
+    setFormData({
+      identifier: "",
+      password: "",
+      confirmed_password: "",
+      otp: "",
+    });
     setPhoneNumber("");
     setEmail("");
     setValidated(false);
     setError(null);
-    setMessage(null);
   };
 
   const errorBlock = error && (
     <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
       {error}
-    </div>
-  );
-
-  const messageBlock = message && !error && (
-    <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-      {message}
     </div>
   );
 
@@ -210,10 +272,17 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
                   setAuthMethod(m);
                   setError(null);
                   setValidated(false);
-                  if (m === "email" && email) setFormData((prev) => ({ ...prev, identifier: email }));
+                  if (m === "email" && email)
+                    setFormData((prev) => ({ ...prev, identifier: email }));
                   else if (m === "phone" && phoneNumber) {
-                    const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-                    setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, selectedCountry) }));
+                    const cleaned = cleanPhoneNumber(
+                      phoneNumber,
+                      selectedCountry,
+                    );
+                    setFormData((prev) => ({
+                      ...prev,
+                      identifier: getFullPhoneNumber(cleaned, selectedCountry),
+                    }));
                   }
                 }}
                 className={cn("auth-segment-item", authMethod === m && "on")}
@@ -243,7 +312,10 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
                 setSelectedCountry(country);
                 if (phoneNumber) {
                   const cleaned = cleanPhoneNumber(phoneNumber, country);
-                  setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, country) }));
+                  setFormData((prev) => ({
+                    ...prev,
+                    identifier: getFullPhoneNumber(cleaned, country),
+                  }));
                 }
               }}
               defaultCountry={selectedCountry}
@@ -254,15 +326,24 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
           )}
 
           {errorBlock}
-          {messageBlock}
 
           {!validated ? (
-            <button type="button" className="auth-submit-btn" onClick={handleValidate} disabled={isLoading}>
+            <button
+              type="button"
+              className="auth-submit-btn"
+              onClick={handleValidate}
+              disabled={isLoading}
+            >
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               {isLoading ? t("auth.validating") : t("auth.validate")}
             </button>
           ) : (
-            <button type="button" className="auth-submit-btn" onClick={handleSendOtp} disabled={isLoading}>
+            <button
+              type="button"
+              className="auth-submit-btn"
+              onClick={handleSendOtp}
+              disabled={isLoading}
+            >
               {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               {isLoading ? t("auth.sending") : t("auth.sendOtp")}
             </button>
@@ -272,41 +353,35 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
       {step === "otp" && (
         <div className="space-y-5">
-          <input
-            id="otp"
-            type="text"
-            inputMode="numeric"
-            placeholder={t("auth.otpCodePlaceholder")}
-            value={formData.otp}
-            onChange={(e) => handleInputChange("otp", e.target.value)}
-            maxLength={6}
-            autoComplete="one-time-code"
-            className="auth-input"
-            autoFocus
-          />
+          <div className="auth-otp">
+            <span className="auth-otp-label">{t("auth.otpVerification")}</span>
+            <OtpBoxInput
+              length={OTP_LENGTH}
+              value={formData.otp}
+              onChange={(value) => handleInputChange("otp", value)}
+              disabled={isLoading}
+            />
+          </div>
 
           {errorBlock}
-          {messageBlock}
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setStep("identifier")}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t("common.back")}
-            </button>
-            <button
-              type="button"
-              className="auth-submit-btn flex-1"
-              onClick={handleVerifyOtp}
-              disabled={isLoading}
-            >
-              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isLoading ? t("auth.verifying") : t("auth.verifyOtp")}
-            </button>
-          </div>
+          <button
+            type="button"
+            className="auth-submit-btn"
+            onClick={handleVerifyOtp}
+            disabled={isLoading || formData.otp.length < OTP_LENGTH}
+          >
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isLoading ? t("auth.verifying") : t("auth.verifyOtp")}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setStep("identifier")}
+            className="auth-secondary-btn"
+          >
+            {t("common.back")}
+          </button>
 
           <div className="text-center">
             {otpTimer.canResend ? (
@@ -319,8 +394,8 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
                 {t("auth.resendOtp")}
               </button>
             ) : (
-              <p className="tabular-nums text-xs text-muted-foreground">
-                {t("auth.resendIn")} {otpTimer.formatted}
+              <p className="auth-otp-resend tabular-nums">
+                {t("auth.resendIn")} <bdi>{otpTimer.formatted}</bdi>
               </p>
             )}
           </div>
@@ -329,15 +404,13 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
 
       {step === "password" && (
         <div className="space-y-5">
-          {messageBlock}
-
           <div className="relative">
             <input
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder={t("auth.enterNewPassword")}
               value={formData.password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
+              onChange={(e) => handlePasswordChange("password", e.target.value)}
               className="auth-input with-toggle"
               autoComplete="new-password"
               dir="ltr"
@@ -346,10 +419,16 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               type="button"
               tabIndex={-1}
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+              className="auth-input-toggle"
+              aria-label={
+                showPassword ? t("auth.hidePassword") : t("auth.showPassword")
+              }
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
 
@@ -359,7 +438,9 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               type={showConfirmPassword ? "text" : "password"}
               placeholder={t("auth.confirmNewPasswordPlaceholder")}
               value={formData.confirmed_password}
-              onChange={(e) => handleInputChange("confirmed_password", e.target.value)}
+              onChange={(e) =>
+                handlePasswordChange("confirmed_password", e.target.value)
+              }
               className="auth-input with-toggle"
               autoComplete="new-password"
               dir="ltr"
@@ -368,34 +449,40 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
               type="button"
               tabIndex={-1}
               onClick={() => setShowConfirmPassword((v) => !v)}
-              className="absolute bottom-2 left-0 text-muted-foreground transition-colors hover:text-foreground"
-              aria-label={showConfirmPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+              className="auth-input-toggle"
+              aria-label={
+                showConfirmPassword
+                  ? t("auth.hidePassword")
+                  : t("auth.showPassword")
+              }
             >
-              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </button>
           </div>
 
           {errorBlock}
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setStep("otp")}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t("common.back")}
-            </button>
-            <button
-              type="button"
-              className="auth-submit-btn flex-1"
-              onClick={handleResetPassword}
-              disabled={isLoading}
-            >
-              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isLoading ? t("auth.resetting") : t("auth.resetPassword")}
-            </button>
-          </div>
+          <button
+            type="button"
+            className="auth-submit-btn"
+            onClick={handleResetPassword}
+            disabled={isLoading}
+          >
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isLoading ? t("auth.resetting") : t("auth.resetPassword")}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setStep("otp")}
+            className="auth-secondary-btn"
+          >
+            {t("common.back")}
+          </button>
         </div>
       )}
 
@@ -405,35 +492,37 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
             <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">{t("auth.passwordResetSuccess")}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{t("auth.passwordResetDesc")}</p>
+            <h3 className="text-lg font-semibold">
+              {t("auth.passwordResetSuccess")}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("auth.passwordResetDesc")}
+            </p>
           </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={resetForm}
-              className="flex flex-1 items-center justify-center rounded-xl border border-border py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {t("auth.resetAnotherPassword")}
-            </button>
-            <Link href={buildPath("/auth/login")} className="auth-submit-btn flex-1">
-              {t("auth.goToLogin")}
-            </Link>
-          </div>
+          <Link href={buildPath("/auth/login")} className="auth-submit-btn">
+            {t("auth.goToLogin")}
+          </Link>
+
+          <button
+            type="button"
+            onClick={resetForm}
+            className="auth-secondary-btn"
+          >
+            {t("auth.resetAnotherPassword")}
+          </button>
         </div>
       )}
 
-      {errorBlock}
-      {messageBlock}
-
-      <div className="text-center text-sm">
-        <Link
-          href={buildPath("/auth/login")}
-          className="font-semibold text-(--auth-accent) hover:underline"
-        >
-          {t("auth.backToLogin")}
-        </Link>
-      </div>
+      {step !== "success" && (
+        <div className="text-center text-sm">
+          <Link
+            href={buildPath("/auth/login")}
+            className="font-semibold text-(--auth-accent) hover:underline"
+          >
+            {t("auth.backToLogin")}
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

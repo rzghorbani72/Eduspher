@@ -20,6 +20,8 @@ interface AuthOtpFieldProps {
   onSend: () => void;
   onVerify: () => void;
   length?: number;
+  /** false when the screen's primary button already drives send/verify. */
+  showActions?: boolean;
 }
 
 /**
@@ -42,6 +44,7 @@ export function AuthOtpField({
   onSend,
   onVerify,
   length = 5,
+  showActions = true,
 }: AuthOtpFieldProps) {
   const { t } = useTranslation();
 
@@ -58,6 +61,7 @@ export function AuthOtpField({
   }
 
   if (!sent) {
+    if (!showActions) return null;
     return (
       <div className="auth-otp">
         <span className="auth-otp-label">{label}</span>
@@ -78,7 +82,12 @@ export function AuthOtpField({
     <div className="auth-otp">
       <span className="auth-otp-label">{label}</span>
 
-      <OtpBoxInput length={length} value={value} onChange={onChange} disabled={loading} />
+      <OtpBoxInput
+        length={length}
+        value={value}
+        onChange={onChange}
+        disabled={loading}
+      />
 
       <div className="auth-otp-resend">
         {canResend ? (
@@ -87,20 +96,22 @@ export function AuthOtpField({
           </button>
         ) : (
           <span className="tabular-nums">
-            {t("auth.resendIn")} {countdown}
+            {t("auth.resendIn")} <bdi>{countdown}</bdi>
           </span>
         )}
       </div>
 
-      <button
-        type="button"
-        className="auth-ghost-btn"
-        onClick={onVerify}
-        disabled={loading || value.length < length}
-      >
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {loading ? t("auth.verifying") : verifyLabel}
-      </button>
+      {showActions && (
+        <button
+          type="button"
+          className="auth-ghost-btn"
+          onClick={onVerify}
+          disabled={loading || value.length < length}
+        >
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {loading ? t("auth.verifying") : verifyLabel}
+        </button>
+      )}
     </div>
   );
 }

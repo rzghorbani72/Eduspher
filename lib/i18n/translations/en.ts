@@ -36,7 +36,8 @@ export const en = {
     euro: "Euro",
   },
   academyStatus: {
-    enrollmentClosed: "This academy is not accepting new enrollments right now.",
+    enrollmentClosed:
+      "This academy is not accepting new enrollments right now.",
     currentStudentsKeepAccess:
       "If you are already enrolled, your access continues as normal.",
     reopensOn: "Reopens on",
@@ -239,7 +240,8 @@ export const en = {
     weekdaySaturday: "Saturday",
     tabLive: "Live classes",
     liveScheduleTitle: "Live class schedule",
-    liveScheduleSubtitle: "The join link appears on the lesson page after you enrol.",
+    liveScheduleSubtitle:
+      "The join link appears on the lesson page after you enrol.",
     noLiveSessions: "No live classes for this course",
     noLiveSessionsDescription: "This course is recorded content only for now.",
     requirements: "Requirements",
@@ -421,7 +423,8 @@ export const en = {
     and: "and",
     acceptSuffix: ".",
     privacyPolicy: "Privacy Policy",
-    mustAcceptTerms: "You must accept the Terms and Privacy Policy to continue.",
+    mustAcceptTerms:
+      "You must accept the Terms and Privacy Policy to continue.",
     documentsUnavailable:
       "Legal documents are not available yet. Please try again later or contact support.",
     reacceptTitle: "Updated terms",
@@ -454,7 +457,8 @@ export const en = {
     continueLabel: "Continue",
     changeIdentifier: "Change",
     useOtpInstead: "Sign in with a one-time code",
-    accountNotRegisteredForLogin: "No account is registered with these details.",
+    accountNotRegisteredForLogin:
+      "No account is registered with these details.",
     registerToLoginHint: "Create a free account first, then sign in.",
     createAccountToContinue: "Create account",
     noSignInMethodAvailable:
@@ -501,13 +505,13 @@ export const en = {
     termsOfService: "Terms of Service",
     and: "and",
     privacyPolicy: "Privacy Policy",
-    otpVerification: "Phone Verification",
+    otpVerification: "Enter the verification code",
     phoneVerificationRequired:
       "Phone verification required. A verification code has been sent to your phone.",
-    enterVerificationCode: "Enter the verification code sent to {phone}",
+    enterVerificationCode: "We sent a verification code to {phone}",
     enterOtpCode: "Enter the 6-digit code",
     otpCodePlaceholder: "Enter OTP",
-    verifyAndSignIn: "Verify & Sign In",
+    verifyAndSignIn: "Verify & sign in",
     invalidOtp: "Invalid verification code",
     otpExpired: "Verification code has expired",
     resendOtp: "Resend code",
@@ -535,17 +539,17 @@ export const en = {
     continueWithGoogle: "Continue with Google",
     googleSoon: "Google sign-in is coming soon",
     dontHaveAccountYet: "Don't have an account?",
-    validate: "Validate",
-    validating: "Validating...",
-    sendOtp: "Send OTP",
-    verifyOtp: "Verify OTP",
+    validate: "Continue",
+    validating: "Checking...",
+    sendOtp: "Send verification code",
+    verifyOtp: "Verify code",
     verifying: "Verifying...",
     sending: "Sending...",
     verified: "Verified",
-    accountFound: "Account found. Send OTP to continue.",
-    otpSentToPhone: "OTP sent to your phone number",
+    accountFound: "Account found. Send the code to continue.",
+    otpSentToPhone: "Verification code sent to your phone",
     otpCodeLabel: "Code",
-    otpSentToEmail: "OTP sent to your email address",
+    otpSentToEmail: "Verification code sent to your email",
     otpVerifiedSuccess: "OTP verified successfully",
     enterNewPassword: "Enter new password",
     confirmNewPasswordPlaceholder: "Confirm new password",
@@ -556,15 +560,15 @@ export const en = {
     resetAnotherPassword: "Reset Another",
     goToLogin: "Go to Login",
     backToLogin: "Back to Login",
-    phoneOtp: "Phone OTP",
-    emailOtp: "Email OTP",
+    phoneOtp: "Phone verification code",
+    emailOtp: "Email verification code",
     enterPhoneOtpPlaceholder: "Enter phone OTP",
     enterEmailOtpPlaceholder: "Enter email OTP",
-    sendPhoneOtp: "Send Phone OTP",
-    sendEmailOtp: "Send Email OTP",
-    verifyPhoneOtp: "Verify Phone OTP",
-    verifyEmailOtp: "Verify Email OTP",
-    continueToForm: "Continue to Form",
+    sendPhoneOtp: "Send verification code",
+    sendEmailOtp: "Send verification code",
+    verifyPhoneOtp: "Verify code",
+    verifyEmailOtp: "Verify code",
+    continueToForm: "Continue",
     processing: "Processing...",
     registering: "Registering...",
     backToVerification: "Back",
@@ -576,6 +580,9 @@ export const en = {
     enterFullName: "Enter your full name",
     displayNameRequired: "Display name is required",
     maxBioLength: "Maximum 300 characters",
+    sendVerificationCode: "Send verification code",
+    verifyAndContinue: "Verify and continue",
+    resending: "Resending...",
   },
   account: {
     title: "My Account",
@@ -583,7 +590,8 @@ export const en = {
     myProducts: "My Products",
     transactions: "Payments",
     noTransactions: "No payments yet",
-    noTransactionsDescription: "After your first purchase, your payment history will appear here.",
+    noTransactionsDescription:
+      "After your first purchase, your payment history will appear here.",
     settings: "Settings",
     profile: "Profile",
     displayName: "Display Name",
@@ -659,8 +667,10 @@ export const en = {
     noClasses: "No live classes are available in your enrolled courses.",
     openClass: "Open class",
     notSubmitted: "Not submitted",
-    privateTutoringUnavailable: "Private tutoring links are not available because the academy has not connected a tutoring service yet.",
-    noPrivateTutoring: "You do not have an active private tutoring engagement yet.",
+    privateTutoringUnavailable:
+      "Private tutoring links are not available because the academy has not connected a tutoring service yet.",
+    noPrivateTutoring:
+      "You do not have an active private tutoring engagement yet.",
     tutorLabel: "Tutor",
     tutoringEnds: "Ends",
     tutoringActive: "Active",
@@ -671,7 +681,8 @@ export const en = {
     tutoringRenew: "Renew",
     openTutoringCourse: "Open course",
     videoSessions: "video sessions",
-    learningDataUnavailable: "Your learning data is temporarily unavailable. Please try again later.",
+    learningDataUnavailable:
+      "Your learning data is temporarily unavailable. Please try again later.",
     // Security & Sessions
     securitySessions: "Security & Sessions",
     activeSessions: "Active Sessions",
@@ -765,7 +776,8 @@ export const en = {
     refundRequestFailed: "The refund request could not be sent.",
     // Subscriptions
     subscriptions: "Subscriptions",
-    subscriptionsDescription: "Your academy subscription and the plans on offer.",
+    subscriptionsDescription:
+      "Your academy subscription and the plans on offer.",
     activeSubscription: "Active subscription",
     noSubscription: "You do not have an active subscription.",
     availablePlans: "Available plans",
@@ -796,21 +808,28 @@ export const en = {
   learning: {
     curriculum: "Course curriculum",
     noLessons: "No lessons are available",
-    noLessonsDescription: "Your academy has not published lessons for this course yet.",
-    lessonUnavailable: "This lesson is unavailable or you do not currently have access.",
-    lessonTypeUnavailable: "This lesson format is not available in the student player yet.",
+    noLessonsDescription:
+      "Your academy has not published lessons for this course yet.",
+    lessonUnavailable:
+      "This lesson is unavailable or you do not currently have access.",
+    lessonTypeUnavailable:
+      "This lesson format is not available in the student player yet.",
     videoUnavailable: "The lesson video has not been published yet.",
     textUnavailable: "The lesson text has not been published yet.",
     liveClass: "Live class",
     liveUnavailable: "Live class details are unavailable",
-    liveUnavailableDescription: "The schedule or join window has not been published yet.",
+    liveUnavailableDescription:
+      "The schedule or join window has not been published yet.",
     joinClass: "Join class",
-    joinLinkUnavailable: "The join link becomes available during the allowed class window.",
+    joinLinkUnavailable:
+      "The join link becomes available during the allowed class window.",
     openLessonResource: "Open lesson resource",
-    downloadRestricted: "Downloading this lesson is restricted by your academy.",
+    downloadRestricted:
+      "Downloading this lesson is restricted by your academy.",
     markComplete: "Mark as complete",
     completed: "Completed",
-    progressSaveFailed: "Your progress could not be saved. Check your connection and try again.",
+    progressSaveFailed:
+      "Your progress could not be saved. Check your connection and try again.",
     assignmentUnavailable: "No assignment is available for this lesson yet.",
     assignmentAnswer: "Assignment answer",
     assignmentAnswerPlaceholder: "Write your answer...",
@@ -818,7 +837,8 @@ export const en = {
     resourceLink: "Resource link",
     resourceLinkPlaceholder: "https://example.com/your-work",
     invalidResourceLink: "Enter a valid HTTPS or HTTP link.",
-    uploadUnavailableNote: "Direct file upload is not available yet. You can submit a secure shared link.",
+    uploadUnavailableNote:
+      "Direct file upload is not available yet. You can submit a secure shared link.",
     submitAssignment: "Submit assignment",
     submittingAssignment: "Submitting...",
     assignmentSubmitFailed: "The assignment could not be submitted.",

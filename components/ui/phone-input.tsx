@@ -2,8 +2,14 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Phone, ChevronDown } from "lucide-react";
-import { COUNTRY_CODES, getCountryByCode, getDefaultCountry, type CountryCode } from "@/lib/country-codes";
+import {
+  COUNTRY_CODES,
+  getCountryByCode,
+  getDefaultCountry,
+  type CountryCode,
+} from "@/lib/country-codes";
 import { toEnglishDigits } from "@/lib/phone-utils";
+import { useLocaleDigits } from "@/hooks/use-locale-digits";
 import { cn } from "@/lib/utils";
 
 interface PhoneInputProps {
@@ -36,15 +42,16 @@ export const PhoneInput = ({
   const lockedCountry = useMemo(
     () =>
       lockCountryCode
-        ? getCountryByCode(lockCountryCode) ?? getDefaultCountry()
+        ? (getCountryByCode(lockCountryCode) ?? getDefaultCountry())
         : null,
-    [lockCountryCode]
+    [lockCountryCode],
   );
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
-    () => defaultCountry || getDefaultCountry()
+    () => defaultCountry || getDefaultCountry(),
   );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const localeDigits = useLocaleDigits();
 
   // Follow the defaultCountry prop without an effect (React's "adjust state on
   // prop change" pattern). A locked country always wins and is derived below.
@@ -58,7 +65,10 @@ export const PhoneInput = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -92,13 +102,20 @@ export const PhoneInput = ({
             className={cn(
               "flex h-11 items-center gap-2 rounded-l-theme border border-r-0 border-slate-200 bg-card",
               (disabled || lockedCountry) && "opacity-50 cursor-not-allowed",
-              isOpen && "ring-2 ring-sky-500"
+              isOpen && "ring-2 ring-sky-500",
             )}
           >
             <span className="text-base">{activeCountry.flag}</span>
-            <span className="text-xs">{activeCountry.dialCode}</span>
+            <span className="text-xs tabular-nums">
+              {localeDigits(activeCountry.dialCode)}
+            </span>
             {!lockedCountry && (
-              <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  isOpen && "rotate-180",
+                )}
+              />
             )}
           </button>
           {isOpen && !lockedCountry && (
@@ -113,12 +130,15 @@ export const PhoneInput = ({
                   onClick={() => handleCountrySelect(country)}
                   className={cn(
                     "flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100  dark:hover:bg-slate-800",
-                    activeCountry.code === country.code && "bg-sky-50 dark:bg-sky-950"
+                    activeCountry.code === country.code &&
+                      "bg-sky-50 dark:bg-sky-950",
                   )}
                 >
                   <span className="text-base">{country.flag}</span>
                   <span className="flex-1">{country.name}</span>
-                  <span className="text-xs text-muted opacity-70">{country.dialCode}</span>
+                  <span className="text-xs tabular-nums text-muted opacity-70">
+                    {localeDigits(country.dialCode)}
+                  </span>
                 </button>
               ))}
             </div>
@@ -132,15 +152,15 @@ export const PhoneInput = ({
             id={id}
             type="tel"
             dir="ltr"
-            value={value}
+            value={localeDigits(value)}
             onChange={handlePhoneChange}
             autoComplete={autoComplete}
-            placeholder={placeholder}
+            placeholder={localeDigits(placeholder)}
             disabled={disabled}
             className={cn(
               "flex h-11 w-full rounded-r-theme border border-theme bg-card",
               disabled && "opacity-50 cursor-not-allowed",
-              inputClassName
+              inputClassName,
             )}
           />
         </div>
