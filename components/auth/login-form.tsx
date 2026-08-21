@@ -8,10 +8,6 @@ import { LoginOtpStep } from "@/components/auth/login-otp-step";
 import { SetNewPasswordStep } from "@/components/auth/set-new-password-step";
 import { useTranslation } from "@/lib/i18n/hooks";
 
-interface LoginFormProps {
-  defaultCountryCode?: string;
-}
-
 /* Kept for when Google sign-in is turned on — see the hidden button below.
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -30,8 +26,8 @@ function GoogleIcon({ className }: { className?: string }) {
  * the method that account actually has. The steps live in their own files; this
  * component only decides which one is on screen.
  */
-export const LoginForm = ({ defaultCountryCode }: LoginFormProps) => {
-  const login = useLogin(defaultCountryCode);
+export const LoginForm = () => {
+  const login = useLogin();
   const { t } = useTranslation();
 
   if (login.step === "otpLogin" || login.step === "otpGate") {

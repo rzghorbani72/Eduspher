@@ -19,11 +19,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { OtpBoxInput } from "@/components/ui/otp-box-input";
 import { useOtpNotifier } from "@/hooks/use-otp-notifier";
 import { useStorePath } from "@/components/providers/store-provider";
-import {
-  getDefaultCountry,
-  getCountryByCode,
-  type CountryCode,
-} from "@/lib/country-codes";
+import { getDefaultCountry } from "@/lib/country-codes";
 import {
   getFullPhoneNumber,
   cleanPhoneNumber,
@@ -46,13 +42,7 @@ type Step = "identifier" | "otp" | "password" | "success";
 
 const OTP_LENGTH = 5;
 
-interface ForgotPasswordFormProps {
-  defaultCountryCode?: string;
-}
-
-export const ForgotPasswordForm = ({
-  defaultCountryCode,
-}: ForgotPasswordFormProps) => {
+export const ForgotPasswordForm = () => {
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>("identifier");
@@ -65,15 +55,8 @@ export const ForgotPasswordForm = ({
   const otpTimer = useOtpTimer();
   const notifyOtpSent = useOtpNotifier();
 
-  const getInitialCountry = () => {
-    if (defaultCountryCode) {
-      const country = getCountryByCode(defaultCountryCode);
-      if (country) return country;
-    }
-    return getDefaultCountry();
-  };
-  const [selectedCountry, setSelectedCountry] =
-    useState<CountryCode>(getInitialCountry());
+  // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
+  const selectedCountry = getDefaultCountry();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
 
@@ -320,17 +303,7 @@ export const ForgotPasswordForm = ({
               id="identifier"
               value={phoneNumber}
               onChange={handlePhoneChange}
-              onCountryChange={(country) => {
-                setSelectedCountry(country);
-                if (phoneNumber) {
-                  const cleaned = cleanPhoneNumber(phoneNumber, country);
-                  setFormData((prev) => ({
-                    ...prev,
-                    identifier: getFullPhoneNumber(cleaned, country),
-                  }));
-                }
-              }}
-              defaultCountry={selectedCountry}
+              lockCountryCode={selectedCountry.code}
               autoComplete="tel"
               className="auth-phone"
             />

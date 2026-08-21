@@ -65,8 +65,7 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
           id="identifier"
           value={login.phoneNumber}
           onChange={login.setPhoneNumber}
-          onCountryChange={login.setCountry}
-          defaultCountry={login.country}
+          lockCountryCode={login.country.code}
           autoComplete="tel"
           className="auth-phone"
         />

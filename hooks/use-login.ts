@@ -25,11 +25,7 @@ import {
 import { safeRedirectPath } from "@/lib/auth/redirect-target";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import { useStorePath } from "@/components/providers/store-provider";
-import {
-  getDefaultCountry,
-  getCountryByCode,
-  type CountryCode,
-} from "@/lib/country-codes";
+import { getDefaultCountry } from "@/lib/country-codes";
 import {
   getFullPhoneNumber,
   cleanPhoneNumber,
@@ -47,7 +43,7 @@ export type LoginStep =
  * show only the method it really has. Same rule as the panel — see
  * `lib/auth-identify.ts`.
  */
-export function useLogin(defaultCountryCode?: string) {
+export function useLogin() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuthenticated } = useAuthContext();
@@ -63,10 +59,8 @@ export function useLogin(defaultCountryCode?: string) {
   const [channel, setChannel] = useState<LoginChannel>("email");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [country, setCountry] = useState<CountryCode>(
-    (defaultCountryCode ? getCountryByCode(defaultCountryCode) : null) ??
-      getDefaultCountry(),
-  );
+  // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
+  const country = getDefaultCountry();
   const [password, setPassword] = useState("");
   // Shown only after repeated failures — the API demands a token from then on.
   const [captchaRequired, setCaptchaRequired] = useState(false);
@@ -353,7 +347,6 @@ export function useLogin(defaultCountryCode?: string) {
     phoneNumber,
     setPhoneNumber,
     country,
-    setCountry,
     identifier,
     identifierValid,
     password,
