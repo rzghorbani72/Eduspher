@@ -20,15 +20,17 @@ const getCookieValue = (name: string) => {
 };
 
 /**
- * Academy ID from cookie or default — required for tenant-scoped API calls.
+ * Which academy this browser is on: the cookie the tenant middleware set, then
+ * the build-time default. Every tenant-scoped call must go through this — a
+ * second, hand-rolled copy is how one flow ends up on a different academy.
  */
+export const resolveAcademyId = (): string | null =>
+  getCookieValue(env.academyIdCookie) ?? env.defaultAcademyId;
+
 const getAcademyId = (): string => {
-  const academyId = getCookieValue(env.academyIdCookie);
+  const academyId = resolveAcademyId();
   if (academyId) {
     return academyId;
-  }
-  if (env.defaultAcademyId) {
-    return String(env.defaultAcademyId);
   }
   throw new Error(
     "Academy ID is required but not found in cookies or environment variables",
@@ -451,18 +453,11 @@ export const login = async (
   payload: LoginPayload,
   options?: RequestOptions,
 ) => {
-  const cookieId = getCookieValue(env.academyIdCookie);
-  const finalAcademyId = cookieId ? Number(cookieId) : env.defaultAcademyId;
-
-  if (!finalAcademyId) {
-    throw new Error("Academy ID is required for public login");
-  }
-
   return postJson<AuthResponse>(
     "/auth/public/login",
     {
       ...payload,
-      academy_id: payload.academy_id ?? finalAcademyId,
+      academy_id: payload.academy_id ?? getAcademyId(),
     },
     options,
   );
@@ -493,20 +488,11 @@ export const identifyAccount = async (
   captchaToken?: string,
   options?: RequestOptions,
 ) => {
-  const cookieId = getCookieValue(env.academyIdCookie);
-  const finalAcademyId =
-    cookieId ??
-    (env.defaultAcademyId != null ? String(env.defaultAcademyId) : undefined);
-
-  if (!finalAcademyId) {
-    throw new Error("Academy ID is required for login");
-  }
-
   return postJson<AccountIdentity>(
     "/auth/public/identify",
     {
       identifier,
-      academy_id: finalAcademyId,
+      academy_id: getAcademyId(),
       ...(captchaToken ? { captcha_token: captchaToken } : {}),
     },
     options,
@@ -531,14 +517,11 @@ export const register = async (
   payload: RegisterPayload,
   options?: RequestOptions,
 ) => {
-  const cookieId = getCookieValue(env.academyIdCookie);
-  const finalAcademyId = cookieId ? Number(cookieId) : env.defaultAcademyId;
-
   return postJson<AuthResponse>(
     "/auth/register",
     {
       role: "USER",
-      academy_id: finalAcademyId,
+      academy_id: resolveAcademyId() ?? undefined,
       ...payload,
     },
     options,
@@ -813,7 +796,7 @@ export const forgetPassword = (
     "/auth/forget-password",
     {
       ...payload,
-      academy_id: payload.academy_id ?? env.defaultAcademyId,
+      academy_id: payload.academy_id ?? resolveAcademyId() ?? undefined,
     },
     options,
   );

@@ -9,13 +9,13 @@ import {
   loginByEmailOtp,
   loginByPhoneOtp,
   postJson,
+  resolveAcademyId,
   sendEmailOtp,
   sendPhoneOtp,
   type AccountIdentity,
 } from "@/lib/api/client";
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useOtpNotifier } from "@/hooks/use-otp-notifier";
-import { env } from "@/lib/env";
 import { isPasswordValid } from "@/lib/password-utils";
 import { nextStepFor } from "@/lib/auth-identify";
 import {
@@ -41,12 +41,6 @@ import { OtpType } from "@/lib/constants";
 export type LoginChannel = "email" | "phone";
 export type LoginStep =
   "identify" | "password" | "otpLogin" | "otpGate" | "passwordReset";
-
-function readCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
 
 /**
  * Identifier-first sign-in for an academy site: look the account up first, then
@@ -209,11 +203,7 @@ export function useLogin(defaultCountryCode?: string) {
     clearFeedback();
     startTransition(async () => {
       try {
-        const academyId =
-          readCookie(env.academyIdCookie) ??
-          (env.defaultAcademyId != null
-            ? String(env.defaultAcademyId)
-            : undefined);
+        const academyId = resolveAcademyId() ?? undefined;
 
         const result = await postJson<{
           phone_verification_required?: boolean;

@@ -16,6 +16,7 @@ import {
   verifyPhoneOtp,
   postJson,
   getLegalDocuments,
+  resolveAcademyId,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
 import { useAuthContext } from "@/components/providers/auth-provider";
@@ -39,7 +40,6 @@ import {
 } from "@/lib/auth/identifier-validation";
 import { isPasswordValid } from "@/lib/password-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
 import { toast } from "react-toastify";
 import { useOtpNotifier } from "@/hooks/use-otp-notifier";
@@ -339,20 +339,7 @@ export const RegisterForm = ({
         return;
       }
 
-      const getCookieValue = (name: string) => {
-        if (typeof document === "undefined") return null;
-        const match = document.cookie.match(
-          new RegExp(`(?:^|; )${name}=([^;]*)`),
-        );
-        return match ? decodeURIComponent(match[1]) : null;
-      };
-
-      const academyIdCookie = getCookieValue(env.academyIdCookie);
-      const finalAcademyId =
-        academyIdCookie ??
-        (env.defaultAcademyId != null
-          ? String(env.defaultAcademyId)
-          : undefined);
+      const finalAcademyId = resolveAcademyId() ?? undefined;
 
       const userData: {
         name?: string;

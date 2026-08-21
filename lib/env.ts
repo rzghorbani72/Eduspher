@@ -13,7 +13,10 @@ const normalizeApiPath = (path: string) => {
   return path;
 };
 
-const defaultAcademyId = Number(process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_ID ?? "1");
+// Academy ids are cuids, never numbers: Number(cuid) is NaN, which used to be
+// sent as the academy_id "NaN" and rejected by the API.
+const defaultAcademyId =
+  process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_ID?.trim() || null;
 const defaultAcademySlug = process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_SLUG ?? null;
 const academyIdCookie =
   process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? "skillforge_selected_academy_id";
