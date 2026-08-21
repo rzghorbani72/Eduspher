@@ -548,6 +548,7 @@ export const fa = {
     verified: "تأیید شد",
     accountFound: "حساب یافت شد. برای ادامه کد ارسال کنید.",
     otpSentToPhone: "کد به شماره تلفن شما ارسال شد",
+    otpCodeLabel: "کد",
     otpSentToEmail: "کد به ایمیل شما ارسال شد",
     otpVerifiedSuccess: "کد با موفقیت تأیید شد",
     enterNewPassword: "رمز عبور جدید را وارد کنید",

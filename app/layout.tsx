@@ -40,7 +40,7 @@ import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
 import { resolveAssetUrl } from "@/lib/utils";
 import { GdprConsentBanner } from "@/components/gdpr-consent-banner";
-import { SnackbarHost } from "@/components/ui/snackbar";
+import { ToastContainerWrapper } from "@/components/providers/toast-container-wrapper";
 import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -263,7 +263,7 @@ export default async function RootLayout({
                     {process.env.NEXT_PUBLIC_GDPR_ENABLED === "true" && (
                       <GdprConsentBanner />
                     )}
-                    <SnackbarHost />
+                    <ToastContainerWrapper />
                   </I18nProvider>
                 </ThemeProvider>
               </StoreProvider>
