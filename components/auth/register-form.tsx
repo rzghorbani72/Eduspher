@@ -29,6 +29,7 @@ import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber, toEnglishDigi
 import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
+import { showSnackbar } from "@/components/ui/snackbar";
 
 type RegisterValues = {
   name: string;
@@ -65,7 +66,6 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
   );
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("verification");
   const [isLoading, setIsLoading] = useState(false);
   const [phoneOtpSent, setPhoneOtpSent] = useState(false);
@@ -163,13 +163,12 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     }
     setOtpLoading(true);
     setError(null);
-    setMessage(null);
     try {
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
       const response = (await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION)) as { otp?: string };
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
-      setMessage(
+      showSnackbar(
         response?.otp
           ? `${t("auth.otpSentToPhone")}\n\n🔐 Code: ${response.otp}`
           : t("auth.otpSentToPhone")
@@ -188,13 +187,12 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     }
     setOtpLoading(true);
     setError(null);
-    setMessage(null);
     try {
       const fullPhone = getFullPhoneNumber(cleanPhoneNumber(phoneNumber, selectedCountry), selectedCountry);
       const result = await verifyPhoneOtp(fullPhone, phoneOtp, OtpType.REGISTER_PHONE_VERIFICATION);
       if (result.success !== false) {
         setPhoneOtpVerified(true);
-        setMessage(t("auth.phoneVerified"));
+        showSnackbar(t("auth.phoneVerified"));
       } else {
         setError(t("auth.invalidOtp"));
       }
@@ -213,12 +211,11 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     }
     setOtpLoading(true);
     setError(null);
-    setMessage(null);
     try {
       const response = (await sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION)) as { otp?: string };
       setEmailOtpSent(true);
       emailOtpTimer.start();
-      setMessage(
+      showSnackbar(
         response?.otp
           ? `${t("auth.otpSentToEmail")}\n\n🔐 Code: ${response.otp}`
           : t("auth.otpSentToEmail")
@@ -242,12 +239,11 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     }
     setOtpLoading(true);
     setError(null);
-    setMessage(null);
     try {
       const result = await verifyEmailOtp(emailVal, emailOtp, OtpType.REGISTER_EMAIL_VERIFICATION);
       if (result.success !== false) {
         setEmailOtpVerified(true);
-        setMessage(t("auth.emailVerified"));
+        showSnackbar(t("auth.emailVerified"));
       } else {
         setError(t("auth.invalidOtp"));
       }
@@ -269,7 +265,6 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     }
     setStep("form");
     setError(null);
-    setMessage(null);
   };
 
   const onFormSubmit = handleSubmit(async (values) => {
@@ -277,7 +272,6 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
     setIsLoading(true);
     isSubmittingRef.current = true;
     setError(null);
-    setMessage(null);
     try {
       const primaryVerified = primaryVerificationMethod === "phone" ? phoneOtpVerified : emailOtpVerified;
       if (!primaryVerified) {
@@ -348,7 +342,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
       }
 
       await postJson("/auth/register", userData);
-      setMessage(t("auth.registrationSuccess"));
+      showSnackbar(t("auth.registrationSuccess"));
       setTimeout(() => {
         router.push(loginHref);
         router.refresh();
@@ -369,13 +363,6 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
       {error}
     </div>
   ) : null;
-
-  const messageBlock =
-    message && !error ? (
-      <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-        {message}
-      </div>
-    ) : null;
 
   return (
     <div className="space-y-5">
@@ -469,7 +456,6 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
           )}
 
           {errorBlock}
-          {messageBlock}
 
           <button type="submit" className="auth-submit-btn" disabled={isLoading || otpLoading}>
             {(isLoading || otpLoading) && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -605,7 +591,6 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
           </label>
 
           {errorBlock}
-          {messageBlock}
 
           <div className="flex gap-2">
             <button

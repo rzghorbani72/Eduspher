@@ -41,7 +41,7 @@ export function AuthOtpField({
   countdown,
   onSend,
   onVerify,
-  length = 6,
+  length = 5,
 }: AuthOtpFieldProps) {
   const { t } = useTranslation();
 

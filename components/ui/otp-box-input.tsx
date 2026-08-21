@@ -13,7 +13,7 @@ interface OtpBoxInputProps {
 }
 
 export function OtpBoxInput({
-  length = 6,
+  length = 5,
   value,
   onChange,
   disabled,
