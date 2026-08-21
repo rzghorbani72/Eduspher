@@ -352,6 +352,12 @@ export const tr = {
     invalidEmail: "Geçersiz e-posta adresi",
     invalidPhone: "Geçersiz telefon numarası",
     passwordRequired: "Şifre gereklidir",
+    passwordMinLength: "En az 6 karakter",
+    passwordTooWeak:
+      "Şifre bir İngilizce harf, bir rakam ve bir sembol içermelidir",
+    passwordHasLetter: "Bir İngilizce harf içerir",
+    passwordHasNumber: "Bir rakam içerir",
+    passwordHasSymbol: "Bir sembol içerir",
     passwordTooShort: "Şifre en az 8 karakter olmalıdır",
     passwordsDoNotMatch: "Şifreler eşleşmiyor",
     signingIn: "Giriş yapılıyor...",

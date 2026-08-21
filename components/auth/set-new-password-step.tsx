@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { sanitizePasswordInput } from "@/lib/password-utils";
+import { isPasswordValid, sanitizePasswordInput } from "@/lib/password-utils";
+import { PasswordStrength } from "@/components/ui/password-strength";
 import { AuthError } from "@/components/auth/auth-notice";
 import type { useLogin } from "@/hooks/use-login";
 
@@ -55,6 +56,8 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
           </button>
         </div>
 
+        <PasswordStrength password={login.newPassword} />
+
         <input
           id="confirm-new-password"
           type={showPassword ? "text" : "password"}
@@ -69,7 +72,15 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
 
       <AuthError>{login.error}</AuthError>
 
-      <button type="submit" className="auth-submit-btn" disabled={login.pending}>
+      <button
+        type="submit"
+        className="auth-submit-btn"
+        disabled={
+          login.pending ||
+          !isPasswordValid(login.newPassword) ||
+          !login.confirmNewPassword
+        }
+      >
         {login.pending && <Loader2 className="h-4 w-4 animate-spin" />}
         {login.pending ? t("auth.settingPassword") : t("auth.setPasswordAndContinue")}
       </button>

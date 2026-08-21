@@ -4,14 +4,12 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
 import { AuthField } from "@/components/auth/auth-field";
+import { PasswordStrength } from "@/components/ui/password-strength";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { sanitizePasswordInput } from "@/lib/password-utils";
 
 export type RegisterFieldErrors = Partial<
-  Record<
-    "name" | "display_name" | "password" | "confirmed_password" | "bio",
-    string
-  >
+  Record<"name" | "display_name" | "password" | "confirmed_password", string>
 >;
 
 interface RegisterDetailsStepProps {
@@ -20,9 +18,10 @@ interface RegisterDetailsStepProps {
     display_name: UseFormRegisterReturn;
     password: UseFormRegisterReturn;
     confirmed_password: UseFormRegisterReturn;
-    bio: UseFormRegisterReturn;
   };
   errors: RegisterFieldErrors;
+  /** Live value of the password field, for the strength checklist. */
+  password: string;
   loading: boolean;
   verifiedLabel: string;
   verifiedHint: string;
@@ -54,6 +53,7 @@ const withAsciiPassword = (
 export function RegisterDetailsStep({
   fields,
   errors,
+  password,
   loading,
   verifiedLabel,
   verifiedHint,
@@ -92,15 +92,18 @@ export function RegisterDetailsStep({
         {...fields.display_name}
       />
 
-      <AuthField
-        label={t("auth.password")}
-        type="password"
-        dir="ltr"
-        autoComplete="new-password"
-        disabled={loading}
-        error={errors.password}
-        {...withAsciiPassword(fields.password)}
-      />
+      <div className="space-y-1.5">
+        <AuthField
+          label={t("auth.password")}
+          type="password"
+          dir="ltr"
+          autoComplete="new-password"
+          disabled={loading}
+          error={errors.password}
+          {...withAsciiPassword(fields.password)}
+        />
+        <PasswordStrength password={password} />
+      </div>
 
       <AuthField
         label={t("auth.confirmPassword")}
@@ -111,17 +114,6 @@ export function RegisterDetailsStep({
         error={errors.confirmed_password}
         {...withAsciiPassword(fields.confirmed_password)}
       />
-
-      <div className="space-y-1">
-        <textarea
-          rows={3}
-          placeholder={t("auth.bioOptional")}
-          disabled={loading}
-          className="auth-textarea"
-          {...fields.bio}
-        />
-        {errors.bio && <p className="auth-field-error">{errors.bio}</p>}
-      </div>
 
       <label className="auth-fine-print">
         <input

@@ -16,6 +16,7 @@ import {
 import { useOtpTimer } from "@/hooks/use-otp-timer";
 import { useOtpNotifier } from "@/hooks/use-otp-notifier";
 import { env } from "@/lib/env";
+import { isPasswordValid } from "@/lib/password-utils";
 import { nextStepFor } from "@/lib/auth-identify";
 import {
   isValidEmail,
@@ -282,8 +283,8 @@ export function useLogin(defaultCountryCode?: string) {
   }
 
   function submitNewPassword() {
-    if (newPassword.length < 6) {
-      setError(t("auth.passwordMinLength"));
+    if (!isPasswordValid(newPassword)) {
+      setError(t("auth.passwordTooWeak"));
       return;
     }
     if (newPassword !== confirmNewPassword) {

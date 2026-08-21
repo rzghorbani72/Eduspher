@@ -519,7 +519,12 @@ export const en = {
     phoneRequired: "Phone number is required",
     emailRequired: "Email is required",
     identifierRequired: "Email or phone number is required",
-    passwordMinLength: "Minimum 6 characters",
+    passwordMinLength: "At least 6 characters",
+    passwordTooWeak:
+      "Password must contain an English letter, a number, and a symbol",
+    passwordHasLetter: "Contains an English letter",
+    passwordHasNumber: "Contains a number",
+    passwordHasSymbol: "Contains a symbol",
     showPassword: "Show password",
     hidePassword: "Hide password",
     newPassword: "New Password",

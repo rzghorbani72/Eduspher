@@ -1664,7 +1664,7 @@ select[class*="rounded-sm"] {
 .auth-frame {
   position: relative;
   width: 100%;
-  max-width: 1140px;
+  max-width: 1240px;
   min-height: 620px;
   /* auto margins, not align-items:center — a frame taller than the viewport
      would otherwise overflow both ways and put its top out of reach */
@@ -1699,10 +1699,29 @@ select[class*="rounded-sm"] {
 }
 .auth-card {
   width: 100%;
-  max-width: 400px;
+  /* Same width as the panel's auth card, so the password checklist sits inside
+     the field it belongs to instead of spilling past it. */
+  max-width: 526px;
   margin: auto;
   padding-block: 24px;
 }
+/* The password rules read as one line under the field they belong to; only a
+   narrow screen is allowed to break them onto a second row. */
+.auth-password-checks {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+.auth-password-checks > * {
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .auth-password-checks {
+    flex-wrap: wrap;
+  }
+}
+
 .auth-title-wrap {
   margin-bottom: 28px;
   text-align: center;

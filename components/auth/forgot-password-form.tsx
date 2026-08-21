@@ -33,7 +33,11 @@ import {
   isValidEmail,
   isValidPhoneInput,
 } from "@/lib/auth/identifier-validation";
-import { sanitizePasswordInput } from "@/lib/password-utils";
+import {
+  isPasswordValid,
+  sanitizePasswordInput,
+} from "@/lib/password-utils";
+import { PasswordStrength } from "@/components/ui/password-strength";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 
@@ -134,8 +138,8 @@ export const ForgotPasswordForm = ({
       setError(t("auth.passwordRequired"));
       return false;
     }
-    if (formData.password.length < 6) {
-      setError(t("auth.passwordTooShort"));
+    if (!isPasswordValid(formData.password)) {
+      setError(t("auth.passwordTooWeak"));
       return false;
     }
     if (formData.password !== formData.confirmed_password) {
@@ -439,6 +443,8 @@ export const ForgotPasswordForm = ({
             </button>
           </div>
 
+          <PasswordStrength password={formData.password} />
+
           <div className="relative">
             <input
               id="confirmed_password"
@@ -477,7 +483,11 @@ export const ForgotPasswordForm = ({
             type="button"
             className="auth-submit-btn"
             onClick={handleResetPassword}
-            disabled={isLoading}
+            disabled={
+              isLoading ||
+              !isPasswordValid(formData.password) ||
+              !formData.confirmed_password
+            }
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             {isLoading ? t("auth.resetting") : t("auth.resetPassword")}

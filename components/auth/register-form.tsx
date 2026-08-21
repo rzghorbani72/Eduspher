@@ -37,6 +37,7 @@ import {
   isValidEmail,
   isValidPhoneInput,
 } from "@/lib/auth/identifier-validation";
+import { isPasswordValid } from "@/lib/password-utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { env } from "@/lib/env";
 import { cn } from "@/lib/utils";
@@ -50,7 +51,6 @@ type RegisterValues = {
   display_name: string;
   password: string;
   confirmed_password: string;
-  bio?: string;
 };
 
 type Step = "verification" | "form";
@@ -135,9 +135,10 @@ export const RegisterForm = ({
                   .optional()
                   .or(z.literal("")),
           display_name: z.string().min(2, t("auth.displayNameRequired")),
-          password: z.string().min(6, t("auth.passwordMinLength")),
-          confirmed_password: z.string().min(6, t("auth.passwordMinLength")),
-          bio: z.string().max(300, t("auth.maxBioLength")).optional(),
+          password: z
+            .string()
+            .refine(isPasswordValid, t("auth.passwordTooWeak")),
+          confirmed_password: z.string().min(1, t("auth.passwordRequired")),
         })
         .refine((v) => v.password === v.confirmed_password, {
           path: ["confirmed_password"],
@@ -162,7 +163,6 @@ export const RegisterForm = ({
       password: "",
       confirmed_password: "",
       display_name: "",
-      bio: "",
     },
   });
 
@@ -359,7 +359,6 @@ export const RegisterForm = ({
         display_name?: string;
         password?: string;
         confirmed_password?: string;
-        bio?: string;
         role: string;
         academy_id?: string;
         phone_number?: string;
@@ -373,7 +372,6 @@ export const RegisterForm = ({
         display_name: values.display_name,
         password: values.password,
         confirmed_password: values.confirmed_password,
-        bio: values.bio,
         role: "USER",
         academy_id: finalAcademyId,
         accepted_terms_version: legalVersions.terms,
@@ -569,19 +567,18 @@ export const RegisterForm = ({
 
       {step === "form" && (
         <RegisterDetailsStep
+          password={watch("password")}
           fields={{
             name: register("name"),
             display_name: register("display_name"),
             password: register("password"),
             confirmed_password: register("confirmed_password"),
-            bio: register("bio"),
           }}
           errors={{
             name: errors.name?.message,
             display_name: errors.display_name?.message,
             password: errors.password?.message,
             confirmed_password: errors.confirmed_password?.message,
-            bio: errors.bio?.message,
           }}
           loading={isLoading}
           verifiedLabel={
