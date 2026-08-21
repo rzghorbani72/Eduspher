@@ -201,7 +201,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
       {step === "identifier" && (
         <div className="space-y-5">
           {/* Method switcher — same pill style as login form */}
-          <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+          <div className="auth-segment">
             {(["email", "phone"] as const).map((m) => (
               <button
                 key={m}
@@ -216,12 +216,7 @@ export const ForgotPasswordForm = ({ defaultCountryCode }: ForgotPasswordFormPro
                     setFormData((prev) => ({ ...prev, identifier: getFullPhoneNumber(cleaned, selectedCountry) }));
                   }
                 }}
-                className={cn(
-                  "rounded-md py-1.5 text-xs font-medium transition-colors",
-                  authMethod === m
-                    ? "bg-card text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
+                className={cn("auth-segment-item", authMethod === m && "on")}
               >
                 {m === "email" ? t("auth.email") : t("auth.phone")}
               </button>

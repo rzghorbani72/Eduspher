@@ -313,6 +313,14 @@ export const tr = {
       "Yasal belgeler henüz kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
   },
   auth: {
+    academyPanelTagline:
+      "Derslerinize, ödevlerinize ve ilerlemenize tek bir yerden ulaşmak için giriş yapın.",
+    loginTitle: "Giriş yap",
+    loginSubtitle: "Kaldığınız yerden devam edin",
+    registerTitle: "Hesap oluştur",
+    registerSubtitle: "İki dakikadan kısa sürer",
+    forgotTitle: "Şifrenizi sıfırlayın",
+    forgotSubtitle: "Size bir doğrulama kodu göndereceğiz",
     login: "Giriş Yap",
     register: "Kayıt Ol",
     logout: "Çıkış Yap",

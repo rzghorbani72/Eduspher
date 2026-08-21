@@ -35,18 +35,13 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
         login.submitIdentify();
       }}
     >
-      <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+      <div className="auth-segment">
         {(["email", "phone"] as const).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => login.changeChannel(m)}
-            className={cn(
-              "flex items-center justify-center gap-1.5 rounded-md py-1.5 text-xs font-medium transition-colors",
-              login.channel === m
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
+            className={cn("auth-segment-item", login.channel === m && "on")}
           >
             {m === "email" ? <Mail className="h-3.5 w-3.5" /> : <Phone className="h-3.5 w-3.5" />}
             {m === "email" ? t("auth.email") : t("auth.phone")}
