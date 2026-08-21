@@ -61,19 +61,6 @@ export function AuthShell({
     <div className="auth-page">
       <div className="auth-frame">
         <div className="auth-pane">
-          <div className="auth-head">
-            <AcademyLogo
-              academyName={academyName}
-              logoUrl={logoUrl}
-              logoGlyph={logoGlyph}
-              size={46}
-            />
-            <div>
-              <div className="auth-name">{academyName}</div>
-              {academySubtitle ? <div className="auth-sub">{academySubtitle}</div> : null}
-            </div>
-          </div>
-
           <div className="auth-card" key={pathname}>
             {heading ? (
               <div className="auth-title-wrap">

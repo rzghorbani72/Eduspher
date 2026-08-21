@@ -19,10 +19,10 @@ import {
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
 import { useAuthContext } from "@/components/providers/auth-provider";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { AuthOtpField } from "@/components/auth/auth-otp-field";
 import { useStorePath } from "@/components/providers/store-provider";
 import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber, isValidPhoneNumber, toEnglishDigits } from "@/lib/phone-utils";
@@ -419,7 +419,7 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
                 }}
                 defaultCountry={selectedCountry}
                 placeholder={t("auth.enterPhone")}
-                inputClassName="text-center"
+                className="auth-phone"
               />
               {errors.phone_number && (
                 <p className="mt-1 text-xs text-destructive">{errors.phone_number.message}</p>
@@ -429,91 +429,43 @@ export const RegisterForm = ({ primaryVerificationMethod = "phone" }: RegisterFo
 
           {/* OTP row */}
           {primaryVerificationMethod === "phone" ? (
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{t("auth.phoneOtp")}</Label>
-              <div className="flex items-end gap-2">
-                <input
-                  id="phoneOtp"
-                  type="text"
-                  placeholder={t("auth.enterPhoneOtpPlaceholder")}
-                  value={phoneOtp}
-                  onChange={(e) => { setPhoneOtp(toEnglishDigits(e.target.value)); setError(null); }}
-                  maxLength={6}
-                  autoComplete="one-time-code"
-                  disabled={isLoading || otpLoading}
-                  className="auth-input min-w-0 flex-1"
-                />
-                {phoneOtpSent && !phoneOtpTimer.canResend ? (
-                  <span className="shrink-0 whitespace-nowrap pb-2 text-xs tabular-nums text-muted-foreground">
-                    {phoneOtpTimer.formatted}
-                  </span>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={handleSendPhoneOtp}
-                    disabled={otpLoading || !phoneNumber || !isValidPhone(phoneNumber)}
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0"
-                  >
-                    {otpLoading ? t("auth.sending") : phoneOtpSent ? t("auth.resendOtp") : t("auth.sendPhoneOtp")}
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  onClick={handleVerifyPhoneOtp}
-                  disabled={otpLoading || !phoneOtp.trim() || phoneOtpVerified}
-                  variant={phoneOtpVerified ? "ghost" : "outline"}
-                  size="sm"
-                  className="shrink-0"
-                >
-                  {otpLoading ? t("auth.verifying") : phoneOtpVerified ? `✓ ${t("auth.verified")}` : t("auth.verifyPhoneOtp")}
-                </Button>
-              </div>
-            </div>
+            <AuthOtpField
+              label={t("auth.phoneOtp")}
+              sendLabel={t("auth.sendPhoneOtp")}
+              verifyLabel={t("auth.verifyPhoneOtp")}
+              value={phoneOtp}
+              onChange={(value) => {
+                setPhoneOtp(toEnglishDigits(value));
+                setError(null);
+              }}
+              sent={phoneOtpSent}
+              verified={phoneOtpVerified}
+              loading={otpLoading}
+              canSend={Boolean(phoneNumber) && isValidPhone(phoneNumber)}
+              canResend={phoneOtpTimer.canResend}
+              countdown={phoneOtpTimer.formatted}
+              onSend={handleSendPhoneOtp}
+              onVerify={handleVerifyPhoneOtp}
+            />
           ) : (
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{t("auth.emailOtp")}</Label>
-              <div className="flex items-end gap-2">
-                <input
-                  id="emailOtp"
-                  type="text"
-                  placeholder={t("auth.enterEmailOtpPlaceholder")}
-                  value={emailOtp}
-                  onChange={(e) => { setEmailOtp(toEnglishDigits(e.target.value)); setError(null); }}
-                  maxLength={6}
-                  autoComplete="one-time-code"
-                  disabled={isLoading || otpLoading}
-                  className="auth-input min-w-0 flex-1"
-                />
-                {emailOtpSent && !emailOtpTimer.canResend ? (
-                  <span className="shrink-0 whitespace-nowrap pb-2 text-xs tabular-nums text-muted-foreground">
-                    {emailOtpTimer.formatted}
-                  </span>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={handleSendEmailOtp}
-                    disabled={otpLoading || !hasEmail}
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0"
-                  >
-                    {otpLoading ? t("auth.sending") : emailOtpSent ? t("auth.resendOtp") : t("auth.sendEmailOtp")}
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  onClick={handleVerifyEmailOtp}
-                  disabled={otpLoading || !emailOtp.trim() || emailOtpVerified}
-                  variant={emailOtpVerified ? "ghost" : "outline"}
-                  size="sm"
-                  className="shrink-0"
-                >
-                  {otpLoading ? t("auth.verifying") : emailOtpVerified ? `✓ ${t("auth.verified")}` : t("auth.verifyEmailOtp")}
-                </Button>
-              </div>
-            </div>
+            <AuthOtpField
+              label={t("auth.emailOtp")}
+              sendLabel={t("auth.sendEmailOtp")}
+              verifyLabel={t("auth.verifyEmailOtp")}
+              value={emailOtp}
+              onChange={(value) => {
+                setEmailOtp(toEnglishDigits(value));
+                setError(null);
+              }}
+              sent={emailOtpSent}
+              verified={emailOtpVerified}
+              loading={otpLoading}
+              canSend={hasEmail}
+              canResend={emailOtpTimer.canResend}
+              countdown={emailOtpTimer.formatted}
+              onSend={handleSendEmailOtp}
+              onVerify={handleVerifyEmailOtp}
+            />
           )}
 
           {errorBlock}

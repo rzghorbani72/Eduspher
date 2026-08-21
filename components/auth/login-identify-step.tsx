@@ -69,7 +69,7 @@ export function LoginIdentifyStep({ login }: { login: Login }) {
           defaultCountry={login.country}
           placeholder={t("auth.enterPhone")}
           autoComplete="tel"
-          inputClassName="text-center"
+          className="auth-phone"
         />
       )}
 

@@ -67,8 +67,8 @@ export default async function RootLayout({
   // header/footer/banner chrome, raw full-width children.
   const isPreview =
     urlPathname.startsWith("/preview") || pathname.startsWith("/preview");
-  // Auth routes render as a self-contained full-screen experience (its own
-  // gradient background, card, and controls) — strip the site chrome.
+  // Auth routes keep the site header/footer, but bring their own gradient
+  // background, so only the creative background is stripped.
   const isAuth =
     urlPathname.startsWith("/auth") || pathname.startsWith("/auth");
   // Admin master-template preview: the draft renders on the academy path but
@@ -148,7 +148,7 @@ export default async function RootLayout({
     (theme?.text_direction as "ltr" | "rtl" | undefined) ??
     getAcademyDirection(storeLanguage, countryCode);
 
-  const bareLayout = isPanelRoot || isPreview || isSamplePreview || isAuth;
+  const bareLayout = isPanelRoot || isPreview || isSamplePreview;
   // Paths that render the full-bleed academy home template, as the BROWSER sees
   // them (subdomain academies live at "/", path-based ones at "/{slug}").
   // MainContainer re-checks these on every client navigation.

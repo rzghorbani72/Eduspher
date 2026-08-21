@@ -1240,11 +1240,13 @@ select[class*="rounded-sm"] {
   --auth-pane-bg: #f1f2f4;
   --auth-segment-bg: rgba(24, 28, 32, 0.07);
   position: relative;
-  min-height: 100vh;
+  width: 100%;
+  /* Sits between the site header and footer, so it fills the space it is given
+     rather than claiming a whole viewport; the frame's own min-height is the
+     floor when that percentage cannot resolve. */
+  min-height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(0px, 2.5vw, 32px);
+  padding: clamp(16px, 3vw, 48px);
   background:
     radial-gradient(
       120% 90% at 85% 15%,
@@ -1296,11 +1298,15 @@ select[class*="rounded-sm"] {
 }
 
 /* The split frame */
+/* Split card, centred in the space between the site header and footer */
 .auth-frame {
   position: relative;
   width: 100%;
-  max-width: 1180px;
-  min-height: min(840px, calc(100vh - 64px));
+  max-width: 1140px;
+  min-height: 620px;
+  /* auto margins, not align-items:center — a frame taller than the viewport
+     would otherwise overflow both ways and put its top out of reach */
+  margin: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   border-radius: 28px;
@@ -1353,9 +1359,7 @@ select[class*="rounded-sm"] {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  margin: 12px;
   padding: 48px 40px;
-  border-radius: 20px;
   text-align: center;
   color: #fff;
   overflow: hidden;
@@ -1382,13 +1386,9 @@ select[class*="rounded-sm"] {
   z-index: 1;
 }
 @media (max-width: 900px) {
-  .auth-page {
-    padding: 0;
-  }
   .auth-frame {
     grid-template-columns: minmax(0, 1fr);
-    min-height: 100vh;
-    border-radius: 0;
+    min-height: 0;
   }
   .auth-brand {
     display: none;
@@ -1574,7 +1574,14 @@ select[class*="rounded-sm"] {
   padding-inline: 1.125rem;
   color: var(--auth-card-ink);
   font-size: 0.95rem;
+  text-align: start;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+/* Browsers force direction:ltr on tel/email/number inputs, which would flush
+   their text to the left edge. Align to the page direction instead, so digits
+   keep their safe LTR order while the text sits where the design expects. */
+[dir="rtl"] .auth-input {
+  text-align: right;
 }
 .auth-input::placeholder {
   color: var(--auth-card-muted);
@@ -1589,6 +1596,127 @@ select[class*="rounded-sm"] {
 }
 .auth-input.with-toggle {
   padding-inline: 2.75rem;
+}
+
+/* Secondary action on the auth pane (send code / verify code) */
+.auth-ghost-btn {
+  width: 100%;
+  height: 2.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--auth-accent);
+  background: var(--auth-accent-tint);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.auth-ghost-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--auth-accent) 24%, transparent);
+}
+.auth-ghost-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Verification code field */
+.auth-otp {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.auth-otp-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--auth-card-muted);
+}
+.auth-otp input {
+  height: 3rem;
+  width: 2.5rem;
+  background: var(--auth-card-bg);
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: var(--auth-card-ink);
+}
+.auth-otp input:focus {
+  border-color: var(--auth-accent);
+  box-shadow: 0 0 0 3px var(--auth-accent-tint);
+}
+.auth-otp-resend {
+  display: flex;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--auth-card-muted);
+}
+.auth-otp-resend button {
+  color: var(--auth-accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+.auth-otp-resend button:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.auth-otp-resend button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.auth-otp-verified {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 2.875rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #10b981 12%, transparent);
+  color: #047857;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Phone control: the shared PhoneInput paints itself with the academy theme
+   tokens (bg-card/border-theme), which can resolve dark. Inside the auth pane
+   it must match .auth-input instead, and stay LTR so the flag + dial code lead
+   the number in every page direction. */
+.auth-phone {
+  direction: ltr;
+}
+.auth-phone button,
+.auth-phone input {
+  height: 3.25rem;
+  background: var(--auth-card-bg);
+  border: 1px solid transparent;
+  color: var(--auth-card-ink);
+}
+.auth-phone button {
+  border-start-start-radius: 999px;
+  border-end-start-radius: 999px;
+  padding-inline: 0.875rem 0.75rem;
+  gap: 0.375rem;
+}
+.auth-phone input {
+  border-start-end-radius: 999px;
+  border-end-end-radius: 999px;
+  padding-inline: 2.5rem 1rem;
+  font-size: 0.95rem;
+  text-align: left;
+}
+.auth-phone input::placeholder {
+  color: var(--auth-card-muted);
+}
+.auth-phone input:focus {
+  outline: none;
+  border-color: var(--auth-accent);
+  box-shadow: 0 0 0 3px var(--auth-accent-tint);
+}
+/* Country dropdown sits on the same white surface as the inputs */
+.auth-phone [class*="absolute"][class*="z-50"] {
+  background: var(--auth-card-bg);
+  border-color: var(--auth-card-line);
+  border-radius: 16px;
 }
 .auth-input.has-error {
   border-color: hsl(var(--destructive));
