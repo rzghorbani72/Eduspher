@@ -14,6 +14,7 @@ import {
   getTutoringOffersPublic,
   getCourseOfferingsPublic,
   getCoursePaymentPlans,
+  getPublicLesson,
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
@@ -114,9 +115,25 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const isEnrolled = Boolean(enrollment?.enrollments?.length);
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
-  const videoUrl = resolveAssetUrl(course.Video?.publicUrl);
+  // No promo video? The first free video lesson is the next best pitch, so the
+  // cover plays it in place instead of showing a dead image.
+  const firstFreeVideoId = seasons
+    .flatMap((season) => season.lessons)
+    .find((lesson) => lesson.isPreview && lesson.type === "VIDEO")?.id;
+  const freeLesson =
+    !course.Video?.publicUrl && firstFreeVideoId
+      ? await getPublicLesson(firstFreeVideoId)
+      : null;
+  const videoUrl =
+    resolveAssetUrl(course.Video?.publicUrl) ??
+    resolveAssetUrl(freeLesson?.Video?.publicUrl);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
   const learnPath = buildPath(`/learn/${course.id}`);
+  // An owner keeps the full learning player; everyone else gets the public
+  // free-lesson page, which needs no account.
+  const previewBasePath = isEnrolled
+    ? learnPath
+    : buildPath(`/courses/${course.id}/preview`);
 
   const relatedCourses = await getCourses({
     published: true,
@@ -171,6 +188,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               <video
                 src={videoUrl}
                 controls
+                preload="metadata"
                 poster={coverUrl}
                 className="h-full w-full object-cover"
               />
@@ -195,7 +213,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             <CourseDetailTabs
               course={course}
               isLoggedIn={!!user}
-              previewBasePath={learnPath}
+              previewBasePath={previewBasePath}
               prerequisiteHref={
                 course.PrerequisiteCourse
                   ? buildPath(`/courses/${course.PrerequisiteCourse.id}`)

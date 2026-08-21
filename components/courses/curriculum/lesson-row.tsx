@@ -178,7 +178,7 @@ export function LessonRow({ lesson, now, previewHref }: LessonRowProps) {
           <Link
             href={previewHref}
             aria-label={`${t("courses.badgePreview")}: ${lesson.title}`}
-            className="grid h-8 w-8 place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-(--theme-primary) transition-transform hover:scale-110"
+            className="grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-(--theme-primary) transition-transform hover:scale-110"
           >
             <Play className="h-4 w-4" />
           </Link>

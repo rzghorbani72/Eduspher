@@ -57,6 +57,8 @@ export const ar = {
     aboutUs: 'من نحن',
   },
   courses: {
+    freeLessonNotice: 'هذا الدرس مجاني. احصل على الدورة لفتح بقية الدروس.',
+    backToCourse: 'العودة إلى الدورة',
     title: 'الدورات',
     allCourses: 'جميع الدورات',
     featuredCourses: 'الدورات المميزة',

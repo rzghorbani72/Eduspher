@@ -173,6 +173,8 @@ export const en = {
     expert: "Expert",
     lastUpdated: "Updated:",
     freePreview: "Free preview",
+    freeLessonNotice: "This lesson is free. Get the course to unlock the rest.",
+    backToCourse: "Back to the course",
     chooseEnrollMethod: "Choose an enrollment method",
     chooseEnrollMethodHint: "You can switch to another method anytime.",
     singleEnrollMethodHint: "How this course is sold:",

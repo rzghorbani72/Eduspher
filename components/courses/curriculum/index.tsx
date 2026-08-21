@@ -78,7 +78,7 @@ export function CourseCurriculum({
           <button
             type="button"
             onClick={() => setOpenIds(allOpen ? [] : seasons.map((s) => s.id))}
-            className="text-xs font-bold text-(--theme-primary) hover:underline"
+            className="cursor-pointer text-xs font-bold text-(--theme-primary) hover:underline"
           >
             {allOpen ? t("courses.collapseAll") : t("courses.expandAll")}
           </button>
@@ -104,7 +104,7 @@ export function CourseCurriculum({
                 type="button"
                 onClick={() => toggle(season.id)}
                 aria-expanded={isOpen}
-                className="flex w-full items-center gap-3 p-4 text-start"
+                className="flex w-full cursor-pointer items-center gap-3 p-4 text-start"
               >
                 <span className="cd-price grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-sm font-extrabold text-(--theme-primary)">
                   {toPersianDigits(index + 1, language)}

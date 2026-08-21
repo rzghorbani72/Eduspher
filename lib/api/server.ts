@@ -59,6 +59,7 @@ import type {
   StoreSummary,
   UserProfilesResponse,
   EnrollmentSummary,
+  LessonSummary,
   Pagination,
 } from "@/lib/api/types";
 
@@ -405,6 +406,18 @@ export async function getCourseById(id: string | number) {
  */
 export async function getPublicCourseDetail(id: string) {
   const result = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
+    includeAuth: false,
+  }).catch(() => null);
+  return result?.data ?? null;
+}
+
+/**
+ * Free-preview lesson for the storefront. Readable without a session — the
+ * backend serves it only when the lesson is a free, published lesson of a
+ * published course, so nothing paid can leak through this call.
+ */
+export async function getPublicLesson(id: string) {
+  const result = await serverFetch<LessonSummary>(`/lessons/public/${id}`, {
     includeAuth: false,
   }).catch(() => null);
   return result?.data ?? null;

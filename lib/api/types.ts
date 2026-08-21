@@ -60,8 +60,10 @@ export interface LessonAssignmentSummary {
 
 export interface LessonSummary {
   id: string;
+  course_id?: string;
   title: string;
   description?: string | null;
+  content?: string | null;
   duration?: number | null;
   is_free?: boolean;
   is_published?: boolean;

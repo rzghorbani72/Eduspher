@@ -56,6 +56,8 @@ export const tr = {
     roadmap: "Yol Haritası",
   },
   courses: {
+    freeLessonNotice: "Bu ders ücretsiz. Diğer derslerin kilidini açmak için kursu edinin.",
+    backToCourse: "Kursa dön",
     title: "Kurslar",
     allCourses: "Tüm Kurslar",
     featuredCourses: "Öne Çıkan Kurslar",

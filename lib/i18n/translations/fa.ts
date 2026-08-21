@@ -172,6 +172,8 @@ export const fa = {
     expert: "حرفه‌ای",
     lastUpdated: "به‌روزرسانی:",
     freePreview: "پیش‌نمایش رایگان",
+    freeLessonNotice: "این درس رایگان است. برای دیدن بقیهٔ درس‌ها، دوره را تهیه کنید.",
+    backToCourse: "بازگشت به دوره",
     chooseEnrollMethod: "یک روش ثبت‌نام انتخاب کن",
     chooseEnrollMethodHint: "می‌تونی هر زمان روش دیگری را انتخاب کنی.",
     singleEnrollMethodHint: "روش ثبت‌نام این دوره:",
