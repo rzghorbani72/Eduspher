@@ -7,6 +7,7 @@ import {
   formatLtrValue,
   formatNumber,
   formatPercent,
+  formatPhoneDisplay,
   toPersianDigits,
 } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ export function useLocaleFormat() {
       number: (value: number) => formatNumber(value, language),
       percent: (value: number) => formatPercent(value, language),
       ltr: (value: string) => formatLtrValue(value, language),
+      phone: (value: string) => formatPhoneDisplay(value, language),
     }),
     [language],
   );

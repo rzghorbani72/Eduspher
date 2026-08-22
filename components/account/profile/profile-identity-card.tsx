@@ -4,7 +4,7 @@ import { BadgeCheck, ShieldAlert } from "lucide-react";
 
 import { AddContactForm } from "@/components/account/add-contact-form";
 import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
-import { useLocaleDigits } from "@/hooks/use-locale-digits";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface ProfileIdentityCardProps {
@@ -33,7 +33,7 @@ export function ProfileIdentityCard({
   defaultCountryCode,
 }: ProfileIdentityCardProps) {
   const { t } = useTranslation();
-  const localeDigits = useLocaleDigits();
+  const { phone: formatPhone } = useLocaleFormat();
 
   return (
     <div className="space-y-5 rounded-xl border border-theme bg-card p-5 shadow-sm">
@@ -57,7 +57,7 @@ export function ProfileIdentityCard({
         />
         <ContactRow
           label={t("account.phone")}
-          value={phoneNumber ? localeDigits(phoneNumber) : null}
+          value={phoneNumber ? formatPhone(phoneNumber) : null}
           confirmed={phoneConfirmed}
           confirmedLabel={t("account.verified")}
           unconfirmedLabel={t("account.notVerified")}

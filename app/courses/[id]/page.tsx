@@ -22,12 +22,8 @@ import {
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
-import {
-  buildAcademyPath,
-  resolveAssetUrl,
-  truncate,
-  buildOgImageUrl,
-} from "@/lib/utils";
+import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
+import { getAcademyShareImageUrl } from "@/lib/seo/share-image";
 import { t } from "@/lib/i18n/server-translations";
 import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
 import { buildPurchaseOptions } from "@/lib/courses/purchase-options";
@@ -60,6 +56,11 @@ export async function generateMetadata({
     160,
   );
 
+  // Course cover first; the academy's share image only when the course has none.
+  const shareImage =
+    resolveAssetUrl(course.Image?.publicUrl) ??
+    (await getAcademyShareImageUrl());
+
   return {
     title: course.title,
     description,
@@ -69,15 +70,13 @@ export async function generateMetadata({
       title: course.title,
       description,
       url: ctx.canonicalUrl,
-      images: [
-        resolveAssetUrl(course.Image?.publicUrl) ??
-          buildOgImageUrl(course.title, description),
-      ],
+      ...(shareImage ? { images: [shareImage] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: course.title,
       description,
+      ...(shareImage ? { images: [shareImage] } : {}),
     },
   };
 }

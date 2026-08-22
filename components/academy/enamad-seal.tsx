@@ -21,6 +21,7 @@ export function EnamadSeal({
       {/* eNamad requires a plain img with referrerPolicy=origin, not next/image. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        loading="lazy"
         referrerPolicy="origin"
         src={src}
         alt="نماد اعتماد الکترونیکی"

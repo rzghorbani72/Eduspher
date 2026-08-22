@@ -286,6 +286,37 @@ export const formatPercent = (value: number, language?: string): string =>
 export const formatLtrValue = (value: string, language?: string): string =>
   language === "fa" ? `\u2066${toPersianDigits(value, language)}\u2069` : value;
 
+const toEnglishDigits = (value: string): string =>
+  value
+    .replace(/[۰-۹]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x06f0 + 48))
+    .replace(/[٠-٩]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48));
+
+/** E.164 or raw digits → spaced national Iranian mobile (۰۹۱۲ ۰۰۰ ۰۰۰۰). */
+export const formatPhoneDisplay = (
+  raw: string,
+  language?: string,
+): string => {
+  if (!raw) return "—";
+
+  let digits = toEnglishDigits(raw).replace(/\D/g, "");
+  if (digits.startsWith("0098")) digits = digits.slice(4);
+  else if (digits.startsWith("98")) digits = digits.slice(2);
+
+  let national = digits;
+  if (digits.length === 10 && digits.startsWith("9")) {
+    national = `0${digits}`;
+  }
+
+  let formatted = national;
+  if (national.length === 11 && national.startsWith("09")) {
+    formatted = `${national.slice(0, 4)} ${national.slice(4, 7)} ${national.slice(7)}`;
+  } else {
+    formatted = national.replace(/(\d{3})(?=\d)/g, "$1 ").trim();
+  }
+
+  return formatLtrValue(formatted, language ?? "fa");
+};
+
 /**
  * Dates in the account area are rendered on the server, so they must not depend
  * on the viewer's locale. `fa` gets the Persian calendar the academy actually
