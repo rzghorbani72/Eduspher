@@ -148,6 +148,7 @@ export const en = {
       "Lessons coming soon. Check back for new modules.",
     preview: "Preview",
     min: "min",
+    sec: "sec",
     noVideo: "No video",
     liveSession: "Live",
     liveSessionTimezone: "Timezone",

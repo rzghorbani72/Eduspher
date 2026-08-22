@@ -21,6 +21,17 @@ export const formatMinutes = (
   return `${hoursLabel} ${toPersianDigits(rest, language)} ${t("courses.min")}`;
 };
 
+/** Lesson lengths come in seconds: "۳۱ ثانیه" under a minute, minutes above. */
+export const formatSeconds = (
+  seconds: number | null | undefined,
+  language: string,
+  t: Translate,
+): string => {
+  if (!seconds || seconds <= 0) return "";
+  if (seconds < 60) return `${toPersianDigits(seconds, language)} ${t("courses.sec")}`;
+  return formatMinutes(Math.round(seconds / 60), language, t);
+};
+
 export const formatDateTime = (
   iso: string,
   language: string,

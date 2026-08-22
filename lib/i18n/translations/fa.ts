@@ -147,6 +147,7 @@ export const fa = {
       "درس‌ها به زودی. برای ماژول‌های جدید دوباره بررسی کنید.",
     preview: "پیش‌نمایش",
     min: "دقیقه",
+    sec: "ثانیه",
     noVideo: "بدون ویدیو",
     liveSession: "زنده",
     liveSessionTimezone: "منطقهٔ زمانی",

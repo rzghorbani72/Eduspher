@@ -40,7 +40,8 @@ export interface CurriculumLessonView {
   type: LessonType;
   /** Free lessons are watchable without buying anything. */
   isPreview: boolean;
-  durationMinutes: number | null;
+  /** Lesson.duration is stored in whole SECONDS (the panel measures the file). */
+  durationSeconds: number | null;
   unlock: UnlockRule | null;
   downloadable: boolean;
   live: LiveView | null;
@@ -57,7 +58,7 @@ export interface CurriculumSeasonView {
   title: string;
   description: string | null;
   lessons: CurriculumLessonView[];
-  totalMinutes: number;
+  totalSeconds: number;
 }
 
 export interface CourseContentStats {
@@ -107,7 +108,7 @@ const toLessonView = (lesson: LessonSummary): CurriculumLessonView => ({
   description: lesson.description ?? null,
   type: resolveType(lesson),
   isPreview: Boolean(lesson.is_free),
-  durationMinutes: lesson.duration ?? null,
+  durationSeconds: lesson.duration ?? null,
   unlock: resolveUnlock(lesson),
   downloadable: resolveDownloadable(lesson),
   live: lesson.LiveSession
@@ -145,7 +146,7 @@ const toSeasonView = (season: SeasonSummary): CurriculumSeasonView => {
     title: season.title,
     description: season.description ?? null,
     lessons,
-    totalMinutes: lessons.reduce((sum, l) => sum + (l.durationMinutes ?? 0), 0),
+    totalSeconds: lessons.reduce((sum, l) => sum + (l.durationSeconds ?? 0), 0),
   };
 };
 
@@ -160,7 +161,11 @@ export const buildContentStats = (
   const lessons = seasons.flatMap((s) => s.lessons);
   const countOf = (type: LessonType) =>
     lessons.filter((l) => l.type === type).length;
-  const totalMinutes = seasons.reduce((sum, s) => sum + s.totalMinutes, 0);
+  // Course.duration is stored in minutes, so the lesson seconds are converted
+  // once here and everything downstream keeps talking in minutes.
+  const totalMinutes = Math.round(
+    seasons.reduce((sum, s) => sum + s.totalSeconds, 0) / 60,
+  );
 
   return {
     seasonCount: seasons.length,

@@ -15,7 +15,7 @@ import { CourseReviews } from "@/components/courses/course-reviews";
 interface CourseDetailTabsProps {
   course: CourseSummary;
   isLoggedIn: boolean;
-  previewBasePath: string;
+  previewBasePath: string | null;
   prerequisiteHref: string | null;
   instructorAvatarUrl: string | null;
 }

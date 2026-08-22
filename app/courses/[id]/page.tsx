@@ -1,10 +1,14 @@
-/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { CourseCard } from "@/components/courses/course-card";
 import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
 import { CourseHero } from "@/components/courses/course-hero";
+import { CoursePreviewPlayer } from "@/components/courses/course-preview-player";
+import {
+  PreviewPlayerProvider,
+  type PreviewMedia,
+} from "@/components/courses/preview-player-context";
 import { PurchasePanel } from "@/components/courses/purchase-panel";
 import {
   getCourses,
@@ -31,7 +35,10 @@ import {
   formatAccessTerm,
   formatMinutes,
 } from "@/components/courses/curriculum/format";
-import { buildCourseJsonLd, buildBreadcrumbJsonLd } from "@/lib/seo/course-json-ld";
+import {
+  buildCourseJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/lib/seo/course-json-ld";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
 
 type PageParams = Promise<{ id: string }>;
@@ -75,7 +82,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function CourseDetailPage({ params }: { params: PageParams }) {
+export default async function CourseDetailPage({
+  params,
+}: {
+  params: PageParams;
+}) {
   const { id } = await params;
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) =>
@@ -100,7 +111,11 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const translate = (key: string) => t(key, language);
 
   const seasons = buildCurriculum(course);
-  const stats = buildContentStats(seasons, course.lessons_count, course.duration);
+  const stats = buildContentStats(
+    seasons,
+    course.lessons_count,
+    course.duration,
+  );
   const options = buildPurchaseOptions(
     course,
     courseOfferings,
@@ -115,25 +130,37 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const isEnrolled = Boolean(enrollment?.enrollments?.length);
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
-  // No promo video? The first free video lesson is the next best pitch, so the
-  // cover plays it in place instead of showing a dead image.
-  const firstFreeVideoId = seasons
-    .flatMap((season) => season.lessons)
-    .find((lesson) => lesson.isPreview && lesson.type === "VIDEO")?.id;
-  const freeLesson =
-    !course.Video?.publicUrl && firstFreeVideoId
-      ? await getPublicLesson(firstFreeVideoId)
-      : null;
-  const videoUrl =
-    resolveAssetUrl(course.Video?.publicUrl) ??
-    resolveAssetUrl(freeLesson?.Video?.publicUrl);
+  const promoVideoUrl = resolveAssetUrl(course.Video?.publicUrl);
+
+  // Free lessons play inside the cover player, so their media is loaded with
+  // the page. The endpoint serves free lessons only — nothing paid can leak.
+  const freeLessons = await Promise.all(
+    seasons
+      .flatMap((season) => season.lessons)
+      .filter((lesson) => lesson.isPreview)
+      .map((lesson) => getPublicLesson(lesson.id)),
+  );
+  const previewMedia: PreviewMedia[] = freeLessons
+    .filter((lesson) => lesson !== null)
+    .map((lesson) => ({
+      lessonId: lesson.id,
+      title: lesson.title,
+      description: lesson.description ?? null,
+      videoUrl: resolveAssetUrl(lesson.Video?.publicUrl),
+      audioUrl: resolveAssetUrl(lesson.Audio?.publicUrl),
+      content: lesson.content ?? null,
+    }))
+    .filter((item) => item.videoUrl || item.audioUrl || item.content);
+  // No promo video? The first free video is the next best pitch, so it loads
+  // in the cover instead of a dead image.
+  const defaultPreviewId = promoVideoUrl
+    ? null
+    : (previewMedia.find((item) => item.videoUrl)?.lessonId ?? null);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
   const learnPath = buildPath(`/learn/${course.id}`);
   // An owner keeps the full learning player; everyone else gets the public
   // free-lesson page, which needs no account.
-  const previewBasePath = isEnrolled
-    ? learnPath
-    : buildPath(`/courses/${course.id}/preview`);
+  const previewBasePath = isEnrolled ? learnPath : null;
 
   const relatedCourses = await getCourses({
     published: true,
@@ -176,64 +203,56 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
         stats={stats}
         language={language}
         coursesHref={buildPath("/courses")}
-        accessLabel={formatAccessTerm(course.access_duration_days, language, translate)}
+        accessLabel={formatAccessTerm(
+          course.access_duration_days,
+          language,
+          translate,
+        )}
         durationLabel={formatMinutes(stats.totalMinutes, language, translate)}
         avatarUrl={avatarUrl}
       />
 
-      <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]">
-        <div className="min-w-0">
-          <div className="cd-preview-card group relative">
-            {videoUrl ? (
-              <video
-                src={videoUrl}
-                controls
-                preload="metadata"
-                poster={coverUrl}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <>
-                <img
-                  src={coverUrl}
-                  alt={course.Image?.alt ?? course.title}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="cd-preview-overlay" />
-              </>
-            )}
-            {stats.previewCount > 0 && (
-              <span className="cd-preview-label absolute bottom-4 start-4 rounded-full px-3 py-1.5 text-sm font-bold">
-                {translate("courses.freePreview")}
-              </span>
-            )}
-          </div>
-
-          <div className="mt-7">
-            <CourseDetailTabs
-              course={course}
-              isLoggedIn={!!user}
-              previewBasePath={previewBasePath}
-              prerequisiteHref={
-                course.PrerequisiteCourse
-                  ? buildPath(`/courses/${course.PrerequisiteCourse.id}`)
-                  : null
-              }
-              instructorAvatarUrl={avatarUrl}
+      <PreviewPlayerProvider
+        media={previewMedia}
+        defaultLessonId={defaultPreviewId}
+      >
+        <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]">
+          <div className="min-w-0">
+            <CoursePreviewPlayer
+              promoVideoUrl={promoVideoUrl}
+              coverUrl={coverUrl}
+              coverAlt={course.Image?.alt ?? course.title}
+              hasPreviewLessons={stats.previewCount > 0}
             />
-          </div>
-        </div>
 
-        <aside className="lg:sticky lg:top-[86px]">
-          <PurchasePanel
-            options={options}
-            language={language}
-            currencyConfig={currencyConfig}
-            loginHref={buildPath(`/auth/login?redirect=/courses/${course.id}`)}
-            continueHref={isEnrolled ? learnPath : null}
-          />
-        </aside>
-      </div>
+            <div className="mt-7">
+              <CourseDetailTabs
+                course={course}
+                isLoggedIn={!!user}
+                previewBasePath={previewBasePath}
+                prerequisiteHref={
+                  course.PrerequisiteCourse
+                    ? buildPath(`/courses/${course.PrerequisiteCourse.id}`)
+                    : null
+                }
+                instructorAvatarUrl={avatarUrl}
+              />
+            </div>
+          </div>
+
+          <aside className="lg:sticky lg:top-[86px]">
+            <PurchasePanel
+              options={options}
+              language={language}
+              currencyConfig={currencyConfig}
+              loginHref={buildPath(
+                `/auth/login?redirect=/courses/${course.id}`,
+              )}
+              continueHref={isEnrolled ? learnPath : null}
+            />
+          </aside>
+        </div>
+      </PreviewPlayerProvider>
 
       {relatedCourses?.courses?.filter((c) => c.id !== course.id).length ? (
         <section className="mt-16 space-y-4">
@@ -247,7 +266,9 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 <CourseCard
                   key={item.id}
                   course={item}
-                  storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
+                  storeSlug={
+                    storeContext.isSubdomain ? null : storeContext.slug
+                  }
                 />
               ))}
           </div>

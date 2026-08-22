@@ -11,15 +11,18 @@ import type {
   CurriculumSeasonView,
 } from "@/lib/courses/curriculum";
 import { LessonRow } from "@/components/courses/curriculum/lesson-row";
-import { formatMinutes } from "@/components/courses/curriculum/format";
+import {
+  formatMinutes,
+  formatSeconds,
+} from "@/components/courses/curriculum/format";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useNow } from "@/lib/hooks/use-now";
 
 interface CourseCurriculumProps {
   seasons: CurriculumSeasonView[];
   stats: CourseContentStats;
-  /** Prefix for free-preview lesson links, e.g. `/learn/<courseId>`. */
-  previewBasePath: string;
+  /** Link prefix for owners, e.g. `/learn/<courseId>`. Null plays in place. */
+  previewBasePath: string | null;
 }
 
 export function CourseCurriculum({
@@ -90,7 +93,7 @@ export function CourseCurriculum({
           const isOpen = openIds.includes(season.id);
           const seasonSummary = [
             `${toPersianDigits(season.lessons.length, language)} ${t("courses.lesson")}`,
-            formatMinutes(season.totalMinutes, language, t),
+            formatSeconds(season.totalSeconds, language, t),
           ]
             .filter(Boolean)
             .join(" · ");
@@ -145,7 +148,7 @@ export function CourseCurriculum({
                         lesson={lesson}
                         now={now}
                         previewHref={
-                          lesson.isPreview
+                          lesson.isPreview && previewBasePath
                             ? `${previewBasePath}/${lesson.id}`
                             : null
                         }
