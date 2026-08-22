@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { LandingShot } from "./landing-shot";
 import { ProductFrame } from "./product-frame";
 
 type Props = {
@@ -83,7 +84,7 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
             lift={false}
             className="w-full max-w-[560px] lg:max-w-[680px] will-change-transform"
           >
-            <Image
+            <LandingShot
               src={LANDING.hero.panelImage}
               alt={LANDING.hero.panelAlt}
               width={1440}

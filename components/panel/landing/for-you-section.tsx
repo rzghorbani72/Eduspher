@@ -1,5 +1,4 @@
-import Image from "next/image";
-
+import { LandingShot } from "./landing-shot";
 import { CircledWord } from "./circled-word";
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
@@ -35,7 +34,7 @@ export function ForYouSection() {
               style={{ flexGrow: index === 0 ? 6 : 1 }}
               className="relative min-w-0 flex-1 basis-0 overflow-hidden rounded-2xl border border-lp-line"
             >
-              <Image
+              <LandingShot
                 src={slide.src}
                 alt={slide.alt}
                 fill

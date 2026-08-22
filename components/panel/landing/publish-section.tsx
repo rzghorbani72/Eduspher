@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { LandingShot } from "./landing-shot";
 import { ProductFrame } from "./product-frame";
 import { SectionHeading } from "./section-heading";
 
@@ -179,7 +179,7 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
               className="w-full"
             >
               <div className="relative aspect-1440/768 w-full">
-                <Image
+                <LandingShot
                   key={frameKey}
                   src={frame.image}
                   alt={frame.alt}

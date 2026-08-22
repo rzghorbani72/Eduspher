@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { LandingShot } from "./landing-shot";
 import { ProductFrame } from "./product-frame";
 import { SectionHeading } from "./section-heading";
 
@@ -73,7 +73,7 @@ export function StepsSection() {
                       laptop and the controls end up below the fold. */}
                   <ProductFrame className="h-[46vh] max-h-[520px] min-h-[320px]">
                     <div className="relative min-h-0 flex-1">
-                      <Image
+                      <LandingShot
                         key={item.image}
                         src={item.image}
                         alt={item.alt}

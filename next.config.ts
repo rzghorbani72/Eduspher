@@ -102,8 +102,10 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Image optimization settings
+  // Image optimization needs `sharp`. Until it is installed locally, serve
+  // public assets as-is so landing screenshots never blank via /_next/image.
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
