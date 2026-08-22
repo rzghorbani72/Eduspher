@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Loader2, Lock, X } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -64,7 +65,7 @@ export function CheckoutDialog({
     await reprice(trimmed || undefined);
   };
 
-  return (
+  const dialog = (
     <div
       role="dialog"
       aria-modal="true"
@@ -97,7 +98,7 @@ export function CheckoutDialog({
               value={code}
               onChange={(event) => setCode(event.target.value)}
               placeholder={t("checkout.discountCode")}
-              className="h-11 min-w-0 flex-1 rounded-xl border border-theme bg-surface px-3 text-sm text-(--theme-foreground) outline-none focus:border-(--theme-primary)"
+              className="h-11 min-w-0 flex-1 rounded-xl border border-theme bg-card px-3 text-sm text-(--theme-foreground) placeholder:text-muted outline-none focus:border-(--theme-primary)"
             />
             <button
               type="button"
@@ -188,4 +189,6 @@ export function CheckoutDialog({
       </div>
     </div>
   );
+
+  return typeof document === "undefined" ? dialog : createPortal(dialog, document.body);
 }
