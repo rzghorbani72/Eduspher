@@ -65,10 +65,11 @@ const fromOffering = (
     (offering.compare_at_price ?? 0) > offering.price
       ? (offering.compare_at_price ?? null)
       : null;
+  // Only the course's own default offer inherits the course discount; another
+  // offer priced the same is a separate selling way and carries no badge.
   const carriesCourseDiscount =
     ownCompareAt === null &&
-    offering.type === "ONE_TIME" &&
-    offering.price === course.price &&
+    offering.source_course_id === course.id &&
     (course.original_price ?? 0) > course.price;
   const originalPrice =
     ownCompareAt ??

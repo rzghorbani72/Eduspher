@@ -337,6 +337,14 @@ export const fa = {
   checkout: {
     title: "تسویه حساب",
     paymentFailed: "پرداخت انجام نشد. دوباره تلاش کنید.",
+    chooseGateway: "انتخاب درگاه پرداخت",
+    confirmTitle: "تأیید و پرداخت",
+    confirmHint: "پیش از رفتن به درگاه، مبلغ نهایی را ببین.",
+    itemPrice: "قیمت",
+    payNow: "پرداخت",
+    couponInvalid: "این کد تخفیف معتبر نیست.",
+    vatIncluded: "شامل {percent}٪ مالیات بر ارزش افزوده",
+    chooseGatewayHint: "برای ادامه، درگاه بانکی مورد نظرت را انتخاب کن.",
     orderSummary: "خلاصه سفارش",
     total: "مجموع",
     discount: "تخفیف",
@@ -424,6 +432,13 @@ export const fa = {
     comingSoonDescription:
       "امکان پرداخت به‌زودی فعال می‌شود. برای دسترسی زودهنگام با ما تماس بگیرید.",
     contactUs: "تماس با ما",
+    goToMyCourses: "رفتن به دوره‌های من",
+    reasonCancelled: "پرداخت را در درگاه بانک لغو کردی.",
+    reasonDeclined: "بانک این تراکنش را انجام نداد. لطفاً دوباره تلاش کن.",
+    reasonNotVerified: "پرداخت تأیید نشد. اگر مبلغ کم شده، تا ۷۲ ساعت به حسابت برمی‌گردد.",
+    reasonInvalidCallback: "پاسخ درگاه بانک ناقص بود و پرداخت ثبت نشد.",
+    reasonServerError: "در تأیید پرداخت خطایی رخ داد. لطفاً با پشتیبانی تماس بگیر.",
+    noMoneyTaken: "اگر مبلغی از حسابت کم شده باشد، به‌صورت خودکار برمی‌گردد.",
   },
   legal: {
     acceptPrefix: "با ساخت حساب، با",

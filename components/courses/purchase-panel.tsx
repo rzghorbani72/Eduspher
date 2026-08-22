@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/i18n/hooks";
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from "@/lib/utils";
 import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
 import { usePurchase } from "@/components/purchase/use-purchase";
+import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { totalOf } from "@/lib/courses/purchase-options";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
@@ -51,7 +52,8 @@ export function PurchasePanel({
 }: PurchasePanelProps) {
   const { t } = useTranslation();
   const enrollmentClosed = useEnrollmentClosed();
-  const { purchase, pendingKey, error } = usePurchase({ loginHref });
+  const { purchase, pendingKey, error, gateways, reset } = usePurchase({ loginHref });
+  const [confirming, setConfirming] = useState(false);
   const [selectedKey, setSelectedKey] = useState(options[0]?.key ?? "");
 
   const selected =
@@ -120,9 +122,7 @@ export function PurchasePanel({
           type="button"
           disabled={disabled}
           title={enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined}
-          onClick={() =>
-            void purchase(selected.selector, selected.price, selected.key)
-          }
+          onClick={() => setConfirming(true)}
           className={cn(
             "cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all",
             disabled ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",
@@ -152,6 +152,29 @@ export function PurchasePanel({
           {t("courses.securePaymentNote")}
         </p>
       </div>
+
+      {confirming && (
+        <CheckoutDialog
+          selector={selected.selector}
+          fallbackAmount={selected.price}
+          fallbackTitle={selected.title}
+          currencyConfig={currencyConfig}
+          language={language}
+          busy={isBusy}
+          error={error}
+          gateways={gateways}
+          onPay={(couponCode, provider) =>
+            void purchase(selected.selector, selected.price, selected.key, {
+              couponCode,
+              provider,
+            })
+          }
+          onClose={() => {
+            reset();
+            setConfirming(false);
+          }}
+        />
+      )}
     </div>
   );
 }

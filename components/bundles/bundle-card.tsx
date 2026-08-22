@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { Check } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
 import { usePurchase } from "@/components/purchase/use-purchase";
+import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { StudentBundle } from "@/lib/bundles";
@@ -30,7 +32,8 @@ export function BundleCard({
   const { t } = useTranslation();
   const format = useLocaleFormat();
   const enrollmentClosed = useEnrollmentClosed();
-  const { purchase, pendingKey, error } = usePurchase({ loginHref });
+  const { purchase, pendingKey, error, gateways, reset } = usePurchase({ loginHref });
+  const [confirming, setConfirming] = useState(false);
 
   const busy = pendingKey === bundle.key;
   const discountPercent =
@@ -96,7 +99,7 @@ export function BundleCard({
         <button
           type="button"
           disabled={busy || enrollmentClosed}
-          onClick={() => purchase(bundle.selector, bundle.price, bundle.key)}
+          onClick={() => setConfirming(true)}
           title={
             enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined
           }
@@ -115,6 +118,27 @@ export function BundleCard({
 
         {error && <p className="text-center text-xs text-red-600">{error}</p>}
       </div>
+
+      {confirming && (
+        <CheckoutDialog
+          selector={bundle.selector}
+          fallbackAmount={bundle.price}
+          fallbackTitle={bundle.name}
+          busy={busy}
+          error={error}
+          gateways={gateways}
+          onPay={(couponCode, provider) =>
+            void purchase(bundle.selector, bundle.price, bundle.key, {
+              couponCode,
+              provider,
+            })
+          }
+          onClose={() => {
+            reset();
+            setConfirming(false);
+          }}
+        />
+      )}
     </div>
   );
 }

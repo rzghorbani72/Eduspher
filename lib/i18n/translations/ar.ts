@@ -207,6 +207,14 @@ export const ar = {
   checkout: {
     title: 'الدفع',
     paymentFailed: 'تعذر بدء الدفع. حاول مرة أخرى.',
+    chooseGateway: 'اختر بوابة الدفع',
+    confirmTitle: 'المراجعة والدفع',
+    confirmHint: 'تحقق من المبلغ النهائي قبل الانتقال إلى البنك.',
+    itemPrice: 'السعر',
+    payNow: 'ادفع',
+    couponInvalid: 'رمز الخصم هذا غير صالح.',
+    vatIncluded: 'يشمل {percent}٪ ضريبة القيمة المضافة',
+    chooseGatewayHint: 'اختر البوابة البنكية التي تريد الدفع من خلالها.',
     orderSummary: 'ملخص الطلب',
     total: 'المجموع',
     discount: 'الخصم',
@@ -290,6 +298,13 @@ export const ar = {
     comingSoonDescription:
       'ستتوفر معالجة الدفع قريباً. تواصل معنا للحصول على وصول مبكر.',
     contactUs: 'تواصل معنا',
+    goToMyCourses: 'الذهاب إلى دوراتي',
+    reasonCancelled: 'لقد ألغيت الدفع في بوابة البنك.',
+    reasonDeclined: 'لم يُكمل البنك هذه المعاملة. حاول مرة أخرى.',
+    reasonNotVerified: 'تعذر التحقق من الدفع. أي مبلغ مخصوم يُعاد خلال ٧٢ ساعة.',
+    reasonInvalidCallback: 'كان رد البنك ناقصًا، لذلك لم يُسجَّل أي دفع.',
+    reasonServerError: 'حدث خطأ أثناء التحقق من الدفع. يرجى التواصل مع الدعم.',
+    noMoneyTaken: 'إذا خُصم أي مبلغ من حسابك فسيُعاد تلقائيًا.',
   },
   legal: {
     acceptPrefix: 'بإنشاء حساب، أوافق على',

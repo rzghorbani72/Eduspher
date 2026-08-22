@@ -157,8 +157,9 @@ export const formatCurrencyWithAcademy = (
     return formatCurrency(value, { divideBy: divideBy || 1 });
   }
 
-  // For Toman (IRR), typically no division needed as it's already in the base unit
-  const defaultDivideBy = academy.currency === "IRR" ? 1 : 100;
+  // Every price in this system is stored in the major unit (Toman, euro), so a
+  // missing currency must never silently divide the figure by 100.
+  const defaultDivideBy = 1;
 
   // Determine locale based on country code for proper thousand separator
   // Some countries use dots (.), others use commas (,)

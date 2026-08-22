@@ -35,12 +35,16 @@ export type InitiateCheckoutInput = PurchaseSelector & {
   origin: string;
 };
 
+export type CheckoutGateway = { provider: string; display_name: string };
+
 export type InitiateCheckoutResult =
   | {
       ok: true;
       payment_id: string | null;
       redirect_url: string | null;
       amount: number;
+      /** Non-empty when the academy has several gateways and the buyer must pick one. */
+      gateways: CheckoutGateway[];
     }
   | { ok: false; status: number; error: string };
 
@@ -107,5 +111,8 @@ export const initiateCheckout = async (
     // A free or already-covered purchase resolves without a gateway hop.
     redirect_url: body?.data?.redirect_url ?? null,
     amount: body?.data?.amount ?? input.amount,
+    gateways: body?.data?.needs_gateway_selection
+      ? ((body.data.available_gateways ?? []) as CheckoutGateway[])
+      : [],
   };
 };

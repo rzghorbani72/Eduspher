@@ -14,26 +14,38 @@ export type PurchaseSelector =
   | { tutoring_offer_id: string }
   | { payment_plan_id: string };
 
+export type PurchaseGateway = { provider: string; display_name: string };
+
 type PurchaseOptions = {
   /** Where to send a signed-out visitor; they return here after logging in. */
   loginHref: string;
-  couponCode?: string;
 };
+
+type PayOptions = { couponCode?: string; provider?: string };
 
 /**
  * The one place the storefront starts a purchase, so every buying path — course,
  * offer, plan, bundle, tutoring, installments — behaves identically: signed-out
  * goes to login, a gateway purchase redirects to the bank, and a free or
  * already-covered purchase just refreshes into the granted access.
+ *
+ * When the academy runs several gateways the backend answers with the list
+ * instead of a redirect; the caller shows it and pays again with a provider.
  */
-export const usePurchase = ({ loginHref, couponCode }: PurchaseOptions) => {
+export const usePurchase = ({ loginHref }: PurchaseOptions) => {
   const router = useRouter();
   const { t } = useTranslation();
   const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [gateways, setGateways] = useState<PurchaseGateway[]>([]);
 
   const purchase = useCallback(
-    async (selector: PurchaseSelector, amount: number, key: string) => {
+    async (
+      selector: PurchaseSelector,
+      amount: number,
+      key: string,
+      options?: PayOptions,
+    ) => {
       setPendingKey(key);
       setError(null);
       // One chart for every buying path; `kind` keeps them separable.
@@ -45,7 +57,8 @@ export const usePurchase = ({ loginHref, couponCode }: PurchaseOptions) => {
           body: JSON.stringify({
             ...selector,
             amount,
-            ...(couponCode && { coupon_code: couponCode }),
+            ...(options?.provider && { provider: options.provider }),
+            ...(options?.couponCode && { coupon_code: options.couponCode }),
           }),
         });
 
@@ -63,6 +76,16 @@ export const usePurchase = ({ loginHref, couponCode }: PurchaseOptions) => {
             http_status: response.status,
           });
           setError(data?.error ?? t("checkout.paymentFailed"));
+          return;
+        }
+
+        if (Array.isArray(data.gateways) && data.gateways.length > 0) {
+          setGateways(data.gateways as PurchaseGateway[]);
+          logger.ok("payments", "checkout_gateway_prompted", {
+            kind,
+            amount,
+            gateway_count: data.gateways.length,
+          });
           return;
         }
 
@@ -85,8 +108,13 @@ export const usePurchase = ({ loginHref, couponCode }: PurchaseOptions) => {
         setPendingKey(null);
       }
     },
-    [couponCode, loginHref, router, t],
+    [loginHref, router, t],
   );
 
-  return { purchase, pendingKey, error };
+  const reset = useCallback(() => {
+    setGateways([]);
+    setError(null);
+  }, []);
+
+  return { purchase, pendingKey, error, gateways, reset };
 };

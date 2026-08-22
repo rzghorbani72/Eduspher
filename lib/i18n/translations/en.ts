@@ -334,6 +334,14 @@ export const en = {
   checkout: {
     title: "Checkout",
     paymentFailed: "Payment could not be started. Please try again.",
+    chooseGateway: "Choose a payment gateway",
+    confirmTitle: "Review and pay",
+    confirmHint: "Check the final amount before you go to the bank.",
+    itemPrice: "Price",
+    payNow: "Pay",
+    couponInvalid: "This discount code is not valid.",
+    vatIncluded: "Includes {percent}% VAT",
+    chooseGatewayHint: "Pick the bank gateway you want to pay through.",
     orderSummary: "Order Summary",
     total: "Total",
     discount: "Discount",
@@ -420,6 +428,13 @@ export const en = {
     comingSoonDescription:
       "Payment processing is coming soon. Contact us to get early access.",
     contactUs: "Contact Us",
+    goToMyCourses: "Go to my courses",
+    reasonCancelled: "You cancelled the payment at the bank.",
+    reasonDeclined: "The bank did not complete this transaction. Please try again.",
+    reasonNotVerified: "The payment could not be verified. Any amount taken is returned within 72 hours.",
+    reasonInvalidCallback: "The bank's response was incomplete, so no payment was recorded.",
+    reasonServerError: "Something went wrong while verifying the payment. Please contact support.",
+    noMoneyTaken: "If any amount left your account, it is returned automatically.",
   },
   legal: {
     acceptPrefix: "By creating an account, I agree to the",

@@ -218,6 +218,14 @@ export const tr = {
   checkout: {
     title: "Ödeme",
     paymentFailed: "Ödeme başlatılamadı. Lütfen tekrar deneyin.",
+    chooseGateway: "Ödeme geçidini seçin",
+    confirmTitle: "Gözden geçir ve öde",
+    confirmHint: "Bankaya gitmeden önce son tutarı kontrol edin.",
+    itemPrice: "Fiyat",
+    payNow: "Öde",
+    couponInvalid: "Bu indirim kodu geçerli değil.",
+    vatIncluded: "%{percent} KDV dahildir",
+    chooseGatewayHint: "Ödemeyi yapmak istediğiniz banka geçidini seçin.",
     orderSummary: "Sipariş Özeti",
     total: "Toplam",
     discount: "İndirim",
@@ -305,6 +313,13 @@ export const tr = {
     comingSoonDescription:
       "Ödeme işlemleri yakında etkinleştirilecek. Erken erişim için bizimle iletişime geçin.",
     contactUs: "Bize Ulaşın",
+    goToMyCourses: "Derslerime git",
+    reasonCancelled: "Ödemeyi bankada iptal ettiniz.",
+    reasonDeclined: "Banka bu işlemi tamamlamadı. Lütfen tekrar deneyin.",
+    reasonNotVerified: "Ödeme doğrulanamadı. Çekilen tutar 72 saat içinde iade edilir.",
+    reasonInvalidCallback: "Bankanın yanıtı eksikti, bu yüzden ödeme kaydedilmedi.",
+    reasonServerError: "Ödeme doğrulanırken bir sorun oluştu. Lütfen destek ile iletişime geçin.",
+    noMoneyTaken: "Hesabınızdan bir tutar çıktıysa otomatik olarak iade edilir.",
   },
   legal: {
     acceptPrefix: "Hesap oluşturarak şunları kabul ediyorum:",

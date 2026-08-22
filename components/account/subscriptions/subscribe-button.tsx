@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { usePurchase } from "@/components/purchase/use-purchase";
+import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 /**
@@ -21,14 +23,15 @@ export function SubscribeButton({
   loginHref: string;
 }) {
   const { t } = useTranslation();
-  const { purchase, pendingKey, error } = usePurchase({ loginHref });
+  const { purchase, pendingKey, error, gateways, reset } = usePurchase({ loginHref });
+  const [confirming, setConfirming] = useState(false);
   const busy = pendingKey === planId;
 
   return (
     <div className="space-y-2">
       <Button
         type="button"
-        onClick={() => purchase({ academy_plan_id: planId }, amount, planId)}
+        onClick={() => setConfirming(true)}
         disabled={busy}
         className="w-full"
       >
@@ -40,6 +43,26 @@ export function SubscribeButton({
           {error}
         </p>
       ) : null}
+      {confirming && (
+        <CheckoutDialog
+          selector={{ academy_plan_id: planId }}
+          fallbackAmount={amount}
+          fallbackTitle={null}
+          busy={busy}
+          error={error}
+          gateways={gateways}
+          onPay={(couponCode, provider) =>
+            void purchase({ academy_plan_id: planId }, amount, planId, {
+              couponCode,
+              provider,
+            })
+          }
+          onClose={() => {
+            reset();
+            setConfirming(false);
+          }}
+        />
+      )}
     </div>
   );
 }

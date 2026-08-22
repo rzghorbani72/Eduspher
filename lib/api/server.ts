@@ -854,6 +854,8 @@ export interface PublicCourseOffering {
   includes_live: boolean;
   is_active: boolean;
   payment_plan_id: string | null;
+  /** Set when this offer mirrors the course's own price (the default offer). */
+  source_course_id: string | null;
 }
 
 type OfferRow = Omit<PublicCourseOffering, "course_id"> & {
@@ -865,6 +867,36 @@ type OfferRow = Omit<PublicCourseOffering, "course_id"> & {
  * single source of price and access term — the course's own price is published
  * as its DEFAULT offer. The endpoint returns the array directly (no envelope).
  */
+export interface PaymentSummary {
+  id: string;
+  amount: number;
+  status: string;
+  provider: string | null;
+  /** Bank reference written at verify time — the number support can trace. */
+  gateway_id: string | null;
+  paid_at: string | null;
+  created_at: string;
+  Course: { id: string; title: string } | null;
+}
+
+/**
+ * The paid receipt line the return-from-bank pages show. Ownership is enforced
+ * by the backend, so a payment id in the URL can only ever load the buyer's own.
+ */
+export async function getPaymentSummary(
+  paymentId: string,
+): Promise<PaymentSummary | null> {
+  try {
+    const result = await serverFetchRaw<{ status?: string; data?: PaymentSummary }>(
+      `/payments/${encodeURIComponent(paymentId)}`,
+      { method: "GET" },
+    );
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function getCourseOfferingsPublic(
   courseId: string,
 ): Promise<PublicCourseOffering[]> {

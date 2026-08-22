@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
       payment_id: result.payment_id,
       redirect_url: result.redirect_url,
       amount: result.amount,
+      gateways: result.gateways,
     });
   } catch (error) {
     return NextResponse.json(
