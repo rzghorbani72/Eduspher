@@ -8,6 +8,7 @@ import {
   PLATFORM_ENAMAD_SEAL_CODE,
   PLATFORM_ENAMAD_SEAL_ID,
 } from "@/lib/seo/enamad";
+import { PoweredBy } from "@/components/shared/powered-by";
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 
@@ -92,6 +93,7 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col-reverse items-center justify-between gap-3 border-t border-lp-line pt-6 text-[12.5px] text-lp-muted sm:flex-row">
           <span>{LANDING.footer.madeIn}</span>
+          <PoweredBy />
           <span>© ۱۴۰۴ {LANDING.footer.rights}</span>
         </div>
       </Container>

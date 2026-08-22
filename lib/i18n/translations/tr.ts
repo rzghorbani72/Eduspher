@@ -563,6 +563,7 @@ export const tr = {
     messageSendFailed: "Mesaj gönderilemedi.",
   },
   footer: {
+    poweredBy: "Destekleyen",
     product: "Ürün",
     company: "Şirket",
     support: "Destek",

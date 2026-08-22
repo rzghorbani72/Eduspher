@@ -1,5 +1,6 @@
 import { getCurrentAcademy } from '@/lib/api/server';
 import { PlatformTrustBadge } from '@/components/academy/platform-trust-badge';
+import { PoweredBy } from '@/components/shared/powered-by';
 import { Container } from './section';
 import { list, text, type SectionConfig } from './types';
 
@@ -130,6 +131,7 @@ export async function TemplateSiteFooter({ id, config, defaults }: TemplateFoote
           <span>
             © {year} {academyName}. <span data-editable="legal">{text(config, 'legal', defaults.legal)}</span>
           </span>
+          <PoweredBy />
           {academy?.slug ? (
             <PlatformTrustBadge slug={academy.slug} academyId={academy.id} />
           ) : null}

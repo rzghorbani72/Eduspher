@@ -911,6 +911,7 @@ export const fa = {
     messageSendFailed: "ارسال پیام انجام نشد.",
   },
   footer: {
+    poweredBy: "قدرت‌گرفته از",
     product: "محصول",
     company: "شرکت",
     support: "پشتیبانی",

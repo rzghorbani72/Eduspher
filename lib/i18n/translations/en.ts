@@ -917,6 +917,7 @@ export const en = {
     messageSendFailed: "The message could not be sent.",
   },
   footer: {
+    poweredBy: "Powered by",
     product: "Product",
     company: "Company",
     support: "Support",

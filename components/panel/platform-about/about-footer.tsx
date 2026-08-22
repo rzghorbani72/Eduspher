@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { PoweredBy } from "@/components/shared/powered-by";
+
 const BrandLogo = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <circle cx="6" cy="7" r="2.3" fill="#fff" />
@@ -98,6 +100,7 @@ export function AboutFooter() {
         }}
       >
         <span style={{ fontSize: 13, color: "var(--ink-3)" }}>© ۱۴۰۴ منتوما — همه حقوق محفوظ است.</span>
+        <PoweredBy className="text-[13px] text-[var(--ink-3)]" />
         <span style={{ fontSize: 13, color: "var(--ink-3)" }}>ساخته‌شده با ❤ در ایران</span>
       </div>
     </footer>

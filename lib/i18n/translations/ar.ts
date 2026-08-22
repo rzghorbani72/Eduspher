@@ -533,6 +533,7 @@ export const ar = {
     messageSendFailed: 'تعذر إرسال الرسالة.',
   },
   footer: {
+    poweredBy: "مدعوم بواسطة",
     product: 'المنتج',
     company: 'الشركة',
     support: 'الدعم',

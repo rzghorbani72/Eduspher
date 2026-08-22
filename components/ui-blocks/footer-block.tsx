@@ -2,6 +2,7 @@ import Link from "@/components/ui/link";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
 import { PlatformTrustBadge } from "@/components/academy/platform-trust-badge";
+import { PoweredBy } from "@/components/shared/powered-by";
 import {
   Mail,
   Facebook,
@@ -124,11 +125,12 @@ export async function FooterBlock(props: FooterBlockProps) {
   return (
     <>
       <FooterBlockBody {...props} />
-      {store.slug ? (
-        <div className="mx-auto w-full max-w-6xl px-6 pb-6">
+      <div className="mx-auto w-full max-w-6xl px-6 pb-6">
+        <PoweredBy className="block text-xs opacity-50" />
+        {store.slug ? (
           <PlatformTrustBadge slug={store.slug} academyId={store.id} />
-        </div>
-      ) : null}
+        ) : null}
+      </div>
     </>
   );
 }
