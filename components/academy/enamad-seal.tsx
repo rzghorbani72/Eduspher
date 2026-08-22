@@ -11,6 +11,9 @@ export function EnamadSeal({
 }) {
   const href = `https://trustseal.enamad.ir/?id=${encodeURIComponent(sealId)}&Code=${encodeURIComponent(code)}`;
   const src = `https://trustseal.enamad.ir/logo.aspx?id=${encodeURIComponent(sealId)}&Code=${encodeURIComponent(code)}`;
+  // eNamad's own snippet puts a non-standard `code` attribute on the img and
+  // their verifier looks for it; React only passes it through via a spread.
+  const enamadCodeAttr: Record<string, string> = { code };
   return (
     <a
       referrerPolicy="origin"
@@ -21,10 +24,10 @@ export function EnamadSeal({
       {/* eNamad requires a plain img with referrerPolicy=origin, not next/image. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        loading="lazy"
         referrerPolicy="origin"
         src={src}
         alt="نماد اعتماد الکترونیکی"
+        {...enamadCodeAttr}
         width={125}
         height={136}
         style={{ cursor: "pointer" }}
