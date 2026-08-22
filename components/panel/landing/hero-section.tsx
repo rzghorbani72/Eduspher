@@ -1,6 +1,5 @@
-import Image from "next/image";
-
 import { Container } from "./landing-container";
+import { HeroGlobe } from "./hero-globe";
 import { LANDING } from "./landing.messages";
 import { LandingShot } from "./landing-shot";
 import { ProductFrame } from "./product-frame";
@@ -64,19 +63,15 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
         </div>
 
         <div className="relative flex items-center justify-center">
-          {/* Dotted world map sits behind the product frame and is what the
-              hero scroll scene rotates/zooms — see landing-motion.tsx. */}
+          {/* Dotted globe sits behind the product frame and is what the hero
+              scroll scene rotates/zooms — see landing-motion.tsx. */}
           <div
             data-lp="hero-earth"
             className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10 will-change-transform"
           >
-            <Image
-              src="/landing/world-dots.svg"
-              alt=""
-              width={600}
-              height={450}
-              priority
-              className="h-full w-full object-contain"
+            <HeroGlobe
+              src="/dotted-globe-mint.json"
+              className="h-full w-full"
             />
           </div>
 

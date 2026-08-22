@@ -41,6 +41,9 @@ importers:
       jose:
         specifier: ^5.9.4
         version: 5.10.0
+      lottie-web:
+        specifier: ^5.13.0
+        version: 5.13.0
       lucide-react:
         specifier: ^0.468.0
         version: 0.468.0(react@19.2.1)
@@ -1837,6 +1840,9 @@ packages:
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/loose-envify/-/loose-envify-1.4.0.tgz}
     hasBin: true
+
+  lottie-web@5.13.0:
+    resolution: {integrity: sha512-+gfBXl6sxXMPe8tKQm7qzLnUy5DUPJPKIyRHwtpCpyUEYjHYRJC/5gjUvdkuO2c3JllrPtHXH5UJJK8LRYl5yQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/lottie-web/-/lottie-web-5.13.0.tgz}
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/lru-cache/-/lru-cache-5.1.1.tgz}
@@ -4160,6 +4166,8 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
+
+  lottie-web@5.13.0: {}
 
   lru-cache@5.1.1:
     dependencies:
