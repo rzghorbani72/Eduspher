@@ -493,6 +493,7 @@ export const ar = {
     joinClass: 'الانضمام إلى الصف',
     joinLinkUnavailable: 'يتوفر رابط الانضمام خلال نافذة الصف المسموح بها.',
     openLessonResource: 'فتح مورد الدرس',
+    downloadVideo: 'تنزيل الفيديو',
     downloadRestricted: 'تنزيل هذا الدرس مقيد من قبل أكاديميتك.',
     markComplete: 'وضع علامة مكتمل',
     completed: 'مكتمل',

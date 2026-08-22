@@ -78,12 +78,10 @@ export function LearningShell({
     "TEXT"
   ).toUpperCase();
   const documentUrl = resolveAssetUrl(lesson?.Document?.publicUrl);
-  const canDownload =
-    lesson?.can_download === true ||
-    lesson?.allow_download_enrollment === true ||
-    lesson?.allow_download_subscription === true ||
-    lesson?.allow_download_tutoring === true ||
-    lesson?.allow_download_free === true;
+  // The server resolves this: the allow_download_* flags are per access route,
+  // so only the backend knows which one applies to THIS student. Reading the
+  // raw flags here would offer a download the server then refuses.
+  const canDownload = lesson?.can_download === true;
 
   return (
     <div className="mx-auto max-w-[1500px]">
@@ -122,6 +120,7 @@ export function LearningShell({
                 <VideoLesson
                   title={lesson.title}
                   source={lesson.Video?.publicUrl}
+                  downloadUrl={resolveAssetUrl(lesson.video_download_url)}
                   initialPosition={initialPosition}
                   onHeartbeat={heartbeat}
                   canDownload={canDownload}

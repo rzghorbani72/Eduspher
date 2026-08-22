@@ -46,6 +46,9 @@ export interface LessonDetail extends Omit<LessonSummary, "id"> {
   allow_download_subscription?: boolean;
   allow_download_tutoring?: boolean;
   can_download?: boolean;
+  // Present only when can_download is true — the server omits them otherwise.
+  video_download_url?: string | null;
+  audio_download_url?: string | null;
 }
 
 export interface Assignment {

@@ -523,6 +523,7 @@ export const tr = {
     joinClass: "Derse katıl",
     joinLinkUnavailable: "Katılım bağlantısı izin verilen ders aralığında açılır.",
     openLessonResource: "Ders kaynağını aç",
+    downloadVideo: "Videoyu indir",
     downloadRestricted: "Bu dersin indirilmesi akademiniz tarafından kısıtlanmıştır.",
     markComplete: "Tamamlandı olarak işaretle",
     completed: "Tamamlandı",

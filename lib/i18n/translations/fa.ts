@@ -869,6 +869,7 @@ export const fa = {
     joinClass: "ورود به کلاس",
     joinLinkUnavailable: "پیوند ورود در بازه مجاز کلاس در دسترس قرار می‌گیرد.",
     openLessonResource: "باز کردن منبع درس",
+    downloadVideo: "دانلود ویدیو",
     downloadRestricted: "دانلود این درس توسط آکادمی محدود شده است.",
     markComplete: "علامت‌گذاری به‌عنوان تکمیل‌شده",
     completed: "تکمیل‌شده",

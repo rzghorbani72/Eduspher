@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Download } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { resolveAssetUrl } from "@/lib/utils";
@@ -8,6 +9,8 @@ import { resolveAssetUrl } from "@/lib/utils";
 interface VideoLessonProps {
   title: string;
   source?: string | null;
+  /** Only set when the server allows this student to save a copy. */
+  downloadUrl?: string | null;
   initialPosition: number;
   onHeartbeat: (position: number) => void;
   canDownload?: boolean;
@@ -16,6 +19,7 @@ interface VideoLessonProps {
 export function VideoLesson({
   title,
   source,
+  downloadUrl,
   initialPosition,
   onHeartbeat,
   canDownload = false,
@@ -65,9 +69,17 @@ export function VideoLesson({
       >
         {t("courses.videoNotSupported")}
       </video>
-      {!canDownload ? (
+      {canDownload && downloadUrl ? (
+        <a
+          href={downloadUrl}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
+          <Download className="size-4" aria-hidden="true" />
+          {t("learning.downloadVideo")}
+        </a>
+      ) : (
         <p className="text-xs text-muted-foreground">{t("learning.downloadRestricted")}</p>
-      ) : null}
+      )}
     </div>
   );
 }

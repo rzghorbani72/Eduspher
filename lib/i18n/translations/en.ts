@@ -874,6 +874,7 @@ export const en = {
     joinLinkUnavailable:
       "The join link becomes available during the allowed class window.",
     openLessonResource: "Open lesson resource",
+    downloadVideo: "Download video",
     downloadRestricted:
       "Downloading this lesson is restricted by your academy.",
     markComplete: "Mark as complete",
