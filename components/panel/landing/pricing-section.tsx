@@ -10,7 +10,7 @@ import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 import { SectionHeading } from "./section-heading";
 
-type Cycle = "yearly" | "monthly";
+type Cycle = "monthly" | "yearly";
 
 type Props = {
   registerUrl: string;
@@ -22,18 +22,13 @@ const faNumber = (value: number) => value.toLocaleString("fa-IR");
 
 export function PricingSection({ registerUrl, plans = [] }: Props) {
   const [cycle, setCycle] = useState<Cycle>("yearly");
-  const cards = LANDING.pricing.plans;
-  // The growth plan is highlighted by default; clicking another card moves the
-  // highlight so a visitor can compare tiers as the one they are considering.
-  const featuredId = cards.find((p) => p.featured)?.id ?? cards[0]?.id;
-  const [selectedId, setSelectedId] = useState<string>(featuredId);
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
   return (
     <section
       id="pricing"
       data-lp-reveal
-      className="scroll-mt-32 bg-lp-surface py-20 lg:py-28"
+      className="scroll-mt-32 bg-lp-surface-2 py-20 lg:py-28"
     >
       <Container>
         <SectionHeading
@@ -41,38 +36,19 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
           subtitle={LANDING.pricing.subtitle}
         />
 
-        <p className="mt-3 text-center text-[13px] font-bold text-lp-blue">
-          {LANDING.pricing.noCommission}
-        </p>
-        <p className="mx-auto mt-2 max-w-xl text-center text-[12px] text-lp-muted">
-          {LANDING.pricing.unlimitedSignups}
-        </p>
-
-        {/* The trial is one universal offer, not a feature of any one plan:
-            every manager gets 14 days, then picks a plan. Stated once here so a
-            per-card bullet does not imply it belongs to a specific tier. */}
-        <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-lp-mint/50 bg-lp-mint/10 px-6 py-5 text-center">
-          <p className="text-[15px] font-bold text-lp-ink">
-            {LANDING.pricing.trialBannerTitle}
-          </p>
-          <p className="mx-auto mt-1.5 max-w-xl text-[12.5px] leading-[1.9] text-lp-ink-2">
-            {LANDING.pricing.trialBannerBody}
-          </p>
-        </div>
-
-        <div className="mt-9 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <div
             role="group"
-            className="flex items-center gap-1 rounded-full border border-lp-line bg-white p-1"
+            className="flex items-center gap-1 rounded-full bg-lp-surface p-1"
           >
-            {(["yearly", "monthly"] as const).map((option) => (
+            {(["monthly", "yearly"] as const).map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setCycle(option)}
                 aria-pressed={cycle === option}
                 className={cn(
-                  "rounded-full px-5 py-2 text-[13px] font-bold transition-colors",
+                  "rounded-full px-5 py-1.5 text-[13px] font-bold transition-colors",
                   cycle === option
                     ? "bg-lp-blue text-white"
                     : "text-lp-muted hover:text-lp-ink"
@@ -84,13 +60,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
           </div>
         </div>
 
-        <p className="mt-3 text-center text-[12px] text-lp-muted">
-          {cycle === "yearly"
-            ? LANDING.pricing.cycleNoteYearly
-            : LANDING.pricing.cycleNoteMonthly}
-        </p>
-
-        <div className="mt-12 grid items-stretch gap-5 lg:grid-cols-3">
+        <div className="mx-auto mt-12 grid max-w-[880px] items-stretch gap-4 lg:grid-cols-[1fr_1.12fr_1fr]">
           {LANDING.pricing.plans.map((plan) => {
             const live = livePlans.get(plan.id);
             const yearlyPerMonth =
@@ -105,63 +75,38 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                 ? (yearlyPerMonth != null ? faNumber(yearlyPerMonth) : plan.priceYearly)
                 : (live ? faNumber(live.price_monthly_toman) : plan.priceMonthly);
             const upcoming = live?.upcoming_price ?? null;
-            const isSelected = selectedId === plan.id;
-            // Recommendation is editorial and fixed on the featured plan;
-            // selection is the visitor's interaction. They are independent, so
-            // Growth keeps its badge even when another card is selected.
-            const isRecommended = plan.featured;
-
-            // The "hidden discount": a year billed at ten months' price, shown
-            // as the real Toman saved so the annual value is explicit.
-            const yearlySaving =
-              live?.price_yearly_toman != null
-                ? live.price_monthly_toman * 12 - live.price_yearly_toman
-                : null;
+            const isFeatured = plan.featured;
 
             return (
               <article
                 key={plan.id}
-                onClick={() => setSelectedId(plan.id)}
-                data-selected={isSelected}
                 className={cn(
-                  "flex h-full cursor-pointer flex-col rounded-2xl border bg-white p-8 transition-all",
-                  isSelected
-                    ? "border-lp-mint ring-2 ring-lp-mint/50 shadow-lp-card"
-                    : "border-lp-line hover:border-lp-mint/40"
+                  "flex h-full flex-col rounded-2xl border bg-lp-surface p-6 transition-colors",
+                  isFeatured
+                    ? "border-lp-line shadow-lp-card lg:-my-5 lg:p-7"
+                    : "border-lp-line/70 hover:border-lp-line"
                 )}
               >
-                {isRecommended ? (
-                  <span className="mx-auto -mt-11 mb-3 inline-flex rounded-full bg-lp-mint px-3 py-1 text-[11px] font-bold text-lp-ink shadow-lp-mint">
-                    {LANDING.pricing.mostPopular}
-                  </span>
-                ) : null}
-
-                <h3 className="text-center text-lg font-bold text-lp-ink">
+                <h3 className="text-center text-[15px] font-bold text-lp-ink">
                   {plan.name}
                 </h3>
-                <p className="mt-1.5 text-center text-[13px] text-lp-muted">
+                <p className="mt-1.5 text-center text-[12px] text-lp-muted">
                   {plan.tagline}
                 </p>
 
-                <p className="mt-7 text-center">
-                  <span className="text-[34px] font-black leading-none text-lp-ink">
+                <p className="mt-6 text-center">
+                  <span className="text-[30px] font-black leading-none text-lp-ink">
                     {price}
                   </span>
-                  <span className="ms-2 text-[13px] text-lp-muted">
+                  <span className="ms-2 text-[12px] text-lp-muted">
                     {LANDING.pricing.perMonth}
                   </span>
                 </p>
 
-                {/* Hidden discount, right under the price. */}
-                <p className="mt-2 h-4 text-center text-[12px] font-bold text-lp-mint">
+                <p className="mt-2 text-center text-[11.5px] text-lp-muted">
                   {cycle === "yearly"
-                    ? yearlySaving && yearlySaving > 0
-                      ? LANDING.pricing.savingYearly.replace(
-                          "{amount}",
-                          faNumber(yearlySaving),
-                        )
-                      : ""
-                    : LANDING.pricing.savingHintMonthly}
+                    ? LANDING.pricing.cycleNoteYearly
+                    : LANDING.pricing.cycleNoteMonthly}
                 </p>
 
                 {/* Announced-but-not-applied price — the public half of the
@@ -177,37 +122,34 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   </p>
                 ) : null}
 
-                <ul className="mt-7 flex flex-1 flex-col gap-3.5">
-                  {plan.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex items-start gap-2.5 text-[13.5px] leading-[1.7] text-lp-ink-2"
-                    >
-                      <Check
-                        size={15}
-                        strokeWidth={3}
-                        aria-hidden="true"
-                        className="mt-1 shrink-0 text-lp-blue"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* mt-auto pins the CTA to the bottom, so it aligns across
-                    cards whatever the feature-list length. */}
                 <a
                   href={registerUrl}
-                  onClick={(e) => e.stopPropagation()}
                   className={cn(
-                    "mt-8 flex h-12 items-center justify-center rounded-xl text-[14px] font-bold transition-transform hover:-translate-y-0.5",
-                    isSelected
+                    "mt-5 flex h-11 items-center justify-center rounded-lg text-[13.5px] font-bold transition-transform hover:-translate-y-0.5",
+                    isFeatured
                       ? "bg-lp-mint text-lp-ink shadow-lp-mint"
                       : "border border-lp-line bg-lp-surface-2 text-lp-ink"
                   )}
                 >
                   {plan.cta}
                 </a>
+
+                <ul className="mt-6 flex flex-1 flex-col gap-2.5">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-[12.5px] leading-[1.7] text-lp-ink-2"
+                    >
+                      <Check
+                        size={13}
+                        strokeWidth={3}
+                        aria-hidden="true"
+                        className="mt-1 shrink-0 text-lp-ink-2"
+                      />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </article>
             );
           })}
