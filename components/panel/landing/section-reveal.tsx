@@ -17,6 +17,8 @@ export function SectionReveal() {
     // to the section, which fights the reveal's translateY: the element gets
     // moved out of the observer's way, never intersects, and would stay stuck
     // at opacity 0 — an invisible section. Reveal or pin, never both.
+    // Sections like for-you mark the whole block with data-lp even though the
+    // scrubbed scene lives on a child (grow-rail).
     const targets = Array.from(
       document.querySelectorAll<HTMLElement>("[data-lp-reveal]")
     ).filter((el) => !el.hasAttribute("data-lp"));
@@ -36,7 +38,27 @@ export function SectionReveal() {
     );
 
     targets.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+
+    // The logo marquee animates transform on a loop. Running it while it is off
+    // screen is pure compositor work nobody sees, so gate it on visibility.
+    // Separate observer: this one must keep toggling, not unobserve on first hit.
+    const marquees = Array.from(
+      document.querySelectorAll<HTMLElement>(".lp-marquee-strip")
+    );
+    const marqueeObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        entry.target.setAttribute(
+          "data-visible",
+          entry.isIntersecting ? "true" : "false"
+        );
+      });
+    });
+    marquees.forEach((el) => marqueeObserver.observe(el));
+
+    return () => {
+      observer.disconnect();
+      marqueeObserver.disconnect();
+    };
   }, []);
 
   return null;

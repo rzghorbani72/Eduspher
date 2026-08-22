@@ -3,11 +3,22 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-export function ScrollAnimationProvider({ children }: { children: React.ReactNode }) {
+/**
+ * `enabled` exists because this provider kills every ScrollTrigger on the page
+ * on each navigation. The platform landing owns its own GSAP scenes
+ * (`panel/landing/landing-motion.tsx`), so running both would tear those down.
+ */
+export function ScrollAnimationProvider({
+  children,
+  enabled = true,
+}: {
+  children: React.ReactNode;
+  enabled?: boolean;
+}) {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !enabled) return;
 
     let cleanup: (() => void) | null = null;
 
@@ -105,7 +116,7 @@ export function ScrollAnimationProvider({ children }: { children: React.ReactNod
         cleanup();
       }
     };
-  }, [pathname]);
+  }, [pathname, enabled]);
 
   return <>{children}</>;
 }

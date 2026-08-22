@@ -23,6 +23,7 @@ export function LandingMotion() {
 
     let ctx: { revert: () => void } | null = null;
     let cancelled = false;
+    let removeRefreshListeners: (() => void) | null = null;
 
     const init = async () => {
       const { gsap } = await import("gsap");
@@ -33,23 +34,23 @@ export function LandingMotion() {
       const canPin = window.matchMedia(DESKTOP).matches;
 
       ctx = gsap.context(() => {
-        // ── Hero: hold the page while the globe rotates and zooms ───────────
-        const earth = document.querySelector<HTMLElement>('[data-lp="hero-earth"]');
+        // ── Hero: the product frame drifts as the page scrolls ──────────────
+        // One transform on one composited element. It replaced a scrubbed
+        // rotate+scale of a 45KB dotted globe, which repainted a large vector
+        // across the LCP viewport and sold a decoration instead of the product.
+        // Deliberately not pinned: the hero must never hold the page hostage.
+        const frame = document.querySelector<HTMLElement>('[data-lp="hero-frame"]');
         const hero = document.querySelector<HTMLElement>('[data-lp="hero"]');
 
-        if (earth && hero) {
-          gsap.to(earth, {
-            rotate: 38,
-            scale: 1.55,
+        if (frame && hero) {
+          gsap.to(frame, {
+            y: -20,
             ease: "none",
             scrollTrigger: {
               trigger: hero,
               start: "top top",
-              end: canPin ? "+=90%" : "bottom top",
-              pin: canPin,
-              pinSpacing: canPin,
+              end: "bottom top",
               scrub: 0.6,
-              anticipatePin: 1,
               invalidateOnRefresh: true,
             },
           });
@@ -121,12 +122,42 @@ export function LandingMotion() {
           });
         }
       });
+
+      // PNG screenshots load after first paint; without a refresh the pin
+      // maths are computed against empty/narrow panels and the accordion
+      // never hands off correctly.
+      const refresh = () => ScrollTrigger.refresh();
+      refresh();
+      const onLoad = () => refresh();
+      window.addEventListener("load", onLoad);
+      void document.fonts?.ready.then(refresh);
+
+      const growRail = document.querySelector<HTMLElement>(
+        '[data-lp="grow-rail"]',
+      );
+      const railImages = growRail?.querySelectorAll("img") ?? [];
+      let pending = 0;
+      railImages.forEach((img) => {
+        if (img.complete) return;
+        pending += 1;
+        const done = () => {
+          pending -= 1;
+          if (pending <= 0) refresh();
+        };
+        img.addEventListener("load", done, { once: true });
+        img.addEventListener("error", done, { once: true });
+      });
+
+      removeRefreshListeners = () => {
+        window.removeEventListener("load", onLoad);
+      };
     };
 
     void init();
 
     return () => {
       cancelled = true;
+      removeRefreshListeners?.();
       ctx?.revert();
     };
   }, []);
