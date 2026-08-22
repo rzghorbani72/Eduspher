@@ -59,42 +59,42 @@ export function LandingMotion() {
         }
 
         // ── For-you rail: hold the page while the images hand off ───────────
-        // Only the media block is pinned, never the whole section: the heading
-        // scrolls away normally and the stage takes over once it reaches the
-        // top, which reads as "the images hold" rather than "the page froze".
+        // The stage (images + the copy that follows them) is pinned, never the
+        // whole section: the heading scrolls away normally and the stage takes
+        // over once it reaches the top. The copy must be inside the pin, or it
+        // sits below the fold and nobody ever sees it change.
         //
-        // The rail itself is plain React state + a CSS transition; this trigger
-        // only reports which panel should be open, so a click on a panel and a
-        // scroll cannot fight over the same flex values.
+        // This trigger reports a CONTINUOUS position (0 → slideCount - 1), not
+        // a step, so the panels resize with the scroll instead of jumping at a
+        // threshold. The section owns the flex values; here we only measure.
         const forYou = document.querySelector<HTMLElement>(
           '[data-lp="for-you"]',
         );
-        const rail = document.querySelector<HTMLElement>(
-          '[data-lp="grow-rail"]',
+        const forYouStage = document.querySelector<HTMLElement>(
+          '[data-lp="for-you-stage"]',
         );
-        const slideCount = Number(rail?.dataset.lpSlideCount ?? 0);
+        const slideCount = Number(forYouStage?.dataset.lpSlideCount ?? 0);
 
-        if (forYou && rail && slideCount > 1) {
-          let current = -1;
+        if (forYou && forYouStage && slideCount > 1) {
+          // A tenth of the scroll at each end holds the first/last slide open,
+          // so the rail does not start moving the instant the pin engages.
+          const HOLD = 0.1;
 
           ScrollTrigger.create({
-            trigger: rail,
+            trigger: forYouStage,
             start: canPin ? "center center" : "top 75%",
-            end: canPin ? `+=${slideCount * 55}%` : "bottom 40%",
+            end: canPin ? `+=${slideCount * 70}%` : "bottom 40%",
             pin: canPin,
             pinSpacing: canPin,
             scrub: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
-              const index = Math.min(
-                slideCount - 1,
-                Math.floor(self.progress * slideCount),
-              );
-              if (index === current) return;
-              current = index;
+              const eased = (self.progress - HOLD) / (1 - HOLD * 2);
+              const position =
+                Math.min(1, Math.max(0, eased)) * (slideCount - 1);
               forYou.dispatchEvent(
-                new CustomEvent("lp:for-you", { detail: index }),
+                new CustomEvent("lp:for-you", { detail: position }),
               );
             },
           });
@@ -146,10 +146,10 @@ export function LandingMotion() {
       window.addEventListener("load", onLoad);
       void document.fonts?.ready.then(refresh);
 
-      const growRail = document.querySelector<HTMLElement>(
-        '[data-lp="grow-rail"]',
-      );
-      const railImages = growRail?.querySelectorAll("img") ?? [];
+      const railImages =
+        document
+          .querySelector<HTMLElement>('[data-lp="for-you-stage"]')
+          ?.querySelectorAll("img") ?? [];
       let pending = 0;
       railImages.forEach((img) => {
         if (img.complete) return;

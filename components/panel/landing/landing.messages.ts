@@ -32,10 +32,17 @@ export const LANDING = {
   forYou: {
     titleCircled: "منتوما",
     titleAfter: " برای توئه !",
-    /** Each slide owns its own copy; the block under the rail follows the open panel. */
+    /**
+     * Each slide owns its own copy; the block under the rail follows the open
+     * panel. `focus` is the CSS object-position of the photo: it decides which
+     * part stays visible when the panel is squeezed into a narrow strip.
+     * First value = horizontal (0% = start of the image, 100% = end),
+     * second = vertical (0% = top, 100% = bottom).
+     */
     slides: [
       {
         src: "/landing/for-you-academy.webp",
+        focus: "39% 45%",
         alt: "مدیر آموزشگاه در پذیرش، گزارش دانش‌آموزان روی تبلت",
         headline: "اگه آموزشگاه داری و میخوای دوره‌هاتو آنلاین هم برگزار کنی!",
         points: [
@@ -45,6 +52,7 @@ export const LANDING = {
       },
       {
         src: "/landing/for-you-teacher.webp",
+        focus: "80% 45%",
         alt: "مدرس‌ها در حال ساخت دوره و بررسی پیشرفت دانش‌آموزان",
         headline: "اگه معلمی و میخوای دوره‌هاتو آنلاین هم بفروشی!",
         points: [
@@ -54,6 +62,7 @@ export const LANDING = {
       },
       {
         src: "/landing/for-you-student.webp",
+        focus: "36% 45%",
         alt: "دانش‌آموزان در حال یادگیری آنلاین با لپ‌تاپ",
         headline: "اگه دنبال یادگیری و مهارت جدید میگردی!",
         points: [
