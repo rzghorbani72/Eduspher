@@ -78,67 +78,20 @@ export const LANDING = {
     subtitle: "با چند کلیک، آکادمی خودت رو بنداز و دوره‌هات رو منتشر کن.",
     ctaPrimary: "شروع ۱۴ روز رایگان",
     ctaSecondary: "مشاهده پلن",
-    tabs: [
+    views: [
       {
         id: "student",
-        title: "چیزی که دانش‌آموزت میبینه",
-        body: "سایت آموزشی با طراحی به‌روز و ترند جهانی ، امکان خرید دوره‌ها بصورت اشتراکی و یا خرید دوره ، پرداخت امن و دسترسی راحت به دوره‌های خریداری شده",
+        title: "چیزی که دانش‌آموزت می‌بینه",
+        body: "سایت آموزشی با طراحی به‌روز و ترند جهانی، خرید دوره یا اشتراک، پرداخت امن و دسترسی راحت به دوره‌های خریداری‌شده.",
+        image: "/landing/template-parastoo.png",
+        alt: "قالب پرستو — سایت دانش‌آموز",
       },
       {
         id: "owner",
         title: "چیزی که خودت می‌بینی",
-        body: "نشرها و سطح دسترسی دانش‌آموزان رو دقیق تنظیم کن. با ابزارهای بازاریابی و پرداخت‌های امن، درآمدت رو افزایش بده.",
-      },
-    ],
-    /**
-     * Matched student ↔ owner pairs. The carousel flips side within a pair,
-     * then advances to the next pair — so what the student sees always lines
-     * up with the matching manager screen.
-     */
-    pairs: [
-      {
-        id: "course-list",
-        student: {
-          image: "/landing/student-course.png",
-          alt: "صفحه دوره در سایت دانش‌آموز",
-        },
-        owner: {
-          image: "/landing/owner-courses.png",
-          alt: "فهرست دوره‌ها در پنل مدیر",
-        },
-      },
-      {
-        id: "templates",
-        student: {
-          image: "/landing/template-parastoo.png",
-          alt: "قالب پرستو — سایت دانش‌آموز",
-        },
-        owner: {
-          image: "/landing/owner-templates.png",
-          alt: "انتخاب و مدیریت قالب‌ها در پنل",
-        },
-      },
-      {
-        id: "course-detail",
-        student: {
-          image: "/landing/student-course-alt.png",
-          alt: "صفحه دوره دیگر در سایت دانش‌آموز",
-        },
-        owner: {
-          image: "/landing/owner-course-detail.png",
-          alt: "جزئیات و ویرایش دوره در پنل مدیر",
-        },
-      },
-      {
-        id: "analytics",
-        student: {
-          image: "/landing/template-keyhan.png",
-          alt: "قالب کیهان — سایت دانش‌آموز",
-        },
-        owner: {
-          image: "/landing/owner-analytics-v2.png",
-          alt: "تحلیل‌ها و آمار آکادمی در پنل",
-        },
+        body: "از بین قالب‌های آماده انتخاب کن، ظاهر سایت رو بدون کدنویسی بساز و دوره‌ها و دسترسی‌ها رو از یک پنل مدیریت کن.",
+        image: "/landing/owner-templates.png",
+        alt: "انتخاب و مدیریت قالب‌ها در پنل مدیر",
       },
     ],
   },
