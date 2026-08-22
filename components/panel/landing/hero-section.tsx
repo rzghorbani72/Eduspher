@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { ProductFrame } from "./product-frame";
 
 type Props = {
   registerUrl: string;
@@ -12,8 +13,16 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
   return (
     <section
       data-lp="hero"
-      className="relative overflow-hidden bg-[#F6F8FD] pb-20 pt-[132px] lg:pb-28 lg:pt-[180px]"
+      className="relative overflow-hidden bg-lp-hero pb-20 pt-[132px] lg:pb-28 lg:pt-[180px]"
     >
+      {/* Ambient orbs, same backdrop as the product dashboard. Static by
+          design — animating a 110px blur this large is expensive. */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <span className="lp-glow lp-glow-1 -top-40 start-[-8rem]" />
+        <span className="lp-glow lp-glow-2 top-24 end-[-6rem]" />
+        <span className="lp-glow lp-glow-3 -bottom-56 start-1/3" />
+      </div>
+
       <Container className="relative z-10 grid items-center gap-14 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
           <h1 className="text-balance text-[32px] font-extrabold leading-[1.35] tracking-[-0.028em] text-lp-ink sm:text-[40px] lg:text-[46px]">
@@ -53,33 +62,24 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
           </ul>
         </div>
 
+        {/* The product itself is the hero art. `hero-frame` is what the scroll
+            scene parallaxes — see landing-motion.tsx. */}
         <div className="relative flex items-center justify-center">
-          {/* Dotted world map sits behind the call window and is what the hero
-              scroll animation rotates/zooms — it reads as "teach anywhere". */}
-          <div
-            data-lp="hero-earth"
-            className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10 will-change-transform"
+          <ProductFrame
+            data-lp="hero-frame"
+            lift={false}
+            className="w-full max-w-[560px] will-change-transform"
           >
             <Image
-              src="/landing/world-dots.svg"
-              alt=""
-              width={600}
-              height={450}
-              priority
-              className="h-full w-full object-contain"
-            />
-          </div>
-
-          <div className="w-full max-w-[470px] rounded-[10px] bg-white p-1 shadow-lp-card">
-            <Image
-              src="/landing/hero-call.svg"
+              src={LANDING.hero.panelImage}
               alt={LANDING.hero.panelAlt}
-              width={470}
-              height={420}
+              width={1120}
+              height={780}
               priority
-              className="h-auto w-full rounded-md"
+              sizes="(max-width: 1024px) 100vw, 560px"
+              className="h-auto w-full"
             />
-          </div>
+          </ProductFrame>
         </div>
       </Container>
     </section>

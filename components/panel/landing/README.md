@@ -17,11 +17,37 @@ Three motion systems, deliberately separate:
 | What | Where | Why not GSAP / why GSAP |
 |---|---|---|
 | Header hide-on-scroll-down | `use-hide-on-scroll.ts` | A passive scroll listener toggling one boolean. Must feel instant and must not wait on a dynamic import. |
-| Section fade-in on enter | `section-reveal.tsx` | IntersectionObserver, zero bundle cost. The common case doesn't need a timeline. |
-| Hero earth scrub + image accordion | `landing-motion.tsx` | Genuinely scrubbed to scroll position — this is what GSAP ScrollTrigger is for. |
+| Section fade-in on enter | `section-reveal.tsx` | IntersectionObserver, zero bundle cost. Matches AdminPanel `.fade-in-up` / `.stagger-children` (6px, 320ms, 30ms cadence). |
+| Hero frame parallax + image accordion + pinned steps | `landing-motion.tsx` | Genuinely scrubbed to scroll position — this is what GSAP ScrollTrigger is for. Pinning is desktop-only. |
 
 All three bail out under `prefers-reduced-motion: reduce` and render the final
 state. The hero is never opacity-hidden at rest because it owns LCP.
+
+Do **not** add stock photography, Lottie, or extra GSAP scenes. The product
+screenshots *are* the art, framed like AdminPanel `.stat-card`. Ambient dashboard
+glows stay static — blurring that large a surface must never animate.
+
+## Photos
+
+Files in `public/landing/*.png` are real product captures (AdminPanel + a live
+academy site). Replace a file in place to update a shot — `landing.messages.ts`
+points at the paths.
+
+| Slot | File | What it must show |
+|---|---|---|
+| Hero | `hero-dashboard.png` | Manager dashboard with stats |
+| For-you 1 | `for-you-2.png` | Users / teachers / students |
+| For-you 2 | `admin-panel.png` | Courses grid |
+| For-you 3 | `step-3.png` | Finance / transactions |
+| Publish · student | `template-{keyhan,dastan,tavan,parastoo,zabaneh}.png` | Active gallery templates only — one per student turn |
+| Publish · owner | `hero-dashboard.png`, `owner-{courses,appearance,analytics,financial}.png` | Manager panel with demo data. Financial shot is `/financial/academy`. |
+| Step 1 | `step-1.png` | Settings hub / account summary |
+| Step 2 | `admin-panel.png` | Adding courses |
+| Step 3 | `step-3.png` | Transactions (`/payments`) |
+
+Never ship placeholder SVGs, empty-state screens, or error toasts as marketing
+art. `for-you-3.png` (empty assignments + warning) was captured and is unused
+for that reason.
 
 ## Cascade-layer gotcha
 
@@ -42,16 +68,11 @@ If link colors on this page ever go wrong, check those two first.
 ## Tokens
 
 Design tokens live in the `@theme` block in `globals.css`, prefixed `lp-`
-(`bg-lp-mint`, `text-lp-muted`, `rounded-lp`, `shadow-lp-mint`, …). They are
-intentionally **not** bound to the `--theme-*` academy variables so a cached
-tenant theme can never restyle the marketing page.
+(`bg-lp-mint`, `text-lp-muted`, `rounded-lp`, `shadow-lp-mint`, `bg-lp-hero`, …).
+They are intentionally **not** bound to the `--theme-*` academy variables so a
+cached tenant theme can never restyle the marketing page.
 
 ## Copy
 
 All Persian strings live in `landing.messages.ts`. No literal user-facing text in
 JSX.
-
-## Placeholder art
-
-`public/landing/*.svg` are placeholders standing in for the real Figma exports.
-Replacing a file in place is enough — no code change needed.

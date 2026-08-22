@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { ProductFrame } from "./product-frame";
 import { SectionHeading } from "./section-heading";
 
 const STEPS = LANDING.steps.items;
@@ -70,16 +71,18 @@ export function StepsSection() {
                       image, badge, copy and dots — still fits on screen while
                       it is pinned. An uncapped 1100x560 image overflows a short
                       laptop and the controls end up below the fold. */}
-                  <div className="relative h-[38vh] max-h-[420px] min-h-[220px] overflow-hidden rounded-2xl">
-                    <Image
-                      src={item.image}
-                      alt={item.alt}
-                      fill
-                      priority={index === 0}
-                      sizes="(max-width: 1024px) 100vw, 1160px"
-                      className="object-cover"
-                    />
-                  </div>
+                  <ProductFrame className="h-[38vh] max-h-[420px] min-h-[220px]">
+                    <div className="relative min-h-0 flex-1">
+                      <Image
+                        src={item.image}
+                        alt={item.alt}
+                        fill
+                        loading={index === active ? "eager" : "lazy"}
+                        sizes="(max-width: 1024px) 100vw, 1160px"
+                        className="object-cover object-top"
+                      />
+                    </div>
+                  </ProductFrame>
 
                   {/* z-10 so the number badge sits over the image edge rather
                       than being covered by it. */}

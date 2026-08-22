@@ -49,7 +49,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
         </p>
 
         {/* The trial is one universal offer, not a feature of any one plan:
-            every account gets a month, then picks a plan. Stated once here so a
+            every manager gets 14 days, then picks a plan. Stated once here so a
             per-card bullet does not imply it belongs to a specific tier. */}
         <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-lp-mint/50 bg-lp-mint/10 px-6 py-5 text-center">
           <p className="text-[15px] font-bold text-lp-ink">

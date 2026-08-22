@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import type { StoreSummary } from "@/lib/api/types";
 import { env } from "@/lib/env";
-import { buildAcademySubdomainUrl } from "@/lib/utils";
+import { buildAcademySubdomainUrl, resolveAssetUrl } from "@/lib/utils";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
@@ -15,45 +15,32 @@ type Props = {
 type Card = {
   key: string;
   name: string;
-  role: string;
-  followers: string;
-  image: string;
-  mobile: string;
-  href?: string;
+  description: string | null;
+  cover: string | null;
+  href: string;
 };
 
 /**
- * Showcases academies running on the platform. Each block pairs the desktop
- * view with a phone frame so a visitor sees both surfaces of one academy at a
- * glance. Real tenants are used when the API returns any; the curated
- * placeholders only fill in so the section never renders empty.
+ * Showcases academies actually running on the platform. Everything shown is
+ * real: the name, the description and the cover come from the academy itself
+ * and the card links to its live site. There is deliberately no placeholder
+ * roster — an empty section is honest, an invented one is not.
  */
 export function CreatorsSection({ academies }: Props) {
-  const preset = LANDING.creators.items;
-  const live = academies.filter((academy) => Boolean(academy.slug)).slice(0, 6);
+  const cards: Card[] = academies
+    .filter((academy) => Boolean(academy.slug))
+    .slice(0, 6)
+    .map((academy) => ({
+      key: String(academy.id),
+      name: academy.name,
+      description: academy.description ?? null,
+      cover: resolveAssetUrl(
+        academy.cover?.publicUrl ?? academy.logo?.publicUrl ?? null,
+      ),
+      href: buildAcademySubdomainUrl(academy.slug ?? "", env.appUrl),
+    }));
 
-  const cards: Card[] =
-    live.length > 0
-      ? live.map((academy, index) => {
-          const fallback = preset[index % preset.length];
-          return {
-            key: String(academy.id),
-            name: academy.name,
-            role: fallback.role,
-            followers: fallback.followers,
-            image: fallback.image,
-            mobile: fallback.mobile,
-            href: buildAcademySubdomainUrl(academy.slug ?? "", env.appUrl),
-          };
-        })
-      : preset.map((item) => ({
-          key: item.id,
-          name: item.name,
-          role: item.role,
-          followers: item.followers,
-          image: item.image,
-          mobile: item.mobile,
-        }));
+  if (cards.length === 0) return null;
 
   return (
     <section
@@ -70,61 +57,44 @@ export function CreatorsSection({ academies }: Props) {
 
       {/* Rail scrolls inside itself so the page body never scrolls sideways. */}
       <div className="mt-14 overflow-x-auto pb-6 [scrollbar-width:none]">
-        <ul className="mx-auto flex w-max items-center gap-10 px-5 sm:px-8 lg:px-10">
-          {cards.map((card) => {
-            const Wrapper = card.href ? "a" : "div";
-
-            return (
-              <li key={card.key}>
-                <Wrapper
-                  {...(card.href ? { href: card.href } : {})}
-                  className="group flex items-center"
-                >
-                  {/* Phone frame first in DOM so RTL places it on the right,
-                      overlapping the desktop card — as in the design. Drawn in
-                      CSS rather than shipped as an image so it stays crisp at
-                      any size and follows the landing theme. */}
-                  <span className="relative z-10 block h-[340px] w-[168px] shrink-0 rounded-[26px] bg-[#15181F] p-[5px] shadow-lp-card ring-1 ring-black/10">
-                    <span className="relative block h-full w-full overflow-hidden rounded-[21px] bg-white">
-                      <Image
-                        src={card.mobile}
-                        alt=""
-                        fill
-                        sizes="168px"
-                        className="object-cover object-top"
-                      />
-                    </span>
-                    <span className="absolute left-1/2 top-[5px] h-3.5 w-[52px] -translate-x-1/2 rounded-b-lg bg-[#15181F]" />
-                  </span>
-
-                  {/* Desktop view */}
-                  <span className="relative -ms-12 block h-[300px] w-[236px] shrink-0 overflow-hidden rounded-2xl border border-lp-line">
+        <ul className="mx-auto flex w-max items-stretch gap-6 px-5 sm:px-8 lg:px-10">
+          {cards.map((card) => (
+            <li key={card.key}>
+              <a
+                href={card.href}
+                className="lp-frame group flex h-full w-[280px] flex-col overflow-hidden text-start"
+              >
+                <span className="relative block h-[168px] w-full overflow-hidden bg-lp-surface-2">
+                  {card.cover ? (
                     <Image
-                      src={card.image}
+                      src={card.cover}
                       alt=""
                       fill
-                      sizes="236px"
+                      sizes="280px"
+                      loading="lazy"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <span className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-black/85 to-transparent" />
-                    {/* ps-16 keeps the caption clear of the phone frame, which
-                        overlaps this card's inline-start edge. */}
-                    <span className="absolute inset-x-0 bottom-0 p-4 ps-16 text-white">
-                      <span className="block text-[15px] font-bold">
-                        {card.name}
-                      </span>
-                      <span className="mt-0.5 block text-[11px] opacity-80">
-                        {card.followers}
-                      </span>
-                      <span className="mt-2.5 inline-flex rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold text-lp-ink">
-                        {card.role}
-                      </span>
-                    </span>
+                  ) : (
+                    <span className="block h-full w-full bg-linear-to-br from-lp-mint/25 to-lp-blue/15" />
+                  )}
+                </span>
+
+                <span className="flex flex-1 flex-col p-5">
+                  <span className="block text-[15px] font-bold text-lp-ink">
+                    {card.name}
                   </span>
-                </Wrapper>
-              </li>
-            );
-          })}
+                  {card.description ? (
+                    <span className="mt-2 line-clamp-2 text-[13px] leading-[1.8] text-lp-muted">
+                      {card.description}
+                    </span>
+                  ) : null}
+                  <span className="mt-4 text-[12.5px] font-semibold text-lp-blue">
+                    {LANDING.creators.visit}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
     </section>

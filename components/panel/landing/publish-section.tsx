@@ -7,52 +7,76 @@ import { cn } from "@/lib/utils";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { ProductFrame } from "./product-frame";
 import { SectionHeading } from "./section-heading";
 
 const TABS = LANDING.publish.tabs;
+const STUDENT_TEMPLATES = LANDING.publish.studentTemplates;
+const OWNER_PAGES = LANDING.publish.ownerPages;
 const CYCLE_MS = 6000;
-const TICK_MS = 50;
+
+type Side = "student" | "owner";
 
 type Props = {
   registerUrl: string;
   pricingUrl: string;
 };
 
+/**
+ * Infinite loop alternating sides:
+ * student template → owner panel page → next student → next owner → …
+ * Each side advances its own gallery independently.
+ */
 export function PublishSection({ registerUrl, pricingUrl }: Props) {
-  const [active, setActive] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [side, setSide] = useState<Side>("student");
+  const [templateIndex, setTemplateIndex] = useState(0);
+  const [ownerIndex, setOwnerIndex] = useState(0);
+  const [cycle, setCycle] = useState(0);
+  const [running, setRunning] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
-  const elapsed = useRef(0);
+  const sideRef = useRef(side);
+  const templateRef = useRef(templateIndex);
+  const ownerRef = useRef(ownerIndex);
+  useEffect(() => {
+    sideRef.current = side;
+    templateRef.current = templateIndex;
+    ownerRef.current = ownerIndex;
+  });
 
   useEffect(() => {
     const node = panelRef.current;
     if (!node) return;
 
-    let timer: ReturnType<typeof setInterval> | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
 
     const stop = () => {
-      if (timer) clearInterval(timer);
+      if (timer) clearTimeout(timer);
       timer = null;
+      setRunning(false);
     };
 
     const start = () => {
       if (timer) return;
-      timer = setInterval(() => {
-        elapsed.current += TICK_MS;
-        if (elapsed.current >= CYCLE_MS) {
-          elapsed.current = 0;
-          setActive((tab) => (tab + 1) % TABS.length);
-          setProgress(0);
-          return;
-        }
-        setProgress((elapsed.current / CYCLE_MS) * 100);
-      }, TICK_MS);
+      setRunning(true);
+      const schedule = () => {
+        timer = setTimeout(() => {
+          timer = null;
+          if (sideRef.current === "student") {
+            setSide("owner");
+          } else {
+            setOwnerIndex((ownerRef.current + 1) % OWNER_PAGES.length);
+            setTemplateIndex(
+              (templateRef.current + 1) % STUDENT_TEMPLATES.length
+            );
+            setSide("student");
+          }
+          setCycle((value) => value + 1);
+          schedule();
+        }, CYCLE_MS);
+      };
+      schedule();
     };
 
-    // Only run the timer while the panel is on screen. Threshold stays 0: the
-    // panel is often taller than the viewport (short laptops, mobile), and a
-    // fractional threshold can then never be met — which would silently freeze
-    // the cycle on the first image.
     const observer = new IntersectionObserver(
       ([entry]) => (entry.isIntersecting ? start() : stop()),
       { threshold: 0, rootMargin: "-15% 0px -15% 0px" }
@@ -65,11 +89,32 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
     };
   }, []);
 
-  const selectTab = (index: number) => {
-    elapsed.current = 0;
-    setActive(index);
-    setProgress(0);
+  const selectTab = (next: Side) => {
+    if (next === side) {
+      if (next === "student") {
+        setTemplateIndex((index) => (index + 1) % STUDENT_TEMPLATES.length);
+      } else {
+        setOwnerIndex((index) => (index + 1) % OWNER_PAGES.length);
+      }
+    } else if (next === "owner") {
+      setOwnerIndex((ownerRef.current + 1) % OWNER_PAGES.length);
+      setSide("owner");
+    } else {
+      setTemplateIndex((templateRef.current + 1) % STUDENT_TEMPLATES.length);
+      setSide("student");
+    }
+    setCycle((value) => value + 1);
   };
+
+  const activeTabIndex = side === "student" ? 0 : 1;
+  const frame =
+    side === "student"
+      ? STUDENT_TEMPLATES[templateIndex]
+      : OWNER_PAGES[ownerIndex];
+  const frameKey =
+    side === "student"
+      ? `student-${STUDENT_TEMPLATES[templateIndex].id}`
+      : `owner-${OWNER_PAGES[ownerIndex].id}`;
 
   return (
     <section
@@ -107,15 +152,12 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => selectTab(index)}
-                aria-pressed={active === index}
+                onClick={() => selectTab(tab.id as Side)}
+                aria-pressed={activeTabIndex === index}
                 aria-controls="publish-panel-image"
                 className={cn(
-                  // Neither tab is ever dimmed — both describe halves of the
-                  // same product and stay fully legible. The active one is
-                  // marked by surface + border, not by muting the other.
                   "flex flex-col gap-2.5 rounded-2xl border p-5 text-start transition-colors",
-                  active === index
+                  activeTabIndex === index
                     ? "border-lp-mint/45 bg-white"
                     : "border-transparent bg-transparent hover:bg-white/60"
                 )}
@@ -125,7 +167,7 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
                     aria-hidden="true"
                     className={cn(
                       "h-2 w-2 shrink-0 rounded-full transition-colors",
-                      active === index ? "bg-lp-mint" : "bg-lp-line"
+                      activeTabIndex === index ? "bg-lp-mint" : "bg-lp-line"
                     )}
                   />
                   {tab.title}
@@ -135,36 +177,38 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
                 </span>
                 <span className="mt-2 h-1 w-full overflow-hidden rounded-full bg-lp-line/70">
                   <span
-                    className="block h-full rounded-full bg-lp-mint transition-[width] duration-100 ease-linear motion-reduce:transition-none"
-                    style={{ width: active === index ? `${progress}%` : "0%" }}
+                    key={`${index}-${cycle}`}
+                    className={cn(
+                      "block h-full rounded-full bg-lp-mint",
+                      activeTabIndex === index && running && "lp-progress"
+                    )}
+                    style={{
+                      width:
+                        activeTabIndex === index && running ? undefined : "0%",
+                    }}
                   />
                 </span>
               </button>
             ))}
           </div>
 
-          <div className="px-6 pb-0 sm:px-8">
-            <div
+          <div className="px-6 pb-6 sm:px-8 sm:pb-8">
+            <ProductFrame
               id="publish-panel-image"
               aria-live="polite"
-              className="relative aspect-1440/768 w-full overflow-hidden rounded-t-2xl border border-b-0 border-lp-line"
+              className="w-full"
             >
-              {/* Only the active image is rendered. Cross-fading two stacked
-                  images is prettier, but it fails closed in the worst way: if
-                  the hiding class ever loses, the last one painted covers the
-                  other forever and the section looks frozen. Swapping the
-                  element cannot fail that way. `key` forces a real remount so
-                  the fade-in replays on every change. */}
-              <Image
-                key={TABS[active].id}
-                src={TABS[active].image}
-                alt={TABS[active].alt}
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 1240px"
-                className="lp-fade-in object-cover object-top"
-              />
-            </div>
+              <div className="relative aspect-1440/768 w-full">
+                <Image
+                  key={frameKey}
+                  src={frame.image}
+                  alt={frame.alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 1160px"
+                  className="lp-fade-in object-cover object-top"
+                />
+              </div>
+            </ProductFrame>
           </div>
         </div>
       </Container>

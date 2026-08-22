@@ -45,22 +45,25 @@ export function SiteFooter() {
               {LANDING.footer.tagline}
             </p>
 
-            <ul className="mt-6 flex items-center gap-3">
-              {LANDING.footer.socials.map((social) => {
-                const Icon = SOCIAL_ICONS[social.id] ?? Send;
-                return (
-                  <li key={social.id}>
-                    <a
-                      href={social.href}
-                      aria-label={social.label}
-                      className="grid h-9 w-9 place-items-center rounded-full border border-lp-line text-lp-muted transition-colors hover:border-lp-mint/50 hover:text-lp-ink"
-                    >
-                      <Icon size={15} aria-hidden="true" />
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
+            {LANDING.footer.socials.some((social) => social.href) ? (
+              <ul className="mt-6 flex items-center gap-3">
+                {LANDING.footer.socials.map((social) => {
+                  if (!social.href) return null;
+                  const Icon = SOCIAL_ICONS[social.id] ?? Send;
+                  return (
+                    <li key={social.id}>
+                      <a
+                        href={social.href}
+                        aria-label={social.label}
+                        className="grid h-9 w-9 place-items-center rounded-full border border-lp-line text-lp-muted transition-colors hover:border-lp-mint/50 hover:text-lp-ink"
+                      >
+                        <Icon size={15} aria-hidden="true" />
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : null}
 
             <div className="mt-6">
               <EnamadSeal

@@ -39,14 +39,18 @@ export function ForYouSection() {
                 src={slide.src}
                 alt={slide.alt}
                 fill
-                sizes="(max-width: 1024px) 100vw, 1240px"
+                loading="eager"
+                sizes="(max-width: 1024px) 90vw, 42vw"
                 className="object-cover object-top"
               />
             </div>
           ))}
         </div>
 
-        <ul className="mx-auto mt-14 grid max-w-[900px] gap-4 sm:grid-cols-2">
+        <ul
+          data-lp-stagger
+          className="mx-auto mt-14 grid max-w-[900px] gap-4 sm:grid-cols-2"
+        >
           {LANDING.forYou.points.map((point) => (
             <li
               key={point}

@@ -39,12 +39,13 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
               priority
               className="h-[38px] w-[38px]"
             />
+            {/* No `priority`: the wordmark is a 1KB SVG next to the mark, and
+                every extra preload hint competes with the hero for bandwidth. */}
             <Image
               src="/logo-type.svg"
               alt=""
               width={52}
               height={16}
-              priority
               className="hidden h-4 w-[52px] sm:block"
             />
           </Link>

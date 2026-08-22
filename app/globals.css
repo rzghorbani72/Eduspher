@@ -68,9 +68,15 @@
   --color-lp-muted: #6b7280;
   --color-lp-surface: #ffffff;
   --color-lp-surface-2: #fafbfc;
+  --color-lp-hero: #f6f8fd;
   --color-lp-line: rgba(18, 20, 50, 0.09);
   --color-lp-line-2: #e5e7eb;
   --color-lp-blue: #1b98e0;
+  /* Screenshot-frame surface — see .lp-frame. Tokenised so the dark landing
+     can re-point it instead of being caught by the .bg-white sweep below. */
+  --color-lp-frame-bg: rgba(255, 255, 255, 0.75);
+  --color-lp-frame-border: rgba(255, 255, 255, 0.7);
+  --color-lp-frame-bar: rgba(250, 251, 252, 0.9);
   --color-lp-green: #10b981;
 
   --radius-lp: 24px;
@@ -92,6 +98,28 @@ html::-webkit-scrollbar {
   display: none; /* Chrome / Safari / Opera */
 }
 
+/* Tab auto-advance progress bar. Kept in CSS so the 6s fill costs zero React
+   renders — see publish-section.tsx. Duration must match CYCLE_MS there. */
+@keyframes lp-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.lp-progress {
+  animation: lp-progress 6000ms linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-progress {
+    animation: none;
+    width: 100%;
+  }
+}
+
 @keyframes lp-marquee {
   from {
     transform: translateX(0);
@@ -103,6 +131,11 @@ html::-webkit-scrollbar {
 
 .lp-marquee-strip {
   animation: lp-marquee 28s linear infinite;
+  /* Stops the compositor animating a strip nobody is looking at. */
+  animation-play-state: paused;
+}
+.lp-marquee-strip[data-visible="true"] {
+  animation-play-state: running;
 }
 
 .lp-proof-strip {
@@ -1511,8 +1544,12 @@ select[class*="rounded-sm"] {
   --color-lp-muted: #9aa0b4;
   --color-lp-surface: #0b0e18;
   --color-lp-surface-2: #111524;
+  --color-lp-hero: #0e1220;
   --color-lp-line: rgba(255, 255, 255, 0.1);
   --color-lp-line-2: rgba(255, 255, 255, 0.16);
+  --color-lp-frame-bg: rgba(21, 26, 43, 0.75);
+  --color-lp-frame-border: rgba(255, 255, 255, 0.09);
+  --color-lp-frame-bar: rgba(11, 14, 24, 0.9);
 }
 /* Only one theme icon shows; CSS picks it so the button needs no React state. */
 .lp-root .lp-icon-dark {
@@ -1540,16 +1577,143 @@ select[class*="rounded-sm"] {
   transform: translateY(-120%);
 }
 
+/* Easing, distance and stagger are AdminPanel's `.fade-in-up` /
+   `.stagger-children`, so entering a section here feels like entering the
+   product. Do not retune one without the other. */
 .lp-reveal {
   opacity: 0;
-  transform: translateY(40px);
+  transform: translateY(6px);
   transition:
-    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .lp-reveal[data-shown="true"] {
   opacity: 1;
   transform: none;
+}
+
+/* Opt-in child stagger, same 30ms cadence as the panel. */
+.lp-reveal[data-lp-stagger] > * {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.lp-reveal[data-lp-stagger][data-shown="true"] > * {
+  opacity: 1;
+  transform: none;
+}
+.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(1) { transition-delay: 20ms; }
+.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(2) { transition-delay: 50ms; }
+.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(3) { transition-delay: 80ms; }
+.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(4) { transition-delay: 110ms; }
+.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(5) { transition-delay: 140ms; }
+.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(6) { transition-delay: 170ms; }
+
+/* Nested stagger: section reveals as a whole, then its inner grid/list
+   children pick up the same 30ms cadence as the panel. */
+.lp-reveal [data-lp-stagger] > * {
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.lp-reveal[data-shown="true"] [data-lp-stagger] > * {
+  opacity: 1;
+  transform: none;
+}
+.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(1) { transition-delay: 20ms; }
+.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(2) { transition-delay: 50ms; }
+.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(3) { transition-delay: 80ms; }
+.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(4) { transition-delay: 110ms; }
+.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(5) { transition-delay: 140ms; }
+.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(6) { transition-delay: 170ms; }
+
+/* ── Screenshot frame ──────────────────────────────────────────────────────
+   The panel's own surface (AdminPanel `.stat-card`): frosted white over a
+   primary-tinted long shadow. Product shots sit in this so they read as part
+   of the page rather than pasted onto it.
+   Defined with lp- tokens, never raw bg-white/NN, so the dark landing can
+   re-point it — see the dark override block above. */
+.lp-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--color-lp-frame-border);
+  background: var(--color-lp-frame-bg);
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 25, 0.04),
+    0 16px 32px -20px rgba(27, 152, 224, 0.22);
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.lp-frame:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 2px rgba(15, 23, 25, 0.04),
+    0 20px 40px -18px rgba(27, 152, 224, 0.3);
+}
+/* GSAP owns transform on the hero frame — a CSS hover would overwrite the
+   scrubbed translate and the screenshot would jump. */
+.lp-frame-static:hover {
+  transform: none;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 25, 0.04),
+    0 16px 32px -20px rgba(27, 152, 224, 0.22);
+}
+
+/* Window chrome strip — reads as "real software", costs one element. */
+.lp-frame-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-lp-line);
+  background: var(--color-lp-frame-bar);
+}
+.lp-frame-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: var(--color-lp-line-2);
+}
+
+/* ── Ambient glow orbs ─────────────────────────────────────────────────────
+   The dashboard's signature backdrop (AdminPanel `.dashboard-glow`). Static —
+   blurring this large a surface is expensive, so it must never animate. */
+.lp-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  pointer-events: none;
+  z-index: 0;
+}
+.lp-glow-1 {
+  width: 440px;
+  height: 440px;
+  background: rgba(27, 152, 224, 0.16);
+}
+.lp-glow-2 {
+  width: 380px;
+  height: 380px;
+  background: rgba(48, 255, 180, 0.14);
+}
+.lp-glow-3 {
+  width: 480px;
+  height: 480px;
+  background: rgba(58, 107, 172, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-frame,
+  .lp-frame:hover {
+    transition: none;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1559,10 +1723,16 @@ select[class*="rounded-sm"] {
   .lp-header[data-hidden="true"] {
     transform: none;
   }
-  .lp-reveal {
+  .lp-reveal,
+  .lp-reveal[data-lp-stagger] > *,
+  .lp-reveal [data-lp-stagger] > * {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .lp-marquee-strip,
+  .lp-proof-strip {
+    animation: none;
   }
 }
 

@@ -4,7 +4,7 @@ export const LANDING = {
       { href: "#examples", label: "نمونه‌ها" },
       { href: "#pricing", label: "قیمت‌ها" },
       { href: "/about", label: "درباره ما" },
-      { href: "/contact", label: "تماس‌باما" },
+      { href: "/contact", label: "تماس با ما" },
       { href: "#features", label: "امکانات" },
     ],
     login: "ورود",
@@ -14,26 +14,19 @@ export const LANDING = {
   },
 
   hero: {
-    panelAlt: "نمای کلاس آنلاین منتوما",
+    panelAlt: "نمای داشبورد مدیریت آکادمی در منتوما",
+    panelImage: "/landing/hero-dashboard.png",
     titleLead: "با داشتن وب‌سایت آموزشی شخصی خودت فقط ",
     titleHighlight: "۱۰ دقیقه فاصله داری",
     subtitle:
       "با منتوما، پلتفرم ساخت آکادمی آنلاین، وبسایت آموزشیت رو به سادگی بساز به جامعه دانش‌آموز دسترسی بده و کسب‌وکارت رو رشد بده.",
-    ctaPrimary: "شروع یک ماه رایگان",
+    ctaPrimary: "شروع ۱۴ روز رایگان",
     ctaSecondary: "مشاهده دمو",
-    bullets: ["پشتیبانی ۲۴/۷", "۳۰ روز تست رایگان", "بدون نیاز به کدنویسی"],
+    bullets: ["پشتیبانی ۲۴/۷", "۱۴ روز تست رایگان", "بدون نیاز به کدنویسی"],
   },
 
   logos: {
-    label: "مورد اعتماد سازندگان محتوا و کسب‌وکارهای آموزشی",
-    fallback: [
-      "آکادمی رها",
-      "کدآموز",
-      "زبان‌یار",
-      "دیزاین‌لب",
-      "بیزینس‌پلاس",
-      "هنرکده",
-    ],
+    label: "مورد اعتماد آموزشگاه‌ها و کسب‌وکارهای آموزشی",
   },
 
   forYou: {
@@ -45,31 +38,97 @@ export const LANDING = {
       "مدیریت فروش و مالی آموزشگاه",
     ],
     slides: [
-      { src: "/landing/for-you-1.svg", alt: "دانش‌آموز" },
-      { src: "/landing/for-you-2.svg", alt: "مدرس" },
-      { src: "/landing/for-you-3.svg", alt: "کلاس درس" },
+      {
+        src: "/landing/for-you-2.png",
+        alt: "مدیریت دانش‌آموزان و مدرس‌ها در پنل منتوما",
+      },
+      {
+        src: "/landing/admin-panel.png",
+        alt: "فهرست دوره‌های آکادمی در پنل مدیریت",
+      },
+      {
+        src: "/landing/step-3.png",
+        alt: "تراکنش‌ها و فروش دوره‌ها در پنل مالی",
+      },
     ],
   },
 
   publish: {
     title: "شروع کسب و کارت با برند شخصی آموزشی",
     subtitle: "با چند کلیک، آکادمی خودت رو بنداز و دوره‌هات رو منتشر کن.",
-    ctaPrimary: "شروع یک ماه رایگان",
+    ctaPrimary: "شروع ۱۴ روز رایگان",
     ctaSecondary: "مشاهده پلن",
     tabs: [
       {
         id: "student",
         title: "چیزی که دانش‌آموزت میبینه",
         body: "سایت آموزشی با طراحی به‌روز و ترند جهانی ، امکان خرید دوره‌ها بصورت اشتراکی و یا خرید دوره ، پرداخت امن و دسترسی راحت به دوره‌های خریداری شده",
-        image: "/landing/student-site.svg",
-        alt: "نمای سایت دانش‌آموز",
       },
       {
         id: "owner",
         title: "چیزی که خودت می‌بینی",
         body: "نشرها و سطح دسترسی دانش‌آموزان رو دقیق تنظیم کن. با ابزارهای بازاریابی و پرداخت‌های امن، درآمدت رو افزایش بده.",
-        image: "/landing/admin-panel.svg",
-        alt: "نمای پنل مدیریت",
+      },
+    ],
+    /** Active gallery templates only — never retired presets. */
+    studentTemplates: [
+      {
+        id: "keyhan",
+        name: "کیهان",
+        image: "/landing/template-keyhan.png",
+        alt: "قالب کیهان — سایت دانش‌آموز",
+      },
+      {
+        id: "dastan",
+        name: "دستان",
+        image: "/landing/template-dastan.png",
+        alt: "قالب دستان — سایت دانش‌آموز",
+      },
+      {
+        id: "tavan",
+        name: "توان",
+        image: "/landing/template-tavan.png",
+        alt: "قالب توان — سایت دانش‌آموز",
+      },
+      {
+        id: "parastoo",
+        name: "پرستو",
+        image: "/landing/template-parastoo.png",
+        alt: "قالب پرستو — سایت دانش‌آموز",
+      },
+      {
+        id: "zabaneh",
+        name: "زبانه",
+        image: "/landing/template-zabaneh.png",
+        alt: "قالب زبانه — سایت دانش‌آموز",
+      },
+    ],
+    /** Manager/teacher panel pages with full demo data — one per owner turn. */
+    ownerPages: [
+      {
+        id: "dashboard",
+        image: "/landing/hero-dashboard.png",
+        alt: "داشبورد مدیریت آکادمی",
+      },
+      {
+        id: "courses",
+        image: "/landing/owner-courses.png",
+        alt: "فهرست دوره‌ها در پنل مدیر",
+      },
+      {
+        id: "appearance",
+        image: "/landing/owner-appearance.png",
+        alt: "ظاهر و قالب‌های سایت آکادمی",
+      },
+      {
+        id: "analytics",
+        image: "/landing/owner-analytics.png",
+        alt: "تحلیل‌ها و آمار آکادمی",
+      },
+      {
+        id: "financial",
+        image: "/landing/owner-financial.png",
+        alt: "تراکنش‌ها و پرداخت‌های دانشجویان در پنل",
       },
     ],
   },
@@ -85,7 +144,6 @@ export const LANDING = {
         id: "nocode",
         icon: "code",
         wide: false,
-        image: null,
         title: "بدون نیاز به کدنویسی",
         body: "همه‌چیز با کشیدن و رها کردن. تو روی محتوا تمرکز کن، فنی‌اش با ما.",
       },
@@ -93,7 +151,6 @@ export const LANDING = {
         id: "setup",
         icon: "zap",
         wide: true,
-        image: "/landing/why-setup.svg",
         title: "راه‌اندازی در ۱۰ دقیقه",
         body: "یک قالب آماده انتخاب کن، برندت را اضافه کن و آکادمی‌ات همین حالا آنلاین است. بدون انتظار، بدون توسعه‌دهنده.",
       },
@@ -101,7 +158,6 @@ export const LANDING = {
         id: "brand",
         icon: "user",
         wide: false,
-        image: null,
         title: "برند شخصی آموزشی",
         body: "دامنه اختصاصی، رنگ و لوگوی خودت. آکادمی‌ات کاملاً متعلق به توست.",
       },
@@ -109,7 +165,6 @@ export const LANDING = {
         id: "revenue",
         icon: "money",
         wide: false,
-        image: null,
         title: "فروش و درآمد پایدار",
         body: "اشتراک، فروش تکی، کد تخفیف و پرداخت ریالی — همه آماده و یکپارچه.",
       },
@@ -117,7 +172,6 @@ export const LANDING = {
         id: "access",
         icon: "shield",
         wide: false,
-        image: null,
         title: "کنترل کامل دسترسی‌ها",
         body: "سطح دسترسی دانشجو، مدرس و مدیر را دقیق تعیین کن. امن و منعطف.",
       },
@@ -132,70 +186,36 @@ export const LANDING = {
         number: "۱",
         title: "آکادمی خودت رو بدون کدنویسی بساز",
         body: "اطلاعات آکادمی، درگاه پرداخت و دامنه اختصاصیت رو تنظیم کن.",
-        image: "/landing/step-1.svg",
-        alt: "ساخت آکادمی",
+        image: "/landing/step-1.png",
+        alt: "تنظیم آکادمی، دامنه و برند در پنل منتوما",
       },
       {
         number: "۲",
         title: "دوره‌ها و مدرس‌هات رو اضافه کن",
         body: "ویدیو، جلسه و آزمون بساز؛ مدرس‌ها رو دعوت کن و دسترسی‌ها رو مشخص کن.",
-        image: "/landing/step-2.svg",
-        alt: "افزودن دوره",
+        image: "/landing/admin-panel.png",
+        alt: "افزودن و مدیریت دوره‌ها در پنل منتوما",
       },
       {
         number: "۳",
         title: "منتشر کن و شروع به فروش کن",
         body: "لینک آکادمی‌ات رو منتشر کن و اولین دانش‌آموزهات رو بپذیر.",
-        image: "/landing/step-3.svg",
-        alt: "انتشار آکادمی",
+        image: "/landing/step-3.png",
+        alt: "فروش دوره و پیگیری تراکنش‌ها در پنل مالی",
       },
     ],
   },
 
   creators: {
-    title: "بهترین‌ها از منتوما استفاده می‌کنند",
+    title: "آکادمی‌هایی که روی منتوما ساخته شده‌اند",
     subtitle:
-      "از آموزش زبان تا عکاسی و طراحی گرافیک — بیش از ۵۰۰ آکادمی روی منتوما فعاله",
+      "هر کارت یک آکادمی واقعی روی منتوما است — روی آن بزن و خود سایت را ببین.",
     visit: "مشاهده آکادمی",
-    items: [
-      {
-        id: "c1",
-        name: "آکادمی رها",
-        role: "مربی کسب‌وکار",
-        followers: "۱۰۰K+ دنبال‌کننده",
-        image: "/landing/creator-1.svg",
-        mobile: "/landing/creator-1-mobile.svg",
-      },
-      {
-        id: "c2",
-        name: "کدآموز",
-        role: "آموزش برنامه‌نویسی",
-        followers: "۱۵۰K+ دنبال‌کننده",
-        image: "/landing/creator-2.svg",
-        mobile: "/landing/creator-2-mobile.svg",
-      },
-      {
-        id: "c3",
-        name: "هنرکده",
-        role: "طراحی و گرافیک",
-        followers: "۵۵۴K+ دنبال‌کننده",
-        image: "/landing/creator-3.svg",
-        mobile: "/landing/creator-3-mobile.svg",
-      },
-      {
-        id: "c4",
-        name: "زبان‌یار",
-        role: "آموزش زبان",
-        followers: "۲۴۱K+ دنبال‌کننده",
-        image: "/landing/creator-4.svg",
-        mobile: "/landing/creator-4-mobile.svg",
-      },
-    ],
   },
 
   pricing: {
     title: "یک پلن برای هر مرحله از رشد",
-    subtitle: "یک ماه رایگان امتحان کن، بعد پلن مناسبت را انتخاب کن.",
+    subtitle: "۱۴ روز رایگان امتحان کن، بعد پلن مناسبت را انتخاب کن.",
     yearly: "سالانه",
     monthly: "ماهانه",
     perMonth: "تومان / ماه",
@@ -204,9 +224,9 @@ export const LANDING = {
     mostPopular: "پیشنهاد ما",
     savingYearly: "سالانه {amount} تومان کمتر (۲ ماه رایگان)",
     savingHintMonthly: "با پرداخت سالانه، ۲ ماه رایگان",
-    trialBannerTitle: "۱ ماه رایگان برای همه",
+    trialBannerTitle: "۱۴ روز رایگان برای شروع",
     trialBannerBody:
-      "هر حساب کاربری با یک ماه استفادهٔ رایگان و کامل شروع می‌شود — بدون کارت بانکی. بعد از پایان دوره، یک پلن انتخاب و ثبت‌نام می‌کنی.",
+      "هر مدیر با ۱۴ روز استفادهٔ رایگان و کامل شروع می‌کند — بدون کارت بانکی. این دوره یک‌بار برای هر شخص است و به همهٔ آکادمی‌های او تعلق می‌گیرد. بعد از پایان دوره، یک پلن انتخاب و ثبت‌نام می‌کنی.",
     upcomingPrice:
       "از {date} قیمت این پلن به {price} تومان در ماه تغییر می‌کند. تا آن تاریخ می‌توانی با قیمت فعلی ثبت‌نام یا تمدید کنی.",
     noCommission: "بدون کارمزد از فروش دوره‌ها",
@@ -291,7 +311,7 @@ export const LANDING = {
       },
       {
         q: "می‌توانم رایگان امتحان کنم؟",
-        a: "بله. هر آکادمی یک ماه استفادهٔ کامل و رایگان دارد؛ بدون کارت بانکی. بعد از آن یکی از پلن‌ها را انتخاب می‌کنی و اطلاعاتت هم سر جایش می‌ماند.",
+        a: "بله. هر مدیر ۱۴ روز استفادهٔ کامل و رایگان دارد؛ بدون کارت بانکی. این دوره یک‌بار برای هر شخص است، نه برای هر آکادمی. بعد از آن یکی از پلن‌ها را انتخاب می‌کنی و اطلاعاتت هم سر جایش می‌ماند.",
       },
     ],
   },
@@ -299,8 +319,8 @@ export const LANDING = {
   cta: {
     title: "آکادمی خودت را همین امروز بساز",
     subtitle:
-      "یک ماه رایگان، بدون کارت بانکی، بدون ریسک. فقط دانش تو و یک داشبورد قدرتمند.",
-    primary: "شروع یک ماه رایگان",
+      "۱۴ روز رایگان، بدون کارت بانکی، بدون ریسک. فقط دانش تو و یک داشبورد قدرتمند.",
+    primary: "شروع ۱۴ روز رایگان",
     secondary: "دیدن نمونه‌ها",
   },
 
@@ -323,7 +343,6 @@ export const LANDING = {
           { href: "/about", label: "درباره ما" },
           { href: "/contact", label: "تماس با ما" },
           { href: "/articles", label: "وبلاگ" },
-          { href: "/about", label: "فرصت‌های شغلی" },
         ],
       },
       {
@@ -336,9 +355,9 @@ export const LANDING = {
       },
     ],
     socials: [
-      { id: "instagram", label: "اینستاگرام", href: "#" },
-      { id: "telegram", label: "تلگرام", href: "#" },
-      { id: "linkedin", label: "لینکدین", href: "#" },
+      { id: "instagram", label: "اینستاگرام", href: "" },
+      { id: "telegram", label: "تلگرام", href: "" },
+      { id: "linkedin", label: "لینکدین", href: "" },
     ],
     rights: "منتوما — همه حقوق محفوظ است.",
     madeIn: "ساخته‌شده با ❤️ در ایران",
