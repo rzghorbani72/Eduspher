@@ -98,6 +98,28 @@ html::-webkit-scrollbar {
   display: none; /* Chrome / Safari / Opera */
 }
 
+/* Tab auto-advance progress bar. Kept in CSS so the fill costs zero React
+   renders; publish-section.tsx sets the duration from CYCLE_MS. */
+@keyframes lp-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.lp-progress {
+  animation: lp-progress linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-progress {
+    animation: none;
+    width: 100%;
+  }
+}
+
 @keyframes lp-marquee {
   from {
     transform: translateX(0);
