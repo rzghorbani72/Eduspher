@@ -3,6 +3,11 @@ import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { EnamadSeal } from "@/components/academy/enamad-seal";
+import {
+  PLATFORM_ENAMAD_SEAL_CODE,
+  PLATFORM_ENAMAD_SEAL_ID,
+} from "@/lib/seo/enamad";
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 
@@ -55,6 +60,13 @@ export function SiteFooter() {
                 );
               })}
             </ul>
+
+            <div className="mt-6">
+              <EnamadSeal
+                sealId={PLATFORM_ENAMAD_SEAL_ID}
+                code={PLATFORM_ENAMAD_SEAL_CODE}
+              />
+            </div>
           </div>
 
           {LANDING.footer.columns.map((column) => (
