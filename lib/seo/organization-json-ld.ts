@@ -24,6 +24,31 @@ export function buildOrganizationJsonLd(ctx: SeoRequestContext): Record<string, 
   };
 }
 
+type AcademyOrganization = {
+  name: string;
+  description: string | null;
+  logoUrl: string | null;
+};
+
+/**
+ * An academy site is a school in its own right, not a page of ours — so it gets
+ * its own EducationalOrganization, never the platform's Organization.
+ */
+export function buildAcademyOrganizationJsonLd(
+  academy: AcademyOrganization,
+  ctx: SeoRequestContext,
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: academy.name,
+    url: ctx.canonicalUrl,
+    inLanguage: ctx.region === "ir" ? "fa-IR" : "en",
+    ...(academy.description ? { description: academy.description } : {}),
+    ...(academy.logoUrl ? { logo: academy.logoUrl } : {}),
+  };
+}
+
 export function buildWebSiteJsonLd(ctx: SeoRequestContext): Record<string, unknown> {
   return {
     "@context": "https://schema.org",

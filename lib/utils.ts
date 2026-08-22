@@ -309,11 +309,6 @@ export const formatDate = (
 export const truncate = (value: string, length = 150) =>
   value.length > length ? `${value.slice(0, length).trimEnd()}…` : value;
 
-export const buildOgImageUrl = (title: string, description?: string) =>
-  `/api/og?title=${encodeURIComponent(title)}${
-    description ? `&description=${encodeURIComponent(description)}` : ""
-  }`;
-
 export const resolveAssetUrl = (path?: string | null) => {
   if (!path) return null;
   if (/^https?:\/\//i.test(path)) {

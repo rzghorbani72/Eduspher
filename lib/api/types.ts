@@ -212,6 +212,10 @@ export interface StoreSummary {
   cover?: MediaAsset | null;
   logo?: MediaAsset | null;
   favicon?: MediaAsset | null;
+  description?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
+  og_image?: MediaAsset | null;
 }
 
 export interface StoreDetail extends StoreSummary {

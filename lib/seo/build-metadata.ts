@@ -20,19 +20,35 @@ type BuildMetadataOptions = {
   ctx?: SeoRequestContext;
 };
 
-type AcademyBranding = { name: string | null; iconUrl: string | null };
+type AcademyBranding = {
+  name: string | null;
+  iconUrl: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImageUrl: string | null;
+};
+
+const trimmed = (value: string | null | undefined): string | null =>
+  value?.trim() || null;
 
 /**
- * The academy's own name and favicon, so a visitor's tab shows the academy's
- * brand rather than the platform's. Empty on the platform site, and whenever
- * the academy is unreachable — callers then fall back to the platform values.
+ * The academy's own brand and manager-authored SEO text, so search results and
+ * shared links show the academy rather than the platform. Empty on the platform
+ * site, and whenever the academy is unreachable — callers then fall back to the
+ * platform values.
  *
- * `getAcademyBySlug` is request-cached, so asking for both costs one fetch.
+ * `getAcademyBySlug` is request-cached, so asking for all of it costs one fetch.
  */
 async function resolveAcademyBranding(
   ctx: SeoRequestContext,
 ): Promise<AcademyBranding> {
-  const none: AcademyBranding = { name: null, iconUrl: null };
+  const none: AcademyBranding = {
+    name: null,
+    iconUrl: null,
+    metaTitle: null,
+    metaDescription: null,
+    ogImageUrl: null,
+  };
   if (ctx.isPlatform) return none;
   try {
     const { slug } = await getAcademyContext();
@@ -40,9 +56,16 @@ async function resolveAcademyBranding(
     const academy = await getAcademyBySlug(slug);
     if (!academy) return none;
     const url = academy.favicon?.publicUrl;
+    const ogUrl = academy.og_image?.publicUrl;
     return {
-      name: academy.name?.trim() || null,
+      name: trimmed(academy.name),
       iconUrl: url ? resolveAssetUrl(url) : null,
+      metaTitle: trimmed(academy.meta_title),
+      // The manager's own academy description is a far better fallback than our
+      // platform copy, which describes us and not them.
+      metaDescription:
+        trimmed(academy.meta_description) ?? trimmed(academy.description),
+      ogImageUrl: ogUrl ? resolveAssetUrl(ogUrl) : null,
     };
   } catch {
     return none;
@@ -55,12 +78,21 @@ export async function buildSiteMetadata(
   const ctx = options.ctx ?? (await getSeoRequestContext());
   const platformPage = ctx.isPlatform ? getPlatformPageSeo(ctx.pathname) : null;
 
-  const { name: academyName, iconUrl } = await resolveAcademyBranding(ctx);
+  const {
+    name: academyName,
+    iconUrl,
+    metaTitle,
+    metaDescription,
+    ogImageUrl,
+  } = await resolveAcademyBranding(ctx);
 
   // On an academy site the brand is the academy the manager named — the
   // platform name is our internal identity and must never surface there.
   const brandName = academyName ?? seoDomains.siteName;
-  const baseTitle = options.title ?? platformPage?.title ?? brandName;
+  // A page that names itself always wins; the academy's SEO title is the
+  // site-wide default under it.
+  const baseTitle =
+    options.title ?? platformPage?.title ?? metaTitle ?? brandName;
   const academyBadge =
     !ctx.isPlatform && ctx.academySlug
       ? await getTrustBadge(ctx.academySlug)
@@ -81,6 +113,7 @@ export async function buildSiteMetadata(
   const description =
     options.description ??
     platformPage?.description ??
+    metaDescription ??
     seoDomains.siteDescription;
 
   const noIndex = shouldNoIndexPath(ctx.pathname);
@@ -110,11 +143,13 @@ export async function buildSiteMetadata(
       siteName: brandName,
       locale: openGraphLocale,
       alternateLocale: [alternateLocale],
+      ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
     },
     ...(iconUrl
       ? { icons: { icon: iconUrl, shortcut: iconUrl, apple: iconUrl } }

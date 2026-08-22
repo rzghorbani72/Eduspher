@@ -35,7 +35,7 @@ import {
 import { EnrollmentClosedBanner } from "@/components/academy/enrollment-closed-banner";
 import { EnrollmentStatusProvider } from "@/components/academy/enrollment-status-provider";
 import { getAcademyLanguage, getAcademyDirection } from "@/lib/i18n/server";
-import { CreativeBackground } from "@/components/motion/creative-background";
+import { CreativeBackgroundLazy } from "@/components/motion/creative-background-lazy";
 import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
 import { resolveAssetUrl } from "@/lib/utils";
@@ -92,7 +92,11 @@ export default async function RootLayout({
 
   // Get store details for language and country (server-side)
   // Try to get current store first (requires auth), then fall back to public store by slug
-  let currentAcademy = await getCurrentAcademy().catch(() => null);
+  // The platform root has no academy, so every academy lookup below is a
+  // guaranteed miss. Skipping them keeps the marketing page off the backend.
+  let currentAcademy = isPanelRoot
+    ? null
+    : await getCurrentAcademy().catch(() => null);
 
   // If no authenticated store, try to get public store by slug
   if (!currentAcademy && storeContext.slug) {
@@ -178,6 +182,17 @@ export default async function RootLayout({
         } as React.CSSProperties
       }
     >
+      <head>
+        {/* The only family the chrome actually renders. Preloading it stops the
+            headings swapping in after first paint (same as AdminPanel). */}
+        <link
+          rel="preload"
+          href="/fonts/vazirmatn.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body
         suppressHydrationWarning
         className="antialiased"
@@ -217,7 +232,7 @@ export default async function RootLayout({
                     <EnrollmentStatusProvider
                       closed={Boolean(enrollmentStatus?.disabled)}
                     >
-                      <ScrollAnimationProvider>
+                      <ScrollAnimationProvider enabled={!isPanelRoot}>
                         <div
                           className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-x-clip"
                           style={{
@@ -226,12 +241,15 @@ export default async function RootLayout({
                           }}
                         >
                           {/* Creative animated background with gradients and flying icons */}
-                          {!isPreview && !isSamplePreview && !isAuth && (
-                            <CreativeBackground
-                              theme={theme}
-                              storeIcons={validStoreIcons}
-                            />
-                          )}
+                          {!isPreview &&
+                            !isSamplePreview &&
+                            !isAuth &&
+                            !isPanelRoot && (
+                              <CreativeBackgroundLazy
+                                theme={theme}
+                                storeIcons={validStoreIcons}
+                              />
+                            )}
 
                           {!bareLayout && <PreviewModeBanner />}
                           {!bareLayout && enrollmentStatus?.disabled && (

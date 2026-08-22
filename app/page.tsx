@@ -3,7 +3,9 @@ import { PlatformOrganizationJsonLd } from "@/components/seo/platform-organizati
 import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { getAcademiesPublic, getPublicPlans } from "@/lib/api/server";
 
-export const dynamic = "force-dynamic";
+// The marketing page has no per-visitor content. Both fetches below already
+// cache for PUBLIC_REVALIDATE_SECONDS, so rendering per request bought nothing.
+export const revalidate = 300;
 
 export default async function Home() {
   const adminLoginUrl = await getServerAdminPanelUrl("/login");

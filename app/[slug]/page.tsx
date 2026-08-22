@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { AcademyHomePage } from "@/components/academy/academy-home-page";
+import { AcademyOrganizationJsonLd } from "@/components/seo/academy-organization-json-ld";
 import { getPublicAcademies } from "@/lib/api/server";
 
 export const dynamic = "force-dynamic";
@@ -26,5 +27,10 @@ export default async function AcademyHome({
     notFound();
   }
 
-  return <AcademyHomePage />;
+  return (
+    <>
+      <AcademyOrganizationJsonLd />
+      <AcademyHomePage />
+    </>
+  );
 }
