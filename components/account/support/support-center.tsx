@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, MessageSquare } from "lucide-react";
+import { LifeBuoy, MessageSquare, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { listMySupportTickets, type TicketListItem } from "@/lib/api/client";
 import { NewTicketForm } from "./new-ticket-form";
@@ -15,10 +16,14 @@ type View = { mode: "list" } | { mode: "new" } | { mode: "thread"; id: string };
 
 export function SupportCenter() {
   const { t } = useTranslation();
+  const format = useLocaleFormat();
   const [view, setView] = useState<View>({ mode: "list" });
   const [tickets, setTickets] = useState<TicketListItem[] | null>(null);
 
-  const load = () => listMySupportTickets().then((r) => setTickets(r.items)).catch(() => setTickets([]));
+  const load = () =>
+    listMySupportTickets()
+      .then((r) => setTickets(r.items))
+      .catch(() => setTickets([]));
   useEffect(() => {
     if (view.mode === "list") load();
   }, [view.mode]);
@@ -33,14 +38,21 @@ export function SupportCenter() {
   }
 
   if (view.mode === "thread") {
-    return <TicketThread ticketId={view.id} onBack={() => setView({ mode: "list" })} />;
+    return (
+      <TicketThread
+        ticketId={view.id}
+        onBack={() => setView({ mode: "list" })}
+      />
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">{t("support.title")}</h2>
+          <h2 className="text-lg font-semibold text-foreground">
+            {t("support.title")}
+          </h2>
           <p className="text-sm text-muted">{t("support.subtitle")}</p>
         </div>
         <Button size="sm" onClick={() => setView({ mode: "new" })}>
@@ -48,12 +60,19 @@ export function SupportCenter() {
         </Button>
       </div>
 
-      {tickets === null && <p className="text-sm text-muted">{t("support.loading")}</p>}
+      {tickets === null && (
+        <p className="text-sm text-muted">{t("support.loading")}</p>
+      )}
 
       {tickets !== null && tickets.length === 0 && (
         <EmptyState
+          icon={<LifeBuoy className="size-7" aria-hidden="true" />}
           title={t("support.empty")}
-          action={<Button onClick={() => setView({ mode: "new" })}>{t("support.newTicket")}</Button>}
+          action={
+            <Button onClick={() => setView({ mode: "new" })}>
+              {t("support.newTicket")}
+            </Button>
+          }
         />
       )}
 
@@ -66,17 +85,23 @@ export function SupportCenter() {
               className="flex w-full items-center justify-between gap-3 rounded-lg border border-theme p-3 text-start hover:border-primary"
             >
               <div className="min-w-0">
-                <p className="truncate font-medium text-foreground">{ti.subject}</p>
+                <p className="truncate font-medium text-foreground">
+                  {ti.subject}
+                </p>
                 <p className="text-xs text-muted">
-                  {ti.AssignedTo ? `${t("support.assignedTo")}: ${ti.AssignedTo.display_name}` : ""}
+                  {ti.AssignedTo
+                    ? `${t("support.assignedTo")}: ${ti.AssignedTo.display_name}`
+                    : ""}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <span className="flex items-center gap-1 text-xs text-muted">
                   <MessageSquare className="h-3 w-3" />
-                  {ti._count.Message}
+                  {format.number(ti._count.Message)}
                 </span>
-                <Badge variant={statusBadgeVariant(ti.status)}>{t(`support.statuses.${ti.status}`)}</Badge>
+                <Badge variant={statusBadgeVariant(ti.status)}>
+                  {t(`support.statuses.${ti.status}`)}
+                </Badge>
               </div>
             </button>
           </li>

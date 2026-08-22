@@ -45,8 +45,10 @@ const DEFAULT_FONT_STACK = FONT_STACK_MAP.vazirmatn;
 const SHADOW_MAP: Record<string, string> = {
   none: "none",
   subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-  medium: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-  strong: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+  medium:
+    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+  strong:
+    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
 };
 
 // Motion presets. A string CSS variable cannot be branched on in plain CSS, so
@@ -77,12 +79,14 @@ const CONTAINER_WIDTH_MAP: Record<string, string> = {
   wide: "1320px",
   full: "100%",
 };
-const HEADING_SCALE_MAP: Record<string, { sm: string; md: string; lg: string }> =
-  {
-    compact: { sm: "1.25rem", md: "1.875rem", lg: "2.5rem" },
-    standard: { sm: "1.5rem", md: "2.25rem", lg: "3rem" },
-    large: { sm: "1.875rem", md: "2.75rem", lg: "3.75rem" },
-  };
+const HEADING_SCALE_MAP: Record<
+  string,
+  { sm: string; md: string; lg: string }
+> = {
+  compact: { sm: "1.25rem", md: "1.875rem", lg: "2.5rem" },
+  standard: { sm: "1.5rem", md: "2.25rem", lg: "3rem" },
+  large: { sm: "1.875rem", md: "2.75rem", lg: "3.75rem" },
+};
 
 export const DEFAULT_PLATFORM_THEME: ThemeConfigInput = {
   primary_color: "#3b82f6",
@@ -100,8 +104,13 @@ export const DEFAULT_PLATFORM_THEME: ThemeConfigInput = {
 function relativeLuminance(hex: string): number {
   const c = hex.replace("#", "");
   const n = parseInt(
-    c.length === 3 ? c.split("").map((x) => x + x).join("") : c,
-    16
+    c.length === 3
+      ? c
+          .split("")
+          .map((x) => x + x)
+          .join("")
+      : c,
+    16,
   );
   return (
     (0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) /
@@ -113,16 +122,21 @@ export function hexContrast(hex: string): string {
   return relativeLuminance(hex) > 0.5 ? "#0f172a" : "#f8fafc";
 }
 
-// Button text prefers white — only switches to dark when the button background
-// is itself white-like (near-white), where white text would be unreadable.
+/**
+ * Button text prefers white, and switches to dark once the button colour is
+ * bright enough that white stops being readable on it. The old cut-off was 0.8
+ * — near-white only — so a pale brand colour (lavender, mint, light amber) kept
+ * white text at roughly 2:1 contrast. 0.6 catches those while leaving mid-tone
+ * blues and greens, where white still reads well, on white.
+ */
 export function buttonTextContrast(hex: string): string {
-  return relativeLuminance(hex) > 0.8 ? "#0f172a" : "#f8fafc";
+  return relativeLuminance(hex) > 0.6 ? "#0f172a" : "#f8fafc";
 }
 
 export function resolveThemeIsDark(
   theme: ThemeConfigInput | null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _prefersDark = false
+  _prefersDark = false,
 ): boolean {
   const dm = theme?.dark_mode;
   // Light is the default for every template; dark is opt-in. When the manager
@@ -135,7 +149,7 @@ export function resolveThemeIsDark(
 
 export function buildThemeCssVariables(
   theme: ThemeConfigInput | null,
-  options?: { prefersDark?: boolean }
+  options?: { prefersDark?: boolean },
 ): Record<string, string> {
   const t = { ...DEFAULT_PLATFORM_THEME, ...theme };
   const isDark = resolveThemeIsDark(theme, options?.prefersDark ?? false);
@@ -151,7 +165,8 @@ export function buildThemeCssVariables(
     : t.background_color_light || t.background_color || "#f8fafc";
   const accent = t.accent_color || "#f59e0b";
   const foreground = hexContrast(background);
-  const heading = HEADING_SCALE_MAP[t.heading_scale || "standard"] ||
+  const heading =
+    HEADING_SCALE_MAP[t.heading_scale || "standard"] ||
     HEADING_SCALE_MAP.standard;
 
   const animationStyle = String(t.element_animation_style || "subtle");
@@ -174,6 +189,11 @@ export function buildThemeCssVariables(
     "--theme-border-strong": `color-mix(in srgb, ${foreground} 18%, transparent)`,
     "--theme-muted": `color-mix(in srgb, ${foreground} 55%, ${background})`,
     "--theme-primary-subtle": `color-mix(in srgb, ${primary} 15%, ${background})`,
+    // Primary as TEXT on a light/neutral surface. A pale brand colour fails
+    // contrast when printed straight onto the background, so the ink variant is
+    // pulled toward the foreground — which darkens it on light themes and
+    // brightens it on dark ones.
+    "--theme-primary-ink": `color-mix(in srgb, ${primary} 62%, ${foreground})`,
     "--theme-secondary-subtle": `color-mix(in srgb, ${secondary} 12%, ${background})`,
     "--theme-accent-subtle": `color-mix(in srgb, ${accent} 15%, ${background})`,
     // Dark anchor band. Every new template inverts at least one section onto a
@@ -187,7 +207,8 @@ export function buildThemeCssVariables(
     "--theme-hairline": `color-mix(in srgb, ${foreground} 14%, transparent)`,
     "--theme-border-radius":
       BORDER_RADIUS_MAP[t.border_radius_style || "rounded"] || "16px",
-    "--theme-shadow": SHADOW_MAP[t.shadow_style || "medium"] || SHADOW_MAP.medium,
+    "--theme-shadow":
+      SHADOW_MAP[t.shadow_style || "medium"] || SHADOW_MAP.medium,
     "--theme-element-animation": ELEMENT_ANIMATION_MAP[animationStyle]
       ? animationStyle
       : "subtle",
@@ -215,7 +236,7 @@ export function themeCssVariablesToBlock(vars: Record<string, string>): string {
 
 export function applyThemeCssVariables(
   theme: ThemeConfigInput | null,
-  options?: { prefersDark?: boolean }
+  options?: { prefersDark?: boolean },
 ): void {
   if (typeof document === "undefined") return;
 

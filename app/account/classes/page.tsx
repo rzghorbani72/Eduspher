@@ -4,7 +4,11 @@ import { AccountPageHeader } from "@/components/account/account-page-header";
 import { DataPanel } from "@/components/shared/data-list/data-panel";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "@/components/ui/link";
-import { getAcademyBySlug, getCourseById, getEnrollments } from "@/lib/api/server";
+import {
+  getAcademyBySlug,
+  getCourseById,
+  getEnrollments,
+} from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
@@ -38,15 +42,22 @@ export default async function AccountClassesPage() {
 
   const [enrollmentsData, academy] = await Promise.all([
     getEnrollments({ limit: 100 }).catch(() => null),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
   const enrollments = enrollmentsData?.enrollments ?? [];
 
   const courses = await Promise.all(
-    enrollments.map((enrollment) => getCourseById(enrollment.course_id).catch(() => null)),
+    enrollments.map((enrollment) =>
+      getCourseById(enrollment.course_id).catch(() => null),
+    ),
   );
 
   const liveLessons: LiveLesson[] = courses.flatMap((course) =>
@@ -60,7 +71,8 @@ export default async function AccountClassesPage() {
               courseId: String(course.id),
               courseTitle: course.title,
               startsAt:
-                (lesson as { live_starts_at?: string | null }).live_starts_at ?? null,
+                (lesson as { live_starts_at?: string | null }).live_starts_at ??
+                null,
             })),
         )
       : [],
@@ -112,24 +124,33 @@ function LessonList({
   emptyLabel: string;
   openLabel: string;
 }) {
-  if (lessons.length === 0) return <EmptyState title={emptyLabel} />;
+  if (lessons.length === 0) return <EmptyState compact title={emptyLabel} />;
 
   return (
     <ul className="space-y-3">
       {lessons.map((lesson) => (
         <li key={lesson.id}>
           <Link
-            href={buildAcademyPath(storeSlug, `/learn/${lesson.courseId}/${lesson.id}`)}
+            href={buildAcademyPath(
+              storeSlug,
+              `/learn/${lesson.courseId}/${lesson.id}`,
+            )}
             className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-theme bg-card p-4 transition hover:border-(--theme-primary)/40"
           >
             <span>
-              <span className="block font-medium text-(--theme-foreground)">{lesson.title}</span>
+              <span className="block font-medium text-(--theme-foreground)">
+                {lesson.title}
+              </span>
               <span className="mt-1 block text-sm text-muted">
                 {lesson.courseTitle}
-                {lesson.startsAt ? ` · ${formatDate(lesson.startsAt, language, true)}` : ""}
+                {lesson.startsAt
+                  ? ` · ${formatDate(lesson.startsAt, language, true)}`
+                  : ""}
               </span>
             </span>
-            <span className="text-sm font-semibold text-(--theme-primary)">{openLabel}</span>
+            <span className="text-sm font-semibold text-(--theme-primary-ink)">
+              {openLabel}
+            </span>
           </Link>
         </li>
       ))}

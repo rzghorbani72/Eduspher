@@ -1,57 +1,63 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { 
-  Monitor, 
-  Smartphone, 
-  Globe, 
-  Trash2, 
-  LogOut, 
+import {
+  Monitor,
+  Smartphone,
+  Globe,
+  Trash2,
+  LogOut,
   RefreshCw,
   Shield,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  getActiveSessions, 
-  revokeSession, 
+import {
+  getActiveSessions,
+  revokeSession,
   logoutAllDevices,
-  type ActiveSession 
+  type ActiveSession,
 } from "@/lib/api/client";
-import { cn } from "@/lib/utils";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { cn, formatDate } from "@/lib/utils";
 
 const getDeviceIcon = (deviceInfo: string) => {
   const info = deviceInfo.toLowerCase();
-  if (info.includes("mobile") || info.includes("phone") || info.includes("android") || info.includes("iphone")) {
+  if (
+    info.includes("mobile") ||
+    info.includes("phone") ||
+    info.includes("android") ||
+    info.includes("iphone")
+  ) {
     return Smartphone;
   }
   return Monitor;
 };
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
+type RelativeTime =
+  { key: string; count: number } | { key: string; count: null };
 
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins} min ago`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-  
-  return date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+/** "3 hours ago" as data, so the caller can translate and localise the digits. */
+const relativeTime = (dateString: string, now: number): RelativeTime | null => {
+  const time = new Date(dateString).getTime();
+  if (Number.isNaN(time)) return null;
+
+  const minutes = Math.floor((now - time) / 60000);
+  if (minutes < 1) return { key: "account.justNow", count: null };
+  if (minutes < 60) return { key: "account.minutesAgo", count: minutes };
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return { key: "account.hoursAgo", count: hours };
+
+  const days = Math.floor(hours / 24);
+  return days < 7 ? { key: "account.daysAgo", count: days } : null;
 };
 
 export const ActiveSessions = () => {
-  const { t: translate } = useTranslation();
+  const { t: translate, language } = useTranslation();
+  const format = useLocaleFormat();
   const [sessions, setSessions] = useState<ActiveSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRevoking, setIsRevoking] = useState<string | null>(null);
@@ -76,6 +82,20 @@ export const ActiveSessions = () => {
     errorLoadingSessions: translate("account.errorLoadingSessions"),
     errorRevokingSession: translate("account.errorRevokingSession"),
     confirmRevokeAll: translate("account.confirmRevokeAll"),
+    unknownIp: translate("account.unknownIp"),
+  };
+
+  // Sessions older than a week fall back to a full date, which is already
+  // localised by `formatDate`.
+  const when = (value: string) => {
+    const relative = relativeTime(value, Date.now());
+    if (!relative) return formatDate(value, language, true);
+    return relative.count == null
+      ? translate(relative.key)
+      : translate(relative.key).replace(
+          "{count}",
+          format.number(relative.count),
+        );
   };
 
   const loadSessions = useCallback(async () => {
@@ -148,15 +168,13 @@ export const ActiveSessions = () => {
           size="sm"
           onClick={loadSessions}
           disabled={isLoading}
-          className="text-muted opacity-70 hover:opacity-100"
+          className="text-muted hover:text-foreground"
         >
           <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
         </Button>
       </div>
 
-      <p className="text-sm text-muted">
-        {t.description}
-      </p>
+      <p className="text-sm text-muted">{t.description}</p>
 
       {error && (
         <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
@@ -191,10 +209,8 @@ export const ActiveSessions = () => {
         </div>
       ) : sessions.length === 0 ? (
         <div className="rounded-xl border border-theme bg-surface p-6 text-center">
-          <Globe className="mx-auto h-10 w-10 text-muted opacity-60" />
-          <p className="mt-2 text-sm text-muted">
-            {t.noSessions}
-          </p>
+          <Globe className="mx-auto h-10 w-10 text-muted" />
+          <p className="mt-2 text-sm text-muted">{t.noSessions}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -209,7 +225,7 @@ export const ActiveSessions = () => {
                   "group relative rounded-xl border p-4 transition-all",
                   isCurrent
                     ? "border-[var(--theme-primary)]/30 bg-[var(--theme-primary)]/5 dark:border-[var(--theme-primary)]/30 dark:bg-[var(--theme-primary)]/10"
-                    : "border-theme bg-card hover:border-theme-strong"
+                    : "border-theme bg-card hover:border-theme-strong",
                 )}
               >
                 <div className="flex items-start gap-4">
@@ -218,7 +234,7 @@ export const ActiveSessions = () => {
                       "flex h-10 w-10 items-center justify-center rounded-full",
                       isCurrent
                         ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)]"
-                        : "bg-surface-alt text-muted opacity-70"
+                        : "bg-surface-alt text-muted",
                     )}
                   >
                     <DeviceIcon className="h-5 w-5" />
@@ -236,16 +252,22 @@ export const ActiveSessions = () => {
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted opacity-70">
+                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
                       <span className="flex items-center gap-1">
                         <Globe className="h-3 w-3" />
-                        {session.ip_address || "Unknown IP"}
+                        {session.ip_address ? (
+                          <span dir="ltr">
+                            {format.digits(session.ip_address)}
+                          </span>
+                        ) : (
+                          t.unknownIp
+                        )}
                       </span>
                       <span>
-                        {t.lastUsed}: {formatDate(session.last_used_at)}
+                        {t.lastUsed}: {when(session.last_used_at)}
                       </span>
                       <span>
-                        {t.createdAt}: {formatDate(session.created_at)}
+                        {t.createdAt}: {when(session.created_at)}
                       </span>
                     </div>
                   </div>
@@ -256,7 +278,7 @@ export const ActiveSessions = () => {
                       size="sm"
                       onClick={() => handleRevokeSession(session.id)}
                       disabled={isRevoking === session.id}
-                      className="text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="shrink-0 text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50"
                     >
                       {isRevoking === session.id ? (
                         <RefreshCw className="h-4 w-4 animate-spin" />
@@ -295,4 +317,3 @@ export const ActiveSessions = () => {
     </div>
   );
 };
-

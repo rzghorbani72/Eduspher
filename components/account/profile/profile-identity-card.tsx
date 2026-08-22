@@ -4,6 +4,7 @@ import { BadgeCheck, ShieldAlert } from "lucide-react";
 
 import { AddContactForm } from "@/components/account/add-contact-form";
 import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
+import { useLocaleDigits } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface ProfileIdentityCardProps {
@@ -32,6 +33,7 @@ export function ProfileIdentityCard({
   defaultCountryCode,
 }: ProfileIdentityCardProps) {
   const { t } = useTranslation();
+  const localeDigits = useLocaleDigits();
 
   return (
     <div className="space-y-5 rounded-xl border border-theme bg-card p-5 shadow-sm">
@@ -39,7 +41,10 @@ export function ProfileIdentityCard({
         <h3 className="mb-4 text-base font-semibold text-(--theme-foreground)">
           {t("account.identity")}
         </h3>
-        <EditDisplayNameForm profileId={profileId} currentDisplayName={displayName} />
+        <EditDisplayNameForm
+          profileId={profileId}
+          currentDisplayName={displayName}
+        />
       </div>
 
       <dl className="space-y-2 text-sm">
@@ -52,7 +57,7 @@ export function ProfileIdentityCard({
         />
         <ContactRow
           label={t("account.phone")}
-          value={phoneNumber}
+          value={phoneNumber ? localeDigits(phoneNumber) : null}
           confirmed={phoneConfirmed}
           confirmedLabel={t("account.verified")}
           unconfirmedLabel={t("account.notVerified")}
@@ -95,7 +100,9 @@ function ContactRow({
     <div className="flex items-center justify-between gap-3">
       <dt className="text-muted">{label}</dt>
       <dd className="flex items-center gap-2 font-medium text-(--theme-foreground)">
-        <span className="break-all">{value}</span>
+        <span className="break-all" dir="ltr">
+          {value}
+        </span>
         {confirmed ? (
           <span className="inline-flex items-center gap-1 text-xs text-green-600">
             <BadgeCheck className="size-3.5" aria-hidden="true" />

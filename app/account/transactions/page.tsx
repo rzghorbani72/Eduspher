@@ -2,12 +2,16 @@ import { Receipt } from "lucide-react";
 
 import { AccountPageHeader } from "@/components/account/account-page-header";
 import { StatusPill, toneForStatus } from "@/components/account/status-pill";
-import { DataList, type DataColumn } from "@/components/shared/data-list/data-list";
+import {
+  DataList,
+  type DataColumn,
+} from "@/components/shared/data-list/data-list";
 import { DataPanel } from "@/components/shared/data-list/data-panel";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "@/components/ui/link";
 import { getPayments } from "@/lib/api/account-server";
 import type { PaymentSummary } from "@/lib/api/account-types";
+import { gatewayLabel } from "@/lib/account-labels";
 import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
@@ -34,10 +38,15 @@ export default async function AccountTransactionsPage() {
 
   const [{ payments }, academy] = await Promise.all([
     getPayments(),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
   const money = (value: number) =>
     toPersianDigits(formatCurrencyWithAcademy(value, academy), language);
@@ -48,29 +57,38 @@ export default async function AccountTransactionsPage() {
       header: translate("account.transactionItem"),
       cell: (payment) => (
         <Link
-          href={buildAcademyPath(slugForPaths, `/account/transactions/${payment.id}`)}
+          href={buildAcademyPath(
+            slugForPaths,
+            `/account/transactions/${payment.id}`,
+          )}
           className="font-medium hover:underline"
         >
-          {payment.Course?.title ?? payment.Order?.order_number ?? translate("account.unknown")}
+          {payment.Course?.title ??
+            payment.Order?.order_number ??
+            translate("account.unknown")}
         </Link>
       ),
     },
     {
       id: "date",
       header: translate("account.transactionDate"),
-      cell: (payment) => formatDate(payment.paid_at ?? payment.created_at, language),
+      cell: (payment) =>
+        formatDate(payment.paid_at ?? payment.created_at, language),
     },
     {
       id: "method",
       header: translate("account.transactionMethod"),
-      cell: (payment) => payment.gateway ?? payment.provider ?? "—",
+      cell: (payment) =>
+        gatewayLabel(payment.gateway ?? payment.provider, translate),
     },
     {
       id: "amount",
       header: translate("account.transactionAmount"),
       align: "end",
       cell: (payment) => (
-        <span className="font-semibold text-(--theme-foreground)">{money(payment.amount)}</span>
+        <span className="font-semibold text-(--theme-foreground)">
+          {money(payment.amount)}
+        </span>
       ),
     },
     {
@@ -80,7 +98,9 @@ export default async function AccountTransactionsPage() {
       cell: (payment) => (
         <StatusPill
           label={
-            STATUS_KEY[payment.status] ? translate(STATUS_KEY[payment.status]) : payment.status
+            STATUS_KEY[payment.status]
+              ? translate(STATUS_KEY[payment.status])
+              : payment.status
           }
           tone={toneForStatus(payment.status)}
         />
@@ -102,6 +122,8 @@ export default async function AccountTransactionsPage() {
           rowKey={(payment) => payment.id}
           emptyState={
             <EmptyState
+              compact
+              icon={<Receipt className="size-7" aria-hidden="true" />}
               title={translate("account.noTransactions")}
               description={translate("account.noTransactionsDescription")}
             />

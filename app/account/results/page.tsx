@@ -9,6 +9,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
+import { scoreLabel } from "@/lib/account-labels";
 import { buildAcademyPath, formatDate } from "@/lib/utils";
 
 export default async function AccountResultsPage() {
@@ -17,12 +18,19 @@ export default async function AccountResultsPage() {
 
   const [submissions, academy] = await Promise.all([
     getSubmissions(),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
-  const graded = submissions.filter((submission) => submission.status === "GRADED");
+  const graded = submissions.filter(
+    (submission) => submission.status === "GRADED",
+  );
 
   return (
     <div className="space-y-6">
@@ -34,7 +42,11 @@ export default async function AccountResultsPage() {
 
       <DataPanel title={translate("account.assignmentResults")}>
         {graded.length === 0 ? (
-          <EmptyState title={translate("account.noResults")} />
+          <EmptyState
+            compact
+            icon={<CheckCircle2 className="size-7" aria-hidden="true" />}
+            title={translate("account.noResults")}
+          />
         ) : (
           <ul className="space-y-3">
             {graded.map((submission) => (
@@ -51,15 +63,24 @@ export default async function AccountResultsPage() {
                       )}
                       className="font-medium text-(--theme-foreground) hover:underline"
                     >
-                      {submission.Assignment?.title ?? translate("account.unknown")}
+                      {submission.Assignment?.title ??
+                        translate("account.unknown")}
                     </Link>
                     <p className="mt-1 text-xs text-muted">
                       {translate("account.attemptSubmitted")}:{" "}
-                      {formatDate(submission.graded_at ?? submission.submitted_at, language)}
+                      {formatDate(
+                        submission.graded_at ?? submission.submitted_at,
+                        language,
+                      )}
                     </p>
                   </div>
-                  <p className="font-semibold text-(--theme-primary)">
-                    {submission.score} / {submission.Assignment?.max_score ?? "—"}
+                  <p className="font-semibold text-(--theme-primary-ink)">
+                    {scoreLabel(
+                      submission.score,
+                      submission.Assignment?.max_score,
+                      translate,
+                      language,
+                    )}
                   </p>
                 </div>
                 {submission.feedback ? (

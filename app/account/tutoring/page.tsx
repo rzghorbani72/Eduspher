@@ -25,10 +25,15 @@ export default async function AccountTutoringPage() {
 
   const [engagements, academy] = await Promise.all([
     getTutoringEngagements(),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
 
   return (
@@ -39,11 +44,15 @@ export default async function AccountTutoringPage() {
       />
 
       {engagements.length === 0 ? (
-        <EmptyState title={translate("account.noPrivateTutoring")} />
+        <EmptyState
+          icon={<UserRoundCheck className="size-7" aria-hidden="true" />}
+          title={translate("account.noPrivateTutoring")}
+        />
       ) : (
         <ul className="space-y-3">
           {engagements.map((engagement) => {
-            const isLive = engagement.status === "ACTIVE" || engagement.status === "PENDING";
+            const isLive =
+              engagement.status === "ACTIVE" || engagement.status === "PENDING";
             return (
               <li
                 key={engagement.id}
@@ -56,7 +65,8 @@ export default async function AccountTutoringPage() {
                     </p>
                     <p className="mt-1 text-sm text-muted">
                       {translate("account.tutorLabel")}:{" "}
-                      {engagement.Tutor?.display_name ?? translate("account.unknown")}
+                      {engagement.Tutor?.display_name ??
+                        translate("account.unknown")}
                     </p>
                     {engagement.ends_at ? (
                       <p className="mt-1 text-xs text-muted">
@@ -81,7 +91,7 @@ export default async function AccountTutoringPage() {
                       ? `/learn/${engagement.course_id}`
                       : `/courses/${engagement.course_id}`,
                   )}
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary) underline-offset-4 hover:underline"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
                 >
                   {isLive
                     ? translate("account.openTutoringCourse")

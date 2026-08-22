@@ -20,10 +20,15 @@ export default async function AccountCoursesPage() {
   const [enrollmentsData, accessRows, academy] = await Promise.all([
     getEnrollments({ limit: 100 }).catch(() => null),
     getCourseAccess(),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
 
   const enrollments = enrollmentsData?.enrollments ?? [];
@@ -32,8 +37,12 @@ export default async function AccountCoursesPage() {
 
   // A subscription, tutoring term or group grant opens a course without creating
   // an Enrollment row, so those courses would otherwise be invisible here.
-  const enrolledCourseIds = new Set(enrollments.map((item) => String(item.course_id)));
-  const extraAccess = accessRows.filter((row) => !enrolledCourseIds.has(row.course_id));
+  const enrolledCourseIds = new Set(
+    enrollments.map((item) => String(item.course_id)),
+  );
+  const extraAccess = accessRows.filter(
+    (row) => !enrolledCourseIds.has(row.course_id),
+  );
 
   return (
     <div className="space-y-6">
@@ -54,6 +63,7 @@ export default async function AccountCoursesPage() {
 
       {enrollments.length === 0 && extraAccess.length === 0 ? (
         <EmptyState
+          icon={<GraduationCap className="size-7" aria-hidden="true" />}
           title={translate("account.noCoursesPurchased")}
           description={translate("account.browseCatalogDescription")}
           action={
@@ -74,7 +84,11 @@ export default async function AccountCoursesPage() {
       />
 
       {extraAccess.length > 0 ? (
-        <ExtraAccessList rows={extraAccess} storeSlug={slugForPaths} language={language} />
+        <ExtraAccessList
+          rows={extraAccess}
+          storeSlug={slugForPaths}
+          language={language}
+        />
       ) : null}
 
       <CourseSection
@@ -101,7 +115,9 @@ function CourseSection({
 
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-semibold text-(--theme-foreground)">{title}</h2>
+      <h2 className="text-lg font-semibold text-(--theme-foreground)">
+        {title}
+      </h2>
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {enrollments.map((enrollment) => (
           <EnrolledCourseCard

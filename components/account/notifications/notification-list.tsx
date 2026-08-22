@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCheck } from "lucide-react";
+import { BellOff, CheckCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -12,6 +12,7 @@ import {
 } from "@/lib/api/client";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { cn, formatDate } from "@/lib/utils";
 
 interface NotificationListProps {
@@ -23,8 +24,12 @@ interface NotificationListProps {
  * Server-rendered first paint, then read-state is updated locally so marking one
  * as read does not re-fetch the whole list.
  */
-export function NotificationList({ initialItems, language }: NotificationListProps) {
+export function NotificationList({
+  initialItems,
+  language,
+}: NotificationListProps) {
   const { t } = useTranslation();
+  const format = useLocaleFormat();
   const [items, setItems] = useState(initialItems);
   const [busy, setBusy] = useState(false);
 
@@ -32,7 +37,9 @@ export function NotificationList({ initialItems, language }: NotificationListPro
 
   async function handleMarkRead(id: string) {
     setItems((current) =>
-      current.map((item) => (item.id === id ? { ...item, is_read: true } : item)),
+      current.map((item) =>
+        item.id === id ? { ...item, is_read: true } : item,
+      ),
     );
     await markNotificationRead(id).catch(() => undefined);
   }
@@ -45,7 +52,12 @@ export function NotificationList({ initialItems, language }: NotificationListPro
   }
 
   if (items.length === 0) {
-    return <EmptyState title={t("notifications.empty")} />;
+    return (
+      <EmptyState
+        icon={<BellOff className="size-7" aria-hidden="true" />}
+        title={t("notifications.empty")}
+      />
+    );
   }
 
   return (
@@ -53,9 +65,15 @@ export function NotificationList({ initialItems, language }: NotificationListPro
       {unreadCount > 0 ? (
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm text-muted">
-            {unreadCount} {t("notifications.unread")}
+            {format.number(unreadCount)} {t("notifications.unread")}
           </p>
-          <Button type="button" variant="outline" size="sm" onClick={handleMarkAll} disabled={busy}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleMarkAll}
+            disabled={busy}
+          >
             <CheckCheck className="me-2 size-4" />
             {t("notifications.markAllRead")}
           </Button>
@@ -75,7 +93,9 @@ export function NotificationList({ initialItems, language }: NotificationListPro
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-medium text-(--theme-foreground)">{item.title}</p>
+                <p className="font-medium text-(--theme-foreground)">
+                  {item.title}
+                </p>
                 <p className="mt-1 text-sm text-muted">{item.message}</p>
                 <p className="mt-1 text-xs text-muted">
                   {formatDate(item.created_at, language, true)}
@@ -85,7 +105,7 @@ export function NotificationList({ initialItems, language }: NotificationListPro
                 <button
                   type="button"
                   onClick={() => handleMarkRead(item.id)}
-                  className="shrink-0 text-xs font-semibold text-(--theme-primary) hover:underline"
+                  className="shrink-0 text-xs font-semibold text-(--theme-primary-ink) hover:underline"
                 >
                   {t("notifications.markRead")}
                 </button>

@@ -7,15 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { 
-  sendEmailOtp, 
-  sendPhoneOtp, 
-  verifyEmailOtp, 
-  verifyPhoneOtp 
+import {
+  sendEmailOtp,
+  sendPhoneOtp,
+  verifyEmailOtp,
+  verifyPhoneOtp,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
-import { getDefaultCountry, getCountryByCode, type CountryCode } from "@/lib/country-codes";
+import {
+  getDefaultCountry,
+  getCountryByCode,
+  type CountryCode,
+} from "@/lib/country-codes";
 import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
 
 interface AddContactFormProps {
@@ -36,33 +41,42 @@ const isValidPhone = (phone: string): boolean => {
   return PHONE_REGEX.test(phone);
 };
 
-const getEmailValidationError = (email: string): string | null => {
-  if (!email) return "Email is required";
-  if (!isValidEmail(email)) return "Please enter a valid email address";
+type Translate = (key: string) => string;
+
+const getEmailValidationError = (
+  email: string,
+  t: Translate,
+): string | null => {
+  if (!email) return t("auth.emailRequired");
+  if (!isValidEmail(email)) return t("account.invalidEmail");
   return null;
 };
 
-const getPhoneValidationError = (phone: string): string | null => {
-  if (!phone) return "Phone number is required";
-  if (!isValidPhone(phone)) return "Please enter a valid phone number";
+const getPhoneValidationError = (
+  phone: string,
+  t: Translate,
+): string | null => {
+  if (!phone) return t("auth.phoneRequired");
+  if (!isValidPhone(phone)) return t("account.invalidPhone");
   return null;
 };
 
 export const AddContactForm = ({
   method,
   defaultCountryCode,
-  onSuccess
+  onSuccess,
 }: AddContactFormProps) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [step, setStep] = useState<"input" | "otp" | "success">("input");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  
+
   // Email state
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
-  
+
   // Phone state
   const getInitialCountry = () => {
     if (defaultCountryCode) {
@@ -71,10 +85,11 @@ export const AddContactForm = ({
     }
     return getDefaultCountry();
   };
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const [selectedCountry, setSelectedCountry] =
+    useState<CountryCode>(getInitialCountry());
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState<string | null>(null);
-  
+
   // OTP state
   const [otp, setOtp] = useState("");
   const [, setOtpSent] = useState(false);
@@ -89,51 +104,62 @@ export const AddContactForm = ({
     try {
       if (method === "email") {
         if (!email.trim()) {
-          setError("Email is required");
-          setEmailError("Email is required");
+          setError(t("auth.emailRequired"));
+          setEmailError(t("auth.emailRequired"));
           return;
         }
-        const emailError = getEmailValidationError(email);
+        const emailError = getEmailValidationError(email, t);
         if (emailError) {
           setError(emailError);
           setEmailError(emailError);
           return;
         }
-        const response = await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION) as { otp?: string };
+        const response = (await sendEmailOtp(
+          email,
+          OtpType.REGISTER_EMAIL_VERIFICATION,
+        )) as { otp?: string };
         // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
-          setMessage(`OTP sent to your email address\n\n🔐 Code: ${response.otp}`);
+          setMessage(
+            `OTP sent to your email address\n\n🔐 Code: ${response.otp}`,
+          );
         } else {
-          setMessage("OTP sent to your email address");
+          setMessage(t("auth.otpSentToEmail"));
         }
         setOtpSent(true);
         setStep("otp");
       } else {
         if (!phoneNumber.trim()) {
-          setError("Phone number is required");
-          setPhoneError("Phone number is required");
+          setError(t("auth.phoneRequired"));
+          setPhoneError(t("auth.phoneRequired"));
           return;
         }
         const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
         const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-        const phoneError = getPhoneValidationError(fullPhone);
+        const phoneError = getPhoneValidationError(fullPhone, t);
         if (phoneError) {
           setError(phoneError);
           setPhoneError(phoneError);
           return;
         }
-        const response = await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION) as { otp?: string };
+        const response = (await sendPhoneOtp(
+          fullPhone,
+          OtpType.REGISTER_PHONE_VERIFICATION,
+        )) as { otp?: string };
         // TODO: Remove when real SMS/email provider is integrated
         if (response?.otp) {
-          setMessage(`OTP sent to your phone number\n\n🔐 Code: ${response.otp}`);
+          setMessage(
+            `OTP sent to your phone number\n\n🔐 Code: ${response.otp}`,
+          );
         } else {
-          setMessage("OTP sent to your phone number");
+          setMessage(t("auth.otpSentToPhone"));
         }
         setOtpSent(true);
         setStep("otp");
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to send OTP";
+      const errorMessage =
+        err instanceof Error ? err.message : t("account.sendOtpFailed");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -142,7 +168,7 @@ export const AddContactForm = ({
 
   const handleVerifyOtp = async () => {
     if (!otp.trim()) {
-      setError("OTP is required");
+      setError(t("auth.enterOtpFirst"));
       return;
     }
 
@@ -152,34 +178,43 @@ export const AddContactForm = ({
 
     try {
       if (method === "email") {
-        const result = await verifyEmailOtp(email, otp, OtpType.REGISTER_EMAIL_VERIFICATION);
+        const result = await verifyEmailOtp(
+          email,
+          otp,
+          OtpType.REGISTER_EMAIL_VERIFICATION,
+        );
         if (result.success !== false) {
           setStep("success");
-          setMessage("Email verified and added successfully");
+          setMessage(t("account.emailAdded"));
           onSuccess?.();
           setTimeout(() => {
             router.refresh();
           }, 1500);
         } else {
-          setError("Invalid OTP. Please try again.");
+          setError(t("auth.invalidOtp"));
         }
       } else {
         const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
         const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-        const result = await verifyPhoneOtp(fullPhone, otp, OtpType.REGISTER_PHONE_VERIFICATION);
+        const result = await verifyPhoneOtp(
+          fullPhone,
+          otp,
+          OtpType.REGISTER_PHONE_VERIFICATION,
+        );
         if (result.success !== false) {
           setStep("success");
-          setMessage("Phone verified and added successfully");
+          setMessage(t("account.phoneAdded"));
           onSuccess?.();
           setTimeout(() => {
             router.refresh();
           }, 1500);
         } else {
-          setError("Invalid OTP. Please try again.");
+          setError(t("auth.invalidOtp"));
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Invalid OTP";
+      const errorMessage =
+        err instanceof Error ? err.message : t("auth.invalidOtp");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -193,12 +228,11 @@ export const AddContactForm = ({
           <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-            {method === "email" ? "Email Added Successfully!" : "Phone Added Successfully!"}
+          <h3 className="text-lg font-semibold text-foreground">
+            {method === "email"
+              ? t("account.emailAdded")
+              : t("account.phoneAdded")}
           </h3>
-          <p className="mt-2 text-sm text-muted dark:text-muted opacity-60">
-            Your {method === "email" ? "email address" : "phone number"} has been verified and added to your account.
-          </p>
         </div>
       </div>
     );
@@ -208,16 +242,22 @@ export const AddContactForm = ({
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="otp">Verification Code</Label>
+          <Label htmlFor="otp">{t("auth.otpVerification")}</Label>
           <Input
             id="otp"
             type="text"
-            placeholder="Enter 6-digit code"
+            placeholder={t("auth.enterOtpCode")}
             value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            onChange={(e) =>
+              setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+            }
             maxLength={6}
             autoComplete="one-time-code"
-            className={error && error.includes("OTP") ? "border-amber-500 focus:border-amber-500" : ""}
+            className={
+              error && error.includes("OTP")
+                ? "border-amber-500 focus:border-amber-500"
+                : ""
+            }
           />
         </div>
 
@@ -245,7 +285,7 @@ export const AddContactForm = ({
             }}
             className="flex-1"
           >
-            Back
+            {t("common.back")}
           </Button>
           <Button
             type="button"
@@ -254,7 +294,7 @@ export const AddContactForm = ({
             className="flex-1"
             loading={isLoading}
           >
-            {isLoading ? "Verifying..." : "Verify OTP"}
+            {isLoading ? t("auth.verifying") : t("auth.verifyOtp")}
           </Button>
         </div>
       </div>
@@ -265,37 +305,42 @@ export const AddContactForm = ({
     <div className="space-y-4">
       {method === "email" ? (
         <div className="space-y-2">
-          <Label htmlFor="email">Email Address</Label>
+          <Label htmlFor="email">{t("account.email")}</Label>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-muted opacity-60" />
+              <Mail className="h-5 w-5 text-muted" />
             </div>
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t("account.emailPlaceholder")}
               value={email}
               onChange={(e) => {
                 const value = e.target.value;
                 setEmail(value);
-                const error = getEmailValidationError(value);
+                const error = getEmailValidationError(value, t);
                 setEmailError(error);
               }}
               onBlur={(e) => {
-                const error = getEmailValidationError(e.target.value);
+                const error = getEmailValidationError(e.target.value, t);
                 setEmailError(error);
               }}
-              className={cn("pl-10", emailError && "border-amber-500 focus:border-amber-500")}
+              className={cn(
+                "pl-10",
+                emailError && "border-amber-500 focus:border-amber-500",
+              )}
               autoComplete="email"
             />
           </div>
           {emailError && (
-            <p className="text-sm text-amber-600 dark:text-amber-400">{emailError}</p>
+            <p className="text-sm text-amber-600 dark:text-amber-400">
+              {emailError}
+            </p>
           )}
         </div>
       ) : (
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor="phone">{t("account.phoneNumber")}</Label>
           <PhoneInput
             id="phone"
             value={phoneNumber}
@@ -303,7 +348,9 @@ export const AddContactForm = ({
               setPhoneNumber(value);
               const cleaned = cleanPhoneNumber(value, selectedCountry);
               const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-              const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+              const error = fullPhone
+                ? getPhoneValidationError(fullPhone, t)
+                : null;
               setPhoneError(error);
             }}
             onCountryChange={(country) => {
@@ -311,17 +358,23 @@ export const AddContactForm = ({
               if (phoneNumber) {
                 const cleaned = cleanPhoneNumber(phoneNumber, country);
                 const fullPhone = getFullPhoneNumber(cleaned, country);
-                const error = fullPhone ? getPhoneValidationError(fullPhone) : null;
+                const error = fullPhone
+                  ? getPhoneValidationError(fullPhone, t)
+                  : null;
                 setPhoneError(error);
               }
             }}
             defaultCountry={selectedCountry}
-            placeholder="Enter phone number"
+            placeholder={t("account.phonePlaceholder")}
             autoComplete="tel"
-            className={phoneError ? "border-amber-500 focus:border-amber-500" : ""}
+            className={
+              phoneError ? "border-amber-500 focus:border-amber-500" : ""
+            }
           />
           {phoneError && (
-            <p className="text-sm text-amber-600 dark:text-amber-400">{phoneError}</p>
+            <p className="text-sm text-amber-600 dark:text-amber-400">
+              {phoneError}
+            </p>
           )}
         </div>
       )}
@@ -345,9 +398,8 @@ export const AddContactForm = ({
         className="w-full"
         loading={isLoading}
       >
-        {isLoading ? "Sending..." : "Send OTP"}
+        {isLoading ? t("auth.sending") : t("auth.sendOtp")}
       </Button>
     </div>
   );
 };
-

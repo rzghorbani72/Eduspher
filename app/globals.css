@@ -14,6 +14,48 @@
 }
 @import "tailwindcss";
 
+/* ── Semantic theme utilities ─────────────────────────────────────────────────
+   These map Tailwind utility names onto the live `--theme-*` variables, so
+   `bg-card`, `text-muted` or `border-theme` follow whichever academy theme is
+   active. They live here rather than in `tailwind.config.js`: Tailwind v4 only
+   reads a JS config when a `@config` directive points at it, and without one
+   every class below emitted no CSS at all. */
+@theme {
+  --color-background: var(--theme-background);
+  --color-foreground: var(--theme-foreground);
+  --color-card: var(--theme-card-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-alt: var(--theme-surface-alt);
+  --color-muted: var(--theme-muted);
+  --color-primary: var(--theme-primary);
+  --color-primary-ink: var(--theme-primary-ink);
+  --color-primary-subtle: var(--theme-primary-subtle);
+  --color-on-primary: var(--theme-on-primary);
+  --color-secondary: var(--theme-secondary);
+  --color-secondary-subtle: var(--theme-secondary-subtle);
+  --color-on-secondary: var(--theme-on-secondary);
+  --color-accent: var(--theme-accent);
+  --color-accent-subtle: var(--theme-accent-subtle);
+  --color-on-accent: var(--theme-on-accent);
+
+  --radius-theme: var(--theme-border-radius, 16px);
+  --shadow-theme: var(--theme-shadow, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+@utility border-theme {
+  border-color: var(--theme-border-color);
+}
+
+@utility border-theme-strong {
+  border-color: var(--theme-border-strong);
+}
+
+@utility divide-theme {
+  & > :not([hidden]) ~ :not([hidden]) {
+    border-color: var(--theme-border-color);
+  }
+}
+
 /* ── Platform landing design tokens (Figma "Landing" frame) ───────────────────
    Prefixed `lp-` and intentionally NOT bound to the academy `--theme-*` vars:
    the marketing site must look identical no matter which tenant theme is
@@ -335,6 +377,16 @@ html::-webkit-scrollbar {
     var(--theme-background)
   );
 
+  /* Readable primary for TEXT on a light/neutral surface. An academy may pick a
+     pale brand color, and pale-on-white fails contrast, so the ink variant is
+     pulled toward the foreground. In a dark theme the foreground is light, so
+     the same mix brightens instead — it stays readable either way. */
+  --theme-primary-ink: color-mix(
+    in srgb,
+    var(--theme-primary) 62%,
+    var(--theme-foreground)
+  );
+
   /* On-color text vars — guaranteed contrast against solid primary/secondary/accent backgrounds */
   --theme-on-primary: #ffffff;
   --theme-on-secondary: #ffffff;
@@ -469,33 +521,40 @@ body {
   }
 }
 
-/* Ensure links inside buttons are white */
-button a,
-[role="button"] a,
-a[class*="text-white"],
+/* Ensure links styled as solid buttons keep readable text. A link that already
+   sets `text-(--theme-on-primary)` opts out: that variable is the ink computed
+   for the academy's own primary colour, and forcing white over it puts white on
+   a pale brand colour. */
+button a:not([class*="theme-on-primary"]),
+[role="button"] a:not([class*="theme-on-primary"]),
+a[class*="text-white"]:not([class*="theme-on-primary"]),
 /* When asChild is used, the Link becomes the button element - target links with
    button-like styling.
    `[class*="bg-"]` also matches a `hover:bg-*` utility, so a pill-shaped link
    that only tints on hover (template nav) was being forced to permanent white.
    Template sections set their own on-* colors, so they opt out like .lp-root. */
-a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):not(.ui-blocks-root a),
-a[class*="bg-\[var\(--theme-primary\)\]"],
-a[class*="bg-sky-600"],
-a[class*="bg-sky-500"],
-a[class*="bg-slate-900"] {
+a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):not(.ui-blocks-root a):not([class*="bg-card"]):not([class*="bg-surface"]):not([class*="bg-transparent"]):not([class*="theme-on-primary"]),
+a[class*="bg-\[var\(--theme-primary\)\]"]:not([class*="theme-on-primary"]),
+a[class*="bg-sky-600"]:not([class*="theme-on-primary"]),
+a[class*="bg-sky-500"]:not([class*="theme-on-primary"]),
+a[class*="bg-slate-900"]:not([class*="theme-on-primary"]) {
   color: white !important;
 }
 
-button a:hover,
-[role="button"] a:hover,
-a[class*="text-white"]:hover,
+button a:not([class*="theme-on-primary"]):hover,
+[role="button"] a:not([class*="theme-on-primary"]):hover,
+a[class*="text-white"]:not([class*="theme-on-primary"]):hover,
 a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):not(
     .ui-blocks-root a
+  ):not([class*="bg-card"]):not([class*="bg-surface"]):not(
+    [class*="bg-transparent"]
+  ):not([class*="theme-on-primary"]):hover,
+a[class*="bg-\[var\(--theme-primary\)\]"]:not(
+    [class*="theme-on-primary"]
   ):hover,
-a[class*="bg-\[var\(--theme-primary\)\]"]:hover,
-a[class*="bg-sky-600"]:hover,
-a[class*="bg-sky-500"]:hover,
-a[class*="bg-slate-900"]:hover {
+a[class*="bg-sky-600"]:not([class*="theme-on-primary"]):hover,
+a[class*="bg-sky-500"]:not([class*="theme-on-primary"]):hover,
+a[class*="bg-slate-900"]:not([class*="theme-on-primary"]):hover {
   color: white !important;
 }
 

@@ -11,6 +11,7 @@ import { getSession } from "@/lib/auth/session";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
+import { scoreLabel } from "@/lib/account-labels";
 import { buildAcademyPath } from "@/lib/utils";
 
 export default async function QuizAttemptResultPage({
@@ -25,12 +26,17 @@ export default async function QuizAttemptResultPage({
 
   const [attempt, academy] = await Promise.all([
     getQuizAttempt(attemptId),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
   if (!attempt) notFound();
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
 
   const statusLabel =
@@ -53,28 +59,42 @@ export default async function QuizAttemptResultPage({
       <AccountPageHeader
         title={attempt.Quiz?.title ?? translate("account.quizResults")}
         icon={CheckCircle2}
-        actions={<StatusPill label={statusLabel} tone={toneForStatus(attempt.status)} />}
+        actions={
+          <StatusPill
+            label={statusLabel}
+            tone={toneForStatus(attempt.status)}
+          />
+        }
       />
 
       <section className="space-y-3 rounded-2xl border border-theme bg-card p-5 shadow-sm">
-        <p className="text-lg font-semibold text-(--theme-primary)">
-          {translate("learning.score")}: {attempt.score} / {attempt.max_score}
+        <p className="text-lg font-semibold text-(--theme-primary-ink)">
+          {translate("learning.score")}:{" "}
+          {scoreLabel(attempt.score, attempt.max_score, translate, language)}
         </p>
         {attempt.passed != null ? (
           <StatusPill
-            label={attempt.passed ? translate("learning.passed") : translate("learning.notPassed")}
+            label={
+              attempt.passed
+                ? translate("learning.passed")
+                : translate("learning.notPassed")
+            }
             tone={attempt.passed ? "success" : "danger"}
           />
         ) : null}
         {attempt.status === "PENDING_REVIEW" ? (
-          <p className="text-sm text-muted">{translate("learning.shortAnswersPending")}</p>
+          <p className="text-sm text-muted">
+            {translate("learning.shortAnswersPending")}
+          </p>
         ) : null}
         {attempt.feedback ? (
           <div className="border-t border-theme pt-3">
             <h2 className="mb-1 text-sm font-semibold text-(--theme-foreground)">
               {translate("account.teacherFeedback")}
             </h2>
-            <p className="whitespace-pre-wrap text-sm text-muted">{attempt.feedback}</p>
+            <p className="whitespace-pre-wrap text-sm text-muted">
+              {attempt.feedback}
+            </p>
           </div>
         ) : null}
       </section>

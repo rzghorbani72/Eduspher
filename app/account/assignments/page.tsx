@@ -1,7 +1,10 @@
 import { ClipboardList } from "lucide-react";
 
 import { AccountPageHeader } from "@/components/account/account-page-header";
-import { DataList, type DataColumn } from "@/components/shared/data-list/data-list";
+import {
+  DataList,
+  type DataColumn,
+} from "@/components/shared/data-list/data-list";
 import { DataPanel } from "@/components/shared/data-list/data-panel";
 import { StatusPill } from "@/components/account/status-pill";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -23,10 +26,15 @@ export default async function AccountAssignmentsPage() {
   const [assignments, submissions, academy] = await Promise.all([
     getAssignments(),
     getSubmissions(),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
 
   const submissionByAssignment = new Map(
@@ -67,7 +75,9 @@ export default async function AccountAssignmentsPage() {
       id: "due",
       header: translate("account.assignmentDue"),
       cell: (assignment) =>
-        assignment.due_at ? formatDate(assignment.due_at, language) : translate("account.noDueDate"),
+        assignment.due_at
+          ? formatDate(assignment.due_at, language)
+          : translate("account.noDueDate"),
     },
     {
       id: "status",
@@ -76,7 +86,13 @@ export default async function AccountAssignmentsPage() {
       cell: (assignment) => (
         <StatusPill
           label={statusLabel[statusOf(assignment)]}
-          tone={statusOf(assignment) === "graded" ? "success" : statusOf(assignment) === "submitted" ? "info" : "neutral"}
+          tone={
+            statusOf(assignment) === "graded"
+              ? "success"
+              : statusOf(assignment) === "submitted"
+                ? "info"
+                : "neutral"
+          }
         />
       ),
     },
@@ -94,7 +110,13 @@ export default async function AccountAssignmentsPage() {
           items={assignments}
           columns={columns}
           rowKey={(assignment) => assignment.id}
-          emptyState={<EmptyState title={translate("account.noWork")} />}
+          emptyState={
+            <EmptyState
+              compact
+              icon={<ClipboardList className="size-7" aria-hidden="true" />}
+              title={translate("account.noWork")}
+            />
+          }
         />
       </DataPanel>
     </div>

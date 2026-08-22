@@ -2,10 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { CheckCircle, Loader2, Receipt, CreditCard, Calendar, Hash, XCircle } from "lucide-react";
+import {
+  CheckCircle,
+  Loader2,
+  Receipt,
+  CreditCard,
+  Calendar,
+  Hash,
+  XCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useStorePath } from "@/components/providers/store-provider";
-import { formatCurrencyWithAcademy } from "@/lib/utils";
+import { formatCurrencyWithAcademy, formatDate } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface PaymentDetails {
@@ -54,7 +62,9 @@ export default function PaymentSuccessPage() {
   const buildPath = useStorePath();
   const { t, language } = useTranslation();
   const [loading, setLoading] = useState(true);
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
+    null,
+  );
   const [error] = useState<string | null>(null);
   const [store, setStore] = useState<{
     currency?: string;
@@ -65,13 +75,29 @@ export default function PaymentSuccessPage() {
   } | null>(null);
 
   // Bank gateway parameters (common across different gateways)
-  const paymentId = searchParams.get("payment_id") || searchParams.get("PaymentId") || searchParams.get("paymentId");
-  const transactionId = searchParams.get("transaction_id") || searchParams.get("TransactionId") || searchParams.get("TransId") || searchParams.get("transId") || searchParams.get("Authority");
-  const reference = searchParams.get("reference") || searchParams.get("Reference") || searchParams.get("RefNum") || searchParams.get("refNum");
-  const authCode = searchParams.get("auth_code") || searchParams.get("AuthCode") || searchParams.get("authCode");
+  const paymentId =
+    searchParams.get("payment_id") ||
+    searchParams.get("PaymentId") ||
+    searchParams.get("paymentId");
+  const transactionId =
+    searchParams.get("transaction_id") ||
+    searchParams.get("TransactionId") ||
+    searchParams.get("TransId") ||
+    searchParams.get("transId") ||
+    searchParams.get("Authority");
+  const reference =
+    searchParams.get("reference") ||
+    searchParams.get("Reference") ||
+    searchParams.get("RefNum") ||
+    searchParams.get("refNum");
+  const authCode =
+    searchParams.get("auth_code") ||
+    searchParams.get("AuthCode") ||
+    searchParams.get("authCode");
   const rrn = searchParams.get("rrn") || searchParams.get("RRN");
-  const hostRefNum = searchParams.get("host_ref_num") || searchParams.get("HostRefNum");
-  
+  const hostRefNum =
+    searchParams.get("host_ref_num") || searchParams.get("HostRefNum");
+
   // Store all URL params for display
   const urlParams: Record<string, string> = {};
   searchParams.forEach((value, key) => {
@@ -147,7 +173,11 @@ export default function PaymentSuccessPage() {
             </div>
           </div>
           <div className="space-y-3">
-            <Button onClick={() => router.push(buildPath("/account"))} className="w-full" size="lg">
+            <Button
+              onClick={() => router.push(buildPath("/account"))}
+              className="w-full"
+              size="lg"
+            >
               {t("payment.goToAccount")}
             </Button>
             <Button
@@ -164,9 +194,10 @@ export default function PaymentSuccessPage() {
   }
 
   // Get the latest callback response (most relevant for display)
-  const latestResponse = paymentDetails?.gateway_responses?.find(
-    (r) => r.response_type === "CALLBACK"
-  ) || paymentDetails?.gateway_responses?.[0];
+  const latestResponse =
+    paymentDetails?.gateway_responses?.find(
+      (r) => r.response_type === "CALLBACK",
+    ) || paymentDetails?.gateway_responses?.[0];
 
   return (
     <div className="min-h-screen bg-background py-12 px-4">
@@ -200,35 +231,50 @@ export default function PaymentSuccessPage() {
               {/* Amount */}
               {paymentDetails.amount && (
                 <div className="flex justify-between items-center py-3 border-b border-theme">
-                  <span className="text-slate-600 dark:text-slate-400">{t("payment.amountPaid")}</span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {t("payment.amountPaid")}
+                  </span>
                   <span className="text-xl font-bold text-slate-900 dark:text-white">
-                    {formatCurrencyWithAcademy(paymentDetails.amount, store, undefined, language)}
+                    {formatCurrencyWithAcademy(
+                      paymentDetails.amount,
+                      store,
+                      undefined,
+                      language,
+                    )}
                   </span>
                 </div>
               )}
 
               {/* Transaction ID */}
-              {(latestResponse?.transaction_id || paymentDetails?.transaction_id || transactionId) && (
+              {(latestResponse?.transaction_id ||
+                paymentDetails?.transaction_id ||
+                transactionId) && (
                 <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <CreditCard className="h-4 w-4" />
                     {t("payment.transactionId")}
                   </span>
                   <span className="font-mono text-sm text-slate-900 dark:text-white break-all text-right max-w-[60%]">
-                    {latestResponse?.transaction_id || paymentDetails?.transaction_id || transactionId}
+                    {latestResponse?.transaction_id ||
+                      paymentDetails?.transaction_id ||
+                      transactionId}
                   </span>
                 </div>
               )}
 
               {/* Reference ID */}
-              {(latestResponse?.reference_id || paymentDetails?.reference_id || reference) && (
+              {(latestResponse?.reference_id ||
+                paymentDetails?.reference_id ||
+                reference) && (
                 <div className="flex justify-between items-center py-3 border-b border-theme">
                   <span className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     {t("payment.referenceId")}
                   </span>
                   <span className="font-mono text-sm text-slate-900 dark:text-white break-all text-right max-w-[60%]">
-                    {latestResponse?.reference_id || paymentDetails?.reference_id || reference}
+                    {latestResponse?.reference_id ||
+                      paymentDetails?.reference_id ||
+                      reference}
                   </span>
                 </div>
               )}
@@ -275,9 +321,13 @@ export default function PaymentSuccessPage() {
               {/* Gateway */}
               {paymentDetails.gateway && (
                 <div className="flex justify-between items-center py-3 border-b border-theme">
-                  <span className="text-slate-600 dark:text-slate-400">{t("payment.gateway")}</span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {t("payment.gateway")}
+                  </span>
                   <span className="text-slate-900 dark:text-white font-medium">
-                    {latestResponse?.gateway?.display_name || latestResponse?.gateway?.name || paymentDetails.gateway}
+                    {latestResponse?.gateway?.display_name ||
+                      latestResponse?.gateway?.name ||
+                      paymentDetails.gateway}
                   </span>
                 </div>
               )}
@@ -290,7 +340,7 @@ export default function PaymentSuccessPage() {
                     {t("payment.date")}
                   </span>
                   <span className="text-slate-900 dark:text-white">
-                    {new Date(paymentDetails.created_at).toLocaleString()}
+                    {formatDate(paymentDetails.created_at, language, true)}
                   </span>
                 </div>
               )}
@@ -306,7 +356,10 @@ export default function PaymentSuccessPage() {
             </h2>
             <div className="space-y-2">
               {Object.entries(urlParams).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-sm py-2 border-b border-theme last:border-0">
+                <div
+                  key={key}
+                  className="flex justify-between text-sm py-2 border-b border-theme last:border-0"
+                >
                   <span className="text-slate-600 dark:text-slate-400 font-mono text-xs">
                     {key}
                   </span>
@@ -329,7 +382,9 @@ export default function PaymentSuccessPage() {
             <div className="space-y-3">
               {latestResponse.status && (
                 <div className="flex justify-between">
-                  <span className="text-slate-600 dark:text-slate-400">Status</span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Status
+                  </span>
                   <span className="text-green-600 dark:text-green-400 font-medium">
                     {latestResponse.status}
                   </span>
@@ -338,43 +393,61 @@ export default function PaymentSuccessPage() {
 
               {latestResponse.fee_amount && (
                 <div className="flex justify-between">
-                  <span className="text-slate-600 dark:text-slate-400">{t("payment.gatewayFee")}</span>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    {t("payment.gatewayFee")}
+                  </span>
                   <span className="text-slate-900 dark:text-white">
-                    {formatCurrencyWithAcademy(latestResponse.fee_amount, store, undefined, language)}
+                    {formatCurrencyWithAcademy(
+                      latestResponse.fee_amount,
+                      store,
+                      undefined,
+                      language,
+                    )}
                   </span>
                 </div>
               )}
 
               {/* Processed Data */}
-              {latestResponse.processed_data && Object.keys(latestResponse.processed_data).length > 0 && (
-                <div className="mt-4 pt-4 border-t border-theme">
-                  <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                    {t("payment.additionalInformation")}
-                  </h3>
-                  <div className="space-y-2">
-                    {Object.entries(latestResponse.processed_data).map(([key, value]) => {
-                      if (value === null || value === undefined) return null;
-                      return (
-                        <div key={key} className="flex justify-between text-sm">
-                          <span className="text-slate-600 dark:text-slate-400 capitalize">
-                            {key.replace(/_/g, " ")}
-                          </span>
-                          <span className="text-slate-900 dark:text-white font-mono">
-                            {String(value)}
-                          </span>
-                        </div>
-                      );
-                    })}
+              {latestResponse.processed_data &&
+                Object.keys(latestResponse.processed_data).length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-theme">
+                    <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      {t("payment.additionalInformation")}
+                    </h3>
+                    <div className="space-y-2">
+                      {Object.entries(latestResponse.processed_data).map(
+                        ([key, value]) => {
+                          if (value === null || value === undefined)
+                            return null;
+                          return (
+                            <div
+                              key={key}
+                              className="flex justify-between text-sm"
+                            >
+                              <span className="text-slate-600 dark:text-slate-400 capitalize">
+                                {key.replace(/_/g, " ")}
+                              </span>
+                              <span className="text-slate-900 dark:text-white font-mono">
+                                {String(value)}
+                              </span>
+                            </div>
+                          );
+                        },
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
         )}
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <Button onClick={() => router.push(buildPath("/account"))} className="w-full" size="lg">
+          <Button
+            onClick={() => router.push(buildPath("/account"))}
+            className="w-full"
+            size="lg"
+          >
             {t("payment.goToAccount")}
           </Button>
           <Button
@@ -389,4 +462,3 @@ export default function PaymentSuccessPage() {
     </div>
   );
 }
-

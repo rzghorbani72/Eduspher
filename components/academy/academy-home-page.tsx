@@ -16,6 +16,8 @@ import {
   resolveAssetUrl,
   truncate,
   buildAcademyPath,
+  formatNumber,
+  toPersianDigits,
 } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -28,7 +30,8 @@ import { AcademyHomeAnimations } from "./academy-home-animations";
 
 export async function AcademyHomePage() {
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
+  const buildPath = (path: string) =>
+    buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   const [
     academies,
@@ -42,9 +45,9 @@ export async function AcademyHomePage() {
     getAcademiesPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
-    getCourses({ limit: 6, published: true, is_featured: true } as Parameters<typeof getCourses>[0]).catch(
-      () => null,
-    ),
+    getCourses({ limit: 6, published: true, is_featured: true } as Parameters<
+      typeof getCourses
+    >[0]).catch(() => null),
     getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
     getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
@@ -62,11 +65,18 @@ export async function AcademyHomePage() {
   const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
   const storeCurrency =
     user?.currentAcademy ||
-    (currentAcademy as { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" }) ||
+    (currentAcademy as {
+      currency?: string;
+      currency_symbol?: string;
+      currency_position?: "before" | "after";
+    }) ||
     null;
-  const paStats = primaryAcademy as
-    | { student_count?: number; mentor_count?: number; course_count?: number; average_rating?: number }
-    | null;
+  const paStats = primaryAcademy as {
+    student_count?: number;
+    mentor_count?: number;
+    course_count?: number;
+    average_rating?: number;
+  } | null;
   const stats = {
     students: paStats?.student_count ?? null,
     mentors: paStats?.mentor_count ?? null,
@@ -77,7 +87,8 @@ export async function AcademyHomePage() {
   let storeForLang = currentAcademy;
   if (!storeForLang && storeContext.slug)
     storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
-  if (!storeForLang && primaryAcademy) storeForLang = primaryAcademy as typeof currentAcademy;
+  if (!storeForLang && primaryAcademy)
+    storeForLang = primaryAcademy as typeof currentAcademy;
   const language = getAcademyLanguage(
     storeForLang?.language || null,
     storeForLang?.country_code || null,
@@ -276,19 +287,27 @@ export async function AcademyHomePage() {
           {[
             {
               label: translate("home.learners"),
-              value: stats.students ? stats.students.toLocaleString() : "—",
+              value: stats.students
+                ? formatNumber(stats.students, language)
+                : "—",
             },
             {
               label: translate("home.mentors"),
-              value: stats.mentors ? stats.mentors.toLocaleString() : "—",
+              value: stats.mentors
+                ? formatNumber(stats.mentors, language)
+                : "—",
             },
             {
               label: translate("home.courses"),
-              value: stats.courses ? stats.courses.toLocaleString() : "—",
+              value: stats.courses
+                ? formatNumber(stats.courses, language)
+                : "—",
             },
             {
               label: translate("home.avgRating"),
-              value: stats.rating ? `${stats.rating.toFixed(1)} / 5` : "—",
+              value: stats.rating
+                ? toPersianDigits(`${stats.rating.toFixed(1)} / 5`, language)
+                : "—",
             },
           ].map((stat) => (
             <div
@@ -372,7 +391,9 @@ export async function AcademyHomePage() {
                 <CourseCard
                   key={course.id}
                   course={course}
-                  storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
+                  storeSlug={
+                    storeContext.isSubdomain ? null : storeContext.slug
+                  }
                   store={storeCurrency}
                 />
               ))}

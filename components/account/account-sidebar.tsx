@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  BadgeCheck,
   BookOpenCheck,
   Bell,
   CalendarClock,
@@ -17,6 +18,8 @@ import {
 } from "lucide-react";
 
 import Link from "@/components/ui/link";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
+import { roleLabel } from "@/lib/account-labels";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 
@@ -37,26 +40,58 @@ const NAV_SECTIONS = [
   {
     titleKey: "account.navLearning",
     items: [
-      { segment: "/courses", labelKey: "account.myCourses", icon: GraduationCap },
-      { segment: "/progress", labelKey: "account.myProgress", icon: BookOpenCheck },
-      { segment: "/assignments", labelKey: "account.myWork", icon: ClipboardList },
+      {
+        segment: "/courses",
+        labelKey: "account.myCourses",
+        icon: GraduationCap,
+      },
+      {
+        segment: "/progress",
+        labelKey: "account.myProgress",
+        icon: BookOpenCheck,
+      },
+      {
+        segment: "/assignments",
+        labelKey: "account.myWork",
+        icon: ClipboardList,
+      },
       { segment: "/results", labelKey: "account.results", icon: CheckCircle2 },
-      { segment: "/classes", labelKey: "account.myClasses", icon: CalendarClock },
-      { segment: "/tutoring", labelKey: "account.privateTutoring", icon: UserRoundCheck },
+      {
+        segment: "/classes",
+        labelKey: "account.myClasses",
+        icon: CalendarClock,
+      },
+      {
+        segment: "/tutoring",
+        labelKey: "account.privateTutoring",
+        icon: UserRoundCheck,
+      },
     ],
   },
   {
     titleKey: "account.navBilling",
     items: [
-      { segment: "/transactions", labelKey: "account.transactions", icon: Receipt },
-      { segment: "/subscriptions", labelKey: "account.subscriptions", icon: Repeat },
+      {
+        segment: "/transactions",
+        labelKey: "account.transactions",
+        icon: Receipt,
+      },
+      {
+        segment: "/subscriptions",
+        labelKey: "account.subscriptions",
+        icon: Repeat,
+      },
     ],
   },
   {
     titleKey: "account.navAccount",
     items: [
       { segment: "/profile", labelKey: "account.profile", icon: UserRound },
-      { segment: "/notifications", labelKey: "notifications.title", icon: Bell },
+      {
+        segment: "/notifications",
+        labelKey: "notifications.title",
+        icon: Bell,
+      },
       { segment: "/support", labelKey: "support.title", icon: LifeBuoy },
     ],
   },
@@ -75,18 +110,20 @@ export function AccountSidebar({
   displayName,
   contact,
   avatarUrl,
-  roleLabel,
+  roleLabel: rawRole,
   isVerified,
   academyName,
   currentPath,
   basePath,
 }: AccountSidebarProps) {
   const { t } = useTranslation();
+  const format = useLocaleFormat();
   const homePath = basePath.replace(/\/account$/, "") || "/";
+  const role = roleLabel(rawRole, t);
 
   return (
-    <aside className="flex w-full flex-col gap-4">
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-theme bg-card p-5 text-center">
+    <aside className="flex w-full flex-col gap-4 lg:sticky lg:top-24">
+      <div className="flex items-center gap-3 rounded-xl border border-theme bg-card p-4 text-start lg:flex-col lg:p-5 lg:text-center">
         {avatarUrl ? (
           <Image
             src={avatarUrl}
@@ -94,67 +131,80 @@ export function AccountSidebar({
             width={64}
             height={64}
             unoptimized
-            className="h-16 w-16 rounded-full object-cover shadow-lg"
+            className="h-12 w-12 shrink-0 rounded-full object-cover shadow-lg lg:h-16 lg:w-16"
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--theme-primary) text-2xl font-bold text-(--theme-on-primary) shadow-lg shadow-(--theme-primary)/30">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-(--theme-primary) text-xl font-bold text-(--theme-on-primary) shadow-lg shadow-(--theme-primary)/30 lg:h-16 lg:w-16 lg:text-2xl">
             {initialsOf(displayName)}
           </div>
         )}
-        <div className="space-y-0.5">
-          <p className="font-semibold text-(--theme-foreground)">{displayName}</p>
-          {contact ? <p className="text-xs break-all text-muted">{contact}</p> : null}
-          {academyName ? <p className="text-xs text-muted">{academyName}</p> : null}
-          {roleLabel ? (
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                isVerified
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                  : "bg-surface text-muted",
-              )}
-            >
-              {isVerified ? "✓ " : ""}
-              {roleLabel}
+        <div className="flex min-w-0 flex-col gap-1 lg:items-center lg:gap-1.5">
+          <p className="font-semibold text-(--theme-foreground)">
+            {displayName}
+          </p>
+          {contact ? (
+            <p className="text-xs break-all text-muted" dir="ltr">
+              {format.digits(contact)}
+            </p>
+          ) : null}
+          {academyName ? (
+            <p className="hidden text-xs text-muted lg:block">{academyName}</p>
+          ) : null}
+          {role ? (
+            <span className="inline-flex w-fit items-center gap-1 rounded-full lg:mt-1 bg-(--theme-primary)/15 px-2.5 py-1 text-xs font-semibold text-(--theme-primary-ink)">
+              {isVerified ? (
+                <BadgeCheck
+                  className="size-3.5 shrink-0"
+                  aria-label={t("account.verified")}
+                />
+              ) : null}
+              {role}
             </span>
           ) : null}
         </div>
       </div>
 
-      <nav className="flex flex-col gap-4">
+      <nav className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:mx-0 lg:flex-col lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0">
         {NAV_SECTIONS.map((section) => (
-          <div key={section.titleKey} className="flex flex-col gap-1">
-            <p className="px-4 pb-1 text-xs font-semibold tracking-wide text-muted uppercase">
+          <div
+            key={section.titleKey}
+            className="flex shrink-0 gap-2 lg:flex-col lg:gap-1"
+          >
+            <p className="hidden px-4 pb-1 text-xs font-semibold text-muted lg:block">
               {t(section.titleKey)}
             </p>
-            {section.items.map((item) => {
-              const Icon = item.icon;
-              const href = `${basePath}${item.segment}`;
-              const isActive = currentPath.startsWith(`/account${item.segment}`);
-              return (
-                <Link
-                  key={item.segment}
-                  href={href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all",
-                    isActive
-                      ? "bg-(--theme-primary)/10 font-semibold text-(--theme-primary)"
-                      : "text-muted hover:bg-surface hover:text-foreground",
-                  )}
-                >
-                  <Icon size={16} className="shrink-0" />
-                  {t(item.labelKey)}
-                </Link>
-              );
-            })}
+            <div className="flex gap-2 lg:flex-col lg:gap-1">
+              {section.items.map((item) => {
+                const Icon = item.icon;
+                const href = `${basePath}${item.segment}`;
+                const isActive = currentPath.startsWith(
+                  `/account${item.segment}`,
+                );
+                return (
+                  <Link
+                    key={item.segment}
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={cn(
+                      "flex shrink-0 items-center gap-2 rounded-full border border-theme px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-colors lg:gap-3 lg:rounded-lg lg:border-0 lg:px-4 lg:py-2.5",
+                      isActive
+                        ? "bg-(--theme-primary)/15 font-semibold text-(--theme-primary-ink)"
+                        : "text-muted hover:bg-surface hover:text-foreground",
+                    )}
+                  >
+                    <Icon size={16} className="shrink-0" />
+                    <span className="truncate">{t(item.labelKey)}</span>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         ))}
       </nav>
 
       <Link
         href={homePath}
-        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-muted transition-colors hover:text-foreground"
+        className="hidden items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-muted transition-colors hover:text-foreground lg:flex"
       >
         <Home size={16} className="shrink-0" />
         {t("account.backToHome")}

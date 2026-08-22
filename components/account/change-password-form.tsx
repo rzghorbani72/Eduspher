@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,25 +9,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { changePassword } from "@/lib/api/client";
+import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 
-const changePasswordSchema = z.object({
-  current_password: z.string().min(6, "Password must be at least 6 characters"),
-  new_password: z.string().min(6, "Password must be at least 6 characters"),
-  confirm_new_password: z.string().min(6, "Password must be at least 6 characters"),
-}).refine((data) => data.new_password === data.confirm_new_password, {
-  message: "Passwords do not match",
-  path: ["confirm_new_password"],
-});
+type Translate = (key: string) => string;
 
-type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
+/** Built per render so the validation messages follow the active language. */
+const buildSchema = (t: Translate) =>
+  z
+    .object({
+      current_password: z.string().min(6, t("auth.passwordMinLength")),
+      new_password: z.string().min(6, t("auth.passwordMinLength")),
+      confirm_new_password: z.string().min(6, t("auth.passwordMinLength")),
+    })
+    .refine((data) => data.new_password === data.confirm_new_password, {
+      message: t("account.passwordsDoNotMatch"),
+      path: ["confirm_new_password"],
+    });
+
+type ChangePasswordFormValues = z.infer<ReturnType<typeof buildSchema>>;
 
 interface ChangePasswordFormProps {
   profileId: string;
   onSuccess?: () => void;
 }
 
-export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormProps) => {
+export const ChangePasswordForm = ({
+  profileId,
+  onSuccess,
+}: ChangePasswordFormProps) => {
+  const { t } = useTranslation();
+  const schema = useMemo(() => buildSchema(t), [t]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -41,7 +53,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
     formState: { errors },
     reset,
   } = useForm<ChangePasswordFormValues>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(schema),
   });
 
   const onSubmit = async (data: ChangePasswordFormValues) => {
@@ -57,11 +69,12 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
         confirm_new_password: data.confirm_new_password,
       });
 
-      setMessage("Password changed successfully");
+      setMessage(t("account.passwordChanged"));
       reset();
       onSuccess?.();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to change password";
+      const errorMessage =
+        err instanceof Error ? err.message : t("account.passwordChangeFailed");
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -71,83 +84,114 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="current_password">Current Password</Label>
+        <Label htmlFor="current_password">{t("account.currentPassword")}</Label>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="h-5 w-5 text-muted opacity-60" />
+          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+            <Lock className="h-5 w-5 text-muted" />
           </div>
           <Input
             id="current_password"
             type={showCurrentPassword ? "text" : "password"}
             {...register("current_password")}
-            className={cn("pl-10 pr-10", errors.current_password && "border-amber-500 focus:border-amber-500")}
+            className={cn(
+              "ps-10 pe-10",
+              errors.current_password &&
+                "border-amber-500 focus:border-amber-500",
+            )}
             autoComplete="current-password"
-            placeholder="Enter current password"
+            placeholder={t("account.currentPasswordPlaceholder")}
           />
           <button
             type="button"
             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted opacity-60 hover:text-muted"
+            className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted transition-colors hover:text-foreground"
           >
-            {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showCurrentPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
         {errors.current_password && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{errors.current_password.message}</p>
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            {errors.current_password.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="new_password">New Password</Label>
+        <Label htmlFor="new_password">{t("account.newPassword")}</Label>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="h-5 w-5 text-muted opacity-60" />
+          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+            <Lock className="h-5 w-5 text-muted" />
           </div>
           <Input
             id="new_password"
             type={showNewPassword ? "text" : "password"}
             {...register("new_password")}
-            className={cn("pl-10 pr-10", errors.new_password && "border-amber-500 focus:border-amber-500")}
+            className={cn(
+              "ps-10 pe-10",
+              errors.new_password && "border-amber-500 focus:border-amber-500",
+            )}
             autoComplete="new-password"
-            placeholder="Enter new password"
+            placeholder={t("account.newPasswordPlaceholder")}
           />
           <button
             type="button"
             onClick={() => setShowNewPassword(!showNewPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted opacity-60 hover:text-muted"
+            className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted transition-colors hover:text-foreground"
           >
-            {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showNewPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
         {errors.new_password && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{errors.new_password.message}</p>
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            {errors.new_password.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirm_new_password">Confirm New Password</Label>
+        <Label htmlFor="confirm_new_password">
+          {t("account.confirmNewPassword")}
+        </Label>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="h-5 w-5 text-muted opacity-60" />
+          <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+            <Lock className="h-5 w-5 text-muted" />
           </div>
           <Input
             id="confirm_new_password"
             type={showConfirmPassword ? "text" : "password"}
             {...register("confirm_new_password")}
-            className={cn("pl-10 pr-10", errors.confirm_new_password && "border-amber-500 focus:border-amber-500")}
+            className={cn(
+              "ps-10 pe-10",
+              errors.confirm_new_password &&
+                "border-amber-500 focus:border-amber-500",
+            )}
             autoComplete="new-password"
-            placeholder="Confirm new password"
+            placeholder={t("account.confirmPasswordPlaceholder")}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted opacity-60 hover:text-muted"
+            className="absolute inset-y-0 end-0 flex items-center pe-3 text-muted transition-colors hover:text-foreground"
           >
-            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+            {showConfirmPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
         {errors.confirm_new_password && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{errors.confirm_new_password.message}</p>
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            {errors.confirm_new_password.message}
+          </p>
         )}
       </div>
 
@@ -163,10 +207,16 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
         </div>
       )}
 
-      <Button type="submit" disabled={isLoading} className="w-full" loading={isLoading}>
-        {isLoading ? "Changing..." : "Change Password"}
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="w-full"
+        loading={isLoading}
+      >
+        {isLoading
+          ? t("account.changingPassword")
+          : t("account.changePassword")}
       </Button>
     </form>
   );
 };
-

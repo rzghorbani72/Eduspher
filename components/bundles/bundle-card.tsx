@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
 import { usePurchase } from "@/components/purchase/use-purchase";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { StudentBundle } from "@/lib/bundles";
 
@@ -27,6 +28,7 @@ export function BundleCard({
   loginHref,
 }: BundleCardProps) {
   const { t } = useTranslation();
+  const format = useLocaleFormat();
   const enrollmentClosed = useEnrollmentClosed();
   const { purchase, pendingKey, error } = usePurchase({ loginHref });
 
@@ -52,16 +54,24 @@ export function BundleCard({
         </div>
       )}
 
-      <h2 className="text-xl font-bold text-(--theme-foreground)">{bundle.name}</h2>
-      {bundle.description && <p className="mt-1 text-sm text-muted">{bundle.description}</p>}
+      <h2 className="text-xl font-bold text-(--theme-foreground)">
+        {bundle.name}
+      </h2>
+      {bundle.description && (
+        <p className="mt-1 text-sm text-muted">{bundle.description}</p>
+      )}
 
       <p className="mt-4 text-sm text-muted">
-        {t("bundles.includes")} {bundle.courses.length} {t("bundles.course")}
+        {t("bundles.includes")} {format.number(bundle.courses.length)}{" "}
+        {t("bundles.course")}
       </p>
 
       <ul className="mb-6 mt-3 space-y-2.5 text-sm">
         {bundle.courses.map((course) => (
-          <li key={course.id} className="flex items-center gap-2 text-(--theme-foreground)">
+          <li
+            key={course.id}
+            className="flex items-center gap-2 text-(--theme-foreground)"
+          >
             <Check size={14} className="shrink-0 text-(--theme-primary)" />
             <span>{course.title}</span>
           </li>
@@ -73,10 +83,12 @@ export function BundleCard({
           <p className="text-sm text-muted line-through">{listPriceLabel}</p>
         )}
         <div>
-          <p className="text-2xl font-bold text-(--theme-foreground)">{priceLabel}</p>
+          <p className="text-2xl font-bold text-(--theme-foreground)">
+            {priceLabel}
+          </p>
           {discountPercent > 0 && (
             <Badge variant="success" className="mt-1">
-              {t("bundles.save")} {discountPercent}%
+              {t("bundles.save")} {format.percent(discountPercent)}
             </Badge>
           )}
         </div>
@@ -85,7 +97,9 @@ export function BundleCard({
           type="button"
           disabled={busy || enrollmentClosed}
           onClick={() => purchase(bundle.selector, bundle.price, bundle.key)}
-          title={enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined}
+          title={
+            enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined
+          }
           className={`inline-flex h-11 w-full items-center justify-center rounded-full text-sm font-semibold transition-all disabled:opacity-60 ${
             isFeatured
               ? "bg-(--theme-primary) text-(--theme-on-primary) hover:opacity-90"

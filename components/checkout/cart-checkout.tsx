@@ -7,10 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Loader2, AlertCircle, X, Trash2 } from "lucide-react";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
 import { useStorePath } from "@/components/providers/store-provider";
-import { getCartItems, removeCourseFromCart, syncCart, type CartItem } from "@/app/actions/cart";
+import {
+  getCartItems,
+  removeCourseFromCart,
+  syncCart,
+  type CartItem,
+} from "@/app/actions/cart";
 import { validateVoucher } from "@/app/actions/voucher";
 import { processCheckout } from "@/app/actions/checkout";
 import { useTransition } from "react";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CartCheckoutProps {
@@ -46,6 +52,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   const router = useRouter();
   const buildPath = useStorePath();
   const { t, language } = useTranslation();
+  const format = useLocaleFormat();
   const [pending, startTransition] = useTransition();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -60,12 +67,12 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
 
   useEffect(() => {
     let syncTimeout: NodeJS.Timeout | null = null;
-    
+
     const fetchCart = async () => {
       const items = getCartItems();
       setCart(items);
       setLoading(false);
-      
+
       // Debounce sync to avoid race conditions when multiple updates happen quickly
       if (syncTimeout) {
         clearTimeout(syncTimeout);
@@ -77,12 +84,12 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         });
       }, 500);
     };
-    
+
     fetchCart();
-    
+
     // Listen for cart updates
     window.addEventListener("cartUpdated", fetchCart);
-    
+
     return () => {
       window.removeEventListener("cartUpdated", fetchCart);
       if (syncTimeout) {
@@ -129,7 +136,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
       if (result.success && result.discount_amount !== undefined) {
         setDiscount({
           discount_amount: result.discount_amount,
-          final_amount: result.final_amount ?? totalAmount - result.discount_amount,
+          final_amount:
+            result.final_amount ?? totalAmount - result.discount_amount,
         });
         setVoucherError(null);
       } else {
@@ -137,7 +145,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         setDiscount(null);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t("checkout.voucherValidationFailed");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : t("checkout.voucherValidationFailed");
       setVoucherError(errorMessage);
       setDiscount(null);
     } finally {
@@ -156,7 +167,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
       try {
         // Sync cart to server before checkout (ensure server has latest)
         await syncCart();
-        
+
         // Filter out undefined course_ids
         const courseIds = cart.map((item: CartItem) => item.course_id);
         const result = await processCheckout({
@@ -177,7 +188,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           setError(result.error || t("checkout.checkoutFailed"));
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : t("common.error");
+        const errorMessage =
+          err instanceof Error ? err.message : t("common.error");
         setError(errorMessage);
       }
     });
@@ -217,7 +229,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     <div className="space-y-6">
       <div className="space-y-4">
         <h2 className="text-xl font-semibold text-foreground">
-          {t("cart.items")} ({cart.length})
+          {t("cart.items")} ({format.number(cart.length)})
         </h2>
         <div className="space-y-3">
           {cart.map((item: CartItem, index: number) => {
@@ -232,15 +244,18 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground">
-                      {itemTitle}
-                    </h3>
+                    <h3 className="font-medium text-foreground">{itemTitle}</h3>
                     <span className="text-xs text-muted opacity-70">
                       ({t("courses.title")})
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-muted ">
-                    {formatCurrencyWithAcademy(itemPrice, user.currentAcademy || null, undefined, language)}
+                    {formatCurrencyWithAcademy(
+                      itemPrice,
+                      user.currentAcademy || null,
+                      undefined,
+                      language,
+                    )}
                   </p>
                 </div>
                 <button
@@ -268,7 +283,13 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 {voucherCode.toUpperCase()}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">
-                {t("checkout.discount")}: {formatCurrencyWithAcademy(discountAmount, user.currentAcademy || null, undefined, language)}
+                {t("checkout.discount")}:{" "}
+                {formatCurrencyWithAcademy(
+                  discountAmount,
+                  user.currentAcademy || null,
+                  undefined,
+                  language,
+                )}
               </div>
             </div>
             <button
@@ -309,7 +330,9 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           </div>
         )}
         {voucherError && (
-          <p className="text-xs text-red-600 dark:text-red-400">{voucherError}</p>
+          <p className="text-xs text-red-600 dark:text-red-400">
+            {voucherError}
+          </p>
         )}
       </div>
 
@@ -317,22 +340,40 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         <div className="flex justify-between text-sm">
           <span className="text-muted ">{t("checkout.subtotal")}</span>
           <span className="font-medium text-foreground">
-            {formatCurrencyWithAcademy(totalAmount / 100, user.currentAcademy || null, undefined, language)}
+            {formatCurrencyWithAcademy(
+              totalAmount / 100,
+              user.currentAcademy || null,
+              undefined,
+              language,
+            )}
           </span>
         </div>
         {discount && discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
             <span>{t("checkout.discount")}</span>
             <span className="font-medium">
-              -{formatCurrencyWithAcademy(discountAmount, user.currentAcademy || null, undefined, language)}
+              -
+              {formatCurrencyWithAcademy(
+                discountAmount,
+                user.currentAcademy || null,
+                undefined,
+                language,
+              )}
             </span>
           </div>
         )}
         <div className="border-t border-slate-200 pt-3 ">
           <div className="flex justify-between">
-            <span className="font-semibold text-foreground">{t("checkout.total")}</span>
+            <span className="font-semibold text-foreground">
+              {t("checkout.total")}
+            </span>
             <span className="text-xl font-bold text-foreground">
-              {formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}
+              {formatCurrencyWithAcademy(
+                finalPrice,
+                user.currentAcademy || null,
+                undefined,
+                language,
+              )}
             </span>
           </div>
         </div>
@@ -366,4 +407,3 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     </div>
   );
 }
-

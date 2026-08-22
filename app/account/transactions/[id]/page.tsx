@@ -7,6 +7,7 @@ import { PaymentReceiptCard } from "@/components/account/transactions/payment-re
 import { RefundRequestForm } from "@/components/account/transactions/refund-request-form";
 import Link from "@/components/ui/link";
 import { getPayment, getPaymentReceipt } from "@/lib/api/account-server";
+import { gatewayLabel } from "@/lib/account-labels";
 import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
@@ -38,15 +39,21 @@ export default async function TransactionDetailPage({
 
   const [payment, academy] = await Promise.all([
     getPayment(id),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
   if (!payment) notFound();
 
   // Only a completed payment has a receipt to issue.
-  const receipt = payment.status === "PAID" ? await getPaymentReceipt(id) : null;
+  const receipt =
+    payment.status === "PAID" ? await getPaymentReceipt(id) : null;
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
   const money = (value: number) =>
     toPersianDigits(formatCurrencyWithAcademy(value, academy), language);
@@ -67,7 +74,9 @@ export default async function TransactionDetailPage({
         actions={
           <StatusPill
             label={
-              STATUS_KEY[payment.status] ? translate(STATUS_KEY[payment.status]) : payment.status
+              STATUS_KEY[payment.status]
+                ? translate(STATUS_KEY[payment.status])
+                : payment.status
             }
             tone={toneForStatus(payment.status)}
           />
@@ -76,14 +85,21 @@ export default async function TransactionDetailPage({
 
       <section className="rounded-2xl border border-theme bg-card p-5 shadow-sm">
         <dl className="grid gap-3 sm:grid-cols-2">
-          <Row label={translate("account.transactionAmount")} value={money(payment.amount)} />
+          <Row
+            label={translate("account.transactionAmount")}
+            value={money(payment.amount)}
+          />
           <Row
             label={translate("account.transactionDate")}
-            value={formatDate(payment.paid_at ?? payment.created_at, language, true)}
+            value={formatDate(
+              payment.paid_at ?? payment.created_at,
+              language,
+              true,
+            )}
           />
           <Row
             label={translate("account.transactionMethod")}
-            value={payment.gateway ?? payment.provider ?? "—"}
+            value={gatewayLabel(payment.gateway ?? payment.provider, translate)}
           />
           {payment.refund_amount ? (
             <Row
@@ -95,7 +111,11 @@ export default async function TransactionDetailPage({
       </section>
 
       {receipt ? (
-        <PaymentReceiptCard receipt={receipt} language={language} academy={academy} />
+        <PaymentReceiptCard
+          receipt={receipt}
+          language={language}
+          academy={academy}
+        />
       ) : (
         <p className="rounded-2xl border border-dashed border-theme bg-surface p-5 text-sm text-muted">
           {translate("account.receiptUnavailable")}

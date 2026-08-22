@@ -2,6 +2,7 @@
 
 import Link from "@/components/ui/link";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
 
 interface EnrolledCourseCardProps {
@@ -18,14 +19,20 @@ interface EnrolledCourseCardProps {
       Image?: { publicUrl: string } | null;
       Category?: { name: string } | null;
       author?: { display_name: string } | null;
-      Season?: Array<{ Lesson?: Array<{ lesson_type?: string | null }> }> | null;
+      Season?: Array<{
+        Lesson?: Array<{ lesson_type?: string | null }>;
+      }> | null;
     } | null;
   };
   storeSlug: string | null;
 }
 
-export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCardProps) {
+export function EnrolledCourseCard({
+  enrollment,
+  storeSlug,
+}: EnrolledCourseCardProps) {
   const { t } = useTranslation();
+  const format = useLocaleFormat();
   const course = enrollment.course;
   if (!course) return null;
 
@@ -38,7 +45,11 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
       {/* Cover */}
       <div className="relative h-44 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={coverUrl} alt={course.title} className="h-full w-full object-cover" />
+        <img
+          src={coverUrl}
+          alt={course.title}
+          className="h-full w-full object-cover"
+        />
         {enrollment.status === "COMPLETED" && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
             <span className="rounded-full bg-green-500 px-3 py-1 text-xs font-bold text-white">
@@ -60,7 +71,9 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         </div>
 
         {/* Title */}
-        <p className="font-bold text-(--theme-foreground) leading-snug line-clamp-2">{course.title}</p>
+        <p className="font-bold text-(--theme-foreground) leading-snug line-clamp-2">
+          {course.title}
+        </p>
 
         {/* Author */}
         {course.author && (
@@ -71,7 +84,9 @@ export function EnrolledCourseCard({ enrollment, storeSlug }: EnrolledCourseCard
         <div className="space-y-1.5 mt-auto">
           <div className="flex items-center justify-between text-xs text-muted">
             <span>{t("account.progress")}</span>
-            <span className="font-semibold text-(--theme-primary)">{progress}%</span>
+            <span className="font-semibold text-(--theme-primary-ink)">
+              {format.percent(progress)}
+            </span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-surface-alt overflow-hidden">
             <div

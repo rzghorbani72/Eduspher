@@ -12,6 +12,8 @@ import {
   listSubmissions,
   submitAssignment,
 } from "@/lib/api/learning";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
+import { scoreLabel } from "@/lib/account-labels";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { useApiQuery } from "@/hooks/use-api-query";
 import { queryKeys } from "@/lib/query/keys";
@@ -28,6 +30,7 @@ export function AssignmentPanel({
   currentProfileId,
 }: AssignmentPanelProps) {
   const { t, language } = useTranslation();
+  const format = useLocaleFormat();
   const [content, setContent] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -127,7 +130,7 @@ export function AssignmentPanel({
             ) : null}
           </div>
           <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">
-            {assignment.max_score} {t("learning.points")}
+            {format.number(assignment.max_score)} {t("learning.points")}
           </span>
         </div>
         {dueDate ? (
@@ -150,8 +153,13 @@ export function AssignmentPanel({
             </p>
             {submission.score !== null && submission.score !== undefined ? (
               <p className="mt-2 text-sm">
-                {t("learning.score")}: {submission.score} /{" "}
-                {assignment.max_score}
+                {t("learning.score")}:{" "}
+                {scoreLabel(
+                  submission.score,
+                  assignment.max_score,
+                  t,
+                  language,
+                )}
               </p>
             ) : null}
             {submission.feedback ? (

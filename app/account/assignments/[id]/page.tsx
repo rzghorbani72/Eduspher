@@ -11,7 +11,8 @@ import { getSession } from "@/lib/auth/session";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath, formatDate } from "@/lib/utils";
+import { scoreLabel } from "@/lib/account-labels";
+import { buildAcademyPath, formatDate, formatNumber } from "@/lib/utils";
 
 export default async function AssignmentDetailPage({
   params,
@@ -26,14 +27,20 @@ export default async function AssignmentDetailPage({
   const [assignment, submissions, academy] = await Promise.all([
     getAssignment(id),
     getSubmissions(),
-    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
+    academyContext.slug
+      ? getAcademyBySlug(academyContext.slug).catch(() => null)
+      : null,
   ]);
 
   if (!assignment) notFound();
 
-  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
   const translate = (key: string) => t(key, language);
-  const submission = submissions.find((item) => item.assignment_id === assignment.id) ?? null;
+  const submission =
+    submissions.find((item) => item.assignment_id === assignment.id) ?? null;
   const courseId = assignment.Lesson?.Season?.course_id;
 
   return (
@@ -53,7 +60,10 @@ export default async function AssignmentDetailPage({
         actions={
           courseId ? (
             <Link
-              href={buildAcademyPath(slugForPaths, `/learn/${courseId}/${assignment.lesson_id}`)}
+              href={buildAcademyPath(
+                slugForPaths,
+                `/learn/${courseId}/${assignment.lesson_id}`,
+              )}
               className="inline-flex h-10 items-center rounded-full bg-(--theme-primary) px-5 text-sm font-semibold text-(--theme-on-primary) transition-opacity hover:opacity-90"
             >
               {translate("account.openAssignment")}
@@ -66,10 +76,13 @@ export default async function AssignmentDetailPage({
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
           <span>
             {translate("account.assignmentDue")}:{" "}
-            {assignment.due_at ? formatDate(assignment.due_at, language) : translate("account.noDueDate")}
+            {assignment.due_at
+              ? formatDate(assignment.due_at, language)
+              : translate("account.noDueDate")}
           </span>
           <span>
-            {translate("learning.points")}: {assignment.max_score}
+            {translate("learning.points")}:{" "}
+            {formatNumber(assignment.max_score, language)}
           </span>
         </div>
         {assignment.description ? (
@@ -94,7 +107,10 @@ export default async function AssignmentDetailPage({
               tone={toneForStatus(submission.status)}
             />
           ) : (
-            <StatusPill label={translate("account.notSubmitted")} tone="neutral" />
+            <StatusPill
+              label={translate("account.notSubmitted")}
+              tone="neutral"
+            />
           )}
         </div>
 
@@ -106,7 +122,8 @@ export default async function AssignmentDetailPage({
               </p>
             ) : null}
             <p className="text-xs text-muted">
-              {translate("learning.submitted")}: {formatDate(submission.submitted_at, language, true)}
+              {translate("learning.submitted")}:{" "}
+              {formatDate(submission.submitted_at, language, true)}
             </p>
             <div className="border-t border-theme pt-3">
               <h3 className="mb-1 text-sm font-semibold text-(--theme-foreground)">
@@ -114,8 +131,14 @@ export default async function AssignmentDetailPage({
               </h3>
               {submission.status === "GRADED" ? (
                 <>
-                  <p className="font-semibold text-(--theme-primary)">
-                    {translate("learning.score")}: {submission.score} / {assignment.max_score}
+                  <p className="font-semibold text-(--theme-primary-ink)">
+                    {translate("learning.score")}:{" "}
+                    {scoreLabel(
+                      submission.score,
+                      assignment.max_score,
+                      translate,
+                      language,
+                    )}
                   </p>
                   {submission.feedback ? (
                     <p className="mt-2 whitespace-pre-wrap text-sm text-muted">
@@ -124,12 +147,16 @@ export default async function AssignmentDetailPage({
                   ) : null}
                 </>
               ) : (
-                <p className="text-sm text-muted">{translate("account.awaitingGrade")}</p>
+                <p className="text-sm text-muted">
+                  {translate("account.awaitingGrade")}
+                </p>
               )}
             </div>
           </>
         ) : (
-          <p className="text-sm text-muted">{translate("account.notSubmitted")}</p>
+          <p className="text-sm text-muted">
+            {translate("account.notSubmitted")}
+          </p>
         )}
       </section>
 

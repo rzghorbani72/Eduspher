@@ -13,22 +13,22 @@ export function cn(...inputs: ClassValue[]) {
  */
 const CURRENCY_SYMBOLS: Record<string, Record<string, string>> = {
   IRR: {
-    fa: 'تومان',
-    ar: 'تومان',
-    en: 'Toman',
-    tr: 'Toman',
+    fa: "تومان",
+    ar: "تومان",
+    en: "Toman",
+    tr: "Toman",
   },
   USD: {
-    fa: 'دلار',
-    ar: 'دولار',
-    en: '$',
-    tr: 'Dolar',
+    fa: "دلار",
+    ar: "دولار",
+    en: "$",
+    tr: "Dolar",
   },
   EUR: {
-    fa: 'یورو',
-    ar: 'يورو',
-    en: '€',
-    tr: 'Euro',
+    fa: "یورو",
+    ar: "يورو",
+    en: "€",
+    tr: "Euro",
   },
 };
 
@@ -37,10 +37,10 @@ const CURRENCY_SYMBOLS: Record<string, Record<string, string>> = {
  * Returns the appropriate price unit/symbol based on language
  */
 const PRICE_UNITS: Record<string, string> = {
-  fa: 'تومان', // Farsi/Persian - Toman
-  ar: 'دولار', // Arabic - Dollar (or could be دينار for some countries)
-  tr: '₺', // Turkish - Turkish Lira symbol
-  en: '$', // English - Dollar sign
+  fa: "تومان", // Farsi/Persian - Toman
+  ar: "دولار", // Arabic - Dollar (or could be دينار for some countries)
+  tr: "₺", // Turkish - Turkish Lira symbol
+  en: "$", // English - Dollar sign
 };
 
 /**
@@ -48,8 +48,8 @@ const PRICE_UNITS: Record<string, string> = {
  * @param language - Language code (e.g., 'fa', 'en', 'tr', 'ar')
  * @returns Price unit string for the given language
  */
-export const getPriceUnit = (language: string = 'en'): string => {
-  return PRICE_UNITS[language] || PRICE_UNITS['en'];
+export const getPriceUnit = (language: string = "en"): string => {
+  return PRICE_UNITS[language] || PRICE_UNITS["en"];
 };
 
 /**
@@ -60,12 +60,17 @@ export const getPriceUnit = (language: string = 'en'): string => {
  */
 export const getLocalizedCurrencySymbol = (
   currency: string,
-  language: string = 'en',
-  fallbackSymbol?: string
+  language: string = "en",
+  fallbackSymbol?: string,
 ): string => {
   const currencySymbols = CURRENCY_SYMBOLS[currency?.toUpperCase()];
   if (currencySymbols) {
-    return currencySymbols[language] || currencySymbols['en'] || fallbackSymbol || currency;
+    return (
+      currencySymbols[language] ||
+      currencySymbols["en"] ||
+      fallbackSymbol ||
+      currency
+    );
   }
   return fallbackSymbol || currency;
 };
@@ -79,7 +84,7 @@ export const formatCurrency = (
     divideBy?: number;
     locale?: string;
     language?: string; // Language for localized currency symbol
-  }
+  },
 ) => {
   const {
     currency = "USD",
@@ -95,13 +100,15 @@ export const formatCurrency = (
   // Determine the symbol to use
   // Priority: 1. Localized symbol for IRR, 2. Custom symbol, 3. Language-based price unit, 4. Default
   let symbol = currency_symbol;
-  
+
   // For IRR (Iranian Rial/Toman), always use localized symbol
-  if (currency?.toUpperCase() === 'IRR') {
-    const lang = language || (locale.startsWith('fa') ? 'fa' : locale.startsWith('ar') ? 'ar' : 'en');
-    symbol = getLocalizedCurrencySymbol('IRR', lang, currency_symbol);
+  if (currency?.toUpperCase() === "IRR") {
+    const lang =
+      language ||
+      (locale.startsWith("fa") ? "fa" : locale.startsWith("ar") ? "ar" : "en");
+    symbol = getLocalizedCurrencySymbol("IRR", lang, currency_symbol);
   }
-  
+
   // If no symbol provided and we have a language, use getPriceUnit for language-specific price unit
   if (!symbol && language) {
     symbol = getPriceUnit(language);
@@ -144,7 +151,7 @@ export const formatCurrencyWithAcademy = (
     language?: string;
   } | null,
   divideBy?: number,
-  language?: string
+  language?: string,
 ) => {
   if (!academy) {
     return formatCurrency(value, { divideBy: divideBy || 1 });
@@ -159,13 +166,41 @@ export const formatCurrencyWithAcademy = (
   let locale = "en-US"; // Default: uses commas for thousands
   if (academy.country_code) {
     // Countries that typically use dots for thousands: DE, IT, ES, FR, etc.
-    const dotSeparatorCountries = ["DE", "IT", "ES", "FR", "NL", "BE", "AT", "CH", "PL", "CZ", "SK", "HU", "RO", "BG", "HR", "SI"];
+    const dotSeparatorCountries = [
+      "DE",
+      "IT",
+      "ES",
+      "FR",
+      "NL",
+      "BE",
+      "AT",
+      "CH",
+      "PL",
+      "CZ",
+      "SK",
+      "HU",
+      "RO",
+      "BG",
+      "HR",
+      "SI",
+    ];
     // Countries that use commas: US, UK, CA, AU, IN, IR, etc.
-    const commaSeparatorCountries = ["US", "GB", "CA", "AU", "IN", "IR", "AE", "SA"];
-    
+    const commaSeparatorCountries = [
+      "US",
+      "GB",
+      "CA",
+      "AU",
+      "IN",
+      "IR",
+      "AE",
+      "SA",
+    ];
+
     if (dotSeparatorCountries.includes(academy.country_code.toUpperCase())) {
       locale = "de-DE"; // German locale uses dots for thousands
-    } else if (commaSeparatorCountries.includes(academy.country_code.toUpperCase())) {
+    } else if (
+      commaSeparatorCountries.includes(academy.country_code.toUpperCase())
+    ) {
       locale = "en-US"; // US locale uses commas for thousands
     } else {
       // Default to en-US for unknown countries
@@ -179,20 +214,20 @@ export const formatCurrencyWithAcademy = (
   if (!lang && academy.country_code) {
     // Map country codes to languages
     const countryToLanguage: Record<string, string> = {
-      'IR': 'fa', // Iran -> Persian
-      'AF': 'fa', // Afghanistan -> Persian/Dari
-      'TJ': 'fa', // Tajikistan -> Persian/Tajik
-      'SA': 'ar', // Saudi Arabia -> Arabic
-      'AE': 'ar', // UAE -> Arabic
-      'EG': 'ar', // Egypt -> Arabic
-      'IQ': 'ar', // Iraq -> Arabic
-      'TR': 'tr', // Turkey -> Turkish
-      'US': 'en',
-      'GB': 'en',
-      'CA': 'en',
-      'AU': 'en',
+      IR: "fa", // Iran -> Persian
+      AF: "fa", // Afghanistan -> Persian/Dari
+      TJ: "fa", // Tajikistan -> Persian/Tajik
+      SA: "ar", // Saudi Arabia -> Arabic
+      AE: "ar", // UAE -> Arabic
+      EG: "ar", // Egypt -> Arabic
+      IQ: "ar", // Iraq -> Arabic
+      TR: "tr", // Turkey -> Turkish
+      US: "en",
+      GB: "en",
+      CA: "en",
+      AU: "en",
     };
-    lang = countryToLanguage[academy.country_code.toUpperCase()] || 'en';
+    lang = countryToLanguage[academy.country_code.toUpperCase()] || "en";
   }
 
   return formatCurrency(value, {
@@ -205,17 +240,51 @@ export const formatCurrencyWithAcademy = (
   });
 };
 
-const PERSIAN_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"] as const;
+const PERSIAN_DIGITS = [
+  "۰",
+  "۱",
+  "۲",
+  "۳",
+  "۴",
+  "۵",
+  "۶",
+  "۷",
+  "۸",
+  "۹",
+] as const;
 
 /**
  * Convert Latin digits (0-9) to Persian digits when the language is `fa`.
  * Keeps separators (commas, dots) untouched so "2,900,000" -> "۲,۹۰۰,۰۰۰".
  */
-export const toPersianDigits = (value: string | number, language?: string): string => {
+export const toPersianDigits = (
+  value: string | number,
+  language?: string,
+): string => {
   const text = String(value);
   if (language !== "fa") return text;
   return text.replace(/[0-9]/g, (digit) => PERSIAN_DIGITS[Number(digit)]);
 };
+
+/**
+ * A grouped, localised number for display: 1234 -> "۱,۲۳۴" in `fa`.
+ * Grouping is done with the en-US separator so a count and a price printed next
+ * to each other look the same.
+ */
+export const formatNumber = (value: number, language?: string): string =>
+  toPersianDigits(value.toLocaleString("en-US"), language);
+
+/** A percentage with the sign the locale actually uses: 42 -> "۴۲٪". */
+export const formatPercent = (value: number, language?: string): string =>
+  language === "fa" ? `${toPersianDigits(value, language)}٪` : `${value}%`;
+
+/**
+ * Phone numbers and other Latin-first identifiers keep their own direction. In
+ * an RTL paragraph a bare "+98…" renders as "98…+", so the value is wrapped in
+ * the Unicode isolate characters that pin it back to LTR.
+ */
+export const formatLtrValue = (value: string, language?: string): string =>
+  language === "fa" ? `\u2066${toPersianDigits(value, language)}\u2069` : value;
 
 /**
  * Dates in the account area are rendered on the server, so they must not depend
@@ -255,7 +324,10 @@ export const resolveAssetUrl = (path?: string | null) => {
 };
 
 // Builds a subdomain URL for an academy: http://siah.localhost:5000 or https://siah.mentoma.com
-export const buildAcademySubdomainUrl = (slug: string, appUrl: string): string => {
+export const buildAcademySubdomainUrl = (
+  slug: string,
+  appUrl: string,
+): string => {
   try {
     const { protocol, host } = new URL(appUrl);
     return `${protocol}//${slug}.${host}`;
@@ -274,7 +346,6 @@ export const buildAcademyPath = (slug: string | null, path: string): string => {
   }
   return `/${slug}${normalized}`;
 };
-
 
 /** Stable index from a cuid, so the same record always gets the same variant. */
 export const hashToIndex = (value: string, buckets: number): number => {

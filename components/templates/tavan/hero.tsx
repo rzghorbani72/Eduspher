@@ -6,6 +6,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { TAVAN_DEFAULTS } from './defaults';
 import styles from './tavan.module.css';
+import { formatPercent } from '@/lib/utils';
 
 interface HeroStat {
   value: string;
@@ -97,7 +98,7 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
             <div className="rounded-(--theme-border-radius) border border-current/18 p-5">
               <div className="mb-2.5 flex items-baseline justify-between text-[13px] text-current/70">
                 <span data-editable="cycleLabel">{text(config, 'cycleLabel', d.cycleLabel)}</span>
-                <span className="font-bold tabular-nums">{percent}٪</span>
+                <span className="font-bold tabular-nums">{formatPercent(percent, "fa")}</span>
               </div>
               <div className={styles.track}>
                 <span className={styles.trackFill} style={{ width: `${percent}%` }} />
