@@ -14,8 +14,8 @@ export const LANDING = {
   },
 
   hero: {
-    panelAlt: "مدیریت دوره‌های آکادمی در پنل منتوما",
-    panelImage: "/landing/owner-courses.png",
+    panelAlt: "پنل مدیریت دوره‌های آکادمی روی لپ‌تاپ",
+    panelImage: "/landing/hero-laptop.webp",
     titleLead: "با داشتن وب‌سایت آموزشی شخصی خودت فقط ",
     titleHighlight: "۱۰ دقیقه فاصله داری",
     subtitle:

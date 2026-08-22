@@ -2,7 +2,6 @@ import { Container } from "./landing-container";
 import { HeroGlobe } from "./hero-globe";
 import { LANDING } from "./landing.messages";
 import { LandingShot } from "./landing-shot";
-import { ProductFrame } from "./product-frame";
 
 type Props = {
   registerUrl: string;
@@ -23,7 +22,7 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
         <span className="lp-glow lp-glow-3 -bottom-56 start-1/3" />
       </div>
 
-      <Container className="relative z-10 grid items-center gap-14 lg:grid-cols-2 lg:gap-16">
+      <Container className="relative z-10 grid items-center gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16">
         <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
           <h1 className="text-balance text-[32px] font-extrabold leading-[1.35] tracking-[-0.028em] text-lp-ink sm:text-[40px] lg:text-[46px]">
             {LANDING.hero.titleLead}
@@ -62,35 +61,27 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
           </ul>
         </div>
 
-        <div className="relative flex items-center justify-center">
-          {/* Dotted globe sits behind the product frame and is what the hero
-              scroll scene rotates/zooms — see landing-motion.tsx. */}
+        <div className="relative flex items-center justify-center lg:justify-end lg:-me-10 xl:-me-20">
+          {/* Dotted globe sits behind the product shot. The hero scroll scene
+              feeds it a 0→1 progress it grows into — see landing-motion.tsx. */}
           <div
             data-lp="hero-earth"
-            className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10 will-change-transform"
+            className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10"
           >
             {/* Square + self-centering: the globe must not depend on the
-                sibling frame's height to have a size of its own. */}
-            <HeroGlobe
-              src="/dotted-globe-mint.json"
-              className="absolute inset-x-0 top-1/2 aspect-square -translate-y-1/2"
-            />
+                sibling shot's height to have a size of its own. */}
+            <HeroGlobe className="absolute inset-x-0 top-1/2 aspect-square w-full -translate-y-1/2" />
           </div>
 
-          {/* <ProductFrame
-            lift={false}
-            className="w-full max-w-[560px] lg:max-w-[680px] will-change-transform"
-          >
-            <LandingShot
-              src={LANDING.hero.panelImage}
-              alt={LANDING.hero.panelAlt}
-              width={1440}
-              height={900}
-              priority
-              sizes="(max-width: 1024px) 100vw, 680px"
-              className="h-auto w-full"
-            />
-          </ProductFrame> */}
+          <LandingShot
+            src={LANDING.hero.panelImage}
+            alt={LANDING.hero.panelAlt}
+            width={1536}
+            height={1024}
+            priority
+            sizes="(max-width: 1024px) 100vw, 820px"
+            className="lp-shot-fade h-auto w-full max-w-[620px] lg:max-w-[820px] will-change-transform"
+          />
         </div>
       </Container>
     </section>

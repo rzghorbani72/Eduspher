@@ -1682,6 +1682,27 @@ select[class*="rounded-sm"] {
   background: var(--color-lp-line-2);
 }
 
+/* Frameless product shot: the photo already carries its own device frame, so
+   instead of window chrome we dissolve its four edges into the hero backdrop.
+   Two axis gradients intersected — one mask per axis is cheaper than a radial
+   and keeps the centre fully opaque. */
+/* Dot colour of the canvas hero globe. A plain class, not an @theme token:
+   hero-globe.tsx reads it off the canvas as `color`, and an @theme var that no
+   utility references is tree-shaken out of the build. */
+.lp-globe {
+  color: #3a6e62;
+}
+.lp-root[data-theme="dark"] .lp-globe {
+  color: #3d8b76;
+}
+
+.lp-shot-fade {
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, #000 10%, #000 86%, transparent 100%),
+    linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-composite: intersect;
+}
+
 /* ── Ambient glow orbs ─────────────────────────────────────────────────────
    The dashboard's signature backdrop (AdminPanel `.dashboard-glow`). Static —
    blurring this large a surface is expensive, so it must never animate. */

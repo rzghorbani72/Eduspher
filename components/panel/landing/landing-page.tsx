@@ -52,7 +52,7 @@ export function LandingPage({
         <ForYouSection />
         <PublishSection registerUrl={adminRegisterUrl} pricingUrl="#pricing" />
         <WhySection />
-        <StepsSection />
+        {/* <StepsSection /> */}
         <CreatorsSection academies={academies} />
         <PricingSection registerUrl={adminRegisterUrl} plans={plans} />
         <FaqSection />
