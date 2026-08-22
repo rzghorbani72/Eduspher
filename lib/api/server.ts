@@ -1412,3 +1412,62 @@ export async function createBasket(data: {
     throw error;
   }
 }
+
+export type AcademyContactChannel =
+  | "phone"
+  | "email"
+  | "address"
+  | "website"
+  | "instagram"
+  | "telegram"
+  | "whatsapp"
+  | "linkedin"
+  | "youtube"
+  | "twitter"
+  | "aparat"
+  | "eitaa";
+
+export type AcademyContactLink = {
+  type: AcademyContactChannel;
+  value: string;
+  label: string | null;
+};
+
+export type AcademyStaticPage = {
+  slug: "about" | "contact";
+  title: string;
+  body: string;
+  is_published: boolean;
+  updated_at: string | null;
+};
+
+export type AcademySiteContent = {
+  academy_name: string;
+  pages: AcademyStaticPage[];
+  links: AcademyContactLink[];
+};
+
+/**
+ * The manager-authored About/Contact content plus the academy's public contact
+ * channels. Read by both static pages and the footer on the same render, so it
+ * is cached per request.
+ *
+ * Returns `null` when the academy has no such content or the backend is
+ * unreachable — the footer degrades to no social row, the pages to a 404.
+ */
+export const getAcademySiteContent = cache(
+  async (slug: string): Promise<AcademySiteContent | null> => {
+    if (!slug) return null;
+    try {
+      const result = await serverFetchRaw<{
+        status: string;
+        data: AcademySiteContent;
+      }>(`/academy-site/public?slug=${encodeURIComponent(slug)}`, {
+        includeAuth: false,
+      });
+      return result.data ?? null;
+    } catch {
+      return null;
+    }
+  },
+);

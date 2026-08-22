@@ -3,15 +3,10 @@ import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
 import { PlatformTrustBadge } from "@/components/academy/platform-trust-badge";
 import { PoweredBy } from "@/components/shared/powered-by";
-import {
-  Mail,
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Youtube,
-} from "lucide-react";
+import { Mail } from "lucide-react";
 import { t } from "@/lib/i18n/server-translations";
+import { ContactChannelIcons } from "@/components/academy/contact-channel-list";
+import { getAcademySiteContent, type AcademyContactLink } from "@/lib/api/server";
 
 interface FooterBlockProps {
   id?: string;
@@ -26,8 +21,13 @@ interface FooterBlockProps {
   };
 }
 
-function getFooterLinks() {
-  return [
+/**
+ * `/about` and `/contact` only exist once the manager writes them, so an
+ * unpublished page is dropped from the column instead of being advertised as a
+ * link that 404s.
+ */
+function getFooterLinks(publishedPages: ReadonlySet<string>) {
+  const sections = [
     {
       title: t("footer.product"),
       items: [
@@ -56,15 +56,16 @@ function getFooterLinks() {
       ],
     },
   ];
-}
 
-const socialLinks = [
-  { name: "Facebook", icon: Facebook, href: "#" },
-  { name: "Twitter", icon: Twitter, href: "#" },
-  { name: "Instagram", icon: Instagram, href: "#" },
-  { name: "LinkedIn", icon: Linkedin, href: "#" },
-  { name: "YouTube", icon: Youtube, href: "#" },
-];
+  return sections.map((section) => ({
+    ...section,
+    items: section.items.filter(
+      (item) =>
+        !["/about", "/contact"].includes(item.href) ||
+        publishedPages.has(item.href.slice(1)),
+    ),
+  }));
+}
 
 const footerStyle = {
   backgroundColor: "var(--theme-surface-alt)",
@@ -86,23 +87,17 @@ const LogoBadge = () => (
   </div>
 );
 
-const SocialLinks = ({ max }: { max?: number }) => (
-  <div className="flex items-center gap-4">
-    {(max ? socialLinks.slice(0, max) : socialLinks).map((social) => {
-      const Icon = social.icon;
-      return (
-        <Link
-          key={social.name}
-          href={social.href}
-          className="opacity-40 transition-all hover:opacity-100 hover:text-[var(--theme-primary)]"
-          aria-label={social.name}
-        >
-          <Icon className="h-5 w-5" />
-        </Link>
-      );
-    })}
-  </div>
-);
+/**
+ * The academy's own channels. Nothing is rendered when the manager published
+ * none — a row of dead icons reads as a broken site, not a placeholder.
+ */
+const SocialLinks = ({
+  links,
+  max,
+}: {
+  links: AcademyContactLink[];
+  max?: number;
+}) => <ContactChannelIcons links={max ? links.slice(0, max) : links} />;
 
 const Copyright = ({
   name,
@@ -138,6 +133,9 @@ export async function FooterBlock(props: FooterBlockProps) {
 async function FooterBlockBody({ id, config }: FooterBlockProps) {
   const store = await getAcademyContext();
   const buildPath = (path: string) => buildAcademyPath(store.slug, path);
+  const site = store.slug ? await getAcademySiteContent(store.slug) : null;
+  const socialLinks = site?.links ?? [];
+  const publishedPages = new Set(site?.pages.map((page) => page.slug) ?? []);
 
   if (config?.style === "creative") {
     return (
@@ -149,14 +147,15 @@ async function FooterBlockBody({ id, config }: FooterBlockProps) {
     );
   }
 
-  const showSocialLinks = config?.showSocialLinks !== false;
+  const showSocialLinks =
+    config?.showSocialLinks !== false && socialLinks.length > 0;
   const showNewsletter = config?.showNewsletter !== false;
   const columns = config?.columns || 4;
   const minimal = config?.minimal === true;
   const compact = config?.compact === true;
   const showLegal = config?.showLegal === true;
 
-  const footerLinks = getFooterLinks();
+  const footerLinks = getFooterLinks(publishedPages);
   const displayLinks = minimal ? footerLinks.slice(0, 2) : footerLinks;
   const gridCols = minimal
     ? "sm:grid-cols-2"
@@ -231,7 +230,7 @@ async function FooterBlockBody({ id, config }: FooterBlockProps) {
         >
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Copyright name={store.name ?? ""} rightsText={rightsText} />
-            {showSocialLinks && <SocialLinks max={4} />}
+            {showSocialLinks && <SocialLinks links={socialLinks} max={4} />}
           </div>
         </div>
       </footer>
@@ -250,7 +249,7 @@ async function FooterBlockBody({ id, config }: FooterBlockProps) {
           <p className="text-sm leading-relaxed opacity-55">
             {t("footer.description")}
           </p>
-          {showSocialLinks && <SocialLinks />}
+          {showSocialLinks && <SocialLinks links={socialLinks} />}
           {showNewsletter && (
             <div className="space-y-2">
               <p className="text-sm font-semibold">{t("footer.newsletter")}</p>
