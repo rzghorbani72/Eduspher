@@ -169,6 +169,14 @@ type PublicStore = {
 const isBackendProxyPath = (pathname: string) =>
   /^\/(?:(?:fa|en|ar|tr)\/)?v1(?:\/|$)/.test(pathname);
 
+/**
+ * Static assets under /public. A missing extension here is not cosmetic: the
+ * request falls through to the academy-slug rewrite and 404s, so any new asset
+ * type must be listed.
+ */
+const STATIC_FILE =
+  /\.(?:txt|xml|json|js|mjs|css|map|ico|png|jpe?g|gif|svg|webp|avif|mp4|webm|mp3|pdf|woff2?|ttf|otf)$/i;
+
 const shouldBypass = (req: NextRequest) => {
   const { pathname } = req.nextUrl;
   return (
@@ -180,15 +188,7 @@ const shouldBypass = (req: NextRequest) => {
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/robots.txt") ||
     pathname.startsWith("/sitemap") ||
-    pathname.endsWith(".txt") ||
-    pathname.endsWith(".js") ||
-    pathname.endsWith(".css") ||
-    pathname.endsWith(".ico") ||
-    pathname.endsWith(".png") ||
-    pathname.endsWith(".jpg") ||
-    pathname.endsWith(".svg") ||
-    pathname.endsWith(".woff") ||
-    pathname.endsWith(".woff2")
+    STATIC_FILE.test(pathname)
   );
 };
 
