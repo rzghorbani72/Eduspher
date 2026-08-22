@@ -371,6 +371,7 @@ export const tr = {
     verifyPhoneLater:
       "Telefonunuzu daha sonra hesap ayarlarından doğrulayabilirsiniz",
     unableToCreateAccount: "Hesap oluşturulamadı. Lütfen tekrar deneyin.",
+    loginSuccess: "Başarıyla giriş yapıldı",
     unableToLogin: "Giriş yapılamadı. Lütfen tekrar deneyin.",
     unableToLogout: "Çıkış yapılamadı",
     resetPassword: "Şifrenizi sıfırlayın",

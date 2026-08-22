@@ -483,6 +483,7 @@ export const en = {
     verifyEmailLater: "You can verify your email later in account settings",
     verifyPhoneLater: "You can verify your phone later in account settings",
     unableToCreateAccount: "Unable to create account. Try again.",
+    loginSuccess: "Signed in successfully",
     unableToLogin: "Unable to login. Try again.",
     unableToLogout: "Unable to logout",
     resetPassword: "Reset your password",

@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
+import { toast } from "react-toastify";
 
 import {
   identifyAccount,
@@ -105,10 +106,10 @@ export function useLogin() {
     setAuthenticated(true);
     const { loadAndMergeCart } = await import("@/app/actions/cart");
     loadAndMergeCart().catch(() => {});
-    // The route guard sent us here with the page the visitor actually wanted.
-    router.push(
-      safeRedirectPath(searchParams.get("redirect"), buildPath("/courses")),
-    );
+    toast.success(t("auth.loginSuccess"), { toastId: "login-success" });
+    // The route guard sent us here with the page the visitor actually wanted;
+    // otherwise the visitor lands back on the academy home page.
+    router.push(safeRedirectPath(searchParams.get("redirect"), buildPath("/")));
     router.refresh();
   }
 

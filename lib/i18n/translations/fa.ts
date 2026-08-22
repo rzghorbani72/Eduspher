@@ -485,6 +485,7 @@ export const fa = {
     verifyEmailLater: "می‌توانید بعداً در تنظیمات حساب ایمیل خود را تأیید کنید",
     verifyPhoneLater: "می‌توانید بعداً در تنظیمات حساب تلفن خود را تأیید کنید",
     unableToCreateAccount: "نمی‌توان حساب ایجاد کرد. دوباره تلاش کنید.",
+    loginSuccess: "با موفقیت وارد شدید",
     unableToLogin: "نمی‌توان وارد شد. دوباره تلاش کنید.",
     unableToLogout: "نمی‌توان خارج شد",
     resetPassword: "بازیابی رمز عبور",

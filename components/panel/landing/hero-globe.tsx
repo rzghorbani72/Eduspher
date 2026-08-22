@@ -5,14 +5,17 @@ import { useEffect, useRef } from "react";
 type Props = {
   src: string;
   className?: string;
+  /** Playback rate: 1 = the file's own 30fps. Lower is slower. */
+  speed?: number;
 };
 
 /**
  * Lottie backdrop for the hero product frame. Both the player and the JSON are
  * fetched at runtime so neither lands in the initial bundle of a page whose LCP
  * is the hero. Under `prefers-reduced-motion` it renders a single frozen frame.
+ * It turns very slowly on purpose — it is a backdrop, not the subject.
  */
-export function HeroGlobe({ src, className }: Props) {
+export function HeroGlobe({ src, className, speed = 0.15 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,6 +26,7 @@ export function HeroGlobe({ src, className }: Props) {
     let animation: {
       destroy: () => void;
       goToAndStop: (f: number, isFrame: boolean) => void;
+      setSpeed: (speed: number) => void;
     } | null = null;
 
     const load = async () => {
@@ -45,6 +49,7 @@ export function HeroGlobe({ src, className }: Props) {
         autoplay: !reduced,
         animationData,
       });
+      animation.setSpeed(speed);
       if (reduced) animation.goToAndStop(0, true);
     };
 
@@ -54,7 +59,7 @@ export function HeroGlobe({ src, className }: Props) {
       cancelled = true;
       animation?.destroy();
     };
-  }, [src]);
+  }, [src, speed]);
 
   return <div ref={hostRef} aria-hidden className={className} />;
 }

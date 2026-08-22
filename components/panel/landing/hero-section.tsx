@@ -69,13 +69,15 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
             data-lp="hero-earth"
             className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10 will-change-transform"
           >
+            {/* Square + self-centering: the globe must not depend on the
+                sibling frame's height to have a size of its own. */}
             <HeroGlobe
               src="/dotted-globe-mint.json"
-              className="h-full w-full"
+              className="absolute inset-x-0 top-1/2 aspect-square -translate-y-1/2"
             />
           </div>
 
-          <ProductFrame
+          {/* <ProductFrame
             lift={false}
             className="w-full max-w-[560px] lg:max-w-[680px] will-change-transform"
           >
@@ -88,7 +90,7 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
               sizes="(max-width: 1024px) 100vw, 680px"
               className="h-auto w-full"
             />
-          </ProductFrame>
+          </ProductFrame> */}
         </div>
       </Container>
     </section>

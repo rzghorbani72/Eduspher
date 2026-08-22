@@ -68,7 +68,7 @@ test.describe('edusphere auth flows @backend', () => {
     await expect(page.locator('#password')).toBeVisible({ timeout: 15_000 });
     await page.locator('#password').fill(PASSWORD);
     await page.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\/courses/, { timeout: 20_000 });
+    await expect(page).not.toHaveURL(/\/auth\/login/, { timeout: 20_000 });
 
     // ── Forgot password: validate → code → new password ───────────────────
     await page.goto('/auth/forgot-password');

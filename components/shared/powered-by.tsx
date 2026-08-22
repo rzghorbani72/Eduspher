@@ -1,6 +1,6 @@
 import { env } from "@/lib/env";
 import type { LanguageCode } from "@/lib/i18n/config";
-import { t } from "@/lib/i18n/server-translations";
+import { t } from "@/lib/i18n";
 
 /**
  * Attribution line every footer carries: the year plus a link back to the

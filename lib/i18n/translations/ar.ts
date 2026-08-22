@@ -354,6 +354,7 @@ export const ar = {
     verifyEmailLater: 'يمكنك التحقق من بريدك الإلكتروني لاحقًا في إعدادات الحساب',
     verifyPhoneLater: 'يمكنك التحقق من هاتفك لاحقًا في إعدادات الحساب',
     unableToCreateAccount: 'تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.',
+    loginSuccess: 'تم تسجيل الدخول بنجاح',
     unableToLogin: 'تعذر تسجيل الدخول. يرجى المحاولة مرة أخرى.',
     unableToLogout: 'تعذر تسجيل الخروج',
     resetPassword: 'إعادة تعيين كلمة المرور',
