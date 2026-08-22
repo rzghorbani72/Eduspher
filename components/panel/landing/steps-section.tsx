@@ -71,13 +71,16 @@ export function StepsSection() {
                       image, badge, copy and dots — still fits on screen while
                       it is pinned. An uncapped 1100x560 image overflows a short
                       laptop and the controls end up below the fold. */}
-                  <ProductFrame className="h-[38vh] max-h-[420px] min-h-[220px]">
+                  <ProductFrame className="h-[46vh] max-h-[520px] min-h-[320px]">
                     <div className="relative min-h-0 flex-1">
                       <Image
+                        key={item.image}
                         src={item.image}
                         alt={item.alt}
                         fill
-                        loading={index === active ? "eager" : "lazy"}
+                        // All three slides sit off-canvas via transform; `lazy`
+                        // never intersects the viewport so step 2/3 stayed blank.
+                        priority
                         sizes="(max-width: 1024px) 100vw, 1160px"
                         className="object-cover object-top"
                       />

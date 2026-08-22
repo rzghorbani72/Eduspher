@@ -81,15 +81,15 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
 
           <ProductFrame
             lift={false}
-            className="w-full max-w-[560px] will-change-transform"
+            className="w-full max-w-[560px] lg:max-w-[680px] will-change-transform"
           >
             <Image
               src={LANDING.hero.panelImage}
               alt={LANDING.hero.panelAlt}
-              width={1120}
-              height={780}
+              width={1440}
+              height={900}
               priority
-              sizes="(max-width: 1024px) 100vw, 560px"
+              sizes="(max-width: 1024px) 100vw, 680px"
               className="h-auto w-full"
             />
           </ProductFrame>

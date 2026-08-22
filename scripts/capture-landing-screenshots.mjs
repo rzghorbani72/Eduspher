@@ -1,9 +1,11 @@
 /**
- * Captures real AdminPanel + active template screenshots for the platform landing.
+ * Captures real AdminPanel + academy screenshots for the platform landing.
  *
  * Prerequisites: Backend :3000, AdminPanel :4000, edusphere :5000, demo-showcase seeded.
  *
  *   node scripts/capture-landing-screenshots.mjs
+ *
+ * Publish carousel uses matched student ↔ owner pairs (see landing.messages.ts).
  */
 import { chromium } from '@playwright/test';
 import path from 'node:path';
@@ -14,36 +16,51 @@ const OUT = path.join(__dirname, '../public/landing');
 
 const PANEL = process.env.PANEL_URL ?? 'http://localhost:4000';
 const WEB = process.env.WEB_URL ?? 'http://localhost:5000';
+const ACADEMY_WEB =
+  process.env.ACADEMY_WEB_URL ?? 'http://demo-showcase.localhost:5000';
 const PHONE = process.env.DEMO_MANAGER_PHONE ?? '09000000100';
 const PASSWORD = process.env.DEMO_MANAGER_PASSWORD ?? 'Demo1234!';
 
-/** Active gallery templates only (کیهان، دستان، توان، پرستو، زبانه). */
-const STUDENT_TEMPLATES = [
-  'keyhan',
-  'dastan',
-  'tavan',
-  'parastoo',
-  'zabaneh'
-];
+/** Demo course ids (seed-demo-showcase). Override via env if ids change. */
+const COURSE_A =
+  process.env.DEMO_COURSE_A_ID ?? 'cmt4hzhah002y48lbtu9iv7w4';
+const COURSE_B =
+  process.env.DEMO_COURSE_B_ID ?? 'cmt4hzhay003248lbtcpo4c7c';
 
 /**
- * Manager/teacher panel pages used by the publish-section owner carousel.
- * Captured while logged into demo-showcase so shots show full sample data.
+ * Matched pairs for the publish section (student URL → file, owner URL → file).
+ * Keep this list in sync with LANDING.publish.pairs.
  */
-const OWNER_PAGES = [
-  ['/dashboard', 'hero-dashboard.png'],
-  ['/courses', 'owner-courses.png'],
-  ['/website/appearance', 'owner-appearance.png'],
-  ['/analytics', 'owner-analytics.png'],
-  // Full student payment rows (same data as /payments) — capture with demo login.
-  ['/financial/academy', 'owner-financial.png']
+const PUBLISH_CAPTURES = [
+  {
+    student: [`${ACADEMY_WEB}/courses/${COURSE_A}`, 'student-course.png'],
+    owner: [`${PANEL}/courses`, 'owner-courses.png']
+  },
+  {
+    student: [
+      `${WEB}/preview/blocks?template=parastoo&sample=1`,
+      'template-parastoo.png'
+    ],
+    owner: [`${PANEL}/website/appearance`, 'owner-templates.png']
+  },
+  {
+    student: [`${ACADEMY_WEB}/courses/${COURSE_B}`, 'student-course-alt.png'],
+    owner: [`${PANEL}/courses/${COURSE_A}`, 'owner-course-detail.png']
+  },
+  {
+    student: [
+      `${WEB}/preview/blocks?template=keyhan&sample=1`,
+      'template-keyhan.png'
+    ],
+    owner: [`${PANEL}/analytics`, 'owner-analytics-v2.png']
+  }
 ];
 
-/** Other landing slots that still need panel shots. */
 const OTHER_PANEL_SHOTS = [
   ['/users', 'for-you-2.png'],
   ['/courses', 'admin-panel.png'],
-  ['/courses', 'owner-courses.png']
+  ['/financial/academy', 'owner-financial-v2.png'],
+  ['/dashboard', 'hero-dashboard.png']
 ];
 
 async function hideDevOverlay(page) {
@@ -57,11 +74,11 @@ async function hideDevOverlay(page) {
 }
 
 async function capture(page, url, filename, waitMs = 2500) {
-  // Appearance polls live preview forever — networkidle never settles.
   const waitUntil = url.includes('/website/appearance') ? 'load' : 'networkidle';
   await page.goto(url, { waitUntil, timeout: 60_000 });
   await hideDevOverlay(page);
   await page.waitForTimeout(waitMs);
+  await page.mouse.move(0, 0);
   await page.screenshot({
     path: path.join(OUT, filename),
     fullPage: false
@@ -89,23 +106,18 @@ const context = await browser.newContext({
 const page = await context.newPage();
 
 try {
+  for (const pair of PUBLISH_CAPTURES) {
+    await capture(page, pair.student[0], pair.student[1], 4000);
+  }
+
   await login(page);
 
-  for (const [route, file] of OWNER_PAGES) {
-    await capture(page, `${PANEL}${route}`, file, 3500);
+  for (const pair of PUBLISH_CAPTURES) {
+    await capture(page, pair.owner[0], pair.owner[1], 4000);
   }
 
   for (const [route, file] of OTHER_PANEL_SHOTS) {
     await capture(page, `${PANEL}${route}`, file, 3000);
-  }
-
-  for (const id of STUDENT_TEMPLATES) {
-    await capture(
-      page,
-      `${WEB}/preview/blocks?template=${id}&sample=1`,
-      `template-${id}.png`,
-      4000
-    );
   }
 } finally {
   await browser.close();

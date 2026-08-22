@@ -14,8 +14,8 @@ export const LANDING = {
   },
 
   hero: {
-    panelAlt: "نمای داشبورد مدیریت آکادمی در منتوما",
-    panelImage: "/landing/hero-dashboard.png",
+    panelAlt: "مدیریت دوره‌های آکادمی در پنل منتوما",
+    panelImage: "/landing/owner-courses.png",
     titleLead: "با داشتن وب‌سایت آموزشی شخصی خودت فقط ",
     titleHighlight: "۱۰ دقیقه فاصله داری",
     subtitle:
@@ -70,65 +70,55 @@ export const LANDING = {
         body: "نشرها و سطح دسترسی دانش‌آموزان رو دقیق تنظیم کن. با ابزارهای بازاریابی و پرداخت‌های امن، درآمدت رو افزایش بده.",
       },
     ],
-    /** Active gallery templates only — never retired presets. */
-    studentTemplates: [
+    /**
+     * Matched student ↔ owner pairs. The carousel flips side within a pair,
+     * then advances to the next pair — so what the student sees always lines
+     * up with the matching manager screen.
+     */
+    pairs: [
       {
-        id: "keyhan",
-        name: "کیهان",
-        image: "/landing/template-keyhan.png",
-        alt: "قالب کیهان — سایت دانش‌آموز",
+        id: "course-list",
+        student: {
+          image: "/landing/student-course.png",
+          alt: "صفحه دوره در سایت دانش‌آموز",
+        },
+        owner: {
+          image: "/landing/owner-courses.png",
+          alt: "فهرست دوره‌ها در پنل مدیر",
+        },
       },
       {
-        id: "dastan",
-        name: "دستان",
-        image: "/landing/template-dastan.png",
-        alt: "قالب دستان — سایت دانش‌آموز",
+        id: "templates",
+        student: {
+          image: "/landing/template-parastoo.png",
+          alt: "قالب پرستو — سایت دانش‌آموز",
+        },
+        owner: {
+          image: "/landing/owner-templates.png",
+          alt: "انتخاب و مدیریت قالب‌ها در پنل",
+        },
       },
       {
-        id: "tavan",
-        name: "توان",
-        image: "/landing/template-tavan.png",
-        alt: "قالب توان — سایت دانش‌آموز",
-      },
-      {
-        id: "parastoo",
-        name: "پرستو",
-        image: "/landing/template-parastoo.png",
-        alt: "قالب پرستو — سایت دانش‌آموز",
-      },
-      {
-        id: "zabaneh",
-        name: "زبانه",
-        image: "/landing/template-zabaneh.png",
-        alt: "قالب زبانه — سایت دانش‌آموز",
-      },
-    ],
-    /** Manager/teacher panel pages with full demo data — one per owner turn. */
-    ownerPages: [
-      {
-        id: "financial",
-        image: "/landing/owner-financial-v2.png",
-        alt: "تراکنش‌ها و پرداخت‌های دانشجویان در پنل",
+        id: "course-detail",
+        student: {
+          image: "/landing/student-course-alt.png",
+          alt: "صفحه دوره دیگر در سایت دانش‌آموز",
+        },
+        owner: {
+          image: "/landing/owner-course-detail.png",
+          alt: "جزئیات و ویرایش دوره در پنل مدیر",
+        },
       },
       {
         id: "analytics",
-        image: "/landing/owner-analytics-v2.png",
-        alt: "تحلیل‌ها و آمار آکادمی",
-      },
-      {
-        id: "dashboard",
-        image: "/landing/hero-dashboard.png",
-        alt: "داشبورد مدیریت آکادمی",
-      },
-      {
-        id: "courses",
-        image: "/landing/owner-courses.png",
-        alt: "فهرست دوره‌ها در پنل مدیر",
-      },
-      {
-        id: "appearance",
-        image: "/landing/owner-appearance.png",
-        alt: "ظاهر و قالب‌های سایت آکادمی",
+        student: {
+          image: "/landing/template-keyhan.png",
+          alt: "قالب کیهان — سایت دانش‌آموز",
+        },
+        owner: {
+          image: "/landing/owner-analytics-v2.png",
+          alt: "تحلیل‌ها و آمار آکادمی در پنل",
+        },
       },
     ],
   },

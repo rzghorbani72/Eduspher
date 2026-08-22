@@ -35,12 +35,20 @@ points at the paths.
 
 | Slot | File | What it must show |
 |---|---|---|
-| Hero | `hero-dashboard.png` | Manager dashboard with stats |
+| Hero | `owner-courses.png` | Courses management page |
 | For-you 1 | `for-you-2.png` | Users / teachers / students |
 | For-you 2 | `owner-analytics-v2.png` | Analytics overview (980M gross, growth chart) |
 | For-you 3 | `owner-financial-v2.png` | Student payments (`/financial/academy`) |
-| Publish · student | `template-{keyhan,dastan,tavan,parastoo,zabaneh}.png` | Active gallery templates only — one per student turn |
-| Publish · owner | `owner-{financial,analytics}-v2.png` first, then dashboard / courses / appearance | Manager panel with demo data. Financial shot is `/financial/academy`. |
+| Publish · pairs | Matched student ↔ owner (advance together) | See table below |
+
+Publish pairs (student → owner):
+
+| # | Student | Owner |
+|---|---|---|
+| 1 | `student-course.png` (course page) | `owner-courses.png` (courses list) |
+| 2 | `template-parastoo.png` | `owner-templates.png` (`/website/appearance`) |
+| 3 | `student-course-alt.png` (other course) | `owner-course-detail.png` (course detail) |
+| 4 | `template-keyhan.png` | `owner-analytics-v2.png` |
 | Step 1 | `owner-appearance.png` | Appearance / branding setup |
 | Step 2 | `owner-courses.png` | Adding courses |
 | Step 3 | `owner-financial-v2.png` | Student payments (`/financial/academy`) |

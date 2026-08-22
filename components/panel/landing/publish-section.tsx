@@ -11,8 +11,7 @@ import { ProductFrame } from "./product-frame";
 import { SectionHeading } from "./section-heading";
 
 const TABS = LANDING.publish.tabs;
-const STUDENT_TEMPLATES = LANDING.publish.studentTemplates;
-const OWNER_PAGES = LANDING.publish.ownerPages;
+const PAIRS = LANDING.publish.pairs;
 const CYCLE_MS = 6000;
 
 type Side = "student" | "owner";
@@ -23,24 +22,21 @@ type Props = {
 };
 
 /**
- * Infinite loop alternating sides:
- * student template → owner panel page → next student → next owner → …
- * Each side advances its own gallery independently.
+ * Infinite loop of matched pairs:
+ * student shot → matching owner shot → next pair’s student → …
+ * Pair index stays locked while flipping sides so the two views stay aligned.
  */
 export function PublishSection({ registerUrl, pricingUrl }: Props) {
   const [side, setSide] = useState<Side>("student");
-  const [templateIndex, setTemplateIndex] = useState(0);
-  const [ownerIndex, setOwnerIndex] = useState(0);
+  const [pairIndex, setPairIndex] = useState(0);
   const [cycle, setCycle] = useState(0);
   const [running, setRunning] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const sideRef = useRef(side);
-  const templateRef = useRef(templateIndex);
-  const ownerRef = useRef(ownerIndex);
+  const pairRef = useRef(pairIndex);
   useEffect(() => {
     sideRef.current = side;
-    templateRef.current = templateIndex;
-    ownerRef.current = ownerIndex;
+    pairRef.current = pairIndex;
   });
 
   useEffect(() => {
@@ -64,10 +60,7 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
           if (sideRef.current === "student") {
             setSide("owner");
           } else {
-            setOwnerIndex((ownerRef.current + 1) % OWNER_PAGES.length);
-            setTemplateIndex(
-              (templateRef.current + 1) % STUDENT_TEMPLATES.length
-            );
+            setPairIndex((pairRef.current + 1) % PAIRS.length);
             setSide("student");
           }
           setCycle((value) => value + 1);
@@ -91,30 +84,17 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
 
   const selectTab = (next: Side) => {
     if (next === side) {
-      if (next === "student") {
-        setTemplateIndex((index) => (index + 1) % STUDENT_TEMPLATES.length);
-      } else {
-        setOwnerIndex((index) => (index + 1) % OWNER_PAGES.length);
-      }
-    } else if (next === "owner") {
-      setOwnerIndex((ownerRef.current + 1) % OWNER_PAGES.length);
-      setSide("owner");
+      setPairIndex((index) => (index + 1) % PAIRS.length);
     } else {
-      setTemplateIndex((templateRef.current + 1) % STUDENT_TEMPLATES.length);
-      setSide("student");
+      setSide(next);
     }
     setCycle((value) => value + 1);
   };
 
   const activeTabIndex = side === "student" ? 0 : 1;
-  const frame =
-    side === "student"
-      ? STUDENT_TEMPLATES[templateIndex]
-      : OWNER_PAGES[ownerIndex];
-  const frameKey =
-    side === "student"
-      ? `student-${STUDENT_TEMPLATES[templateIndex].id}`
-      : `owner-${OWNER_PAGES[ownerIndex].id}`;
+  const pair = PAIRS[pairIndex];
+  const frame = side === "student" ? pair.student : pair.owner;
+  const frameKey = `${pair.id}-${side}`;
 
   return (
     <section
