@@ -62,11 +62,24 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
           </ul>
         </div>
 
-        {/* The product itself is the hero art. `hero-frame` is what the scroll
-            scene parallaxes — see landing-motion.tsx. */}
         <div className="relative flex items-center justify-center">
+          {/* Dotted world map sits behind the product frame and is what the
+              hero scroll scene rotates/zooms — see landing-motion.tsx. */}
+          <div
+            data-lp="hero-earth"
+            className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10 will-change-transform"
+          >
+            <Image
+              src="/landing/world-dots.svg"
+              alt=""
+              width={600}
+              height={450}
+              priority
+              className="h-full w-full object-contain"
+            />
+          </div>
+
           <ProductFrame
-            data-lp="hero-frame"
             lift={false}
             className="w-full max-w-[560px] will-change-transform"
           >

@@ -34,23 +34,23 @@ export function LandingMotion() {
       const canPin = window.matchMedia(DESKTOP).matches;
 
       ctx = gsap.context(() => {
-        // ── Hero: the product frame drifts as the page scrolls ──────────────
-        // One transform on one composited element. It replaced a scrubbed
-        // rotate+scale of a 45KB dotted globe, which repainted a large vector
-        // across the LCP viewport and sold a decoration instead of the product.
-        // Deliberately not pinned: the hero must never hold the page hostage.
-        const frame = document.querySelector<HTMLElement>('[data-lp="hero-frame"]');
+        // ── Hero: hold the page while the globe rotates and zooms ───────────
+        const earth = document.querySelector<HTMLElement>('[data-lp="hero-earth"]');
         const hero = document.querySelector<HTMLElement>('[data-lp="hero"]');
 
-        if (frame && hero) {
-          gsap.to(frame, {
-            y: -20,
+        if (earth && hero) {
+          gsap.to(earth, {
+            rotate: 38,
+            scale: 1.55,
             ease: "none",
             scrollTrigger: {
               trigger: hero,
               start: "top top",
-              end: "bottom top",
+              end: canPin ? "+=90%" : "bottom top",
+              pin: canPin,
+              pinSpacing: canPin,
               scrub: 0.6,
+              anticipatePin: 1,
               invalidateOnRefresh: true,
             },
           });

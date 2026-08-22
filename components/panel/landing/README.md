@@ -18,7 +18,7 @@ Three motion systems, deliberately separate:
 |---|---|---|
 | Header hide-on-scroll-down | `use-hide-on-scroll.ts` | A passive scroll listener toggling one boolean. Must feel instant and must not wait on a dynamic import. |
 | Section fade-in on enter | `section-reveal.tsx` | IntersectionObserver, zero bundle cost. Matches AdminPanel `.fade-in-up` / `.stagger-children` (6px, 320ms, 30ms cadence). |
-| Hero frame parallax + image accordion + pinned steps | `landing-motion.tsx` | Genuinely scrubbed to scroll position — this is what GSAP ScrollTrigger is for. Pinning is desktop-only. |
+| Pinned hero globe (rotate + zoom) + image accordion + pinned steps | `landing-motion.tsx` | Genuinely scrubbed to scroll position — this is what GSAP ScrollTrigger is for. Pinning is desktop-only. |
 
 All three bail out under `prefers-reduced-motion: reduce` and render the final
 state. The hero is never opacity-hidden at rest because it owns LCP.
