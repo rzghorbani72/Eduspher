@@ -35,7 +35,9 @@ export function LandingMotion() {
 
       ctx = gsap.context(() => {
         // ── Hero: hold the page while the globe rotates and zooms ───────────
-        const earth = document.querySelector<HTMLElement>('[data-lp="hero-earth"]');
+        const earth = document.querySelector<HTMLElement>(
+          '[data-lp="hero-earth"]',
+        );
         const hero = document.querySelector<HTMLElement>('[data-lp="hero"]');
 
         if (earth && hero) {
@@ -57,34 +59,44 @@ export function LandingMotion() {
         }
 
         // ── For-you rail: hold the page while the images hand off ───────────
-        // Panel 0 starts expanded; each stage expands the next as the previous
-        // collapses. Only 3 panels, so animating flex-grow costs little and is
-        // the only way to get a true "one opens as the previous closes".
-        //
         // Only the media block is pinned, never the whole section: the heading
         // scrolls away normally and the stage takes over once it reaches the
         // top, which reads as "the images hold" rather than "the page froze".
-        const rail = document.querySelector<HTMLElement>('[data-lp="grow-rail"]');
-        const panels = gsap.utils.toArray<HTMLElement>('[data-lp="grow-panel"]');
+        //
+        // The rail itself is plain React state + a CSS transition; this trigger
+        // only reports which panel should be open, so a click on a panel and a
+        // scroll cannot fight over the same flex values.
+        const forYou = document.querySelector<HTMLElement>(
+          '[data-lp="for-you"]',
+        );
+        const rail = document.querySelector<HTMLElement>(
+          '[data-lp="grow-rail"]',
+        );
+        const slideCount = Number(rail?.dataset.lpSlideCount ?? 0);
 
-        if (rail && panels.length > 1) {
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: rail,
-              start: canPin ? "center center" : "top 75%",
-              end: canPin ? `+=${panels.length * 55}%` : "bottom 40%",
-              pin: canPin,
-              pinSpacing: canPin,
-              scrub: 0.8,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
+        if (forYou && rail && slideCount > 1) {
+          let current = -1;
+
+          ScrollTrigger.create({
+            trigger: rail,
+            start: canPin ? "center center" : "top 75%",
+            end: canPin ? `+=${slideCount * 55}%` : "bottom 40%",
+            pin: canPin,
+            pinSpacing: canPin,
+            scrub: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const index = Math.min(
+                slideCount - 1,
+                Math.floor(self.progress * slideCount),
+              );
+              if (index === current) return;
+              current = index;
+              forYou.dispatchEvent(
+                new CustomEvent("lp:for-you", { detail: index }),
+              );
             },
-          });
-
-          panels.forEach((panel, index) => {
-            if (index === 0) return;
-            tl.to(panels[index - 1], { flexGrow: 1, ease: "power2.inOut" }, index - 1)
-              .to(panel, { flexGrow: 6, ease: "power2.inOut" }, index - 1);
           });
         }
 
@@ -93,7 +105,9 @@ export function LandingMotion() {
         // talk through a DOM event so this file stays the single GSAP owner and
         // the section stays a plain component.
         const steps = document.querySelector<HTMLElement>('[data-lp="steps"]');
-        const stage = document.querySelector<HTMLElement>('[data-lp="steps-stage"]');
+        const stage = document.querySelector<HTMLElement>(
+          '[data-lp="steps-stage"]',
+        );
         const stepCount = Number(steps?.dataset.lpStepCount ?? 0);
 
         if (steps && stage && stepCount > 1 && canPin) {
@@ -111,12 +125,12 @@ export function LandingMotion() {
             onUpdate: (self) => {
               const index = Math.min(
                 stepCount - 1,
-                Math.floor(self.progress * stepCount)
+                Math.floor(self.progress * stepCount),
               );
               if (index === current) return;
               current = index;
               steps.dispatchEvent(
-                new CustomEvent("lp:step", { detail: index })
+                new CustomEvent("lp:step", { detail: index }),
               );
             },
           });
