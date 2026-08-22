@@ -173,7 +173,7 @@ export const en = {
     enrollFree: "Enroll for free",
     expert: "Expert",
     lastUpdated: "Updated:",
-    freePreview: "Free preview",
+    freePreview: "Free",
     freeLessonNotice: "This lesson is free. Get the course to unlock the rest.",
     backToCourse: "Back to the course",
     chooseEnrollMethod: "Choose an enrollment method",

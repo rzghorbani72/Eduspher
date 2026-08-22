@@ -50,6 +50,8 @@ export function CoursePreviewPlayer({
             ref={mediaRef}
             src={videoUrl}
             controls
+            controlsList="nodownload"
+            onContextMenu={(event) => event.preventDefault()}
             autoPlay={autoPlay}
             preload="metadata"
             poster={coverUrl}
@@ -66,7 +68,7 @@ export function CoursePreviewPlayer({
           </>
         )}
         {hasPreviewLessons && (
-          <span className="cd-preview-label absolute bottom-4 start-4 rounded-full px-3 py-1.5 text-sm font-bold">
+          <span className="cd-preview-label absolute top-3 end-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
             {t("courses.freePreview")}
           </span>
         )}
@@ -78,6 +80,8 @@ export function CoursePreviewPlayer({
           ref={mediaRef}
           src={audioUrl}
           controls
+          controlsList="nodownload"
+          onContextMenu={(event) => event.preventDefault()}
           autoPlay={autoPlay}
           className="mt-3 w-full"
           aria-label={selected?.title}

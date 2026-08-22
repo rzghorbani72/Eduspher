@@ -172,7 +172,7 @@ export const fa = {
     enrollFree: "ثبت‌نام رایگان",
     expert: "حرفه‌ای",
     lastUpdated: "به‌روزرسانی:",
-    freePreview: "پیش‌نمایش رایگان",
+    freePreview: "رایگان",
     freeLessonNotice:
       "این درس رایگان است. برای دیدن بقیهٔ درس‌ها، دوره را تهیه کنید.",
     backToCourse: "بازگشت به دوره",
