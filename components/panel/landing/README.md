@@ -37,13 +37,13 @@ points at the paths.
 |---|---|---|
 | Hero | `hero-dashboard.png` | Manager dashboard with stats |
 | For-you 1 | `for-you-2.png` | Users / teachers / students |
-| For-you 2 | `admin-panel.png` | Courses grid |
-| For-you 3 | `step-3.png` | Finance / transactions |
+| For-you 2 | `owner-analytics-v2.png` | Analytics overview (980M gross, growth chart) |
+| For-you 3 | `owner-financial-v2.png` | Student payments (`/financial/academy`) |
 | Publish · student | `template-{keyhan,dastan,tavan,parastoo,zabaneh}.png` | Active gallery templates only — one per student turn |
-| Publish · owner | `hero-dashboard.png`, `owner-{courses,appearance,analytics,financial}.png` | Manager panel with demo data. Financial shot is `/financial/academy`. |
+| Publish · owner | `owner-{financial,analytics}-v2.png` first, then dashboard / courses / appearance | Manager panel with demo data. Financial shot is `/financial/academy`. |
 | Step 1 | `step-1.png` | Settings hub / account summary |
 | Step 2 | `admin-panel.png` | Adding courses |
-| Step 3 | `step-3.png` | Transactions (`/payments`) |
+| Step 3 | `step-3-v2.png` | Transactions (`/payments`) |
 
 Never ship placeholder SVGs, empty-state screens, or error toasts as marketing
 art. `for-you-3.png` (empty assignments + warning) was captured and is unused

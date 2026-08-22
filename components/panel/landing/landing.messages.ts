@@ -43,11 +43,11 @@ export const LANDING = {
         alt: "مدیریت دانش‌آموزان و مدرس‌ها در پنل منتوما",
       },
       {
-        src: "/landing/owner-analytics.png?v=20260822",
+        src: "/landing/owner-analytics-v2.png",
         alt: "تحلیل درآمد و ثبت‌نام‌ها در پنل منتوما",
       },
       {
-        src: "/landing/owner-financial.png?v=20260822",
+        src: "/landing/owner-financial-v2.png",
         alt: "پرداخت‌های دانشجویان در پنل مالی منتوما",
       },
     ],
@@ -107,12 +107,12 @@ export const LANDING = {
     ownerPages: [
       {
         id: "financial",
-        image: "/landing/owner-financial.png?v=20260822",
+        image: "/landing/owner-financial-v2.png",
         alt: "تراکنش‌ها و پرداخت‌های دانشجویان در پنل",
       },
       {
         id: "analytics",
-        image: "/landing/owner-analytics.png?v=20260822",
+        image: "/landing/owner-analytics-v2.png",
         alt: "تحلیل‌ها و آمار آکادمی",
       },
       {
@@ -200,7 +200,7 @@ export const LANDING = {
         number: "۳",
         title: "منتشر کن و شروع به فروش کن",
         body: "لینک آکادمی‌ات رو منتشر کن و اولین دانش‌آموزهات رو بپذیر.",
-        image: "/landing/step-3.png?v=20260822",
+        image: "/landing/step-3-v2.png",
         alt: "فروش دوره و پیگیری تراکنش‌ها در پنل مالی",
       },
     ],
