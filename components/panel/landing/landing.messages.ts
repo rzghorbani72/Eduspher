@@ -43,12 +43,12 @@ export const LANDING = {
         alt: "مدیریت دانش‌آموزان و مدرس‌ها در پنل منتوما",
       },
       {
-        src: "/landing/admin-panel.png",
-        alt: "فهرست دوره‌های آکادمی در پنل مدیریت",
+        src: "/landing/owner-analytics.png?v=20260822",
+        alt: "تحلیل درآمد و ثبت‌نام‌ها در پنل منتوما",
       },
       {
-        src: "/landing/step-3.png",
-        alt: "تراکنش‌ها و فروش دوره‌ها در پنل مالی",
+        src: "/landing/owner-financial.png?v=20260822",
+        alt: "پرداخت‌های دانشجویان در پنل مالی منتوما",
       },
     ],
   },
@@ -106,6 +106,16 @@ export const LANDING = {
     /** Manager/teacher panel pages with full demo data — one per owner turn. */
     ownerPages: [
       {
+        id: "financial",
+        image: "/landing/owner-financial.png?v=20260822",
+        alt: "تراکنش‌ها و پرداخت‌های دانشجویان در پنل",
+      },
+      {
+        id: "analytics",
+        image: "/landing/owner-analytics.png?v=20260822",
+        alt: "تحلیل‌ها و آمار آکادمی",
+      },
+      {
         id: "dashboard",
         image: "/landing/hero-dashboard.png",
         alt: "داشبورد مدیریت آکادمی",
@@ -119,16 +129,6 @@ export const LANDING = {
         id: "appearance",
         image: "/landing/owner-appearance.png",
         alt: "ظاهر و قالب‌های سایت آکادمی",
-      },
-      {
-        id: "analytics",
-        image: "/landing/owner-analytics.png",
-        alt: "تحلیل‌ها و آمار آکادمی",
-      },
-      {
-        id: "financial",
-        image: "/landing/owner-financial.png",
-        alt: "تراکنش‌ها و پرداخت‌های دانشجویان در پنل",
       },
     ],
   },
@@ -200,7 +200,7 @@ export const LANDING = {
         number: "۳",
         title: "منتشر کن و شروع به فروش کن",
         body: "لینک آکادمی‌ات رو منتشر کن و اولین دانش‌آموزهات رو بپذیر.",
-        image: "/landing/step-3.png",
+        image: "/landing/step-3.png?v=20260822",
         alt: "فروش دوره و پیگیری تراکنش‌ها در پنل مالی",
       },
     ],
