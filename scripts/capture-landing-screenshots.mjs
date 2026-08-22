@@ -43,8 +43,7 @@ const OWNER_PAGES = [
 const OTHER_PANEL_SHOTS = [
   ['/users', 'for-you-2.png'],
   ['/courses', 'admin-panel.png'],
-  ['/settings', 'step-1.png'],
-  ['/payments', 'step-3.png']
+  ['/courses', 'owner-courses.png']
 ];
 
 async function hideDevOverlay(page) {

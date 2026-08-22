@@ -41,9 +41,9 @@ points at the paths.
 | For-you 3 | `owner-financial-v2.png` | Student payments (`/financial/academy`) |
 | Publish · student | `template-{keyhan,dastan,tavan,parastoo,zabaneh}.png` | Active gallery templates only — one per student turn |
 | Publish · owner | `owner-{financial,analytics}-v2.png` first, then dashboard / courses / appearance | Manager panel with demo data. Financial shot is `/financial/academy`. |
-| Step 1 | `step-1.png` | Settings hub / account summary |
-| Step 2 | `admin-panel.png` | Adding courses |
-| Step 3 | `step-3-v2.png` | Transactions (`/payments`) |
+| Step 1 | `owner-appearance.png` | Appearance / branding setup |
+| Step 2 | `owner-courses.png` | Adding courses |
+| Step 3 | `owner-financial-v2.png` | Student payments (`/financial/academy`) |
 
 Never ship placeholder SVGs, empty-state screens, or error toasts as marketing
 art. `for-you-3.png` (empty assignments + warning) was captured and is unused
