@@ -12,6 +12,7 @@ import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { totalOf } from "@/lib/courses/purchase-options";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
 import { MyAccessPanel } from "@/components/courses/my-access-panel";
+import { accessTargetFor } from "@/lib/courses/access-target";
 
 export interface CurrencyConfig {
   currency?: string;
@@ -83,7 +84,11 @@ export function PurchasePanel({
   if (!selected) return null;
 
   const isBusy = pendingKey === selected.key;
-  const disabled = isBusy || enrollmentClosed || selected.owned;
+  const disabled = isBusy || enrollmentClosed;
+  // An owned way is not bought again — the call to action enters it instead.
+  const ownedTarget = selected.owned
+    ? accessTargetFor(selected, { learnHref, liveClassesHref, tutoringHref })
+    : null;
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
@@ -137,24 +142,33 @@ export function PurchasePanel({
       </div>
 
       <div className="px-5 pb-5">
-        <button
-          type="button"
-          disabled={disabled}
-          title={enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined}
-          onClick={() => setConfirming(true)}
-          className={cn(
-            "cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all",
-            disabled ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",
-          )}
-        >
-          {selected.owned
-            ? t("courses.methodOwned")
-            : enrollmentClosed
+        {ownedTarget ? (
+          <a
+            href={ownedTarget.href}
+            className="cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all hover:-translate-y-0.5"
+          >
+            {t(ownedTarget.actionKey)}
+          </a>
+        ) : (
+          <button
+            type="button"
+            disabled={disabled}
+            title={
+              enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined
+            }
+            onClick={() => setConfirming(true)}
+            className={cn(
+              "cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all",
+              disabled ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",
+            )}
+          >
+            {enrollmentClosed
               ? t("academyStatus.enrollmentClosedShort")
               : isBusy
                 ? t("common.loading")
                 : t(CTA_KEY[selected.kind] ?? "courses.ctaBuy")}
-        </button>
+          </button>
+        )}
 
         {selected.installments && (
           <p className="cd-price mt-2.5 text-center text-xs text-(--theme-muted)">

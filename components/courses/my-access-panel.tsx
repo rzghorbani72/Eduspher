@@ -1,10 +1,11 @@
 "use client";
 
-import { ArrowLeft, GraduationCap, PlayCircle, Radio } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatDate } from "@/lib/utils";
 import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
+import { accessTargetFor } from "@/lib/courses/access-target";
 
 interface MyAccessPanelProps {
   /** Only the ways this student actually holds. */
@@ -13,12 +14,6 @@ interface MyAccessPanelProps {
   liveClassesHref: string;
   tutoringHref: string;
 }
-
-type AccessTarget = {
-  href: string;
-  actionKey: string;
-  icon: typeof PlayCircle;
-};
 
 /**
  * A student can hold several ways into the same course — recorded lessons, the
@@ -35,24 +30,8 @@ export function MyAccessPanel({
 
   if (owned.length === 0) return null;
 
-  const targetFor = (option: PurchaseOptionView): AccessTarget => {
-    if (option.kind === "TUTORING" || option.kind === "PRIVATE") {
-      return {
-        href: tutoringHref,
-        actionKey: "courses.enterTutoring",
-        icon: GraduationCap,
-      };
-    }
-    // A live-class way is entered through the schedule, not the lesson list.
-    if (option.kind === "SUBSCRIPTION" && option.includesLive) {
-      return {
-        href: liveClassesHref,
-        actionKey: "courses.enterLiveClasses",
-        icon: Radio,
-      };
-    }
-    return { href: learnHref, actionKey: "courses.enterLessons", icon: PlayCircle };
-  };
+  const targetFor = (option: PurchaseOptionView) =>
+    accessTargetFor(option, { learnHref, liveClassesHref, tutoringHref });
 
   return (
     <div className="border-b border-theme bg-(--theme-primary)/8 px-5 py-4">
