@@ -365,6 +365,7 @@ export const fa = {
     itemPrice: "قیمت",
     payNow: "پرداخت",
     couponInvalid: "این کد تخفیف معتبر نیست.",
+    couponApplied: "کد تخفیف اعمال شد.",
     vatIncluded: "شامل {percent}٪ مالیات بر ارزش افزوده",
     chooseGatewayHint: "برای ادامه، درگاه بانکی مورد نظرت را انتخاب کن.",
     orderSummary: "خلاصه سفارش",

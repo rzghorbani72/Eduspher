@@ -362,6 +362,7 @@ export const en = {
     itemPrice: "Price",
     payNow: "Pay",
     couponInvalid: "This discount code is not valid.",
+    couponApplied: "Discount code applied.",
     vatIncluded: "Includes {percent}% VAT",
     chooseGatewayHint: "Pick the bank gateway you want to pay through.",
     orderSummary: "Order Summary",

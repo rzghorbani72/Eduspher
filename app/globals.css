@@ -767,13 +767,16 @@ textarea {
   background-color: var(--theme-background);
 }
 
-/* Ensure form elements respect theme */
-input,
-textarea,
-select {
-  background-color: rgb(var(--background));
-  color: rgb(var(--foreground));
-  border-color: rgb(var(--border));
+/* Base theme for form elements; in @layer base so a component's own background
+   utility still wins */
+@layer base {
+  input,
+  textarea,
+  select {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    border-color: rgb(var(--border));
+  }
 }
 
 input:focus,

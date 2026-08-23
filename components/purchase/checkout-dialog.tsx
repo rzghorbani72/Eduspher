@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Loader2, Lock, X } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, Lock, X } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn, formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
@@ -68,6 +68,11 @@ export function CheckoutDialog({
     await reprice(trimmed || undefined);
   };
 
+  /** Feedback belongs to the code that was actually priced, not to new typing. */
+  const codeIsPriced = applied !== undefined && code.trim() === applied && !loading;
+  const couponAccepted = codeIsPriced && Boolean(quote?.coupon_applied);
+  const couponRejected = codeIsPriced && Boolean(quote?.coupon_invalid);
+
   const dialog = (
     <div
       role="dialog"
@@ -101,7 +106,14 @@ export function CheckoutDialog({
               value={code}
               onChange={(event) => setCode(event.target.value)}
               placeholder={t("checkout.discountCode")}
-              className="h-11 min-w-0 flex-1 rounded-xl border border-theme bg-card px-3 text-sm text-(--theme-foreground) placeholder:text-muted outline-none focus:border-(--theme-primary)"
+              className={cn(
+                "h-11 min-w-0 flex-1 rounded-xl border bg-transparent px-3 text-sm text-(--theme-foreground) placeholder:text-muted outline-none focus:border-(--theme-primary)",
+                couponAccepted
+                  ? "border-emerald-500"
+                  : couponRejected
+                    ? "border-red-500"
+                    : "border-theme",
+              )}
             />
             <button
               type="button"
@@ -113,8 +125,16 @@ export function CheckoutDialog({
             </button>
           </div>
 
-          {quote?.coupon_invalid && (
-            <p role="alert" className="text-xs text-red-600">
+          {couponAccepted && (
+            <p className="flex items-center gap-1.5 text-xs text-emerald-600">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              {t("checkout.couponApplied")}
+            </p>
+          )}
+
+          {couponRejected && (
+            <p role="alert" className="flex items-center gap-1.5 text-xs text-red-600">
+              <AlertCircle className="h-3.5 w-3.5" />
               {t("checkout.couponInvalid")}
             </p>
           )}
@@ -153,7 +173,7 @@ export function CheckoutDialog({
                 <button
                   key={gateway.provider}
                   type="button"
-                  onClick={() => onPay(applied, gateway.provider)}
+                  onClick={() => onPay(couponAccepted ? applied : undefined, gateway.provider)}
                   className="w-full rounded-xl border border-theme px-4 py-3 text-start text-sm font-bold text-(--theme-foreground) hover:bg-surface"
                 >
                   {gateway.display_name}
@@ -174,7 +194,7 @@ export function CheckoutDialog({
             <button
               type="button"
               disabled={busy || loading}
-              onClick={() => onPay(applied)}
+              onClick={() => onPay(couponAccepted ? applied : undefined)}
               className={cn(
                 "cd-cta-btn flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold text-white",
                 busy || loading ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",

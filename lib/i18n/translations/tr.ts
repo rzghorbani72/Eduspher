@@ -236,6 +236,7 @@ export const tr = {
     itemPrice: "Fiyat",
     payNow: "Öde",
     couponInvalid: "Bu indirim kodu geçerli değil.",
+    couponApplied: "İndirim kodu uygulandı.",
     vatIncluded: "%{percent} KDV dahildir",
     chooseGatewayHint: "Ödemeyi yapmak istediğiniz banka geçidini seçin.",
     orderSummary: "Sipariş Özeti",
