@@ -374,6 +374,74 @@ const fetchStores = async () => {
   }
 };
 
+/**
+ * The access token cookie lives ~5h while the refresh token lives ~7 days, so a
+ * visitor coming back the next day still holds a valid session the server can
+ * revive. Without this the expired `jwt` alone decided the answer and every
+ * returning user was bounced to login after 5 hours.
+ */
+type RefreshOutcome =
+  | { status: "refreshed"; jwt: string; setCookies: string[] }
+  | { status: "invalid" }
+  | { status: "unavailable" };
+
+const readSetCookieValue = (
+  setCookies: string[],
+  name: string,
+): string | null => {
+  const entry = setCookies.find((cookie) => cookie.startsWith(`${name}=`));
+  if (!entry) return null;
+  const value = entry.slice(name.length + 1).split(";")[0];
+  return value.length > 0 ? value : null;
+};
+
+/** Rewrites one cookie in the request header so this render sees the new token. */
+const withCookie = (header: string | null, name: string, value: string) => {
+  const others = (header ?? "")
+    .split(";")
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0 && !part.startsWith(`${name}=`));
+  return [...others, `${name}=${value}`].join("; ");
+};
+
+const refreshSession = async (
+  request: NextRequest,
+): Promise<RefreshOutcome> => {
+  if (!request.cookies.get("refresh_token")?.value) {
+    return { status: "invalid" };
+  }
+
+  try {
+    const csrfToken = request.cookies.get("csrf-token")?.value;
+    const response = await fetch(
+      `${BACKEND_ORIGIN}${BACKEND_API_PATH}/auth/refresh`,
+      {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          cookie: request.headers.get("cookie") ?? "",
+          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
+        },
+      },
+    );
+
+    if (response.ok) {
+      const setCookies = response.headers.getSetCookie();
+      const jwt = readSetCookieValue(setCookies, "jwt");
+      return jwt ? { status: "refreshed", jwt, setCookies } : { status: "invalid" };
+    }
+
+    // Only an explicit rejection means the refresh token is dead. A 5xx or a
+    // network blip must not log the visitor out.
+    return response.status === 401 || response.status === 403
+      ? { status: "invalid" }
+      : { status: "unavailable" };
+  } catch {
+    return { status: "unavailable" };
+  }
+};
+
 export async function proxy(request: NextRequest) {
   const enamadTxt = await maybeEnamadTxtResponse(request);
   if (enamadTxt) return enamadTxt;
@@ -618,6 +686,37 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // Expired/missing access token but a live refresh token: mint a new one here so
+  // the visitor stays logged in for the full refresh-token lifetime (~7 days).
+  let refreshedSetCookies: string[] = [];
+  let dropRefreshCookie = false;
+
+  if (!isAuthenticated) {
+    const refreshed = await refreshSession(request);
+    if (refreshed.status === "refreshed") {
+      isAuthenticated = true;
+      refreshedSetCookies = refreshed.setCookies;
+      // Server components read the request cookies, so this render must already
+      // see the new token instead of the stale one.
+      requestHeaders.set(
+        "cookie",
+        withCookie(request.headers.get("cookie"), "jwt", refreshed.jwt),
+      );
+    } else if (refreshed.status === "invalid") {
+      dropRefreshCookie = Boolean(request.cookies.get("refresh_token")?.value);
+    }
+  }
+
+  // Auth cookies are decided once and copied onto whichever response we return.
+  const applyAuthCookies = (target: NextResponse) => {
+    for (const cookie of refreshedSetCookies) {
+      target.headers.append("set-cookie", cookie);
+    }
+    if (dropRefreshCookie) {
+      target.cookies.set("refresh_token", "", { path: "/", maxAge: 0 });
+    }
+  };
+
   // If user is on an auth route and is already authenticated, redirect to home
   if (
     isAuthRoute &&
@@ -628,6 +727,7 @@ export async function proxy(request: NextRequest) {
     const redirectUrl = new URL(redirectPath, requestUrl.origin);
     redirectUrl.searchParams.delete("redirect");
     const redirectResponse = NextResponse.redirect(redirectUrl);
+    applyAuthCookies(redirectResponse);
     if (applyPreviewEmbed) {
       applyPreviewEmbedResponse(
         redirectResponse,
@@ -650,6 +750,7 @@ export async function proxy(request: NextRequest) {
       requestUrl.pathname + requestUrl.search,
     );
     const loginRedirect = NextResponse.redirect(loginUrl);
+    applyAuthCookies(loginRedirect);
     if (applyPreviewEmbed) {
       applyPreviewEmbedResponse(
         loginRedirect,
@@ -720,8 +821,12 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // Ensure jwt cookie from request is preserved if it exists
-  const jwtCookie = request.cookies.get("jwt");
+  applyAuthCookies(response);
+
+  // Ensure jwt cookie from request is preserved if it exists.
+  // Skipped after a refresh — the backend's own Set-Cookie is authoritative.
+  const jwtCookie =
+    refreshedSetCookies.length > 0 ? null : request.cookies.get("jwt");
   if (jwtCookie) {
     response.cookies.set("jwt", jwtCookie.value, {
       path: "/",
