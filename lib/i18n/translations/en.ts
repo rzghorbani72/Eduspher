@@ -356,6 +356,7 @@ export const en = {
   checkout: {
     title: "Checkout",
     paymentFailed: "Payment could not be started. Please try again.",
+    paymentSuccess: "Payment completed successfully.",
     chooseGateway: "Choose a payment gateway",
     confirmTitle: "Review and pay",
     confirmHint: "Check the final amount before you go to the bank.",

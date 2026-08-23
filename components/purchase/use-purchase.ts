@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { logger } from "@/lib/logging/app-logger";
@@ -84,7 +85,9 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
             amount,
             http_status: response.status,
           });
-          setError(data?.error ?? t("checkout.paymentFailed"));
+          const message = data?.error ?? t("checkout.paymentFailed");
+          setError(message);
+          toast.error(message);
           return;
         }
 
@@ -109,10 +112,12 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           return;
         }
 
+        toast.success(t("checkout.paymentSuccess"));
         router.refresh();
       } catch {
         logger.error("payments", "checkout_start_failed", { kind, amount, http_status: 0 });
         setError(t("checkout.paymentFailed"));
+        toast.error(t("checkout.paymentFailed"));
       } finally {
         setPendingKey(null);
       }

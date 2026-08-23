@@ -359,6 +359,7 @@ export const fa = {
   checkout: {
     title: "تسویه حساب",
     paymentFailed: "پرداخت انجام نشد. دوباره تلاش کنید.",
+    paymentSuccess: "پرداخت با موفقیت انجام شد.",
     chooseGateway: "انتخاب درگاه پرداخت",
     confirmTitle: "تأیید و پرداخت",
     confirmHint: "پیش از رفتن به درگاه، مبلغ نهایی را ببین.",

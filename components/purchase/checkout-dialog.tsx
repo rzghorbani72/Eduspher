@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AlertCircle, CheckCircle2, Loader2, Lock, X } from "lucide-react";
 
@@ -51,6 +51,7 @@ export function CheckoutDialog({
   const language = languageProp ?? uiLanguage;
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<string | undefined>(undefined);
+  const [payingProvider, setPayingProvider] = useState<string | null>(null);
   const { quote, loading, reprice } = useCheckoutQuote(selector, true, extras);
 
   const fmt = (amount: number) =>
@@ -61,6 +62,21 @@ export function CheckoutDialog({
 
   const total = quote?.final_amount ?? fallbackAmount;
   const percent = Math.round((quote?.vat_rate ?? 0) * 100);
+
+  // The purchase is settled once the request stops; a gateway list is not an
+  // outcome, so only the real success/failure closes the dialog.
+  const wasBusy = useRef(false);
+  useEffect(() => {
+    if (busy) {
+      wasBusy.current = true;
+      return;
+    }
+    if (!wasBusy.current) return;
+    wasBusy.current = false;
+    if (gateways.length > 0) return;
+    const timer = setTimeout(onClose, 1000);
+    return () => clearTimeout(timer);
+  }, [busy, gateways.length, onClose]);
 
   const applyCode = async () => {
     const trimmed = code.trim();
@@ -173,9 +189,16 @@ export function CheckoutDialog({
                 <button
                   key={gateway.provider}
                   type="button"
-                  onClick={() => onPay(couponAccepted ? applied : undefined, gateway.provider)}
-                  className="w-full rounded-xl border border-theme px-4 py-3 text-start text-sm font-bold text-(--theme-foreground) hover:bg-surface"
+                  disabled={busy}
+                  onClick={() => {
+                    setPayingProvider(gateway.provider);
+                    onPay(couponAccepted ? applied : undefined, gateway.provider);
+                  }}
+                  className="flex w-full items-center gap-2 rounded-xl border border-theme px-4 py-3 text-start text-sm font-bold text-(--theme-foreground) hover:bg-surface disabled:opacity-60"
                 >
+                  {busy && payingProvider === gateway.provider && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
                   {gateway.display_name}
                 </button>
               ))}

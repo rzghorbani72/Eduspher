@@ -219,6 +219,7 @@ export const ar = {
   checkout: {
     title: 'الدفع',
     paymentFailed: 'تعذر بدء الدفع. حاول مرة أخرى.',
+    paymentSuccess: 'تم الدفع بنجاح.',
     chooseGateway: 'اختر بوابة الدفع',
     confirmTitle: 'المراجعة والدفع',
     confirmHint: 'تحقق من المبلغ النهائي قبل الانتقال إلى البنك.',

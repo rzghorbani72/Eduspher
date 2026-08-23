@@ -230,6 +230,7 @@ export const tr = {
   checkout: {
     title: "Ödeme",
     paymentFailed: "Ödeme başlatılamadı. Lütfen tekrar deneyin.",
+    paymentSuccess: "Ödeme başarıyla tamamlandı.",
     chooseGateway: "Ödeme geçidini seçin",
     confirmTitle: "Gözden geçir ve öde",
     confirmHint: "Bankaya gitmeden önce son tutarı kontrol edin.",
