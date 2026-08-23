@@ -34,33 +34,6 @@ export function LandingMotion() {
       const canPin = window.matchMedia(DESKTOP).matches;
 
       ctx = gsap.context(() => {
-        // ── Hero: hold the page while the globe grows ───────────────────────
-        // Progress is handed to the canvas globe instead of being tweened as a
-        // CSS `scale`: scaling would magnify the dots, while the globe grows by
-        // adding dots at a fixed size — see hero-globe.tsx.
-        const earth = document.querySelector<HTMLElement>(
-          '[data-lp="hero-earth"]',
-        );
-        const hero = document.querySelector<HTMLElement>('[data-lp="hero"]');
-
-        if (earth && hero) {
-          ScrollTrigger.create({
-            trigger: hero,
-            start: "top top",
-            end: canPin ? "+=90%" : "bottom top",
-            pin: canPin,
-            pinSpacing: canPin,
-            scrub: 0.6,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              earth.dispatchEvent(
-                new CustomEvent("lp:hero-globe", { detail: self.progress }),
-              );
-            },
-          });
-        }
-
         // ── For-you rail: hold the page while the images hand off ───────────
         // The stage (images + the copy that follows them) is pinned, never the
         // whole section: the heading scrolls away normally and the stage takes

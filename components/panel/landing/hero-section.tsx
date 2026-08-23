@@ -1,5 +1,3 @@
-import { Container } from "./landing-container";
-import { HeroGlobe } from "./hero-globe";
 import { LANDING } from "./landing.messages";
 import { LandingShot } from "./landing-shot";
 
@@ -8,47 +6,58 @@ type Props = {
   demoUrl: string;
 };
 
+/**
+ * The shot is full-bleed and already carries its own backdrop (mint blob + dot
+ * grid), so the copy is overlaid on the empty start-side band of the photo
+ * instead of sitting in a second grid column.
+ *
+ * Type follows the shared landing scale (`section-heading.tsx`), not the
+ * photo's proportions — the hero has to read as the same page as everything
+ * below it.
+ */
 export function HeroSection({ registerUrl, demoUrl }: Props) {
   return (
     <section
       data-lp="hero"
-      className="relative overflow-hidden bg-lp-hero pb-20 pt-[132px] lg:pb-28 lg:pt-[180px]"
+      className="relative overflow-hidden bg-lp-hero pt-[104px] lg:pt-[132px]"
     >
-      {/* Ambient orbs, same backdrop as the product dashboard. Static by
-          design — animating a 110px blur this large is expensive. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <span className="lp-glow lp-glow-1 -top-40 start-[-8rem]" />
-        <span className="lp-glow lp-glow-2 top-24 end-[-6rem]" />
-        <span className="lp-glow lp-glow-3 -bottom-56 start-1/3" />
-      </div>
+      <div className="relative flex flex-col">
+        <LandingShot
+          src={LANDING.hero.panelImage}
+          alt={LANDING.hero.panelAlt}
+          width={1750}
+          height={860}
+          priority
+          sizes="100vw"
+          className="order-2 h-auto w-full"
+        />
 
-      <Container className="relative z-10 grid items-center gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-16">
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-start">
-          <h1 className="text-balance text-[32px] font-extrabold leading-[1.35] tracking-[-0.028em] text-lp-ink sm:text-[40px] lg:text-[46px]">
+        <div className="order-1 z-10 mx-auto flex w-full max-w-[560px] flex-col items-center px-5 pb-12 text-center lg:absolute lg:inset-y-0 lg:order-0 lg:mx-0 lg:w-[40%] lg:max-w-none lg:items-stretch lg:justify-center lg:px-0 lg:pb-0 lg:text-start lg:start-[6%]">
+          <h1 className="text-balance text-[30px] font-extrabold leading-tight tracking-[-0.022em] text-lp-ink sm:text-[38px] lg:text-[40px] xl:text-[46px]">
             {LANDING.hero.titleLead}
             <span className="text-lp-blue">{LANDING.hero.titleHighlight}</span>
           </h1>
 
-          <p className="mt-5 max-w-[520px] text-pretty text-[15px] leading-[1.95] text-lp-muted lg:text-base">
+          <p className="mt-4 text-pretty text-base leading-[1.85] text-lp-muted lg:text-[17px]">
             {LANDING.hero.subtitle}
           </p>
 
-          <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <div className="mt-9 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center lg:w-full">
             <a
               href={registerUrl}
-              className="flex h-14 items-center justify-center rounded-lp bg-lp-mint px-8 text-[15.5px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
+              className="flex h-14 items-center justify-center rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
             >
               {LANDING.hero.ctaPrimary}
             </a>
             <a
               href={demoUrl}
-              className="flex h-14 items-center justify-center rounded-lp border border-lp-line-2 bg-white px-8 text-[14.5px] font-semibold text-lp-ink transition-colors hover:border-lp-ink/25"
+              className="flex h-14 items-center justify-center rounded-lp border border-lp-line-2 bg-white px-8 text-[15px] font-semibold text-lp-ink transition-colors hover:border-lp-ink/25"
             >
               {LANDING.hero.ctaSecondary}
             </a>
           </div>
 
-          <ul className="mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 lg:justify-start">
+          <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
             {LANDING.hero.bullets.map((bullet) => (
               <li
                 key={bullet}
@@ -60,30 +69,7 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
             ))}
           </ul>
         </div>
-
-        <div className="relative flex items-center justify-center lg:justify-end lg:-me-10 xl:-me-20">
-          {/* Dotted globe sits behind the product shot. The hero scroll scene
-              feeds it a 0→1 progress it grows into — see landing-motion.tsx. */}
-          <div
-            data-lp="hero-earth"
-            className="pointer-events-none absolute -inset-x-16 -inset-y-10 -z-10"
-          >
-            {/* Square + self-centering: the globe must not depend on the
-                sibling shot's height to have a size of its own. */}
-            <HeroGlobe className="absolute inset-x-0 top-1/2 aspect-square w-full -translate-y-1/2" />
-          </div>
-
-          <LandingShot
-            src={LANDING.hero.panelImage}
-            alt={LANDING.hero.panelAlt}
-            width={1536}
-            height={1024}
-            priority
-            sizes="(max-width: 1024px) 100vw, 820px"
-            className="lp-shot-fade h-auto w-full max-w-[620px] lg:max-w-[820px] will-change-transform"
-          />
-        </div>
-      </Container>
+      </div>
     </section>
   );
 }

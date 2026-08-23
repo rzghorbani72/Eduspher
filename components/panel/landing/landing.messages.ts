@@ -15,7 +15,7 @@ export const LANDING = {
 
   hero: {
     panelAlt: "پنل مدیریت دوره‌های آکادمی روی لپ‌تاپ",
-    panelImage: "/landing/hero-laptop.webp",
+    panelImage: "/landing/hero-wide.webp",
     titleLead: "با داشتن وب‌سایت آموزشی شخصی خودت فقط ",
     titleHighlight: "۱۰ دقیقه فاصله داری",
     subtitle:
