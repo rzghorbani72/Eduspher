@@ -3,6 +3,8 @@ import "server-only";
 import { serverFetch, serverFetchRaw } from "@/lib/api/server";
 import type {
   AccountProfile,
+  MyTutoringGroupRow,
+  TutoringGroupRoom,
   AcademyPlanPublic,
   AssignmentSummary,
   CourseAccessRow,
@@ -127,51 +129,6 @@ export const getTutoringEngagements = () =>
     return result.data ?? [];
   }, []);
 
-export type MyTutoringGroupSlot = {
-  weekday: number;
-  start_minute: number;
-  duration_minutes: number;
-  Lesson: { id: string; title: string } | null;
-};
-
-export type MyTutoringGroupSession = {
-  id: string;
-  starts_at: string;
-  ends_at: string | null;
-  status: string;
-  meeting_url?: string | null;
-  Lesson?: { id: string; title: string } | null;
-};
-
-export type MyTutoringGroup = {
-  id: string;
-  title: string;
-  description: string | null;
-  timezone: string;
-  capacity: number;
-  seats_taken: number;
-  seats_left: number;
-  min_students: number;
-  status: string;
-  starts_on: string | null;
-  ends_on: string | null;
-  course_id: string;
-  Slots: MyTutoringGroupSlot[];
-  Tutor: { id: string; display_name: string | null } | null;
-  next_session?: {
-    id: string;
-    starts_at: string;
-    ends_at: string | null;
-  } | null;
-};
-
-export type MyTutoringGroupRow = {
-  engagement_id: string;
-  engagement_status: string;
-  seats_claimed: number;
-  group: MyTutoringGroup;
-};
-
 /** Group classes the signed-in student holds a seat in. */
 export const getMyTutoringGroups = () =>
   safe<MyTutoringGroupRow[]>(async () => {
@@ -180,15 +137,6 @@ export const getMyTutoringGroups = () =>
     );
     return result.data ?? [];
   }, []);
-
-export type TutoringGroupRoom = MyTutoringGroup & {
-  /** Present only inside the join window — otherwise null, never a stale link. */
-  meeting_url: string | null;
-  is_tutor: boolean;
-  membership: { id: string; status: string; seats_claimed: number } | null;
-  next_session: MyTutoringGroupSession | null;
-  sessions: MyTutoringGroupSession[];
-};
 
 /** The class page. Returns null when the caller is not in this class. */
 export const getTutoringGroupRoom = (groupId: string) =>

@@ -72,7 +72,11 @@ export type AssignmentSummary = {
   Lesson?: {
     id: string;
     title: string;
-    Season?: { id: string; course_id: string; Course?: AccessCourseRef | null } | null;
+    Season?: {
+      id: string;
+      course_id: string;
+      Course?: AccessCourseRef | null;
+    } | null;
   } | null;
 };
 
@@ -206,4 +210,75 @@ export type PageMeta = {
   page: number;
   limit: number;
   totalPages: number;
+};
+
+export type MyTutoringGroupSlot = {
+  weekday: number;
+  start_minute: number;
+  duration_minutes: number;
+  Lesson: { id: string; title: string } | null;
+};
+
+export type MyTutoringGroupSession = {
+  id: string;
+  starts_at: string;
+  ends_at: string | null;
+  status: string;
+  meeting_url?: string | null;
+  /** The teacher's name for this meeting; falls back to its topic. */
+  title?: string | null;
+  notes?: string | null;
+  Topic?: { id: string; title: string } | null;
+  Lesson?: { id: string; title: string } | null;
+};
+
+export type CourseTopic = {
+  id: string;
+  title: string;
+  description: string | null;
+  order: number;
+};
+
+export type MyTutoringGroup = {
+  id: string;
+  title: string;
+  description: string | null;
+  timezone: string;
+  capacity: number;
+  seats_taken: number;
+  seats_left: number;
+  min_students: number;
+  status: string;
+  starts_on: string | null;
+  ends_on: string | null;
+  course_id: string;
+  Slots: MyTutoringGroupSlot[];
+  Tutor: { id: string; display_name: string | null } | null;
+  next_session?: {
+    id: string;
+    starts_at: string;
+    ends_at: string | null;
+  } | null;
+};
+
+export type MyTutoringGroupRow = {
+  engagement_id: string;
+  engagement_status: string;
+  seats_claimed: number;
+  group: MyTutoringGroup;
+};
+
+export type TutoringGroupRoom = MyTutoringGroup & {
+  /** Present only inside the join window — otherwise null, never a stale link. */
+  meeting_url: string | null;
+  is_tutor: boolean;
+  membership: { id: string; status: string; seats_claimed: number } | null;
+  next_session: MyTutoringGroupSession | null;
+  sessions: MyTutoringGroupSession[];
+  topics: CourseTopic[];
+  /** True only inside the joining window — drives the Join button. */
+  link_open: boolean;
+  /** Parents for the two chats: the class together, and 1:1 with the teacher. */
+  group_thread_parent: string;
+  private_thread_parent: string | null;
 };

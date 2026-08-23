@@ -1234,8 +1234,38 @@ export const getDiscussionThread = async (
     )
   ).data;
 
+/** Every parent a thread can hang from. Exactly one is sent. */
+export type DiscussionParent = {
+  attempt_id?: string;
+  submission_id?: string;
+  engagement_id?: string;
+  tutoring_session_id?: string;
+  tutoring_group_id?: string;
+};
+
+/**
+ * The thread for a parent, whether or not it exists yet. A chat box has to
+ * render before anyone has written in it, and threads are created lazily.
+ */
+export const findDiscussionThread = async (
+  parent: DiscussionParent,
+  options?: RequestOptions,
+) => {
+  const query = new URLSearchParams(
+    Object.entries(parent).filter(([, value]) => Boolean(value)) as [
+      string,
+      string,
+    ][],
+  );
+  return (
+    await getJson<
+      Envelope<{ thread: { id: string } | null; messages: DiscussionMessage[] }>
+    >(`/discussions/thread?${query.toString()}`, options)
+  ).data;
+};
+
 export const postDiscussionMessage = async (
-  parent: { attempt_id?: string; submission_id?: string },
+  parent: DiscussionParent,
   body: string,
   options?: RequestOptions,
 ) =>

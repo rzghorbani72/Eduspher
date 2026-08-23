@@ -908,6 +908,22 @@ export const fa = {
     loadFailed: "اعلان‌ها بارگذاری نشد.",
     openNotifications: "باز کردن اعلان‌ها",
   },
+  live: {
+    joinClass: "ورود به کلاس",
+    linkOpensSoon: "پیوند ورود، کمی پیش از شروع کلاس فعال می‌شود.",
+    session: "جلسه",
+    sessionCancelled: "لغو شد",
+    timetable: "برنامهٔ جلسات",
+    tabChat: "گفتگو",
+    tabSyllabus: "سرفصل‌ها",
+    tabSessions: "جلسات",
+    chatGroup: "گفتگوی کلاس",
+    chatPrivate: "گفتگو با مدرس",
+    chatGroupPlaceholder: "پیام خود را با هم‌کلاسی‌ها و مدرس در میان بگذارید…",
+    chatPrivatePlaceholder: "پیام خصوصی به مدرس…",
+    noTopics: "هنوز سرفصلی ثبت نشده است",
+  },
+
   learning: {
     curriculum: "برنامه درسی دوره",
     noLessons: "درسی در دسترس نیست",

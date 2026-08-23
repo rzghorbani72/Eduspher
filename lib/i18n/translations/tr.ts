@@ -553,6 +553,22 @@ export const tr = {
     confirmRevokeAll:
       "Tüm cihazlardan çıkış yapmak istediğinizden emin misiniz? Tekrar giriş yapmanız gerekecek.",
   },
+  live: {
+    joinClass: "Derse katıl",
+    linkOpensSoon: "Katılım bağlantısı ders başlamadan kısa süre önce açılır.",
+    session: "Oturum",
+    sessionCancelled: "iptal edildi",
+    timetable: "Ders programı",
+    tabChat: "Sohbet",
+    tabSyllabus: "Konular",
+    tabSessions: "Oturumlar",
+    chatGroup: "Sınıf sohbeti",
+    chatPrivate: "Öğretmenle sohbet",
+    chatGroupPlaceholder: "Sınıf arkadaşların ve öğretmeninle paylaş…",
+    chatPrivatePlaceholder: "Öğretmenine özel mesaj…",
+    noTopics: "Henüz konu yok",
+  },
+
   learning: {
     curriculum: "Kurs müfredatı",
     noLessons: "Kullanılabilir ders yok",

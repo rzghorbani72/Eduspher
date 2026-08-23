@@ -523,6 +523,22 @@ export const ar = {
     errorRevokingSession: 'فشل في إلغاء الجلسة',
     confirmRevokeAll: 'هل أنت متأكد من أنك تريد تسجيل الخروج من جميع الأجهزة؟ ستحتاج إلى تسجيل الدخول مرة أخرى.',
   },
+  live: {
+    joinClass: "الدخول إلى الصف",
+    linkOpensSoon: "يُفتح رابط الدخول قبل بدء الصف بقليل.",
+    session: "جلسة",
+    sessionCancelled: "أُلغيت",
+    timetable: "جدول الجلسات",
+    tabChat: "المحادثة",
+    tabSyllabus: "المواضيع",
+    tabSessions: "الجلسات",
+    chatGroup: "محادثة الصف",
+    chatPrivate: "محادثة مع المعلم",
+    chatGroupPlaceholder: "شارك زملاءك ومعلمك…",
+    chatPrivatePlaceholder: "رسالة خاصة إلى المعلم…",
+    noTopics: "لا توجد مواضيع بعد",
+  },
+
   learning: {
     curriculum: 'منهج الدورة',
     noLessons: 'لا توجد دروس متاحة',

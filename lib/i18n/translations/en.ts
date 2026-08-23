@@ -909,6 +909,22 @@ export const en = {
     loadFailed: "Notifications could not be loaded.",
     openNotifications: "Open notifications",
   },
+  live: {
+    joinClass: "Join the class",
+    linkOpensSoon: "The join link opens shortly before the class starts.",
+    session: "Session",
+    sessionCancelled: "cancelled",
+    timetable: "Class schedule",
+    tabChat: "Chat",
+    tabSyllabus: "Topics",
+    tabSessions: "Sessions",
+    chatGroup: "Class chat",
+    chatPrivate: "Chat with the teacher",
+    chatGroupPlaceholder: "Share something with your classmates and teacher…",
+    chatPrivatePlaceholder: "A private message to your teacher…",
+    noTopics: "No topics yet",
+  },
+
   learning: {
     curriculum: "Course curriculum",
     noLessons: "No lessons are available",

@@ -1,24 +1,32 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { MessageSquare, Send } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { MessageSquare, Send } from "lucide-react";
 import {
+  findDiscussionThread,
   getDiscussionThread,
   postDiscussionMessage,
   type DiscussionMessage,
-} from '@/lib/api/client';
-import { useTranslation } from '@/lib/i18n/hooks';
-import { cn } from '@/lib/utils';
+  type DiscussionParent,
+} from "@/lib/api/client";
+import { useTranslation } from "@/lib/i18n/hooks";
+import { cn } from "@/lib/utils";
 
 interface DiscussionThreadProps {
   /** Provide exactly one parent. */
   attemptId?: string;
   submissionId?: string;
+  /** A class-wide chat, or a student alone with their teacher. */
+  groupId?: string;
+  engagementId?: string;
   /** Existing thread id (skips the first lazy create); optional. */
   threadId?: string;
   currentProfileId?: string;
+  /** Heading shown above the messages. Defaults to "discussion". */
+  title?: string;
+  placeholder?: string;
 }
 
 /**
@@ -27,27 +35,54 @@ interface DiscussionThreadProps {
  * history. Message bodies are rendered as plain text (React escapes them),
  * so a `<script>` payload can never execute.
  */
-export function DiscussionThread({ attemptId, submissionId, threadId, currentProfileId }: DiscussionThreadProps) {
+export function DiscussionThread({
+  attemptId,
+  submissionId,
+  groupId,
+  engagementId,
+  threadId,
+  currentProfileId,
+  title,
+  placeholder,
+}: DiscussionThreadProps) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
-  const [body, setBody] = useState('');
+  const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const activeThreadId = useRef<string | undefined>(threadId);
 
+  const parent: DiscussionParent = attemptId
+    ? { attempt_id: attemptId }
+    : submissionId
+      ? { submission_id: submissionId }
+      : groupId
+        ? { tutoring_group_id: groupId }
+        : { engagement_id: engagementId };
+
+  const parentKey = JSON.stringify(parent);
+
   const load = useCallback(async () => {
-    if (!activeThreadId.current) return;
     try {
-      const data = await getDiscussionThread(activeThreadId.current);
-      setMessages(data.messages);
+      // Look the thread up by its parent: a class chat has to render before
+      // anyone has written in it, and a thread only exists after the first post.
+      if (activeThreadId.current) {
+        const data = await getDiscussionThread(activeThreadId.current);
+        setMessages(data.messages);
+        return;
+      }
+      const found = await findDiscussionThread(JSON.parse(parentKey));
+      activeThreadId.current = found.thread?.id;
+      setMessages(found.messages);
     } catch {
-      /* thread may not exist until the first message — ignore */
+      /* an empty chat is a valid state — leave the box ready to write in */
     }
-  }, []);
+  }, [parentKey]);
 
   useEffect(() => {
+    activeThreadId.current = threadId;
     void load();
-  }, [load]);
+  }, [load, threadId]);
 
   const send = async () => {
     const text = body.trim();
@@ -55,16 +90,13 @@ export function DiscussionThread({ attemptId, submissionId, threadId, currentPro
     setSending(true);
     setError(null);
     try {
-      const msg = await postDiscussionMessage(
-        attemptId ? { attempt_id: attemptId } : { submission_id: submissionId },
-        text,
-      );
+      const msg = await postDiscussionMessage(parent, text);
       activeThreadId.current = msg.thread_id;
-      setBody('');
+      setBody("");
       await load();
       if (!activeThreadId.current) setMessages((prev) => [...prev, msg]);
     } catch {
-      setError(t('learning.messageSendFailed'));
+      setError(t("learning.messageSendFailed"));
     } finally {
       setSending(false);
     }
@@ -74,19 +106,34 @@ export function DiscussionThread({ attemptId, submissionId, threadId, currentPro
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm font-medium text-foreground">
         <MessageSquare className="h-4 w-4" />
-        <span>{t('learning.discussion')}</span>
+        <span>{title ?? t("learning.discussion")}</span>
       </div>
 
       <div className="space-y-3">
         {messages.length === 0 && (
-          <p className="text-sm text-muted-foreground">{t('learning.noMessages')}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("learning.noMessages")}
+          </p>
         )}
         {messages.map((m) => {
           const mine = currentProfileId && m.Author?.id === currentProfileId;
           return (
-            <div key={m.id} className={cn('flex flex-col', mine ? 'items-end' : 'items-start')}>
-              <div className={cn('max-w-[85%] rounded-lg px-3 py-2 text-sm', mine ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-                <p className="mb-1 text-xs opacity-70">{m.Author?.display_name ?? t('account.unknown')}</p>
+            <div
+              key={m.id}
+              className={cn(
+                "flex flex-col",
+                mine ? "items-end" : "items-start",
+              )}
+            >
+              <div
+                className={cn(
+                  "max-w-[85%] rounded-lg px-3 py-2 text-sm",
+                  mine ? "bg-primary text-primary-foreground" : "bg-muted",
+                )}
+              >
+                <p className="mb-1 text-xs opacity-70">
+                  {m.Author?.display_name ?? t("account.unknown")}
+                </p>
                 <p className="whitespace-pre-wrap wrap-break-word">{m.body}</p>
               </div>
             </div>
@@ -98,8 +145,8 @@ export function DiscussionThread({ attemptId, submissionId, threadId, currentPro
         <Textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder={t('learning.writeMessage')}
-          aria-label={t('learning.writeMessage')}
+          placeholder={placeholder ?? t("learning.writeMessage")}
+          aria-label={placeholder ?? t("learning.writeMessage")}
           rows={2}
           maxLength={5000}
           className="flex-1"
@@ -108,7 +155,7 @@ export function DiscussionThread({ attemptId, submissionId, threadId, currentPro
           onClick={send}
           disabled={sending || !body.trim()}
           size="sm"
-          aria-label={t('learning.sendMessage')}
+          aria-label={t("learning.sendMessage")}
         >
           <Send className="h-4 w-4" />
         </Button>

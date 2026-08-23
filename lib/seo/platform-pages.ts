@@ -20,6 +20,11 @@ const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     title: "تماس با منتوما",
     description: "با تیم منتوما در ارتباط باشید — پشتیبانی، فروش و همکاری.",
   },
+  "/academies": {
+    title: "آکادمی‌های منتوما",
+    description:
+      "فهرست آکادمی‌های فعال روی منتوما — جستجو کن و سایت هر آکادمی را ببین.",
+  },
   "/pricing": {
     title: "قیمت‌ها",
     description:
@@ -54,6 +59,11 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     title: "Contact Mentoma",
     description: "Get in touch with the Mentoma team for support, sales, and partnerships.",
   },
+  "/academies": {
+    title: "Academies on Mentoma",
+    description:
+      "Browse and search the academies running on Mentoma — open any academy's own site.",
+  },
   "/pricing": {
     title: "Pricing",
     description:
@@ -77,6 +87,7 @@ export const PLATFORM_SITEMAP_PATHS = [
   "/",
   "/about",
   "/contact",
+  "/academies",
   "/pricing",
   "/privacy",
   "/terms",
