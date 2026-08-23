@@ -48,11 +48,9 @@ export function SubscribeButton({
           selector={{ academy_plan_id: planId }}
           fallbackAmount={amount}
           fallbackTitle={null}
-          busy={busy}
-          error={error}
           gateways={gateways}
           onPay={(couponCode, provider) =>
-            void purchase({ academy_plan_id: planId }, amount, planId, {
+            purchase({ academy_plan_id: planId }, amount, planId, {
               couponCode,
               provider,
             })

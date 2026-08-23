@@ -195,11 +195,9 @@ export function PurchasePanel({
           fallbackTitle={selected.title}
           currencyConfig={currencyConfig}
           language={language}
-          busy={isBusy}
-          error={error}
           gateways={gateways}
           onPay={(couponCode, provider) =>
-            void purchase(selected.selector, selected.price, selected.key, {
+            purchase(selected.selector, selected.price, selected.key, {
               couponCode,
               provider,
             })

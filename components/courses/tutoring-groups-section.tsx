@@ -54,7 +54,7 @@ export const TutoringGroupsSection = ({
     provider?: string,
   ) => {
     const seats = seatsFor(group);
-    void purchase(
+    return purchase(
       { tutoring_group_id: group.id },
       (group.Offer?.price ?? 0) * seats,
       group.id,
@@ -106,8 +106,6 @@ export const TutoringGroupsSection = ({
           fallbackTitle={confirming.title}
           currencyConfig={currencyConfig}
           language={language}
-          busy={pendingKey === confirming.id}
-          error={error}
           gateways={gateways}
           extras={{
             seats: seatsFor(confirming),

@@ -18,6 +18,9 @@ export type PurchaseSelector =
 
 export type PurchaseGateway = { provider: string; display_name: string };
 
+/** How a purchase attempt ended, so a dialog knows whether to close. */
+export type PurchaseOutcome = { ok: boolean; needsGateway: boolean };
+
 type PurchaseOptions = {
   /** Where to send a signed-out visitor; they return here after logging in. */
   loginHref: string;
@@ -53,7 +56,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
       amount: number,
       key: string,
       options?: PayOptions,
-    ) => {
+    ): Promise<PurchaseOutcome> => {
       setPendingKey(key);
       setError(null);
       // One chart for every buying path; `kind` keeps them separable.
@@ -74,7 +77,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
 
         if (response.status === 401) {
           window.location.assign(loginHref);
-          return;
+          return { ok: false, needsGateway: false };
         }
 
         const data = await response.json().catch(() => null);
@@ -88,7 +91,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           const message = data?.error ?? t("checkout.paymentFailed");
           setError(message);
           toast.error(message);
-          return;
+          return { ok: false, needsGateway: false };
         }
 
         if (Array.isArray(data.gateways) && data.gateways.length > 0) {
@@ -98,7 +101,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
             amount,
             gateway_count: data.gateways.length,
           });
-          return;
+          return { ok: false, needsGateway: true };
         }
 
         logger.ok("payments", "checkout_started", {
@@ -109,15 +112,17 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
 
         if (data.redirect_url) {
           window.location.assign(data.redirect_url);
-          return;
+          return { ok: true, needsGateway: false };
         }
 
         toast.success(t("checkout.paymentSuccess"));
         router.refresh();
+        return { ok: true, needsGateway: false };
       } catch {
         logger.error("payments", "checkout_start_failed", { kind, amount, http_status: 0 });
         setError(t("checkout.paymentFailed"));
         toast.error(t("checkout.paymentFailed"));
+        return { ok: false, needsGateway: false };
       } finally {
         setPendingKey(null);
       }

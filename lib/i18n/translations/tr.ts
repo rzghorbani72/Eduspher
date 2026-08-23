@@ -842,4 +842,12 @@ export const tr = {
     noRoadmaps: "Henüz bir yol haritası tanımlanmadı.",
     viewCourse: "Kursu görüntüle",
   },
+  abuse: {
+    report: "İhlal bildir",
+    question: "Bu sayfada sorun nedir?",
+    emailPlaceholder: "E-posta (isteğe bağlı, takip için)",
+    submit: "Bildirimi gönder",
+    success: "Bildiriminiz alındı ve 72 iş saati içinde incelenecek.",
+    error: "Bildirim gönderilemedi. Lütfen info@mentoma.ir adresine e-posta gönderin.",
+  },
 };

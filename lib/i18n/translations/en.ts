@@ -1317,4 +1317,12 @@ export const en = {
     noRoadmaps: "No roadmap has been defined yet.",
     viewCourse: "View course",
   },
+  abuse: {
+    report: "Report a violation",
+    question: "What is wrong with this page?",
+    emailPlaceholder: "Email (optional, for follow-up)",
+    submit: "Send report",
+    success: "Your report was received and will be reviewed within 72 working hours.",
+    error: "The report could not be sent. Please email info@mentoma.ir.",
+  },
 };

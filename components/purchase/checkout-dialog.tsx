@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { AlertCircle, CheckCircle2, Loader2, Lock, X } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn, formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
 import { useCheckoutQuote } from "@/components/purchase/use-checkout-quote";
-import type { PurchaseGateway, PurchaseSelector } from "@/components/purchase/use-purchase";
+import { useDialogAction } from "@/hooks/use-dialog-action";
+import type {
+  PurchaseGateway,
+  PurchaseOutcome,
+  PurchaseSelector,
+} from "@/components/purchase/use-purchase";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
 import { SummaryRow } from "@/components/purchase/summary-row";
 
@@ -19,11 +24,12 @@ interface CheckoutDialogProps {
   /** Falls back to the academy-less format when the surface has no config. */
   currencyConfig?: CurrencyConfig | null;
   language?: string;
-  busy: boolean;
-  error: string | null;
   /** Non-empty when the buyer must choose which bank to pay through. */
   gateways: PurchaseGateway[];
-  onPay: (couponCode: string | undefined, provider?: string) => void;
+  onPay: (
+    couponCode: string | undefined,
+    provider?: string,
+  ) => Promise<PurchaseOutcome | void>;
   onClose: () => void;
   /** Extra pricing inputs the selector cannot carry, e.g. group class seats. */
   extras?: Record<string, string | number>;
@@ -40,8 +46,6 @@ export function CheckoutDialog({
   fallbackTitle,
   currencyConfig = null,
   language: languageProp,
-  busy,
-  error,
   gateways,
   onPay,
   onClose,
@@ -53,6 +57,17 @@ export function CheckoutDialog({
   const [applied, setApplied] = useState<string | undefined>(undefined);
   const [payingProvider, setPayingProvider] = useState<string | null>(null);
   const { quote, loading, reprice } = useCheckoutQuote(selector, true, extras);
+  const { pending: busy, run } = useDialogAction(
+    onClose,
+    t("checkout.paymentFailed"),
+  );
+
+  /** A gateway list is not an outcome, so only a real result closes the dialog. */
+  const pay = (couponCode: string | undefined, provider?: string) =>
+    void run(async () => {
+      const outcome = await onPay(couponCode, provider);
+      return { keepOpen: Boolean(outcome && outcome.needsGateway) };
+    });
 
   const fmt = (amount: number) =>
     toPersianDigits(
@@ -62,21 +77,6 @@ export function CheckoutDialog({
 
   const total = quote?.final_amount ?? fallbackAmount;
   const percent = Math.round((quote?.vat_rate ?? 0) * 100);
-
-  // The purchase is settled once the request stops; a gateway list is not an
-  // outcome, so only the real success/failure closes the dialog.
-  const wasBusy = useRef(false);
-  useEffect(() => {
-    if (busy) {
-      wasBusy.current = true;
-      return;
-    }
-    if (!wasBusy.current) return;
-    wasBusy.current = false;
-    if (gateways.length > 0) return;
-    const timer = setTimeout(onClose, 1000);
-    return () => clearTimeout(timer);
-  }, [busy, gateways.length, onClose]);
 
   const applyCode = async () => {
     const trimmed = code.trim();
@@ -135,8 +135,9 @@ export function CheckoutDialog({
               type="button"
               onClick={() => void applyCode()}
               disabled={loading}
-              className="h-11 shrink-0 rounded-xl border border-theme px-4 text-xs font-bold text-(--theme-foreground) disabled:opacity-60"
+              className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl border border-theme px-4 text-xs font-bold text-(--theme-foreground) disabled:opacity-60"
             >
+              {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               {t("checkout.applyDiscount")}
             </button>
           </div>
@@ -192,7 +193,7 @@ export function CheckoutDialog({
                   disabled={busy}
                   onClick={() => {
                     setPayingProvider(gateway.provider);
-                    onPay(couponAccepted ? applied : undefined, gateway.provider);
+                    pay(couponAccepted ? applied : undefined, gateway.provider);
                   }}
                   className="flex w-full items-center gap-2 rounded-xl border border-theme px-4 py-3 text-start text-sm font-bold text-(--theme-foreground) hover:bg-surface disabled:opacity-60"
                 >
@@ -204,12 +205,6 @@ export function CheckoutDialog({
               ))}
             </div>
           )}
-
-          {error && (
-            <p role="alert" className="text-xs text-red-600">
-              {error}
-            </p>
-          )}
         </div>
 
         <div className="space-y-2 px-5 pb-5">
@@ -217,7 +212,7 @@ export function CheckoutDialog({
             <button
               type="button"
               disabled={busy || loading}
-              onClick={() => onPay(couponAccepted ? applied : undefined)}
+              onClick={() => pay(couponAccepted ? applied : undefined)}
               className={cn(
                 "cd-cta-btn flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold text-white",
                 busy || loading ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",

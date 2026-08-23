@@ -124,11 +124,9 @@ export function BundleCard({
           selector={bundle.selector}
           fallbackAmount={bundle.price}
           fallbackTitle={bundle.name}
-          busy={busy}
-          error={error}
           gateways={gateways}
           onPay={(couponCode, provider) =>
-            void purchase(bundle.selector, bundle.price, bundle.key, {
+            purchase(bundle.selector, bundle.price, bundle.key, {
               couponCode,
               provider,
             })
