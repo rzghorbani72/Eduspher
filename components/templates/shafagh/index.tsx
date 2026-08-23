@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { TemplateDataTable } from '../_shared/data-table';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import { ShafaghHero } from './hero';
@@ -21,6 +22,11 @@ const SHAFAGH_HEADER = headerDefaults({
   ctaText: 'ثبت‌نام در دوره',
   nav: FULL_NAV,
 });
+
+export const SHAFAGH_COURSE_CARD: CourseCardSpec = {
+  thumbTones: SHAFAGH_THUMBS,
+  thumbClassName: 'relative aspect-video overflow-hidden',
+};
 
 export const SHAFAGH_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
@@ -43,8 +49,7 @@ export const SHAFAGH_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={SHAFAGH_DEFAULTS.courses}
-      thumbTones={SHAFAGH_THUMBS}
-      thumbClassName="relative aspect-video overflow-hidden"
+      card={SHAFAGH_COURSE_CARD}
       tone="page"
     />
   ),

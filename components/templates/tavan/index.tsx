@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { TAVAN_DEFAULTS } from './defaults';
 import { TavanHero } from './hero';
 import { TavanFeatures } from './features';
@@ -21,6 +22,12 @@ const TAVAN_HEADER = headerDefaults({
   ctaText: 'شروع هفتهٔ صفر',
   nav: FULL_NAV,
 });
+
+export const TAVAN_COURSE_CARD: CourseCardSpec = {
+  thumbTones: TAVAN_THUMBS,
+  thumbClassName: styles.thumb,
+  footer: 'action',
+};
 
 export const TAVAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
@@ -43,10 +50,8 @@ export const TAVAN_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={TAVAN_DEFAULTS.courses}
-      thumbTones={TAVAN_THUMBS}
-      thumbClassName={styles.thumb}
+      card={TAVAN_COURSE_CARD}
       tone="surface"
-      footer="action"
     />
   ),
   categories: TavanCategories,

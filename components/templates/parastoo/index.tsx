@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { PARASTOO_DEFAULTS } from './defaults';
 import { ParastooHero } from './hero';
 import { ParastooFeatures } from './features';
@@ -21,6 +22,11 @@ const PARASTOO_HEADER = headerDefaults({
   ctaText: 'جلسهٔ آزمایشی رایگان',
   nav: FULL_NAV,
 });
+
+export const PARASTOO_COURSE_CARD: CourseCardSpec = {
+  thumbTones: PARASTOO_THUMBS,
+  thumbClassName: styles.thumb,
+};
 
 export const PARASTOO_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
@@ -43,8 +49,7 @@ export const PARASTOO_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={PARASTOO_DEFAULTS.courses}
-      thumbTones={PARASTOO_THUMBS}
-      thumbClassName={styles.thumb}
+      card={PARASTOO_COURSE_CARD}
       tone="page"
       bordered={false}
     />

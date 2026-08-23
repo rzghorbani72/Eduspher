@@ -1,0 +1,80 @@
+import { Button, Initials } from "./primitives";
+import type { TemplateCourse } from "./courses-data";
+import { isSampleRecord } from "./sample-data";
+
+/**
+ * The per-template look of a single course card, kept apart from the section
+ * that lists them. The academy's chosen template owns this spec, so the same
+ * card renders on the home page, the courses list and the course detail page.
+ */
+export interface CourseCardSpec {
+  /** Per-template thumbnail gradients, applied round-robin. */
+  thumbTones: readonly string[];
+  thumbClassName: string;
+  /** `rating` closes the card with a score, `action` with a details button. */
+  footer?: "rating" | "action";
+}
+
+export function TemplateCourseCard({
+  course,
+  spec,
+  index = 0,
+}: {
+  course: TemplateCourse;
+  spec: CourseCardSpec;
+  index?: number;
+}) {
+  const thumbClassName = `${spec.thumbClassName} ${spec.thumbTones[index % spec.thumbTones.length]}`;
+
+  return (
+    <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
+      <a href={course.href} className="block">
+        <div className={thumbClassName}>
+          {isSampleRecord(course.id) ? (
+            <span className="absolute top-3 end-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-deep)/85 px-2.5 py-1 text-[11px] font-bold text-(--theme-on-deep)">
+              نمونهٔ پیش‌نمایش
+            </span>
+          ) : null}
+          {course.levelLabel ? (
+            <span className="absolute top-3 start-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-surface)/90 px-2.5 py-1 text-[11px] font-bold text-(--theme-foreground)">
+              {course.levelLabel}
+            </span>
+          ) : null}
+        </div>
+      </a>
+
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <h3 className="text-[18.5px] font-bold leading-[1.45]">
+          <a href={course.href} className="hover:text-(--theme-primary)">
+            {course.title}
+          </a>
+        </h3>
+
+        {course.teacherName ? (
+          <p className="flex items-center gap-2.5 text-[13.5px] text-(--theme-muted)">
+            <Initials value={course.teacherInitials} className="size-7" />
+            {course.teacherName}
+          </p>
+        ) : null}
+
+        <p className="flex flex-wrap gap-3.5 border-t border-(--theme-border-color) pt-3 text-[13px] text-(--theme-muted)">
+          {course.durationLabel ? <span>{course.durationLabel}</span> : null}
+          {course.lessonsLabel ? <span>{course.lessonsLabel}</span> : null}
+        </p>
+
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-(--theme-border-color) pt-3.5">
+          <span className="text-[17px] font-bold">{course.priceLabel}</span>
+          {spec.footer === "action" ? (
+            <Button tone="deep" size="sm" href={course.href}>
+              جزئیات
+            </Button>
+          ) : course.ratingLabel ? (
+            <span className="text-[13px] font-bold text-(--theme-accent)">
+              ★ {course.ratingLabel}
+            </span>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}

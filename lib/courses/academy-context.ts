@@ -1,6 +1,9 @@
 import "server-only";
 
-import { getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import { cache } from "react";
+
+import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from "@/lib/api/server";
+import { getAcademyContext } from "@/lib/store-context";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import type { LanguageCode } from "@/lib/i18n/config";
 
@@ -64,3 +67,18 @@ export async function resolveAcademyForRequest(
     currencyConfig,
   };
 }
+
+/**
+ * How to print money on this request, for components that render a price but
+ * have no academy prop to thread it through. It goes through the same resolver
+ * as the pages, so an anonymous visitor sees the academy's real currency
+ * instead of falling back to dollars.
+ */
+export const getAcademyCurrency = cache(async (): Promise<CurrencyConfig | null> => {
+  const [user, storeContext] = await Promise.all([
+    getCurrentUser().catch(() => null),
+    getAcademyContext(),
+  ]);
+  const { currencyConfig } = await resolveAcademyForRequest(user, storeContext.slug);
+  return currencyConfig;
+});

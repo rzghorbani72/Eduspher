@@ -1,11 +1,11 @@
 import Link from "@/components/ui/link";
 import { BookOpen } from "lucide-react";
 
-import { CourseCard } from "@/components/courses/course-card";
+import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
 import { CourseFilters } from "@/components/courses/course-filters";
 import { CourseSearch } from "@/components/courses/course-search";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getCourses, getCategories, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
+import { getCourses, getCategories, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
 import { buildAcademyPath, toPersianDigits } from "@/lib/utils";
 import { getAcademyContext } from "@/lib/store-context";
 import { getAcademyLanguage } from "@/lib/i18n/server";
@@ -52,7 +52,7 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
   const categoryId = params?.category_id || undefined;
   const isFree = parseBoolean(params?.is_free);
 
-  const [coursePayload, categories, user, currentAcademy] = await Promise.all([
+  const [coursePayload, categories, currentAcademy] = await Promise.all([
     getCourses({
       search: query || undefined,
       page,
@@ -63,18 +63,12 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
       is_free: isFree,
     }).catch(() => null),
     getCategories().catch(() => []),
-    getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
   ]);
 
   // Courses are public - anyone can view them
   const courses = coursePayload?.courses ?? [];
   const pagination = coursePayload?.pagination;
-  const storeCurrency =
-    user?.currentAcademy ||
-    (currentAcademy as { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" }) ||
-    null;
-
   // Get store language for translations
   let storeForLang = currentAcademy;
   if (!storeForLang && storeContext.slug) {
@@ -133,7 +127,11 @@ export default async function CoursesPage({ searchParams }: { searchParams: Sear
                   className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CourseCard course={course} storeSlug={storeContext.isSubdomain ? null : storeContext.slug} store={storeCurrency} />
+                  <TemplatedCourseCard
+                    course={course}
+                    index={index}
+                    storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
+                  />
                 </div>
               ))}
             </div>

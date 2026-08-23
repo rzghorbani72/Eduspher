@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { TemplateTracks } from '../_shared/tracks';
 import { NOKHBEH_DEFAULTS } from './defaults';
 import { NokhbehHero } from './hero';
@@ -22,6 +23,11 @@ const NOKHBEH_HEADER = headerDefaults({
   nav: FULL_NAV,
 });
 
+export const NOKHBEH_COURSE_CARD: CourseCardSpec = {
+  thumbTones: NOKHBEH_THUMBS,
+  thumbClassName: styles.thumb,
+};
+
 export const NOKHBEH_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
     <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={NOKHBEH_HEADER} spec={{ tone: 'page', height: 76, navStyle: 'plain', markClassName: styles.logoMark, monoTagline: true }} />
@@ -37,8 +43,7 @@ export const NOKHBEH_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={NOKHBEH_DEFAULTS.courses}
-      thumbTones={NOKHBEH_THUMBS}
-      thumbClassName={styles.thumb}
+      card={NOKHBEH_COURSE_CARD}
       tone="page"
     />
   ),

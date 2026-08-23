@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CourseCard } from "@/components/courses/course-card";
+import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
 import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
 import { CourseHero } from "@/components/courses/course-hero";
 import { CoursePreviewPlayer } from "@/components/courses/course-preview-player";
@@ -297,10 +297,11 @@ export default async function CourseDetailPage({
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {relatedCourses.courses
               .filter((item) => item.id !== course.id)
-              .map((item) => (
-                <CourseCard
+              .map((item, index) => (
+                <TemplatedCourseCard
                   key={item.id}
                   course={item}
+                  index={index}
                   storeSlug={
                     storeContext.isSubdomain ? null : storeContext.slug
                   }

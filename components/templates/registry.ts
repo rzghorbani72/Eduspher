@@ -12,6 +12,16 @@ import { HAMRANG_SECTIONS } from './hamrang';
 import { BARAN_SECTIONS } from './baran';
 import { SHAFAGH_SECTIONS } from './shafagh';
 import { ELEKTRON_SECTIONS } from './elektron';
+import { KEYHAN_COURSE_CARD } from './keyhan';
+import { TAVAN_COURSE_CARD } from './tavan';
+import { DASTAN_COURSE_CARD } from './dastan';
+import { PARASTOO_COURSE_CARD } from './parastoo';
+import { NOKHBEH_COURSE_CARD } from './nokhbeh';
+import { ZABANEH_COURSE_CARD } from './zabaneh';
+import { BIKARAN_COURSE_CARD } from './bikaran';
+import { SHAFAGH_COURSE_CARD } from './shafagh';
+import { ELEKTRON_COURSE_CARD } from './elektron';
+import type { CourseCardSpec } from './_shared/course-card';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
 import type { ComponentType } from 'react';
@@ -50,4 +60,26 @@ export function resolveTemplateSection(
   if (!isTemplateKey(style)) return null;
   const sections = TEMPLATE_SECTIONS[style];
   return sections[type as TemplateSectionType] ?? null;
+}
+
+/**
+ * Template key → its course-card look. Read by every page that lists courses
+ * (home, catalogue, course detail), so the manager's template choice is not a
+ * home-page-only decision. A template with no entry keeps the built-in card.
+ */
+const TEMPLATE_COURSE_CARDS: Partial<Record<TemplateKey, CourseCardSpec>> = {
+  keyhan: KEYHAN_COURSE_CARD,
+  tavan: TAVAN_COURSE_CARD,
+  dastan: DASTAN_COURSE_CARD,
+  parastoo: PARASTOO_COURSE_CARD,
+  nokhbeh: NOKHBEH_COURSE_CARD,
+  zabaneh: ZABANEH_COURSE_CARD,
+  bikaran: BIKARAN_COURSE_CARD,
+  shafagh: SHAFAGH_COURSE_CARD,
+  elektron: ELEKTRON_COURSE_CARD,
+};
+
+export function resolveTemplateCourseCard(style: unknown): CourseCardSpec | null {
+  if (!isTemplateKey(style)) return null;
+  return TEMPLATE_COURSE_CARDS[style] ?? null;
 }

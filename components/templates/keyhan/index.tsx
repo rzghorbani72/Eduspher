@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { KEYHAN_DEFAULTS } from './defaults';
 import { KeyhanHero } from './hero';
 import { KeyhanFeatures } from './features';
@@ -22,6 +23,11 @@ const KEYHAN_HEADER = headerDefaults({
   nav: FULL_NAV,
 });
 
+export const KEYHAN_COURSE_CARD: CourseCardSpec = {
+  thumbTones: KEYHAN_THUMBS,
+  thumbClassName: styles.thumb,
+};
+
 export const KEYHAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
     <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={KEYHAN_HEADER} spec={{ tone: 'page', height: 72, navStyle: 'plain', markClassName: styles.logoMark, translucent: true }} />
@@ -37,8 +43,7 @@ export const KEYHAN_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={KEYHAN_DEFAULTS.courses}
-      thumbTones={KEYHAN_THUMBS}
-      thumbClassName={styles.thumb}
+      card={KEYHAN_COURSE_CARD}
       tone="surface"
     />
   ),

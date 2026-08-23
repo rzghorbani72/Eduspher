@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { TemplateDataTable } from '../_shared/data-table';
 import { DASTAN_DEFAULTS } from './defaults';
 import { DastanHero } from './hero';
@@ -21,6 +22,11 @@ const DASTAN_HEADER = headerDefaults({
   ctaText: 'ثبت‌نام دوره',
   nav: FULL_NAV,
 });
+
+export const DASTAN_COURSE_CARD: CourseCardSpec = {
+  thumbTones: DASTAN_THUMBS,
+  thumbClassName: styles.thumb,
+};
 
 export const DASTAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
@@ -43,8 +49,7 @@ export const DASTAN_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={DASTAN_DEFAULTS.courses}
-      thumbTones={DASTAN_THUMBS}
-      thumbClassName={styles.thumb}
+      card={DASTAN_COURSE_CARD}
       tone="surface"
     />
   ),

@@ -1,4 +1,5 @@
-import { getCourses, getCurrentAcademy } from '@/lib/api/server';
+import { getCourses } from '@/lib/api/server';
+import { getAcademyCurrency, type CurrencyConfig } from '@/lib/courses/academy-context';
 import { buildAcademyPath, formatCurrencyWithAcademy, toPersianDigits } from '@/lib/utils';
 import type { CourseSummary } from '@/lib/api/types';
 import type { TemplateStoreContext } from './types';
@@ -39,42 +40,21 @@ function initialsOf(name: string | null): string {
   return parts.map((part) => part.charAt(0)).join('') || '—';
 }
 
-/** Only the currency-shaped fields this module needs off the academy record. */
-type CurrencyStore = NonNullable<Parameters<typeof formatCurrencyWithAcademy>[1]>;
-
-function toCurrencyStore(academy: unknown): CurrencyStore | null {
-  if (!academy || typeof academy !== 'object') return null;
-  const record: Record<string, unknown> = { ...academy };
-  const pick = (key: string): string | undefined =>
-    typeof record[key] === 'string' ? record[key] : undefined;
-  const position = pick('currency_position');
-
-  return {
-    currency: pick('currency'),
-    currency_symbol: pick('currency_symbol'),
-    currency_position: position === 'before' || position === 'after' ? position : undefined,
-    country_code: pick('country_code'),
-    language: pick('language'),
-  };
-}
-
 export async function loadTemplateCourses(
   storeContext: TemplateStoreContext | undefined,
   limit: number
 ): Promise<TemplateCourse[]> {
-  const [payload, academy] = await Promise.all([
+  const [payload, currencyStore] = await Promise.all([
     getCourses({
       limit,
       published: true,
       ...(storeContext?.academyId ? { academy_id: storeContext.academyId } : {}),
     }).catch(() => null),
-    getCurrentAcademy().catch(() => null),
+    getAcademyCurrency().catch(() => null),
   ]);
 
   const courses = payload?.courses ?? [];
   const storeSlug = storeContext?.isSubdomain ? null : (storeContext?.slug ?? null);
-  const currencyStore = toCurrencyStore(academy);
-
   const live = courses.map((course) => toTemplateCourse(course, storeSlug, currencyStore));
 
   // Preview only: pad a thin catalogue with labelled samples so the design can
@@ -94,10 +74,10 @@ function formatDurationLabel(minutes: number | null): string | null {
   return `${hoursLabel} ${toPersianDigits(String(rest), 'fa')} دقیقه`;
 }
 
-function toTemplateCourse(
+export function toTemplateCourse(
   course: CourseSummary,
   storeSlug: string | null,
-  currencyStore: CurrencyStore | null
+  currencyStore: CurrencyConfig | null
 ): TemplateCourse {
   const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
   const minutes = course.duration ?? null;

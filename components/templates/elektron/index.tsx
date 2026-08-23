@@ -6,6 +6,7 @@ import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
+import type { CourseCardSpec } from '../_shared/course-card';
 import { TemplateDataTable } from '../_shared/data-table';
 import { ELEKTRON_DEFAULTS } from './defaults';
 import { ElektronHero } from './hero';
@@ -19,6 +20,11 @@ const ELEKTRON_HEADER = headerDefaults({
   ctaText: 'ثبت‌نام در دوره',
   nav: FULL_NAV,
 });
+
+export const ELEKTRON_COURSE_CARD: CourseCardSpec = {
+  thumbTones: [styles.tA, styles.tB, styles.tC, styles.tD],
+  thumbClassName: 'relative aspect-video overflow-hidden',
+};
 
 export const ELEKTRON_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
@@ -41,8 +47,7 @@ export const ELEKTRON_SECTIONS: TemplateSectionMap = {
       config={config}
       storeContext={storeContext}
       defaults={ELEKTRON_DEFAULTS.courses}
-      thumbTones={[styles.tA, styles.tB, styles.tC, styles.tD]}
-      thumbClassName="relative aspect-video overflow-hidden"
+      card={ELEKTRON_COURSE_CARD}
       tone="surface"
     />
   ),
