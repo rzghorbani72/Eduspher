@@ -10,11 +10,13 @@ import {
   type PreviewMedia,
 } from "@/components/courses/preview-player-context";
 import { PurchasePanel } from "@/components/courses/purchase-panel";
+import { TutoringGroupsSection } from "@/components/courses/tutoring-groups-section";
 import {
   getCourses,
   getCurrentUser,
   getEnrollments,
   getPublicCourseDetail,
+  getTutoringGroupsPublic,
   getTutoringOffersPublic,
   getCourseOfferingsPublic,
   getCoursePaymentPlans,
@@ -91,11 +93,19 @@ export default async function CourseDetailPage({
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const [course, user, tutoringOffers, courseOfferings, paymentPlans, seoCtx] =
-    await Promise.all([
+  const [
+    course,
+    user,
+    tutoringOffers,
+    tutoringGroups,
+    courseOfferings,
+    paymentPlans,
+    seoCtx,
+  ] = await Promise.all([
       getPublicCourseDetail(id),
       getCurrentUser().catch(() => null),
       getTutoringOffersPublic(id).catch(() => []),
+      getTutoringGroupsPublic(id).catch(() => []),
       getCourseOfferingsPublic(id).catch(() => []),
       getCoursePaymentPlans(id),
       getSeoRequestContext(),
@@ -247,6 +257,19 @@ export default async function CourseDetailPage({
                 instructorAvatarUrl={avatarUrl}
               />
             </div>
+
+            {tutoringGroups.length ? (
+              <div className="mt-10">
+                <TutoringGroupsSection
+                  groups={tutoringGroups}
+                  currencyConfig={currencyConfig}
+                  language={language}
+                  loginHref={buildPath(
+                    `/auth/login?redirect=/courses/${course.id}`,
+                  )}
+                />
+              </div>
+            ) : null}
           </div>
 
           <aside className="lg:sticky lg:top-[86px]">

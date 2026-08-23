@@ -43,6 +43,9 @@ export async function POST(request: NextRequest) {
     },
     body: JSON.stringify({
       ...selector,
+      // A group class is priced per seat, so the quote must know how many.
+      ...(Number(body.seats) > 1 && { seats: Number(body.seats) }),
+      ...(body.join_code && { join_code: String(body.join_code) }),
       ...(body.coupon_code && { coupon_code: String(body.coupon_code) }),
     }),
   });

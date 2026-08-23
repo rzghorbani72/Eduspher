@@ -838,6 +838,69 @@ export async function getTutoringOffersPublic(
   return result.data ?? [];
 }
 
+export interface PublicTutoringGroupSlot {
+  weekday: number;
+  start_minute: number;
+  duration_minutes: number;
+  lesson_id: string | null;
+  Lesson: { id: string; title: string } | null;
+}
+
+export interface PublicTutoringGroup {
+  id: string;
+  title: string;
+  description: string | null;
+  timezone: string;
+  capacity: number;
+  seats_taken: number;
+  seats_left: number;
+  min_students: number;
+  age_min: number | null;
+  age_max: number | null;
+  status: "WAITING" | "CONFIRMED" | "RUNNING";
+  starts_on: string | null;
+  ends_on: string | null;
+  term_weeks: number;
+  join_deadline: string | null;
+  visibility: "PUBLIC" | "PRIVATE";
+  course_id: string;
+  Slots: PublicTutoringGroupSlot[];
+  Tutor: { id: string; display_name: string | null } | null;
+  Offer: { id: string; price: number; currency: string } | null;
+  /** True when the signed-in student already holds a seat in this class. */
+  joined?: boolean;
+}
+
+/** Scheduled group classes of a course that anyone may join. */
+export async function getTutoringGroupsPublic(
+  courseId: string,
+): Promise<PublicTutoringGroup[]> {
+  const result = await serverFetchRaw<{
+    status: string;
+    data: PublicTutoringGroup[];
+  }>(`/tutoring/groups/public?course_id=${encodeURIComponent(courseId)}`, {
+    method: "GET",
+  });
+  return result.data ?? [];
+}
+
+/** A private class opened by its share code, so friends can book it together. */
+export async function getTutoringGroupByCode(
+  code: string,
+): Promise<PublicTutoringGroup | null> {
+  try {
+    const result = await serverFetchRaw<{
+      status: string;
+      data: PublicTutoringGroup;
+    }>(`/tutoring/groups/by-code/${encodeURIComponent(code)}`, {
+      method: "GET",
+    });
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export type PublicOfferingType =
   "FREE" | "ONE_TIME" | "SUBSCRIPTION" | "PRIVATE" | "PAYMENT_PLAN";
 

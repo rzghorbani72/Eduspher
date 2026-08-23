@@ -9,6 +9,7 @@ import {
   getCourseById,
   getEnrollments,
 } from "@/lib/api/server";
+import { getMyTutoringGroups } from "@/lib/api/account-server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
@@ -40,11 +41,12 @@ export default async function AccountClassesPage() {
   const academyContext = await getAcademyContext();
   const slugForPaths = academyContext.isSubdomain ? null : academyContext.slug;
 
-  const [enrollmentsData, academy] = await Promise.all([
+  const [enrollmentsData, academy, groupRows] = await Promise.all([
     getEnrollments({ limit: 100 }).catch(() => null),
     academyContext.slug
       ? getAcademyBySlug(academyContext.slug).catch(() => null)
       : null,
+    getMyTutoringGroups(),
   ]);
 
   const language = getAcademyLanguage(
@@ -87,6 +89,31 @@ export default async function AccountClassesPage() {
         description={translate("account.classesDescription")}
         icon={CalendarClock}
       />
+
+      {groupRows.length ? (
+        <DataPanel title={translate("account.groupClasses")}>
+          <ul className="space-y-3">
+            {groupRows.map((row) => (
+              <li key={row.engagement_id}>
+                <Link
+                  href={buildAcademyPath(
+                    slugForPaths,
+                    `/account/classes/${row.group.id}`,
+                  )}
+                  className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-theme bg-card p-4 transition hover:border-(--theme-primary)/40"
+                >
+                  <span className="font-medium">{row.group.title}</span>
+                  <span className="text-sm text-muted">
+                    {row.group.next_session
+                      ? formatDate(row.group.next_session.starts_at, language)
+                      : translate("account.groupWaitingToStart")}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </DataPanel>
+      ) : null}
 
       <DataPanel title={translate("account.upcomingClasses")}>
         <LessonList

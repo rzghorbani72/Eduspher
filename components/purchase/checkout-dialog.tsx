@@ -25,6 +25,8 @@ interface CheckoutDialogProps {
   gateways: PurchaseGateway[];
   onPay: (couponCode: string | undefined, provider?: string) => void;
   onClose: () => void;
+  /** Extra pricing inputs the selector cannot carry, e.g. group class seats. */
+  extras?: Record<string, string | number>;
 }
 
 /**
@@ -43,12 +45,13 @@ export function CheckoutDialog({
   gateways,
   onPay,
   onClose,
+  extras,
 }: CheckoutDialogProps) {
   const { t, language: uiLanguage } = useTranslation();
   const language = languageProp ?? uiLanguage;
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<string | undefined>(undefined);
-  const { quote, loading, reprice } = useCheckoutQuote(selector, true);
+  const { quote, loading, reprice } = useCheckoutQuote(selector, true, extras);
 
   const fmt = (amount: number) =>
     toPersianDigits(

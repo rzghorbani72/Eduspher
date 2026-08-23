@@ -12,6 +12,7 @@ export type PurchaseSelector =
   | { offer_id: string }
   | { academy_plan_id: string }
   | { tutoring_offer_id: string }
+  | { tutoring_group_id: string }
   | { payment_plan_id: string };
 
 export type PurchaseGateway = { provider: string; display_name: string };
@@ -21,7 +22,13 @@ type PurchaseOptions = {
   loginHref: string;
 };
 
-type PayOptions = { couponCode?: string; provider?: string };
+type PayOptions = {
+  couponCode?: string;
+  provider?: string;
+  /** Group class only: seats to book at once, and a private class share code. */
+  seats?: number;
+  joinCode?: string;
+};
 
 /**
  * The one place the storefront starts a purchase, so every buying path — course,
@@ -59,6 +66,8 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
             amount,
             ...(options?.provider && { provider: options.provider }),
             ...(options?.couponCode && { coupon_code: options.couponCode }),
+            ...(options?.seats && options.seats > 1 && { seats: options.seats }),
+            ...(options?.joinCode && { join_code: options.joinCode }),
           }),
         });
 

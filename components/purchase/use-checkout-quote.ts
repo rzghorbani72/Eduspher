@@ -21,10 +21,15 @@ export type CheckoutQuote = {
  * Prices the selected purchase server-side, so the confirmation step shows the
  * amount the bank will actually charge instead of a figure the page guessed.
  */
-export const useCheckoutQuote = (selector: PurchaseSelector, enabled: boolean) => {
+export const useCheckoutQuote = (
+  selector: PurchaseSelector,
+  enabled: boolean,
+  /** Extra pricing inputs a selector alone cannot carry, e.g. group seats. */
+  extras?: Record<string, string | number>,
+) => {
   const [quote, setQuote] = useState<CheckoutQuote | null>(null);
   const [loading, setLoading] = useState(false);
-  const key = JSON.stringify(selector);
+  const key = JSON.stringify({ ...selector, ...extras });
 
   const load = useCallback(
     async (couponCode?: string) => {
@@ -34,7 +39,7 @@ export const useCheckoutQuote = (selector: PurchaseSelector, enabled: boolean) =
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            ...(JSON.parse(key) as PurchaseSelector),
+            ...(JSON.parse(key) as Record<string, unknown>),
             ...(couponCode && { coupon_code: couponCode }),
           }),
         });

@@ -35,7 +35,9 @@ export const getProfile = (profileId: string) =>
 
 export const getCourseAccess = () =>
   safe<CourseAccessRow[]>(async () => {
-    const result = await serverFetch<CourseAccessRow[]>("/enrollments/my-access");
+    const result = await serverFetch<CourseAccessRow[]>(
+      "/enrollments/my-access",
+    );
     return result.data ?? [];
   }, []);
 
@@ -119,21 +121,98 @@ export type TutoringEngagementRow = {
 
 export const getTutoringEngagements = () =>
   safe<TutoringEngagementRow[]>(async () => {
-    const result = await serverFetch<TutoringEngagementRow[]>("/tutoring/engagements");
+    const result = await serverFetch<TutoringEngagementRow[]>(
+      "/tutoring/engagements",
+    );
     return result.data ?? [];
   }, []);
 
+export type MyTutoringGroupSlot = {
+  weekday: number;
+  start_minute: number;
+  duration_minutes: number;
+  Lesson: { id: string; title: string } | null;
+};
+
+export type MyTutoringGroupSession = {
+  id: string;
+  starts_at: string;
+  ends_at: string | null;
+  status: string;
+  meeting_url?: string | null;
+  Lesson?: { id: string; title: string } | null;
+};
+
+export type MyTutoringGroup = {
+  id: string;
+  title: string;
+  description: string | null;
+  timezone: string;
+  capacity: number;
+  seats_taken: number;
+  seats_left: number;
+  min_students: number;
+  status: string;
+  starts_on: string | null;
+  ends_on: string | null;
+  course_id: string;
+  Slots: MyTutoringGroupSlot[];
+  Tutor: { id: string; display_name: string | null } | null;
+  next_session?: {
+    id: string;
+    starts_at: string;
+    ends_at: string | null;
+  } | null;
+};
+
+export type MyTutoringGroupRow = {
+  engagement_id: string;
+  engagement_status: string;
+  seats_claimed: number;
+  group: MyTutoringGroup;
+};
+
+/** Group classes the signed-in student holds a seat in. */
+export const getMyTutoringGroups = () =>
+  safe<MyTutoringGroupRow[]>(async () => {
+    const result = await serverFetch<MyTutoringGroupRow[]>(
+      "/tutoring/groups/mine",
+    );
+    return result.data ?? [];
+  }, []);
+
+export type TutoringGroupRoom = MyTutoringGroup & {
+  /** Present only inside the join window — otherwise null, never a stale link. */
+  meeting_url: string | null;
+  is_tutor: boolean;
+  membership: { id: string; status: string; seats_claimed: number } | null;
+  next_session: MyTutoringGroupSession | null;
+  sessions: MyTutoringGroupSession[];
+};
+
+/** The class page. Returns null when the caller is not in this class. */
+export const getTutoringGroupRoom = (groupId: string) =>
+  safe<TutoringGroupRoom | null>(async () => {
+    const result = await serverFetch<TutoringGroupRoom>(
+      `/tutoring/groups/${groupId}/room`,
+    );
+    return result.data ?? null;
+  }, null);
+
 export const getPayments = (params?: { page?: number; limit?: number }) =>
-  safe<{ payments: PaymentSummary[]; pagination: PageMeta | null }>(async () => {
-    const result = await serverFetch<{
-      payments: PaymentSummary[];
-      pagination: PageMeta;
-    }>("/payments", { query: { limit: 50, ...params } });
-    return {
-      payments: result.data?.payments ?? [],
-      pagination: result.data?.pagination ?? null,
-    };
-  }, { payments: [], pagination: null });
+  safe<{ payments: PaymentSummary[]; pagination: PageMeta | null }>(
+    async () => {
+      const result = await serverFetch<{
+        payments: PaymentSummary[];
+        pagination: PageMeta;
+      }>("/payments", { query: { limit: 50, ...params } });
+      return {
+        payments: result.data?.payments ?? [],
+        pagination: result.data?.pagination ?? null,
+      };
+    },
+    { payments: [], pagination: null },
+  );
 
 export const getPayment = (paymentId: string) =>
   safe<PaymentSummary | null>(async () => {
@@ -150,10 +229,13 @@ export const getPaymentReceipt = (paymentId: string) =>
 
 export const getAcademyPlansPublicByKind = (kind: "SUBSCRIPTION" | "PACKAGE") =>
   safe<AcademyPlanPublic[]>(async () => {
-    const result = await serverFetch<AcademyPlanPublic[]>("/academy-plans/public", {
-      includeAuth: false,
-      query: { kind },
-    });
+    const result = await serverFetch<AcademyPlanPublic[]>(
+      "/academy-plans/public",
+      {
+        includeAuth: false,
+        query: { kind },
+      },
+    );
     return result.data ?? [];
   }, []);
 
@@ -181,13 +263,16 @@ export const getMySubscriptions = () =>
   }, []);
 
 export const getNotifications = (params?: { page?: number; limit?: number }) =>
-  safe<{ notifications: NotificationItem[]; pagination: PageMeta | null }>(async () => {
-    const result = await serverFetch<{
-      notifications: NotificationItem[];
-      pagination: PageMeta;
-    }>("/notifications", { query: { limit: 30, ...params } });
-    return {
-      notifications: result.data?.notifications ?? [],
-      pagination: result.data?.pagination ?? null,
-    };
-  }, { notifications: [], pagination: null });
+  safe<{ notifications: NotificationItem[]; pagination: PageMeta | null }>(
+    async () => {
+      const result = await serverFetch<{
+        notifications: NotificationItem[];
+        pagination: PageMeta;
+      }>("/notifications", { query: { limit: 30, ...params } });
+      return {
+        notifications: result.data?.notifications ?? [],
+        pagination: result.data?.pagination ?? null,
+      };
+    },
+    { notifications: [], pagination: null },
+  );

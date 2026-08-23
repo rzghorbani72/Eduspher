@@ -11,7 +11,8 @@ import {
 /**
  * POST /api/payment/initiate — the single checkout entry point for the
  * storefront. Body carries exactly one selector (course_id, offer_id,
- * academy_plan_id, tutoring_offer_id or payment_plan_id) plus the amount.
+ * academy_plan_id, tutoring_offer_id, tutoring_group_id or payment_plan_id)
+ * plus the amount.
  * Returns { payment_id, redirect_url, amount }; a null redirect_url means the
  * purchase resolved without a gateway (free or already covered).
  */
@@ -38,6 +39,8 @@ export async function POST(request: NextRequest) {
     const result = await initiateCheckout({
       ...selector,
       amount,
+      seats: Number(body.seats) > 1 ? Number(body.seats) : undefined,
+      join_code: body.join_code ? String(body.join_code) : undefined,
       coupon_code: body.coupon_code,
       affiliate_code: body.affiliate_code,
       mobile: body.mobile,

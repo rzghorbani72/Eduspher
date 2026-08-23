@@ -14,6 +14,7 @@ export type PurchaseSelector = {
   offer_id?: string;
   academy_plan_id?: string;
   tutoring_offer_id?: string;
+  tutoring_group_id?: string;
   payment_plan_id?: string;
 };
 
@@ -22,11 +23,16 @@ export const SELECTOR_KEYS = [
   "offer_id",
   "academy_plan_id",
   "tutoring_offer_id",
+  "tutoring_group_id",
   "payment_plan_id",
 ] as const satisfies readonly (keyof PurchaseSelector)[];
 
 export type InitiateCheckoutInput = PurchaseSelector & {
   amount: number;
+  /** Seats bought in one go — more than one books a group class privately. */
+  seats?: number;
+  /** Share code required to join a private group class. */
+  join_code?: string;
   coupon_code?: string;
   affiliate_code?: string;
   mobile?: string;
@@ -71,7 +77,8 @@ export const initiateCheckout = async (
     return {
       ok: false,
       status: 400,
-      error: "Exactly one of course_id, offer_id, academy_plan_id, tutoring_offer_id or payment_plan_id is required",
+      error:
+        "Exactly one of course_id, offer_id, academy_plan_id, tutoring_offer_id, tutoring_group_id or payment_plan_id is required",
     };
   }
 
@@ -92,6 +99,8 @@ export const initiateCheckout = async (
       ...(input.affiliate_code && { affiliate_code: input.affiliate_code }),
       ...(input.mobile && { mobile: input.mobile }),
       ...(input.provider && { provider: input.provider }),
+      ...(input.seats && input.seats > 1 && { seats: input.seats }),
+      ...(input.join_code && { join_code: input.join_code }),
     }),
   });
 
