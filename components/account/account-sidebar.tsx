@@ -188,7 +188,7 @@ export function AccountSidebar({
                     className={cn(
                       "flex shrink-0 items-center gap-2 rounded-full border border-theme px-3.5 py-2 text-sm font-medium whitespace-nowrap transition-colors lg:gap-3 lg:rounded-lg lg:border-0 lg:px-4 lg:py-2.5",
                       isActive
-                        ? "bg-(--theme-primary)/15 font-semibold text-(--theme-primary-ink)"
+                        ? "border-transparent bg-(--theme-primary) font-semibold text-(--theme-on-primary) shadow-sm shadow-(--theme-primary)/30"
                         : "text-muted hover:bg-surface hover:text-foreground",
                     )}
                   >
