@@ -25,6 +25,8 @@ export interface LiveView {
   weekdays: readonly number[];
   recurrenceUntil: string | null;
   providerLabel: string | null;
+  /** The next meeting of this class; null when the series is over. */
+  nextOccurrenceAt: string | null;
 }
 
 export interface UnlockRule {
@@ -121,6 +123,7 @@ const toLessonView = (lesson: LessonSummary): CurriculumLessonView => ({
         weekdays: parseWeeklyRule(lesson.LiveSession.recurrence_rule),
         recurrenceUntil: lesson.LiveSession.recurrence_until ?? null,
         providerLabel: lesson.LiveSession.provider_label ?? null,
+        nextOccurrenceAt: lesson.LiveSession.next_occurrence_at ?? null,
       }
     : null,
   // A draft quiz exists in the payload but is not part of what is being sold.
@@ -191,10 +194,13 @@ export const parseAuthoredList = (value?: string | null): string[] =>
     .filter((line) => line.length > 0);
 
 export const liveStateAt = (live: LiveView, now: number): LiveState => {
-  const start = new Date(live.startsAt).getTime();
-  const end = live.endsAt
-    ? new Date(live.endsAt).getTime()
-    : start + (live.durationMinutes ?? 60) * 60_000;
+  // "Running" must follow the meeting that is actually next, not the day the
+  // weekly series first ran.
+  const start = new Date(live.nextOccurrenceAt ?? live.startsAt).getTime();
+  const end =
+    live.endsAt && !live.nextOccurrenceAt
+      ? new Date(live.endsAt).getTime()
+      : start + (live.durationMinutes ?? 60) * 60_000;
   if (now < start) return "upcoming";
   if (now <= end) return "running";
   // A repeating session is only really over once the series has run out.

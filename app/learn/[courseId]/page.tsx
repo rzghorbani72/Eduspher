@@ -29,9 +29,12 @@ export default async function LearningCoursePage({ params }: { params: PageParam
     getCourseById(courseId).catch(() => null),
     getEnrollments({ course_id: courseId, limit: 1 }).catch(() => null),
   ]);
+  // Staff see the academy's enrollments here, so match this viewer's own row —
+  // otherwise progress would be written against another student's enrollment.
   const enrollment = enrollmentData?.enrollments.find(
     (item) =>
       String(item.course_id) === courseId &&
+      String(item.profile_id) === String(session.profileId) &&
       (item.status === "ACTIVE" || item.status === "COMPLETED"),
   );
 

@@ -67,12 +67,21 @@ export const formatLiveRepeat = (live: LiveView, t: Translate): string => {
   return t("courses.liveWeekdays").replace("{days}", names.join("، "));
 };
 
+/**
+ * A weekly class started months ago, so its `starts_at` is not the answer to
+ * "when do we meet". The server computes the next occurrence; the row shows
+ * that, and falls back to the original time once the series is over.
+ */
 export const formatLiveWindow = (
   live: LiveView,
   language: string,
   t: Translate,
 ): string => {
-  const start = formatDateTime(live.startsAt, language, live.timezone);
+  const when = live.nextOccurrenceAt ?? live.startsAt;
+  const meeting = formatDateTime(when, language, live.timezone);
+  const start = live.nextOccurrenceAt
+    ? `${t("courses.liveNextSession")} ${meeting}`
+    : meeting;
   const length = live.durationMinutes
     ? formatMinutes(live.durationMinutes, language, t)
     : "";

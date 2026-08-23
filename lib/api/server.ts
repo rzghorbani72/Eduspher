@@ -860,6 +860,8 @@ export interface PublicCourseOffering {
   source_course_id: string | null;
   /** True when the signed-in student already paid for this selling way. */
   owned?: boolean;
+  /** End of the term this way granted; null means it does not expire. */
+  access_expires_at?: string | null;
 }
 
 type OfferRow = Omit<PublicCourseOffering, "course_id"> & {

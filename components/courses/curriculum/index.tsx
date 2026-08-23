@@ -23,12 +23,15 @@ interface CourseCurriculumProps {
   stats: CourseContentStats;
   /** Link prefix for owners, e.g. `/learn/<courseId>`. Null plays in place. */
   previewBasePath: string | null;
+  /** The student holds the recorded lessons, so nothing here is locked. */
+  hasLessonAccess?: boolean;
 }
 
 export function CourseCurriculum({
   seasons,
   stats,
   previewBasePath,
+  hasLessonAccess = false,
 }: CourseCurriculumProps) {
   const { t, language } = useTranslation();
   const now = useNow();
@@ -148,10 +151,12 @@ export function CourseCurriculum({
                         lesson={lesson}
                         now={now}
                         previewHref={
-                          lesson.isPreview && previewBasePath
+                          (lesson.isPreview || hasLessonAccess) &&
+                          previewBasePath
                             ? `${previewBasePath}/${lesson.id}`
                             : null
                         }
+                        unlocked={hasLessonAccess}
                       />
                     ))}
                   </motion.ul>

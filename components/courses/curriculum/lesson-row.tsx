@@ -89,9 +89,16 @@ interface LessonRowProps {
   now: number;
   /** Set only when the lesson opens elsewhere (an owner goes to /learn). */
   previewHref?: string | null;
+  /** The student owns the lessons: no padlock, every row opens. */
+  unlocked?: boolean;
 }
 
-export function LessonRow({ lesson, now, previewHref }: LessonRowProps) {
+export function LessonRow({
+  lesson,
+  now,
+  previewHref,
+  unlocked = false,
+}: LessonRowProps) {
   const { t, language } = useTranslation();
   const player = usePreviewPlayer();
   const Icon = TYPE_ICON[lesson.type];
@@ -129,7 +136,7 @@ export function LessonRow({ lesson, now, previewHref }: LessonRowProps) {
   const playsInCover =
     lesson.isPreview && player?.isPlayable(lesson.id) === true;
   const isPlaying = playsInCover && player?.selected?.lessonId === lesson.id;
-  const canPreview = lesson.isPreview && Boolean(previewHref);
+  const canOpen = (lesson.isPreview || unlocked) && Boolean(previewHref);
 
   const playHere = () => {
     player?.select(lesson.id);
@@ -211,10 +218,12 @@ export function LessonRow({ lesson, now, previewHref }: LessonRowProps) {
           >
             <Play className="h-4 w-4" />
           </button>
-        ) : canPreview && previewHref ? (
+        ) : canOpen && previewHref ? (
           <Link
             href={previewHref}
-            aria-label={`${t("courses.free")}: ${lesson.title}`}
+            aria-label={`${
+              lesson.isPreview ? t("courses.free") : t("courses.openLesson")
+            }: ${lesson.title}`}
             className={playButtonClass}
           >
             <Play className="h-4 w-4" />

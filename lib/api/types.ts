@@ -36,6 +36,8 @@ export interface LiveSessionSummary {
   recurrence_rule?: string | null;
   recurrence_until?: string | null;
   provider_label?: string | null;
+  /** Next time the series actually meets, computed server-side. */
+  next_occurrence_at?: string | null;
   notes?: string | null;
 }
 

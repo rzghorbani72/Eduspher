@@ -44,6 +44,8 @@ export interface PurchaseOptionView {
   sessionsIncluded: number | null;
   /** Already paid for by this student — shown, but not buyable again. */
   owned: boolean;
+  /** When this way's access ends. Null = no end date. */
+  accessExpiresAt: string | null;
 }
 
 /** Cheapest commitment first, so the page leads with the easiest yes. */
@@ -98,6 +100,7 @@ const fromOffering = (
     tutorName: null,
     sessionsIncluded: null,
     owned: offering.owned ?? false,
+    accessExpiresAt: offering.access_expires_at ?? null,
   };
 };
 
@@ -120,6 +123,7 @@ const fromPaymentPlan = (plan: PublicPaymentPlan): PurchaseOptionView => ({
   tutorName: null,
   sessionsIncluded: null,
   owned: false,
+  accessExpiresAt: null,
 });
 
 const fromTutoringOffer = (offer: PublicTutoringOffer): PurchaseOptionView => ({
@@ -137,6 +141,7 @@ const fromTutoringOffer = (offer: PublicTutoringOffer): PurchaseOptionView => ({
   tutorName: offer.Tutor?.display_name ?? null,
   sessionsIncluded: offer.sessions_included,
   owned: offer.owned ?? false,
+  accessExpiresAt: null,
 });
 
 /**
@@ -161,6 +166,7 @@ const fallbackOption = (course: CourseSummary): PurchaseOptionView => ({
   tutorName: null,
   sessionsIncluded: null,
   owned: false,
+  accessExpiresAt: null,
 });
 
 export const buildPurchaseOptions = (

@@ -16,6 +16,8 @@ interface CourseDetailTabsProps {
   course: CourseSummary;
   isLoggedIn: boolean;
   previewBasePath: string | null;
+  /** The student owns the recorded lessons — the curriculum opens instead of locking. */
+  hasLessonAccess?: boolean;
   prerequisiteHref: string | null;
   instructorAvatarUrl: string | null;
 }
@@ -26,6 +28,7 @@ export function CourseDetailTabs({
   course,
   isLoggedIn,
   previewBasePath,
+  hasLessonAccess = false,
   prerequisiteHref,
   instructorAvatarUrl,
 }: CourseDetailTabsProps) {
@@ -100,6 +103,7 @@ export function CourseDetailTabs({
           seasons={seasons}
           stats={stats}
           previewBasePath={previewBasePath}
+          hasLessonAccess={hasLessonAccess}
         />
       )}
 

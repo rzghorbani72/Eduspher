@@ -11,6 +11,7 @@ import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { totalOf } from "@/lib/courses/purchase-options";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
+import { MyAccessPanel } from "@/components/courses/my-access-panel";
 
 export interface CurrencyConfig {
   currency?: string;
@@ -27,6 +28,10 @@ interface PurchasePanelProps {
   loginHref: string;
   /** Set when the visitor already owns the course; buying is replaced by "continue". */
   continueHref: string | null;
+  /** Where each owned way is entered. */
+  learnHref: string;
+  liveClassesHref: string;
+  tutoringHref: string;
 }
 
 const CTA_KEY: Record<string, string> = {
@@ -49,11 +54,15 @@ export function PurchasePanel({
   currencyConfig,
   loginHref,
   continueHref,
+  learnHref,
+  liveClassesHref,
+  tutoringHref,
 }: PurchasePanelProps) {
   const { t } = useTranslation();
   const enrollmentClosed = useEnrollmentClosed();
   const { purchase, pendingKey, error, gateways, reset } = usePurchase({ loginHref });
   const [confirming, setConfirming] = useState(false);
+  const ownedOptions = options.filter((option) => option.owned);
   const firstBuyable = options.find((option) => !option.owned) ?? options[0];
   const [selectedKey, setSelectedKey] = useState(firstBuyable?.key ?? "");
 
@@ -78,7 +87,14 @@ export function PurchasePanel({
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
-      {continueHref && (
+      {ownedOptions.length > 0 ? (
+        <MyAccessPanel
+          owned={ownedOptions}
+          learnHref={continueHref ?? learnHref}
+          liveClassesHref={liveClassesHref}
+          tutoringHref={tutoringHref}
+        />
+      ) : continueHref ? (
         <div className="border-b border-theme bg-(--theme-primary)/8 px-5 py-4 text-center">
           <p className="text-xs font-bold text-(--theme-foreground)">
             {t("courses.alreadyEnrolled")}
@@ -90,16 +106,16 @@ export function PurchasePanel({
             {t("courses.continueLearning")}
           </a>
         </div>
-      )}
+      ) : null}
 
       <div className="px-6 pt-6 pb-2">
         <h2 className="text-lg font-black text-(--theme-foreground)">
-          {continueHref
+          {ownedOptions.length > 0 || continueHref
             ? t("courses.addAnotherMethod")
             : t("courses.chooseEnrollMethod")}
         </h2>
         <p className="mt-1 text-[13px] text-(--theme-muted)">
-          {continueHref
+          {ownedOptions.length > 0 || continueHref
             ? t("courses.addAnotherMethodHint")
             : options.length > 1
               ? t("courses.chooseEnrollMethodHint")

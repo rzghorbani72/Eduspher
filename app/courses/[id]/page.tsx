@@ -126,7 +126,16 @@ export default async function CourseDetailPage({
   const enrollment = user
     ? await getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
     : null;
-  const isEnrolled = Boolean(enrollment?.enrollments?.length);
+  // Staff get the whole academy's enrollments from this endpoint, so the row
+  // must belong to the viewer before it counts as "I own this course".
+  const isEnrolled = Boolean(
+    user &&
+      enrollment?.enrollments?.some(
+        (item) =>
+          String(item.profile_id) === String(user.id) &&
+          (item.status === "ACTIVE" || item.status === "COMPLETED"),
+      ),
+  );
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
   const promoVideoUrl = resolveAssetUrl(course.Video?.publicUrl);
@@ -229,6 +238,7 @@ export default async function CourseDetailPage({
                 course={course}
                 isLoggedIn={!!user}
                 previewBasePath={previewBasePath}
+                hasLessonAccess={isEnrolled}
                 prerequisiteHref={
                   course.PrerequisiteCourse
                     ? buildPath(`/courses/${course.PrerequisiteCourse.id}`)
@@ -248,6 +258,9 @@ export default async function CourseDetailPage({
                 `/auth/login?redirect=/courses/${course.id}`,
               )}
               continueHref={isEnrolled ? learnPath : null}
+              learnHref={learnPath}
+              liveClassesHref={buildPath("/account/classes")}
+              tutoringHref={buildPath("/account/tutoring")}
             />
           </aside>
         </div>
