@@ -35,13 +35,23 @@ export default async function LearningCoursePage({ params }: { params: PageParam
       (item.status === "ACTIVE" || item.status === "COMPLETED"),
   );
 
-  if (!course || !enrollment) {
+  if (!course) {
     redirect(buildAcademyPath(storeSlug, `/courses/${courseId}`));
   }
 
-  const firstLesson = (course.Season ?? [])
+  const publishedLessons = (course.Season ?? [])
     .flatMap((season) => season.Lesson ?? [])
-    .find((lesson) => lesson.is_published !== false);
+    .filter((lesson) => lesson.is_published !== false);
+
+  // Without an enrollment the classroom still opens on the free lessons; with
+  // nothing free to show there is nothing to open, so back to the sales page.
+  const firstLesson = enrollment
+    ? publishedLessons[0]
+    : publishedLessons.find((lesson) => lesson.is_free);
+
+  if (!enrollment && !firstLesson) {
+    redirect(buildAcademyPath(storeSlug, `/courses/${courseId}`));
+  }
 
   if (firstLesson) {
     redirect(

@@ -822,6 +822,8 @@ export interface PublicTutoringOffer {
   duration_days: number | null;
   sessions_included: number | null;
   Tutor: { id: string; display_name: string | null } | null;
+  /** True when the signed-in student already tutors under this offer. */
+  owned?: boolean;
 }
 
 export async function getTutoringOffersPublic(
@@ -856,6 +858,8 @@ export interface PublicCourseOffering {
   payment_plan_id: string | null;
   /** Set when this offer mirrors the course's own price (the default offer). */
   source_course_id: string | null;
+  /** True when the signed-in student already paid for this selling way. */
+  owned?: boolean;
 }
 
 type OfferRow = Omit<PublicCourseOffering, "course_id"> & {

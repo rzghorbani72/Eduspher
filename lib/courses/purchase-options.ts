@@ -42,6 +42,8 @@ export interface PurchaseOptionView {
   installments: { count: number; amount: number; intervalDays: number } | null;
   tutorName: string | null;
   sessionsIncluded: number | null;
+  /** Already paid for by this student — shown, but not buyable again. */
+  owned: boolean;
 }
 
 /** Cheapest commitment first, so the page leads with the easiest yes. */
@@ -95,6 +97,7 @@ const fromOffering = (
     installments: null,
     tutorName: null,
     sessionsIncluded: null,
+    owned: offering.owned ?? false,
   };
 };
 
@@ -116,6 +119,7 @@ const fromPaymentPlan = (plan: PublicPaymentPlan): PurchaseOptionView => ({
   },
   tutorName: null,
   sessionsIncluded: null,
+  owned: false,
 });
 
 const fromTutoringOffer = (offer: PublicTutoringOffer): PurchaseOptionView => ({
@@ -132,6 +136,7 @@ const fromTutoringOffer = (offer: PublicTutoringOffer): PurchaseOptionView => ({
   installments: null,
   tutorName: offer.Tutor?.display_name ?? null,
   sessionsIncluded: offer.sessions_included,
+  owned: offer.owned ?? false,
 });
 
 /**
@@ -155,6 +160,7 @@ const fallbackOption = (course: CourseSummary): PurchaseOptionView => ({
   installments: null,
   tutorName: null,
   sessionsIncluded: null,
+  owned: false,
 });
 
 export const buildPurchaseOptions = (

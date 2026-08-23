@@ -113,6 +113,11 @@ export function PurchaseOptionRow({
             <span className="text-[15px] font-extrabold text-(--theme-foreground)">
               {option.title || t(KIND_TITLE[option.kind])}
             </span>
+            {option.owned ? (
+              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                {t("courses.methodOwned")}
+              </span>
+            ) : null}
             {option.discountPercent ? (
               <span className="cd-badge-save rounded-full px-2 py-0.5 text-[11px] font-bold">
                 {toPersianDigits(option.discountPercent, language)}%

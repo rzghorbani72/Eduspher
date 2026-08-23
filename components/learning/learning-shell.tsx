@@ -22,7 +22,8 @@ interface LearningShellProps {
   courseTitle: string;
   seasons: SeasonSummary[];
   selectedLesson: LessonSummary;
-  enrollmentId: string;
+  /** Null when a free lesson is being watched without an enrollment. */
+  enrollmentId: string | null;
   currentProfileId: string;
   storeSlug: string | null;
 }
@@ -143,7 +144,7 @@ export function LearningShell({
                   currentProfileId={currentProfileId}
                 />
               ) : null}
-              {type === "ASSIGNMENT" ? (
+              {type === "ASSIGNMENT" && enrollmentId ? (
                 <AssignmentPanel
                   lessonId={lessonId}
                   enrollmentId={enrollmentId}

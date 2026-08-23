@@ -54,7 +54,8 @@ export function PurchasePanel({
   const enrollmentClosed = useEnrollmentClosed();
   const { purchase, pendingKey, error, gateways, reset } = usePurchase({ loginHref });
   const [confirming, setConfirming] = useState(false);
-  const [selectedKey, setSelectedKey] = useState(options[0]?.key ?? "");
+  const firstBuyable = options.find((option) => !option.owned) ?? options[0];
+  const [selectedKey, setSelectedKey] = useState(firstBuyable?.key ?? "");
 
   const selected =
     options.find((option) => option.key === selectedKey) ?? options[0];
@@ -72,35 +73,37 @@ export function PurchasePanel({
 
   if (!selected) return null;
 
-  if (continueHref) {
-    return (
-      <div className="cd-side-card rounded-2xl border p-6 text-center shadow-2xl">
-        <p className="text-sm font-bold text-(--theme-foreground)">
-          {t("courses.alreadyEnrolled")}
-        </p>
-        <a
-          href={continueHref}
-          className="cd-cta-btn mt-4 flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all hover:-translate-y-0.5"
-        >
-          {t("courses.continueLearning")}
-        </a>
-      </div>
-    );
-  }
-
   const isBusy = pendingKey === selected.key;
-  const disabled = isBusy || enrollmentClosed;
+  const disabled = isBusy || enrollmentClosed || selected.owned;
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
+      {continueHref && (
+        <div className="border-b border-theme bg-(--theme-primary)/8 px-5 py-4 text-center">
+          <p className="text-xs font-bold text-(--theme-foreground)">
+            {t("courses.alreadyEnrolled")}
+          </p>
+          <a
+            href={continueHref}
+            className="cd-cta-btn mt-2.5 flex h-11 w-full items-center justify-center rounded-full text-sm font-extrabold text-white transition-all hover:-translate-y-0.5"
+          >
+            {t("courses.continueLearning")}
+          </a>
+        </div>
+      )}
+
       <div className="px-6 pt-6 pb-2">
         <h2 className="text-lg font-black text-(--theme-foreground)">
-          {t("courses.chooseEnrollMethod")}
+          {continueHref
+            ? t("courses.addAnotherMethod")
+            : t("courses.chooseEnrollMethod")}
         </h2>
         <p className="mt-1 text-[13px] text-(--theme-muted)">
-          {options.length > 1
-            ? t("courses.chooseEnrollMethodHint")
-            : t("courses.singleEnrollMethodHint")}
+          {continueHref
+            ? t("courses.addAnotherMethodHint")
+            : options.length > 1
+              ? t("courses.chooseEnrollMethodHint")
+              : t("courses.singleEnrollMethodHint")}
         </p>
       </div>
 
@@ -128,11 +131,13 @@ export function PurchasePanel({
             disabled ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",
           )}
         >
-          {enrollmentClosed
-            ? t("academyStatus.enrollmentClosedShort")
-            : isBusy
-              ? t("common.loading")
-              : t(CTA_KEY[selected.kind] ?? "courses.ctaBuy")}
+          {selected.owned
+            ? t("courses.methodOwned")
+            : enrollmentClosed
+              ? t("academyStatus.enrollmentClosedShort")
+              : isBusy
+                ? t("common.loading")
+                : t(CTA_KEY[selected.kind] ?? "courses.ctaBuy")}
         </button>
 
         {selected.installments && (

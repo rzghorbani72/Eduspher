@@ -41,7 +41,7 @@ export default async function LearningLessonPage({
       (item.status === "ACTIVE" || item.status === "COMPLETED"),
   );
 
-  if (!course || !enrollment || !user) {
+  if (!course || !user) {
     redirect(buildAcademyPath(storeSlug, `/courses/${courseId}`));
   }
 
@@ -54,13 +54,20 @@ export default async function LearningLessonPage({
     notFound();
   }
 
+  // A free lesson is open to every signed-in visitor, whichever way they bought
+  // the course — or even if they have not bought it yet. Everything else still
+  // needs a live enrollment, and the backend re-checks each lesson anyway.
+  if (!enrollment && !selectedLesson.is_free) {
+    redirect(buildAcademyPath(storeSlug, `/courses/${courseId}`));
+  }
+
   return (
     <LearningShell
       courseId={courseId}
       courseTitle={course.title}
       seasons={seasons}
       selectedLesson={selectedLesson}
-      enrollmentId={String(enrollment.id)}
+      enrollmentId={enrollment ? String(enrollment.id) : null}
       currentProfileId={String(user.id)}
       storeSlug={storeSlug}
     />

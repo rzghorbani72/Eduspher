@@ -16,18 +16,25 @@ import { queryKeys } from "@/lib/query/keys";
 
 const HEARTBEAT_SECONDS = 15;
 
+/**
+ * Progress belongs to an enrollment. A free lesson opened by someone who has not
+ * enrolled has nowhere to record it, so the hook stays inert instead of firing
+ * requests that can only 400.
+ */
 export function useLessonProgress(
-  enrollmentId: string,
+  enrollmentId: string | null,
   lessonId: string,
   options?: { useVideoHeartbeat?: boolean },
 ) {
   const useVideoHeartbeat = options?.useVideoHeartbeat ?? false;
   const queryClient = useQueryClient();
-  const progressKey = queryKeys.lessonProgress(enrollmentId, lessonId);
+  const progressKey = queryKeys.lessonProgress(enrollmentId ?? "none", lessonId);
 
   const { data } = useApiQuery({
     queryKey: progressKey,
+    enabled: Boolean(enrollmentId),
     queryFn: async (signal) => {
+      if (!enrollmentId) return null;
       const result = await getProgress(
         { enrollmentId, lessonId, limit: 1 },
         { signal },
@@ -60,6 +67,7 @@ export function useLessonProgress(
 
   const persistStatus = useCallback(
     async (status: ProgressStatus, position: number) => {
+      if (!enrollmentId) return false;
       await awaitPending();
       setSaving(true);
       setSaveFailed(false);
@@ -91,6 +99,7 @@ export function useLessonProgress(
 
   const persistVideoHeartbeat = useCallback(
     async (position: number, activeSeconds: number, segmentStart: number) => {
+      if (!enrollmentId) return false;
       await awaitPending();
       setSaving(true);
       setSaveFailed(false);
