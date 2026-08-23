@@ -35,16 +35,21 @@ export function CreatorsSection({ academies }: Props) {
     .filter((academy) => Boolean(academy.slug))
     .slice(0, 6)
     .map((academy) => {
-      const cover = resolveAssetUrl(academy.cover?.publicUrl ?? null);
       const logo = resolveAssetUrl(academy.logo?.publicUrl ?? null);
+      // Platform-curated screenshots when they exist; branding is the fallback
+      // so a not-yet-photographed academy still renders.
+      const desktop =
+        resolveAssetUrl(academy.showcase_desktop?.publicUrl ?? null) ??
+        resolveAssetUrl(academy.cover?.publicUrl ?? null);
+      const mobile = resolveAssetUrl(academy.showcase_mobile?.publicUrl ?? null);
 
       return {
         key: String(academy.id),
         name: academy.name,
         handle: `@${academy.slug ?? ""}`,
         description: academy.description ?? null,
-        desktop: cover ?? logo,
-        mobile: logo ?? cover,
+        desktop: desktop ?? logo,
+        mobile: mobile ?? logo ?? desktop,
         href: buildAcademySubdomainUrl(academy.slug ?? "", env.appUrl),
       };
     });

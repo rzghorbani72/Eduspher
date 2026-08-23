@@ -216,6 +216,9 @@ export interface StoreSummary {
   meta_title?: string | null;
   meta_description?: string | null;
   og_image?: MediaAsset | null;
+  /** Platform-curated landing screenshots of the academy's public site. */
+  showcase_desktop?: MediaAsset | null;
+  showcase_mobile?: MediaAsset | null;
 }
 
 export interface StoreDetail extends StoreSummary {
