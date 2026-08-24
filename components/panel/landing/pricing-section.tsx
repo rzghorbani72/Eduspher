@@ -10,7 +10,7 @@ import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 import { SectionHeading } from "./section-heading";
 
-type Cycle = "monthly" | "yearly";
+type Cycle = "monthly" | "quarterly";
 
 type Props = {
   registerUrl: string;
@@ -20,8 +20,42 @@ type Props = {
 
 const faNumber = (value: number) => value.toLocaleString("fa-IR");
 
+const QUARTERLY_STEP = 500_000;
+const QUARTERLY_DISCOUNT_RATE = 0.05;
+
+function quarterlyFromMonthly(monthly: number): {
+  charged: number;
+  full: number;
+  discountPercent: number;
+} {
+  const full = monthly * 3;
+  const discounted = full * (1 - QUARTERLY_DISCOUNT_RATE);
+  const charged = Math.max(
+    QUARTERLY_STEP,
+    Math.floor(discounted / QUARTERLY_STEP) * QUARTERLY_STEP,
+  );
+  const amount = Math.max(0, full - charged);
+  const discountPercent =
+    amount > 0 ? Math.round(QUARTERLY_DISCOUNT_RATE * 100) : 0;
+  return { charged, full, discountPercent };
+}
+
+const FALLBACK_MONTHLY: Record<string, number> = {
+  starter: 2_800_000,
+  growth: 5_800_000,
+  business: 9_000_000,
+};
+
+function resolveMonthlyToman(
+  livePrice: number | undefined,
+  planId: string,
+): number {
+  if (livePrice != null) return livePrice;
+  return FALLBACK_MONTHLY[planId] ?? 0;
+}
+
 export function PricingSection({ registerUrl, plans = [] }: Props) {
-  const [cycle, setCycle] = useState<Cycle>("yearly");
+  const [cycle, setCycle] = useState<Cycle>("monthly");
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
   return (
@@ -41,7 +75,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
             role="group"
             className="flex items-center gap-1 rounded-full bg-lp-surface p-1"
           >
-            {(["monthly", "yearly"] as const).map((option) => (
+            {(["monthly", "quarterly"] as const).map((option) => (
               <button
                 key={option}
                 type="button"
@@ -63,19 +97,24 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
         <div className="mx-auto mt-12 grid max-w-[880px] items-stretch gap-4 lg:grid-cols-[1fr_1.12fr_1fr]">
           {LANDING.pricing.plans.map((plan) => {
             const live = livePlans.get(plan.id);
-            const yearlyPerMonth =
-              live?.price_yearly_toman != null
-                ? Math.round(live.price_yearly_toman / 12)
-                : null;
+            const monthly = resolveMonthlyToman(
+              live?.price_monthly_toman,
+              plan.id,
+            );
+            const q = quarterlyFromMonthly(monthly);
 
-            // Live price wins; the static copy is only a fallback for when the
-            // API is unreachable, so the page never shows a blank price.
             const price =
-              cycle === "yearly"
-                ? (yearlyPerMonth != null ? faNumber(yearlyPerMonth) : plan.priceYearly)
-                : (live ? faNumber(live.price_monthly_toman) : plan.priceMonthly);
+              cycle === "quarterly"
+                ? monthly > 0
+                  ? faNumber(q.charged)
+                  : plan.priceQuarterly
+                : live
+                  ? faNumber(live.price_monthly_toman)
+                  : plan.priceMonthly;
             const upcoming = live?.upcoming_price ?? null;
             const isFeatured = plan.featured;
+            const showDiscount =
+              cycle === "quarterly" && q.discountPercent > 0;
 
             return (
               <article
@@ -99,18 +138,38 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                     {price}
                   </span>
                   <span className="ms-2 text-[12px] text-lp-muted">
-                    {LANDING.pricing.perMonth}
+                    {cycle === "quarterly"
+                      ? LANDING.pricing.perQuarter
+                      : LANDING.pricing.perMonth}
                   </span>
                 </p>
 
-                <p className="mt-2 text-center text-[11.5px] text-lp-muted">
-                  {cycle === "yearly"
-                    ? LANDING.pricing.cycleNoteYearly
-                    : LANDING.pricing.cycleNoteMonthly}
-                </p>
+                {showDiscount ? (
+                  <p className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[12px]">
+                    <span className="text-lp-muted line-through">
+                      {faNumber(q.full)}
+                    </span>
+                    <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 font-semibold text-emerald-700">
+                      {LANDING.pricing.discountPercent.replace(
+                        "{percent}",
+                        faNumber(q.discountPercent),
+                      )}
+                    </span>
+                  </p>
+                ) : (
+                  <p className="mt-2 text-center text-[11.5px] text-lp-muted">
+                    {cycle === "quarterly"
+                      ? LANDING.pricing.cycleNoteQuarterly
+                      : LANDING.pricing.cycleNoteMonthly}
+                  </p>
+                )}
 
-                {/* Announced-but-not-applied price — the public half of the
-                    30-day notice the agreement promises. */}
+                {showDiscount ? (
+                  <p className="mt-1.5 text-center text-[11.5px] text-lp-muted">
+                    {LANDING.pricing.cycleNoteQuarterly}
+                  </p>
+                ) : null}
+
                 {upcoming ? (
                   <p className="mt-2 text-center text-[11px] leading-[1.7] text-lp-muted">
                     {LANDING.pricing.upcomingPrice
@@ -122,34 +181,34 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   </p>
                 ) : null}
 
-                <a
-                  href={registerUrl}
-                  className={cn(
-                    "mt-5 flex h-11 items-center justify-center rounded-lg text-[13.5px] font-bold transition-transform hover:-translate-y-0.5",
-                    isFeatured
-                      ? "bg-lp-mint text-lp-ink shadow-lp-mint"
-                      : "border border-lp-line bg-lp-surface-2 text-lp-ink"
-                  )}
-                >
-                  {plan.cta}
-                </a>
-
                 <ul className="mt-6 flex flex-1 flex-col gap-2.5">
                   {plan.features.map((feature) => (
                     <li
                       key={feature}
-                      className="flex items-start gap-2 text-[12.5px] leading-[1.7] text-lp-ink-2"
+                      className="flex items-start gap-2 text-[13px] leading-[1.7] text-lp-ink/80"
                     >
                       <Check
-                        size={13}
+                        size={14}
                         strokeWidth={3}
-                        aria-hidden="true"
-                        className="mt-1 shrink-0 text-lp-ink-2"
+                        aria-hidden
+                        className="mt-1 shrink-0 text-lp-blue"
                       />
                       {feature}
                     </li>
                   ))}
                 </ul>
+
+                <a
+                  href={registerUrl}
+                  className={cn(
+                    "mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors",
+                    isFeatured
+                      ? "bg-lp-blue text-white hover:bg-lp-blue/90"
+                      : "bg-lp-surface-2 text-lp-ink hover:bg-lp-line/40"
+                  )}
+                >
+                  {plan.cta}
+                </a>
               </article>
             );
           })}
