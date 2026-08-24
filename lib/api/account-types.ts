@@ -230,6 +230,29 @@ export type MyTutoringGroupSession = {
   notes?: string | null;
   Topic?: { id: string; title: string } | null;
   Lesson?: { id: string; title: string } | null;
+  /** Null until the teacher uploads the video of this meeting. */
+  recording?: SessionRecording | null;
+};
+
+export type SessionRecording = {
+  video_id: string;
+  title: string;
+  duration: number | null;
+  poster_url: string | null;
+  /** Resolved on the server: a recording that may not be saved is signed. */
+  can_download: boolean;
+  url: string | null;
+};
+
+export type ClassAssignment = {
+  id: string;
+  title: string;
+  description: string | null;
+  due_date: string | null;
+  max_score: number;
+  is_required: boolean;
+  tutoring_group_id: string | null;
+  tutoring_session_id: string | null;
 };
 
 export type CourseTopic = {
@@ -276,6 +299,8 @@ export type TutoringGroupRoom = MyTutoringGroup & {
   next_session: MyTutoringGroupSession | null;
   sessions: MyTutoringGroupSession[];
   topics: CourseTopic[];
+  /** Homework for the whole class and for individual meetings. */
+  assignments: ClassAssignment[];
   /** True only inside the joining window — drives the Join button. */
   link_open: boolean;
   /** Parents for the two chats: the class together, and 1:1 with the teacher. */

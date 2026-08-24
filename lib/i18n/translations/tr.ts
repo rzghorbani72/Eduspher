@@ -69,7 +69,8 @@ export const tr = {
     groupEnter: "Enter your class",
     groupInviteTitle: "You were invited to a class",
     sec: "sn",
-    freeLessonNotice: "Bu ders ücretsiz. Diğer derslerin kilidini açmak için kursu edinin.",
+    freeLessonNotice:
+      "Bu ders ücretsiz. Diğer derslerin kilidini açmak için kursu edinin.",
     backToCourse: "Kursa dön",
     title: "Kurslar",
     allCourses: "Tüm Kurslar",
@@ -330,17 +331,22 @@ export const tr = {
     goToMyCourses: "Derslerime git",
     reasonCancelled: "Ödemeyi bankada iptal ettiniz.",
     reasonDeclined: "Banka bu işlemi tamamlamadı. Lütfen tekrar deneyin.",
-    reasonNotVerified: "Ödeme doğrulanamadı. Çekilen tutar 72 saat içinde iade edilir.",
-    reasonInvalidCallback: "Bankanın yanıtı eksikti, bu yüzden ödeme kaydedilmedi.",
-    reasonServerError: "Ödeme doğrulanırken bir sorun oluştu. Lütfen destek ile iletişime geçin.",
-    noMoneyTaken: "Hesabınızdan bir tutar çıktıysa otomatik olarak iade edilir.",
+    reasonNotVerified:
+      "Ödeme doğrulanamadı. Çekilen tutar 72 saat içinde iade edilir.",
+    reasonInvalidCallback:
+      "Bankanın yanıtı eksikti, bu yüzden ödeme kaydedilmedi.",
+    reasonServerError:
+      "Ödeme doğrulanırken bir sorun oluştu. Lütfen destek ile iletişime geçin.",
+    noMoneyTaken:
+      "Hesabınızdan bir tutar çıktıysa otomatik olarak iade edilir.",
   },
   legal: {
     acceptPrefix: "Hesap oluşturarak şunları kabul ediyorum:",
     and: "ve",
     acceptSuffix: ".",
     privacyPolicy: "Gizlilik Politikası",
-    mustAcceptTerms: "Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.",
+    mustAcceptTerms:
+      "Devam etmek için Şartları ve Gizlilik Politikasını kabul etmelisiniz.",
     documentsUnavailable:
       "Yasal belgeler henüz kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
   },
@@ -448,7 +454,8 @@ export const tr = {
     myProducts: "Ürünlerim",
     transactions: "Ödemeler",
     noTransactions: "Henüz ödeme yok",
-    noTransactionsDescription: "İlk satın alımınızdan sonra ödeme geçmişiniz burada görünecek.",
+    noTransactionsDescription:
+      "İlk satın alımınızdan sonra ödeme geçmişiniz burada görünecek.",
     settings: "Ayarlar",
     profile: "Profil",
     displayName: "Görünen Ad",
@@ -524,7 +531,8 @@ export const tr = {
     noClasses: "Kayıtlı kurslarınızda canlı ders yok.",
     openClass: "Dersi aç",
     notSubmitted: "Gönderilmedi",
-    privateTutoringUnavailable: "Akademi henüz bir özel ders hizmeti bağlamadığı için özel ders bağlantıları kullanılamıyor.",
+    privateTutoringUnavailable:
+      "Akademi henüz bir özel ders hizmeti bağlamadığı için özel ders bağlantıları kullanılamıyor.",
     noPrivateTutoring: "Henüz aktif bir özel ders ilişkiniz yok.",
     tutorLabel: "Eğitmen",
     tutoringEnds: "Bitiş",
@@ -532,7 +540,8 @@ export const tr = {
     tutoringPending: "Beklemede",
     openTutoringCourse: "Kursu aç",
     videoSessions: "video oturumu",
-    learningDataUnavailable: "Öğrenme verileriniz geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
+    learningDataUnavailable:
+      "Öğrenme verileriniz geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
     // Güvenlik ve Oturumlar
     securitySessions: "Güvenlik ve Oturumlar",
     activeSessions: "Aktif Oturumlar",
@@ -561,6 +570,11 @@ export const tr = {
     timetable: "Ders programı",
     tabChat: "Sohbet",
     tabSyllabus: "Konular",
+    tabHomework: "Ödevler",
+    tabRecordings: "Kayıtlar",
+    noRecordings: "Henüz kayıt paylaşılmadı.",
+    noAssignments: "Bu ders için henüz ödev verilmedi.",
+    hasRecording: "Kaydı var",
     tabSessions: "Oturumlar",
     chatGroup: "Sınıf sohbeti",
     chatPrivate: "Öğretmenle sohbet",
@@ -574,20 +588,25 @@ export const tr = {
     noLessons: "Kullanılabilir ders yok",
     noLessonsDescription: "Akademiniz bu kurs için henüz ders yayınlamadı.",
     lessonUnavailable: "Bu ders kullanılamıyor veya şu anda erişiminiz yok.",
-    lessonTypeUnavailable: "Bu ders biçimi henüz öğrenci oynatıcısında kullanılamıyor.",
+    lessonTypeUnavailable:
+      "Bu ders biçimi henüz öğrenci oynatıcısında kullanılamıyor.",
     videoUnavailable: "Ders videosu henüz yayınlanmadı.",
     textUnavailable: "Ders metni henüz yayınlanmadı.",
     liveClass: "Canlı ders",
     liveUnavailable: "Canlı ders ayrıntıları kullanılamıyor",
-    liveUnavailableDescription: "Program veya katılım aralığı henüz yayınlanmadı.",
+    liveUnavailableDescription:
+      "Program veya katılım aralığı henüz yayınlanmadı.",
     joinClass: "Derse katıl",
-    joinLinkUnavailable: "Katılım bağlantısı izin verilen ders aralığında açılır.",
+    joinLinkUnavailable:
+      "Katılım bağlantısı izin verilen ders aralığında açılır.",
     openLessonResource: "Ders kaynağını aç",
     downloadVideo: "Videoyu indir",
-    downloadRestricted: "Bu dersin indirilmesi akademiniz tarafından kısıtlanmıştır.",
+    downloadRestricted:
+      "Bu dersin indirilmesi akademiniz tarafından kısıtlanmıştır.",
     markComplete: "Tamamlandı olarak işaretle",
     completed: "Tamamlandı",
-    progressSaveFailed: "İlerlemeniz kaydedilemedi. Bağlantınızı kontrol edip tekrar deneyin.",
+    progressSaveFailed:
+      "İlerlemeniz kaydedilemedi. Bağlantınızı kontrol edip tekrar deneyin.",
     assignmentUnavailable: "Bu ders için henüz bir ödev yok.",
     assignmentAnswer: "Ödev yanıtı",
     assignmentAnswerPlaceholder: "Yanıtınızı yazın...",
@@ -595,11 +614,13 @@ export const tr = {
     resourceLink: "Kaynak bağlantısı",
     resourceLinkPlaceholder: "https://example.com/your-work",
     invalidResourceLink: "Geçerli bir HTTPS veya HTTP bağlantısı girin.",
-    uploadUnavailableNote: "Doğrudan dosya yükleme henüz yok. Güvenli bir paylaşım bağlantısı gönderebilirsiniz.",
+    uploadUnavailableNote:
+      "Doğrudan dosya yükleme henüz yok. Güvenli bir paylaşım bağlantısı gönderebilirsiniz.",
     submitAssignment: "Ödevi gönder",
     submittingAssignment: "Gönderiliyor...",
     assignmentSubmitFailed: "Ödev gönderilemedi.",
     submitted: "Gönderildi",
+    submittedLate: "Geç gönderildi",
     graded: "Notlandırıldı",
     score: "Puan",
     points: "puan",
@@ -864,6 +885,7 @@ export const tr = {
     emailPlaceholder: "E-posta (isteğe bağlı, takip için)",
     submit: "Bildirimi gönder",
     success: "Bildiriminiz alındı ve 72 iş saati içinde incelenecek.",
-    error: "Bildirim gönderilemedi. Lütfen info@mentoma.ir adresine e-posta gönderin.",
+    error:
+      "Bildirim gönderilemedi. Lütfen info@mentoma.ir adresine e-posta gönderin.",
   },
 };

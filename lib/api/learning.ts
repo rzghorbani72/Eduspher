@@ -53,7 +53,10 @@ export interface LessonDetail extends Omit<LessonSummary, "id"> {
 
 export interface Assignment {
   id: string;
-  lesson_id: string;
+  /** Exactly one parent is set: a lesson, a whole class, or one meeting. */
+  lesson_id: string | null;
+  tutoring_group_id?: string | null;
+  tutoring_session_id?: string | null;
   title: string;
   description?: string | null;
   due_date?: string | null;
@@ -77,6 +80,8 @@ export interface AssignmentSubmission {
   content?: string | null;
   file_url?: string | null;
   status: SubmissionStatus;
+  /** Recorded, never blocking — a late hand-in is still accepted. */
+  is_late?: boolean;
   score?: number | null;
   feedback?: string | null;
   submitted_at?: string | null;
@@ -154,6 +159,8 @@ export const listAssignments = async (
   params: {
     lessonId?: string;
     courseId?: string;
+    tutoringGroupId?: string;
+    tutoringSessionId?: string;
     limit?: number;
   },
   options?: RequestOptions,
@@ -161,6 +168,10 @@ export const listAssignments = async (
   const query = new URLSearchParams();
   if (params.lessonId) query.set("lesson_id", params.lessonId);
   if (params.courseId) query.set("course_id", params.courseId);
+  if (params.tutoringGroupId)
+    query.set("tutoring_group_id", params.tutoringGroupId);
+  if (params.tutoringSessionId)
+    query.set("tutoring_session_id", params.tutoringSessionId);
   query.set("limit", String(params.limit ?? 100));
   const response = await getJson<
     Envelope<{ assignments: Assignment[]; pagination: Pagination }>
@@ -188,9 +199,13 @@ export const listSubmissions = async (
   return response.data;
 };
 
+/**
+ * The enrollment is no longer sent: the server resolves it from the
+ * assignment's own course, so a client can never file work against somebody
+ * else's enrollment.
+ */
 export const submitAssignment = async (payload: {
   assignmentId: string;
-  enrollmentId: string;
   content?: string;
   fileUrl?: string;
 }) => {
@@ -198,7 +213,6 @@ export const submitAssignment = async (payload: {
     "/assignments/submit",
     {
       assignment_id: payload.assignmentId,
-      enrollment_id: payload.enrollmentId,
       ...(payload.content ? { content: payload.content } : {}),
       ...(payload.fileUrl ? { file_url: payload.fileUrl } : {}),
     },

@@ -1,17 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarClock, ListChecks, MessageSquare, Users } from "lucide-react";
+import {
+  CalendarClock,
+  ListChecks,
+  MessageSquare,
+  NotebookPen,
+  Users,
+  Video,
+} from "lucide-react";
 
 import { DiscussionThread } from "@/components/discussion/discussion-thread";
 import { MeetingRoom } from "@/components/live/meeting-room";
 import { SessionList } from "@/components/live/session-list";
+import { ClassAssignments } from "@/components/live/class-assignments";
+import { SessionRecordings } from "@/components/live/session-recordings";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { TutoringGroupRoom } from "@/lib/api/account-types";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn, formatDate } from "@/lib/utils";
 
-type TabKey = "chat" | "syllabus" | "sessions";
+type TabKey = "chat" | "homework" | "recordings" | "syllabus" | "sessions";
 type ChatMode = "group" | "private";
 
 interface LiveRoomShellProps {
@@ -39,6 +48,8 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
 
   const tabs: { key: TabKey; label: string; icon: typeof MessageSquare }[] = [
     { key: "chat", label: t("live.tabChat"), icon: MessageSquare },
+    { key: "homework", label: t("live.tabHomework"), icon: NotebookPen },
+    { key: "recordings", label: t("live.tabRecordings"), icon: Video },
     { key: "syllabus", label: t("live.tabSyllabus"), icon: ListChecks },
     { key: "sessions", label: t("live.tabSessions"), icon: CalendarClock },
   ];
@@ -62,7 +73,7 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
         <div className="rounded-2xl border border-theme bg-card">
           <div
             role="tablist"
-            className="flex gap-1 border-b border-(--theme-hairline) p-2"
+            className="flex gap-1 overflow-x-auto border-b border-(--theme-hairline) p-2"
           >
             {tabs.map(({ key, label, icon: Icon }) => (
               <button
@@ -72,7 +83,7 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
                 aria-selected={tab === key}
                 onClick={() => setTab(key)}
                 className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   tab === key
                     ? "bg-(--theme-primary)/10 text-(--theme-primary)"
                     : "text-muted hover:bg-surface",
@@ -119,6 +130,21 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
                   />
                 )}
               </div>
+            ) : null}
+
+            {tab === "homework" ? (
+              <ClassAssignments
+                assignments={room.assignments}
+                sessions={room.sessions}
+                currentProfileId={currentProfileId}
+              />
+            ) : null}
+
+            {tab === "recordings" ? (
+              <SessionRecordings
+                sessions={room.sessions}
+                fallbackTitle={room.title}
+              />
             ) : null}
 
             {tab === "syllabus" ? (

@@ -222,7 +222,8 @@ export const en = {
     ctaRequestPrivate: "Request access",
     ctaSubscribe: "Start subscription",
     addAnotherMethod: "Select other ways to access this course",
-    addAnotherMethodHint: "No worries — adding a new way keeps everything you already have.",
+    addAnotherMethodHint:
+      "No worries — adding a new way keeps everything you already have.",
     methodOwned: "Purchased",
     myAccessTitle: "Your access to this course",
     enterLessons: "Open the lessons",
@@ -467,11 +468,16 @@ export const en = {
     contactUs: "Contact Us",
     goToMyCourses: "Go to my courses",
     reasonCancelled: "You cancelled the payment at the bank.",
-    reasonDeclined: "The bank did not complete this transaction. Please try again.",
-    reasonNotVerified: "The payment could not be verified. Any amount taken is returned within 72 hours.",
-    reasonInvalidCallback: "The bank's response was incomplete, so no payment was recorded.",
-    reasonServerError: "Something went wrong while verifying the payment. Please contact support.",
-    noMoneyTaken: "If any amount left your account, it is returned automatically.",
+    reasonDeclined:
+      "The bank did not complete this transaction. Please try again.",
+    reasonNotVerified:
+      "The payment could not be verified. Any amount taken is returned within 72 hours.",
+    reasonInvalidCallback:
+      "The bank's response was incomplete, so no payment was recorded.",
+    reasonServerError:
+      "Something went wrong while verifying the payment. Please contact support.",
+    noMoneyTaken:
+      "If any amount left your account, it is returned automatically.",
   },
   legal: {
     acceptPrefix: "By creating an account, I agree to the",
@@ -930,6 +936,11 @@ export const en = {
     timetable: "Class schedule",
     tabChat: "Chat",
     tabSyllabus: "Topics",
+    tabHomework: "Homework",
+    tabRecordings: "Recordings",
+    noRecordings: "No recordings have been posted yet.",
+    noAssignments: "No homework has been set for this class yet.",
+    hasRecording: "Has a recording",
     tabSessions: "Sessions",
     chatGroup: "Class chat",
     chatPrivate: "Chat with the teacher",
@@ -977,6 +988,7 @@ export const en = {
     submittingAssignment: "Submitting...",
     assignmentSubmitFailed: "The assignment could not be submitted.",
     submitted: "Submitted",
+    submittedLate: "Submitted late",
     graded: "Graded",
     score: "Score",
     points: "points",
@@ -1351,7 +1363,8 @@ export const en = {
     question: "What is wrong with this page?",
     emailPlaceholder: "Email (optional, for follow-up)",
     submit: "Send report",
-    success: "Your report was received and will be reviewed within 72 working hours.",
+    success:
+      "Your report was received and will be reviewed within 72 working hours.",
     error: "The report could not be sent. Please email info@mentoma.ir.",
   },
 };

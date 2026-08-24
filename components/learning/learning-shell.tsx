@@ -147,7 +147,6 @@ export function LearningShell({
               {type === "ASSIGNMENT" && enrollmentId ? (
                 <AssignmentPanel
                   lessonId={lessonId}
-                  enrollmentId={enrollmentId}
                   currentProfileId={currentProfileId}
                 />
               ) : null}

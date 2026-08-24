@@ -1,6 +1,12 @@
 "use client";
 
-import { CalendarClock, CheckCircle2, Circle, XCircle } from "lucide-react";
+import {
+  CalendarClock,
+  CheckCircle2,
+  Circle,
+  Video,
+  XCircle,
+} from "lucide-react";
 
 import type { MyTutoringGroupSession } from "@/lib/api/account-types";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -68,8 +74,16 @@ export function SessionList({
                 )}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium">
-                  {nameOf(session, `${t("live.session")} ${index + 1}`)}
+                <span className="flex items-center gap-1.5">
+                  <span className="min-w-0 truncate text-sm font-medium">
+                    {nameOf(session, `${t("live.session")} ${index + 1}`)}
+                  </span>
+                  {session.recording?.url ? (
+                    <Video
+                      className="size-3.5 shrink-0 text-muted"
+                      aria-label={t("live.hasRecording")}
+                    />
+                  ) : null}
                 </span>
                 <span className="mt-0.5 block text-xs text-muted">
                   {formatDate(session.starts_at, language)}

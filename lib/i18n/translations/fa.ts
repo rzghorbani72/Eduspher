@@ -222,7 +222,8 @@ export const fa = {
     ctaRequestPrivate: "درخواست دسترسی",
     ctaSubscribe: "شروع اشتراک",
     addAnotherMethod: "انتخاب روش‌های دیگر دسترسی به این دوره",
-    addAnotherMethodHint: "نگران نباش، هر روش تازه‌ای اضافه کنی، دسترسی‌های فعلی‌ات سرِ جایش می‌ماند.",
+    addAnotherMethodHint:
+      "نگران نباش، هر روش تازه‌ای اضافه کنی، دسترسی‌های فعلی‌ات سرِ جایش می‌ماند.",
     methodOwned: "خریداری‌شده",
     myAccessTitle: "دسترسی‌های تو به این دوره",
     enterLessons: "ورود به درس‌ها",
@@ -472,9 +473,11 @@ export const fa = {
     goToMyCourses: "رفتن به دوره‌های من",
     reasonCancelled: "پرداخت را در درگاه بانک لغو کردی.",
     reasonDeclined: "بانک این تراکنش را انجام نداد. لطفاً دوباره تلاش کن.",
-    reasonNotVerified: "پرداخت تأیید نشد. اگر مبلغ کم شده، تا ۷۲ ساعت به حسابت برمی‌گردد.",
+    reasonNotVerified:
+      "پرداخت تأیید نشد. اگر مبلغ کم شده، تا ۷۲ ساعت به حسابت برمی‌گردد.",
     reasonInvalidCallback: "پاسخ درگاه بانک ناقص بود و پرداخت ثبت نشد.",
-    reasonServerError: "در تأیید پرداخت خطایی رخ داد. لطفاً با پشتیبانی تماس بگیر.",
+    reasonServerError:
+      "در تأیید پرداخت خطایی رخ داد. لطفاً با پشتیبانی تماس بگیر.",
     noMoneyTaken: "اگر مبلغی از حسابت کم شده باشد، به‌صورت خودکار برمی‌گردد.",
   },
   legal: {
@@ -649,7 +652,8 @@ export const fa = {
   account: {
     groupClasses: "کلاس‌های گروهی",
     groupWaitingToStart: "در انتظار شروع",
-    groupWaitingExplain: "این کلاس با پیوستن این تعداد دانشجوی دیگر شروع می‌شود:",
+    groupWaitingExplain:
+      "این کلاس با پیوستن این تعداد دانشجوی دیگر شروع می‌شود:",
     groupNextSession: "جلسهٔ بعدی",
     groupNoSessionYet: "جلسه‌ها پس از شروع کلاس نمایش داده می‌شوند.",
     groupTimetable: "زمان‌های هفتگی",
@@ -929,6 +933,11 @@ export const fa = {
     timetable: "برنامهٔ جلسات",
     tabChat: "گفتگو",
     tabSyllabus: "سرفصل‌ها",
+    tabHomework: "تکالیف",
+    tabRecordings: "ویدیوهای ضبط‌شده",
+    noRecordings: "هنوز ویدیوی ضبط‌شده‌ای گذاشته نشده است.",
+    noAssignments: "هنوز تکلیفی برای این کلاس ثبت نشده است.",
+    hasRecording: "ویدیوی ضبط‌شده دارد",
     tabSessions: "جلسات",
     chatGroup: "گفتگوی کلاس",
     chatPrivate: "گفتگو با مدرس",
@@ -971,6 +980,7 @@ export const fa = {
     submittingAssignment: "در حال ارسال...",
     assignmentSubmitFailed: "ارسال تکلیف انجام نشد.",
     submitted: "ارسال‌شده",
+    submittedLate: "با تأخیر ارسال شده",
     graded: "نمره‌دهی‌شده",
     score: "نمره",
     points: "امتیاز",
