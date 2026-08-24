@@ -613,7 +613,6 @@ export const fa = {
     verified: "تأیید شد",
     accountFound: "حساب پیدا شد. برای ادامه کد تأیید بفرستید.",
     otpSentToPhone: "کد تأیید به شماره تلفن ارسال شد",
-    otpCodeLabel: "کد",
     otpSentToEmail: "کد تأیید به ایمیل ارسال شد",
     otpVerifiedSuccess: "کد با موفقیت تأیید شد",
     enterNewPassword: "رمز عبور جدید را وارد کنید",

@@ -615,7 +615,6 @@ export const en = {
     verified: "Verified",
     accountFound: "Account found. Send the code to continue.",
     otpSentToPhone: "Verification code sent to your phone",
-    otpCodeLabel: "Code",
     otpSentToEmail: "Verification code sent to your email",
     otpVerifiedSuccess: "OTP verified successfully",
     enterNewPassword: "Enter new password",

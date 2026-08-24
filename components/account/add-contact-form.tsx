@@ -114,18 +114,8 @@ export const AddContactForm = ({
           setEmailError(emailError);
           return;
         }
-        const response = (await sendEmailOtp(
-          email,
-          OtpType.REGISTER_EMAIL_VERIFICATION,
-        )) as { otp?: string };
-        // TODO: Remove when real SMS/email provider is integrated
-        if (response?.otp) {
-          setMessage(
-            `OTP sent to your email address\n\n🔐 Code: ${response.otp}`,
-          );
-        } else {
-          setMessage(t("auth.otpSentToEmail"));
-        }
+        await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION);
+        setMessage(t("auth.otpSentToEmail"));
         setOtpSent(true);
         setStep("otp");
       } else {
@@ -142,18 +132,8 @@ export const AddContactForm = ({
           setPhoneError(phoneError);
           return;
         }
-        const response = (await sendPhoneOtp(
-          fullPhone,
-          OtpType.REGISTER_PHONE_VERIFICATION,
-        )) as { otp?: string };
-        // TODO: Remove when real SMS/email provider is integrated
-        if (response?.otp) {
-          setMessage(
-            `OTP sent to your phone number\n\n🔐 Code: ${response.otp}`,
-          );
-        } else {
-          setMessage(t("auth.otpSentToPhone"));
-        }
+        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+        setMessage(t("auth.otpSentToPhone"));
         setOtpSent(true);
         setStep("otp");
       }

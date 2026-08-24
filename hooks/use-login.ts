@@ -119,8 +119,8 @@ export function useLogin() {
     setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
   }
 
-  function showSentCode(response: { otp?: string }, sentKey: string) {
-    notifyOtpSent(response?.otp, t(sentKey), "login-otp");
+  function showSentCode(sentKey: string) {
+    notifyOtpSent(t(sentKey), "login-otp");
   }
 
   function sendLoginOtp() {
@@ -128,19 +128,15 @@ export function useLogin() {
     clearFeedback();
     startTransition(async () => {
       try {
-        const response =
-          channel === "phone"
-            ? ((await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE)) as {
-                otp?: string;
-              })
-            : ((await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL)) as {
-                otp?: string;
-              });
+        if (channel === "phone") {
+          await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE);
+        } else {
+          await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL);
+        }
         setOtp("");
         setStep("otpLogin");
         otpLoginTimer.start();
         showSentCode(
-          response,
           channel === "phone" ? "auth.otpSentToPhone" : "auth.otpSentToEmail",
         );
       } catch (err) {
@@ -301,12 +297,9 @@ export function useLogin() {
     setOtpResending(true);
     clearFeedback();
     try {
-      const response = (await sendPhoneOtp(
-        otpGate.phone,
-        OtpType.REGISTER_PHONE_VERIFICATION,
-      )) as { otp?: string };
+      await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION);
       otpGateTimer.start();
-      showSentCode(response, "auth.resendOtp");
+      showSentCode("auth.resendOtp");
     } catch (err) {
       failed(err);
     } finally {

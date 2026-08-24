@@ -190,13 +190,13 @@ export const RegisterForm = ({
         cleanPhoneNumber(phoneNumber, selectedCountry),
         selectedCountry,
       );
-      const response = (await sendPhoneOtp(
+      await sendPhoneOtp(
         fullPhone,
         OtpType.REGISTER_PHONE_VERIFICATION,
-      )) as { otp?: string };
+      );
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
-      notifyOtpSent(response?.otp, t("auth.otpSentToPhone"), "register-phone-otp");
+      notifyOtpSent(t("auth.otpSentToPhone"), "register-phone-otp");
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {
@@ -244,13 +244,13 @@ export const RegisterForm = ({
     setOtpLoading(true);
     setError(null);
     try {
-      const response = (await sendEmailOtp(
+      await sendEmailOtp(
         emailVal,
         OtpType.REGISTER_EMAIL_VERIFICATION,
-      )) as { otp?: string };
+      );
       setEmailOtpSent(true);
       emailOtpTimer.start();
-      notifyOtpSent(response?.otp, t("auth.otpSentToEmail"), "register-email-otp");
+      notifyOtpSent(t("auth.otpSentToEmail"), "register-email-otp");
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
     } finally {

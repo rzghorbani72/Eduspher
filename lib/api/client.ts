@@ -705,7 +705,7 @@ export const sendEmailOtp = (
   type: string,
   options?: RequestOptions,
 ) => {
-  return postJson<{ message: string; status: string; otp?: string }>(
+  return postJson<{ message: string; status: string }>(
     "/auth/otp/send-email",
     {
       email,
@@ -720,7 +720,7 @@ export const sendPhoneOtp = (
   type: string,
   options?: RequestOptions,
 ) => {
-  return postJson<{ message: string; status: string; otp?: string }>(
+  return postJson<{ message: string; status: string }>(
     "/auth/otp/send-phone",
     {
       phone_number,

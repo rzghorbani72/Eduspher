@@ -158,17 +158,17 @@ export const ForgotPasswordForm = () => {
     setError(null);
     try {
       if (authMethod === "email") {
-        const response = (await sendEmailOtp(
+        await sendEmailOtp(
           formData.identifier,
           OtpType.RESET_PASSWORD_BY_EMAIL,
-        )) as { otp?: string };
-        notifyOtpSent(response?.otp, t("auth.otpSentToEmail"), "forgot-otp");
+        );
+        notifyOtpSent(t("auth.otpSentToEmail"), "forgot-otp");
       } else {
-        const response = (await sendPhoneOtp(
+        await sendPhoneOtp(
           formData.identifier,
           OtpType.RESET_PASSWORD_BY_PHONE,
-        )) as { otp?: string };
-        notifyOtpSent(response?.otp, t("auth.otpSentToPhone"), "forgot-otp");
+        );
+        notifyOtpSent(t("auth.otpSentToPhone"), "forgot-otp");
       }
       setStep("otp");
       otpTimer.start();
