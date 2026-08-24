@@ -879,6 +879,7 @@ export const fa = {
     roleOwner: "مالک آکادمی",
     roleStaff: "همکار",
     // درگاه‌های پرداخت
+    gatewayBitpay: "بیت‌پی",
     gatewayPayping: "پی‌پینگ",
     gatewayZarinpal: "زرین‌پال",
     gatewaySaman: "بانک سامان",

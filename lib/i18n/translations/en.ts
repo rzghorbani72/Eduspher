@@ -882,6 +882,7 @@ export const en = {
     roleOwner: "Academy owner",
     roleStaff: "Staff",
     // Payment gateways
+    gatewayBitpay: "BitPay",
     gatewayPayping: "PayPing",
     gatewayZarinpal: "Zarinpal",
     gatewaySaman: "Saman Bank",

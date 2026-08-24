@@ -21,6 +21,7 @@ const ROLE_KEY: Record<string, string> = {
 };
 
 const GATEWAY_KEY: Record<string, string> = {
+  BITPAY: "account.gatewayBitpay",
   PAYPING: "account.gatewayPayping",
   ZARINPAL: "account.gatewayZarinpal",
   SAMAN: "account.gatewaySaman",

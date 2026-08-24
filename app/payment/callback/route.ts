@@ -5,14 +5,16 @@ import { backendApiBaseUrl, env } from "@/lib/env";
 
 /**
  * The one return URL every gateway can be sent to, so checkout never has to know
- * in advance which bank will be used. Saman SEP posts State/RefNum/ResNum,
- * Mellat BP posts ResCode/RefId; anything we cannot verify is reported as a
- * failed payment rather than a blank page.
+ * in advance which bank will be used. BitPay returns trans_id/id_get, Saman SEP
+ * posts State/RefNum/ResNum, Mellat BP posts ResCode/RefId; anything we cannot
+ * verify is reported as a failed payment rather than a blank page.
  *
  * Verification happens here, server-side, so the buyer never sees a screen that
  * "confirms" a payment the backend has not verified.
  */
-const readParams = async (request: NextRequest): Promise<Record<string, string>> => {
+const readParams = async (
+  request: NextRequest,
+): Promise<Record<string, string>> => {
   const params: Record<string, string> = {};
   new URL(request.url).searchParams.forEach((value, key) => {
     params[key] = value;
@@ -30,9 +32,15 @@ const readParams = async (request: NextRequest): Promise<Record<string, string>>
   return params;
 };
 
-const redirectTo = (origin: string, path: string, query: Record<string, string>) => {
+const redirectTo = (
+  origin: string,
+  path: string,
+  query: Record<string, string>,
+) => {
   const url = new URL(`${origin}${path}`);
-  Object.entries(query).forEach(([key, value]) => url.searchParams.set(key, value));
+  Object.entries(query).forEach(([key, value]) =>
+    url.searchParams.set(key, value),
+  );
   return NextResponse.redirect(url.toString(), { status: 303 });
 };
 
@@ -68,13 +76,43 @@ const handle = async (request: NextRequest) => {
   const origin = new URL(request.url).origin;
   const params = await readParams(request);
 
+  // BitPay: trans_id + id_get on the redirect, with payment_id carried on the
+  // return URL we handed the gateway. trans_id = -1 means the buyer cancelled.
+  if (params.trans_id || params.id_get) {
+    const transId = params.trans_id;
+    const idGet = params.id_get;
+    if (!transId || transId === "-1" || !idGet) {
+      return redirectTo(origin, "/payment/failure", {
+        reason: transId === "-1" ? "cancelled" : "payment_failed",
+      });
+    }
+    try {
+      const result = await verifyWith("/payments/verify/bitpay", {
+        payment_id: params.payment_id ?? "",
+        trans_id: transId,
+        id_get: idGet,
+      });
+      return result.ok
+        ? redirectTo(origin, "/payment/success", {
+            payment_id: result.paymentId ?? params.payment_id ?? "",
+            reference: transId,
+          })
+        : redirectTo(origin, "/payment/failure", {
+            reason: result.reason ?? "verification_failed",
+          });
+    } catch {
+      return redirectTo(origin, "/payment/failure", { reason: "server_error" });
+    }
+  }
+
   // Saman SEP: State=OK plus RefNum, with ResNum carrying our payment id.
   if (params.State || params.ResNum) {
     const refNum = params.RefNum;
     const resNum = params.ResNum;
     if (params.State !== "OK" || !refNum || !resNum) {
       return redirectTo(origin, "/payment/failure", {
-        reason: params.State === "CanceledByUser" ? "cancelled" : "payment_failed",
+        reason:
+          params.State === "CanceledByUser" ? "cancelled" : "payment_failed",
       });
     }
     try {
@@ -97,10 +135,13 @@ const handle = async (request: NextRequest) => {
 
   const resCode = params.ResCode ?? params.rescode;
   const refId = params.RefId ?? params.refid;
-  const paymentId = params.payment_id ?? params.SaleOrderId ?? params.clientrefid ?? "";
+  const paymentId =
+    params.payment_id ?? params.SaleOrderId ?? params.clientrefid ?? "";
 
   if (resCode === undefined || !refId) {
-    return redirectTo(origin, "/payment/failure", { reason: "invalid_callback" });
+    return redirectTo(origin, "/payment/failure", {
+      reason: "invalid_callback",
+    });
   }
 
   // Mellat sends ResCode 17 when the payer cancels at the bank.

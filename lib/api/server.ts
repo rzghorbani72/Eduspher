@@ -746,7 +746,7 @@ export async function initiateCheckoutPayment(data: {
   amount: number;
   coupon_code?: string;
   mobile?: string;
-  provider?: "PAYPING" | "SAMAN_SEP";
+  provider?: "BITPAY" | "PAYPING" | "SAMAN_SEP";
 }) {
   const headerStore = await nextHeaders();
   const proto =
@@ -988,10 +988,10 @@ export async function getPaymentSummary(
   paymentId: string,
 ): Promise<PaymentSummary | null> {
   try {
-    const result = await serverFetchRaw<{ status?: string; data?: PaymentSummary }>(
-      `/payments/${encodeURIComponent(paymentId)}`,
-      { method: "GET" },
-    );
+    const result = await serverFetchRaw<{
+      status?: string;
+      data?: PaymentSummary;
+    }>(`/payments/${encodeURIComponent(paymentId)}`, { method: "GET" });
     return result.data ?? null;
   } catch {
     return null;
