@@ -31,8 +31,10 @@ import {
   getCurrentAcademy,
   getAcademyBySlug,
   getAcademyEnrollmentStatus,
+  getActiveStudentDiscounts,
 } from "@/lib/api/server";
 import { EnrollmentClosedBanner } from "@/components/academy/enrollment-closed-banner";
+import { ActiveDiscountBanner } from "@/components/academy/active-discount-banner";
 import { EnrollmentStatusProvider } from "@/components/academy/enrollment-status-provider";
 import { getAcademyLanguage, getAcademyDirection } from "@/lib/i18n/server";
 import { CreativeBackgroundLazy } from "@/components/motion/creative-background-lazy";
@@ -110,6 +112,10 @@ export default async function RootLayout({
   const enrollmentStatus = storeContext.slug
     ? await getAcademyEnrollmentStatus(storeContext.slug)
     : null;
+
+  const activeStudentDiscounts = storeContext.slug
+    ? await getActiveStudentDiscounts(storeContext.slug)
+    : [];
 
   // Extract store icons for flying animation
   const storeIcons: string[] = [];
@@ -251,6 +257,12 @@ export default async function RootLayout({
                               />
                             )}
 
+                          {!bareLayout && activeStudentDiscounts.length > 0 && (
+                            <ActiveDiscountBanner
+                              discounts={activeStudentDiscounts}
+                              currencyCode={currentAcademy?.currency ?? "IRR"}
+                            />
+                          )}
                           {!bareLayout && <PreviewModeBanner />}
                           {!bareLayout && enrollmentStatus?.disabled && (
                             <EnrollmentClosedBanner

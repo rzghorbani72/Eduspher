@@ -49,6 +49,7 @@ const isUnauthorizedError = (error: unknown): boolean => {
   return error instanceof Error && /401/.test(error.message);
 };
 
+import type { PublicActiveDiscount } from "@/lib/discounts/format-active-discount";
 import type {
   ApiEnvelope,
   ArticleSummary,
@@ -522,6 +523,29 @@ export async function getAcademyEnrollmentStatus(
     return result.data ?? null;
   } catch {
     return null;
+  }
+}
+
+export type { PublicActiveDiscount };
+
+/** Live student coupon codes for the storefront promo strip. */
+export async function getActiveStudentDiscounts(
+  slug: string,
+): Promise<PublicActiveDiscount[]> {
+  if (!slug) return [];
+  try {
+    const result = await serverFetchRaw<{
+      status: string;
+      data: PublicActiveDiscount[];
+    }>("/discounts/public/active", {
+      includeAuth: false,
+      query: { slug },
+      revalidate: PUBLIC_REVALIDATE_SECONDS,
+      tags: ["active-discounts"],
+    });
+    return result.data ?? [];
+  } catch {
+    return [];
   }
 }
 
