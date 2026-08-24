@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
+import { BrandLockup } from "@/components/brand/brand-lockup";
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 import { ThemeToggle } from "./theme-toggle";
@@ -25,28 +25,12 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
         <nav className="flex items-center justify-between gap-4 rounded-full border border-lp-line bg-white/66 px-4 py-2.5 shadow-lp-nav backdrop-blur-xl backdrop-saturate-150 lg:px-8">
           <Link
             href="/"
-            className="flex shrink-0 items-center gap-4"
+            className="shrink-0"
             aria-label={LANDING.nav.home}
           >
-            {/* Brand lockup per Figma: mark 38px + wordmark, 16px gap. The mark
-                carries its own mint/blue gradients, so it sits on the bare
-                surface rather than inside a tinted tile. */}
-            <Image
-              src="/logo-mark.svg"
-              alt=""
-              width={38}
-              height={38}
+            <BrandLockup
               priority
-              className="h-[38px] w-[38px]"
-            />
-            {/* No `priority`: the wordmark is a 1KB SVG next to the mark, and
-                every extra preload hint competes with the hero for bandwidth. */}
-            <Image
-              src="/logo-type.svg"
-              alt=""
-              width={52}
-              height={16}
-              className="hidden h-4 w-[52px] sm:block"
+              typeClassName="hidden sm:inline-block"
             />
           </Link>
 

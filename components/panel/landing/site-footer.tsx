@@ -1,8 +1,8 @@
 import { Instagram, Linkedin, Send } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
+import { BrandLockup } from "@/components/brand/brand-lockup";
 import { EnamadSeal } from "@/components/academy/enamad-seal";
 import {
   PLATFORM_ENAMAD_SEAL_CODE,
@@ -24,22 +24,7 @@ export function SiteFooter() {
       <Container>
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] lg:gap-16">
           <div>
-            <div className="flex items-center gap-4">
-              <Image
-                src="/logo-mark.svg"
-                alt=""
-                width={38}
-                height={38}
-                className="h-[38px] w-[38px]"
-              />
-              <Image
-                src="/logo-type.svg"
-                alt=""
-                width={52}
-                height={16}
-                className="h-4 w-[52px]"
-              />
-            </div>
+            <BrandLockup />
 
             <p className="mt-5 max-w-[330px] text-[13.5px] leading-[1.95] text-lp-muted">
               {LANDING.footer.tagline}

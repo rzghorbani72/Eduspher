@@ -1,15 +1,7 @@
 import Link from "next/link";
 
+import { BrandLockup } from "@/components/brand/brand-lockup";
 import { PoweredBy } from "@/components/shared/powered-by";
-
-const BrandLogo = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <circle cx="6" cy="7" r="2.3" fill="#fff" />
-    <circle cx="18" cy="6" r="2.3" fill="#fff" opacity=".85" />
-    <circle cx="12" cy="17" r="2.6" fill="#fff" />
-    <path d="M7.6 8.4 11 15M16.6 7.2 13 15M8 7.3l8-1" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" opacity=".9" />
-  </svg>
-);
 
 const footerCols = [
   {
@@ -51,21 +43,8 @@ export function AboutFooter() {
         }}
       >
         <div>
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "inherit" }}>
-            <span
-              style={{
-                display: "grid",
-                placeItems: "center",
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                background: "var(--grad)",
-                flexShrink: 0,
-              }}
-            >
-              <BrandLogo />
-            </span>
-            <span style={{ fontWeight: 800, fontSize: 21 }}>منتوما</span>
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "inherit" }}>
+            <BrandLockup />
           </Link>
           <p style={{ margin: "16px 0 0", fontSize: 14.5, color: "var(--ink-2)", maxWidth: 300, lineHeight: 1.8 }}>
             پلتفرم ساخت آکادمی آنلاین بدون کدنویسی.

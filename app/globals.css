@@ -1565,6 +1565,16 @@ select[class*="rounded-sm"] {
   display: none;
 }
 
+/* Platform wordmark: always black on light, white on dark. Not `.bg-white`
+   because dark landing remaps that utility to the surface color. */
+.brand-wordmark {
+  background-color: #000;
+}
+.lp-root[data-theme="dark"] .brand-wordmark,
+.landing-page.theme-dark .brand-wordmark {
+  background-color: #fff;
+}
+
 .lp-root[data-theme="dark"] .bg-white,
 .lp-root[data-theme="dark"] .bg-white\/66,
 .lp-root[data-theme="dark"] .bg-white\/60,

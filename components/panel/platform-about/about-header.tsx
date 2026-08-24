@@ -2,16 +2,9 @@
 
 import Link from "next/link";
 
-type Theme = "light" | "dark";
+import { BrandLockup } from "@/components/brand/brand-lockup";
 
-const BrandLogo = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-    <circle cx="6" cy="7" r="2.3" fill="#fff" />
-    <circle cx="18" cy="6" r="2.3" fill="#fff" opacity=".85" />
-    <circle cx="12" cy="17" r="2.6" fill="#fff" />
-    <path d="M7.6 8.4 11 15M16.6 7.2 13 15M8 7.3l8-1" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" opacity=".9" />
-  </svg>
-);
+type Theme = "light" | "dark";
 
 const SunIcon = () => (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -47,22 +40,8 @@ export function AboutHeader({ theme, toggleTheme, adminRegisterUrl, activePage =
             boxShadow: "var(--sh-sm)",
           }}
         >
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: "inherit" }}>
-            <span
-              style={{
-                display: "grid",
-                placeItems: "center",
-                width: 38,
-                height: 38,
-                borderRadius: 12,
-                background: "var(--grad)",
-                boxShadow: "0 8px 20px -6px rgba(109,94,252,.6)",
-                flexShrink: 0,
-              }}
-            >
-              <BrandLogo />
-            </span>
-            <span style={{ fontWeight: 800, fontSize: 21 }}>منتوما</span>
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "inherit" }}>
+            <BrandLockup />
           </Link>
 
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
