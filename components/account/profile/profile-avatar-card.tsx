@@ -56,11 +56,11 @@ export function ProfileAvatarCard({
     try {
       const image = await uploadImage(file, displayName || "avatar");
       await updateProfile(profileId, { image_id: image.id });
-      logger.ok("account", "avatar_updated", { size_bytes: file.size });
+      logger.ok("Account", "AvatarUpdated", { size_bytes: file.size });
       setMessage(t("account.avatarUpdated"));
       router.refresh();
     } catch (err) {
-      logger.error("account", "avatar_update_failed", { size_bytes: file.size });
+      logger.error("Account", "AvatarUpdateFailed", { size_bytes: file.size });
       setError(err instanceof Error ? err.message : t("account.avatarUploadFailed"));
     } finally {
       setBusy(false);
@@ -126,7 +126,7 @@ export function ProfileAvatarCard({
                 setBusy(true);
                 try {
                   await updateProfile(profileId, { image_id: "" });
-                  logger.ok("account", "avatar_removed", {});
+                  logger.ok("Account", "AvatarRemoved", {});
                   router.refresh();
                 } catch (err) {
                   setError(err instanceof Error ? err.message : t("common.error"));

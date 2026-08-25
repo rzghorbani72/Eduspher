@@ -26,10 +26,10 @@ export function RefundRequestForm({ paymentId }: { paymentId: string }) {
         payment_id: paymentId,
         ...(reason.trim() ? { reason: reason.trim() } : {}),
       });
-      logger.ok("payments", "refund_requested", { has_reason: Boolean(reason.trim()) });
+      logger.ok("Payments", "RefundRequested", { has_reason: Boolean(reason.trim()) });
       setDone(true);
     } catch (err) {
-      logger.warn("payments", "refund_request_rejected", {
+      logger.warn("Payments", "RefundRequestRejected", {
         has_reason: Boolean(reason.trim()),
       });
       // The academy's refund window lives on the server; show what it said.

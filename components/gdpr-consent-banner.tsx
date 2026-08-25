@@ -32,13 +32,13 @@ export function GdprConsentBanner() {
 
   function accept() {
     setCookie(COOKIE_NAME, 'accepted', COOKIE_MAX_AGE);
-    logger.event('gdpr', 'consent_accepted', { surface: 'website' });
+    logger.event('Gdpr', 'ConsentAccepted', { surface: 'website' });
     setDismissed(true);
   }
 
   function decline() {
     setCookie(COOKIE_NAME, 'declined', COOKIE_MAX_AGE);
-    logger.event('gdpr', 'consent_declined', { surface: 'website' });
+    logger.event('Gdpr', 'ConsentDeclined', { surface: 'website' });
     setDismissed(true);
   }
 

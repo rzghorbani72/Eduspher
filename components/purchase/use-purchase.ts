@@ -83,7 +83,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
         const data = await response.json().catch(() => null);
 
         if (!response.ok || !data?.success) {
-          logger.error("payments", "checkout_start_failed", {
+          logger.error("Payments", "CheckoutStartFailed", {
             kind,
             amount,
             http_status: response.status,
@@ -96,7 +96,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
 
         if (Array.isArray(data.gateways) && data.gateways.length > 0) {
           setGateways(data.gateways as PurchaseGateway[]);
-          logger.ok("payments", "checkout_gateway_prompted", {
+          logger.ok("Payments", "CheckoutGatewayPrompted", {
             kind,
             amount,
             gateway_count: data.gateways.length,
@@ -104,7 +104,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           return { ok: false, needsGateway: true };
         }
 
-        logger.ok("payments", "checkout_started", {
+        logger.ok("Payments", "CheckoutStarted", {
           kind,
           amount,
           gateway_redirect: Boolean(data.redirect_url),
@@ -119,7 +119,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
         router.refresh();
         return { ok: true, needsGateway: false };
       } catch {
-        logger.error("payments", "checkout_start_failed", { kind, amount, http_status: 0 });
+        logger.error("Payments", "CheckoutStartFailed", { kind, amount, http_status: 0 });
         setError(t("checkout.paymentFailed"));
         toast.error(t("checkout.paymentFailed"));
         return { ok: false, needsGateway: false };

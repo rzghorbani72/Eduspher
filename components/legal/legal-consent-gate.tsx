@@ -67,12 +67,12 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
     setError(null);
     try {
       await acceptPlatformLegalDocuments(language);
-      logger.ok("legal", "consent_accepted", {
+      logger.ok("Legal", "ConsentAccepted", {
         document_count: pending?.length ?? 0,
       });
       window.location.reload();
     } catch (err) {
-      logger.error("legal", "consent_accept_failed", {
+      logger.error("Legal", "ConsentAcceptFailed", {
         document_count: pending?.length ?? 0,
       });
       setError(err instanceof Error ? err.message : t("common.error"));
