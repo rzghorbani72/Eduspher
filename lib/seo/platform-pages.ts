@@ -7,7 +7,7 @@ export type PlatformPageSeo = {
 
 const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   "/": {
-    title: "پلتفرم ساخت وبسایت آموزشی | منتوما",
+    title: "منتوما | پلتفرم ساخت وبسایت آموزشی",
     description:
       "وب‌سایت آموزشی خودت را بدون کدنویسی بساز: قالب سفارشی با برند خودت، دورهٔ ضبط‌شده و کلاس زنده تکی یا گروهی، فروش و مدیریت دانشجو در یک پنل. ۱۴ روز رایگان.",
   },
@@ -29,6 +29,11 @@ const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     title: "قیمت‌ها و پلن‌ها | منتوما",
     description:
       "۱۴ روز رایگان و بدون کارت بانکی، بعد پلن استارتر، رشد یا بیزینس. بدون کارمزد از فروش دوره‌ها؛ فروش عمومی در همهٔ پلن‌ها نامحدود است.",
+  },
+  "/articles": {
+    title: "وبلاگ منتوما — آموزش ساخت وبسایت آموزشی",
+    description:
+      "راهنماها و تجربه‌های ساخت و رشد کسب‌وکار آموزشی آنلاین: ساخت سایت، فروش دوره، کلاس زنده و مدیریت دانشجو.",
   },
   "/privacy": {
     title: "حریم خصوصی | منتوما",
@@ -71,6 +76,11 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     description:
       "Transparent subscription plans for academies — a 14-day free trial, no commission on enrollments, clear storage limits.",
   },
+  "/articles": {
+    title: "Mentoma Blog",
+    description:
+      "Guides on building and growing an online teaching business: your website, course sales, live classes, and student management.",
+  },
   "/privacy": {
     title: "Privacy Policy",
     description: "Mentoma privacy policy — how we collect and use your data.",
@@ -95,6 +105,7 @@ export const PLATFORM_SITEMAP_PATHS = [
   "/privacy",
   "/terms",
   "/refund",
+  "/articles",
 ] as const;
 
 export function getPlatformPageSeo(pathname: string): PlatformPageSeo | null {

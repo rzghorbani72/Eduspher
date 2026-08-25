@@ -1,8 +1,8 @@
 export const LANDING = {
   nav: {
     links: [
-      { href: "/#examples", label: "نمونه‌ها" },
-      { href: "/#pricing", label: "قیمت‌ها" },
+      { href: "/academies", label: "نمونه‌ها" },
+      { href: "/pricing", label: "قیمت‌ها" },
       { href: "/about", label: "درباره ما" },
       { href: "/contact", label: "تماس با ما" },
       { href: "/#features", label: "امکانات" },
@@ -308,8 +308,8 @@ export const LANDING = {
         title: "محصول",
         links: [
           { href: "/#features", label: "امکانات" },
-          { href: "/#pricing", label: "قیمت‌ها" },
-          { href: "#examples", label: "نمونه آکادمی‌ها" },
+          { href: "/pricing", label: "قیمت‌ها" },
+          { href: "/academies", label: "نمونه آکادمی‌ها" },
           { href: "#how", label: "چطور کار می‌کند" },
         ],
       },
