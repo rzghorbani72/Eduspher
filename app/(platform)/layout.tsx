@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PlatformOrganizationJsonLd } from "@/components/seo/platform-organization-json-ld";
 import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
@@ -27,5 +28,10 @@ export default function PlatformLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <>
+      <PlatformOrganizationJsonLd />
+      {children}
+    </>
+  );
 }

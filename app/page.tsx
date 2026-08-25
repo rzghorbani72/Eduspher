@@ -18,6 +18,7 @@ export default async function Home() {
 
   return (
     <>
+      {/* Home is outside (platform)/layout — still emit the brand JSON-LD graph. */}
       <PlatformOrganizationJsonLd />
       <LandingPage
         adminLoginUrl={adminLoginUrl}

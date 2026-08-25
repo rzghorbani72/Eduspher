@@ -6,7 +6,10 @@ import {
   buildAbsoluteUrl,
   buildCrossMarketUrl,
 } from "@/lib/seo/domains";
-import { PLATFORM_SITEMAP_PATHS } from "@/lib/seo/platform-pages";
+import {
+  PLATFORM_SITEMAP_PATHS,
+  getSitemapPriority,
+} from "@/lib/seo/platform-pages";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const headerStore = await headers();
@@ -24,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url,
       lastModified: now,
       changeFrequency: path === "/" ? "weekly" : "monthly",
-      priority: path === "/" ? 1 : 0.7,
+      priority: getSitemapPriority(path),
       alternates: {
         languages: {
           "fa-IR": faIR,

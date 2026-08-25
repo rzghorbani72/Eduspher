@@ -3,98 +3,176 @@ import { env } from "@/lib/env";
 export type PlatformPageSeo = {
   title: string;
   description: string;
+  keywords: string[];
+  /** Short label Google may use for sitelinks under the brand result. */
+  navLabel: string;
 };
+
+const IR_KEYWORDS_CORE = [
+  "منتوما",
+  "Mentoma",
+  "ساخت وبسایت آموزشی",
+  "پلتفرم آموزش آنلاین",
+  "آکادمی آنلاین",
+  "ساخت آکادمی",
+  "سایت آموزشگاهی",
+  "فروش دوره آنلاین",
+  "کلاس زنده آنلاین",
+  "بدون کدنویسی",
+];
+
+const COM_KEYWORDS_CORE = [
+  "Mentoma",
+  "academy platform",
+  "online teaching website",
+  "academy operating system",
+  "course website builder",
+  "live class platform",
+];
 
 const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   "/": {
-    title: "منتوما | پلتفرم ساخت وبسایت آموزشی",
+    title: "منتوما | پلتفرم ساخت وبسایت و آکادمی آموزشی",
     description:
-      "وب‌سایت آموزشی خودت را بدون کدنویسی بساز: قالب سفارشی با برند خودت، دورهٔ ضبط‌شده و کلاس زنده تکی یا گروهی، فروش و مدیریت دانشجو در یک پنل. ۱۴ روز رایگان.",
+      "منتوما پلتفرم ساخت وبسایت آموزشی برای آموزشگاه‌هاست: قالب با برند خودت، دورهٔ ضبط‌شده و کلاس زنده، ثبت‌نام و پرداخت دانشجو در یک پنل. ۱۴ روز رایگان، بدون کارمزد از فروش.",
+    keywords: IR_KEYWORDS_CORE,
+    navLabel: "صفحه اصلی",
   },
   "/about": {
-    title: "درباره منتوما — پلتفرم ساخت وبسایت آموزشی",
+    title: "درباره منتوما | داستان پلتفرم ساخت وبسایت آموزشی",
     description:
-      "منتوما پلتفرم ساخت وبسایت آموزشی است؛ از یک مدرس تا آموزشگاه چندمعلمه، بدون کدنویسی و بدون توسعه‌دهنده.",
+      "منتوما را ساختیم تا مدیر آموزشگاه بدون کدنویسی، سایت آموزشی، مدرس‌ها، کلاس زنده و فروش دوره را در یک سیستم اداره کند.",
+    keywords: [...IR_KEYWORDS_CORE, "درباره منتوما"],
+    navLabel: "درباره ما",
   },
   "/contact": {
-    title: "تماس با منتوما",
-    description: "با تیم منتوما در ارتباط باش — پشتیبانی، فروش و همکاری.",
+    title: "تماس با منتوما | پشتیبانی و فروش",
+    description:
+      "با تیم منتوما در ارتباط باش — پشتیبانی محصول، مشاوره فروش پلن، و همکاری با آموزشگاه‌ها.",
+    keywords: [...IR_KEYWORDS_CORE, "تماس با منتوما", "پشتیبانی منتوما"],
+    navLabel: "تماس با ما",
   },
   "/academies": {
-    title: "نمونه وبسایت‌های آموزشی ساخته‌شده با منتوما",
+    title: "نمونه آکادمی‌های منتوما | وبسایت‌های آموزشی واقعی",
     description:
-      "وب‌سایت‌های آموزشی واقعی که روی منتوما ساخته شده‌اند — جستجو کن و سایت هرکدام را ببین.",
+      "نمونه‌های واقعی وبسایت آموزشی ساخته‌شده با منتوما را ببین — هر آکادمی سایت و برند خودش را دارد.",
+    keywords: [...IR_KEYWORDS_CORE, "نمونه آکادمی", "دمو منتوما"],
+    navLabel: "نمونه آکادمی‌ها",
   },
   "/pricing": {
-    title: "قیمت‌ها و پلن‌ها | منتوما",
+    title: "تعرفه و پلن‌های منتوما | قیمت اشتراک",
     description:
-      "۱۴ روز رایگان و بدون کارت بانکی، بعد پلن استارتر، رشد یا بیزینس. بدون کارمزد از فروش دوره‌ها؛ فروش عمومی در همهٔ پلن‌ها نامحدود است.",
+      "تعرفه منتوما: ۱۴ روز رایگان بدون کارت بانکی، بعد پلن استارتر، رشد یا بیزینس. بدون کارمزد از فروش دوره‌ها؛ فروش عمومی در همهٔ پلن‌ها نامحدود است.",
+    keywords: [
+      ...IR_KEYWORDS_CORE,
+      "قیمت منتوما",
+      "تعرفه منتوما",
+      "پلن منتوما",
+      "اشتراک آکادمی آنلاین",
+    ],
+    navLabel: "تعرفه و پلن‌ها",
   },
   "/articles": {
-    title: "وبلاگ منتوما — آموزش ساخت وبسایت آموزشی",
+    title: "وبلاگ منتوما | آموزش ساخت و رشد آکادمی آنلاین",
     description:
-      "راهنماها و تجربه‌های ساخت و رشد کسب‌وکار آموزشی آنلاین: ساخت سایت، فروش دوره، کلاس زنده و مدیریت دانشجو.",
+      "راهنماهای منتوما برای ساخت وبسایت آموزشی، فروش دوره، کلاس زنده و مدیریت دانشجو — از راه‌اندازی تا رشد.",
+    keywords: [...IR_KEYWORDS_CORE, "وبلاگ منتوما", "آموزش ساخت آکادمی"],
+    navLabel: "وبلاگ",
   },
   "/privacy": {
-    title: "حریم خصوصی | منتوما",
+    title: "حریم خصوصی منتوما",
     description:
-      "سیاست حریم خصوصی منتوما — چه داده‌ای جمع می‌شود و چطور استفاده می‌شود.",
+      "سیاست حریم خصوصی منتوما — چه داده‌ای جمع می‌شود و چطور برای ارائهٔ سرویس استفاده می‌شود.",
+    keywords: ["حریم خصوصی منتوما", "منتوما"],
+    navLabel: "حریم خصوصی",
   },
   "/terms": {
-    title: "قوانین و مقررات | منتوما",
-    description: "شرایط استفاده از منتوما برای مدیران، مدرس‌ها و دانشجویان.",
+    title: "قوانین و مقررات منتوما",
+    description:
+      "شرایط استفاده از پلتفرم منتوما برای مدیران آکادمی، مدرس‌ها و دانشجویان.",
+    keywords: ["قوانین منتوما", "منتوما"],
+    navLabel: "قوانین",
   },
   "/refund": {
-    title: "سیاست بازگشت وجه | منتوما",
-    description: "قوانین بازگشت وجه و لغو اشتراک در منتوما.",
+    title: "سیاست بازگشت وجه منتوما",
+    description: "قوانین بازگشت وجه و لغو اشتراک پلن‌های منتوما.",
+    keywords: ["بازگشت وجه منتوما", "منتوما"],
+    navLabel: "بازگشت وجه",
   },
 };
 
 const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   "/": {
-    title: "Build Your Teaching Website | Mentoma",
+    title: "Mentoma | Academy Website & Teaching Platform",
     description:
-      "Multi-tenant academy platform for managers: enrollment, teachers, live classes, and payments.",
+      "Mentoma is an Academy Operating System for managers: branded site, recorded courses, live classes, enrollment, and payments — with a 14-day free trial and no commission on sales.",
+    keywords: COM_KEYWORDS_CORE,
+    navLabel: "Home",
   },
   "/about": {
-    title: "About Mentoma",
+    title: "About Mentoma | Academy Operating System",
     description:
-      "Mentoma is an Academy Operating System built for academy managers who run operations at scale.",
+      "Mentoma helps academy managers run enrollment, teachers, live classes, and payments without building software from scratch.",
+    keywords: [...COM_KEYWORDS_CORE, "about Mentoma"],
+    navLabel: "About",
   },
   "/contact": {
-    title: "Contact Mentoma",
+    title: "Contact Mentoma | Support & Sales",
     description:
-      "Get in touch with the Mentoma team for support, sales, and partnerships.",
+      "Reach the Mentoma team for product support, plan questions, and academy partnerships.",
+    keywords: [...COM_KEYWORDS_CORE, "contact Mentoma"],
+    navLabel: "Contact",
   },
   "/academies": {
-    title: "Academies on Mentoma",
+    title: "Academies on Mentoma | Live Examples",
     description:
-      "Browse and search the academies running on Mentoma — open any academy's own site.",
+      "Browse real academies running on Mentoma — each with its own branded teaching site.",
+    keywords: [...COM_KEYWORDS_CORE, "Mentoma demos"],
+    navLabel: "Examples",
   },
   "/pricing": {
-    title: "Pricing",
+    title: "Mentoma Pricing | Plans & Trial",
     description:
-      "Transparent subscription plans for academies — a 14-day free trial, no commission on enrollments, clear storage limits.",
+      "Mentoma subscription plans with a 14-day free trial, no commission on enrollments, and clear storage limits.",
+    keywords: [...COM_KEYWORDS_CORE, "Mentoma pricing", "Mentoma plans"],
+    navLabel: "Pricing",
   },
   "/articles": {
-    title: "Mentoma Blog",
+    title: "Mentoma Blog | Grow Your Online Academy",
     description:
-      "Guides on building and growing an online teaching business: your website, course sales, live classes, and student management.",
+      "Guides on building and growing an online teaching business: your website, course sales, live classes, and student ops.",
+    keywords: [...COM_KEYWORDS_CORE, "Mentoma blog"],
+    navLabel: "Blog",
   },
   "/privacy": {
-    title: "Privacy Policy",
-    description: "Mentoma privacy policy — how we collect and use your data.",
+    title: "Mentoma Privacy Policy",
+    description: "How Mentoma collects and uses data to run the academy platform.",
+    keywords: ["Mentoma privacy"],
+    navLabel: "Privacy",
   },
   "/terms": {
-    title: "Terms of Service",
+    title: "Mentoma Terms of Service",
     description: "Terms of use for the Mentoma academy platform.",
+    keywords: ["Mentoma terms"],
+    navLabel: "Terms",
   },
   "/refund": {
-    title: "Refund Policy",
+    title: "Mentoma Refund Policy",
     description:
       "Refund and cancellation policy for Mentoma subscriptions and purchases.",
+    keywords: ["Mentoma refund"],
+    navLabel: "Refunds",
   },
 };
+
+/** Paths we want Google to treat as brand sitelink candidates (not legal pages). */
+export const PLATFORM_SITELINK_PATHS = [
+  "/pricing",
+  "/academies",
+  "/about",
+  "/contact",
+  "/articles",
+] as const;
 
 export const PLATFORM_SITEMAP_PATHS = [
   "/",
@@ -107,6 +185,22 @@ export const PLATFORM_SITEMAP_PATHS = [
   "/refund",
   "/articles",
 ] as const;
+
+const SITEMAP_PRIORITY: Record<string, number> = {
+  "/": 1,
+  "/pricing": 0.9,
+  "/academies": 0.85,
+  "/about": 0.8,
+  "/contact": 0.8,
+  "/articles": 0.7,
+  "/privacy": 0.3,
+  "/terms": 0.3,
+  "/refund": 0.3,
+};
+
+export function getSitemapPriority(path: string): number {
+  return SITEMAP_PRIORITY[path] ?? 0.5;
+}
 
 export function getPlatformPageSeo(pathname: string): PlatformPageSeo | null {
   const normalized =

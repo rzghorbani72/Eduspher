@@ -1,28 +1,41 @@
 import {
   buildOrganizationJsonLd,
+  buildPlatformWebPageJsonLd,
+  buildSiteNavigationJsonLd,
+  buildSoftwareApplicationJsonLd,
   buildWebSiteJsonLd,
 } from "@/lib/seo/organization-json-ld";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
 
+/**
+ * Brand entity graph for the platform host. Emitted on every public platform
+ * page so Google can group Mentoma as one site (sitelinks), not loose URLs.
+ */
 export async function PlatformOrganizationJsonLd() {
   const ctx = await getSeoRequestContext();
-  if (!ctx.isPlatform || ctx.pathname !== "/") {
+  if (!ctx.isPlatform) {
     return null;
   }
 
-  const organization = buildOrganizationJsonLd(ctx);
-  const website = buildWebSiteJsonLd(ctx);
+  const payloads: Record<string, unknown>[] = [
+    buildOrganizationJsonLd(ctx),
+    buildWebSiteJsonLd(ctx),
+    buildSiteNavigationJsonLd(ctx),
+    buildSoftwareApplicationJsonLd(ctx),
+  ];
+
+  const webPage = buildPlatformWebPageJsonLd(ctx);
+  if (webPage) payloads.push(webPage);
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
-      />
+      {payloads.map((data, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+        />
+      ))}
     </>
   );
 }

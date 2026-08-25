@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PlatformAboutPage } from "@/components/panel/platform-about/platform-about-page";
-import { ABOUT } from "@/components/panel/platform-about/about.messages";
 import { AcademyStaticPageView } from "@/components/academy/academy-static-page";
 import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { getAcademySiteContent } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
+import { getSeoRequestContext } from "@/lib/seo/request-context";
 
 export const dynamic = "force-dynamic";
 
@@ -25,10 +27,16 @@ const loadAcademyPage = async () => {
 
 export async function generateMetadata(): Promise<Metadata> {
   const academy = await loadAcademyPage();
-  if (!academy) {
-    return { title: ABOUT.meta.title, description: ABOUT.meta.description };
+  if (academy) {
+    return { title: `${academy.page.title} | ${academy.content?.academy_name}` };
   }
-  return { title: `${academy.page.title} | ${academy.content?.academy_name}` };
+  const ctx = await getSeoRequestContext();
+  const pageSeo = getPlatformPageSeo("/about");
+  return buildSiteMetadata({
+    title: pageSeo?.title,
+    description: pageSeo?.description,
+    ctx,
+  });
 }
 
 export default async function AboutPage() {

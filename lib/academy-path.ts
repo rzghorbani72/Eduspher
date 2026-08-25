@@ -11,6 +11,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "s",
   "courses",
   "articles",
+  "academies",
   "pricing",
   "checkout",
   "payment",

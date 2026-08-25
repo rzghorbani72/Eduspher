@@ -331,7 +331,11 @@ export const LANDING = {
       },
     ],
     socials: [
-      { id: "instagram", label: "اینستاگرام", href: "" },
+      {
+        id: "instagram",
+        label: "اینستاگرام",
+        href: "https://www.instagram.com/mentoma_ir/",
+      },
       { id: "telegram", label: "تلگرام", href: "" },
       { id: "linkedin", label: "لینکدین", href: "" },
     ],

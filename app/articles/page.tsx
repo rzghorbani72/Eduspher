@@ -1,34 +1,67 @@
 /* eslint-disable @next/next/no-img-element */
+import type { Metadata } from "next";
 import Link from "@/components/ui/link";
 
 import { EmptyState } from "@/components/ui/empty-state";
+import { PlatformOrganizationJsonLd } from "@/components/seo/platform-organization-json-ld";
 import { getArticles } from "@/lib/api/server";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
 import { getAcademyContext } from "@/lib/store-context";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
+import { getSeoRequestContext } from "@/lib/seo/request-context";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getSeoRequestContext();
+  if (ctx.isPlatform) {
+    const pageSeo = getPlatformPageSeo("/articles");
+    return buildSiteMetadata({
+      title: pageSeo?.title,
+      description: pageSeo?.description,
+      ctx,
+    });
+  }
+  return buildSiteMetadata({
+    title: "Articles",
+    description: "Insights and stories from this academy.",
+    ctx,
+  });
+}
 
 export default async function ArticlesPage() {
   const storeContext = await getAcademyContext();
-  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
+  const seoCtx = await getSeoRequestContext();
+  const buildPath = (path: string) =>
+    buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
   const articles = await getArticles().catch(() => []);
+  const pageSeo = seoCtx.isPlatform ? getPlatformPageSeo("/articles") : null;
+  const heading = pageSeo?.navLabel ?? "Insights & stories";
+  const intro =
+    pageSeo?.description ??
+    "Deep dives on emerging skills, career growth strategies, and behind-the-scenes stories from mentors and students.";
 
   if (!articles.length) {
     return (
-      <EmptyState
-        title="Learning insights coming soon"
-        description="Our editorial team is crafting new stories, guides, and community spotlights. Check back shortly."
-      />
+      <>
+        {seoCtx.isPlatform ? <PlatformOrganizationJsonLd /> : null}
+        <EmptyState
+          title="Learning insights coming soon"
+          description="Our editorial team is crafting new stories, guides, and community spotlights. Check back shortly."
+        />
+      </>
     );
   }
 
   return (
+    <>
+      {seoCtx.isPlatform ? <PlatformOrganizationJsonLd /> : null}
     <div className="space-y-6">
       <div className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: 'var(--theme-foreground)' }}>
-          Insights & stories
+          {heading}
         </h1>
         <p className="max-w-2xl text-base leading-7" style={{ color: 'var(--theme-muted)' }}>
-          Deep dives on emerging skills, career growth strategies, and behind-the-scenes stories from
-          mentors and students at EduSpher.
+          {intro}
         </p>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
@@ -78,6 +111,7 @@ export default async function ArticlesPage() {
         })}
       </div>
     </div>
+    </>
   );
 }
 

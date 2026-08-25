@@ -119,14 +119,27 @@ export async function buildSiteMetadata(
   const noIndex = shouldNoIndexPath(ctx.pathname);
   const openGraphLocale = ctx.region === "ir" ? "fa_IR" : "en_US";
   const alternateLocale = ctx.region === "ir" ? "en_US" : "fa_IR";
+  // Platform page titles already include the brand ("منتوما | …"). Absolute
+  // avoids the root template turning them into "… | منتوما | منتوما".
+  const titleIsFullyBranded = Boolean(
+    ctx.isPlatform && (options.title || platformPage),
+  );
+  const platformOgImage = ctx.isPlatform
+    ? `${env.appUrl}/landing/hero-wide.webp`
+    : null;
+  const shareImage = ogImageUrl ?? platformOgImage;
+  const keywords = platformPage?.keywords;
 
   return {
     metadataBase: new URL(env.appUrl),
-    title: {
-      default: title,
-      template: `%s | ${brandName}`,
-    },
+    title: titleIsFullyBranded
+      ? { absolute: title }
+      : {
+          default: title,
+          template: `%s | ${brandName}`,
+        },
     description,
+    ...(keywords?.length ? { keywords: [...keywords] } : {}),
     alternates: {
       canonical: ctx.canonicalUrl,
       languages: {
@@ -143,13 +156,13 @@ export async function buildSiteMetadata(
       siteName: brandName,
       locale: openGraphLocale,
       alternateLocale: [alternateLocale],
-      ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
+      ...(shareImage ? { images: [{ url: shareImage }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
+      ...(shareImage ? { images: [shareImage] } : {}),
     },
     ...(iconUrl
       ? { icons: { icon: iconUrl, shortcut: iconUrl, apple: iconUrl } }

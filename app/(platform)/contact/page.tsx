@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PlatformContactPage } from "@/components/panel/platform-contact/platform-contact-page";
-import { CONTACT } from "@/components/panel/platform-contact/contact.messages";
 import { AcademyStaticPageView } from "@/components/academy/academy-static-page";
 import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { getAcademySiteContent } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { t } from "@/lib/i18n/server-translations";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
+import { getSeoRequestContext } from "@/lib/seo/request-context";
 
 export const dynamic = "force-dynamic";
 
@@ -40,10 +42,16 @@ const loadAcademyContact = async () => {
 
 export async function generateMetadata(): Promise<Metadata> {
   const academy = await loadAcademyContact();
-  if (!academy) {
-    return { title: CONTACT.meta.title, description: CONTACT.meta.description };
+  if (academy) {
+    return { title: `${academy.page.title} | ${academy.content.academy_name}` };
   }
-  return { title: `${academy.page.title} | ${academy.content.academy_name}` };
+  const ctx = await getSeoRequestContext();
+  const pageSeo = getPlatformPageSeo("/contact");
+  return buildSiteMetadata({
+    title: pageSeo?.title,
+    description: pageSeo?.description,
+    ctx,
+  });
 }
 
 export default async function ContactPage() {
