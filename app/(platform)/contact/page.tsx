@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PlatformContactPage } from "@/components/panel/platform-contact/platform-contact-page";
+import { CONTACT } from "@/components/panel/platform-contact/contact.messages";
 import { AcademyStaticPageView } from "@/components/academy/academy-static-page";
 import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { getAcademySiteContent } from "@/lib/api/server";
@@ -39,7 +40,9 @@ const loadAcademyContact = async () => {
 
 export async function generateMetadata(): Promise<Metadata> {
   const academy = await loadAcademyContact();
-  if (!academy) return {};
+  if (!academy) {
+    return { title: CONTACT.meta.title, description: CONTACT.meta.description };
+  }
   return { title: `${academy.page.title} | ${academy.content.academy_name}` };
 }
 
@@ -57,6 +60,17 @@ export default async function ContactPage() {
     );
   }
 
-  const adminRegisterUrl = await getServerAdminPanelUrl("/register");
-  return <PlatformContactPage adminRegisterUrl={adminRegisterUrl} />;
+  const [adminLoginUrl, adminRegisterUrl, panelSupportUrl] = await Promise.all([
+    getServerAdminPanelUrl("/login"),
+    getServerAdminPanelUrl("/register"),
+    getServerAdminPanelUrl("/support"),
+  ]);
+  return (
+    <PlatformContactPage
+      adminLoginUrl={adminLoginUrl}
+      adminRegisterUrl={adminRegisterUrl}
+      panelSupportUrl={panelSupportUrl}
+      studentSupportUrl="/account/support"
+    />
+  );
 }

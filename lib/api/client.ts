@@ -311,6 +311,43 @@ export const postJson = async <T>(
   return makeRequest(options?.skipRefresh);
 };
 
+/**
+ * POST from a page with no academy context (the platform contact form).
+ * `postJson` always stamps `X-Academy-ID` and throws on the root domain, where
+ * no academy cookie exists — this one only bootstraps CSRF and sends the body.
+ */
+export const postPublicJson = async <T>(
+  path: string,
+  body: Record<string, unknown>,
+  options?: RequestOptions,
+): Promise<T> => {
+  const makeRequest = async (retriedCsrf = false): Promise<T> => {
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    });
+    const csrfToken = await ensureCsrfToken();
+    if (csrfToken) headers.set("X-CSRF-Token", csrfToken);
+
+    const response = await fetch(`${getBaseUrl()}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: JSON.stringify(body),
+      signal: options?.signal,
+    });
+
+    return handleResponse<T>(
+      response,
+      () => makeRequest(true),
+      true,
+      retriedCsrf,
+    );
+  };
+
+  return makeRequest();
+};
+
 export const getJson = async <T>(
   path: string,
   options?: RequestOptions,
