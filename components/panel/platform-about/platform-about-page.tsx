@@ -112,7 +112,7 @@ export function PlatformAboutPage({ adminLoginUrl, adminRegisterUrl }: Props) {
             subtitle={ABOUT.team.subtitle}
           />
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto mt-12 grid max-w-[540px] gap-5 sm:grid-cols-2">
             {ABOUT.team.members.map((member) => (
               <article
                 key={member.id}
