@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { PlatformAboutPage } from "@/components/panel/platform-about/platform-about-page";
+import { ABOUT } from "@/components/panel/platform-about/about.messages";
 import { AcademyStaticPageView } from "@/components/academy/academy-static-page";
 import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
 import { getAcademySiteContent } from "@/lib/api/server";
@@ -24,7 +25,9 @@ const loadAcademyPage = async () => {
 
 export async function generateMetadata(): Promise<Metadata> {
   const academy = await loadAcademyPage();
-  if (!academy) return {};
+  if (!academy) {
+    return { title: ABOUT.meta.title, description: ABOUT.meta.description };
+  }
   return { title: `${academy.page.title} | ${academy.content?.academy_name}` };
 }
 
@@ -37,6 +40,14 @@ export default async function AboutPage() {
     return <AcademyStaticPageView page={academy.page} />;
   }
 
-  const adminRegisterUrl = await getServerAdminPanelUrl("/register");
-  return <PlatformAboutPage adminRegisterUrl={adminRegisterUrl} />;
+  const [adminLoginUrl, adminRegisterUrl] = await Promise.all([
+    getServerAdminPanelUrl("/login"),
+    getServerAdminPanelUrl("/register"),
+  ]);
+  return (
+    <PlatformAboutPage
+      adminLoginUrl={adminLoginUrl}
+      adminRegisterUrl={adminRegisterUrl}
+    />
+  );
 }
