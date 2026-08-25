@@ -1,86 +1,34 @@
-import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 
-import { getPublicPlans, getPublicPricingConfig } from "@/lib/api/server";
+import { CtaSection } from "@/components/panel/landing/cta-section";
+import { FaqSection } from "@/components/panel/landing/faq-section";
+import { LandingShell } from "@/components/panel/landing/landing-shell";
+import { PricingSection } from "@/components/panel/landing/pricing-section";
+import { SectionReveal } from "@/components/panel/landing/section-reveal";
+import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
+import { getPublicPlans } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 
-import { PRICING } from "./pricing.messages";
-import { PlanCard } from "./plan-card";
+export const revalidate = 300;
 
+/** Platform-only page: an academy's own site sells courses, not our plans. */
 export default async function PricingPage() {
-  const storeContext = await getAcademyContext();
-  if (storeContext.slug) {
+  const store = await getAcademyContext();
+  if (store.slug) {
     notFound();
   }
 
-  const [pricingConfig, plans] = await Promise.all([
-    getPublicPricingConfig(),
-    getPublicPlans(),
-  ]);
-
-  const pageTitle = pricingConfig?.title || PRICING.title;
-  const pageSubtitle = pricingConfig?.subtitle || PRICING.subtitle;
-  const ctaLabel = pricingConfig?.cta_label || PRICING.cta;
+  const adminLoginUrl = await getServerAdminPanelUrl("/login");
+  const adminRegisterUrl = await getServerAdminPanelUrl("/register");
+  const plans = await getPublicPlans().catch(() => []);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
-      <section className="mb-10 text-center">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          {pageTitle}
-        </h1>
-        <p className="mx-auto mt-3 max-w-3xl text-sm text-muted-foreground sm:text-base">
-          {pageSubtitle}
-        </p>
-        <p className="mt-4 text-sm font-semibold text-primary">
-          {PRICING.noCommission}
-        </p>
-        <p className="mx-auto mt-2 max-w-3xl text-xs text-muted-foreground">
-          {PRICING.unlimitedSignups}
-        </p>
-      </section>
+    <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
+      <PricingSection as="h1" registerUrl={adminRegisterUrl} plans={plans} />
+      <FaqSection />
+      <CtaSection registerUrl={adminRegisterUrl} demoUrl="/academies" />
 
-      {/* The trial is one universal offer, not a feature of any plan: every
-          account starts with a month, then chooses a plan. Stated once, above
-          the grid, instead of repeated in each card's checklist. */}
-      <section className="mb-8 rounded-2xl border border-primary/40 bg-primary/5 p-6 text-center">
-        <h2 className="text-lg font-bold">{PRICING.trialTitle}</h2>
-        <p className="mx-auto mt-1.5 max-w-2xl text-sm leading-7 text-muted-foreground">
-          {PRICING.trialBody}
-        </p>
-      </section>
-
-      {plans.length > 0 ? (
-        <section className="grid gap-5 md:grid-cols-3">
-          {plans.map((plan) => (
-            <PlanCard key={plan.slug} plan={plan} ctaLabel={ctaLabel} />
-          ))}
-        </section>
-      ) : (
-        <p className="rounded-xl border bg-card p-6 text-center text-sm text-muted-foreground">
-          {PRICING.plansUnavailable}
-        </p>
-      )}
-
-      <section className="mt-8 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="text-lg font-semibold">{PRICING.storageTitle}</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {PRICING.storageBody}
-        </p>
-        <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-          <li>• {PRICING.storagePoints.included}</li>
-          <li>• {PRICING.storagePoints.overage}</li>
-          <li>• {PRICING.storagePoints.upgrade}</li>
-        </ul>
-      </section>
-
-      <section className="mt-8 text-center">
-        <Link
-          href="/auth/register"
-          className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
-        >
-          {ctaLabel}
-        </Link>
-      </section>
-    </main>
+      <SectionReveal />
+    </LandingShell>
   );
 }

@@ -36,6 +36,7 @@ export default async function AcademiesPage() {
       <section className="py-32 lg:py-40">
         <Container>
           <SectionHeading
+            as="h1"
             title={LANDING.academies.title}
             subtitle={LANDING.academies.subtitle}
           />

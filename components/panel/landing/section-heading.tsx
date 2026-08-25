@@ -8,6 +8,8 @@ type Props = {
   title: ReactNode;
   subtitle?: string;
   align?: "center" | "start";
+  /** A standalone page needs the section title as its h1. */
+  as?: "h1" | "h2";
   className?: string;
 };
 
@@ -16,14 +18,17 @@ export function SectionHeading({
   title,
   subtitle,
   align = "center",
+  as: Heading = "h2",
   className,
 }: Props) {
   return (
     <div
       className={cn(
         "flex flex-col gap-4",
-        align === "center" ? "mx-auto max-w-[720px] items-center text-center" : "items-start",
-        className
+        align === "center"
+          ? "mx-auto max-w-[720px] items-center text-center"
+          : "items-start",
+        className,
       )}
     >
       {eyebrow ? (
@@ -32,9 +37,9 @@ export function SectionHeading({
         </span>
       ) : null}
 
-      <h2 className="text-balance text-[30px] font-extrabold leading-tight tracking-[-0.022em] text-lp-ink sm:text-[38px] lg:text-[46px]">
+      <Heading className="text-balance text-[30px] font-extrabold leading-tight tracking-[-0.022em] text-lp-ink sm:text-[38px] lg:text-[46px]">
         {title}
-      </h2>
+      </Heading>
 
       {subtitle ? (
         <p className="max-w-[560px] text-pretty text-base leading-[1.85] text-lp-muted lg:text-[17px]">

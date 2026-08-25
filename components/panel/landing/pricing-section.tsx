@@ -16,6 +16,8 @@ type Props = {
   registerUrl: string;
   /** Live plans. Prices come from here; the tagline and feature list stay curated. */
   plans?: PublicPlan[];
+  /** "h1" when the section is the whole page, not a block on the landing page. */
+  as?: "h1" | "h2";
 };
 
 const faNumber = (value: number) => value.toLocaleString("fa-IR");
@@ -54,7 +56,7 @@ function resolveMonthlyToman(
   return FALLBACK_MONTHLY[planId] ?? 0;
 }
 
-export function PricingSection({ registerUrl, plans = [] }: Props) {
+export function PricingSection({ registerUrl, plans = [], as }: Props) {
   const [cycle, setCycle] = useState<Cycle>("monthly");
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
@@ -66,6 +68,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
     >
       <Container>
         <SectionHeading
+          as={as}
           title={LANDING.pricing.title}
           subtitle={LANDING.pricing.subtitle}
         />
@@ -85,7 +88,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   "rounded-full px-5 py-1.5 text-[13px] font-bold transition-colors",
                   cycle === option
                     ? "bg-lp-blue text-white"
-                    : "text-lp-muted hover:text-lp-ink"
+                    : "text-lp-muted hover:text-lp-ink",
                 )}
               >
                 {LANDING.pricing[option]}
@@ -113,8 +116,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   : plan.priceMonthly;
             const upcoming = live?.upcoming_price ?? null;
             const isFeatured = plan.featured;
-            const showDiscount =
-              cycle === "quarterly" && q.discountPercent > 0;
+            const showDiscount = cycle === "quarterly" && q.discountPercent > 0;
 
             return (
               <article
@@ -123,7 +125,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                   "flex h-full flex-col rounded-2xl border bg-lp-surface p-6 transition-colors",
                   isFeatured
                     ? "border-lp-line shadow-lp-card lg:-my-5 lg:p-7"
-                    : "border-lp-line/70 hover:border-lp-line"
+                    : "border-lp-line/70 hover:border-lp-line",
                 )}
               >
                 <h3 className="text-center text-[15px] font-bold text-lp-ink">
@@ -173,10 +175,15 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                 {upcoming ? (
                   <p className="mt-2 text-center text-[11px] leading-[1.7] text-lp-muted">
                     {LANDING.pricing.upcomingPrice
-                      .replace("{price}", faNumber(upcoming.price_monthly_toman))
+                      .replace(
+                        "{price}",
+                        faNumber(upcoming.price_monthly_toman),
+                      )
                       .replace(
                         "{date}",
-                        new Date(upcoming.effective_at).toLocaleDateString("fa-IR"),
+                        new Date(upcoming.effective_at).toLocaleDateString(
+                          "fa-IR",
+                        ),
                       )}
                   </p>
                 ) : null}
@@ -204,7 +211,7 @@ export function PricingSection({ registerUrl, plans = [] }: Props) {
                     "mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors",
                     isFeatured
                       ? "bg-lp-blue text-white hover:bg-lp-blue/90"
-                      : "bg-lp-surface-2 text-lp-ink hover:bg-lp-line/40"
+                      : "bg-lp-surface-2 text-lp-ink hover:bg-lp-line/40",
                   )}
                 >
                   {plan.cta}
