@@ -2514,7 +2514,7 @@ select[class*="rounded-sm"] {
   opacity: 0.8;
 }
 
-/* 404 page */
+/* 404 page — academy theme tokens; layout mirrors landing CTAs */
 .not-found-glow {
   background: color-mix(
     in srgb,
@@ -2527,7 +2527,7 @@ select[class*="rounded-sm"] {
   background: linear-gradient(
     135deg,
     var(--theme-primary) 0%,
-    color-mix(in srgb, var(--theme-primary) 55%, #4f8cff) 100%
+    color-mix(in srgb, var(--theme-primary) 45%, var(--theme-secondary)) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
@@ -2539,15 +2539,12 @@ select[class*="rounded-sm"] {
 .not-found-btn-primary {
   background: var(--theme-primary);
   box-shadow: 0 12px 28px -10px
-    color-mix(in srgb, var(--theme-primary) 70%, transparent);
-  color: #ffffff;
-}
-.not-found-btn-primary:hover {
-  transform: translateY(-1px);
+    color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  color: var(--theme-on-primary, #ffffff);
 }
 .not-found-btn-secondary {
-  background: var(--theme-surface);
-  border: 1px solid var(--theme-border-strong);
+  background: var(--theme-surface, #ffffff);
+  border: 1px solid var(--theme-border-strong, rgba(18, 20, 50, 0.09));
   color: var(--theme-foreground);
 }
 .not-found-btn-secondary:hover {
