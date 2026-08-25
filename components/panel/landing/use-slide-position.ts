@@ -12,14 +12,14 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
  * write the same single value, so they can never fight over the layout.
  */
 export function useSlidePosition(count: number, eventName: string) {
-  const [position, setPosition] = useState(0);
+  const [position, setPositionState] = useState(0);
   const nodeRef = useRef<HTMLElement>(null);
   const positionRef = useRef(0);
   const frameRef = useRef(0);
 
   const move = useCallback((next: number) => {
     positionRef.current = next;
-    setPosition(next);
+    setPositionState(next);
   }, []);
 
   useEffect(() => {
@@ -57,7 +57,17 @@ export function useSlidePosition(count: number, eventName: string) {
     [move],
   );
 
+  /** Direct, untweened write — for a source that already reports a settled
+      value each step, like a horizontal-scroll carousel's nearest slide. */
+  const setPosition = useCallback(
+    (next: number) => {
+      cancelAnimationFrame(frameRef.current);
+      move(next);
+    },
+    [move],
+  );
+
   const active = Math.min(count - 1, Math.max(0, Math.round(position)));
 
-  return { nodeRef, position, active, goTo };
+  return { nodeRef, position, active, goTo, setPosition };
 }

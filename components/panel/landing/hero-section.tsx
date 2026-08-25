@@ -29,7 +29,7 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
           height={860}
           priority
           sizes="100vw"
-          className="order-2 h-auto w-full"
+          className="order-2 hidden h-auto w-full lg:block"
         />
 
         <div className="order-1 z-10 mx-auto flex w-full max-w-[560px] flex-col items-center px-5 pb-12 text-center lg:absolute lg:inset-y-0 lg:order-0 lg:mx-0 lg:w-[40%] lg:max-w-none lg:items-stretch lg:justify-center lg:px-0 lg:pb-0 lg:text-start lg:start-[6%]">

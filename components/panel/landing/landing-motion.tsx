@@ -51,17 +51,21 @@ export function LandingMotion() {
         );
         const slideCount = Number(forYouStage?.dataset.lpSlideCount ?? 0);
 
-        if (forYou && forYouStage && slideCount > 1) {
+        // Mobile has its own horizontal-scroll carousel (for-you-section.tsx
+        // drives `position` from the rail's scrollLeft there), so this
+        // vertical-scroll rig is desktop-only — otherwise normal page scroll
+        // would also flip slides underneath the swipe gesture.
+        if (forYou && forYouStage && slideCount > 1 && canPin) {
           // A tenth of the scroll at each end holds the first/last slide open,
           // so the rail does not start moving the instant the pin engages.
           const HOLD = 0.1;
 
           ScrollTrigger.create({
             trigger: forYouStage,
-            start: canPin ? "center center" : "top 75%",
-            end: canPin ? `+=${slideCount * 70}%` : "bottom 40%",
-            pin: canPin,
-            pinSpacing: canPin,
+            start: "center center",
+            end: `+=${slideCount * 70}%`,
+            pin: true,
+            pinSpacing: true,
             scrub: true,
             anticipatePin: 1,
             invalidateOnRefresh: true,
