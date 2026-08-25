@@ -1,5 +1,6 @@
 import { ChevronLeft, TrendingUp, UserRound, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { CircledWord } from "../landing/circled-word";
@@ -118,9 +119,13 @@ export function PlatformAboutPage({ adminLoginUrl, adminRegisterUrl }: Props) {
                 key={member.id}
                 className="rounded-2xl border border-lp-line bg-white p-7 text-center transition-colors hover:border-lp-mint/50"
               >
-                <span className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-lp-mint/20 text-[22px] font-extrabold text-lp-ink">
-                  {member.name.slice(0, 1)}
-                </span>
+                <Image
+                  src={member.photo}
+                  alt={member.name}
+                  width={80}
+                  height={80}
+                  className="mx-auto h-20 w-20 rounded-full object-cover"
+                />
                 <h3 className="mt-5 text-[15px] font-bold text-lp-ink">
                   {member.name}
                 </h3>

@@ -53,8 +53,18 @@ export const ABOUT = {
     title: "تیمی کوچک، با ماموریتی بزرگ",
     subtitle: "گروهی از مدرس‌ها، طراح‌ها و مهندس‌ها که آموزش را دوست دارند.",
     members: [
-      { id: "reza", name: "رضا قربانی", role: "مهندس نرم‌افزار و برنامه‌نویس" },
-      { id: "razieh", name: "راضیه نبوی", role: "طراح رابط کاربری" },
+      {
+        id: "reza",
+        name: "رضا قربانی",
+        role: "مهندس نرم‌افزار و برنامه‌نویس",
+        photo: "/landing/team/reza.jpg",
+      },
+      {
+        id: "razieh",
+        name: "راضیه نبوی",
+        role: "طراح رابط کاربری",
+        photo: "/landing/team/razieh.jpg",
+      },
     ],
   },
 
