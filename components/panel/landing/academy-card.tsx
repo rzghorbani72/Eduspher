@@ -1,4 +1,3 @@
-import { ArrowUpLeft } from "lucide-react";
 import Image from "next/image";
 
 import type { StoreSummary } from "@/lib/api/types";
@@ -15,16 +14,12 @@ export type AcademyCard = {
   desktop: string | null;
   mobile: string | null;
   href: string;
-  /** Platform-curated screenshots exist — the academy is presentable enough to feature. */
+  /** Both landing shots exist — presentable enough to feature on the homepage. */
   featured: boolean;
 };
 
 export function toAcademyCard(academy: StoreSummary): AcademyCard {
-  const logo = resolveAssetUrl(academy.logo?.publicUrl ?? null);
-  // Marketing cards use platform-curated screenshots only. Cover/logo fallback
-  // made unfinished academies look like live examples.
-  const showcase = resolveAssetUrl(academy.showcase_desktop?.publicUrl ?? null);
-  const desktop = showcase;
+  const desktop = resolveAssetUrl(academy.showcase_desktop?.publicUrl ?? null);
   const mobile = resolveAssetUrl(academy.showcase_mobile?.publicUrl ?? null);
 
   return {
@@ -32,10 +27,10 @@ export function toAcademyCard(academy: StoreSummary): AcademyCard {
     name: academy.name,
     handle: `@${academy.slug ?? ""}`,
     description: academy.description ?? null,
-    desktop: desktop ?? logo,
-    mobile: mobile ?? logo ?? desktop,
+    desktop,
+    mobile,
     href: buildAcademySubdomainUrl(academy.slug ?? "", env.appUrl),
-    featured: Boolean(showcase),
+    featured: Boolean(desktop && mobile),
   };
 }
 
@@ -47,9 +42,8 @@ export function sortAcademyCards(cards: AcademyCard[]): AcademyCard[] {
 }
 
 /**
- * One academy shown twice: the wide card is the desktop view and the phone
- * beside it is the mobile view of the same site. Everything is real academy
- * data — there is deliberately no placeholder roster.
+ * Square card photo + overlapping phone. Both images are platform-uploaded
+ * shots of the real academy — no logo fallback, no fake roster.
  */
 export function AcademyCardLink({ card }: { card: AcademyCard }) {
   return (
@@ -57,54 +51,43 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
       href={card.href}
       target="_blank"
       rel="noreferrer"
-      className="group relative block h-[286px] w-[352px]"
+      aria-label={`${LANDING.creators.visit} ${card.name}`}
+      className="group relative block h-[340px] w-[340px]"
     >
-      {/* Desktop view */}
-      <span className="absolute inset-y-0 start-0 block w-[288px] overflow-hidden rounded-[26px] bg-lp-surface-2 shadow-lp-card">
+      <span className="absolute bottom-0 start-0 block size-[272px] overflow-hidden rounded-[28px] bg-lp-surface-2 shadow-lp-card">
         {card.desktop ? (
           <Image
             src={card.desktop}
             alt=""
             fill
-            sizes="288px"
+            sizes="272px"
             loading="lazy"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <span className="block h-full w-full bg-linear-to-br from-lp-mint/25 to-lp-blue/15" />
+          <span className="block size-full bg-linear-to-br from-lp-mint/25 to-lp-blue/15" />
         )}
 
-        <span className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-1 bg-linear-to-t from-black/85 via-black/45 to-transparent p-4 pt-16 text-start">
-          <span className="block text-[15px] font-bold leading-tight text-white">
+        <span className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-5 pt-16 text-start">
+          <span className="block text-[17px] font-bold leading-tight text-white">
             {card.name}
           </span>
-          <span className="block text-[11.5px] text-white/65" dir="ltr">
+          <span className="mt-0.5 block text-[12px] text-white/70" dir="ltr">
             {card.handle}
-          </span>
-          {card.description ? (
-            <span className="line-clamp-1 block max-w-[180px] text-[11.5px] text-white/75">
-              {card.description}
-            </span>
-          ) : null}
-
-          <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-bold text-lp-ink">
-            <ArrowUpLeft size={12} strokeWidth={2.5} aria-hidden="true" />
-            {LANDING.creators.visit}
           </span>
         </span>
       </span>
 
-      {/* Mobile view of the same academy */}
-      <span className="absolute -top-3 bottom-1 end-0 block w-[124px] rounded-[22px] bg-[#15161c] p-[4px] shadow-lp-card">
-        <span className="relative block h-full w-full overflow-hidden rounded-[18px] bg-lp-surface-2">
+      <span className="absolute -top-1 end-0 block h-[328px] w-[148px] rounded-[30px] bg-[#1c1d22] p-[6px] shadow-lp-card">
+        <span className="relative block h-full w-full overflow-hidden rounded-[24px] bg-lp-surface-2">
           {card.mobile ? (
             <Image
               src={card.mobile}
               alt=""
               fill
-              sizes="124px"
+              sizes="148px"
               loading="lazy"
-              className="object-cover"
+              className="object-cover object-top"
             />
           ) : (
             <span className="block h-full w-full bg-linear-to-b from-lp-blue/20 to-lp-mint/20" />
@@ -112,7 +95,7 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
         </span>
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-[7px] mx-auto h-[4px] w-[34px] rounded-full bg-[#15161c]"
+          className="absolute inset-x-0 top-[9px] mx-auto h-[5px] w-[40px] rounded-full bg-[#1c1d22]"
         />
       </span>
     </a>

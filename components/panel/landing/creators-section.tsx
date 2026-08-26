@@ -12,7 +12,7 @@ type Props = {
 };
 
 /**
- * Landing keeps only academies with platform-curated screenshots. The full
+ * Landing keeps only academies with both card + phone shots. The full
  * published roster lives on /academies so this section stays a highlight.
  */
 export function CreatorsSection({ academies }: Props) {
