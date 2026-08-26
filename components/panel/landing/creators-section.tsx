@@ -12,12 +12,15 @@ type Props = {
 };
 
 /**
- * Landing keeps only the three curated academies — the full, searchable roster
- * lives on /academies so this section stays a highlight, not a directory.
+ * Landing keeps only academies with platform-curated screenshots. The full
+ * published roster lives on /academies so this section stays a highlight.
  */
 export function CreatorsSection({ academies }: Props) {
   const cards = sortAcademyCards(
-    academies.filter((academy) => Boolean(academy.slug)).map(toAcademyCard),
+    academies
+      .filter((academy) => Boolean(academy.slug))
+      .map(toAcademyCard)
+      .filter((card) => card.featured),
   ).slice(0, 3);
 
   if (cards.length === 0) return null;

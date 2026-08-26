@@ -4,8 +4,11 @@ import { SectionHeading } from "./section-heading";
 
 export function FaqSection() {
   return (
-    <section data-lp-reveal className="bg-lp-surface-2 py-20 lg:py-28">
-      <Container width="narrow">
+    <section
+      id="faq"
+      data-lp-reveal
+      className="bg-lp-surface-2 py-20 lg:py-28"
+    >      <Container width="narrow">
         <SectionHeading title={LANDING.faq.title} />
 
         <div className="mt-12 overflow-hidden rounded-2xl border border-lp-line bg-white">

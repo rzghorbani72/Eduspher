@@ -21,10 +21,10 @@ export type AcademyCard = {
 
 export function toAcademyCard(academy: StoreSummary): AcademyCard {
   const logo = resolveAssetUrl(academy.logo?.publicUrl ?? null);
-  // Platform-curated screenshots when they exist; branding is the fallback
-  // so a not-yet-photographed academy still renders.
+  // Marketing cards use platform-curated screenshots only. Cover/logo fallback
+  // made unfinished academies look like live examples.
   const showcase = resolveAssetUrl(academy.showcase_desktop?.publicUrl ?? null);
-  const desktop = showcase ?? resolveAssetUrl(academy.cover?.publicUrl ?? null);
+  const desktop = showcase;
   const mobile = resolveAssetUrl(academy.showcase_mobile?.publicUrl ?? null);
 
   return {

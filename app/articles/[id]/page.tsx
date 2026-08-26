@@ -1,47 +1,128 @@
 /* eslint-disable @next/next/no-img-element */
+import type { Metadata } from "next";
 import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
-import { getArticleById, getAcademyBySlug, getCurrentAcademy } from "@/lib/api/server";
+import {
+  getArticleById,
+  getAcademyBySlug,
+  getCurrentAcademy,
+} from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
+import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { SafeHtml } from "@/components/safe-html";
+import { buildArticleJsonLd } from "@/lib/seo/article-json-ld";
+import { buildBreadcrumbJsonLd } from "@/lib/seo/course-json-ld";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+import { buildAbsoluteUrl, seoDomains } from "@/lib/seo/domains";
+import { getSeoRequestContext } from "@/lib/seo/request-context";
 
 type PageParams = Promise<{
   id: string;
 }>;
 
-export default async function ArticleDetailPage({ params }: { params: PageParams }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
   const { id } = await params;
-  const [article, storeContext] = await Promise.all([
+  const [article, ctx] = await Promise.all([
+    getArticleById(id).catch(() => null),
+    getSeoRequestContext(),
+  ]);
+  if (!article) return { title: "404", robots: { index: false, follow: false } };
+
+  const description = truncate(
+    article.meta_description ||
+      article.excerpt ||
+      article.description ||
+      article.title,
+    160,
+  );
+  const shareImage = resolveAssetUrl(article.featured_image?.publicUrl);
+  const meta = await buildSiteMetadata({
+    title: article.meta_title || article.title,
+    description,
+    ctx,
+  });
+
+  return {
+    ...meta,
+    openGraph: {
+      ...meta.openGraph,
+      type: "article",
+      ...(shareImage ? { images: [{ url: shareImage }] } : {}),
+    },
+  };
+}
+
+export default async function ArticleDetailPage({
+  params,
+}: {
+  params: PageParams;
+}) {
+  const { id } = await params;
+  const [article, storeContext, ctx] = await Promise.all([
     getArticleById(id).catch(() => null),
     getAcademyContext(),
+    getSeoRequestContext(),
   ]);
-  const buildPath = (path: string) => buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
+  const buildPath = (path: string) =>
+    buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   if (!article) {
     return notFound();
   }
 
-  // Get store language for translations
   let currentAcademy = await getCurrentAcademy().catch(() => null);
   if (!currentAcademy && storeContext.slug) {
     currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const language = getAcademyLanguage(
+    currentAcademy?.language || null,
+    currentAcademy?.country_code || null,
+  );
   const translate = (key: string) => t(key, language);
+  const siteName = currentAcademy?.name ?? seoDomains.siteName;
 
-  const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";
+  const imageUrl =
+    resolveAssetUrl(article.featured_image?.publicUrl) ?? "/globe.svg";
   const publishedDate = article.published_at
     ? new Date(article.published_at).toLocaleDateString()
     : "";
 
+  const articlesLabel =
+    language === "fa" ? "مقالات" : "Articles";
+  const articleLd = buildArticleJsonLd({
+    article,
+    canonicalUrl: ctx.canonicalUrl,
+    siteName,
+    imageUrl: resolveAssetUrl(article.featured_image?.publicUrl),
+  });
+  const breadcrumbLd = buildBreadcrumbJsonLd([
+    { name: siteName, url: buildAbsoluteUrl(ctx.host, "/") },
+    {
+      name: articlesLabel,
+      url: buildAbsoluteUrl(ctx.host, buildPath("/articles")),
+    },
+    { name: article.title, url: ctx.canonicalUrl },
+  ]);
+
   return (
     <article className="space-y-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <header className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Badge variant="soft" className="w-fit">
           {article.category?.name ?? translate("articles.learningInsights")}
@@ -81,7 +162,10 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
       )}
       <footer className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-600 transition-all hover:shadow-md    animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
         {translate("articles.wantGuidance")}{" "}
-        <Link className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5" href={buildPath("/contact")}>
+        <Link
+          className="font-semibold text-[var(--theme-primary)] transition-all hover:underline hover:translate-x-0.5"
+          href={buildPath("/contact")}
+        >
           {translate("articles.talkToAdvisors")}
         </Link>
         .
@@ -89,4 +173,3 @@ export default async function ArticleDetailPage({ params }: { params: PageParams
     </article>
   );
 }
-

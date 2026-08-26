@@ -1,0 +1,7 @@
+import type { Metadata } from "next";
+
+/** Soft 404 for unknown academy hosts — never index. */
+export const metadata: Metadata = {
+  title: "Academy not found",
+  robots: { index: false, follow: false },
+};

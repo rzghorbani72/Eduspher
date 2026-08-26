@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Package } from "lucide-react";
 
@@ -14,8 +15,33 @@ import {
 import { toStudentBundles } from "@/lib/bundles";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+import { getSeoRequestContext } from "@/lib/seo/request-context";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath, formatCurrencyWithAcademy } from "@/lib/utils";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getSeoRequestContext();
+  if (ctx.isPlatform) {
+    return { robots: { index: false, follow: false } };
+  }
+  const store = await getAcademyContext();
+  const academy = store.slug
+    ? await getAcademyBySlug(store.slug).catch(() => null)
+    : null;
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
+  const translate = (key: string) => t(key, language);
+  return buildSiteMetadata({
+    title: academy
+      ? `${translate("bundles.title")} | ${academy.name}`
+      : translate("bundles.title"),
+    description: translate("bundles.subtitle"),
+    ctx,
+  });
+}
 
 export default async function BundlesPage() {
   const storeContext = await getAcademyContext();

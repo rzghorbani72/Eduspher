@@ -179,6 +179,11 @@ const STATIC_FILE =
 
 const shouldBypass = (req: NextRequest) => {
   const { pathname } = req.nextUrl;
+  // sitemap.xml must run through proxy so academy hosts get tenant headers
+  // for a correct per-academy sitemap.
+  if (pathname === "/sitemap.xml" || pathname.startsWith("/sitemap")) {
+    return false;
+  }
   return (
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/api/") ||
@@ -187,7 +192,6 @@ const shouldBypass = (req: NextRequest) => {
     pathname.startsWith("/fonts/") ||
     pathname.startsWith("/favicon") ||
     pathname.startsWith("/robots.txt") ||
-    pathname.startsWith("/sitemap") ||
     STATIC_FILE.test(pathname)
   );
 };
@@ -880,6 +884,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api/health).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|api/health).*)",
   ],
 };

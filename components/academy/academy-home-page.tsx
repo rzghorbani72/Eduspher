@@ -6,7 +6,6 @@ import {
   getArticles,
   getCategories,
   getCourses,
-  getAcademiesPublic,
   getCurrentUser,
   getCurrentAcademy,
   getAcademyBySlug,
@@ -34,15 +33,14 @@ export async function AcademyHomePage() {
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
   const [
-    academies,
     categories,
     articles,
     coursePayload,
     themeAndTemplate,
     user,
     currentAcademy,
+    publicAcademy,
   ] = await Promise.all([
-    getAcademiesPublic().catch(() => []),
     getCategories().catch(() => []),
     getArticles().catch(() => []),
     getCourses({ limit: 6, published: true, is_featured: true } as Parameters<
@@ -51,17 +49,14 @@ export async function AcademyHomePage() {
     getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
     getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
+    storeContext.slug
+      ? getAcademyBySlug(storeContext.slug).catch(() => null)
+      : Promise.resolve(null),
   ]);
 
   const hasCatalogAccess = coursePayload !== null;
   const featuredCourses = coursePayload?.courses ?? [];
-  const academyMatchById = storeContext.id
-    ? academies.find((a) => a.id === storeContext.id)
-    : null;
-  const academyMatchBySlug = storeContext.slug
-    ? academies.find((a) => (a as { slug?: string }).slug === storeContext.slug)
-    : null;
-  const primaryAcademy = academyMatchById ?? academyMatchBySlug ?? null;
+  const primaryAcademy = publicAcademy;
   const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
   const storeCurrency =
     user?.currentAcademy ||
@@ -85,8 +80,6 @@ export async function AcademyHomePage() {
   };
 
   let storeForLang = currentAcademy;
-  if (!storeForLang && storeContext.slug)
-    storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
   if (!storeForLang && primaryAcademy)
     storeForLang = primaryAcademy as typeof currentAcademy;
   const language = getAcademyLanguage(

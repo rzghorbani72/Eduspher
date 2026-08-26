@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getCategories, getCourses, getArticles, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
@@ -6,6 +7,31 @@ import { buildAcademyPath, formatCurrencyWithAcademy, resolveAssetUrl } from "@/
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { RoadmapTabs } from "@/components/courses/roadmap-tabs";
+import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+import { getSeoRequestContext } from "@/lib/seo/request-context";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const ctx = await getSeoRequestContext();
+  if (ctx.isPlatform) {
+    return { robots: { index: false, follow: false } };
+  }
+  const store = await getAcademyContext();
+  const academy = store.slug
+    ? await getAcademyBySlug(store.slug).catch(() => null)
+    : null;
+  const language = getAcademyLanguage(
+    academy?.language ?? null,
+    academy?.country_code ?? null,
+  );
+  const translate = (key: string) => t(key, language);
+  return buildSiteMetadata({
+    title: academy
+      ? `${translate("roadmap.title")} | ${academy.name}`
+      : translate("roadmap.title"),
+    description: translate("roadmap.subtitle"),
+    ctx,
+  });
+}
 
 export default async function RoadmapPage() {
   const storeContext = await getAcademyContext();

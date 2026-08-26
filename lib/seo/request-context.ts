@@ -32,6 +32,9 @@ const NOINDEX_PATH_PREFIXES = [
   "/checkout",
   "/payment",
   "/preview",
+  "/learn",
+  "/classes",
+  "/academy-not-found",
 ] as const;
 
 export function shouldNoIndexPath(pathname: string): boolean {
@@ -63,11 +66,12 @@ export async function getSeoRequestContext(): Promise<SeoRequestContext> {
     storeContext.slug;
 
   const region = getRegionFromHostname(host);
-  const canonicalUrl = buildAbsoluteUrl(host, pathname, search);
+  // Canonicals must ignore query strings — tracking params would split ranking.
+  const canonicalUrl = buildAbsoluteUrl(host, pathname);
   const alternateUrls = {
-    faIR: buildCrossMarketUrl(host, pathname, "ir", search),
-    en: buildCrossMarketUrl(host, pathname, "com", search),
-    xDefault: buildCrossMarketUrl(host, pathname, "com", search),
+    faIR: buildCrossMarketUrl(host, pathname, "ir"),
+    en: buildCrossMarketUrl(host, pathname, "com"),
+    xDefault: buildCrossMarketUrl(host, pathname, "com"),
   };
 
   return {
