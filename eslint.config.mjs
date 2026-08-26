@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Node tooling scripts (CommonJS + sharp require)
+    "scripts/**/*.cjs",
+    "graphify-out/**",
   ]),
 ]);
 

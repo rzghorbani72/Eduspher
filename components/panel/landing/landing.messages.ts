@@ -1,14 +1,14 @@
 export const LANDING = {
   nav: {
     links: [
-      { href: "/academies", label: "نمونه‌ها" },
-      { href: "/pricing", label: "قیمت‌ها" },
+      { href: "/academies", label: "نمونه آکادمی‌ها" },
+      { href: "/pricing", label: "تعرفه و پلن‌ها" },
       { href: "/about", label: "درباره ما" },
       { href: "/contact", label: "تماس با ما" },
       { href: "/#features", label: "امکانات" },
     ],
-    login: "ورود",
-    cta: "خرید پلن",
+    login: "ورود به منتوما",
+    cta: "شروع رایگان",
     themeToggle: "تغییر تم",
     home: "صفحه اصلی",
   },
@@ -308,7 +308,7 @@ export const LANDING = {
         title: "محصول",
         links: [
           { href: "/#features", label: "امکانات" },
-          { href: "/pricing", label: "قیمت‌ها" },
+          { href: "/pricing", label: "تعرفه و پلن‌ها" },
           { href: "/academies", label: "نمونه آکادمی‌ها" },
           { href: "#how", label: "چطور کار می‌کند" },
         ],

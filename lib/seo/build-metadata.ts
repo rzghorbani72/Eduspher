@@ -4,9 +4,10 @@ import { env } from "@/lib/env";
 import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
+import { MENTOMA_ASSETS, mentomaSiteName } from "./brand";
 import { seoDomains } from "./domains";
 import { getTrustBadge } from "@/lib/api/trust-badge";
-import { ENAMAD_CODE, isEnamadTitleVerification } from "./enamad";
+import { ENAMAD_CODE } from "./enamad";
 import { getPlatformPageSeo } from "./platform-pages";
 import {
   getSeoRequestContext,
@@ -72,6 +73,20 @@ async function resolveAcademyBranding(
   }
 }
 
+const PLATFORM_ICONS: NonNullable<Metadata["icons"]> = {
+  icon: [
+    { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+    { url: MENTOMA_ASSETS.icon48, sizes: "48x48", type: "image/png" },
+    { url: MENTOMA_ASSETS.icon192, sizes: "192x192", type: "image/png" },
+    { url: MENTOMA_ASSETS.icon512, sizes: "512x512", type: "image/png" },
+    { url: MENTOMA_ASSETS.markSvg, type: "image/svg+xml" },
+  ],
+  shortcut: MENTOMA_ASSETS.icon48,
+  apple: [
+    { url: MENTOMA_ASSETS.appleTouch, sizes: "180x180", type: "image/png" },
+  ],
+};
+
 export async function buildSiteMetadata(
   options: BuildMetadataOptions = {},
 ): Promise<Metadata> {
@@ -86,11 +101,10 @@ export async function buildSiteMetadata(
     ogImageUrl,
   } = await resolveAcademyBranding(ctx);
 
-  // On an academy site the brand is the academy the manager named — the
-  // platform name is our internal identity and must never surface there.
-  const brandName = academyName ?? seoDomains.siteName;
-  // A page that names itself always wins; the academy's SEO title is the
-  // site-wide default under it.
+  // Platform SERP site-name must be منتوما — never a Latin-only fallback.
+  const brandName =
+    academyName ??
+    (ctx.isPlatform ? mentomaSiteName(ctx.region) : seoDomains.siteName);
   const baseTitle =
     options.title ?? platformPage?.title ?? metaTitle ?? brandName;
   const academyBadge =
@@ -105,11 +119,9 @@ export async function buildSiteMetadata(
     : isAcademyHome
       ? academyBadge?.enamad_code
       : null;
-  const titleVerify = isPlatformHome
-    ? isEnamadTitleVerification
-    : Boolean(isAcademyHome && academyBadge?.enamad_title_verify);
-  const title =
-    enamadCode && titleVerify ? `${enamadCode} | ${baseTitle}` : baseTitle;
+  // Keep Enamad verification out of <title> — a numeric prefix looks unprofessional
+  // in Google and weakens the منتوما site-name signal. Code stays in meta "enamad".
+  const title = baseTitle;
   const description =
     options.description ??
     platformPage?.description ??
@@ -119,8 +131,6 @@ export async function buildSiteMetadata(
   const noIndex = shouldNoIndexPath(ctx.pathname);
   const openGraphLocale = ctx.region === "ir" ? "fa_IR" : "en_US";
   const alternateLocale = ctx.region === "ir" ? "en_US" : "fa_IR";
-  // Platform page titles already include the brand ("منتوما | …"). Absolute
-  // avoids the root template turning them into "… | منتوما | منتوما".
   const titleIsFullyBranded = Boolean(
     ctx.isPlatform && (options.title || platformPage),
   );
@@ -132,6 +142,7 @@ export async function buildSiteMetadata(
 
   return {
     metadataBase: new URL(env.appUrl),
+    applicationName: brandName,
     title: titleIsFullyBranded
       ? { absolute: title }
       : {
@@ -140,6 +151,15 @@ export async function buildSiteMetadata(
         },
     description,
     ...(keywords?.length ? { keywords: [...keywords] } : {}),
+    ...(ctx.isPlatform
+      ? {
+          appleWebApp: {
+            title: brandName,
+            capable: true,
+          },
+          manifest: "/site.webmanifest",
+        }
+      : {}),
     alternates: {
       canonical: ctx.canonicalUrl,
       languages: {
@@ -164,9 +184,11 @@ export async function buildSiteMetadata(
       description,
       ...(shareImage ? { images: [shareImage] } : {}),
     },
-    ...(iconUrl
-      ? { icons: { icon: iconUrl, shortcut: iconUrl, apple: iconUrl } }
-      : {}),
+    icons: iconUrl
+      ? { icon: iconUrl, shortcut: iconUrl, apple: iconUrl }
+      : ctx.isPlatform
+        ? PLATFORM_ICONS
+        : undefined,
     ...(enamadCode ? { other: { enamad: enamadCode } } : {}),
     robots: noIndex
       ? { index: false, follow: false }

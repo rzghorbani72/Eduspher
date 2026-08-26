@@ -1,4 +1,5 @@
 import { env } from "@/lib/env";
+import { MENTOMA_BRAND } from "./brand";
 
 export type MarketRegion = "ir" | "com";
 
@@ -8,7 +9,8 @@ const COM_HOST_SUFFIX = ".mentoma.com";
 export const seoDomains = {
   ir: env.irDomain,
   com: env.comDomain,
-  siteName: env.siteName,
+  /** Always the Persian brand for IR default — SERP site name must be منتوما. */
+  siteName: env.siteName?.trim() || MENTOMA_BRAND.fa,
   siteDescription: env.siteDescription,
 } as const;
 

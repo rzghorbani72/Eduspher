@@ -10,6 +10,7 @@ import { getSeoRequestContext } from "@/lib/seo/request-context";
 /**
  * Brand entity graph for the platform host. Emitted on every public platform
  * page so Google can group Mentoma as one site (sitelinks), not loose URLs.
+ * WebSite.name = منتوما drives the SERP site-name chip above the blue title.
  */
 export async function PlatformOrganizationJsonLd() {
   const ctx = await getSeoRequestContext();
@@ -20,7 +21,7 @@ export async function PlatformOrganizationJsonLd() {
   const payloads: Record<string, unknown>[] = [
     buildOrganizationJsonLd(ctx),
     buildWebSiteJsonLd(ctx),
-    buildSiteNavigationJsonLd(ctx),
+    ...buildSiteNavigationJsonLd(ctx),
     buildSoftwareApplicationJsonLd(ctx),
   ];
 
@@ -31,7 +32,8 @@ export async function PlatformOrganizationJsonLd() {
     <>
       {payloads.map((data, index) => (
         <script
-          key={index}
+          // Stable keys from @id when present keep React reconciliation quiet.
+          key={typeof data["@id"] === "string" ? data["@id"] : `ld-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
         />

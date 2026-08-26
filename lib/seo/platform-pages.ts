@@ -8,6 +8,14 @@ export type PlatformPageSeo = {
   navLabel: string;
 };
 
+export type PlatformSitelinkCandidate = {
+  id: string;
+  label: string;
+  description?: string;
+  kind: "page" | "login";
+  path?: string;
+};
+
 const IR_KEYWORDS_CORE = [
   "منتوما",
   "Mentoma",
@@ -30,11 +38,15 @@ const COM_KEYWORDS_CORE = [
   "live class platform",
 ];
 
+/**
+ * Homepage title mirrors Yektanet’s pattern: Brand | clear market claim.
+ * Keep under ~60 chars so Google does not truncate mid-phrase.
+ */
 const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   "/": {
-    title: "منتوما | پلتفرم ساخت وبسایت و آکادمی آموزشی",
+    title: "منتوما | پلتفرم ساخت وبسایت آموزشی ایران",
     description:
-      "منتوما پلتفرم ساخت وبسایت آموزشی برای آموزشگاه‌هاست: قالب با برند خودت، دورهٔ ضبط‌شده و کلاس زنده، ثبت‌نام و پرداخت دانشجو در یک پنل. ۱۴ روز رایگان، بدون کارمزد از فروش.",
+      "منتوما پلتفرم ساخت وبسایت آموزشی برای آموزشگاه‌ها: قالب با برند خودت، دورهٔ ضبط‌شده و کلاس زنده تکی یا گروهی، ثبت‌نام و پرداخت دانشجو در یک پنل. ۱۴ روز رایگان، بدون کارمزد از فروش.",
     keywords: IR_KEYWORDS_CORE,
     navLabel: "صفحه اصلی",
   },
@@ -60,7 +72,7 @@ const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     navLabel: "نمونه آکادمی‌ها",
   },
   "/pricing": {
-    title: "تعرفه و پلن‌های منتوما | قیمت اشتراک",
+    title: "تعرفه و پلن‌های منتوما | قیمت اشتراک آموزشگاه",
     description:
       "تعرفه منتوما: ۱۴ روز رایگان بدون کارت بانکی، بعد پلن استارتر، رشد یا بیزینس. بدون کارمزد از فروش دوره‌ها؛ فروش عمومی در همهٔ پلن‌ها نامحدود است.",
     keywords: [
@@ -103,7 +115,7 @@ const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
 
 const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   "/": {
-    title: "Mentoma | Academy Website & Teaching Platform",
+    title: "Mentoma | Academy Website Platform for Teaching Businesses",
     description:
       "Mentoma is an Academy Operating System for managers: branded site, recorded courses, live classes, enrollment, and payments — with a 14-day free trial and no commission on sales.",
     keywords: COM_KEYWORDS_CORE,
@@ -131,7 +143,7 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     navLabel: "Examples",
   },
   "/pricing": {
-    title: "Mentoma Pricing | Plans & Trial",
+    title: "Mentoma Pricing | Plans & Free Trial",
     description:
       "Mentoma subscription plans with a 14-day free trial, no commission on enrollments, and clear storage limits.",
     keywords: [...COM_KEYWORDS_CORE, "Mentoma pricing", "Mentoma plans"],
@@ -165,7 +177,87 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   },
 };
 
-/** Paths we want Google to treat as brand sitelink candidates (not legal pages). */
+/** Yektanet-style brand sitelink candidates (order = preference). */
+export const PLATFORM_SITELINK_CANDIDATES_IR: PlatformSitelinkCandidate[] = [
+  {
+    id: "pricing",
+    kind: "page",
+    path: "/pricing",
+    label: "تعرفه و پلن‌های منتوما",
+    description: "۱۴ روز رایگان و پلن‌های استارتر، رشد و بیزینس — بدون کارمزد فروش.",
+  },
+  {
+    id: "contact",
+    kind: "page",
+    path: "/contact",
+    label: "تماس با ما",
+    description: "پشتیبانی محصول، مشاوره فروش و همکاری با آموزشگاه‌ها.",
+  },
+  {
+    id: "login",
+    kind: "login",
+    label: "ورود به منتوما",
+    description: "ورود به پنل مدیریت آکادمی منتوما.",
+  },
+  {
+    id: "academies",
+    kind: "page",
+    path: "/academies",
+    label: "نمونه آکادمی‌ها",
+    description: "وبسایت‌های آموزشی واقعی ساخته‌شده با منتوما را ببین.",
+  },
+  {
+    id: "about",
+    kind: "page",
+    path: "/about",
+    label: "درباره منتوما",
+    description: "داستان منتوما و ماموریت ما برای آموزشگاه‌ها.",
+  },
+];
+
+export const PLATFORM_SITELINK_CANDIDATES_COM: PlatformSitelinkCandidate[] = [
+  {
+    id: "pricing",
+    kind: "page",
+    path: "/pricing",
+    label: "Pricing & plans",
+    description: "14-day free trial and clear subscription plans.",
+  },
+  {
+    id: "contact",
+    kind: "page",
+    path: "/contact",
+    label: "Contact us",
+    description: "Support, sales, and academy partnerships.",
+  },
+  {
+    id: "login",
+    kind: "login",
+    label: "Log in to Mentoma",
+    description: "Sign in to your Mentoma academy panel.",
+  },
+  {
+    id: "academies",
+    kind: "page",
+    path: "/academies",
+    label: "Example academies",
+    description: "Browse live academies running on Mentoma.",
+  },
+  {
+    id: "about",
+    kind: "page",
+    path: "/about",
+    label: "About Mentoma",
+    description: "Why we built an Academy Operating System.",
+  },
+];
+
+export const PLATFORM_SITELINK_CANDIDATES =
+  env.appRegion === "IR"
+    ? PLATFORM_SITELINK_CANDIDATES_IR
+    : PLATFORM_SITELINK_CANDIDATES_COM;
+
+/** @deprecated Prefer PLATFORM_SITELINK_CANDIDATES — kept for sitemap callers. */
 export const PLATFORM_SITELINK_PATHS = [
   "/pricing",
   "/academies",
