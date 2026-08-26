@@ -71,7 +71,7 @@ export async function getSeoRequestContext(): Promise<SeoRequestContext> {
   const alternateUrls = {
     faIR: buildCrossMarketUrl(host, pathname, "ir"),
     en: buildCrossMarketUrl(host, pathname, "com"),
-    xDefault: buildCrossMarketUrl(host, pathname, "com"),
+    xDefault: buildCrossMarketUrl(host, pathname, "ir"),
   };
 
   return {

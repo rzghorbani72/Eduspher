@@ -40,7 +40,7 @@ function entry(
       languages: {
         "fa-IR": faIR,
         en,
-        "x-default": en,
+        "x-default": faIR,
       },
     },
   };
