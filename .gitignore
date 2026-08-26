@@ -46,3 +46,6 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 .last-run.json
+
+# Local knowledge-graph cache (lives at monorepo root, not in this app)
+/graphify-out/
