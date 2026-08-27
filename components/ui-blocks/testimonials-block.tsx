@@ -3,7 +3,7 @@ import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { SlotGrid, PlaceholderCard } from "./slot-grid";
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { RichHtml } from "@/components/rich-html";
 
 interface TestimonialsBlockProps {
   id?: string;
@@ -300,13 +300,14 @@ export async function TestimonialsBlock({
             {title}
           </h2>
           {subtitle && (
-            <p
+            <RichHtml
+              as="p"
+              html={subtitle}
               data-scroll-animate="fadeIn"
               data-scroll-delay="0.15"
               data-editable="subtitle"
               data-editable-kind="rich"
               className="mt-3 text-base leading-relaxed text-(--theme-foreground)/60"
-              dangerouslySetInnerHTML={{ __html: subtitle }}
             />
           )}
         </div>

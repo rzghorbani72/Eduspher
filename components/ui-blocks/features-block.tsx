@@ -5,7 +5,7 @@ import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { SlotGrid, PlaceholderCard } from "./slot-grid";
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { RichHtml } from "@/components/rich-html";
 
 interface Stat {
   value: string;
@@ -233,25 +233,27 @@ export async function FeaturesBlock({ id, config }: FeaturesBlockProps) {
           >
             {title}
           </p>
-          <h2
+          <RichHtml
+            as="h2"
+            html={subtitle || title}
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.08"
             data-editable="subtitle"
             data-editable-kind="rich"
             className="text-3xl font-black tracking-tight sm:text-4xl text-(--theme-foreground)"
             style={{ letterSpacing: "-0.025em" }}
-            dangerouslySetInnerHTML={{ __html: subtitle || title }}
           />
         </>
       ) : subtitle ? (
-        <h2
+        <RichHtml
+          as="h2"
+          html={subtitle}
           data-scroll-animate="fadeIn"
           data-scroll-delay="0.05"
           data-editable="subtitle"
           data-editable-kind="rich"
           className="text-3xl font-black tracking-tight sm:text-4xl text-(--theme-foreground)"
           style={{ letterSpacing: "-0.025em" }}
-          dangerouslySetInnerHTML={{ __html: subtitle }}
         />
       ) : null}
     </div>

@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { usePreviewScrollMemory } from "./use-preview-scroll-memory";
 import { applyLiveTheme } from "./apply-live-theme";
 import type { ThemeConfigInput } from "@/lib/theme-apply";
+import { isTrustedPanelOrigin, getPanelPostMessageTarget } from "@/lib/trusted-panel-origin";
+import { sanitizeRichText } from "@/lib/sanitize";
 
 const HOVER = "me-hover";
 const SELECTED = "me-selected";
@@ -72,7 +74,7 @@ function showBlockToolbar(blockEl: HTMLElement) {
       e.stopPropagation();
       window.parent?.postMessage(
         { source: "template-editor", type: "block-action", blockId, action },
-        "*",
+        getPanelPostMessageTarget(),
       );
     });
     bar.appendChild(btn);
@@ -180,7 +182,7 @@ function attachRemovableRestoreButtons(
           fieldKey: flagKey,
           restore: true,
         },
-        "*",
+        getPanelPostMessageTarget(),
       );
     });
   });
@@ -225,7 +227,7 @@ function attachRemovableButtons(root: ParentNode = document) {
       if (!blockId) return;
       window.parent?.postMessage(
         { source: "template-editor", type: "toggle-removable", blockId, fieldKey: flagKey, restore: false },
-        "*",
+        getPanelPostMessageTarget(),
       );
     });
     el.addEventListener("mouseenter", () => { btn.style.opacity = "1"; });
@@ -314,7 +316,7 @@ function buildToolbar(target: HTMLElement, blockId: string): HTMLElement {
           fieldKey: accentField,
           value: colorInput.value,
         },
-        "*",
+        getPanelPostMessageTarget(),
       );
     });
     bar.appendChild(colorInput);
@@ -439,7 +441,7 @@ export function PreviewEditBridge() {
       if (value !== original) {
         window.parent?.postMessage(
           { source: "template-editor", type: "field-update", blockId, fieldKey, value },
-          "*",
+          getPanelPostMessageTarget(),
         );
       }
 
@@ -576,7 +578,7 @@ export function PreviewEditBridge() {
         blockEl.classList.add(SELECTED);
         showBlockToolbar(blockEl);
         window.parent?.postMessage(
-          { source: "template-editor", type: "select", blockId }, "*",
+          { source: "template-editor", type: "select", blockId }, getPanelPostMessageTarget(),
         );
         showLiveToast(e.clientX, e.clientY);
         return;
@@ -588,7 +590,7 @@ export function PreviewEditBridge() {
       blockEl.classList.add(SELECTED);
       showBlockToolbar(blockEl);
       window.parent?.postMessage(
-        { source: "template-editor", type: "select", blockId }, "*",
+        { source: "template-editor", type: "select", blockId }, getPanelPostMessageTarget(),
       );
     };
 
@@ -608,6 +610,8 @@ export function PreviewEditBridge() {
     // ── postMessage from AdminPanel ───────────────────────────────────────────
 
     const onMessage = (e: MessageEvent) => {
+      if (!isTrustedPanelOrigin(e.origin)) return;
+
       const data = e.data as {
         source?: string; type?: string;
         blockId?: string; fieldKey?: string; value?: string;
@@ -624,7 +628,7 @@ export function PreviewEditBridge() {
       const requestReload = () => {
         window.parent?.postMessage(
           { source: "template-editor", type: "needs-reload" },
-          "*",
+          getPanelPostMessageTarget(),
         );
       };
 
@@ -694,8 +698,11 @@ export function PreviewEditBridge() {
           // an image — all rendered server-side. Only a rebuild can show it.
           requestReload();
         } else if (el !== activeEdit?.el) {
-          if (el.dataset.editableKind === "rich") el.innerHTML = data.value ?? "";
-          else                                    el.innerText  = data.value ?? "";
+          if (el.dataset.editableKind === "rich") {
+            el.innerHTML = sanitizeRichText(data.value ?? "");
+          } else {
+            el.innerText = data.value ?? "";
+          }
         }
       }
     };
@@ -729,7 +736,7 @@ export function PreviewEditBridge() {
             type: "media-error",
             message: `حجم فایل باید کمتر از ${MAX_CANVAS_MEDIA_BYTES / (1024 * 1024)} مگابایت باشد.`,
           },
-          "*",
+          getPanelPostMessageTarget(),
         );
         return;
       }
@@ -746,7 +753,7 @@ export function PreviewEditBridge() {
           mimeType: file.type || "image/jpeg",
           buffer,
         },
-        "*",
+        getPanelPostMessageTarget(),
         [buffer],
       );
     });
@@ -766,7 +773,7 @@ export function PreviewEditBridge() {
     // Announce that the listener above is live. The iframe's `load` event fires
     // before React hydrates, so anything the editor sent then was dropped —
     // this handshake is what makes the selection survive a reload.
-    window.parent?.postMessage({ source: "template-editor", type: "ready" }, "*");
+    window.parent?.postMessage({ source: "template-editor", type: "ready" }, getPanelPostMessageTarget());
 
     return () => {
       document.removeEventListener("mouseover",  onOver);

@@ -1,7 +1,7 @@
 import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
-import type { LanguageCode } from "@/lib/i18n/config";
+import { RichHtml } from "@/components/rich-html";
 
 interface CtaBlockProps {
   id?: string;
@@ -36,11 +36,12 @@ export async function CtaBlock({ id, config }: CtaBlockProps) {
         <h2 data-editable="title" className="mb-[16px] text-[clamp(32px,4vw,48px)] font-extrabold leading-[1.3] text-(--theme-foreground)">
           {title}
         </h2>
-        <p
+        <RichHtml
+          as="p"
+          html={subtitle}
           data-editable="subtitle"
           data-editable-kind="rich"
           className="mb-[36px] text-[15px] leading-[1.85] text-(--theme-muted)"
-          dangerouslySetInnerHTML={{ __html: subtitle }}
         />
         <div className="flex flex-wrap justify-center gap-[12px]">
           <button

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { SlotGrid, PlaceholderCard, SectionEmptyState } from "./slot-grid";
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { RichHtml } from "@/components/rich-html";
 
 interface CoursesBlockProps {
   id?: string;
@@ -109,13 +109,14 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           {title || translate("home.featuredCoursesDescription")}
         </h2>
         {subtitle && (
-          <p
-            data-editable="subtitle"
-            data-editable-kind="rich"
-            className="mt-3 text-base leading-relaxed"
-            style={{ color: 'var(--theme-muted)' }}
-            dangerouslySetInnerHTML={{ __html: subtitle }}
-          />
+            <RichHtml
+              as="p"
+              html={subtitle}
+              data-editable="subtitle"
+              data-editable-kind="rich"
+              className="mt-3 text-base leading-relaxed"
+              style={{ color: 'var(--theme-muted)' }}
+            />
         )}
       </div>
       {!centered && showViewAll && (

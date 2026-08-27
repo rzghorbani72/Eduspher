@@ -1,3 +1,4 @@
+import { RichHtml } from "@/components/rich-html";
 import type { CSSProperties } from "react";
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
@@ -319,13 +320,14 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
                 {title}
               </h1>
               {subtitle && (
-                <p
+                <RichHtml
+                  as="p"
+                  html={subtitle}
                   data-scroll-animate="fadeIn"
                   data-scroll-delay="0.15"
                   data-editable="subtitle"
                   data-editable-kind="rich"
                   className="mt-4 leading-relaxed text-lg sm:text-xl opacity-80"
-                  dangerouslySetInnerHTML={{ __html: subtitle }}
                 />
               )}
               {showCTA && (
@@ -442,13 +444,14 @@ function DefaultHero({ id, config, storeContext }: HeroBlockProps) {
             {title}
           </h1>
           {subtitle && (
-            <p
+            <RichHtml
+              as="p"
+              html={subtitle}
               data-scroll-animate="fadeIn"
               data-scroll-delay="0.15"
               data-editable="subtitle"
               data-editable-kind="rich"
               className="mt-3 leading-relaxed text-lg sm:text-xl opacity-80"
-              dangerouslySetInnerHTML={{ __html: subtitle }}
             />
           )}
           {showCTA && (
