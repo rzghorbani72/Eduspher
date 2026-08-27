@@ -9,6 +9,7 @@ import {
   getRegionFromHostname,
   type MarketRegion,
 } from "./domains";
+import { NOINDEX_PATH_PREFIXES } from "./crawl-policy";
 
 export type SeoRequestContext = {
   host: string;
@@ -25,17 +26,6 @@ export type SeoRequestContext = {
     xDefault: string;
   };
 };
-
-const NOINDEX_PATH_PREFIXES = [
-  "/auth",
-  "/account",
-  "/checkout",
-  "/payment",
-  "/preview",
-  "/learn",
-  "/classes",
-  "/academy-not-found",
-] as const;
 
 export function shouldNoIndexPath(pathname: string): boolean {
   return NOINDEX_PATH_PREFIXES.some(

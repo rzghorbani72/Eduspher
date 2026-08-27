@@ -5,10 +5,11 @@ import { getAcademyContext } from "@/lib/store-context";
 import { getAcademyBySlug } from "@/lib/api/server";
 import { resolveAssetUrl } from "@/lib/utils";
 import { env } from "@/lib/env";
+import { NOINDEX_ROBOTS } from "@/lib/seo/crawl-policy";
 
 /** Auth flows are private — block indexing even if a link leaks. */
 export const metadata: Metadata = {
-  robots: { index: false, follow: false },
+  robots: NOINDEX_ROBOTS,
 };
 
 function resolveLogoUrl(academy: Awaited<ReturnType<typeof getAcademyBySlug>>) {

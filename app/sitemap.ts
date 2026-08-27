@@ -56,7 +56,23 @@ async function platformSitemap(host: string): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
-  const academies = await getAcademiesPublic({ limit: 200 }).catch(() => []);
+  const [academies, articles] = await Promise.all([
+    getAcademiesPublic({ limit: 200 }).catch(() => []),
+    getArticles().catch(() => []),
+  ]);
+
+  for (const article of articles ?? []) {
+    rows.push(
+      entry(host, `/articles/${article.id}`, {
+        priority: 0.65,
+        changeFrequency: "monthly",
+        lastModified: article.published_at
+          ? new Date(article.published_at)
+          : now,
+      }),
+    );
+  }
+
   const region = getRegionFromHostname(host);
   for (const academy of academies) {
     if (!academy.slug) continue;

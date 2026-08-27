@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -6,8 +7,13 @@ import { AccountSidebar } from "@/components/account/account-sidebar";
 import { getProfile } from "@/lib/api/account-server";
 import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
+import { NOINDEX_ROBOTS } from "@/lib/seo/crawl-policy";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  robots: NOINDEX_ROBOTS,
+};
 
 /**
  * The single auth boundary for every /account route.

@@ -9,6 +9,7 @@ import { seoDomains } from "./domains";
 import { getTrustBadge } from "@/lib/api/trust-badge";
 import { ENAMAD_CODE } from "./enamad";
 import { getPlatformPageSeo } from "./platform-pages";
+import { NOINDEX_ROBOTS } from "./crawl-policy";
 import {
   getSeoRequestContext,
   shouldNoIndexPath,
@@ -191,7 +192,7 @@ export async function buildSiteMetadata(
         : undefined,
     ...(enamadCode ? { other: { enamad: enamadCode } } : {}),
     robots: noIndex
-      ? { index: false, follow: false }
+      ? NOINDEX_ROBOTS
       : { index: true, follow: true },
   };
 }
