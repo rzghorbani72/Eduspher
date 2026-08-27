@@ -13,7 +13,6 @@ interface CtaBlockProps {
     ctaSecondary?: string;
     style?: "default" | "creative";
   };
-  language?: LanguageCode;
 }
 
 export async function CtaBlock({ id, config }: CtaBlockProps) {

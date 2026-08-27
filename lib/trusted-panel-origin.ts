@@ -37,5 +37,19 @@ export function getPanelPostMessageTarget(): string {
     return '*';
   }
 
-  return '*';
+  return '';
+}
+
+/** Send a message to the AdminPanel parent; no-op if origin is not configured. */
+export function postMessageToPanel(
+  data: object,
+  transfer?: Transferable[],
+): void {
+  const target = getPanelPostMessageTarget();
+  if (!target) return;
+  if (transfer?.length) {
+    window.parent?.postMessage(data, target, transfer);
+  } else {
+    window.parent?.postMessage(data, target);
+  }
 }

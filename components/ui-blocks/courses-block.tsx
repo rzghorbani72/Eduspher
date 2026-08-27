@@ -8,6 +8,7 @@ import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { SlotGrid, PlaceholderCard, SectionEmptyState } from "./slot-grid";
 import { RichHtml } from "@/components/rich-html";
+import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 
 interface CoursesBlockProps {
   id?: string;

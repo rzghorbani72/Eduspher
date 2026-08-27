@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { usePreviewScrollMemory } from "./use-preview-scroll-memory";
 import { applyLiveTheme } from "./apply-live-theme";
 import type { ThemeConfigInput } from "@/lib/theme-apply";
-import { isTrustedPanelOrigin, getPanelPostMessageTarget } from "@/lib/trusted-panel-origin";
+import { isTrustedPanelOrigin, postMessageToPanel } from "@/lib/trusted-panel-origin";
 import { sanitizeRichText } from "@/lib/sanitize";
 
 const HOVER = "me-hover";
@@ -72,9 +72,8 @@ function showBlockToolbar(blockEl: HTMLElement) {
     btn.addEventListener("mousedown", (e) => e.preventDefault());
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      window.parent?.postMessage(
+      postMessageToPanel(
         { source: "template-editor", type: "block-action", blockId, action },
-        getPanelPostMessageTarget(),
       );
     });
     bar.appendChild(btn);
@@ -174,16 +173,13 @@ function attachRemovableRestoreButtons(
         return;
       }
 
-      window.parent?.postMessage(
-        {
-          source: "template-editor",
-          type: "toggle-removable",
-          blockId,
-          fieldKey: flagKey,
-          restore: true,
-        },
-        getPanelPostMessageTarget(),
-      );
+      postMessageToPanel({
+        source: "template-editor",
+        type: "toggle-removable",
+        blockId,
+        fieldKey: flagKey,
+        restore: true,
+      });
     });
   });
 }
@@ -225,10 +221,13 @@ function attachRemovableButtons(root: ParentNode = document) {
       const blockEl = el.closest<HTMLElement>("[data-block-id]");
       const blockId = blockEl?.dataset.blockId;
       if (!blockId) return;
-      window.parent?.postMessage(
-        { source: "template-editor", type: "toggle-removable", blockId, fieldKey: flagKey, restore: false },
-        getPanelPostMessageTarget(),
-      );
+      postMessageToPanel({
+        source: "template-editor",
+        type: "toggle-removable",
+        blockId,
+        fieldKey: flagKey,
+        restore: false,
+      });
     });
     el.addEventListener("mouseenter", () => { btn.style.opacity = "1"; });
     el.addEventListener("mouseleave", () => { btn.style.opacity = "0"; });
@@ -308,16 +307,13 @@ function buildToolbar(target: HTMLElement, blockId: string): HTMLElement {
     colorInput.addEventListener("mousedown", (e) => e.preventDefault());
     colorInput.addEventListener("input", () => {
       target.style.color = colorInput.value;
-      window.parent?.postMessage(
-        {
-          source: "template-editor",
-          type: "accent-color-update",
-          blockId,
-          fieldKey: accentField,
-          value: colorInput.value,
-        },
-        getPanelPostMessageTarget(),
-      );
+      postMessageToPanel({
+        source: "template-editor",
+        type: "accent-color-update",
+        blockId,
+        fieldKey: accentField,
+        value: colorInput.value,
+      });
     });
     bar.appendChild(colorInput);
   }
@@ -437,12 +433,16 @@ export function PreviewEditBridge() {
       el.removeAttribute("contenteditable");
       el.classList.remove(EDITING);
 
-      const value = isRich ? el.innerHTML : el.innerText.trim();
+    const rawValue = isRich ? el.innerHTML : el.innerText.trim();
+      const value = isRich ? sanitizeRichText(rawValue) : rawValue;
       if (value !== original) {
-        window.parent?.postMessage(
-          { source: "template-editor", type: "field-update", blockId, fieldKey, value },
-          getPanelPostMessageTarget(),
-        );
+        postMessageToPanel({
+          source: "template-editor",
+          type: "field-update",
+          blockId,
+          fieldKey,
+          value,
+        });
       }
 
       // Restore block selection ring
@@ -577,9 +577,7 @@ export function PreviewEditBridge() {
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
         blockEl.classList.add(SELECTED);
         showBlockToolbar(blockEl);
-        window.parent?.postMessage(
-          { source: "template-editor", type: "select", blockId }, getPanelPostMessageTarget(),
-        );
+        postMessageToPanel({ source: "template-editor", type: "select", blockId });
         showLiveToast(e.clientX, e.clientY);
         return;
       }
@@ -589,9 +587,7 @@ export function PreviewEditBridge() {
       blockEl.classList.remove(HOVER);
       blockEl.classList.add(SELECTED);
       showBlockToolbar(blockEl);
-      window.parent?.postMessage(
-        { source: "template-editor", type: "select", blockId }, getPanelPostMessageTarget(),
-      );
+      postMessageToPanel({ source: "template-editor", type: "select", blockId });
     };
 
     // ── Keyboard ──────────────────────────────────────────────────────────────
@@ -626,10 +622,7 @@ export function PreviewEditBridge() {
       // layout prop rendered server-side). Ask for a rebuild rather than
       // silently dropping the change — the same fallback HMR makes.
       const requestReload = () => {
-        window.parent?.postMessage(
-          { source: "template-editor", type: "needs-reload" },
-          getPanelPostMessageTarget(),
-        );
+        postMessageToPanel({ source: "template-editor", type: "needs-reload" });
       };
 
       // Style change — repaint the CSS variables in place, no navigation.
@@ -730,19 +723,16 @@ export function PreviewEditBridge() {
       if (!file || !pending) return;
 
       if (file.size > MAX_CANVAS_MEDIA_BYTES) {
-        window.parent?.postMessage(
-          {
-            source: "template-editor",
-            type: "media-error",
-            message: `حجم فایل باید کمتر از ${MAX_CANVAS_MEDIA_BYTES / (1024 * 1024)} مگابایت باشد.`,
-          },
-          getPanelPostMessageTarget(),
-        );
+        postMessageToPanel({
+          source: "template-editor",
+          type: "media-error",
+          message: `حجم فایل باید کمتر از ${MAX_CANVAS_MEDIA_BYTES / (1024 * 1024)} مگابایت باشد.`,
+        });
         return;
       }
 
       const buffer = await file.arrayBuffer();
-      window.parent?.postMessage(
+      postMessageToPanel(
         {
           source: "template-editor",
           type: "media-file-selected",
@@ -753,7 +743,6 @@ export function PreviewEditBridge() {
           mimeType: file.type || "image/jpeg",
           buffer,
         },
-        getPanelPostMessageTarget(),
         [buffer],
       );
     });
@@ -773,7 +762,7 @@ export function PreviewEditBridge() {
     // Announce that the listener above is live. The iframe's `load` event fires
     // before React hydrates, so anything the editor sent then was dropped —
     // this handshake is what makes the selection survive a reload.
-    window.parent?.postMessage({ source: "template-editor", type: "ready" }, getPanelPostMessageTarget());
+    postMessageToPanel({ source: "template-editor", type: "ready" });
 
     return () => {
       document.removeEventListener("mouseover",  onOver);
