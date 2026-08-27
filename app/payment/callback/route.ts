@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 import { backendApiBaseUrl, env } from "@/lib/env";
+import { buildInternalBackendHeaders } from "@/lib/backend-internal";
 
 /**
  * The one return URL every gateway can be sent to, so checkout never has to know
@@ -54,11 +55,10 @@ const verifyWith = async (
 
   const response = await fetch(`${backendApiBaseUrl}${path}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+    headers: buildInternalBackendHeaders({
       ...(token && { Authorization: `Bearer ${token}` }),
       ...(academyId && { "X-Academy-ID": academyId }),
-    },
+    }),
     body: JSON.stringify(body),
   });
 

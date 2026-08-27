@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { backendApiBaseUrl, env } from '@/lib/env';
+import { buildInternalBackendHeaders } from '@/lib/backend-internal';
 import { cookies } from 'next/headers';
 
 /**
@@ -65,11 +66,10 @@ export async function POST(request: NextRequest) {
 
     const verifyRes = await fetch(`${backendApiBaseUrl}/payments/verify/saman`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+      headers: buildInternalBackendHeaders({
         ...(token && { Authorization: `Bearer ${token}` }),
         ...(academyId && { 'X-Academy-ID': academyId }),
-      },
+      }),
       body: JSON.stringify({ payment_id: resNum, ref_num: refNum }),
     });
 
