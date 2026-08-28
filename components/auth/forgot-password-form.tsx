@@ -29,14 +29,10 @@ import {
   isValidEmail,
   isValidPhoneInput,
 } from "@/lib/auth/identifier-validation";
-import {
-  isPasswordValid,
-  sanitizePasswordInput,
-} from "@/lib/password-utils";
+import { isPasswordValid, sanitizePasswordInput } from "@/lib/password-utils";
 import { PasswordStrength } from "@/components/ui/password-strength";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
-
 
 type Step = "identifier" | "otp" | "password" | "success";
 

@@ -24,6 +24,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { AuthOtpField } from "@/components/auth/auth-otp-field";
 import { RegisterDetailsStep } from "@/components/auth/register-details-step";
 import { useStorePath } from "@/components/providers/store-provider";
+import { safeRedirectPath } from "@/lib/auth/redirect-target";
 import {
   getDefaultCountry,
   getCountryByCode,
@@ -67,11 +68,9 @@ export const RegisterForm = ({
   const searchParams = useSearchParams();
   // Login sends the identifier it could not find, so signup never asks for it twice.
   const prefilledIdentifier = searchParams.get("identifier") ?? "";
-  // Signup does not sign you in, so the page you originally wanted is handed
-  // back to login to complete the round trip.
   const redirectParam = searchParams.get("redirect");
   const prefilledIsEmail = prefilledIdentifier.includes("@");
-  useAuthContext();
+  const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
   const loginHref = buildPath(
     redirectParam
@@ -190,10 +189,7 @@ export const RegisterForm = ({
         cleanPhoneNumber(phoneNumber, selectedCountry),
         selectedCountry,
       );
-      await sendPhoneOtp(
-        fullPhone,
-        OtpType.REGISTER_PHONE_VERIFICATION,
-      );
+      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
       notifyOtpSent(t("auth.otpSentToPhone"), "register-phone-otp");
@@ -244,10 +240,7 @@ export const RegisterForm = ({
     setOtpLoading(true);
     setError(null);
     try {
-      await sendEmailOtp(
-        emailVal,
-        OtpType.REGISTER_EMAIL_VERIFICATION,
-      );
+      await sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION);
       setEmailOtpSent(true);
       emailOtpTimer.start();
       notifyOtpSent(t("auth.otpSentToEmail"), "register-email-otp");
@@ -308,6 +301,44 @@ export const RegisterForm = ({
     }
     setStep("form");
     setError(null);
+  };
+
+  /**
+   * Signup already verified the contact and set the password, so the new
+   * account is signed in here instead of being sent to the login form. If that
+   * call fails the account still exists — fall back to login, not to an error.
+   */
+  const signInNewAccount = async (
+    identifier: string,
+    password: string,
+    academyId?: string,
+  ) => {
+    try {
+      const result = await postJson<{
+        phone_verification_required?: boolean;
+        password_reset_required?: boolean;
+      }>("/auth/public/login", {
+        identifier,
+        password,
+        academy_id: academyId,
+      });
+      // A gate response carries no session, so claiming one here would leave a
+      // "signed in" page whose every request 401s. Login finishes those steps.
+      if (
+        result?.phone_verification_required ||
+        result?.password_reset_required
+      ) {
+        router.replace(loginHref);
+        return;
+      }
+      setAuthenticated(true);
+      const { loadAndMergeCart } = await import("@/app/actions/cart");
+      loadAndMergeCart().catch(() => {});
+      router.replace(safeRedirectPath(redirectParam, buildPath("/account")));
+    } catch {
+      router.replace(loginHref);
+    }
+    router.refresh();
   };
 
   const onFormSubmit = handleSubmit(async (values) => {
@@ -388,10 +419,11 @@ export const RegisterForm = ({
 
       await postJson("/auth/register", userData);
       toast.success(t("auth.registrationSuccess"));
-      setTimeout(() => {
-        router.push(loginHref);
-        router.refresh();
-      }, 2000);
+      await signInNewAccount(
+        userData.phone_number ?? userData.email ?? "",
+        userData.password ?? "",
+        finalAcademyId,
+      );
     } catch (err) {
       setError(
         err instanceof Error ? err.message : t("auth.unableToCreateAccount"),
@@ -402,7 +434,8 @@ export const RegisterForm = ({
     }
   });
 
-  const primarySent = primaryVerificationMethod === "phone" ? phoneOtpSent : emailOtpSent;
+  const primarySent =
+    primaryVerificationMethod === "phone" ? phoneOtpSent : emailOtpSent;
   const primaryVerified =
     primaryVerificationMethod === "phone" ? phoneOtpVerified : emailOtpVerified;
   // The one button carries the step it actually performs: send, verify, continue.
@@ -415,7 +448,9 @@ export const RegisterForm = ({
   const watchedEmail = watch("email");
   const hasEmail = Boolean(watchedEmail && isValidEmail(watchedEmail));
   const identifierValid =
-    primaryVerificationMethod === "phone" ? isValidPhone(phoneNumber) : hasEmail;
+    primaryVerificationMethod === "phone"
+      ? isValidPhone(phoneNumber)
+      : hasEmail;
   // The single button walks send → verify → continue, so each step turns it on
   // only once that step's own input is complete.
   const canSubmitVerification = !primarySent
@@ -479,7 +514,9 @@ export const RegisterForm = ({
                     setValue(
                       "phone_number",
                       getFullPhoneNumber(cleaned, country),
-                      { shouldValidate: isValidPhoneInput(phoneNumber, country) },
+                      {
+                        shouldValidate: isValidPhoneInput(phoneNumber, country),
+                      },
                     );
                   }
                 }}
