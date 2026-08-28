@@ -14,6 +14,7 @@ import {
   verifyPhoneOtp,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
+import { OtpBoxInput } from "@/components/ui/otp-box-input";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 import {
@@ -223,21 +224,13 @@ export const AddContactForm = ({
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="otp">{t("auth.otpVerification")}</Label>
-          <Input
-            id="otp"
-            type="text"
-            placeholder={t("auth.enterOtpCode")}
+          <OtpBoxInput
             value={otp}
-            onChange={(e) =>
-              setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-            }
-            maxLength={6}
-            autoComplete="one-time-code"
-            className={
-              error && error.includes("OTP")
-                ? "border-amber-500 focus:border-amber-500"
-                : ""
-            }
+            onChange={setOtp}
+            disabled={isLoading}
+            onComplete={() => {
+              if (!isLoading) void handleVerifyOtp();
+            }}
           />
         </div>
 

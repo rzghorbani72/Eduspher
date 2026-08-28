@@ -344,6 +344,9 @@ export const ForgotPasswordForm = () => {
               value={formData.otp}
               onChange={(value) => handleInputChange("otp", value)}
               disabled={isLoading}
+              onComplete={() => {
+                if (!isLoading) void handleVerifyOtp();
+              }}
             />
           </div>
 

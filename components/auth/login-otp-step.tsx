@@ -47,6 +47,9 @@ export function LoginOtpStep({ login }: { login: Login }) {
           value={login.otp}
           onChange={login.setOtp}
           disabled={login.pending}
+          onComplete={() => {
+            if (!login.pending) login.submitOtp();
+          }}
         />
 
         <div className="auth-otp-resend">

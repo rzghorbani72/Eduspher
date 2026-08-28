@@ -87,6 +87,9 @@ export function AuthOtpField({
         value={value}
         onChange={onChange}
         disabled={loading}
+        onComplete={() => {
+          if (!loading) onVerify();
+        }}
       />
 
       <div className="auth-otp-resend">

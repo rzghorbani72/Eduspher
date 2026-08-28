@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { useLocaleDigits } from "@/hooks/use-locale-digits";
 import { toEnglishDigits } from "@/lib/phone-utils";
@@ -13,6 +13,8 @@ interface OtpBoxInputProps {
   disabled?: boolean;
   autoFocus?: boolean;
   className?: string;
+  /** Fired once the last box is filled, so the code submits without a click. */
+  onComplete?: (code: string) => void;
 }
 
 /**
@@ -26,11 +28,23 @@ export function OtpBoxInput({
   disabled,
   autoFocus = true,
   className,
+  onComplete,
 }: OtpBoxInputProps) {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const localeDigits = useLocaleDigits();
+  const firedRef = useRef<string | null>(null);
 
   const digits = Array.from({ length }, (_, i) => value[i] ?? "");
+
+  useEffect(() => {
+    if (value.length < length || disabled) {
+      if (value.length < length) firedRef.current = null;
+      return;
+    }
+    if (firedRef.current === value) return;
+    firedRef.current = value;
+    onComplete?.(value);
+  }, [value, length, disabled, onComplete]);
 
   function handleChange(index: number, raw: string) {
     const digit = toEnglishDigits(raw).replace(/\D/g, "").slice(-1);
