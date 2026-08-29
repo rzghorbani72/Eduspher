@@ -53,10 +53,16 @@ export async function generateMetadata({
   ]);
   if (!course) return { title: "404" };
 
+  // The author's own search metadata wins; the course copy is the fallback.
+  const title = course.meta_title?.trim() || course.title;
   const description = truncate(
-    course.short_description || course.description || course.title,
+    course.meta_description?.trim() ||
+      course.short_description ||
+      course.description ||
+      course.title,
     160,
   );
+  const keywords = course.keywords ?? [];
 
   // Course cover first; the academy's share image only when the course has none.
   const shareImage =
@@ -64,19 +70,20 @@ export async function generateMetadata({
     (await getAcademyShareImageUrl());
 
   return {
-    title: course.title,
+    title,
     description,
+    ...(keywords.length > 0 ? { keywords } : {}),
     alternates: { canonical: ctx.canonicalUrl },
     openGraph: {
       type: "article",
-      title: course.title,
+      title,
       description,
       url: ctx.canonicalUrl,
       ...(shareImage ? { images: [shareImage] } : {}),
     },
     twitter: {
       card: "summary_large_image",
-      title: course.title,
+      title,
       description,
       ...(shareImage ? { images: [shareImage] } : {}),
     },

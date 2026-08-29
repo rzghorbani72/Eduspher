@@ -106,6 +106,10 @@ export interface CourseSummary {
   title: string;
   short_description?: string | null;
   description?: string | null;
+  /** Author-written search metadata; empty falls back to title/description. */
+  meta_title?: string | null;
+  meta_description?: string | null;
+  keywords?: string[] | null;
   slug: string;
   price: number;
   original_price?: number | null;

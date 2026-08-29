@@ -36,7 +36,11 @@ export function buildCourseJsonLd({
     "@context": "https://schema.org",
     "@type": "Course",
     name: course.title,
-    description: course.short_description || course.description || course.title,
+    description:
+      course.meta_description?.trim() ||
+      course.short_description ||
+      course.description ||
+      course.title,
     url: canonicalUrl,
     inLanguage: course.language ?? "fa",
     provider: {
@@ -52,6 +56,7 @@ export function buildCourseJsonLd({
     },
   };
 
+  if (course.keywords?.length) jsonLd.keywords = course.keywords.join(", ");
   if (imageUrl) jsonLd.image = imageUrl;
   if (course.author?.display_name) {
     jsonLd.author = { "@type": "Person", name: course.author.display_name };
