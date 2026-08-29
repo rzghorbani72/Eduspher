@@ -12,11 +12,11 @@ import {
   acceptPlatformLegalDocuments,
   getLegalAcceptanceDiff,
   getLegalAcceptanceStatus,
-  logout,
   type LegalDocumentDiff,
   type LegalPendingDocument,
 } from "@/lib/api/client";
 import { logger } from "@/lib/logging/app-logger";
+import { signOut } from "@/lib/sign-out";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 const DOCUMENT_LINKS: Record<string, string> = {
@@ -82,8 +82,7 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
 
   async function handleDecline() {
     setSigningOut(true);
-    await logout().catch(() => undefined);
-    window.location.href = buildPath("/auth/login");
+    await signOut(buildPath("/auth/login"));
   }
 
   if (!pending?.length) {

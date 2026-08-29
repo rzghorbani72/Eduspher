@@ -298,7 +298,8 @@ export const postJson = async <T>(
       path.includes("/auth/staff/login") ||
       path.includes("/auth/admin/login") ||
       path.includes("/auth/register") ||
-      path.includes("/auth/refresh");
+      path.includes("/auth/refresh") ||
+      path.includes("/auth/logout");
 
     return handleResponse<T>(
       response,

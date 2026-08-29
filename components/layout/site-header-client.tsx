@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "@/components/ui/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { usePathname } from "next/navigation";
 
 import { CircleUser, Menu, X } from "lucide-react";
 
-import { logout } from "@/app/actions/auth";
+import { signOut } from "@/lib/sign-out";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import {
@@ -33,7 +32,6 @@ export function SiteHeaderClient({
   isPanelRoot,
   requestHost,
 }: SiteHeaderClientProps) {
-  const router = useRouter();
   const { isAuthenticated, setAuthenticated } = useAuthContext();
   const { name: storeName, slug: storeSlug } = useAcademyContext();
   const pathname = usePathname();
@@ -42,7 +40,6 @@ export function SiteHeaderClient({
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [pending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const adminLoginUrl = getAdminPanelUrl("/login", requestHost);
 
@@ -69,23 +66,10 @@ export function SiteHeaderClient({
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   const handleLogout = () => {
-    setError(null);
     startTransition(async () => {
-      try {
-        const result = await logout();
-        if (result.success) {
-          setAuthenticated(false);
-          closeMobile();
-          router.push(buildPath("/"));
-          router.refresh();
-        } else {
-          setError(result.error || t("auth.unableToLogout"));
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("auth.unableToLogout"));
-        router.push(buildPath("/"));
-        router.refresh();
-      }
+      setAuthenticated(false);
+      closeMobile();
+      await signOut(buildPath("/"));
     });
   };
 
@@ -284,11 +268,6 @@ export function SiteHeaderClient({
               )}
             </div>
           </div>
-        </div>
-      ) : null}
-      {error ? (
-        <div className="border-t border-amber-200 bg-amber-50 px-6 py-2 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-200">
-          {error}
         </div>
       ) : null}
     </header>
