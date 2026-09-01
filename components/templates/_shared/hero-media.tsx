@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { resolveAssetUrl } from '@/lib/utils';
+import { HeroVideoSlot, resolveHeroVideoUrl } from './hero-video-slot';
 import type { SectionConfig } from './types';
 
 export function resolveHeroMediaUrl(
@@ -36,6 +37,24 @@ export function HeroVisualSlot({
   mode?: HeroMediaMode;
 }) {
   const url = resolveHeroMediaUrl(config, mediaKey);
+  const videoUrl = resolveHeroVideoUrl(config);
+
+  // A hero video takes the visual's place in the same frame. `fill` hands the
+  // whole slot over; `background` keeps the decorative children on top and
+  // plays the video behind them, exactly where the photo would have been.
+  if (videoUrl && mode === 'fill') {
+    return (
+      <HeroVideoSlot config={config} className={className} poster={url} />
+    );
+  }
+  if (videoUrl) {
+    return (
+      <div className={`relative overflow-hidden ${className ?? ''}`}>
+        <HeroVideoSlot config={config} className="absolute inset-0" poster={url} />
+        <div className="relative">{children}</div>
+      </div>
+    );
+  }
 
   if (mode === 'fill' && url) {
     return (

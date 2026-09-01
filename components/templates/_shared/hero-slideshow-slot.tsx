@@ -1,51 +1,10 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { resolveHeroMediaUrl } from './hero-media';
+import { resolveBoxStyle } from './hero-box';
+import { HeroVideoSlot, resolveHeroVideoUrl } from './hero-video-slot';
 import type { SectionConfig } from './types';
-
-export const MEDIA_HEIGHT_BOUNDS = { min: 120, max: 720 } as const;
-
-/**
- * Selectable box shapes: the common web banner/slider ratios, plus portrait for
- * phone-shaped artwork. `free` falls back to the height slider / template default.
- */
-export const MEDIA_RATIOS = [
-  'free',
-  '3:1',
-  '21:9',
-  '16:9',
-  '4:3',
-  '1:1',
-  '9:16',
-] as const;
-export type MediaRatio = (typeof MEDIA_RATIOS)[number];
-
-/** Owner-set slot height in px, clamped so a bad stored value cannot break the layout. */
-function clampMediaHeight(value: unknown): number | null {
-  if (typeof value !== 'number' || !Number.isFinite(value)) return null;
-  return Math.min(MEDIA_HEIGHT_BOUNDS.max, Math.max(MEDIA_HEIGHT_BOUNDS.min, value));
-}
-
-function readMediaRatio(value: unknown): MediaRatio | null {
-  return typeof value === 'string' && (MEDIA_RATIOS as readonly string[]).includes(value) && value !== 'free'
-    ? (value as MediaRatio)
-    : null;
-}
-
-/**
- * Box shape. A ratio wins over the pixel height and clears the template's own
- * `min-h-*`, so the box keeps that shape at every screen width instead of
- * being floored at the template's minimum.
- */
-function resolveBoxStyle(config?: SectionConfig): CSSProperties | undefined {
-  const ratio = readMediaRatio(config?.mediaRatio);
-  if (ratio) {
-    return { aspectRatio: ratio.replace(':', ' / '), minHeight: 0, height: 'auto' };
-  }
-  const height = clampMediaHeight(config?.mediaHeight);
-  return height ? { minHeight: height, height } : undefined;
-}
 
 /**
  * Multi-image hero visual — same canvas photo-upload wiring as `HeroVisualSlot`
@@ -80,12 +39,23 @@ export function HeroSlideshowSlot({
   // manager removing an upload) never leaves `active` pointing past the end.
   const active = urls.length > 0 ? rawActive % urls.length : 0;
   const boxStyle = resolveBoxStyle(config);
+  // A configured hero video replaces the photo slideshow in the same frame:
+  // one media slot per hero, the owner picks which kind it shows.
+  const hasVideo = !!resolveHeroVideoUrl(config);
 
   useEffect(() => {
     if (urls.length < 2) return;
     const id = setInterval(() => setActive((i) => (i + 1) % urls.length), intervalMs);
     return () => clearInterval(id);
   }, [urls.length, intervalMs]);
+
+  if (hasVideo) {
+    return (
+      <HeroVideoSlot config={config} className={className} poster={urls[0]}>
+        {children}
+      </HeroVideoSlot>
+    );
+  }
 
   return (
     // The upload target is the root, not the image layer: the preview canvas
