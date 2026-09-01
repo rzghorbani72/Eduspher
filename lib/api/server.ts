@@ -189,8 +189,12 @@ const baseFetch = async (
   // hashes the request headers into the fetch cache key, so two academies can
   // never collide on one entry. Tags are additionally academy-scoped below so a
   // mutation in one academy cannot revalidate another's cache.
+  // `revalidate: 0` is an explicit opt-out: a caller uses it for anonymous GETs
+  // whose answer is per-request work-in-progress (the site-builder draft
+  // preview), where a cached response would hide the edit that was just made.
   const method = (init.method ?? "GET").toUpperCase();
-  const isCacheable = includeAuth === false && method === "GET";
+  const isCacheable =
+    includeAuth === false && method === "GET" && revalidate !== 0;
   const scopeHeaders = new Headers(headers);
   const academyTagScope =
     scopeHeaders.get("X-Academy-Slug") ??
@@ -1300,8 +1304,13 @@ export async function getPreviewPreset(
     const path = qs
       ? `/ui-template/preset/${encodeURIComponent(key)}?${qs}`
       : `/ui-template/preset/${encodeURIComponent(key)}`;
+    // Never cached: this renders the academy's unsaved draft inside the site
+    // builder, so a 60s cache entry would both hide live edits and pin a
+    // one-off failure (e.g. an expired preview token) for everyone reloading
+    // the canvas.
     const result = await serverFetchRaw<{ data: PreviewPreset | null }>(path, {
       includeAuth: false,
+      revalidate: 0,
     });
     const preset = result?.data ?? null;
     if (preset?.blocks) {
