@@ -1,15 +1,50 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { resolveHeroMediaUrl } from './hero-media';
 import type { SectionConfig } from './types';
 
 export const MEDIA_HEIGHT_BOUNDS = { min: 120, max: 720 } as const;
 
+/**
+ * Selectable box shapes: the common web banner/slider ratios, plus portrait for
+ * phone-shaped artwork. `free` falls back to the height slider / template default.
+ */
+export const MEDIA_RATIOS = [
+  'free',
+  '3:1',
+  '21:9',
+  '16:9',
+  '4:3',
+  '1:1',
+  '9:16',
+] as const;
+export type MediaRatio = (typeof MEDIA_RATIOS)[number];
+
 /** Owner-set slot height in px, clamped so a bad stored value cannot break the layout. */
 function clampMediaHeight(value: unknown): number | null {
   if (typeof value !== 'number' || !Number.isFinite(value)) return null;
   return Math.min(MEDIA_HEIGHT_BOUNDS.max, Math.max(MEDIA_HEIGHT_BOUNDS.min, value));
+}
+
+function readMediaRatio(value: unknown): MediaRatio | null {
+  return typeof value === 'string' && (MEDIA_RATIOS as readonly string[]).includes(value) && value !== 'free'
+    ? (value as MediaRatio)
+    : null;
+}
+
+/**
+ * Box shape. A ratio wins over the pixel height and clears the template's own
+ * `min-h-*`, so the box keeps that shape at every screen width instead of
+ * being floored at the template's minimum.
+ */
+function resolveBoxStyle(config?: SectionConfig): CSSProperties | undefined {
+  const ratio = readMediaRatio(config?.mediaRatio);
+  if (ratio) {
+    return { aspectRatio: ratio.replace(':', ' / '), minHeight: 0, height: 'auto' };
+  }
+  const height = clampMediaHeight(config?.mediaHeight);
+  return height ? { minHeight: height, height } : undefined;
 }
 
 /**
@@ -44,10 +79,7 @@ export function HeroSlideshowSlot({
   // Derived instead of clamped in an effect: a shrinking slide count (a
   // manager removing an upload) never leaves `active` pointing past the end.
   const active = urls.length > 0 ? rawActive % urls.length : 0;
-  // Owner-set box height. The template's own `min-h-*` is the default; this
-  // overrides it in place, so the box keeps its width and only grows or shrinks
-  // vertically — the photo always covers it instead of resizing it.
-  const height = clampMediaHeight(config?.mediaHeight);
+  const boxStyle = resolveBoxStyle(config);
 
   useEffect(() => {
     if (urls.length < 2) return;
@@ -63,7 +95,7 @@ export function HeroSlideshowSlot({
     <div
       className={`relative overflow-hidden ${className}`}
       data-media-editable={primaryKey}
-      style={height ? { minHeight: height, height } : undefined}
+      style={boxStyle}
     >
       {urls.length > 0 ? (
         // Absolute, not `h-full`: callers size this slot with `min-h-*`, and a
