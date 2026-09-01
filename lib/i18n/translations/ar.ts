@@ -832,6 +832,9 @@ export const ar = {
     pricingTitle: "بسيط وشفاف",
     pricingSubtitle:
       "اختر الخطة المناسبة لأهداف تعلمك. رقِّ أو ألغِ في أي وقت.",
+    // videos
+    videosTitle: "فيديوهات الأكاديمية",
+    videosSubtitle: "مقدمات قصيرة عن دوراتنا وصفوفنا ومساحتنا التعليمية.",
     // projects
     projectsTitle: "مشاريع الطلاب",
     projectsSubtitle:

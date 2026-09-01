@@ -13,6 +13,7 @@ import { PricingBlock } from "./pricing-block";
 import { CtaBlock } from "./cta-block";
 import { CategoriesBlock } from "./categories-block";
 import { ProjectsBlock } from "./projects-block";
+import { VideosBlock } from "./videos-block";
 import { resolveTemplateSection } from "@/components/templates/registry";
 
 interface BlocksRendererProps {
@@ -107,6 +108,8 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
               return <CategoriesBlock key={block.id} id={block.id} config={block.config} />;
             case "projects":
               return <ProjectsBlock key={block.id} id={block.id} config={block.config} />;
+            case "videos":
+              return <VideosBlock key={block.id} id={block.id} config={block.config} />;
             case "sidebar":
               return <SidebarBlockServer key={block.id} id={block.id} config={block.config} />;
             default:

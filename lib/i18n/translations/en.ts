@@ -1266,6 +1266,10 @@ export const en = {
     pricingTitle: "Simple & Transparent",
     pricingSubtitle:
       "Choose a plan that fits your learning goals. Upgrade or cancel anytime.",
+    // videos
+    videosTitle: "Academy Videos",
+    videosSubtitle:
+      "Short introductions to our courses, classes and learning space.",
     // projects
     projectsTitle: "Student Projects",
     projectsSubtitle:

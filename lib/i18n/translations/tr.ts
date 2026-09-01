@@ -854,6 +854,10 @@ export const tr = {
     pricingTitle: "Basit ve Şeffaf",
     pricingSubtitle:
       "Öğrenme hedeflerinize uygun planı seçin. İstediğiniz zaman yükseltin veya iptal edin.",
+    // videos
+    videosTitle: "Akademi Videoları",
+    videosSubtitle:
+      "Kurslarımız, derslerimiz ve öğrenme alanımıza dair kısa tanıtımlar.",
     // projects
     projectsTitle: "Öğrenci Projeleri",
     projectsSubtitle:

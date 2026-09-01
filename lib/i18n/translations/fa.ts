@@ -1258,6 +1258,10 @@ export const fa = {
     pricingTitle: "ساده و شفاف",
     pricingSubtitle:
       "طرحی متناسب با اهداف یادگیری خودت انتخاب کن. هر زمان ارتقا یا لغو کن.",
+    // videos
+    videosTitle: "ویدیوهای آکادمی",
+    videosSubtitle:
+      "معرفی کوتاه دوره‌ها، کلاس‌ها و فضای آموزشی ما را تماشا کنید.",
     // projects
     projectsTitle: "پروژه‌های دانشجویان",
     projectsSubtitle:
