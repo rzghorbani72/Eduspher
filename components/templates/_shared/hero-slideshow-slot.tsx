@@ -46,7 +46,10 @@ export function HeroSlideshowSlot({
   return (
     <div className={`relative overflow-hidden ${className}`}>
       {urls.length > 0 ? (
-        <div className="relative h-full w-full" data-media-editable={primaryKey}>
+        // Absolute, not `h-full`: callers size this slot with `min-h-*`, and a
+        // percentage height never resolves against a min-height, so the layer
+        // collapsed to 0 and every uploaded slide was invisible.
+        <div className="absolute inset-0" data-media-editable={primaryKey}>
           {urls.map((url, i) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
