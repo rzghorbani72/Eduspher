@@ -1142,6 +1142,15 @@ export const en = {
     resetFilters: "Reset filters",
   },
   articles: {
+    blogTitle: "Blog",
+    blogHeading: "Insights & stories",
+    blogIntro:
+      "Guides, updates and stories from our teachers and students.",
+    emptyTitle: "Articles coming soon",
+    emptyDescription:
+      "New stories and guides are on the way. Check back shortly.",
+    readArticle: "Read article",
+    justPublished: "Just published",
     learningInsights: "Learning insights",
     fullArticleComingSoon: "Full article coming soon",
     fullArticleDescription:

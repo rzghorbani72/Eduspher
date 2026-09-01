@@ -209,7 +209,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   "academy-not-found",
   // Academy-scoped routes
   "account",
-  "articles",
+  "blog",
   "bundles",
   "checkout",
   "courses",
@@ -235,7 +235,7 @@ const PLATFORM_PATHS = new Set([
   "",
   "/about",
   "/academies",
-  "/articles",
+  "/blog",
   "/career",
   "/contact",
   "/courses",
@@ -252,7 +252,7 @@ const protectedRoutes = ["/account", "/learn"];
 const publicRoutes = [
   "/",
   "/courses",
-  "/articles",
+  "/blog",
   "/about",
   "/auth/login",
   "/auth/register",
@@ -437,7 +437,9 @@ const refreshSession = async (
     if (response.ok) {
       const setCookies = response.headers.getSetCookie();
       const jwt = readSetCookieValue(setCookies, "jwt");
-      return jwt ? { status: "refreshed", jwt, setCookies } : { status: "invalid" };
+      return jwt
+        ? { status: "refreshed", jwt, setCookies }
+        : { status: "invalid" };
     }
 
     // Only an explicit rejection means the refresh token is dead. A 5xx or a

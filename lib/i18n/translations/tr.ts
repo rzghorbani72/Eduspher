@@ -728,6 +728,14 @@ export const tr = {
     resetFilters: "Filtreleri sıfırla",
   },
   articles: {
+    blogTitle: "Blog",
+    blogHeading: "Yazılar ve hikâyeler",
+    blogIntro:
+      "Öğretmenlerimizden ve öğrencilerimizden rehberler, haberler ve hikâyeler.",
+    emptyTitle: "Yazılar çok yakında",
+    emptyDescription: "Yeni hikâye ve rehberler yolda. Kısa süre sonra bakın.",
+    readArticle: "Yazıyı oku",
+    justPublished: "Yeni yayınlandı",
     learningInsights: "Öğrenme içgörüleri",
     fullArticleComingSoon: "Tam makale yakında",
     fullArticleDescription:

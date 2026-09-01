@@ -1134,6 +1134,13 @@ export const fa = {
     resetFilters: "بازنشانی فیلترها",
   },
   articles: {
+    blogTitle: "بلاگ",
+    blogHeading: "مقاله‌ها و تجربه‌ها",
+    blogIntro: "راهنماها، اخبار و تجربه‌های مدرسان و دانشجویان ما.",
+    emptyTitle: "به‌زودی مقاله منتشر می‌شود",
+    emptyDescription: "مقاله‌ها و راهنماهای تازه در راه است. کمی بعد سر بزنید.",
+    readArticle: "خواندن مقاله",
+    justPublished: "به‌تازگی منتشر شد",
     learningInsights: "بینش‌های یادگیری",
     fullArticleComingSoon: "مقاله کامل به زودی",
     fullArticleDescription:

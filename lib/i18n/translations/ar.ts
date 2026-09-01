@@ -711,6 +711,13 @@ export const ar = {
     resetFilters: "إعادة تعيين المرشحات",
   },
   articles: {
+    blogTitle: "المدونة",
+    blogHeading: "مقالات وقصص",
+    blogIntro: "أدلة وأخبار وقصص من معلمينا وطلابنا.",
+    emptyTitle: "المقالات قريبًا",
+    emptyDescription: "قصص وأدلة جديدة في الطريق. عد إلينا قريبًا.",
+    readArticle: "قراءة المقال",
+    justPublished: "نُشر للتو",
     learningInsights: "رؤى التعلم",
     fullArticleComingSoon: "المقال الكامل قريباً",
     fullArticleDescription:

@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 
 import {
   getAcademiesPublic,
-  getArticles,
+  getBlogArticles,
   getCourses,
 } from "@/lib/api/server";
 import { env } from "@/lib/env";
@@ -58,12 +58,12 @@ async function platformSitemap(host: string): Promise<MetadataRoute.Sitemap> {
 
   const [academies, articles] = await Promise.all([
     getAcademiesPublic({ limit: 200 }).catch(() => []),
-    getArticles().catch(() => []),
+    getBlogArticles().catch(() => []),
   ]);
 
   for (const article of articles ?? []) {
     rows.push(
-      entry(host, `/articles/${article.id}`, {
+      entry(host, `/blog/${article.slug}`, {
         priority: 0.65,
         changeFrequency: "monthly",
         lastModified: article.published_at
@@ -88,16 +88,23 @@ async function platformSitemap(host: string): Promise<MetadataRoute.Sitemap> {
   return rows;
 }
 
-async function academySitemap(host: string): Promise<MetadataRoute.Sitemap> {
+async function academySitemap(
+  host: string,
+  academySlug: string | null,
+): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const rows: MetadataRoute.Sitemap = [
-    entry(host, "/", { priority: 1, changeFrequency: "weekly", lastModified: now }),
+    entry(host, "/", {
+      priority: 1,
+      changeFrequency: "weekly",
+      lastModified: now,
+    }),
     entry(host, "/courses", {
       priority: 0.9,
       changeFrequency: "daily",
       lastModified: now,
     }),
-    entry(host, "/articles", {
+    entry(host, "/blog", {
       priority: 0.7,
       changeFrequency: "weekly",
       lastModified: now,
@@ -126,7 +133,7 @@ async function academySitemap(host: string): Promise<MetadataRoute.Sitemap> {
 
   const [coursePayload, articles] = await Promise.all([
     getCourses({ limit: 200, published: true }).catch(() => null),
-    getArticles().catch(() => []),
+    getBlogArticles(academySlug).catch(() => []),
   ]);
 
   for (const course of coursePayload?.courses ?? []) {
@@ -141,7 +148,7 @@ async function academySitemap(host: string): Promise<MetadataRoute.Sitemap> {
 
   for (const article of articles ?? []) {
     rows.push(
-      entry(host, `/articles/${article.id}`, {
+      entry(host, `/blog/${article.slug}`, {
         priority: 0.65,
         changeFrequency: "monthly",
         lastModified: article.published_at
@@ -161,8 +168,7 @@ async function academySitemap(host: string): Promise<MetadataRoute.Sitemap> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const headerStore = await headers();
   const host =
-    headerStore.get("host")?.split(":")[0] ??
-    new URL(env.appUrl).hostname;
+    headerStore.get("host")?.split(":")[0] ?? new URL(env.appUrl).hostname;
   const isPlatform = headerStore.get("x-panel-root") === "1";
   const isAcademyHost =
     headerStore.get("x-academy-subdomain") === "1" ||
@@ -172,5 +178,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return platformSitemap(host);
   }
 
-  return academySitemap(host);
+  return academySitemap(host, headerStore.get("x-academy-slug"));
 }

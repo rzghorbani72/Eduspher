@@ -352,9 +352,15 @@ export async function getCategories(): Promise<CategorySummary[]> {
   }
 }
 
-export async function getArticles() {
-  const result = await serverFetch<ArticleSummary[]>("/articles", {
+/**
+ * The blog of one academy, or of the platform when `academySlug` is omitted.
+ * The scope must be explicit: the backend reads only this parameter, so a
+ * missing tenant can never widen the query to every academy's posts.
+ */
+export async function getBlogArticles(academySlug?: string | null) {
+  const result = await serverFetch<ArticleSummary[]>("/blog", {
     includeAuth: false,
+    query: academySlug ? { academy_slug: academySlug } : undefined,
   });
   return result.data;
 }
@@ -437,10 +443,17 @@ export async function getPublicLesson(id: string) {
   return result?.data ?? null;
 }
 
-export async function getArticleById(id: string | number) {
-  const result = await serverFetch<ArticleSummary>(`/articles/${id}`, {
-    includeAuth: false,
-  });
+export async function getBlogArticleBySlug(
+  slug: string,
+  academySlug?: string | null,
+) {
+  const result = await serverFetch<ArticleSummary>(
+    `/blog/${encodeURIComponent(slug)}`,
+    {
+      includeAuth: false,
+      query: academySlug ? { academy_slug: academySlug } : undefined,
+    },
+  );
   return result.data;
 }
 

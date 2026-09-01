@@ -3,7 +3,7 @@ import Link from "@/components/ui/link";
 import { BookOpen } from "lucide-react";
 
 import {
-  getArticles,
+  getBlogArticles,
   getCategories,
   getCourses,
   getCurrentUser,
@@ -42,7 +42,7 @@ export async function AcademyHomePage() {
     publicAcademy,
   ] = await Promise.all([
     getCategories().catch(() => []),
-    getArticles().catch(() => []),
+    getBlogArticles(storeContext.slug).catch(() => []),
     getCourses({ limit: 6, published: true, is_featured: true } as Parameters<
       typeof getCourses
     >[0]).catch(() => null),
@@ -664,7 +664,7 @@ export async function AcademyHomePage() {
                 </h2>
               </div>
               <Link
-                href={buildPath("/articles")}
+                href={buildPath("/blog")}
                 className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
                 style={{ color: "var(--theme-primary)" }}
               >
@@ -730,7 +730,7 @@ export async function AcademyHomePage() {
                         {truncate(description, 120)}
                       </p>
                       <Link
-                        href={buildPath(`/articles/${article.id}`)}
+                        href={buildPath(`/blog/${article.slug}`)}
                         className="group/link inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200"
                         style={{ color: "var(--theme-primary)" }}
                       >

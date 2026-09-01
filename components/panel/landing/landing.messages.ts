@@ -318,7 +318,7 @@ export const LANDING = {
         links: [
           { href: "/about", label: "درباره ما" },
           { href: "/contact", label: "تماس با ما" },
-          { href: "/articles", label: "وبلاگ" },
+          { href: "/blog", label: "وبلاگ" },
         ],
       },
       {

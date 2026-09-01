@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import {
-  getArticleById,
+  getBlogArticleBySlug,
   getAcademyBySlug,
   getCurrentAcademy,
 } from "@/lib/api/server";
@@ -22,20 +22,31 @@ import { buildAbsoluteUrl, seoDomains } from "@/lib/seo/domains";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
 
 type PageParams = Promise<{
-  id: string;
+  slug: string;
 }>;
+
+/** Platform posts have no academy; an academy's own posts are read in its scope. */
+async function resolveAcademySlug(): Promise<string | null> {
+  const [storeContext, ctx] = await Promise.all([
+    getAcademyContext(),
+    getSeoRequestContext(),
+  ]);
+  return ctx.isPlatform ? null : storeContext.slug;
+}
 
 export async function generateMetadata({
   params,
 }: {
   params: PageParams;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
+  const academySlug = await resolveAcademySlug();
   const [article, ctx] = await Promise.all([
-    getArticleById(id).catch(() => null),
+    getBlogArticleBySlug(slug, academySlug).catch(() => null),
     getSeoRequestContext(),
   ]);
-  if (!article) return { title: "404", robots: { index: false, follow: false } };
+  if (!article)
+    return { title: "404", robots: { index: false, follow: false } };
 
   const description = truncate(
     article.meta_description ||
@@ -61,17 +72,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function ArticleDetailPage({
+export default async function BlogArticlePage({
   params,
 }: {
   params: PageParams;
 }) {
-  const { id } = await params;
-  const [article, storeContext, ctx] = await Promise.all([
-    getArticleById(id).catch(() => null),
+  const { slug } = await params;
+  const [storeContext, ctx] = await Promise.all([
     getAcademyContext(),
     getSeoRequestContext(),
   ]);
+  const academySlug = ctx.isPlatform ? null : storeContext.slug;
+  const article = await getBlogArticleBySlug(slug, academySlug).catch(
+    () => null,
+  );
+
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
@@ -79,9 +94,13 @@ export default async function ArticleDetailPage({
     return notFound();
   }
 
-  let currentAcademy = await getCurrentAcademy().catch(() => null);
-  if (!currentAcademy && storeContext.slug) {
-    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
+  let currentAcademy = ctx.isPlatform
+    ? null
+    : await getCurrentAcademy().catch(() => null);
+  if (!currentAcademy && !ctx.isPlatform && storeContext.slug) {
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(
+      () => null,
+    );
   }
   const language = getAcademyLanguage(
     currentAcademy?.language || null,
@@ -96,8 +115,6 @@ export default async function ArticleDetailPage({
     ? new Date(article.published_at).toLocaleDateString()
     : "";
 
-  const articlesLabel =
-    language === "fa" ? "مقالات" : "Articles";
   const articleLd = buildArticleJsonLd({
     article,
     canonicalUrl: ctx.canonicalUrl,
@@ -107,8 +124,8 @@ export default async function ArticleDetailPage({
   const breadcrumbLd = buildBreadcrumbJsonLd([
     { name: siteName, url: buildAbsoluteUrl(ctx.host, "/") },
     {
-      name: articlesLabel,
-      url: buildAbsoluteUrl(ctx.host, buildPath("/articles")),
+      name: translate("articles.blogTitle"),
+      url: buildAbsoluteUrl(ctx.host, buildPath("/blog")),
     },
     { name: article.title, url: ctx.canonicalUrl },
   ]);

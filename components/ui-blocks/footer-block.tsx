@@ -41,7 +41,7 @@ function getFooterLinks(publishedPages: ReadonlySet<string>) {
       title: t("footer.company"),
       items: [
         { label: t("footer.about"), href: "/about" },
-        { label: t("footer.blog"), href: "/articles" },
+        { label: t("footer.blog"), href: "/blog" },
         { label: t("footer.careers"), href: "/careers" },
         { label: t("footer.press"), href: "/press" },
       ],
@@ -358,7 +358,7 @@ const CREATIVE_FOOTER_COLS = [
     title: "شرکت",
     items: [
       { label: "درباره ما", href: "/about" },
-      { label: "وبلاگ", href: "/articles" },
+      { label: "وبلاگ", href: "/blog" },
       { label: "استخدام", href: "/about" },
       { label: "مطبوعات", href: "/about" },
     ],

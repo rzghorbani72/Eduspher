@@ -39,7 +39,7 @@ export const SiteFooter = async () => {
       title: translate("footer.company"),
       items: [
         { label: translate("footer.about"), href: "/about" },
-        { label: translate("footer.blog"), href: "/articles" },
+        { label: translate("footer.blog"), href: "/blog" },
         { label: translate("footer.contact"), href: "/contact" },
       ],
     },

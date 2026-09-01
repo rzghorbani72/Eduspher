@@ -84,7 +84,7 @@ const IR_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     ],
     navLabel: "تعرفه و پلن‌ها",
   },
-  "/articles": {
+  "/blog": {
     title: "وبلاگ منتوما | آموزش ساخت و رشد آکادمی آنلاین",
     description:
       "راهنماهای منتوما برای ساخت وبسایت آموزشی، فروش دوره، کلاس زنده و مدیریت دانشجو — از راه‌اندازی تا رشد.",
@@ -149,7 +149,7 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
     keywords: [...COM_KEYWORDS_CORE, "Mentoma pricing", "Mentoma plans"],
     navLabel: "Pricing",
   },
-  "/articles": {
+  "/blog": {
     title: "Mentoma Blog | Grow Your Online Academy",
     description:
       "Guides on building and growing an online teaching business: your website, course sales, live classes, and student ops.",
@@ -158,7 +158,8 @@ const COM_PLATFORM_PAGES: Record<string, PlatformPageSeo> = {
   },
   "/privacy": {
     title: "Mentoma Privacy Policy",
-    description: "How Mentoma collects and uses data to run the academy platform.",
+    description:
+      "How Mentoma collects and uses data to run the academy platform.",
     keywords: ["Mentoma privacy"],
     navLabel: "Privacy",
   },
@@ -184,7 +185,8 @@ export const PLATFORM_SITELINK_CANDIDATES_IR: PlatformSitelinkCandidate[] = [
     kind: "page",
     path: "/pricing",
     label: "تعرفه و پلن‌های منتوما",
-    description: "۱۴ روز رایگان و پلن‌های استارتر، رشد و بیزینس — بدون کارمزد فروش.",
+    description:
+      "۱۴ روز رایگان و پلن‌های استارتر، رشد و بیزینس — بدون کارمزد فروش.",
   },
   {
     id: "contact",
@@ -263,7 +265,7 @@ export const PLATFORM_SITELINK_PATHS = [
   "/academies",
   "/about",
   "/contact",
-  "/articles",
+  "/blog",
 ] as const;
 
 export const PLATFORM_SITEMAP_PATHS = [
@@ -275,7 +277,7 @@ export const PLATFORM_SITEMAP_PATHS = [
   "/privacy",
   "/terms",
   "/refund",
-  "/articles",
+  "/blog",
 ] as const;
 
 const SITEMAP_PRIORITY: Record<string, number> = {
@@ -284,7 +286,7 @@ const SITEMAP_PRIORITY: Record<string, number> = {
   "/academies": 0.85,
   "/about": 0.8,
   "/contact": 0.8,
-  "/articles": 0.7,
+  "/blog": 0.7,
   "/privacy": 0.3,
   "/terms": 0.3,
   "/refund": 0.3,
