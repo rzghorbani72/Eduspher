@@ -4,6 +4,7 @@ import { cache } from "react";
 import { cookies, headers as nextHeaders } from "next/headers";
 
 import { getBackendApiBaseUrl, env } from "@/lib/env";
+import { logger } from "@/lib/logging/app-logger";
 import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
 
 /**
@@ -1313,11 +1314,27 @@ export async function getPreviewPreset(
       revalidate: 0,
     });
     const preset = result?.data ?? null;
+    // The canvas can only render "No preview available" when this comes back
+    // thin, so say WHY here — otherwise a blank site builder has no trace at all.
+    if (!preset?.blocks?.length) {
+      logger.warn("SitePreview", "PresetEmpty", {
+        template_key: key,
+        draft: draft ? 1 : 0,
+        has_token: previewToken ? 1 : 0,
+        has_preset: preset ? 1 : 0,
+      });
+    }
     if (preset?.blocks) {
       preset.blocks = [...preset.blocks].sort((a, b) => a.order - b.order);
     }
     return preset;
-  } catch {
+  } catch (error) {
+    logger.error("SitePreview", "PresetFetchFailed", {
+      template_key: key,
+      draft: draft ? 1 : 0,
+      has_token: previewToken ? 1 : 0,
+      error_message: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
