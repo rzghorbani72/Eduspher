@@ -139,10 +139,30 @@ function attachMediaUploadButtons(
       requestPick({ blockId, fieldKey });
     });
     slot.addEventListener("mouseenter", () => { btn.style.opacity = "1"; });
-    slot.addEventListener("mouseleave", () => { btn.style.opacity = "0"; });
+    slot.addEventListener("mouseleave", () => {
+      if (btn.dataset.uploading !== "1") btn.style.opacity = "0";
+    });
     if (getComputedStyle(slot).position === "static") slot.style.position = "relative";
     slot.appendChild(btn);
   });
+}
+
+/**
+ * Upload feedback on the button itself. While it runs the button stays visible
+ * (it normally only appears on hover) and counts up, so the canvas never looks
+ * like the click did nothing.
+ */
+function setMediaButtonUploading(
+  btn: HTMLButtonElement,
+  uploading: boolean,
+  percent: number,
+) {
+  btn.disabled = uploading;
+  btn.dataset.uploading = uploading ? "1" : "";
+  btn.style.opacity = uploading ? "1" : "0";
+  btn.style.cursor = uploading ? "default" : "pointer";
+  btn.style.fontSize = uploading ? "12px" : "18px";
+  btn.textContent = uploading ? `${Math.round(percent)}%` : "\u2191";
 }
 
 function attachRemovableRestoreButtons(
@@ -614,6 +634,7 @@ export function PreviewEditBridge() {
         visible?: boolean; scroll?: boolean;
         theme?: ThemeConfigInput; direction?: "ltr" | "rtl";
         order?: string[];
+        uploading?: boolean; percent?: number;
       };
       if (!data || data.source !== "template-admin") return;
 
@@ -679,6 +700,16 @@ export function PreviewEditBridge() {
         } else {
           el.style.display = data.visible ? "" : "none";
         }
+      }
+
+      // The panel runs the upload; the button the user pressed is in here, so
+      // it is what has to show the progress.
+      if (data.type === "media-uploading" && data.blockId && data.fieldKey) {
+        const slot = document.querySelector<HTMLElement>(
+          `[data-block-id="${data.blockId}"] [data-media-editable="${data.fieldKey}"]`,
+        );
+        const btn = slot?.querySelector<HTMLButtonElement>(`.${MEDIA_BTN_CLASS}`);
+        if (btn) setMediaButtonUploading(btn, data.uploading === true, data.percent ?? 0);
       }
 
       // Sidebar-driven field sync (keeps preview text in sync with any sidebar controls)

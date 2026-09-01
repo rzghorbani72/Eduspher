@@ -4,6 +4,14 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { resolveHeroMediaUrl } from './hero-media';
 import type { SectionConfig } from './types';
 
+export const MEDIA_HEIGHT_BOUNDS = { min: 120, max: 720 } as const;
+
+/** Owner-set slot height in px, clamped so a bad stored value cannot break the layout. */
+function clampMediaHeight(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return null;
+  return Math.min(MEDIA_HEIGHT_BOUNDS.max, Math.max(MEDIA_HEIGHT_BOUNDS.min, value));
+}
+
 /**
  * Multi-image hero visual — same canvas photo-upload wiring as `HeroVisualSlot`
  * (each slide is its own `data-media-editable` target, so the existing iframe
@@ -36,6 +44,10 @@ export function HeroSlideshowSlot({
   // Derived instead of clamped in an effect: a shrinking slide count (a
   // manager removing an upload) never leaves `active` pointing past the end.
   const active = urls.length > 0 ? rawActive % urls.length : 0;
+  // Owner-set box height. The template's own `min-h-*` is the default; this
+  // overrides it in place, so the box keeps its width and only grows or shrinks
+  // vertically — the photo always covers it instead of resizing it.
+  const height = clampMediaHeight(config?.mediaHeight);
 
   useEffect(() => {
     if (urls.length < 2) return;
@@ -44,12 +56,19 @@ export function HeroSlideshowSlot({
   }, [urls.length, intervalMs]);
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    // The upload target is the root, not the image layer: the preview canvas
+    // injects `[data-media-editable] { position: relative }`, which would undo
+    // the layer's `absolute` and collapse it to zero height (the root is
+    // `relative` already, so the same rule is a no-op here).
+    <div
+      className={`relative overflow-hidden ${className}`}
+      data-media-editable={primaryKey}
+      style={height ? { minHeight: height, height } : undefined}
+    >
       {urls.length > 0 ? (
         // Absolute, not `h-full`: callers size this slot with `min-h-*`, and a
-        // percentage height never resolves against a min-height, so the layer
-        // collapsed to 0 and every uploaded slide was invisible.
-        <div className="absolute inset-0" data-media-editable={primaryKey}>
+        // percentage height never resolves against a min-height.
+        <div className="absolute inset-0">
           {urls.map((url, i) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -73,7 +92,7 @@ export function HeroSlideshowSlot({
           )}
         </div>
       ) : (
-        <div data-media-editable={primaryKey} className="flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full items-center justify-center">
           {children}
         </div>
       )}
