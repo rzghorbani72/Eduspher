@@ -40,7 +40,7 @@ export const PhoneInput = ({
   inputClassName,
   id,
   autoComplete = "tel",
-  placeholder = "9120001234",
+  placeholder = "0912 *** ** **",
   disabled = false,
   lockCountryCode,
 }: PhoneInputProps) => {
