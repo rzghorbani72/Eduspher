@@ -46,6 +46,7 @@ export function LiveLesson({ lessonId }: LiveLessonProps) {
     : new Intl.DateTimeFormat(language, {
         dateStyle: "full",
         timeStyle: "short",
+        hourCycle: "h23",
         timeZone: data.timezone || undefined,
       }).format(startsAt);
 

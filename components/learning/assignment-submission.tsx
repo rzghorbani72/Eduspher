@@ -54,6 +54,7 @@ export function AssignmentSubmissionForm({
     ? new Intl.DateTimeFormat(language, {
         dateStyle: "medium",
         timeStyle: "short",
+        hourCycle: "h23",
       }).format(new Date(assignment.due_date))
     : null;
 

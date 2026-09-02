@@ -43,12 +43,14 @@ export const formatDateTime = (
     return new Intl.DateTimeFormat(localeOf(language), {
       dateStyle: "medium",
       timeStyle: "short",
+      hourCycle: "h23",
       timeZone: timezone || undefined,
     }).format(date);
   } catch {
     return new Intl.DateTimeFormat(localeOf(language), {
       dateStyle: "medium",
       timeStyle: "short",
+      hourCycle: "h23",
     }).format(date);
   }
 };

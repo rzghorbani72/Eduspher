@@ -25,6 +25,7 @@ function formatRange(
   const opts: Intl.DateTimeFormatOptions = {
     dateStyle: "medium",
     timeStyle: "short",
+    hourCycle: "h23",
     timeZone: timezone || undefined,
   };
   try {

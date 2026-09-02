@@ -334,7 +334,9 @@ export const formatDate = (
   const locale = language === "fa" ? "fa-IR" : language;
   return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
-    ...(withTime ? { timeStyle: "short" as const } : {}),
+    ...(withTime
+      ? { timeStyle: "short" as const, hourCycle: "h23" as const }
+      : {}),
   }).format(date);
 };
 
