@@ -50,6 +50,7 @@ const isUnauthorizedError = (error: unknown): boolean => {
   return error instanceof Error && /401/.test(error.message);
 };
 
+import type { CertificateVerification } from "@/lib/api/account-types";
 import type { PublicActiveDiscount } from "@/lib/discounts/format-active-discount";
 import type {
   ApiEnvelope,
@@ -428,6 +429,19 @@ export async function getPublicCourseDetail(id: string) {
   const result = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
     includeAuth: false,
   }).catch(() => null);
+  return result?.data ?? null;
+}
+
+/**
+ * Public certificate check. Anyone holding the number — an employer, a parent —
+ * can confirm it without an account, which is the only thing that makes a
+ * certificate worth printing.
+ */
+export async function verifyCertificate(certificateNumber: string) {
+  const result = await serverFetch<CertificateVerification>(
+    `/certificates/verify/${encodeURIComponent(certificateNumber)}`,
+    { includeAuth: false },
+  ).catch(() => null);
   return result?.data ?? null;
 }
 

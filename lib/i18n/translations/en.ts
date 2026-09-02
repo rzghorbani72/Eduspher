@@ -650,7 +650,21 @@ export const en = {
     verifyAndContinue: "Verify and continue",
     resending: "Resending...",
   },
+  certificate: {
+    title: "Certificate of completion",
+    awardedTo: "This certificate is awarded to",
+    forCompleting: "for completing the course",
+    number: "Certificate number",
+    issuedAt: "Issued on",
+    valid: "Valid",
+    revoked: "Revoked",
+    printHint: "Use your browser's print option to save this as a PDF.",
+  },
   account: {
+    certificates: "Certificates",
+    certificatesDescription: "The course certificates you have earned.",
+    noCertificates: "You have no certificates yet.",
+    viewCertificate: "View certificate",
     groupClasses: "Group classes",
     groupWaitingToStart: "Waiting to start",
     groupWaitingExplain: "This class starts once this many more students join:",
@@ -1146,8 +1160,7 @@ export const en = {
   articles: {
     blogTitle: "Blog",
     blogHeading: "Insights & stories",
-    blogIntro:
-      "Guides, updates and stories from our teachers and students.",
+    blogIntro: "Guides, updates and stories from our teachers and students.",
     emptyTitle: "Articles coming soon",
     emptyDescription:
       "New stories and guides are on the way. Check back shortly.",

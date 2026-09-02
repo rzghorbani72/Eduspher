@@ -324,3 +324,19 @@ export type TutoringGroupRoom = MyTutoringGroup & {
   group_thread_parent: string;
   private_thread_parent: string | null;
 };
+
+export type StudentCertificate = {
+  id: string;
+  certificate_number: string;
+  issued_at: string;
+  Course: { id: string; title: string; slug: string | null } | null;
+};
+
+export type CertificateVerification = {
+  certificate_number: string;
+  issued_at: string;
+  is_valid: boolean;
+  student_name: string | null;
+  course_title: string | null;
+  academy_name: string | null;
+};

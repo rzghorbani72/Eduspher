@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  Award,
   BadgeCheck,
   BookOpenCheck,
   Bell,
@@ -56,6 +57,11 @@ const NAV_SECTIONS = [
         icon: ClipboardList,
       },
       { segment: "/results", labelKey: "account.results", icon: CheckCircle2 },
+      {
+        segment: "/certificates",
+        labelKey: "account.certificates",
+        icon: Award,
+      },
       {
         segment: "/classes",
         labelKey: "account.myClasses",

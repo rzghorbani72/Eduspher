@@ -13,6 +13,7 @@ import type {
   PaymentReceipt,
   PaymentSummary,
   QuizAttemptSummary,
+  StudentCertificate,
   SubmissionSummary,
 } from "@/lib/api/account-types";
 
@@ -65,6 +66,13 @@ export const getSubmissions = () =>
       "/assignments/submissions",
     );
     return result.data?.submissions ?? [];
+  }, []);
+
+export const getMyCertificates = () =>
+  safe<StudentCertificate[]>(async () => {
+    const result =
+      await serverFetch<StudentCertificate[]>("/certificates/mine");
+    return result.data ?? [];
   }, []);
 
 export const getQuizAttempt = (attemptId: string) =>

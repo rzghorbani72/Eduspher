@@ -648,7 +648,21 @@ export const fa = {
     verifyAndContinue: "تأیید و ادامه",
     resending: "در حال ارسال...",
   },
+  certificate: {
+    title: "گواهی پایان دوره",
+    awardedTo: "این گواهی به",
+    forCompleting: "برای گذراندن کامل دورهٔ",
+    number: "شمارهٔ گواهی",
+    issuedAt: "تاریخ صدور",
+    valid: "معتبر",
+    revoked: "باطل‌شده",
+    printHint: "برای گرفتن نسخهٔ PDF، از گزینهٔ چاپ مرورگر استفاده کنید.",
+  },
   account: {
+    certificates: "گواهی‌نامه‌ها",
+    certificatesDescription: "گواهی‌های پایان دوره‌ای که گرفته‌اید.",
+    noCertificates: "هنوز گواهی‌نامه‌ای ندارید.",
+    viewCertificate: "دیدن گواهی",
     groupClasses: "کلاس‌های گروهی",
     groupWaitingToStart: "در انتظار شروع",
     groupWaitingExplain:
