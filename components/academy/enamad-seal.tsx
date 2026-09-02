@@ -1,6 +1,8 @@
 /**
  * Official eNamad trustseal widget. The image and link must stay on
  * trustseal.enamad.ir — a local copy would fail their domain check.
+ * No `rel` here on purpose: `noreferrer` would strip the Referer header
+ * that eNamad uses to verify the seal is served from our domain.
  */
 export function EnamadSeal({
   sealId,
@@ -18,7 +20,6 @@ export function EnamadSeal({
     <a
       referrerPolicy="origin"
       target="_blank"
-      rel="noopener noreferrer"
       href={href}
     >
       {/* eNamad requires a plain img with referrerPolicy=origin, not next/image. */}
