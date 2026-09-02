@@ -57,10 +57,15 @@ export type InitiateCheckoutResult =
 /**
  * Saman SEP POSTs back to the callback; every other gateway GETs back, and a
  * POST to a GET-only page would be rejected — hence two return URLs.
+ *
+ * Saman also registers ONE callback URL per merchant, so an academy on its own
+ * hostname cannot be the return address: the SEP callback is pinned to the
+ * platform origin (exactly the URL registered with the bank, no query string),
+ * and the callback route sends the buyer back to their academy afterwards.
  */
 const callbackFor = (origin: string, provider?: string) =>
   provider === "SAMAN_SEP"
-    ? `${origin}/payment/saman-callback`
+    ? `${env.appUrl}/payment/saman-callback`
     : `${origin}/payment/callback`;
 
 export const initiateCheckout = async (
