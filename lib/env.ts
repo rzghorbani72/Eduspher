@@ -44,7 +44,7 @@ export const env = {
   siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? "منتوما",
   siteDescription:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
-    "منتوما پلتفرم ساخت وبسایت و آکادمی آموزشی — دورهٔ ضبط‌شده، کلاس زنده، ثبت‌نام و پرداخت دانشجو، همه از یک سایت اختصاصی.",
+    "منتوما پلتفرم ساخت وبسایت و آکادمی آموزشی — دورهٔ ضبط‌شده، کلاس آنلاین (زنده)، ثبت‌نام و پرداخت دانشجو، همه از یک سایت اختصاصی.",
   appUrl: normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:5000"),
   irDomain: normalizeBaseUrl(
     process.env.NEXT_PUBLIC_IR_DOMAIN ?? "https://mentoma.ir"

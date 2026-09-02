@@ -46,7 +46,7 @@ export const CONTACT = {
     { value: "BILLING", label: "پلن و صورتحساب" },
     { value: "PAYMENT", label: "پرداخت" },
     { value: "COURSE_ACCESS", label: "دسترسی به دوره" },
-    { value: "LIVE_CLASS", label: "کلاس زنده" },
+    { value: "LIVE_CLASS", label: "کلاس آنلاین (زنده)" },
     { value: "CONTENT", label: "محتوا" },
     { value: "OTHER", label: "سایر موارد" },
   ],
