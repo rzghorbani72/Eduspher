@@ -236,17 +236,19 @@ export type MyTutoringGroupSession = {
   Materials?: SessionMaterial[];
 };
 
-/** A file the teacher left behind after one meeting. */
+/** A handout or helper video the teacher left alongside one meeting. */
 export type SessionMaterial = {
   id: string;
   title: string;
   order: number;
-  Document: {
-    id: string;
-    publicUrl: string | null;
-    mime_type: string | null;
-    size: number | null;
-  } | null;
+  kind: "DOCUMENT" | "VIDEO";
+  /** Resolved on the server: a video that may not be saved is signed. */
+  url: string | null;
+  can_download: boolean;
+  mime_type: string | null;
+  size: number | null;
+  duration: number | null;
+  poster_url: string | null;
 };
 
 export type SessionRecording = {

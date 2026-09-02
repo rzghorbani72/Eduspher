@@ -940,6 +940,7 @@ export const en = {
     tabRecordings: "After class",
     noRecordings: "Nothing has been posted after class yet.",
     materials: "Files from this class",
+    helperVideo: "Helper video",
     noAssignments: "No homework has been set for this class yet.",
     hasRecording: "Has a recording",
     tabSessions: "Sessions",

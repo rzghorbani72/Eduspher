@@ -937,6 +937,7 @@ export const fa = {
     tabRecordings: "بعد از کلاس",
     noRecordings: "هنوز چیزی بعد از کلاس گذاشته نشده است.",
     materials: "فایل‌های این جلسه",
+    helperVideo: "ویدیوی کمک‌آموزشی",
     noAssignments: "هنوز تکلیفی برای این کلاس ثبت نشده است.",
     hasRecording: "ویدیوی ضبط‌شده دارد",
     tabSessions: "جلسات",

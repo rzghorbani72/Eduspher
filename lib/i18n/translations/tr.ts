@@ -574,6 +574,7 @@ export const tr = {
     tabRecordings: "Ders sonrası",
     noRecordings: "Ders sonrası henüz bir şey paylaşılmadı.",
     materials: "Bu dersin dosyaları",
+    helperVideo: "Yardımcı video",
     noAssignments: "Bu ders için henüz ödev verilmedi.",
     hasRecording: "Kaydı var",
     tabSessions: "Oturumlar",

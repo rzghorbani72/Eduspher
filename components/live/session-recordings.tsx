@@ -36,6 +36,12 @@ export function SessionRecordings({
       {recorded.map((session) => {
         const recording = session.recording;
         const materials = session.Materials ?? [];
+        const helperVideos = materials.filter(
+          (material) => material.kind === "VIDEO",
+        );
+        const files = materials.filter(
+          (material) => material.kind === "DOCUMENT",
+        );
         const title = session.title ?? session.Topic?.title ?? fallbackTitle;
         return (
           <section key={session.id} className="space-y-2">
@@ -56,14 +62,29 @@ export function SessionRecordings({
                 onHeartbeat={() => undefined}
               />
             ) : null}
-            {materials.length ? (
+            {helperVideos.map((video) =>
+              video.url ? (
+                <div key={video.id} className="space-y-1">
+                  <p className="text-xs text-muted">{t("live.helperVideo")}</p>
+                  <VideoLesson
+                    title={video.title}
+                    source={video.url}
+                    downloadUrl={video.can_download ? video.url : null}
+                    canDownload={video.can_download}
+                    initialPosition={0}
+                    onHeartbeat={() => undefined}
+                  />
+                </div>
+              ) : null,
+            )}
+            {files.length ? (
               <ul className="space-y-1">
                 <li className="text-xs text-muted">{t("live.materials")}</li>
-                {materials.map((material) =>
-                  material.Document?.publicUrl ? (
+                {files.map((material) =>
+                  material.url ? (
                     <li key={material.id}>
                       <a
-                        href={material.Document.publicUrl}
+                        href={material.url}
                         target="_blank"
                         rel="noreferrer"
                         className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm hover:bg-surface"

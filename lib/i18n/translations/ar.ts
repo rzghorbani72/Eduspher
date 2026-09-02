@@ -558,6 +558,7 @@ export const ar = {
     tabRecordings: "بعد الحصة",
     noRecordings: "لم يُنشر شيء بعد الحصة بعد.",
     materials: "ملفات هذه الحصة",
+    helperVideo: "فيديو مساعد",
     noAssignments: "لم يُحدَّد أي واجب لهذا الصف بعد.",
     hasRecording: "يحتوي تسجيلًا",
     tabSessions: "الجلسات",
