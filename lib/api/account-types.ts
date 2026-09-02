@@ -232,6 +232,21 @@ export type MyTutoringGroupSession = {
   Lesson?: { id: string; title: string } | null;
   /** Null until the teacher uploads the video of this meeting. */
   recording?: SessionRecording | null;
+  /** Handouts the teacher shared after this meeting. */
+  Materials?: SessionMaterial[];
+};
+
+/** A file the teacher left behind after one meeting. */
+export type SessionMaterial = {
+  id: string;
+  title: string;
+  order: number;
+  Document: {
+    id: string;
+    publicUrl: string | null;
+    mime_type: string | null;
+    size: number | null;
+  } | null;
 };
 
 export type SessionRecording = {
