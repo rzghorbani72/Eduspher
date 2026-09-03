@@ -1,0 +1,127 @@
+/* ── Template motion ─────────────────────────────────────────────────────────
+   Makes every template feel alive without a single line of JavaScript: the
+   motion is scroll-driven CSS (`animation-timeline`), so the storefront stays
+   fully server-rendered and adds no client bundle.
+
+   Three layers:
+     1. sections ease in as they enter the viewport,
+     2. their cards follow in a short cascade instead of arriving as one slab,
+     3. pointer feedback (lift, image zoom) on the things a visitor can click.
+
+   Hover uses the independent `translate` / `scale` properties on purpose — the
+   reveal owns `transform`, and the two compose instead of cancelling.
+
+   Browsers without `animation-timeline` render the finished state, so nothing
+   is ever hidden by an animation that cannot run. */
+
+@keyframes tpl-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Interaction motion needs no timeline support, so it lives outside @supports. */
+.ui-blocks-root > section article {
+  transition:
+    translate 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease;
+}
+
+@media (hover: hover) {
+  .ui-blocks-root > section article:hover {
+    translate: 0 -4px;
+    box-shadow: var(--theme-shadow, 0 12px 28px -12px rgba(0, 0, 0, 0.35));
+  }
+
+  /* The frame stays put and the picture moves inside it. */
+  .ui-blocks-root > section article img {
+    transition: scale 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .ui-blocks-root > section article:hover img {
+    scale: 1.04;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .ui-blocks-root > section {
+    animation: tpl-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+
+  /* Cards settle after their section, each one a little later than the last, so
+     a grid reads as a cascade rather than one block dropping in. */
+  .ui-blocks-root > section :is(article, [data-reveal-item]) {
+    animation: tpl-reveal 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 5% entry 55%;
+  }
+
+  .ui-blocks-root > section :is(article, [data-reveal-item]):nth-child(2) {
+    animation-range: entry 10% entry 60%;
+  }
+
+  .ui-blocks-root > section :is(article, [data-reveal-item]):nth-child(3) {
+    animation-range: entry 15% entry 65%;
+  }
+
+  .ui-blocks-root > section :is(article, [data-reveal-item]):nth-child(4) {
+    animation-range: entry 20% entry 70%;
+  }
+
+  .ui-blocks-root > section :is(article, [data-reveal-item]):nth-child(n + 5) {
+    animation-range: entry 25% entry 75%;
+  }
+
+  /* The bar gains depth only once the page has moved under it. */
+  .ui-blocks-root > header {
+    animation: tpl-header-lift 1ms linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 120px;
+  }
+
+  @keyframes tpl-header-lift {
+    from {
+      box-shadow: 0 0 0 0 transparent;
+    }
+    to {
+      box-shadow: 0 8px 24px -18px rgba(0, 0, 0, 0.65);
+    }
+  }
+}
+
+/* The editor canvas never animates: a section that fades while it is being
+   edited reads as a bug, not as polish. */
+[data-edit-mode] .ui-blocks-root > section,
+[data-edit-mode] .ui-blocks-root > section :is(article, [data-reveal-item]),
+[data-edit-mode] .ui-blocks-root > header {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-blocks-root > section,
+  .ui-blocks-root > section :is(article, [data-reveal-item]),
+  .ui-blocks-root > header {
+    animation: none;
+  }
+
+  .ui-blocks-root > section article,
+  .ui-blocks-root > section article img {
+    transition: none;
+  }
+
+  .ui-blocks-root > section article:hover {
+    translate: none;
+  }
+
+  .ui-blocks-root > section article:hover img {
+    scale: none;
+  }
+}
