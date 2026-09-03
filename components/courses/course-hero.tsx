@@ -4,6 +4,7 @@ import type { CourseSummary } from "@/lib/api/types";
 import type { CourseContentStats } from "@/lib/courses/curriculum";
 import { formatDate, toPersianDigits } from "@/lib/utils";
 import { t } from "@/lib/i18n/server-translations";
+import { isLiveCourse } from "@/lib/courses/live-course";
 import type { LanguageCode } from "@/lib/i18n/config";
 
 interface CourseHeroProps {
@@ -41,6 +42,8 @@ export function CourseHero({
 }: CourseHeroProps) {
   const translate = (key: string) => t(key, language);
   const updatedAt = course.updated_at ?? course.published_at ?? null;
+  // A timetable course is live even when no lesson carries a live session.
+  const isLive = isLiveCourse(course) || stats.liveCount > 0;
 
   return (
     <section className="cd-hero relative overflow-hidden -mt-8 sm:-mt-10 lg:-mt-12">
@@ -66,10 +69,10 @@ export function CourseHero({
         </nav>
 
         <div className="mb-5 flex flex-wrap items-center gap-2.5">
-          {stats.liveCount > 0 && (
+          {isLive && (
             <span className="cd-live-badge flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] font-bold">
               <span className="cd-blink-dot h-2 w-2 rounded-full" />
-              {translate("courses.liveSession")}
+              {translate("courses.liveCourse")}
             </span>
           )}
           {course.difficulty && (

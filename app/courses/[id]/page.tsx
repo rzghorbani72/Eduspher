@@ -28,6 +28,7 @@ import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
 import { getAcademyShareImageUrl } from "@/lib/seo/share-image";
 import { t } from "@/lib/i18n/server-translations";
 import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
+import { isLiveCourse } from "@/lib/courses/live-course";
 import { buildPurchaseOptions } from "@/lib/courses/purchase-options";
 import {
   formatAccessTerm,
@@ -276,6 +277,10 @@ export default async function CourseDetailPage({
                   )}
                 />
               </div>
+            ) : isLiveCourse(course) ? (
+              <p className="mt-10 rounded-2xl border border-dashed border-(--theme-border-color) p-6 text-center text-sm text-muted">
+                {translate("courses.liveNoClassesYet")}
+              </p>
             ) : null}
           </div>
 

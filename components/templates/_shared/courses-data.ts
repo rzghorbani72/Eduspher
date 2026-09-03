@@ -2,6 +2,7 @@ import { getCourses } from '@/lib/api/server';
 import { getAcademyCurrency, type CurrencyConfig } from '@/lib/courses/academy-context';
 import { buildAcademyPath, formatCurrencyWithAcademy, toPersianDigits } from '@/lib/utils';
 import type { CourseSummary } from '@/lib/api/types';
+import { isLiveCourse, seatPriceOf } from '@/lib/courses/live-course';
 import type { TemplateStoreContext } from './types';
 import { withSampleCourses } from './sample-data';
 
@@ -81,6 +82,7 @@ export function toTemplateCourse(
 ): TemplateCourse {
   const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
   const minutes = course.duration ?? null;
+  const seatPrice = seatPriceOf(course);
 
   return {
     id: course.id,
@@ -88,14 +90,19 @@ export function toTemplateCourse(
     href: buildAcademyPath(storeSlug, `/courses/${course.id}`),
     priceLabel: course.is_free
       ? 'رایگان'
-      : toPersianDigits(formatCurrencyWithAcademy(course.price, currencyStore), 'fa'),
+      : isLiveCourse(course)
+        ? seatPrice
+          ? `هر صندلی از ${toPersianDigits(formatCurrencyWithAcademy(seatPrice, currencyStore), 'fa')}`
+          : 'ثبت‌نام با هماهنگی'
+        : toPersianDigits(formatCurrencyWithAcademy(course.price, currencyStore), 'fa'),
     isFree: course.is_free,
     teacherName,
     teacherInitials: initialsOf(teacherName),
     levelLabel: course.difficulty ? (DIFFICULTY_FA[course.difficulty] ?? null) : null,
-    lessonsLabel: course.lessons_count
-      ? `${toPersianDigits(String(course.lessons_count), 'fa')} جلسه`
-      : null,
+    lessonsLabel:
+      course.lessons_count && !isLiveCourse(course)
+        ? `${toPersianDigits(String(course.lessons_count), 'fa')} جلسه`
+        : null,
     durationLabel: formatDurationLabel(minutes),
     ratingLabel: course.rating ? toPersianDigits(course.rating.toFixed(1), 'fa') : null,
     coverUrl: course.Image?.publicUrl ?? null,

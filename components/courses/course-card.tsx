@@ -6,6 +6,7 @@ import { BookOpen, Clock } from "lucide-react";
 import type { CourseSummary } from "@/lib/api/types";
 import { buildAcademyPath, formatCurrencyWithAcademy, hashToIndex, resolveAssetUrl, toPersianDigits } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { isLiveCourse, seatPriceOf } from "@/lib/courses/live-course";
 import { formatMinutes } from "@/components/courses/curriculum/format";
 
 interface CourseCardProps {
@@ -31,6 +32,7 @@ const THUMB_GRADIENTS = [
 ] as const;
 
 const FREE_GREEN = "#10b981";
+const LIVE_RED = "#e11d48";
 
 export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCardProps) => {
   const { t, language } = useTranslation();
@@ -43,15 +45,25 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
   const num = (value: number, opts?: Intl.NumberFormatOptions) =>
     toPersianDigits(value.toLocaleString("en-US", opts), language);
   const durationLabel = formatMinutes(course.duration, language, t) || null;
+  const isLive = isLiveCourse(course);
+  const seatPrice = seatPriceOf(course);
+  const money = (value: number) =>
+    toPersianDigits(formatCurrencyWithAcademy(value, store, undefined, language), language);
+  // A live course sells seats, so its own price column is empty by design.
   const priceLabel = course.is_free
     ? t("courses.free")
-    : toPersianDigits(formatCurrencyWithAcademy(course.price || 0, store, undefined, language), language);
+    : isLive
+      ? seatPrice
+        ? `${t("courses.seatPriceFrom")} ${money(seatPrice)}`
+        : t("courses.priceOnRequest")
+      : money(course.price || 0);
   const studentsLabel =
     course.students_count && course.students_count > 0
       ? `${num(course.students_count)} ${t("courses.students")}`
       : t("courses.beFirstStudent");
 
   const chips = [
+    isLive ? { label: t("courses.liveCourse"), color: LIVE_RED } : null,
     course.is_free ? { label: t("courses.free"), color: FREE_GREEN } : null,
     course.is_certificate ? { label: t("courses.certificate"), color: "#4f8cff" } : null,
     course.is_featured ? { label: t("courses.featured"), color: "#f5a623" } : null,
@@ -123,13 +135,13 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
         </h3>
 
         <div className="mt-auto flex items-center gap-3.5 text-[13px] font-semibold text-(--cc-ink-3)">
-          {course.lessons_count ? (
+          {!isLive && course.lessons_count ? (
             <span className="inline-flex items-center gap-1.5">
               <BookOpen className="h-3.5 w-3.5 shrink-0" />
               {num(course.lessons_count)} {t("courses.lesson")}
             </span>
           ) : null}
-          {durationLabel ? (
+          {!isLive && durationLabel ? (
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-3.5 w-3.5 shrink-0" />
               {durationLabel}

@@ -118,6 +118,10 @@ export interface CourseSummary {
   is_published: boolean;
   is_featured: boolean;
   is_certificate: boolean;
+  /** LIVE = taught live on a timetable; OFFLINE = recorded lessons. */
+  course_type?: "LIVE" | "OFFLINE" | null;
+  /** A live course sells seats, so its price lives on these, not on `price`. */
+  TutoringOffer?: Array<{ kind: "GROUP" | "SOLO"; price: number }> | null;
   pricing_type?: CoursePricingType | null;
   /** null = lifetime access; otherwise access expires this many days after purchase. */
   access_duration_days?: number | null;

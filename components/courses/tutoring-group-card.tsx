@@ -3,7 +3,7 @@
 import { CalendarClock, Users } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatNumber } from "@/lib/utils";
+import { formatDate, formatNumber } from "@/lib/utils";
 import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import type { PublicTutoringGroup } from "@/lib/api/server";
 
@@ -40,6 +40,12 @@ export const TutoringGroupCard = ({
   const waiting = group.status === "WAITING";
   const needed = Math.max(group.min_students - group.seats_taken, 0);
   const empty = group.seats_taken === 0;
+  // A student is buying a term, not just a weekday, so print the real dates.
+  const termLabel = group.starts_on
+    ? group.ends_on
+      ? `${t("courses.groupTerm")}: ${formatDate(group.starts_on, language)} – ${formatDate(group.ends_on, language)}`
+      : `${t("courses.groupStarts")}: ${formatDate(group.starts_on, language)}`
+    : null;
 
   return (
     <article className="space-y-3 rounded-2xl border border-(--theme-border-color) bg-card p-4">
@@ -77,6 +83,12 @@ export const TutoringGroupCard = ({
           );
         })}
       </ul>
+
+      {termLabel ? (
+        <p className="text-xs font-medium text-(--theme-foreground)">
+          {termLabel}
+        </p>
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
         <span className="inline-flex items-center gap-1">
