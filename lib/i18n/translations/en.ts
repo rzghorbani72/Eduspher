@@ -179,6 +179,7 @@ export const en = {
     sec: "sec",
     noVideo: "No video",
     liveCourse: "Live class",
+    liveClassWord: "class",
     recordedCourse: "Recorded",
     seatPriceFrom: "Per seat from",
     priceOnRequest: "Ask to join",

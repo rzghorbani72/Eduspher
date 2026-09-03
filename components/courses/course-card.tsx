@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "@/components/ui/link";
-import { BookOpen, Clock } from "lucide-react";
+import { BookOpen, CalendarClock, Clock } from "lucide-react";
 
 import type { CourseSummary } from "@/lib/api/types";
 import { buildAcademyPath, formatCurrencyWithAcademy, hashToIndex, resolveAssetUrl, toPersianDigits } from "@/lib/utils";
@@ -49,13 +49,13 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
   const seatPrice = seatPriceOf(course);
   const money = (value: number) =>
     toPersianDigits(formatCurrencyWithAcademy(value, store, undefined, language), language);
-  // A live course sells seats, so its own price column is empty by design.
-  const priceLabel = course.is_free
-    ? t("courses.free")
-    : isLive
-      ? seatPrice
-        ? `${t("courses.seatPriceFrom")} ${money(seatPrice)}`
-        : t("courses.priceOnRequest")
+  // A live course sells seats, so its own price and free flag say nothing.
+  const priceLabel = isLive
+    ? seatPrice
+      ? `${t("courses.seatPriceFrom")} ${money(seatPrice)}`
+      : t("courses.priceOnRequest")
+    : course.is_free
+      ? t("courses.free")
       : money(course.price || 0);
   const studentsLabel =
     course.students_count && course.students_count > 0
@@ -64,7 +64,7 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
 
   const chips = [
     isLive ? { label: t("courses.liveCourse"), color: LIVE_RED } : null,
-    course.is_free ? { label: t("courses.free"), color: FREE_GREEN } : null,
+    !isLive && course.is_free ? { label: t("courses.free"), color: FREE_GREEN } : null,
     course.is_certificate ? { label: t("courses.certificate"), color: "#4f8cff" } : null,
     course.is_featured ? { label: t("courses.featured"), color: "#f5a623" } : null,
   ].filter((chip): chip is { label: string; color: string } => chip !== null);
@@ -135,7 +135,14 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
         </h3>
 
         <div className="mt-auto flex items-center gap-3.5 text-[13px] font-semibold text-(--cc-ink-3)">
-          {!isLive && course.lessons_count ? (
+          {isLive ? (
+            course.classes_count ? (
+              <span className="inline-flex items-center gap-1.5">
+                <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+                {num(course.classes_count)} {t("courses.liveClassWord")}
+              </span>
+            ) : null
+          ) : course.lessons_count ? (
             <span className="inline-flex items-center gap-1.5">
               <BookOpen className="h-3.5 w-3.5 shrink-0" />
               {num(course.lessons_count)} {t("courses.lesson")}
@@ -153,7 +160,7 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
           <span className="text-xs font-semibold text-(--cc-ink-3)">{studentsLabel}</span>
           <span
             className="whitespace-nowrap text-[15px] font-black"
-            style={{ color: course.is_free ? FREE_GREEN : "var(--cc-brand)" }}
+            style={{ color: !isLive && course.is_free ? FREE_GREEN : "var(--cc-brand)" }}
           >
             {priceLabel}
           </span>

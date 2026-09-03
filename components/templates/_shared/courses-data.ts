@@ -19,6 +19,8 @@ export interface TemplateCourse {
   href: string;
   priceLabel: string;
   isFree: boolean;
+  /** Taught live on a timetable — the card says so instead of showing lessons. */
+  isLive: boolean;
   teacherName: string | null;
   teacherInitials: string;
   levelLabel: string | null;
@@ -83,27 +85,33 @@ export function toTemplateCourse(
   const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
   const minutes = course.duration ?? null;
   const seatPrice = seatPriceOf(course);
+  const isLive = isLiveCourse(course);
 
   return {
     id: course.id,
     title: course.title,
     href: buildAcademyPath(storeSlug, `/courses/${course.id}`),
-    priceLabel: course.is_free
-      ? 'رایگان'
-      : isLiveCourse(course)
-        ? seatPrice
-          ? `هر صندلی از ${toPersianDigits(formatCurrencyWithAcademy(seatPrice, currencyStore), 'fa')}`
-          : 'ثبت‌نام با هماهنگی'
+    // A live course is priced by the seat, so its own price/free flag says nothing.
+    priceLabel: isLive
+      ? seatPrice
+        ? `هر صندلی از ${toPersianDigits(formatCurrencyWithAcademy(seatPrice, currencyStore), 'fa')}`
+        : 'ثبت‌نام با هماهنگی'
+      : course.is_free
+        ? 'رایگان'
         : toPersianDigits(formatCurrencyWithAcademy(course.price, currencyStore), 'fa'),
-    isFree: course.is_free,
+    isFree: !isLive && course.is_free,
+    isLive,
     teacherName,
     teacherInitials: initialsOf(teacherName),
     levelLabel: course.difficulty ? (DIFFICULTY_FA[course.difficulty] ?? null) : null,
-    lessonsLabel:
-      course.lessons_count && !isLiveCourse(course)
+    lessonsLabel: isLive
+      ? course.classes_count
+        ? `${toPersianDigits(String(course.classes_count), 'fa')} کلاس`
+        : null
+      : course.lessons_count
         ? `${toPersianDigits(String(course.lessons_count), 'fa')} جلسه`
         : null,
-    durationLabel: formatDurationLabel(minutes),
+    durationLabel: isLive ? null : formatDurationLabel(minutes),
     ratingLabel: course.rating ? toPersianDigits(course.rating.toFixed(1), 'fa') : null,
     coverUrl: course.Image?.publicUrl ?? null,
   };

@@ -178,6 +178,7 @@ export const fa = {
     sec: "ثانیه",
     noVideo: "بدون ویدیو",
     liveCourse: "کلاس زنده",
+    liveClassWord: "کلاس",
     recordedCourse: "ضبط‌شده",
     seatPriceFrom: "هر صندلی از",
     priceOnRequest: "ثبت‌نام با هماهنگی",

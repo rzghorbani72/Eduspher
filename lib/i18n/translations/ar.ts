@@ -153,6 +153,7 @@ export const ar = {
     min: "دقيقة",
     noVideo: "لا يوجد فيديو",
     liveCourse: "Live class",
+    liveClassWord: "class",
     recordedCourse: "Recorded",
     seatPriceFrom: "Per seat from",
     priceOnRequest: "Ask to join",

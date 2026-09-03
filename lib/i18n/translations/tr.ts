@@ -155,6 +155,7 @@ export const tr = {
     min: "dakika",
     noVideo: "Video yok",
     liveCourse: "Live class",
+    liveClassWord: "class",
     recordedCourse: "Recorded",
     seatPriceFrom: "Per seat from",
     priceOnRequest: "Ask to join",
