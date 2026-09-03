@@ -76,8 +76,8 @@ const handle = async (request: NextRequest) => {
   const origin = new URL(request.url).origin;
   const params = await readParams(request);
 
-  // BitPay: trans_id + id_get on the redirect, with payment_id carried on the
-  // return URL we handed the gateway. trans_id = -1 means the buyer cancelled.
+  // BitPay: trans_id + id_get on the redirect (official callback). payment_id
+  // is optional — checkout stored id_get as the payment authority.
   if (params.trans_id || params.id_get) {
     const transId = params.trans_id;
     const idGet = params.id_get;
