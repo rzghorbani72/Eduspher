@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
+import { AccountAvatar } from "@/components/layout/account-avatar";
 import { Container } from "./section";
 import { Button } from "./primitives";
 import { RemovableSlot } from "./removable-slot";
@@ -108,6 +109,7 @@ export async function TemplateTopBar({
   const nav = list<HeaderNavItem>(config, "nav", defaults.nav);
   const isAuthenticated = Boolean(user);
   const accountLabel = user?.display_name?.trim() || defaults.accountText;
+  const accountAvatarUrl = resolveAssetUrl(user?.avatar?.url);
 
   const borderClass = spec.thickBorder
     ? "border-b-2 border-(--theme-border-color)"
@@ -189,12 +191,25 @@ export async function TemplateTopBar({
               editMode={editMode}
               className="hidden sm:inline-flex"
             >
-              <a
-                href={isAuthenticated ? "/account" : "/auth/login"}
-                className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
-              >
-                {isAuthenticated ? accountLabel : defaults.loginText}
-              </a>
+              {isAuthenticated ? (
+                <Link
+                  href="/account"
+                  className="flex items-center gap-2 rounded-full border border-current/20 py-1 pe-3 ps-1 text-[14.5px] font-medium hover:opacity-90"
+                >
+                  <AccountAvatar
+                    name={accountLabel}
+                    avatarUrl={accountAvatarUrl}
+                  />
+                  <span className="max-w-[10rem] truncate">{accountLabel}</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
+                >
+                  {defaults.loginText}
+                </Link>
+              )}
             </RemovableSlot>
 
             <RemovableSlot
@@ -234,9 +249,20 @@ export async function TemplateTopBar({
                 ))}
                 <a
                   href={isAuthenticated ? "/account" : "/auth/login"}
-                  className="block rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
+                  className="flex items-center gap-2 rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
                 >
-                  {isAuthenticated ? accountLabel : defaults.loginText}
+                  {isAuthenticated ? (
+                    <>
+                      <AccountAvatar
+                        name={accountLabel}
+                        avatarUrl={accountAvatarUrl}
+                        size={28}
+                      />
+                      <span className="truncate">{accountLabel}</span>
+                    </>
+                  ) : (
+                    defaults.loginText
+                  )}
                 </a>
               </div>
             </details>

@@ -8,7 +8,7 @@ import {
   TemplateHeader,
 } from "@/components/layout/template-chrome";
 import { MainContainer } from "@/components/layout/main-container";
-import { getUserDisplayName } from "@/app/actions/auth";
+import { getHeaderUser } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ShellProvider } from "@/components/providers/shell-provider";
@@ -81,10 +81,10 @@ export default async function RootLayout({
   const shellKey = isPanelRoot
     ? "panel"
     : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}`;
-  const headerDisplayName =
+  const headerUser =
     isAuthenticated && !isPanelRoot
-      ? (await getUserDisplayName()).displayName
-      : null;
+      ? await getHeaderUser()
+      : { displayName: null, avatarUrl: null };
 
   const { theme } = await getStoreThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
@@ -219,7 +219,8 @@ export default async function RootLayout({
             <ShellProvider
               key={shellKey}
               isPanelRoot={isPanelRoot}
-              headerDisplayName={headerDisplayName}
+              headerDisplayName={headerUser.displayName}
+              headerAvatarUrl={headerUser.avatarUrl}
               headerIsAuthenticated={isAuthenticated}
               requestHost={requestHost}
             >

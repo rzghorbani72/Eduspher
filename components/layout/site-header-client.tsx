@@ -4,7 +4,7 @@ import Link from "@/components/ui/link";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { usePathname } from "next/navigation";
 
-import { CircleUser, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 import { signOut } from "@/lib/sign-out";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ import {
   useAcademyContext,
   useStorePath,
 } from "@/components/providers/store-provider";
+import { AccountAvatar } from "@/components/layout/account-avatar";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { ThemeToggle } from "@/components/theme/theme-toggle-button";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -21,6 +22,7 @@ import { slugFromPathname } from "@/lib/academy-path";
 
 interface SiteHeaderClientProps {
   displayName: string | null;
+  avatarUrl: string | null;
   isAuthenticated: boolean;
   isPanelRoot: boolean;
   requestHost: string | null;
@@ -28,6 +30,7 @@ interface SiteHeaderClientProps {
 
 export function SiteHeaderClient({
   displayName,
+  avatarUrl,
   isAuthenticated: initialAuth,
   isPanelRoot,
   requestHost,
@@ -140,17 +143,11 @@ export function SiteHeaderClient({
                 color: "var(--theme-foreground)",
               }}
             >
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{
-                  backgroundColor:
-                    "color-mix(in srgb, var(--theme-primary) 22%, var(--theme-background))",
-                  color: "var(--theme-primary)",
-                }}
-                aria-hidden
-              >
-                <CircleUser className="h-5 w-5" strokeWidth={2} />
-              </span>
+              <AccountAvatar
+                name={displayName || t("account.myCourses")}
+                avatarUrl={avatarUrl}
+                size={36}
+              />
               <span
                 className="truncate text-sm font-medium"
                 style={{ color: "var(--theme-foreground)" }}
@@ -234,16 +231,11 @@ export function SiteHeaderClient({
                       color: "var(--theme-foreground)",
                     }}
                   >
-                    <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                      style={{
-                        backgroundColor:
-                          "color-mix(in srgb, var(--theme-primary) 22%, var(--theme-background))",
-                        color: "var(--theme-primary)",
-                      }}
-                    >
-                      <CircleUser className="h-5 w-5" strokeWidth={2} />
-                    </span>
+                    <AccountAvatar
+                      name={displayName || t("account.myCourses")}
+                      avatarUrl={avatarUrl}
+                      size={36}
+                    />
                     {displayName || t("account.myCourses")}
                   </Link>
                   <button

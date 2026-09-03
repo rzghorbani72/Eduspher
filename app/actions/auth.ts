@@ -40,13 +40,20 @@ export async function checkAuth(): Promise<{ isAuthenticated: boolean }> {
   }
 }
 
-export async function getUserDisplayName(): Promise<{ displayName: string | null }> {
+export async function getHeaderUser(): Promise<{
+  displayName: string | null;
+  avatarUrl: string | null;
+}> {
   try {
     const { getCurrentUser } = await import('@/lib/api/server');
+    const { resolveAssetUrl } = await import('@/lib/utils');
     const user = await getCurrentUser();
-    return { displayName: user?.display_name || null };
+    return {
+      displayName: user?.display_name || null,
+      avatarUrl: resolveAssetUrl(user?.avatar?.url),
+    };
   } catch {
-    return { displayName: null };
+    return { displayName: null, avatarUrl: null };
   }
 }
 

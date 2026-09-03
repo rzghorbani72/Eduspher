@@ -590,6 +590,7 @@ export async function getCurrentUser() {
         email: string | null;
         phone_number: string | null;
         display_name: string;
+        avatar: { id: string; url: string } | null;
         has_password: boolean;
         last_login: Date | null;
         login_count: number;

@@ -229,8 +229,11 @@ async function handleResponse<T>(
       return null as unknown as T;
     }
 
-    // Handle 401 without retry (already retried or auth endpoint)
-    if (response.status === 401) {
+    // A 401 on a session-based call (retryFn set) means the session is gone, so
+    // the visitor is sent to login. On a sign-in call there is no session yet —
+    // 401 is "wrong credentials" and must throw, or the form treats the empty
+    // result as a successful login and redirects with no session.
+    if (response.status === 401 && retryFn) {
       redirectToLogin();
       return null as unknown as T;
     }
@@ -267,6 +270,31 @@ async function handleResponse<T>(
   return text as unknown as T;
 }
 
+/**
+ * Calls made before a session exists (or that end one). A 401 here means the
+ * credentials/code were wrong — never "your session expired" — so these must
+ * not trigger a token refresh or a redirect; the error has to reach the form.
+ */
+const PRE_SESSION_AUTH_PATHS = [
+  "/auth/public/login",
+  "/auth/staff/login",
+  "/auth/admin/login",
+  "/auth/public/identify",
+  "/auth/register",
+  "/auth/quick-signup",
+  "/auth/refresh",
+  "/auth/logout",
+  "/auth/login-by-phone-otp",
+  "/auth/login-by-email-otp",
+  "/auth/confirm-phone",
+  "/auth/set-new-password",
+  "/auth/forget-password",
+  "/auth/otp/",
+] as const;
+
+const isPreSessionAuthPath = (path: string): boolean =>
+  PRE_SESSION_AUTH_PATHS.some((authPath) => path.includes(authPath));
+
 export const postJson = async <T>(
   path: string,
   body: Record<string, unknown>,
@@ -292,14 +320,7 @@ export const postJson = async <T>(
       signal: options?.signal,
     });
 
-    // Skip refresh for auth endpoints
-    const isAuthEndpoint =
-      path.includes("/auth/public/login") ||
-      path.includes("/auth/staff/login") ||
-      path.includes("/auth/admin/login") ||
-      path.includes("/auth/register") ||
-      path.includes("/auth/refresh") ||
-      path.includes("/auth/logout");
+    const isAuthEndpoint = isPreSessionAuthPath(path);
 
     return handleResponse<T>(
       response,

@@ -5,6 +5,7 @@ import { createContext, useContext, type PropsWithChildren } from "react";
 type ShellContextValue = {
   isPanelRoot: boolean;
   headerDisplayName: string | null;
+  headerAvatarUrl: string | null;
   headerIsAuthenticated: boolean;
   requestHost: string | null;
 };
@@ -16,13 +17,20 @@ type ShellProviderProps = PropsWithChildren<ShellContextValue>;
 export function ShellProvider({
   isPanelRoot,
   headerDisplayName,
+  headerAvatarUrl,
   headerIsAuthenticated,
   requestHost,
   children,
 }: ShellProviderProps) {
   return (
     <ShellContext.Provider
-      value={{ isPanelRoot, headerDisplayName, headerIsAuthenticated, requestHost }}
+      value={{
+        isPanelRoot,
+        headerDisplayName,
+        headerAvatarUrl,
+        headerIsAuthenticated,
+        requestHost,
+      }}
     >
       {children}
     </ShellContext.Provider>
