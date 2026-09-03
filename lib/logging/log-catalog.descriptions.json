@@ -1,0 +1,28 @@
+{
+  "domains": {
+    "Account": "The account area a student uses on the public website.",
+    "Gdpr": "Cookie and privacy consent captured in the browser.",
+    "Legal": "Legal document publishing and user consent acceptance.",
+    "Media": "Video and file storage, transcoding and secure playback.",
+    "Payments": "Student and academy payments: checkout, gateway callbacks, refunds.",
+    "SitePreview": "Preview rendering of an academy site template."
+  },
+  "events": {
+    "Account.AvatarRemoved": "Account avatar removed.",
+    "Account.AvatarUpdated": "Account avatar updated.",
+    "Account.AvatarUpdateFailed": "Account avatar update failed.",
+    "Gdpr.ConsentAccepted": "GDPR consent accepted.",
+    "Gdpr.ConsentDeclined": "GDPR consent declined.",
+    "Legal.ConsentAccepted": "Legal consent accepted.",
+    "Legal.ConsentAcceptFailed": "Legal consent accept failed.",
+    "Media.PlaybackSessionFailed": "Media playback session failed.",
+    "Media.PlayerError": "Media player error.",
+    "Payments.CheckoutGatewayPrompted": "Payments checkout gateway prompted.",
+    "Payments.CheckoutStarted": "Payments checkout started.",
+    "Payments.CheckoutStartFailed": "Payments checkout start failed.",
+    "Payments.RefundRequested": "Payments refund requested.",
+    "Payments.RefundRequestRejected": "Payments refund request rejected.",
+    "SitePreview.PresetEmpty": "Site preview preset empty.",
+    "SitePreview.PresetFetchFailed": "Site preview preset fetch failed."
+  }
+}
