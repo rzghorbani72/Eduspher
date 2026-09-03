@@ -7,6 +7,7 @@ import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 import { ThemeToggle } from "./theme-toggle";
 import { useHideOnScroll } from "./use-hide-on-scroll";
+import { StartFreeLink } from "./quick-signup/start-free-link";
 
 type Props = {
   loginUrl: string;
@@ -54,12 +55,12 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
             >
               {LANDING.nav.login}
             </a>
-            <a
+            <StartFreeLink
               href={registerUrl}
               className="flex h-[53px] items-center justify-center rounded-lp bg-lp-mint px-5 text-[15px] font-bold leading-[26.37px] text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5 sm:text-[16.48px] lg:w-[186px] lg:px-0"
             >
               {LANDING.nav.cta}
-            </a>
+            </StartFreeLink>
           </div>
         </nav>
       </Container>

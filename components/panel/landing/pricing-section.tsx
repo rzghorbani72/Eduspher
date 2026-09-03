@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 import { SectionHeading } from "./section-heading";
+import { StartFreeLink } from "./quick-signup/start-free-link";
 
 type Cycle = "monthly" | "quarterly";
 
@@ -205,7 +206,7 @@ export function PricingSection({ registerUrl, plans = [], as }: Props) {
                   ))}
                 </ul>
 
-                <a
+                <StartFreeLink
                   href={registerUrl}
                   className={cn(
                     "mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors",
@@ -215,7 +216,7 @@ export function PricingSection({ registerUrl, plans = [], as }: Props) {
                   )}
                 >
                   {plan.cta}
-                </a>
+                </StartFreeLink>
               </article>
             );
           })}

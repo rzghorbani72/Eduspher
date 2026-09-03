@@ -577,6 +577,50 @@ export const me = (options?: RequestOptions) => {
   );
 };
 
+export type QuickSignupPayload = {
+  phone_number: string;
+  display_name: string;
+  accepted_terms_version: string;
+  accepted_privacy_version: string;
+};
+
+/**
+ * Landing fast flow, step 1: turn a verified phone into a logged-in manager.
+ * No password — the OTP just verified IS the credential. Opens the session, so
+ * `quickStartAcademy` can run immediately after.
+ */
+export const quickSignup = (
+  payload: QuickSignupPayload,
+  options?: RequestOptions,
+) => {
+  return postJson<AuthResponse>("/auth/quick-signup", { ...payload }, options);
+};
+
+export type QuickStartResult = {
+  data?: { id?: string; slug?: string };
+  site_ready?: boolean;
+  field?: string;
+};
+
+/** Landing fast flow, step 2: create the academy AND publish its website. */
+export const quickStartAcademy = (
+  payload: { name: string; private_domain: string },
+  options?: RequestOptions,
+) => {
+  return postJson<QuickStartResult>(
+    "/academies/quick-start",
+    { ...payload },
+    options,
+  );
+};
+
+export const checkAcademySlug = (slug: string, options?: RequestOptions) => {
+  return getJson<{ available: boolean }>(
+    `/academies/slug-available?slug=${encodeURIComponent(slug)}`,
+    options,
+  );
+};
+
 export type LegalDocumentSummary = {
   type: string;
   version: string;

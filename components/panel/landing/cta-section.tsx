@@ -2,6 +2,7 @@ import { ChevronLeft } from "lucide-react";
 
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
+import { StartFreeLink } from "./quick-signup/start-free-link";
 
 type Props = {
   registerUrl: string;
@@ -22,7 +23,7 @@ export function CtaSection({ registerUrl, demoUrl }: Props) {
             </p>
 
             <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-              <a
+              <StartFreeLink
                 href={registerUrl}
                 className="group flex h-14 items-center justify-center gap-2 rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
               >
@@ -32,7 +33,7 @@ export function CtaSection({ registerUrl, demoUrl }: Props) {
                   className="transition-transform group-hover:-translate-x-0.5"
                 />
                 {LANDING.cta.primary}
-              </a>
+              </StartFreeLink>
               <a
                 href={demoUrl}
                 className="flex h-14 items-center justify-center rounded-lp border border-lp-line-2 bg-white px-8 text-[15px] font-semibold text-lp-ink transition-colors hover:border-lp-ink/25"

@@ -29,3 +29,18 @@ export function getAdminPanelUrl(path = "", host?: string | null): string {
   const normalized = path.startsWith("/") ? path : path ? `/${path}` : "";
   return `${adminOriginFromHost(resolvedHost)}${normalized}`;
 }
+
+/**
+ * The academy's own public site: <slug>.<base-domain>. On localhost there is no
+ * wildcard subdomain to point at, so the path route the proxy rewrites to is
+ * used instead — the same page, reachable in dev.
+ */
+export function academySiteUrl(slug: string, host?: string | null): string {
+  const resolvedHost =
+    host ?? (typeof window !== "undefined" ? window.location.host : null);
+  const base = resolvedHost ? baseDomainFromHost(resolvedHost) : null;
+  if (!base) {
+    return `${typeof window !== "undefined" ? window.location.origin : ""}/${slug}`;
+  }
+  return `https://${slug}.${base}`;
+}

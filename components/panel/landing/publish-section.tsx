@@ -9,6 +9,7 @@ import { LANDING } from "./landing.messages";
 import { LandingShot } from "./landing-shot";
 import { ProductFrame } from "./product-frame";
 import { SectionHeading } from "./section-heading";
+import { StartFreeLink } from "./quick-signup/start-free-link";
 
 const VIEWS = LANDING.publish.views;
 const CYCLE_MS = 10000;
@@ -71,12 +72,12 @@ export function PublishSection({ registerUrl, pricingUrl }: Props) {
         />
 
         <div className="mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-          <a
+          <StartFreeLink
             href={registerUrl}
             className="flex h-14 items-center justify-center rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
           >
             {LANDING.publish.ctaPrimary}
-          </a>
+          </StartFreeLink>
           <a
             href={pricingUrl}
             className="flex h-14 items-center justify-center rounded-lp border border-lp-line-2 bg-white px-8 text-[15px] font-semibold text-lp-ink transition-colors hover:border-lp-ink/25"
