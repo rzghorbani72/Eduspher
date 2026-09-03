@@ -42,8 +42,9 @@ export function CourseHero({
 }: CourseHeroProps) {
   const translate = (key: string) => t(key, language);
   const updatedAt = course.updated_at ?? course.published_at ?? null;
-  // A timetable course is live even when no lesson carries a live session.
-  const isLive = isLiveCourse(course) || stats.liveCount > 0;
+  // Only the course type decides this: a recorded course never reads as live,
+  // even if an old lesson still carries a live session.
+  const isLive = isLiveCourse(course);
 
   return (
     <section className="cd-hero relative overflow-hidden -mt-8 sm:-mt-10 lg:-mt-12">

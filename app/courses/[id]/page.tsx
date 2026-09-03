@@ -266,7 +266,7 @@ export default async function CourseDetailPage({
               />
             </div>
 
-            {tutoringGroups.length ? (
+            {isLiveCourse(course) && tutoringGroups.length ? (
               <div className="mt-10">
                 <TutoringGroupsSection
                   groups={tutoringGroups}

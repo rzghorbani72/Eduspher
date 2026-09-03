@@ -175,10 +175,14 @@ export const buildPurchaseOptions = (
   paymentPlans: PublicPaymentPlan[],
   tutoringOffers: PublicTutoringOffer[],
 ): PurchaseOptionView[] => {
+  // Seats are a live-course product; a recorded course never sells them, even
+  // if an old tutoring offer is still attached to it.
+  const seatOffers =
+    course.course_type === "LIVE" ? tutoringOffers.map(fromTutoringOffer) : [];
   const options = [
     ...offerings.filter((o) => o.is_active).map((o) => fromOffering(o, course)),
     ...paymentPlans.map(fromPaymentPlan),
-    ...tutoringOffers.map(fromTutoringOffer),
+    ...seatOffers,
   ];
 
   if (options.length === 0) options.push(fallbackOption(course));
