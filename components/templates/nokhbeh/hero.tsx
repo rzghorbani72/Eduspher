@@ -32,7 +32,7 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
         <div className="grid items-start gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span className="inline-flex items-center gap-2.5 text-[13px] font-bold tracking-[0.1em] text-(--theme-primary)">
-              <span aria-hidden="true" className="size-2 rounded-full bg-(--theme-accent)" />
+              <span aria-hidden="true" data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" />
               <span data-editable="eyebrow">{text(config, 'eyebrow', d.eyebrow)}</span>
             </span>
 

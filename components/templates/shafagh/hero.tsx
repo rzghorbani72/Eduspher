@@ -34,7 +34,7 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <div className="flex items-center gap-4">
-              <span className="size-2 flex-none rounded-full bg-(--theme-accent)" aria-hidden="true" />
+              <span data-motion="live" className="size-2 flex-none rounded-full bg-(--theme-accent)" aria-hidden="true" />
               <span data-editable="kicker" className="text-[13px] font-bold text-(--theme-primary)">
                 {text(config, 'kicker', d.kicker)}
               </span>
@@ -75,7 +75,7 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
 
           <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <div className="relative">
-              <span className={styles.plate} aria-hidden="true" />
+              <span className={styles.plate} aria-hidden="true" data-motion="drift" />
               <HeroSlideshowSlot
                 config={config}
                 mediaKeys={SLIDE_KEYS}

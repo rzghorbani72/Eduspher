@@ -31,13 +31,13 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.stage}`}>
-      <div className={styles.mesh} aria-hidden="true" />
+      <div className={styles.mesh} aria-hidden="true" data-motion="wash" />
 
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <span className={`${styles.chip} inline-flex items-center gap-2.5 px-4 py-1.5 text-[13px] font-bold`}>
-              <span aria-hidden="true" className="size-2 rounded-full bg-(--theme-accent)" />
+              <span aria-hidden="true" data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" />
               <span data-editable="kicker">{text(config, 'kicker', d.kicker)}</span>
             </span>
 
@@ -85,8 +85,8 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
 
           <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <div className="relative">
-              <span className={`${styles.orb} ${styles.orbA}`} aria-hidden="true" />
-              <span className={`${styles.orb} ${styles.orbB}`} aria-hidden="true" />
+              <span className={`${styles.orb} ${styles.orbA}`} aria-hidden="true" data-motion="drift" />
+              <span className={`${styles.orb} ${styles.orbB}`} aria-hidden="true" data-motion="drift" />
               <HeroSlideshowSlot
                 config={config}
                 mediaKeys={SLIDE_KEYS}

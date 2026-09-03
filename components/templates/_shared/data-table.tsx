@@ -86,6 +86,7 @@ export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: Te
                     >
                       {cell.status ? (
                         <span
+                          data-motion={cell.status === 'few' ? 'signal' : undefined}
                           className={`inline-block whitespace-nowrap rounded-(--theme-border-radius) px-2.5 py-1 text-[12px] font-bold ${STATUS_CLASS[cell.status]}`}
                         >
                           {cell.text}

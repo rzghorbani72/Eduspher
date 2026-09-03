@@ -26,14 +26,14 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
 
   return (
     <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
-      <span className={styles.blobA} aria-hidden="true" />
-      <span className={styles.blobB} aria-hidden="true" />
+      <span className={styles.blobA} aria-hidden="true" data-motion="drift" />
+      <span className={styles.blobB} aria-hidden="true" data-motion="drift" />
 
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.03fr_0.97fr]">
           <div>
             <Pill>
-              <span aria-hidden="true" className="size-2 rounded-[3px] bg-current" />
+              <span aria-hidden="true" data-motion="live" className="size-2 rounded-[3px] bg-current" />
               <span data-editable="pill">{text(config, 'pill', d.pill)}</span>
             </Pill>
 

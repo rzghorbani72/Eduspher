@@ -95,7 +95,7 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
           <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
             <HeroVisualSlot config={config} mode="fill" className={`${styles.chart} overflow-hidden`}>
               <div className={styles.chart}>
-                <span className={styles.chartDisc} aria-hidden="true" />
+                <span className={styles.chartDisc} aria-hidden="true" data-motion="drift" />
 
                 {CONST_LINES.map((line) => (
                   <span

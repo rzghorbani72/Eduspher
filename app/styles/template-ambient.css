@@ -1,0 +1,122 @@
+/* ── Ambient life ────────────────────────────────────────────────────────────
+   Motion that never stops, so a page still breathes when nobody scrolls. It is
+   deliberately opt-in per element (`data-motion`), never blanket-applied: an
+   interface where everything moves is noise, not life.
+
+   Two budgets, and they are different on purpose:
+
+     ambient (drift / wash / hue)  — decoration only. 18-30s loops, a few px or
+       a few percent of opacity. It must be invisible when looked at directly
+       and only felt out of the corner of the eye.
+     signal (live / pulse)         — status that a visitor benefits from
+       noticing: a class running now, a nearly-full seat count. Faster (2-3s)
+       because it is meant to catch the eye, and reserved for scarcity and
+       liveness so the movement always means the same thing.
+
+   Nothing a person reads ever moves: these attributes go on decorative layers
+   and on badges whose text is already short and static. */
+
+/* `translate` / `rotate`, never `transform`: several templates already rotate
+   their decorations in CSS, and animating `transform` would erase that. The
+   independent properties compose with whatever the template set. */
+@keyframes tpl-drift {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+  50% {
+    translate: 0 -9px;
+    rotate: 0.6deg;
+  }
+  100% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+
+@keyframes tpl-wash {
+  0% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.72;
+  }
+}
+
+@keyframes tpl-hue {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes tpl-live {
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  35% {
+    opacity: 0.55;
+    box-shadow: 0 0 0 4px transparent;
+  }
+}
+
+@keyframes tpl-signal {
+  0%,
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    opacity: 0.78;
+    scale: 1.035;
+  }
+}
+
+[data-motion='drift'] {
+  animation: tpl-drift 24s ease-in-out infinite;
+  will-change: translate;
+}
+
+/* Neighbouring decorations must not swing in lockstep — that reads as a
+   carousel, not as ambience. */
+[data-motion='drift']:nth-of-type(even) {
+  animation-duration: 31s;
+  animation-direction: reverse;
+}
+
+[data-motion='wash'] {
+  animation: tpl-wash 20s ease-in-out infinite;
+}
+
+[data-motion='hue'] {
+  background-size: 220% 100%;
+  animation: tpl-hue 16s ease-in-out infinite alternate;
+}
+
+[data-motion='live'] {
+  animation: tpl-live 2.4s ease-in-out infinite;
+}
+
+[data-motion='signal'] {
+  animation: tpl-signal 3.2s ease-in-out infinite;
+}
+
+[data-edit-mode] [data-motion],
+[data-edit-mode] [data-motion]:nth-of-type(even) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-motion],
+  [data-motion]:nth-of-type(even) {
+    animation: none;
+  }
+}

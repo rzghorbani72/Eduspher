@@ -172,7 +172,8 @@ export async function TemplateTopBar({
       {spec.accentBar ? (
         <span
           aria-hidden="true"
-          className="absolute -bottom-px start-0 h-[3px] w-[38%] bg-(--theme-primary)"
+          data-motion="hue"
+          className="absolute -bottom-px start-0 h-[3px] w-[38%] bg-linear-to-r from-(--theme-primary) via-(--theme-accent) to-(--theme-primary)"
         />
       ) : null}
 

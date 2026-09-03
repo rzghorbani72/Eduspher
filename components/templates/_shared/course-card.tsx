@@ -58,7 +58,7 @@ export function TemplateCourseCard({
           ) : null}
           {course.isLive ? (
             <span className="absolute top-3 start-3 z-[2] inline-flex items-center gap-1.5 rounded-(--theme-border-radius) bg-[#e11d48] px-2.5 py-1 text-[11px] font-bold text-white">
-              <span className="size-1.5 animate-pulse rounded-full bg-white" />
+              <span data-motion="live" className="size-1.5 rounded-full bg-white" />
               کلاس زنده
             </span>
           ) : course.levelLabel ? (

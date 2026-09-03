@@ -5,6 +5,7 @@
 /* Self-hosted (no external CDN): font files live in public/fonts. */
 @import "./styles/gfonts.css";
 @import "./styles/template-motion.css";
+@import "./styles/template-ambient.css";
 
 @font-face {
   font-family: "Vazirmatn";

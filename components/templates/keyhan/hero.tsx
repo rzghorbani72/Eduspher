@@ -66,6 +66,7 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
             <p className="mt-9 flex flex-wrap items-center gap-3 text-[14px] text-current/70">
               <span
                 data-editable="noteTag"
+                data-motion="signal"
                 className="rounded-(--theme-border-radius) bg-(--theme-accent) px-3 py-1 text-[12px] font-bold text-(--theme-on-accent)"
               >
                 {text(config, 'noteTag', d.noteTag)}
