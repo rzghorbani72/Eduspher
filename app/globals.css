@@ -1002,6 +1002,51 @@ select[class*="rounded-sm"] {
   }
 }
 
+/* ── Template section motion ──────────────────────────────────────────────────
+   Every template section eases in as it enters the viewport, so the site reads
+   as alive instead of a static page. Scroll-driven CSS (no JS, no client
+   component, no SSR cost); browsers without `animation-timeline` simply render
+   the finished state, and the editor canvas opts out so editing never fights an
+   animation. */
+@keyframes section-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .ui-blocks-root > section {
+    animation: section-reveal 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+
+  /* Slower, shorter travel on the inner rows so a grid settles after its
+     section rather than moving with it. */
+  .ui-blocks-root > section :is([data-reveal-item], article) {
+    animation: section-reveal 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 5% entry 55%;
+  }
+
+  [data-edit-mode] .ui-blocks-root > section,
+  [data-edit-mode] .ui-blocks-root > section :is([data-reveal-item], article) {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-blocks-root > section,
+  .ui-blocks-root > section :is([data-reveal-item], article) {
+    animation: none;
+  }
+}
+
 @keyframes pulse-glow {
   0%,
   100% {

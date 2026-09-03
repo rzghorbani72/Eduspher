@@ -25,6 +25,85 @@ function removeBlockToolbar() {
   document.getElementById(BLOCK_TOOLBAR_ID)?.remove();
 }
 
+const UNDO_TOAST_ID = "me-undo-toast";
+
+/** Header and footer are pinned: they cannot be moved out of place or deleted. */
+function isPinnedBlock(blockEl: HTMLElement): boolean {
+  const type = blockEl.dataset.blockType;
+  return type === "header" || type === "footer";
+}
+
+/** A movable neighbour in that direction, or none — the button would be dead. */
+function hasMovableNeighbour(blockEl: HTMLElement, dir: "up" | "down"): boolean {
+  let sibling =
+    dir === "up"
+      ? (blockEl.previousElementSibling as HTMLElement | null)
+      : (blockEl.nextElementSibling as HTMLElement | null);
+  while (sibling) {
+    if (sibling.dataset.blockId && !isPinnedBlock(sibling)) return true;
+    sibling =
+      dir === "up"
+        ? (sibling.previousElementSibling as HTMLElement | null)
+        : (sibling.nextElementSibling as HTMLElement | null);
+  }
+  return false;
+}
+
+/**
+ * Hiding or removing a section makes it vanish from the canvas, so the click
+ * that did it is also the last place the manager can take it back. The toast
+ * asks the panel for a normal undo step — no separate restore path to keep in
+ * sync with the editor's history.
+ */
+function showUndoToast(message: string) {
+  document.getElementById(UNDO_TOAST_ID)?.remove();
+  const bar = document.createElement("div");
+  bar.id = UNDO_TOAST_ID;
+  Object.assign(bar.style, {
+    position: "fixed",
+    zIndex: "99999",
+    insetInlineStart: "50%",
+    transform: "translateX(-50%)",
+    bottom: "20px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    background: "#18181b",
+    color: "#e4e4e7",
+    border: "1px solid #3f3f46",
+    borderRadius: "8px",
+    padding: "8px 12px",
+    fontSize: "13px",
+    fontFamily: "inherit",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.45)",
+  });
+
+  const label = document.createElement("span");
+  label.textContent = message;
+  bar.appendChild(label);
+
+  const undoBtn = document.createElement("button");
+  undoBtn.type = "button";
+  undoBtn.textContent = "بازگرداندن";
+  Object.assign(undoBtn.style, {
+    background: "transparent",
+    border: "none",
+    color: "#93c5fd",
+    fontSize: "13px",
+    fontWeight: "600",
+    cursor: "pointer",
+    padding: "0",
+  });
+  undoBtn.addEventListener("click", () => {
+    postMessageToPanel({ source: "template-editor", type: "undo" });
+    bar.remove();
+  });
+  bar.appendChild(undoBtn);
+
+  document.body.appendChild(bar);
+  setTimeout(() => bar.remove(), 8000);
+}
+
 function showBlockToolbar(blockEl: HTMLElement) {
   removeBlockToolbar();
   const blockId = blockEl.dataset.blockId;
@@ -47,12 +126,15 @@ function showBlockToolbar(blockEl: HTMLElement) {
     pointerEvents: "all",
   });
 
+  // Only the actions this section can actually perform: a pinned header keeps
+  // nothing but "hide", and a move button with nowhere to go is never drawn.
+  const pinned = isPinnedBlock(blockEl);
   const actions = [
-    { action: "move-up", label: "↑" },
-    { action: "move-down", label: "↓" },
-    { action: "hide", label: "◌" },
-    { action: "delete", label: "×" },
-  ];
+    { action: "move-up", label: "↑", enabled: !pinned && hasMovableNeighbour(blockEl, "up") },
+    { action: "move-down", label: "↓", enabled: !pinned && hasMovableNeighbour(blockEl, "down") },
+    { action: "hide", label: "◌", enabled: true },
+    { action: "delete", label: "×", enabled: !pinned },
+  ].filter((a) => a.enabled);
 
   for (const { action, label } of actions) {
     const btn = document.createElement("button");
@@ -75,6 +157,8 @@ function showBlockToolbar(blockEl: HTMLElement) {
       postMessageToPanel(
         { source: "template-editor", type: "block-action", blockId, action },
       );
+      if (action === "hide") showUndoToast("بخش پنهان شد");
+      if (action === "delete") showUndoToast("بخش حذف شد");
     });
     bar.appendChild(btn);
   }
