@@ -59,7 +59,6 @@ export const TEMPLATE_PRESETS: Record<string, TemplatePresetInfo> = {
         isVisible: false,
         config: { style: "flow" },
       },
-      { id: "pricing", type: "pricing", order: 7, isVisible: true, config: {} },
       { id: "cta", type: "cta", order: 8, isVisible: true, config: {} },
       {
         id: "footer",

@@ -10,7 +10,7 @@ import { AccountAvatar } from "@/components/layout/account-avatar";
 import { Container } from "./section";
 import { Button } from "./primitives";
 import { RemovableSlot } from "./removable-slot";
-import { list, text, type SectionConfig } from "./types";
+import { flag, list, text, type SectionConfig } from "./types";
 
 export interface HeaderNavItem {
   label: string;
@@ -66,7 +66,8 @@ const TONE_CLASS = {
 // foreground, deep uses on-deep). Without it the global `a { color: primary }`
 // base rule wins and the nav renders in the brand colour on a light bar.
 const NAV_LINK_CLASS = {
-  plain: "text-current px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
+  plain:
+    "text-current px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
   underline:
     "text-current border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
   border:
@@ -110,6 +111,48 @@ export async function TemplateTopBar({
   const isAuthenticated = Boolean(user);
   const accountLabel = user?.display_name?.trim() || defaults.accountText;
   const accountAvatarUrl = resolveAssetUrl(user?.avatar?.url);
+
+  // The manager can swap which action sits closest to the page edge.
+  const reversed = flag(config, "reverseActions", false);
+
+  const ctaSlot = (
+    <RemovableSlot
+      config={config}
+      flagKey="showHeaderCta"
+      editMode={editMode}
+      className="inline-flex"
+    >
+      <Button tone="primary" size="sm" href="/courses" editableKey="ctaText">
+        {text(config, "ctaText", defaults.ctaText)}
+      </Button>
+    </RemovableSlot>
+  );
+
+  const accountSlot = (
+    <RemovableSlot
+      config={config}
+      flagKey="showLogin"
+      editMode={editMode}
+      className="hidden sm:inline-flex"
+    >
+      {isAuthenticated ? (
+        <Link
+          href="/account"
+          className="flex items-center gap-2 rounded-full border border-current/20 py-1 pe-3 ps-1 text-[14.5px] font-medium hover:opacity-90"
+        >
+          <AccountAvatar name={accountLabel} avatarUrl={accountAvatarUrl} />
+          <span className="max-w-[10rem] truncate">{accountLabel}</span>
+        </Link>
+      ) : (
+        <Link
+          href="/auth/login"
+          className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
+        >
+          {defaults.loginText}
+        </Link>
+      )}
+    </RemovableSlot>
+  );
 
   const borderClass = spec.thickBorder
     ? "border-b-2 border-(--theme-border-color)"
@@ -185,43 +228,8 @@ export async function TemplateTopBar({
           </nav>
 
           <div className="ms-auto flex flex-none items-center gap-3">
-            <RemovableSlot
-              config={config}
-              flagKey="showLogin"
-              editMode={editMode}
-              className="hidden sm:inline-flex"
-            >
-              {isAuthenticated ? (
-                <Link
-                  href="/account"
-                  className="flex items-center gap-2 rounded-full border border-current/20 py-1 pe-3 ps-1 text-[14.5px] font-medium hover:opacity-90"
-                >
-                  <AccountAvatar
-                    name={accountLabel}
-                    avatarUrl={accountAvatarUrl}
-                  />
-                  <span className="max-w-[10rem] truncate">{accountLabel}</span>
-                </Link>
-              ) : (
-                <Link
-                  href="/auth/login"
-                  className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
-                >
-                  {defaults.loginText}
-                </Link>
-              )}
-            </RemovableSlot>
-
-            <RemovableSlot
-              config={config}
-              flagKey="showHeaderCta"
-              editMode={editMode}
-              className="inline-flex"
-            >
-              <Button tone="primary" size="sm" href="/courses" editableKey="ctaText">
-                {text(config, "ctaText", defaults.ctaText)}
-              </Button>
-            </RemovableSlot>
+            {reversed ? ctaSlot : accountSlot}
+            {reversed ? accountSlot : ctaSlot}
 
             {/* CSS-only mobile menu: native disclosure, no JavaScript. */}
             <details className="relative lg:hidden">
@@ -279,7 +287,6 @@ export const FULL_NAV: readonly HeaderNavItem[] = [
   { label: "دوره‌ها", href: "/courses" },
   { label: "دسته‌ها", href: "#categories" },
   { label: "مدرسان", href: "#teachers" },
-  { label: "تعرفه‌ها", href: "#pricing" },
 ];
 
 /** Nav for templates without a category wall. */
@@ -288,7 +295,6 @@ export const COMPACT_NAV: readonly HeaderNavItem[] = [
   { label: "دوره‌ها", href: "/courses" },
   { label: "مسیر یادگیری", href: "#showcase" },
   { label: "مدرسان", href: "#teachers" },
-  { label: "تعرفه‌ها", href: "#pricing" },
 ];
 
 export function headerDefaults(

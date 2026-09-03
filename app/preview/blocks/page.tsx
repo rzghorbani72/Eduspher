@@ -38,7 +38,9 @@ export default async function PreviewBlocksPage({
   const preset = await getPreviewPreset(template, token, draft);
   if (!preset || !preset.blocks?.length) {
     return (
-      <div className="p-4 text-sm text-(--theme-muted)">No preview available</div>
+      <div className="p-4 text-sm text-(--theme-muted)">
+        No preview available
+      </div>
     );
   }
 
@@ -109,22 +111,28 @@ export default async function PreviewBlocksPage({
   } as CSSProperties;
 
   // Direction from theme config overrides the HTML-level dir set by layout.tsx.
-  const canvasDir = (preset.theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? 'rtl';
+  const canvasDir =
+    (preset.theme?.text_direction as "ltr" | "rtl" | undefined) ?? "rtl";
 
   return (
     <div style={canvasStyle} dir={canvasDir} data-theme-canvas>
       {edit && <PreviewEditBridge />}
       {blocks.map((block, index) => {
         const animate = !edit && block.type !== "header";
+        // A hidden block still needs its wrapper (the bridge toggles it back on
+        // by id), but the wrapper is empty — without display:none it leaves a
+        // blank band in the canvas.
+        const hidden = block.isVisible === false;
         return (
           <div
             key={block.id}
             data-block-id={block.id}
             className={animate ? "preview-block-enter" : undefined}
             style={
-              animate
-                ? ({ animationDelay: `${index * 90}ms` } as CSSProperties)
-                : undefined
+              {
+                ...(animate ? { animationDelay: `${index * 90}ms` } : {}),
+                ...(hidden ? { display: "none" } : {}),
+              } as CSSProperties
             }
           >
             {block.type === "placeholder" ? (

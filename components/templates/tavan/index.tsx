@@ -2,7 +2,6 @@ import type { TemplateSectionMap } from '../registry-types';
 import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
 import { TemplateSiteFooter } from '../_shared/footer';
-import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
@@ -58,9 +57,6 @@ export const TAVAN_SECTIONS: TemplateSectionMap = {
   showcase: TavanLadder,
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={TAVAN_DEFAULTS.teachers} tone="surface" />
-  ),
-  pricing: ({ id, config }) => (
-    <TemplatePricing id={id} config={config} defaults={TAVAN_DEFAULTS.pricing} tone="page" />
   ),
   cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={TAVAN_DEFAULTS.cta} tone="deep" />,
   footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={TAVAN_DEFAULTS.footer} />,

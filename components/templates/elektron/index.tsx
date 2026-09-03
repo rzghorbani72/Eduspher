@@ -2,7 +2,6 @@ import type { TemplateSectionMap } from '../registry-types';
 import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
 import { TemplateSiteFooter } from '../_shared/footer';
-import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
@@ -57,12 +56,6 @@ export const ELEKTRON_SECTIONS: TemplateSectionMap = {
   ),
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={ELEKTRON_DEFAULTS.teachers} tone="page" />
-  ),
-  // Only the hero, the closing band and the footer go dark — the body stays
-  // light so the page reads dark → light → dark instead of three dark bands
-  // stacking at the end.
-  pricing: ({ id, config }) => (
-    <TemplatePricing id={id} config={config} defaults={ELEKTRON_DEFAULTS.pricing} tone="surface" />
   ),
   cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={ELEKTRON_DEFAULTS.cta} tone="deep" boxed />,
   footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={ELEKTRON_DEFAULTS.footer} />,

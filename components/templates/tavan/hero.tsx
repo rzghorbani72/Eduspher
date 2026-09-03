@@ -43,7 +43,7 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
 
             <div className="mt-9 flex flex-wrap gap-3.5">
               <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href="#pricing">
+                <Button tone="primary" size="lg" editableKey="ctaText" href="/courses">
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>

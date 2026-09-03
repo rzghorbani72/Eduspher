@@ -40,7 +40,6 @@ export type TemplateSectionType =
   | 'showcase'
   | 'teachers'
   | 'testimonials'
-  | 'pricing'
   | 'cta'
   | 'footer';
 

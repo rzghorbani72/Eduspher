@@ -2,7 +2,6 @@ import type { TemplateSectionMap } from '../registry-types';
 import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
 import { TemplateSiteFooter } from '../_shared/footer';
-import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
@@ -58,9 +57,6 @@ export const PARASTOO_SECTIONS: TemplateSectionMap = {
   showcase: ParastooLevels,
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={PARASTOO_DEFAULTS.teachers} tone="page" />
-  ),
-  pricing: ({ id, config }) => (
-    <TemplatePricing id={id} config={config} defaults={PARASTOO_DEFAULTS.pricing} tone="surface" />
   ),
   cta: ({ id, config }) => (
     <TemplateCta id={id} config={config} defaults={PARASTOO_DEFAULTS.cta} tone="accent" boxed />

@@ -2,7 +2,6 @@ import type { TemplateSectionMap } from '../registry-types';
 import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
 import { TemplateSiteFooter } from '../_shared/footer';
-import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
@@ -59,9 +58,6 @@ export const SHAFAGH_SECTIONS: TemplateSectionMap = {
   ),
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={SHAFAGH_DEFAULTS.teachers} tone="page" avatarShape="round" />
-  ),
-  pricing: ({ id, config }) => (
-    <TemplatePricing id={id} config={config} defaults={SHAFAGH_DEFAULTS.pricing} tone="surface" />
   ),
   cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={SHAFAGH_DEFAULTS.cta} tone="deep" boxed />,
   footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={SHAFAGH_DEFAULTS.footer} />,

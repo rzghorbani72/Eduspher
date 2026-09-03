@@ -2,7 +2,6 @@ import type { TemplateSectionMap } from '../registry-types';
 import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
 import { TemplateSiteFooter } from '../_shared/footer';
-import { TemplatePricing } from '../_shared/pricing';
 import { TemplateTeachers } from '../_shared/teachers';
 import { TemplateCta } from '../_shared/cta';
 import { TemplateCourses } from '../_shared/courses';
@@ -53,9 +52,6 @@ export const KEYHAN_SECTIONS: TemplateSectionMap = {
   ),
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={KEYHAN_DEFAULTS.teachers} tone="page" />
-  ),
-  pricing: ({ id, config }) => (
-    <TemplatePricing id={id} config={config} defaults={KEYHAN_DEFAULTS.pricing} tone="deep" />
   ),
   cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={KEYHAN_DEFAULTS.cta} tone="deep" />,
   footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={KEYHAN_DEFAULTS.footer} />,

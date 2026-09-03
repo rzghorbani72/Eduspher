@@ -160,58 +160,6 @@ export const PARASTOO_DEFAULTS = {
       },
     ],
   },
-  pricing: {
-    eyebrow: 'شهریه',
-    title: 'سه راه برای شروع',
-    subtitle:
-      'همهٔ مبالغ برای یک ترم سه‌ماهه است و شامل چرتکهٔ چوبی و دفترچهٔ تمرین می‌شود. پرداخت سه قسطه بدون بهره.',
-    note: 'هزینهٔ آزمون تعیین سطح و جلسهٔ آزمایشی صفر است. انصراف تا پایان جلسهٔ دوم = بازگشت کامل شهریه.',
-    plans: [
-      {
-        name: 'تک‌ترم',
-        description: 'یک ترم کامل، بدون باشگاه تمرین.',
-        price: '۲٬۹۰۰٬۰۰۰',
-        period: 'تومان / ترم',
-        featured: false,
-        ctaText: 'انتخاب تک‌ترم',
-        features: [
-          { label: '۲۴ جلسهٔ حضوری یا آنلاین', included: true },
-          { label: 'چرتکهٔ چوبی و دفترچهٔ تمرین', included: true },
-          { label: 'کارنامهٔ پایان ترم', included: true },
-          { label: 'جبرانی نامحدود', included: false },
-        ],
-      },
-      {
-        name: 'ترم + باشگاه تمرین',
-        description: 'انتخاب بیشتر خانواده‌ها.',
-        price: '۳٬۴۵۰٬۰۰۰',
-        period: 'تومان / ترم',
-        featured: true,
-        ctaText: 'شروع با این پلن',
-        features: [
-          { label: 'هرچه در پلن تک‌ترم هست', included: true },
-          { label: 'اپلیکیشن تمرین روزانهٔ ۱۲ دقیقه‌ای', included: true },
-          { label: 'گزارش هفتگی برای والدین', included: true },
-          { label: 'جبرانی نامحدود', included: true },
-          { label: 'شرکت در چالش هفتگی', included: true },
-        ],
-      },
-      {
-        name: 'خانوادگی (۲ فرزند)',
-        description: 'دو ترم کامل با تخفیف.',
-        price: '۵٬۹۰۰٬۰۰۰',
-        period: 'تومان / ترم',
-        featured: false,
-        ctaText: 'انتخاب خانوادگی',
-        features: [
-          { label: 'دو ترم کامل با باشگاه تمرین', included: true },
-          { label: '۱۵٪ تخفیف نسبت به دو پلن جدا', included: true },
-          { label: 'جلسهٔ مشاورهٔ والدین هر ماه', included: true },
-          { label: 'امکان اختلاف سطح بین دو فرزند', included: true },
-        ],
-      },
-    ],
-  },
   cta: {
     label: 'بدون تعهد ثبت‌نام',
     title: 'اول یک جلسه بیایید، بعد تصمیم بگیرید.',

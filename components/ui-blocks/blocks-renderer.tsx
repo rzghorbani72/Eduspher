@@ -9,7 +9,6 @@ import { MembershipBlock } from "./membership-block";
 import { SidebarBlockServer } from "./sidebar-block-server";
 import { MarqueeBlock } from "./marquee-block";
 import { CourseGridBlock } from "./course-grid-block";
-import { PricingBlock } from "./pricing-block";
 import { CtaBlock } from "./cta-block";
 import { CategoriesBlock } from "./categories-block";
 import { ProjectsBlock } from "./projects-block";
@@ -100,8 +99,6 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
               return <MarqueeBlock key={block.id} id={block.id} config={block.config} />;
             case "course-grid":
               return <CourseGridBlock key={block.id} id={block.id} config={block.config} />;
-            case "pricing":
-              return <PricingBlock key={block.id} id={block.id} config={block.config} />;
             case "cta":
               return <CtaBlock key={block.id} id={block.id} config={block.config} />;
             case "categories":
