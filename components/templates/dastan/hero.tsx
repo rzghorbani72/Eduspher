@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
 import styles from './dastan.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface BoardItem {
   index: string;
@@ -79,13 +80,20 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
               editMode={editMode}
               className="mt-10 flex flex-wrap gap-x-9 gap-y-5 border-t border-(--theme-border-color) pt-5"
             >
-              <dl className="contents">
-                {stats.map((stat) => (
+              <dl className="contents" {...editableList('stats', stats)}>
+                {stats.map((stat, index) => (
                   <div key={stat.label} className="border-e border-(--theme-border-color) pe-9 last:border-0 last:pe-0">
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <b className="block text-[27px] font-bold leading-[1.2] tabular-nums">{stat.value}</b>
-                      <span className="text-[13px] text-(--theme-muted)">{stat.label}</span>
+                      <b
+                        {...editableItem('stats', index, 'value')}
+                        className="block text-[27px] font-bold leading-[1.2] tabular-nums"
+                      >
+                        {stat.value}
+                      </b>
+                      <span {...editableItem('stats', index, 'label')} className="text-[13px] text-(--theme-muted)">
+                        {stat.label}
+                      </span>
                     </dd>
                   </div>
                 ))}
@@ -112,18 +120,26 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
                       {text(config, 'boardDate', d.boardDate)}
                     </p>
 
-                    <ol className="mt-5">
-                      {boardItems.map((item) => (
+                    <ol className="mt-5" {...editableList('boardItems', boardItems)}>
+                      {boardItems.map((item, index) => (
                         <li
                           key={item.index}
                           className="flex items-baseline gap-3 border-b border-dashed border-current/18 py-3 text-[15px] last:border-0"
                         >
-                          <i className="w-6 flex-none not-italic text-[13px] font-bold text-(--theme-accent)">
+                          <i
+                            {...editableItem('boardItems', index, 'index')}
+                            className="w-6 flex-none not-italic text-[13px] font-bold text-(--theme-accent)"
+                          >
                             {item.index}
                           </i>
-                          <span className="flex-1">{item.label}</span>
+                          <span {...editableItem('boardItems', index, 'label')} className="flex-1">
+                            {item.label}
+                          </span>
                           <span aria-hidden="true" className={styles.leader} />
-                          <b className="flex-none text-[13px] font-medium text-current/70">
+                          <b
+                            {...editableItem('boardItems', index, 'time')}
+                            className="flex-none text-[13px] font-medium text-current/70"
+                          >
                             {item.time}
                           </b>
                         </li>

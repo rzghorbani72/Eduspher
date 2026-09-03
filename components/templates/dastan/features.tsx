@@ -4,6 +4,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
 import styles from './dastan.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface FeatureItem {
   kicker: string;
@@ -11,7 +12,11 @@ interface FeatureItem {
   body: string;
 }
 
-const RULE_CLASS = [styles.featRule, `${styles.featRule} ${styles.featRule2}`, `${styles.featRule} ${styles.featRule3}`];
+const RULE_CLASS = [
+  styles.featRule,
+  `${styles.featRule} ${styles.featRule2}`,
+  `${styles.featRule} ${styles.featRule3}`,
+];
 
 /** Ruled editorial columns plus a full-width proof strip carrying one big number. */
 export function DastanFeatures({ id, config, storeContext }: TemplateSectionProps) {
@@ -19,13 +24,13 @@ export function DastanFeatures({ id, config, storeContext }: TemplateSectionProp
   const items = list<FeatureItem>(config, 'items', d.items);
 
   return (
-    <section id={id || 'features'} className="border-t border-(--theme-border-color) bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'features'}
+      className="border-t border-(--theme-border-color) bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Container className="py-(--theme-section-padding-y)">
         <div className="mb-12 grid gap-8 md:grid-cols-2 md:items-end">
-          <h2
-            data-editable="title"
-            className="text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]"
-          >
+          <h2 data-editable="title" className="text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]">
             {text(config, 'title', d.title)}
           </h2>
           <p data-editable="subtitle" className="text-[17px] leading-[1.85] text-(--theme-muted)">
@@ -33,7 +38,7 @@ export function DastanFeatures({ id, config, storeContext }: TemplateSectionProp
           </p>
         </div>
 
-        <div className="grid gap-x-9 gap-y-8 md:grid-cols-3">
+        <div className="grid gap-x-9 gap-y-8 md:grid-cols-3" {...editableList('items', items)}>
           {items.map((item, index) => (
             <article
               key={item.title}
@@ -41,23 +46,42 @@ export function DastanFeatures({ id, config, storeContext }: TemplateSectionProp
                 RULE_CLASS[index % RULE_CLASS.length]
               }`}
             >
-              <span className="block text-[12px] font-bold tracking-[0.18em] text-(--theme-muted)">{item.kicker}</span>
-              <h3 className="mt-3.5 text-[23px] font-bold leading-[1.35]">{item.title}</h3>
-              <p className="mt-3 text-[15px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+              <span
+                {...editableItem('items', index, 'kicker')}
+                className="block text-[12px] font-bold tracking-[0.18em] text-(--theme-muted)"
+              >
+                {item.kicker}
+              </span>
+              <h3 {...editableItem('items', index, 'title')} className="mt-3.5 text-[23px] font-bold leading-[1.35]">
+                {item.title}
+              </h3>
+              <p
+                {...editableItem('items', index, 'body')}
+                className="mt-3 text-[15px] leading-[1.85] text-(--theme-muted)"
+              >
+                {item.body}
+              </p>
             </article>
           ))}
         </div>
 
         <div className="mt-10 grid items-center gap-8 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface-alt) p-8 md:grid-cols-[auto_1fr_auto]">
-          <span className="text-[52px] font-bold leading-none text-(--theme-primary) tabular-nums">
-            {d.highlight.value}
+          <span
+            data-editable="highlightValue"
+            className="text-[52px] font-bold leading-none text-(--theme-primary) tabular-nums"
+          >
+            {text(config, 'highlightValue', d.highlight.value)}
           </span>
           <div>
-            <h3 className="text-[21px] font-bold leading-[1.4]">{d.highlight.title}</h3>
-            <p className="mt-2 text-[15px] leading-[1.8] text-(--theme-muted)">{d.highlight.body}</p>
+            <h3 data-editable="highlightTitle" className="text-[21px] font-bold leading-[1.4]">
+              {text(config, 'highlightTitle', d.highlight.title)}
+            </h3>
+            <p data-editable="highlightBody" className="mt-2 text-[15px] leading-[1.8] text-(--theme-muted)">
+              {text(config, 'highlightBody', d.highlight.body)}
+            </p>
           </div>
-          <Button tone="outline" size="sm" href={templateHref(storeContext, 'register')}>
-            {d.highlight.ctaText}
+          <Button tone="outline" size="sm" editableKey="highlightCta" href={templateHref(storeContext, 'register')}>
+            {text(config, 'highlightCta', d.highlight.ctaText)}
           </Button>
         </div>
       </Container>

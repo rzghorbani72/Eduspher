@@ -1,5 +1,6 @@
 import type { SectionTone } from './section';
 import { list, type SectionConfig } from './types';
+import { editableList, editableItem } from './editable-list';
 
 const TONE_CLASS: Record<Extract<SectionTone, 'deep' | 'brand' | 'accent'>, string> = {
   deep: 'bg-(--theme-deep) text-(--theme-on-deep)',
@@ -48,14 +49,17 @@ export function TemplateMarquee({
       aria-hidden="true"
       className={`overflow-hidden py-4 ${TONE_CLASS[tone]} ${bordered ? 'border-y border-current/15' : ''}`}
     >
-      <div className="mtm-marquee-l flex w-max gap-10 hover:[animation-play-state:paused]">
+      <div
+        className="mtm-marquee-l flex w-max gap-10 hover:[animation-play-state:paused]"
+        {...editableList('items', items)}
+      >
         {track.map((item, index) => (
           <span
             key={`${item}-${index}`}
             className="flex items-center gap-3 whitespace-nowrap text-[15px] font-medium"
           >
             <span className={SEPARATOR[separator]} />
-            {item}
+            <span {...editableItem('items', index % items.length)}>{item}</span>
           </span>
         ))}
       </div>

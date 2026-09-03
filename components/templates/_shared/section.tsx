@@ -37,9 +37,21 @@ export function Container({ className = '', children }: { className?: string; ch
   );
 }
 
-export function Eyebrow({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function Eyebrow({
+  children,
+  className = '',
+  editableKey,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** Config key this label writes to when edited inline on the canvas. */
+  editableKey?: string;
+}) {
   return (
-    <span className={`block text-[13px] font-bold tracking-[0.16em] text-(--theme-primary) ${className}`}>
+    <span
+      data-editable={editableKey}
+      className={`block text-[13px] font-bold tracking-[0.16em] text-(--theme-primary) ${className}`}
+    >
       {children}
     </span>
   );
@@ -54,13 +66,7 @@ interface SectionHeadProps {
 }
 
 /** Eyebrow + title + supporting paragraph — the head every design repeats. */
-export function SectionHead({
-  eyebrow,
-  title,
-  subtitle,
-  align = 'between',
-  className = '',
-}: SectionHeadProps) {
+export function SectionHead({ eyebrow, title, subtitle, align = 'between', className = '' }: SectionHeadProps) {
   return (
     <div
       className={
@@ -70,7 +76,11 @@ export function SectionHead({
       }
     >
       <div>
-        {eyebrow ? <Eyebrow className="mb-3">{eyebrow}</Eyebrow> : null}
+        {eyebrow ? (
+          <Eyebrow className="mb-3" editableKey="eyebrow">
+            {eyebrow}
+          </Eyebrow>
+        ) : null}
         <h2
           data-editable="title"
           className="max-w-[22ch] text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]"

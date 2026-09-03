@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ZABANEH_DEFAULTS } from './defaults';
 import styles from './zabaneh.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface TranscriptLine {
   who: string;
@@ -38,11 +39,7 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
               <b data-editable="entryWord" className="text-[19px] font-bold" dir="ltr">
                 {text(config, 'entryWord', d.entryWord)}
               </b>
-              <span
-                data-editable="entryPhonetic"
-                className="mt-1 block text-[13.5px] text-(--theme-muted)"
-                dir="ltr"
-              >
+              <span data-editable="entryPhonetic" className="mt-1 block text-[13.5px] text-(--theme-muted)" dir="ltr">
                 {text(config, 'entryPhonetic', d.entryPhonetic)}
               </span>
               <span data-editable="entryGloss" className="mt-1 block text-[13.5px] text-(--theme-muted)">
@@ -69,7 +66,12 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="outline" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+                <Button
+                  tone="outline"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -80,7 +82,13 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
             </p>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="relative grid gap-5" mediaKey="bgImage">
+          <RemovableSlot
+            config={config}
+            flagKey="showSideVisual"
+            editMode={editMode}
+            className="relative grid gap-5"
+            mediaKey="bgImage"
+          >
             <RemovableSlot config={config} flagKey="showStamp" editMode={editMode} className="inline-flex">
               <span className={styles.stamp} data-editable="stamp">
                 {text(config, 'stamp', d.stamp)}
@@ -110,10 +118,11 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
                   {text(config, 'transcriptLabel', d.transcriptLabel)}
                 </span>
 
-                <div className="mt-4 grid gap-3.5">
-                  {transcript.map((row) => (
+                <div className="mt-4 grid gap-3.5" {...editableList('transcript', transcript)}>
+                  {transcript.map((row, index) => (
                     <p key={row.line} className="flex gap-3 text-[14.5px] leading-[1.8]">
                       <span
+                        {...editableItem('transcript', index, 'who')}
                         className={`grid size-8 flex-none place-items-center rounded-full text-[11px] font-bold ${
                           row.teacher
                             ? 'bg-(--theme-primary) text-(--theme-on-primary)'
@@ -122,7 +131,9 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
                       >
                         {row.who}
                       </span>
-                      <span className="text-(--theme-ink-2)">{row.line}</span>
+                      <span {...editableItem('transcript', index, 'line')} className="text-(--theme-ink-2)">
+                        {row.line}
+                      </span>
                     </p>
                   ))}
                 </div>
@@ -137,15 +148,23 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
           editMode={editMode}
           className="mt-14 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-border-color) sm:grid-cols-2 lg:grid-cols-4"
         >
-          <dl className="contents">
-            {stats.map((stat) => (
+          <dl className="contents" {...editableList('stats', stats)}>
+            {stats.map((stat, index) => (
               <div key={stat.label} className="bg-(--theme-surface) p-6">
                 <dt className="sr-only">{stat.label}</dt>
                 <dd>
-                  <b className="block text-[30px] font-bold leading-none tracking-[-0.04em] tabular-nums">
+                  <b
+                    {...editableItem('stats', index, 'value')}
+                    className="block text-[30px] font-bold leading-none tracking-[-0.04em] tabular-nums"
+                  >
                     {stat.value}
                   </b>
-                  <span className="mt-2 block text-[13px] leading-[1.6] text-(--theme-muted)">{stat.label}</span>
+                  <span
+                    {...editableItem('stats', index, 'label')}
+                    className="mt-2 block text-[13px] leading-[1.6] text-(--theme-muted)"
+                  >
+                    {stat.label}
+                  </span>
                 </dd>
               </div>
             ))}

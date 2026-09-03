@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { NOKHBEH_DEFAULTS } from './defaults';
 import styles from './nokhbeh.module.css';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface MethodStep {
   step: string;
@@ -23,20 +24,28 @@ export function NokhbehFeatures({ id, config }: TemplateSectionProps) {
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <ol className="grid gap-5">
-          {items.map((item) => (
+        <ol className="grid gap-5" {...editableList('items', items)}>
+          {items.map((item, index) => (
             <li
               key={item.step}
               className="grid gap-5 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-7 md:grid-cols-[90px_1fr] md:items-start"
             >
               <span
+                {...editableItem('items', index, 'step')}
                 className={`text-[46px] font-bold leading-none text-(--theme-primary) opacity-40 ${styles.mono}`}
               >
                 {item.step}
               </span>
               <div>
-                <h3 className="text-[22px] font-bold leading-[1.35]">{item.title}</h3>
-                <p className="mt-3 max-w-[70ch] text-[15.5px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+                <h3 {...editableItem('items', index, 'title')} className="text-[22px] font-bold leading-[1.35]">
+                  {item.title}
+                </h3>
+                <p
+                  {...editableItem('items', index, 'body')}
+                  className="mt-3 max-w-[70ch] text-[15.5px] leading-[1.85] text-(--theme-muted)"
+                >
+                  {item.body}
+                </p>
               </div>
             </li>
           ))}

@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ELEKTRON_DEFAULTS } from './defaults';
 import styles from './elektron.module.css';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface FeatureItem {
   index: string;
@@ -32,16 +33,22 @@ export function ElektronFeatures({ id, config }: TemplateSectionProps) {
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div className="grid gap-5 lg:grid-cols-6">
+        <div className="grid gap-5 lg:grid-cols-6" {...editableList('items', items)}>
           {lead ? (
             <article
               className={`${styles.stage} relative flex flex-col justify-between overflow-hidden rounded-(--theme-border-radius) p-8 lg:col-span-2 lg:row-span-2`}
             >
               <span className={styles.mesh} aria-hidden="true" />
               <div className="relative z-[1]">
-                <span className="text-[12px] font-bold text-(--theme-accent)">{lead.index}</span>
-                <h3 className="mt-3 text-[23px] font-bold leading-[1.3]">{lead.title}</h3>
-                <p className="mt-3 text-[15px] leading-[1.85] text-current/68">{lead.body}</p>
+                <span {...editableItem('items', 0, 'index')} className="text-[12px] font-bold text-(--theme-accent)">
+                  {lead.index}
+                </span>
+                <h3 {...editableItem('items', 0, 'title')} className="mt-3 text-[23px] font-bold leading-[1.3]">
+                  {lead.title}
+                </h3>
+                <p {...editableItem('items', 0, 'body')} className="mt-3 text-[15px] leading-[1.85] text-current/68">
+                  {lead.body}
+                </p>
               </div>
               <span
                 data-editable="pulseCaption"
@@ -59,9 +66,21 @@ export function ElektronFeatures({ id, config }: TemplateSectionProps) {
                 spans[index] ?? 'lg:col-span-2'
               }`}
             >
-              <span className="text-[12px] font-bold text-(--theme-primary)">{item.index}</span>
-              <h3 className="mt-3 text-[19px] font-bold leading-[1.35]">{item.title}</h3>
-              <p className="mt-2.5 text-[14.5px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+              <span
+                {...editableItem('items', index + 1, 'index')}
+                className="text-[12px] font-bold text-(--theme-primary)"
+              >
+                {item.index}
+              </span>
+              <h3 {...editableItem('items', index + 1, 'title')} className="mt-3 text-[19px] font-bold leading-[1.35]">
+                {item.title}
+              </h3>
+              <p
+                {...editableItem('items', index + 1, 'body')}
+                className="mt-2.5 text-[14.5px] leading-[1.85] text-(--theme-muted)"
+              >
+                {item.body}
+              </p>
             </article>
           ))}
         </div>

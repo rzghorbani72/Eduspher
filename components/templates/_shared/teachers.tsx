@@ -1,5 +1,6 @@
 import { Container, SectionHead } from './section';
 import { list, text, type SectionConfig } from './types';
+import { editableList, editableItem } from './editable-list';
 
 export interface TemplateTeacher {
   initials: string;
@@ -35,13 +36,7 @@ const TONE_CLASS = {
  * Teacher grid. Presets ship no photos by design — the initials tile is the
  * intended default state, so a new academy's page never shows a broken image.
  */
-export function TemplateTeachers({
-  id,
-  config,
-  defaults,
-  tone = 'page',
-  avatarShape = 'tile',
-}: TemplateTeachersProps) {
+export function TemplateTeachers({ id, config, defaults, tone = 'page', avatarShape = 'tile' }: TemplateTeachersProps) {
   const items = list<TemplateTeacher>(config, 'items', defaults.items);
   const onDeep = tone === 'deep';
 
@@ -54,8 +49,8 @@ export function TemplateTeachers({
           subtitle={text(config, 'subtitle', defaults.subtitle)}
         />
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((teacher) => (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" {...editableList('items', items)}>
+          {items.map((teacher, index) => (
             <article
               key={teacher.name}
               className={`rounded-(--theme-border-radius) border p-6 ${
@@ -71,9 +66,19 @@ export function TemplateTeachers({
                 {teacher.initials}
               </span>
 
-              <h3 className="mt-5 text-[19px] font-bold">{teacher.name}</h3>
-              <p className="mt-1 text-[13.5px] font-bold text-(--theme-primary)">{teacher.role}</p>
-              <p className={`mt-3 text-[14px] leading-[1.8] ${onDeep ? 'text-current/62' : 'text-(--theme-muted)'}`}>
+              <h3 {...editableItem('items', index, 'name')} className="mt-5 text-[19px] font-bold">
+                {teacher.name}
+              </h3>
+              <p
+                {...editableItem('items', index, 'role')}
+                className="mt-1 text-[13.5px] font-bold text-(--theme-primary)"
+              >
+                {teacher.role}
+              </p>
+              <p
+                {...editableItem('items', index, 'bio')}
+                className={`mt-3 text-[14px] leading-[1.8] ${onDeep ? 'text-current/62' : 'text-(--theme-muted)'}`}
+              >
                 {teacher.bio}
               </p>
 
@@ -83,8 +88,10 @@ export function TemplateTeachers({
                     onDeep ? 'border-current/16 text-current/60' : 'border-(--theme-border-color) text-(--theme-muted)'
                   }`}
                 >
-                  {teacher.stats.map((stat) => (
-                    <li key={stat}>{stat}</li>
+                  {teacher.stats.map((stat, statIndex) => (
+                    <li key={stat} {...editableItem('items', index, 'stats', statIndex)}>
+                      {stat}
+                    </li>
                   ))}
                 </ul>
               ) : null}

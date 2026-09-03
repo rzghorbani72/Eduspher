@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { NOKHBEH_DEFAULTS } from './defaults';
 import styles from './nokhbeh.module.css';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface QuizItem {
   code: string;
@@ -30,31 +31,34 @@ export function NokhbehQuiz({ id, config }: TemplateSectionProps) {
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          {items.map((item) => (
+        <div className="grid gap-5 lg:grid-cols-2" {...editableList('items', items)}>
+          {items.map((item, index) => (
             <article
               key={item.code}
               className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6"
             >
               <div className={`flex items-center justify-between text-[12.5px] text-(--theme-muted) ${styles.mono}`}>
-                <span>{item.code}</span>
-                <span>{item.time}</span>
+                <span {...editableItem('items', index, 'code')}>{item.code}</span>
+                <span {...editableItem('items', index, 'time')}>{item.time}</span>
               </div>
 
-              <p className="mt-4 text-[17px] font-bold leading-[1.7]">{item.question}</p>
+              <p {...editableItem('items', index, 'question')} className="mt-4 text-[17px] font-bold leading-[1.7]">
+                {item.question}
+              </p>
 
               <ol className="mt-4 grid gap-2.5">
-                {item.options.map((option, index) => (
+                {item.options.map((option, optionIndex) => (
                   <li
                     key={option}
                     className="flex items-center gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) px-4 py-2.5 text-[15px]"
                   >
                     <span
+                      aria-hidden="true"
                       className={`grid size-6 flex-none place-items-center rounded-full bg-(--theme-surface-alt) text-[12px] font-bold ${styles.mono}`}
                     >
-                      {index + 1}
+                      {optionIndex + 1}
                     </span>
-                    {option}
+                    <span {...editableItem('items', index, 'options', optionIndex)}>{option}</span>
                   </li>
                 ))}
               </ol>
@@ -63,11 +67,18 @@ export function NokhbehQuiz({ id, config }: TemplateSectionProps) {
                 className={`mt-4 rounded-(--theme-border-radius) border border-(--theme-border-color) p-4 ${styles.answer}`}
               >
                 <summary className="flex items-center justify-between gap-3 text-[14.5px] font-bold text-(--theme-primary)">
-                  پاسخ تشریحی
+                  <span data-editable="answerLabel">{text(config, 'answerLabel', d.answerLabel)}</span>
                   <span aria-hidden="true">+</span>
                 </summary>
-                <p className="mt-3 text-[14.5px] font-bold">{item.answer}</p>
-                <p className="mt-2 text-[14.5px] leading-[1.85] text-(--theme-ink-2)">{item.explanation}</p>
+                <p {...editableItem('items', index, 'answer')} className="mt-3 text-[14.5px] font-bold">
+                  {item.answer}
+                </p>
+                <p
+                  {...editableItem('items', index, 'explanation')}
+                  className="mt-2 text-[14.5px] leading-[1.85] text-(--theme-ink-2)"
+                >
+                  {item.explanation}
+                </p>
               </details>
             </article>
           ))}

@@ -8,6 +8,7 @@ import { TAVAN_DEFAULTS } from './defaults';
 import styles from './tavan.module.css';
 import { formatPercent } from '@/lib/utils';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface HeroStat {
   value: string;
@@ -49,7 +50,12 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+                <Button
+                  tone="ghost-on-deep"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -61,15 +67,23 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
               editMode={editMode}
               className="mt-10 flex flex-wrap gap-x-10 gap-y-5 border-t border-current/18 pt-7"
             >
-              <dl className="contents">
-                {stats.map((stat) => (
+              <dl className="contents" {...editableList('stats', stats)}>
+                {stats.map((stat, index) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <b className="block text-[30px] font-bold leading-none tracking-[-0.04em] tabular-nums">
+                      <b
+                        {...editableItem('stats', index, 'value')}
+                        className="block text-[30px] font-bold leading-none tracking-[-0.04em] tabular-nums"
+                      >
                         {stat.value}
                       </b>
-                      <span className="mt-1.5 block text-[13px] text-current/60">{stat.label}</span>
+                      <span
+                        {...editableItem('stats', index, 'label')}
+                        className="mt-1.5 block text-[13px] text-current/60"
+                      >
+                        {stat.label}
+                      </span>
                     </dd>
                   </div>
                 ))}
@@ -77,7 +91,13 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} className="grid gap-5" mediaKey="bgImage">
+          <RemovableSlot
+            config={config}
+            flagKey="showSideVisual"
+            editMode={editMode}
+            className="grid gap-5"
+            mediaKey="bgImage"
+          >
             <HeroVisualSlot
               config={config}
               mode="fill"
@@ -99,7 +119,7 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
             <div className="rounded-(--theme-border-radius) border border-current/18 p-5">
               <div className="mb-2.5 flex items-baseline justify-between text-[13px] text-current/70">
                 <span data-editable="cycleLabel">{text(config, 'cycleLabel', d.cycleLabel)}</span>
-                <span className="font-bold tabular-nums">{formatPercent(percent, "fa")}</span>
+                <span className="font-bold tabular-nums">{formatPercent(percent, 'fa')}</span>
               </div>
               <div className={styles.track}>
                 <span className={styles.trackFill} data-motion="wash" style={{ width: `${percent}%` }} />

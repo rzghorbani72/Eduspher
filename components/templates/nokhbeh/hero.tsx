@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { NOKHBEH_DEFAULTS } from './defaults';
 import styles from './nokhbeh.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface BoardStep {
   text: string;
@@ -56,7 +57,12 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="outline" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'courses')}>
+                <Button
+                  tone="outline"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -72,13 +78,23 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
               editMode={editMode}
               className="mt-9 grid gap-6 border-t border-(--theme-border-color) pt-7 sm:grid-cols-2 lg:grid-cols-4"
             >
-              <dl className="contents">
-                {stats.map((stat) => (
+              <dl className="contents" {...editableList('stats', stats)}>
+                {stats.map((stat, index) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <b className={`block text-[28px] font-bold leading-none ${styles.mono}`}>{stat.value}</b>
-                      <span className="mt-2 block text-[13px] leading-[1.6] text-(--theme-muted)">{stat.label}</span>
+                      <b
+                        {...editableItem('stats', index, 'value')}
+                        className={`block text-[28px] font-bold leading-none ${styles.mono}`}
+                      >
+                        {stat.value}
+                      </b>
+                      <span
+                        {...editableItem('stats', index, 'label')}
+                        className="mt-2 block text-[13px] leading-[1.6] text-(--theme-muted)"
+                      >
+                        {stat.label}
+                      </span>
                     </dd>
                   </div>
                 ))}
@@ -104,10 +120,11 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
                     </span>
                   </div>
 
-                  <div className={`py-6 text-[16px] ${styles.mono}`} dir="ltr">
-                    {steps.map((step) => (
+                  <div className={`py-6 text-[16px] ${styles.mono}`} dir="ltr" {...editableList('boardSteps', steps)}>
+                    {steps.map((step, index) => (
                       <span
                         key={step.text}
+                        {...editableItem('boardSteps', index, 'text')}
                         className={`${styles.step} ${step.highlight ? styles.stepHi : 'text-(--theme-ink-2)'}`}
                       >
                         {step.text}
@@ -117,7 +134,9 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
 
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--theme-border-color) pt-4 text-[13.5px]">
                     <span className="text-(--theme-muted)">
-                      الگوی حل:{' '}
+                      <span data-editable="boardPatternLabel">
+                        {text(config, 'boardPatternLabel', d.boardPatternLabel)}
+                      </span>{' '}
                       <b data-editable="boardPattern" className="font-bold text-(--theme-foreground)">
                         {text(config, 'boardPattern', d.boardPattern)}
                       </b>

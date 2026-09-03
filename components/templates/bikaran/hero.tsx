@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { BIKARAN_DEFAULTS } from './defaults';
 import styles from './bikaran.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface HeroStat {
   value: string;
@@ -67,7 +68,12 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="outline" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+                <Button
+                  tone="outline"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -79,13 +85,23 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
               editMode={editMode}
               className="mt-10 grid gap-6 border-t border-(--theme-border-color) pt-7 sm:grid-cols-2 lg:grid-cols-4"
             >
-              <dl className="contents">
-                {stats.map((stat) => (
+              <dl className="contents" {...editableList('stats', stats)}>
+                {stats.map((stat, index) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <b className="block text-[26px] font-bold leading-none tracking-[-0.03em]">{stat.value}</b>
-                      <span className="mt-2 block text-[13px] leading-[1.6] text-(--theme-muted)">{stat.label}</span>
+                      <b
+                        {...editableItem('stats', index, 'value')}
+                        className="block text-[26px] font-bold leading-none tracking-[-0.03em]"
+                      >
+                        {stat.value}
+                      </b>
+                      <span
+                        {...editableItem('stats', index, 'label')}
+                        className="mt-2 block text-[13px] leading-[1.6] text-(--theme-muted)"
+                      >
+                        {stat.label}
+                      </span>
                     </dd>
                   </div>
                 ))}

@@ -2,6 +2,7 @@ import { Container, Eyebrow } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import styles from './shafagh.module.css';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface FeatureItem {
   index: string;
@@ -38,7 +39,7 @@ export function ShafaghFeatures({ id, config }: TemplateSectionProps) {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-x-14 md:grid-cols-2">
+        <div className="mt-14 grid gap-x-14 md:grid-cols-2" {...editableList('items', items)}>
           {items.map((item, index) => (
             <article key={item.title} className={styles.row}>
               <span className={styles.hair} aria-hidden="true" />
@@ -47,9 +48,21 @@ export function ShafaghFeatures({ id, config }: TemplateSectionProps) {
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div>
-                  <span className="text-[12px] font-bold text-(--theme-primary)">{item.index}</span>
-                  <h3 className="mt-2 text-[20px] font-bold leading-[1.35]">{item.title}</h3>
-                  <p className="mt-2.5 text-[14.5px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+                  <span
+                    {...editableItem('items', index, 'index')}
+                    className="text-[12px] font-bold text-(--theme-primary)"
+                  >
+                    {item.index}
+                  </span>
+                  <h3 {...editableItem('items', index, 'title')} className="mt-2 text-[20px] font-bold leading-[1.35]">
+                    {item.title}
+                  </h3>
+                  <p
+                    {...editableItem('items', index, 'body')}
+                    className="mt-2.5 text-[14.5px] leading-[1.85] text-(--theme-muted)"
+                  >
+                    {item.body}
+                  </p>
                 </div>
               </div>
             </article>
@@ -58,10 +71,7 @@ export function ShafaghFeatures({ id, config }: TemplateSectionProps) {
 
         <div className="mt-4 flex items-center gap-5">
           <span className={`${styles.hair} flex-1`} aria-hidden="true" />
-          <span
-            data-editable="frameCaption"
-            className="text-[13px] font-bold text-(--theme-primary)"
-          >
+          <span data-editable="frameCaption" className="text-[13px] font-bold text-(--theme-primary)">
             {text(config, 'frameCaption', d.frameCaption)}
           </span>
         </div>

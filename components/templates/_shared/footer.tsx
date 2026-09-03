@@ -4,6 +4,7 @@ import { PoweredBy } from '@/components/shared/powered-by';
 import { Container } from './section';
 import { list, text, type SectionConfig, type TemplateStoreContext } from './types';
 import { templateHref } from './routes';
+import { editableList, editableItem } from './editable-list';
 
 export interface FooterColumn {
   title: string;
@@ -22,6 +23,7 @@ interface TemplateFooterProps {
   defaults: {
     about: string;
     legal: string;
+    contactTitle?: string;
     columns?: readonly FooterColumn[];
     contact?: readonly FooterContact[];
     socials?: readonly { label: string; href: string }[];
@@ -76,19 +78,23 @@ export async function TemplateSiteFooter({
   return (
     <footer id={id || 'footer'} className="bg-(--theme-deep) text-(--theme-on-deep)">
       <Container className="pt-16">
-        <div className="grid gap-10 pb-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]">
+        <div
+          className="grid gap-10 pb-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr]"
+          {...editableList('columns', columns)}
+        >
           <div>
             <p className="text-[19px] font-bold">{academyName}</p>
             <p data-editable="about" className="mt-4 max-w-[36ch] text-[14px] leading-[1.85] text-current/62">
               {text(config, 'about', defaults.about)}
             </p>
             {socials.length > 0 ? (
-              <ul className="mt-6 flex gap-2.5">
-                {socials.map((social) => (
+              <ul className="mt-6 flex gap-2.5" {...editableList('socials', socials)}>
+                {socials.map((social, index) => (
                   <li key={social.label}>
                     <a
                       href={social.href}
                       aria-label={social.label}
+                      {...editableItem('socials', index, 'label')}
                       className="grid size-9 place-items-center rounded-(--theme-border-radius) border border-current/25 text-[12px] font-bold text-current/80 hover:border-(--theme-accent) hover:text-(--theme-accent)"
                     >
                       {social.label}
@@ -99,13 +105,22 @@ export async function TemplateSiteFooter({
             ) : null}
           </div>
 
-          {columns.map((column) => (
+          {columns.map((column, index) => (
             <nav key={column.title} aria-label={column.title}>
-              <h2 className="mb-4 text-[14px] font-bold tracking-[0.1em] text-(--theme-accent)">{column.title}</h2>
+              <h2
+                {...editableItem('columns', index, 'title')}
+                className="mb-4 text-[14px] font-bold tracking-[0.1em] text-(--theme-accent)"
+              >
+                {column.title}
+              </h2>
               <ul className="grid gap-2.5">
-                {column.links.map((link) => (
+                {column.links.map((link, linkIndex) => (
                   <li key={link.label}>
-                    <a href={link.href} className="text-[14px] text-current/72 hover:text-current">
+                    <a
+                      href={link.href}
+                      {...editableItem('columns', index, 'links', linkIndex, 'label')}
+                      className="text-[14px] text-current/72 hover:text-current"
+                    >
                       {link.label}
                     </a>
                   </li>
@@ -116,16 +131,21 @@ export async function TemplateSiteFooter({
 
           {contact.length > 0 ? (
             <div>
-              <h2 className="mb-4 text-[14px] font-bold tracking-[0.1em] text-(--theme-accent)">تماس</h2>
-              <ul className="grid gap-2.5 text-[14px] text-current/72">
-                {contact.map((item) => (
+              <h2
+                data-editable="contactTitle"
+                className="mb-4 text-[14px] font-bold tracking-[0.1em] text-(--theme-accent)"
+              >
+                {text(config, 'contactTitle', defaults.contactTitle ?? 'تماس')}
+              </h2>
+              <ul className="grid gap-2.5 text-[14px] text-current/72" {...editableList('contact', contact)}>
+                {contact.map((item, index) => (
                   <li key={item.label}>
                     {item.href ? (
-                      <a href={item.href} className="hover:text-current">
+                      <a href={item.href} {...editableItem('contact', index, 'label')} className="hover:text-current">
                         {item.label}
                       </a>
                     ) : (
-                      item.label
+                      <span {...editableItem('contact', index, 'label')}>{item.label}</span>
                     )}
                   </li>
                 ))}
@@ -139,9 +159,7 @@ export async function TemplateSiteFooter({
             © {year} {academyName}. <span data-editable="legal">{text(config, 'legal', defaults.legal)}</span>
           </span>
           <PoweredBy />
-          {academy?.slug ? (
-            <PlatformTrustBadge slug={academy.slug} academyId={academy.id} />
-          ) : null}
+          {academy?.slug ? <PlatformTrustBadge slug={academy.slug} academyId={academy.id} /> : null}
         </div>
       </Container>
     </footer>

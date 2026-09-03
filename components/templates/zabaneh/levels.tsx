@@ -3,6 +3,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ZABANEH_DEFAULTS } from './defaults';
 import styles from './zabaneh.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface LevelStep {
   code: string;
@@ -29,23 +30,37 @@ export function ZabanehLevels({ id, config, storeContext }: TemplateSectionProps
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {steps.map((step) => (
+        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" {...editableList('steps', steps)}>
+          {steps.map((step, index) => (
             <li
               key={step.code}
               className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6"
             >
               <span
                 dir="ltr"
+                {...editableItem('steps', index, 'code')}
                 className="inline-block rounded-(--theme-border-radius) bg-(--theme-primary) px-3 py-1 text-[14px] font-bold text-(--theme-on-primary)"
               >
                 {step.code}
               </span>
-              <h3 className="mt-4 text-[20px] font-bold">{step.title}</h3>
-              <p className="mt-2 text-[14.5px] leading-[1.8] text-(--theme-muted)">{step.body}</p>
-              <p className="mt-3 text-[13px] font-bold text-(--theme-ink-2)">میانگین {step.duration}</p>
+              <h3 {...editableItem('steps', index, 'title')} className="mt-4 text-[20px] font-bold">
+                {step.title}
+              </h3>
+              <p
+                {...editableItem('steps', index, 'body')}
+                className="mt-2 text-[14.5px] leading-[1.8] text-(--theme-muted)"
+              >
+                {step.body}
+              </p>
+              <p className="mt-3 text-[13px] font-bold text-(--theme-ink-2)">
+                <span data-editable="durationLabel">{text(config, 'durationLabel', d.durationLabel)}</span>{' '}
+                <span {...editableItem('steps', index, 'duration')}>{step.duration}</span>
+              </p>
 
-              <div className="mt-4 h-1.5 rounded-full bg-(--theme-border-color)">
+              <div
+                className="mt-4 h-1.5 rounded-full bg-(--theme-border-color)"
+                data-editable-range={`steps.${index}.fill`}
+              >
                 <span className={styles.bar} style={{ width: `${step.fill}%`, display: 'block' }} />
               </div>
             </li>
@@ -53,9 +68,14 @@ export function ZabanehLevels({ id, config, storeContext }: TemplateSectionProps
         </ol>
 
         <div className="mt-9 flex flex-col gap-4 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 md:flex-row md:items-center md:justify-between">
-          <p className="max-w-[62ch] text-[15px] leading-[1.85] text-(--theme-muted)">{d.footNote}</p>
-          <a href={templateHref(storeContext, 'register')} className="whitespace-nowrap text-[14.5px] font-bold text-(--theme-primary) hover:underline">
-            {d.footCta} ←
+          <p data-editable="footNote" className="max-w-[62ch] text-[15px] leading-[1.85] text-(--theme-muted)">
+            {text(config, 'footNote', d.footNote)}
+          </p>
+          <a
+            href={templateHref(storeContext, 'register')}
+            className="whitespace-nowrap text-[14.5px] font-bold text-(--theme-primary) hover:underline"
+          >
+            <span data-editable="footCta">{text(config, 'footCta', d.footCta)}</span> ←
           </a>
         </div>
       </Container>

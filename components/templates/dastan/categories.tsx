@@ -2,6 +2,7 @@ import { Container } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface KitchenItem {
   index: string;
@@ -16,10 +17,13 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
   const items = list<KitchenItem>(config, 'items', d.items);
 
   return (
-    <section id={id || 'categories'} className="border-t border-(--theme-border-color) bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'categories'}
+      className="border-t border-(--theme-border-color) bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Container className="py-(--theme-section-padding-y)">
         <p className="mb-5 flex items-center gap-3 text-[13px] font-medium tracking-[0.16em] text-(--theme-primary)">
-          {text(config, 'eyebrow', d.eyebrow)}
+          <span data-editable="eyebrow">{text(config, 'eyebrow', d.eyebrow)}</span>
           <span aria-hidden="true" className="h-px flex-1 bg-(--theme-border-color)" />
         </p>
 
@@ -30,8 +34,8 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
           {text(config, 'title', d.title)}
         </h2>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
-          {items.map((item) => (
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]" {...editableList('items', items)}>
+          {items.map((item, index) => (
             <a
               key={item.title}
               href={templateHref(storeContext, 'courses')}
@@ -42,6 +46,7 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
               }`}
             >
               <span
+                {...editableItem('items', index, 'index')}
                 className={`text-[12px] font-bold tracking-[0.16em] ${
                   item.lead ? 'text-(--theme-accent)' : 'text-(--theme-primary) group-hover:text-(--theme-accent)'
                 }`}
@@ -49,8 +54,14 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
                 {item.index}
               </span>
               <div>
-                <h3 className={`font-bold ${item.lead ? 'text-[30px]' : 'text-[21px]'}`}>{item.title}</h3>
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className={`font-bold ${item.lead ? 'text-[30px]' : 'text-[21px]'}`}
+                >
+                  {item.title}
+                </h3>
                 <p
+                  {...editableItem('items', index, 'body')}
                   className={`mt-2 text-[14px] leading-[1.8] ${
                     item.lead ? 'text-current/72' : 'text-(--theme-muted) group-hover:text-current/72'
                   }`}

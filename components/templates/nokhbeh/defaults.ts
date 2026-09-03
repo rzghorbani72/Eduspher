@@ -17,6 +17,7 @@ export const NOKHBEH_DEFAULTS = {
       { text: '= (x − 2)(x + 2) / (x − 2)', highlight: false },
       { text: '= x + 2  → 4', highlight: true },
     ],
+    boardPatternLabel: 'الگوی حل:',
     boardPattern: 'رفع ابهام صفر بر صفر',
     boardTime: '۰۰:۰۴:۱۲',
     stats: [
@@ -85,6 +86,7 @@ export const NOKHBEH_DEFAULTS = {
     eyebrow: '۰۴',
     title: 'یک نمونه از کلاس',
     subtitle: 'دو تست از دفتر تیپ‌ها؛ پاسخ تشریحی را باز کن و ببین الگو چطور نوشته می‌شود.',
+    answerLabel: 'پاسخ تشریحی',
     items: [
       {
         code: 'TYPE 041 · LIMITS',

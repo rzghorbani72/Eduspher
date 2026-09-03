@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { KEYHAN_DEFAULTS } from './defaults';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface TopicItem {
   count: string;
@@ -24,8 +25,8 @@ export function KeyhanCategories({ id, config, storeContext }: TemplateSectionPr
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {items.map((item) => (
+        <div className="grid gap-5 md:grid-cols-3" {...editableList('items', items)}>
+          {items.map((item, index) => (
             <a
               key={item.title}
               href={templateHref(storeContext, 'courses')}
@@ -33,9 +34,15 @@ export function KeyhanCategories({ id, config, storeContext }: TemplateSectionPr
                 item.wide ? 'md:col-span-3 lg:col-span-3' : ''
               }`}
             >
-              <span className="text-[13px] font-bold tracking-[0.14em] text-(--theme-primary)">{item.count} دوره</span>
-              <h3 className="text-[21px] font-bold leading-[1.35]">{item.title}</h3>
-              <p className="text-[14.5px] leading-[1.8] text-(--theme-muted)">{item.body}</p>
+              <span className="text-[13px] font-bold tracking-[0.14em] text-(--theme-primary)">
+                <span {...editableItem('items', index, 'count')}>{item.count}</span> دوره
+              </span>
+              <h3 {...editableItem('items', index, 'title')} className="text-[21px] font-bold leading-[1.35]">
+                {item.title}
+              </h3>
+              <p {...editableItem('items', index, 'body')} className="text-[14.5px] leading-[1.8] text-(--theme-muted)">
+                {item.body}
+              </p>
               <span className="mt-auto pt-2 text-[13.5px] font-bold text-(--theme-primary) transition-transform duration-200 group-hover:-translate-x-1">
                 مشاهدهٔ دوره‌ها ←
               </span>

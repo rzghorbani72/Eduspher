@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { TAVAN_DEFAULTS } from './defaults';
 import styles from './tavan.module.css';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface FeatureItem {
   kicker: string;
@@ -23,7 +24,10 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
   const items = list<FeatureItem>(config, 'items', d.items);
 
   return (
-    <section id={id || 'features'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'features'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <div className={styles.ruleGrid} aria-hidden="true" />
       <span className={styles.ghostNum} aria-hidden="true">
         {text(config, 'eyebrow', d.eyebrow)}
@@ -36,25 +40,47 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div className="grid gap-5 lg:grid-cols-6">
-          {items.map((item) => (
+        <div className="grid gap-5 lg:grid-cols-6" {...editableList('items', items)}>
+          {items.map((item, index) => (
             <article
               key={item.title}
               className={`flex flex-col rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 ${SPAN[item.size]}`}
             >
-              <span className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)">{item.kicker}</span>
-              <h3 className="mt-3 text-[21px] font-bold leading-[1.35]">{item.title}</h3>
-              <p className="mt-3 text-[15px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+              <span
+                {...editableItem('items', index, 'kicker')}
+                className="text-[12px] font-bold tracking-[0.14em] text-(--theme-primary)"
+              >
+                {item.kicker}
+              </span>
+              <h3 {...editableItem('items', index, 'title')} className="mt-3 text-[21px] font-bold leading-[1.35]">
+                {item.title}
+              </h3>
+              <p
+                {...editableItem('items', index, 'body')}
+                className="mt-3 text-[15px] leading-[1.85] text-(--theme-muted)"
+              >
+                {item.body}
+              </p>
 
               {item.rows.length > 0 ? (
                 <ul className="mt-6 grid gap-px overflow-hidden rounded-(--theme-border-radius) bg-(--theme-border-color)">
-                  {item.rows.map((row) => (
+                  {item.rows.map((row, rowIndex) => (
                     <li
                       key={row.label}
                       className="flex items-baseline justify-between gap-4 bg-(--theme-surface-alt) px-4 py-3 text-[14px]"
                     >
-                      <span className="text-(--theme-muted)">{row.label}</span>
-                      <b className="whitespace-nowrap font-bold">{row.value}</b>
+                      <span
+                        {...editableItem('items', index, 'rows', rowIndex, 'label')}
+                        className="text-(--theme-muted)"
+                      >
+                        {row.label}
+                      </span>
+                      <b
+                        {...editableItem('items', index, 'rows', rowIndex, 'value')}
+                        className="whitespace-nowrap font-bold"
+                      >
+                        {row.value}
+                      </b>
                     </li>
                   ))}
                 </ul>
@@ -63,8 +89,12 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
           ))}
 
           <blockquote className="rounded-(--theme-border-radius) border-s-4 border-(--theme-primary) bg-(--theme-surface-alt) p-6 lg:col-span-6">
-            <p className="text-[17px] leading-[1.85]">{d.quote.body}</p>
-            <cite className="mt-3 block text-[13.5px] not-italic text-(--theme-muted)">{d.quote.cite}</cite>
+            <p data-editable="quoteBody" className="text-[17px] leading-[1.85]">
+              {text(config, 'quoteBody', d.quote.body)}
+            </p>
+            <cite data-editable="quoteCite" className="mt-3 block text-[13.5px] not-italic text-(--theme-muted)">
+              {text(config, 'quoteCite', d.quote.cite)}
+            </cite>
           </blockquote>
         </div>
       </Container>

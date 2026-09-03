@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { KEYHAN_DEFAULTS } from './defaults';
 import styles from './keyhan.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface HeroStat {
   value: string;
@@ -30,10 +31,7 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
           <div>
             <div className="mb-6 flex items-center gap-2.5">
               <span data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" aria-hidden="true" />
-              <span
-                data-editable="kicker"
-                className="text-[13px] font-medium tracking-[0.08em] text-current/70"
-              >
+              <span data-editable="kicker" className="text-[13px] font-medium tracking-[0.08em] text-current/70">
                 {text(config, 'kicker', d.kicker)}
               </span>
             </div>
@@ -44,10 +42,7 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p
-              data-editable="subtitle"
-              className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/72"
-            >
+            <p data-editable="subtitle" className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/72">
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
@@ -58,7 +53,12 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+                <Button
+                  tone="ghost-on-deep"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -102,18 +102,30 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
           editMode={editMode}
           className="mt-16 grid gap-px overflow-hidden rounded-(--theme-border-radius) border border-current/15 bg-current/15 sm:grid-cols-2 lg:grid-cols-4"
         >
-          <dl className="contents">
-            {stats.map((stat) => (
+          <dl className="contents" {...editableList('stats', stats)}>
+            {stats.map((stat, index) => (
               <div key={stat.label} className={`p-6 ${styles.void}`}>
-                <dt className="text-[12px] font-medium tracking-[0.1em] text-current/55">{stat.label}</dt>
+                <dt
+                  {...editableItem('stats', index, 'label')}
+                  className="text-[12px] font-medium tracking-[0.1em] text-current/55"
+                >
+                  {stat.label}
+                </dt>
                 <dd>
                   <span className="mt-2 block text-[34px] font-bold leading-none tracking-[-0.04em]">
-                    {stat.value}
+                    <span {...editableItem('stats', index, 'value')}>{stat.value}</span>
                     {stat.unit ? (
-                      <small className="ms-1.5 text-[13px] font-medium text-current/60">{stat.unit}</small>
+                      <small
+                        {...editableItem('stats', index, 'unit')}
+                        className="ms-1.5 text-[13px] font-medium text-current/60"
+                      >
+                        {stat.unit}
+                      </small>
                     ) : null}
                   </span>
-                  <span className="mt-2 block text-[12.5px] text-current/55">{stat.note}</span>
+                  <span {...editableItem('stats', index, 'note')} className="mt-2 block text-[12.5px] text-current/55">
+                    {stat.note}
+                  </span>
                 </dd>
               </div>
             ))}

@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import styles from './shafagh.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface HeroStat {
   value: string;
@@ -35,7 +36,11 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <div className="flex items-center gap-4">
-              <span data-motion="live" className="size-2 flex-none rounded-full bg-(--theme-accent)" aria-hidden="true" />
+              <span
+                data-motion="live"
+                className="size-2 flex-none rounded-full bg-(--theme-accent)"
+                aria-hidden="true"
+              />
               <span data-editable="kicker" className="text-[13px] font-bold text-(--theme-primary)">
                 {text(config, 'kicker', d.kicker)}
               </span>
@@ -67,7 +72,10 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <span data-editable="ctaSecondary" className="border-b-2 border-(--theme-primary) pb-1 text-[15px] font-bold text-(--theme-primary)">
+                <span
+                  data-editable="ctaSecondary"
+                  className="border-b-2 border-(--theme-primary) pb-1 text-[15px] font-bold text-(--theme-primary)"
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </span>
               </RemovableSlot>
@@ -83,7 +91,9 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
                 editMode={editMode}
                 className={`${styles.frame} aspect-[4/5] min-h-[300px] w-[82%]`}
               >
-                <div className={`${styles.emptySlot} relative flex h-full w-full items-center justify-center p-10 text-center`}>
+                <div
+                  className={`${styles.emptySlot} relative flex h-full w-full items-center justify-center p-10 text-center`}
+                >
                   <span className={styles.grain} aria-hidden="true" />
                   <span data-editable="photoCaption" className="relative z-[1] text-[14px] text-(--theme-muted)">
                     {text(config, 'photoCaption', d.photoCaption)}
@@ -96,19 +106,31 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
 
         <RemovableSlot config={config} flagKey="showStats" editMode={editMode} className="mt-16">
           <span className={styles.hair} aria-hidden="true" />
-          <dl className="grid gap-x-10 gap-y-8 pt-8 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => (
+          <dl className="grid gap-x-10 gap-y-8 pt-8 sm:grid-cols-2 lg:grid-cols-4" {...editableList('stats', stats)}>
+            {stats.map((stat, index) => (
               <div key={stat.label}>
                 <dd>
                   <span className="block text-[34px] font-extrabold leading-none tracking-[-0.04em]">
-                    {stat.value}
+                    <span {...editableItem('stats', index, 'value')}>{stat.value}</span>
                     {stat.unit ? (
-                      <small className="text-[15px] font-bold text-(--theme-primary)">{stat.unit}</small>
+                      <small
+                        {...editableItem('stats', index, 'unit')}
+                        className="text-[15px] font-bold text-(--theme-primary)"
+                      >
+                        {stat.unit}
+                      </small>
                     ) : null}
                   </span>
                 </dd>
-                <dt className="mt-3 text-[14px] font-bold">{stat.label}</dt>
-                <p className="mt-1 text-[12.5px] leading-[1.7] text-(--theme-muted)">{stat.note}</p>
+                <dt {...editableItem('stats', index, 'label')} className="mt-3 text-[14px] font-bold">
+                  {stat.label}
+                </dt>
+                <p
+                  {...editableItem('stats', index, 'note')}
+                  className="mt-1 text-[12.5px] leading-[1.7] text-(--theme-muted)"
+                >
+                  {stat.note}
+                </p>
               </div>
             ))}
           </dl>

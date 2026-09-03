@@ -1,5 +1,6 @@
 import { Container, SectionHead } from './section';
 import { list, text, type SectionConfig } from './types';
+import { editableList, editableItem } from './editable-list';
 
 export type CapacityTone = 'open' | 'few' | 'full';
 
@@ -63,12 +64,13 @@ export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: Te
 
         <div className="overflow-x-auto rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow)">
           <table className="w-full min-w-[720px] border-collapse text-[15px]">
-            <thead>
+            <thead {...editableList('columns', columns)}>
               <tr>
-                {columns.map((column) => (
+                {columns.map((column, columnIndex) => (
                   <th
                     key={column}
                     scope="col"
+                    {...editableItem('columns', columnIndex)}
                     className="border-b border-(--theme-border-color) bg-(--theme-surface-alt) p-4 text-start text-[13px] font-bold text-(--theme-muted)"
                   >
                     {column}
@@ -76,8 +78,8 @@ export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: Te
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {rows.map((row) => (
+            <tbody {...editableList('rows', rows)}>
+              {rows.map((row, rowIndex) => (
                 <tr key={row.key} className="hover:bg-(--theme-surface-alt)">
                   {row.cells.map((cell, index) => (
                     <td
@@ -87,15 +89,23 @@ export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: Te
                       {cell.status ? (
                         <span
                           data-motion={cell.status === 'few' ? 'signal' : undefined}
+                          {...editableItem('rows', rowIndex, 'cells', index, 'text')}
                           className={`inline-block whitespace-nowrap rounded-(--theme-border-radius) px-2.5 py-1 text-[12px] font-bold ${STATUS_CLASS[cell.status]}`}
                         >
                           {cell.text}
                         </span>
                       ) : (
                         <>
-                          <span className="block">{cell.text}</span>
+                          <span {...editableItem('rows', rowIndex, 'cells', index, 'text')} className="block">
+                            {cell.text}
+                          </span>
                           {cell.note ? (
-                            <span className="mt-1 block text-[13px] text-(--theme-muted)">{cell.note}</span>
+                            <span
+                              {...editableItem('rows', rowIndex, 'cells', index, 'note')}
+                              className="mt-1 block text-[13px] text-(--theme-muted)"
+                            >
+                              {cell.note}
+                            </span>
                           ) : null}
                         </>
                       )}

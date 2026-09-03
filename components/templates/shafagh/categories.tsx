@@ -3,6 +3,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import styles from './shafagh.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface TrackItem {
   count: string;
@@ -31,7 +32,7 @@ export function ShafaghCategories({ id, config, storeContext }: TemplateSectionP
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div>
+        <div {...editableList('items', items)}>
           {items.map((item, index) => (
             <a key={item.title} href={templateHref(storeContext, 'courses')} className={`${styles.row} block`}>
               <span className={styles.hair} aria-hidden="true" />
@@ -48,6 +49,7 @@ export function ShafaghCategories({ id, config, storeContext }: TemplateSectionP
                   <div className="md:w-[34%] md:flex-none">
                     {/* Terracotta on purpose — not the inherited `a` colour. */}
                     <h3
+                      {...editableItem('items', index, 'title')}
                       className={`font-bold leading-[1.3] text-(--theme-primary) ${
                         item.wide ? 'text-[25px]' : 'text-[21px]'
                       }`}
@@ -55,10 +57,15 @@ export function ShafaghCategories({ id, config, storeContext }: TemplateSectionP
                       {item.title}
                     </h3>
                     <span className="mt-1.5 block text-[13px] font-bold text-(--theme-primary)">
-                      {item.count} دوره
+                      <span {...editableItem('items', index, 'count')}>{item.count}</span> دوره
                     </span>
                   </div>
-                  <p className="mt-3 text-[14.5px] leading-[1.85] text-(--theme-muted) md:mt-0">{item.body}</p>
+                  <p
+                    {...editableItem('items', index, 'body')}
+                    className="mt-3 text-[14.5px] leading-[1.85] text-(--theme-muted) md:mt-0"
+                  >
+                    {item.body}
+                  </p>
                 </div>
 
                 <span

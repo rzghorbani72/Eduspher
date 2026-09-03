@@ -1,6 +1,7 @@
 import { Container, SectionHead } from './section';
 import { list, text, type SectionConfig, type TemplateStoreContext } from './types';
 import { templateHref } from './routes';
+import { editableList, editableItem } from './editable-list';
 
 export interface TrackItem {
   index: string;
@@ -53,22 +54,29 @@ export function TemplateTracks({
           subtitle={text(config, 'subtitle', defaults.subtitle)}
         />
 
-        <div className={`grid gap-5 ${COLUMNS[columns]}`}>
-          {items.map((item) => (
+        <div className={`grid gap-5 ${COLUMNS[columns]}`} {...editableList('items', items)}>
+          {items.map((item, index) => (
             <article
               key={item.title}
               className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7 shadow-(--theme-shadow)"
             >
-              <span className="text-[38px] font-bold leading-none tracking-[-0.05em] text-(--theme-primary) tabular-nums">
+              <span
+                {...editableItem('items', index, 'index')}
+                className="text-[38px] font-bold leading-none tracking-[-0.05em] text-(--theme-primary) tabular-nums"
+              >
                 {item.index}
               </span>
-              <h3 className="mt-2 text-[22px] font-bold">{item.title}</h3>
-              <p className="text-[15px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
+              <h3 {...editableItem('items', index, 'title')} className="mt-2 text-[22px] font-bold">
+                {item.title}
+              </h3>
+              <p {...editableItem('items', index, 'body')} className="text-[15px] leading-[1.85] text-(--theme-muted)">
+                {item.body}
+              </p>
               <a
                 href={templateHref(storeContext, 'courses')}
                 className="mt-auto pt-3 text-[13.5px] font-bold text-(--theme-primary) hover:underline"
               >
-                {item.meta} ←
+                <span {...editableItem('items', index, 'meta')}>{item.meta}</span> ←
               </a>
             </article>
           ))}

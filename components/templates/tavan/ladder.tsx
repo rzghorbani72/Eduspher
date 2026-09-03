@@ -2,6 +2,7 @@ import { Container } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { TAVAN_DEFAULTS } from './defaults';
 import styles from './tavan.module.css';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface LadderStep {
   range: string;
@@ -29,7 +30,10 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
     <section id={id || 'showcase'} className="relative overflow-hidden bg-(--theme-deep) text-(--theme-on-deep)">
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="mb-12">
-          <span className="block text-[13px] font-bold tracking-[0.16em] text-(--theme-primary)">
+          <span
+            data-editable="eyebrow"
+            className="block text-[13px] font-bold tracking-[0.16em] text-(--theme-primary)"
+          >
             {text(config, 'eyebrow', d.eyebrow)}
           </span>
           <h2
@@ -43,7 +47,7 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
           </p>
         </div>
 
-        <ol className="grid gap-4">
+        <ol className="grid gap-4" {...editableList('steps', steps)}>
           {steps.map((step, index) => (
             <li
               key={step.range}
@@ -52,16 +56,28 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
             >
               <div className="grid gap-5 md:grid-cols-[150px_1fr_200px] md:items-center">
                 <div>
-                  <span className="block text-[13px] text-current/60">{step.range}</span>
-                  <b className="mt-1 block text-[26px] font-bold leading-none tracking-[-0.04em] text-(--theme-primary) tabular-nums">
+                  <span {...editableItem('steps', index, 'range')} className="block text-[13px] text-current/60">
+                    {step.range}
+                  </span>
+                  <b
+                    {...editableItem('steps', index, 'percent')}
+                    className="mt-1 block text-[26px] font-bold leading-none tracking-[-0.04em] text-(--theme-primary) tabular-nums"
+                  >
                     {step.percent}
                   </b>
                 </div>
                 <div>
-                  <h3 className="text-[21px] font-bold">{step.title}</h3>
-                  <p className="mt-2 text-[15px] leading-[1.8] text-current/68">{step.body}</p>
+                  <h3 {...editableItem('steps', index, 'title')} className="text-[21px] font-bold">
+                    {step.title}
+                  </h3>
+                  <p
+                    {...editableItem('steps', index, 'body')}
+                    className="mt-2 text-[15px] leading-[1.8] text-current/68"
+                  >
+                    {step.body}
+                  </p>
                 </div>
-                <div className={styles.track}>
+                <div className={styles.track} data-editable-range={`steps.${index}.fill`}>
                   <span className={styles.trackFill} style={{ width: `${step.fill}%` }} />
                 </div>
               </div>
@@ -69,11 +85,18 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
           ))}
         </ol>
 
-        <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-current/16 pt-7 text-[14px]">
-          {notes.map((note) => (
+        <dl
+          className="mt-10 flex flex-wrap gap-x-10 gap-y-4 border-t border-current/16 pt-7 text-[14px]"
+          {...editableList('notes', notes)}
+        >
+          {notes.map((note, index) => (
             <div key={note.label} className="flex items-baseline gap-2">
-              <dt className="text-current/60">{note.label}:</dt>
-              <dd className="font-bold text-(--theme-primary)">{note.value}</dd>
+              <dt className="text-current/60">
+                <span {...editableItem('notes', index, 'label')}>{note.label}</span>:
+              </dt>
+              <dd {...editableItem('notes', index, 'value')} className="font-bold text-(--theme-primary)">
+                {note.value}
+              </dd>
             </div>
           ))}
         </dl>

@@ -7,6 +7,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { PARASTOO_DEFAULTS } from './defaults';
 import styles from './parastoo.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface Drill {
   question: string;
@@ -60,7 +61,12 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="outline" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+                <Button
+                  tone="outline"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -72,15 +78,23 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
               editMode={editMode}
               className="mt-9 flex flex-wrap gap-x-9 gap-y-5 border-t-2 border-dashed border-(--theme-border-strong) pt-7"
             >
-              <dl className="contents">
-                {stats.map((stat) => (
+              <dl className="contents" {...editableList('stats', stats)}>
+                {stats.map((stat, index) => (
                   <div key={stat.label}>
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
-                      <b className="block text-[30px] font-bold leading-[1.15] tracking-[-0.04em] tabular-nums">
+                      <b
+                        {...editableItem('stats', index, 'value')}
+                        className="block text-[30px] font-bold leading-[1.15] tracking-[-0.04em] tabular-nums"
+                      >
                         {stat.value}
                       </b>
-                      <span className="text-[13.5px] font-medium text-(--theme-muted)">{stat.label}</span>
+                      <span
+                        {...editableItem('stats', index, 'label')}
+                        className="text-[13.5px] font-medium text-(--theme-muted)"
+                      >
+                        {stat.label}
+                      </span>
                     </dd>
                   </div>
                 ))}
@@ -96,10 +110,7 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
             >
               <div className={styles.stack} aria-hidden="true">
                 <div className={`${styles.card3d} ${styles.c1}`}>
-                  <span
-                    data-editable="flashLabel"
-                    className="absolute top-4 start-5 text-[14px] font-bold opacity-85"
-                  >
+                  <span data-editable="flashLabel" className="absolute top-4 start-5 text-[14px] font-bold opacity-85">
                     {text(config, 'flashLabel', d.flashLabel)}
                   </span>
                   <span
@@ -110,7 +121,7 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
                   </span>
                 </div>
 
-                <div className={`${styles.card3d} ${styles.c2}`}>
+                <div className={`${styles.card3d} ${styles.c2}`} {...editableList('drills', drills)}>
                   {drills.map((drill, index) => (
                     <div
                       key={drill.question}
@@ -118,8 +129,8 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
                         index === drills.length - 1 ? 'text-(--theme-accent)' : 'text-(--theme-ink-2)'
                       }`}
                     >
-                      <span>{drill.question}</span>
-                      <span>{drill.answer}</span>
+                      <span {...editableItem('drills', index, 'question')}>{drill.question}</span>
+                      <span {...editableItem('drills', index, 'answer')}>{drill.answer}</span>
                     </div>
                   ))}
                 </div>
@@ -135,7 +146,10 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
 
                 <div className={styles.badge}>
                   <span>
-                    <b data-editable="badgeValue" className="block text-[27px] font-bold leading-none tracking-[-0.03em]">
+                    <b
+                      data-editable="badgeValue"
+                      className="block text-[27px] font-bold leading-none tracking-[-0.03em]"
+                    >
                       {text(config, 'badgeValue', d.badgeValue)}
                     </b>
                     <span data-editable="badgeLabel" className="text-[11.5px] font-bold">

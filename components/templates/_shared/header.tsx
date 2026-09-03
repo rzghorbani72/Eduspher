@@ -12,6 +12,7 @@ import { Button } from "./primitives";
 import { RemovableSlot } from "./removable-slot";
 import { flag, list, text, type SectionConfig } from "./types";
 import { templateHref, type TemplateRoute } from "./routes";
+import { editableList, editableItem } from "./editable-list";
 
 export interface HeaderNavItem {
   label: string;
@@ -154,7 +155,9 @@ export async function TemplateTopBar({
           href={templateHref(storeContext, "login")}
           className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
         >
-          {defaults.loginText}
+          <span data-editable="loginText">
+            {text(config, "loginText", defaults.loginText)}
+          </span>
         </Link>
       )}
     </RemovableSlot>
@@ -222,11 +225,13 @@ export async function TemplateTopBar({
           <nav
             aria-label="ناوبری اصلی"
             className="hidden flex-1 items-center gap-1 lg:flex"
+            {...editableList("nav", nav)}
           >
-            {nav.map((item) => (
+            {nav.map((item, index) => (
               <a
                 key={item.route}
                 href={templateHref(storeContext, item.route)}
+                {...editableItem("nav", index, "label")}
                 className={NAV_LINK_CLASS[spec.navStyle]}
               >
                 {item.label}

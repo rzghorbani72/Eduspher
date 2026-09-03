@@ -3,6 +3,7 @@ import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ELEKTRON_DEFAULTS } from './defaults';
 import styles from './elektron.module.css';
 import { templateHref } from '../_shared/routes';
+import { editableList, editableItem } from '../_shared/editable-list';
 
 interface TrackItem {
   count: string;
@@ -28,24 +29,34 @@ export function ElektronCategories({ id, config, storeContext }: TemplateSection
           subtitle={text(config, 'subtitle', d.subtitle)}
         />
 
-        <div>
+        <div {...editableList('items', items)}>
           {items.map((item, index) => (
-            <a key={item.title} href={templateHref(storeContext, 'courses')} className={`${styles.track} flex items-center gap-6 py-7`}>
+            <a
+              key={item.title}
+              href={templateHref(storeContext, 'courses')}
+              className={`${styles.track} flex items-center gap-6 py-7`}
+            >
               <span aria-hidden="true" className={`${styles.trackNo} flex-none text-[15px] font-bold`}>
                 {String(index + 1).padStart(2, '0')}
               </span>
 
               <div className="min-w-0 flex-1 md:flex md:items-center md:gap-10">
-                <h3 className={`${styles.trackTitle} text-[21px] font-bold leading-[1.3] md:w-[34%] md:flex-none`}>
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className={`${styles.trackTitle} text-[21px] font-bold leading-[1.3] md:w-[34%] md:flex-none`}
+                >
                   {item.title}
                 </h3>
-                <p className={`${styles.trackMuted} mt-2 text-[14.5px] leading-[1.8] text-(--theme-muted) md:mt-0`}>
+                <p
+                  {...editableItem('items', index, 'body')}
+                  className={`${styles.trackMuted} mt-2 text-[14.5px] leading-[1.8] text-(--theme-muted) md:mt-0`}
+                >
                   {item.body}
                 </p>
               </div>
 
               <span className={`${styles.trackMuted} flex-none text-[13px] font-bold text-(--theme-muted)`}>
-                {item.count} دوره
+                <span {...editableItem('items', index, 'count')}>{item.count}</span> دوره
               </span>
               <span aria-hidden="true" className="flex-none text-[18px]">
                 ←
