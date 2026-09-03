@@ -52,10 +52,10 @@ export function SessionRecordings({
                 {formatDate(session.starts_at, language)}
               </span>
             </h3>
-            {recording?.url ? (
+            {recording?.video_id ? (
               <VideoLesson
                 title={title}
-                source={recording.url}
+                videoId={recording.video_id}
                 downloadUrl={recording.can_download ? recording.url : null}
                 canDownload={recording.can_download}
                 initialPosition={0}
@@ -63,12 +63,12 @@ export function SessionRecordings({
               />
             ) : null}
             {helperVideos.map((video) =>
-              video.url ? (
+              video.video_id ? (
                 <div key={video.id} className="space-y-1">
                   <p className="text-xs text-muted">{t("live.helperVideo")}</p>
                   <VideoLesson
                     title={video.title}
-                    source={video.url}
+                    videoId={video.video_id}
                     downloadUrl={video.can_download ? video.url : null}
                     canDownload={video.can_download}
                     initialPosition={0}

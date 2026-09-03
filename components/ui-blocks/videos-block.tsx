@@ -4,11 +4,12 @@ import { getCurrentAcademy } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { resolveAssetUrl } from "@/lib/utils";
+import { LazySecureVideo } from "@/components/media/lazy-secure-video";
 
 export interface VideoItemConfig {
   /** Video row id in the academy's media library. */
   videoId?: string;
-  /** Playback source — the public `/videos/stream/:id` route. */
+  /** Legacy playback source, kept so older saved pages still render. */
   url?: string;
   poster?: string;
   title?: string;
@@ -41,7 +42,7 @@ export async function VideosBlock({ id, config }: VideosBlockProps) {
   );
   const tr = (key: string) => t(key, language);
 
-  const videos = (config?.videos ?? []).filter((video) => !!video.url);
+  const videos = (config?.videos ?? []).filter((video) => !!video.videoId);
   if (videos.length === 0) return null;
 
   const title =
@@ -65,19 +66,17 @@ export async function VideosBlock({ id, config }: VideosBlockProps) {
             if (slot.kind !== "live")
               return <PlaceholderCard key={i} text={slot.text} />;
             const video = slot.data;
+            if (!video.videoId) return null;
             return (
               <figure
                 key={video.videoId ?? i}
                 className="overflow-hidden rounded-[16px] border border-(--theme-border-color) bg-(--theme-surface)"
               >
-                <video
-                  src={resolveAssetUrl(video.url) ?? undefined}
-                  poster={resolveAssetUrl(video.poster) ?? undefined}
-                  controls
-                  preload="none"
-                  playsInline
-                  controlsList="nodownload"
-                  className="aspect-video w-full bg-(--theme-surface-alt) object-cover"
+                <LazySecureVideo
+                  videoId={video.videoId}
+                  title={video.title ?? tr("blocks.videosTitle")}
+                  poster={resolveAssetUrl(video.poster)}
+                  className="aspect-video w-full bg-(--theme-surface-alt)"
                 />
                 {(video.title || video.description) && (
                   <figcaption className="p-[20px]">

@@ -12,7 +12,7 @@ export interface PreviewMedia {
   lessonId: string;
   title: string;
   description: string | null;
-  videoUrl: string | null;
+  videoId: string | null;
   audioUrl: string | null;
   /** Body of a free text lesson, shown under the player. */
   content: string | null;

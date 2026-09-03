@@ -974,6 +974,9 @@ export const en = {
       "This lesson is unavailable or you do not currently have access.",
     lessonTypeUnavailable:
       "This lesson format is not available in the student player yet.",
+    playVideo: "Play video",
+    videoLoading: "Preparing secure playback…",
+    videoPlaybackFailed: "This video could not be played. Please refresh the page.",
     videoUnavailable: "The lesson video has not been published yet.",
     textUnavailable: "The lesson text has not been published yet.",
     liveClass: "Live class",

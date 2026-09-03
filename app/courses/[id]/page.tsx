@@ -109,14 +109,14 @@ export default async function CourseDetailPage({
     paymentPlans,
     seoCtx,
   ] = await Promise.all([
-      getPublicCourseDetail(id),
-      getCurrentUser().catch(() => null),
-      getTutoringOffersPublic(id).catch(() => []),
-      getTutoringGroupsPublic(id).catch(() => []),
-      getCourseOfferingsPublic(id).catch(() => []),
-      getCoursePaymentPlans(id),
-      getSeoRequestContext(),
-    ]);
+    getPublicCourseDetail(id),
+    getCurrentUser().catch(() => null),
+    getTutoringOffersPublic(id).catch(() => []),
+    getTutoringGroupsPublic(id).catch(() => []),
+    getCourseOfferingsPublic(id).catch(() => []),
+    getCoursePaymentPlans(id),
+    getSeoRequestContext(),
+  ]);
 
   if (!course) return notFound();
 
@@ -147,15 +147,15 @@ export default async function CourseDetailPage({
   // must belong to the viewer before it counts as "I own this course".
   const isEnrolled = Boolean(
     user &&
-      enrollment?.enrollments?.some(
-        (item) =>
-          String(item.profile_id) === String(user.id) &&
-          (item.status === "ACTIVE" || item.status === "COMPLETED"),
-      ),
+    enrollment?.enrollments?.some(
+      (item) =>
+        String(item.profile_id) === String(user.id) &&
+        (item.status === "ACTIVE" || item.status === "COMPLETED"),
+    ),
   );
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
-  const promoVideoUrl = resolveAssetUrl(course.Video?.publicUrl);
+  const promoVideoId = course.Video?.id ?? null;
 
   // Free lessons play inside the cover player, so their media is loaded with
   // the page. The endpoint serves free lessons only — nothing paid can leak.
@@ -171,16 +171,16 @@ export default async function CourseDetailPage({
       lessonId: lesson.id,
       title: lesson.title,
       description: lesson.description ?? null,
-      videoUrl: resolveAssetUrl(lesson.Video?.publicUrl),
+      videoId: lesson.Video?.id ?? null,
       audioUrl: resolveAssetUrl(lesson.Audio?.publicUrl),
       content: lesson.content ?? null,
     }))
-    .filter((item) => item.videoUrl || item.audioUrl || item.content);
+    .filter((item) => item.videoId || item.audioUrl || item.content);
   // No promo video? The first free video is the next best pitch, so it loads
   // in the cover instead of a dead image.
-  const defaultPreviewId = promoVideoUrl
+  const defaultPreviewId = promoVideoId
     ? null
-    : (previewMedia.find((item) => item.videoUrl)?.lessonId ?? null);
+    : (previewMedia.find((item) => item.videoId)?.lessonId ?? null);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
   const learnPath = buildPath(`/learn/${course.id}`);
   // An owner keeps the full learning player; everyone else gets the public
@@ -244,7 +244,7 @@ export default async function CourseDetailPage({
         <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]">
           <div className="min-w-0">
             <CoursePreviewPlayer
-              promoVideoUrl={promoVideoUrl}
+              promoVideoId={promoVideoId}
               coverUrl={coverUrl}
               coverAlt={course.Image?.alt ?? course.title}
               hasPreviewLessons={stats.previewCount > 0}

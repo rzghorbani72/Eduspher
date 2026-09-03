@@ -592,6 +592,9 @@ export const tr = {
     lessonUnavailable: "Bu ders kullanılamıyor veya şu anda erişiminiz yok.",
     lessonTypeUnavailable:
       "Bu ders biçimi henüz öğrenci oynatıcısında kullanılamıyor.",
+    playVideo: "Videoyu oynat",
+    videoLoading: "Güvenli oynatma hazırlanıyor…",
+    videoPlaybackFailed: "Bu video oynatılamadı. Lütfen sayfayı yenileyin.",
     videoUnavailable: "Ders videosu henüz yayınlanmadı.",
     textUnavailable: "Ders metni henüz yayınlanmadı.",
     liveClass: "Canlı ders",

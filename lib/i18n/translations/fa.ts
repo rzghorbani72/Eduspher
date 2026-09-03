@@ -969,6 +969,9 @@ export const fa = {
     lessonUnavailable: "این درس در دسترس نیست یا اکنون اجازه دسترسی ندارید.",
     lessonTypeUnavailable:
       "این نوع درس هنوز در پخش‌کننده دانشجو پشتیبانی نمی‌شود.",
+    playVideo: "پخش ویدیو",
+    videoLoading: "آماده‌سازی پخش امن…",
+    videoPlaybackFailed: "پخش این ویدیو ممکن نشد. لطفاً صفحه را دوباره بارگذاری کنید.",
     videoUnavailable: "ویدیوی این درس هنوز منتشر نشده است.",
     textUnavailable: "متن این درس هنوز منتشر نشده است.",
     liveClass: "کلاس آنلاین (زنده)",

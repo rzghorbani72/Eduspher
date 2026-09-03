@@ -6,10 +6,11 @@ import { useEffect, useRef } from "react";
 import { SafeHtml } from "@/components/safe-html";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { usePreviewPlayer } from "@/components/courses/preview-player-context";
+import { SecureVideoPlayer } from "@/components/media/secure-video-player";
 
 interface CoursePreviewPlayerProps {
   /** Course promo video, shown until the visitor picks a free lesson. */
-  promoVideoUrl: string | null;
+  promoVideoId: string | null;
   coverUrl: string;
   coverAlt: string;
   hasPreviewLessons: boolean;
@@ -20,7 +21,7 @@ interface CoursePreviewPlayerProps {
  * replaces its source, title and description here — no second page, no modal.
  */
 export function CoursePreviewPlayer({
-  promoVideoUrl,
+  promoVideoId,
   coverUrl,
   coverAlt,
   hasPreviewLessons,
@@ -28,7 +29,7 @@ export function CoursePreviewPlayer({
   const { t } = useTranslation();
   const player = usePreviewPlayer();
   const selected = player?.selected ?? null;
-  const videoUrl = selected?.videoUrl ?? (selected ? null : promoVideoUrl);
+  const videoId = selected?.videoId ?? (selected ? null : promoVideoId);
   const audioUrl = selected?.audioUrl ?? null;
   const autoPlay = player?.autoPlay ?? false;
   const mediaRef = useRef<HTMLVideoElement & HTMLAudioElement>(null);
@@ -43,19 +44,15 @@ export function CoursePreviewPlayer({
   return (
     <div id="course-preview-player" className="scroll-mt-24">
       <div className="cd-preview-card group relative">
-        {videoUrl ? (
-          <video
-            // Remount on source change so the browser reloads and plays it.
-            key={videoUrl}
-            ref={mediaRef}
-            src={videoUrl}
-            controls
-            controlsList="nodownload"
-            onContextMenu={(event) => event.preventDefault()}
+        {videoId ? (
+          <SecureVideoPlayer
+            // Remount on source change so the new video loads and plays.
+            key={videoId}
+            videoId={videoId}
+            title={selected?.title ?? coverAlt}
             autoPlay={autoPlay}
-            preload="metadata"
-            poster={coverUrl}
-            className="h-full w-full object-cover"
+            fill
+            className="h-full w-full"
           />
         ) : (
           <>

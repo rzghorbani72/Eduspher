@@ -242,6 +242,8 @@ export type SessionMaterial = {
   title: string;
   order: number;
   kind: "DOCUMENT" | "VIDEO";
+  /** Set for videos, so the client can open a secure playback session. */
+  video_id: string | null;
   /** Resolved on the server: a video that may not be saved is signed. */
   url: string | null;
   can_download: boolean;

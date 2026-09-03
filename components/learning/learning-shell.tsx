@@ -120,7 +120,7 @@ export function LearningShell({
               {type === "VIDEO" ? (
                 <VideoLesson
                   title={lesson.title}
-                  source={lesson.Video?.publicUrl}
+                  videoId={lesson.Video?.id}
                   downloadUrl={resolveAssetUrl(lesson.video_download_url)}
                   initialPosition={initialPosition}
                   onHeartbeat={heartbeat}
