@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { sizedImageUrl } from "@/lib/images/sized-image-url";
 
 interface AccountAvatarProps {
   name: string;
@@ -39,9 +40,11 @@ export function AccountAvatar({
       {showImage && avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={avatarUrl}
+          src={sizedImageUrl(avatarUrl, 96, 60) ?? avatarUrl}
           alt=""
           onError={() => setFailed(true)}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover"
         />
       ) : (

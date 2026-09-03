@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/i18n/hooks";
 import { useStorePath } from "@/components/providers/store-provider";
 import { formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
 import { formatMinutes } from "@/components/courses/curriculum/format";
+import { AppImage } from "@/components/ui/app-image";
 
 interface RoadmapCourse {
   id: string;
@@ -201,10 +202,13 @@ export function RoadmapTabs({ roadmaps, articles, store, language }: RoadmapTabs
                   className="group flex gap-4 rounded-xl border border-theme bg-card p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
                 >
                   {article.image && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                    <AppImage
                       src={article.image}
                       alt={article.title}
+                      preset="thumb"
+                      width={80}
+                      height={80}
+                      sizes="80px"
                       className="h-20 w-20 shrink-0 rounded-lg object-cover"
                     />
                   )}

@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+ 
 import type { Metadata } from "next";
 import Link from "@/components/ui/link";
 
@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PlatformOrganizationJsonLd } from "@/components/seo/platform-organization-json-ld";
 import { getBlogArticles, getCurrentAcademy } from "@/lib/api/server";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
+import { AppImage } from "@/components/ui/app-image";
 import { getAcademyContext } from "@/lib/store-context";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
@@ -104,10 +105,12 @@ export default async function BlogPage() {
                 }}
               >
                 <div className="relative aspect-[16/9] overflow-hidden">
-                  <img
+                  <AppImage
                     src={imageUrl}
                     alt={article.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    preset="card"
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </div>

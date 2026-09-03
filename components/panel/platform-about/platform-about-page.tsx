@@ -1,6 +1,6 @@
 import { ChevronLeft, TrendingUp, UserRound, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import Link from "next/link";
 
 import { CircledWord } from "../landing/circled-word";
@@ -119,9 +119,10 @@ export function PlatformAboutPage({ adminLoginUrl, adminRegisterUrl }: Props) {
                 key={member.id}
                 className="rounded-2xl border border-lp-line bg-white p-7 text-center transition-colors hover:border-lp-mint/50"
               >
-                <Image
+                <AppImage
                   src={member.photo}
                   alt={member.name}
+                  preset="thumb"
                   width={80}
                   height={80}
                   className="mx-auto h-20 w-20 rounded-full object-cover"

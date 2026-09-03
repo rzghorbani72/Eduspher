@@ -1,10 +1,11 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
+ 
 import { useTranslation } from "@/lib/i18n/hooks";
 import { toPersianDigits } from "@/lib/utils";
 import type { AuthorSummary } from "@/lib/api/types";
 import { EmptyState } from "@/components/ui/empty-state";
+import { AppImage } from "@/components/ui/app-image";
 
 interface CourseInstructorProps {
   author: AuthorSummary | null;
@@ -53,9 +54,13 @@ export function CourseInstructor({
       <div className="cd-review-card rounded-2xl border p-6">
         <div className="flex items-start gap-4">
           {avatarUrl ? (
-            <img
+            <AppImage
               src={avatarUrl}
               alt={author.display_name}
+              preset="thumb"
+              width={64}
+              height={64}
+              sizes="64px"
               className="h-16 w-16 shrink-0 rounded-2xl object-cover"
             />
           ) : (

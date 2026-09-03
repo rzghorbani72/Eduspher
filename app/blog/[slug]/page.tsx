@@ -20,6 +20,7 @@ import { buildBreadcrumbJsonLd } from "@/lib/seo/course-json-ld";
 import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 import { buildAbsoluteUrl, seoDomains } from "@/lib/seo/domains";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
+import { sizedImageUrl } from "@/lib/images/sized-image-url";
 
 type PageParams = Promise<{
   slug: string;
@@ -154,9 +155,12 @@ export default async function BlogArticlePage({
       </header>
       <div className="overflow-hidden rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
         <div className="relative overflow-hidden rounded-2xl border border-slate-200 shadow-lg ">
+          { }
           <img
-            src={imageUrl}
+            src={sizedImageUrl(imageUrl, 1080) ?? imageUrl}
             alt={article.title}
+            loading="lazy"
+            decoding="async"
             className="h-auto w-full object-cover transition-transform duration-500 hover:scale-105"
           />
         </div>

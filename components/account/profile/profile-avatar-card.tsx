@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, Loader2, Trash2 } from "lucide-react";
@@ -77,12 +77,13 @@ export function ProfileAvatarCard({
 
       <div className="flex items-center gap-4">
         {avatarUrl ? (
-          <Image
+          <AppImage
             src={avatarUrl}
             alt={displayName}
+            preset="avatar"
             width={80}
             height={80}
-            unoptimized
+            sizes="80px"
             className="h-20 w-20 rounded-full object-cover"
           />
         ) : (

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import {
   Award,
   BadgeCheck,
@@ -131,12 +131,13 @@ export function AccountSidebar({
     <aside className="flex w-full flex-col gap-4 lg:sticky lg:top-24">
       <div className="flex items-center gap-3 rounded-xl border border-theme bg-card p-4 text-start lg:flex-col lg:p-5 lg:text-center">
         {avatarUrl ? (
-          <Image
+          <AppImage
             src={avatarUrl}
             alt={displayName}
+            preset="avatar"
             width={64}
             height={64}
-            unoptimized
+            sizes="64px"
             className="h-12 w-12 shrink-0 rounded-full object-cover shadow-lg lg:h-16 lg:w-16"
           />
         ) : (

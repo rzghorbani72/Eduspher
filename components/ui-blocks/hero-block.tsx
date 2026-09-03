@@ -10,6 +10,7 @@ import {
   type MediaAspect,
   type MediaSize,
 } from "./section-media";
+import { AppImage } from "@/components/ui/app-image";
 
 interface HeroBlockProps {
   id?: string;
@@ -1568,11 +1569,12 @@ function FlowHero({ id, config, storeContext }: HeroBlockProps) {
           <div className="absolute left-[20px] right-[20px] top-[40px] rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-[24px] shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
             <div className="relative mb-[16px] flex h-[160px] items-center justify-center overflow-hidden rounded-[10px] bg-[linear-gradient(135deg,var(--theme-primary),color-mix(in_srgb,var(--theme-primary)_35%,var(--theme-secondary)))]">
               {bannerImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <AppImage
                   src={bannerImage}
                   alt={cardTitle}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  preset="card"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <span className="text-[12px] font-semibold text-white/85">
@@ -1769,11 +1771,12 @@ function CodeHero({ id, config, storeContext }: HeroBlockProps) {
           <div className="overflow-hidden rounded-[16px] border border-(--theme-border-color) bg-(--theme-card-bg) shadow-[0_24px_72px_rgba(0,0,0,0.15)]">
             <div className="relative flex h-[200px] items-center justify-center overflow-hidden bg-[linear-gradient(135deg,var(--theme-primary),color-mix(in_srgb,var(--theme-primary)_35%,var(--theme-secondary)))]">
               {bannerImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <AppImage
                   src={bannerImage}
                   alt={cardTitle}
-                  className="absolute inset-0 h-full w-full object-cover"
+                  preset="card"
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <span className="text-[13px] font-semibold text-white/85">

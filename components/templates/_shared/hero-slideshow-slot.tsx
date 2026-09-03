@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, type ReactNode } from 'react';
+
+import { AppImage } from '@/components/ui/app-image';
 import { resolveHeroMediaUrl } from './hero-media';
 import { resolveBoxStyle } from './hero-box';
 import { HeroVideoSlot, resolveHeroVideoUrl } from './hero-video-slot';
@@ -72,12 +74,14 @@ export function HeroSlideshowSlot({
         // percentage height never resolves against a min-height.
         <div className="absolute inset-0">
           {urls.map((url, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <AppImage
               key={url}
               src={url}
               alt={alt}
-              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-700"
+              preset="banner"
+              fill
+              priority={i === 0}
+              className="object-cover transition-opacity duration-700"
               style={{ opacity: i === active ? 1 : 0 }}
             />
           ))}
@@ -111,8 +115,15 @@ export function HeroSlideshowSlot({
                 className="grid h-9 w-9 flex-none place-items-center overflow-hidden rounded border border-white/50 bg-white/10 text-white"
               >
                 {url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <AppImage
+                    src={url}
+                    alt=""
+                    preset="thumb"
+                    width={36}
+                    height={36}
+                    sizes="36px"
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
                   <span className="text-sm leading-none">+</span>
                 )}

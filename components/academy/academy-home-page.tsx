@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+ 
 import Link from "@/components/ui/link";
 import { BookOpen } from "lucide-react";
 
@@ -26,6 +26,7 @@ import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { AcademyHomeAnimations } from "./academy-home-animations";
+import { AppImage } from "@/components/ui/app-image";
 
 export async function AcademyHomePage() {
   const storeContext = await getAcademyContext();
@@ -696,10 +697,12 @@ export async function AcademyHomePage() {
                     }}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden">
-                      <img
+                      <AppImage
                         src={imageUrl}
                         alt={article.title}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        preset="card"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                       {publishedDate && (

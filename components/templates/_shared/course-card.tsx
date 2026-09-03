@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { resolveAssetUrl } from "@/lib/utils";
+import { sizedImageUrl } from "@/lib/images/sized-image-url";
 import { Button, Initials } from "./primitives";
 import type { TemplateCourse } from "./courses-data";
 import { isSampleRecord } from "./sample-data";
@@ -34,7 +35,7 @@ export function TemplateCourseCard({
   // The cover is painted as a background over the template's gradient, so a
   // missing or unreachable image simply leaves the gradient — an <img> would
   // leave a broken-image box instead.
-  const coverUrl = resolveAssetUrl(course.coverUrl);
+  const coverUrl = sizedImageUrl(resolveAssetUrl(course.coverUrl), 640);
 
   return (
     <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">

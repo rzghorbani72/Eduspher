@@ -1,12 +1,13 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
+ 
 import { useEffect, useRef } from "react";
 
 import { SafeHtml } from "@/components/safe-html";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { usePreviewPlayer } from "@/components/courses/preview-player-context";
 import { SecureVideoPlayer } from "@/components/media/secure-video-player";
+import { AppImage } from "@/components/ui/app-image";
 
 interface CoursePreviewPlayerProps {
   /** Course promo video, shown until the visitor picks a free lesson. */
@@ -56,10 +57,12 @@ export function CoursePreviewPlayer({
           />
         ) : (
           <>
-            <img
+            <AppImage
               src={coverUrl}
               alt={coverAlt}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              preset="cover"
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="cd-preview-overlay" />
           </>

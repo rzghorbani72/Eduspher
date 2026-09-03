@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { sizedImageUrl } from "@/lib/images/sized-image-url";
 
 export type MediaSize = "sm" | "md" | "lg" | "full";
 export type MediaAspect = "16:9" | "4:3" | "1:1" | "auto";
@@ -64,8 +65,10 @@ export function SectionMedia({
     <div className={wrapper} style={radiusStyle}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={src}
+        src={sizedImageUrl(src, 1080) ?? src}
         alt={alt}
+        loading="lazy"
+        decoding="async"
         className={cn(
           "h-full w-full",
           aspect === "auto" ? "object-contain" : "object-cover",

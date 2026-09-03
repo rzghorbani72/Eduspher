@@ -6,6 +6,7 @@ import {
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
+import { sizedImageUrl } from "@/lib/images/sized-image-url";
 import { AccountAvatar } from "@/components/layout/account-avatar";
 import { Container } from "./section";
 import { Button } from "./primitives";
@@ -195,8 +196,9 @@ export async function TemplateTopBar({
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={logoUrl}
+                src={sizedImageUrl(logoUrl, 320, 85) ?? logoUrl}
                 alt={brandName}
+                decoding="async"
                 className="h-9 w-auto max-w-[160px] flex-none object-contain"
               />
             ) : spec.markClassName ? (

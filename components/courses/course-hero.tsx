@@ -6,6 +6,7 @@ import { formatDate, toPersianDigits } from "@/lib/utils";
 import { t } from "@/lib/i18n/server-translations";
 import { isLiveCourse } from "@/lib/courses/live-course";
 import type { LanguageCode } from "@/lib/i18n/config";
+import { AppImage } from "@/components/ui/app-image";
 
 interface CourseHeroProps {
   course: CourseSummary;
@@ -149,10 +150,13 @@ export function CourseHero({
         {course.author && (
           <div className="mt-6 flex items-center gap-3">
             {avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <AppImage
                 src={avatarUrl}
                 alt={course.author.display_name}
+                preset="avatar"
+                width={44}
+                height={44}
+                sizes="44px"
                 className="h-11 w-11 shrink-0 rounded-full object-cover"
               />
             ) : (

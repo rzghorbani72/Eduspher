@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+ 
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -7,6 +7,7 @@ import Link from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
 import { buildAcademyPath } from '@/lib/utils';
 import { cn } from '@/lib/utils';
+import { AppImage } from "@/components/ui/app-image";
 
 export interface SlideConfig {
   title?: string;
@@ -88,12 +89,14 @@ export function HeroSlideshow({
       {hasBg ? (
         <>
           <div className="absolute inset-0 bg-(--theme-foreground)" />
-          <img
+          <AppImage
             src={slide.backgroundImage!}
             alt=""
+            preset="banner"
+            fill
             aria-hidden="true"
             className={cn(
-              'absolute inset-0 h-full w-full object-contain transition-opacity duration-700 ease-in-out',
+              'object-contain transition-opacity duration-700 ease-in-out',
               transitioning ? 'opacity-0' : 'opacity-100',
             )}
           />

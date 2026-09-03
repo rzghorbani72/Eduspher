@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import { resolveAssetUrl } from '@/lib/utils';
 import { HeroVideoSlot, resolveHeroVideoUrl } from './hero-video-slot';
 import type { SectionConfig } from './types';
+import { AppImage } from "@/components/ui/app-image";
 
 export function resolveHeroMediaUrl(
   config?: SectionConfig,
@@ -62,12 +63,13 @@ export function HeroVisualSlot({
         className={`relative overflow-hidden ${className ?? ''}`}
         data-media-editable={mediaKey}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <AppImage
           src={url}
           alt={alt}
+          preset="banner"
+          fill
           data-motion="parallax"
-          className="h-full w-full scale-[1.06] object-cover"
+          className="scale-[1.06] object-cover"
         />
       </div>
     );

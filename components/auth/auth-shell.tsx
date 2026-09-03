@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { usePathname } from "next/navigation";
 import { Globe } from "lucide-react";
 
@@ -26,7 +26,14 @@ function AcademyLogo({
     <div className="auth-logo-wrap">
       <div className="auth-logo">
         {logoUrl ? (
-          <Image src={logoUrl} alt={academyName} width={size} height={size} />
+          <AppImage
+            src={logoUrl}
+            alt={academyName}
+            preset="logo"
+            width={size}
+            height={size}
+            sizes={`${size}px`}
+          />
         ) : (
           logoGlyph
         )}

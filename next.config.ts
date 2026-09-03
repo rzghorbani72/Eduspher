@@ -102,10 +102,26 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Image optimization needs `sharp`. Until it is installed locally, serve
-  // public assets as-is so landing screenshots never blank via /_next/image.
+  /**
+   * No built-in optimizer, and no `unoptimized` either.
+   *
+   * `loaderFile` makes every <Image> rewrite its own URL (see
+   * lib/images/image-loader.ts) instead of routing through `/_next/image`. The
+   * backend renders the derivative once and caches it in the shared object
+   * bucket, so this pod writes NOTHING to `.next/cache/images` — the unbounded
+   * on-disk cache that would otherwise grow until Kubernetes evicts the pod for
+   * exceeding its ephemeral-storage limit.
+   *
+   * The width ladder below must stay a subset of IMAGE_VARIANT_WIDTHS in
+   * Backend/src/common/utils/image-variant.util.ts; a width outside it is
+   * snapped up there, which would silently serve more pixels than requested.
+   */
   images: {
-    unoptimized: true,
+    loader: "custom",
+    loaderFile: "./lib/images/image-loader.ts",
+    deviceSizes: [640, 828, 1080, 1280],
+    imageSizes: [32, 64, 96, 128, 200, 320, 480],
+    qualities: [45, 60, 75, 85],
     remotePatterns: [
       {
         protocol: "https",

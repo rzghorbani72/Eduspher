@@ -8,6 +8,7 @@ import { buildAcademyPath, formatCurrencyWithAcademy, hashToIndex, resolveAssetU
 import { useTranslation } from "@/lib/i18n/hooks";
 import { isLiveCourse, seatPriceOf } from "@/lib/courses/live-course";
 import { formatMinutes } from "@/components/courses/curriculum/format";
+import { AppImage } from "@/components/ui/app-image";
 
 interface CourseCardProps {
   course: CourseSummary;
@@ -79,11 +80,12 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
         style={coverUrl ? undefined : { background: thumbGradient }}
       >
         {coverUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <AppImage
             src={coverUrl}
             alt={course.title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            preset="card"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <span

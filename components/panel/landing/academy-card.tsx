@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 
 import type { StoreSummary } from "@/lib/api/types";
 import { env } from "@/lib/env";
@@ -56,12 +56,12 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
     >
       <span className="absolute bottom-0 start-0 block size-[272px] overflow-hidden rounded-[28px] bg-lp-surface-2 shadow-lp-card">
         {card.desktop ? (
-          <Image
+          <AppImage
             src={card.desktop}
             alt=""
+            preset="card"
             fill
             sizes="272px"
-            loading="lazy"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
@@ -81,12 +81,12 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
       <span className="absolute -top-1 end-0 block h-[328px] w-[148px] rounded-[30px] bg-[#1c1d22] p-[6px] shadow-lp-card">
         <span className="relative block h-full w-full overflow-hidden rounded-[24px] bg-lp-surface-2">
           {card.mobile ? (
-            <Image
+            <AppImage
               src={card.mobile}
               alt=""
+              preset="card"
               fill
               sizes="148px"
-              loading="lazy"
               className="object-cover object-top"
             />
           ) : (
