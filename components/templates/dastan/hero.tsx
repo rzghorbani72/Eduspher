@@ -133,7 +133,7 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
               </HeroVisualSlot>
 
               <RemovableSlot config={config} flagKey="showStamp" editMode={editMode}>
-                <div className={styles.stamp}>
+                <div className={styles.stamp} data-motion="drift">
                   <b data-editable="stampValue" className="block text-[22px] font-bold leading-[1.1]">
                     {text(config, 'stampValue', d.stampValue)}
                   </b>

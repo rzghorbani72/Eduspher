@@ -86,7 +86,7 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
               </span>
             </RemovableSlot>
 
-            <div className={`${styles.card3d} ${styles.cardA} p-4`}>
+            <div className={`${styles.card3d} ${styles.cardA} p-4`} data-motion="drift">
               <HeroVisualSlot
                 config={config}
                 mode="fill"
@@ -101,7 +101,7 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
             </div>
 
             <RemovableSlot config={config} flagKey="showTranscript" editMode={editMode}>
-              <div className={`${styles.card3d} ${styles.cardB} p-6`}>
+              <div className={`${styles.card3d} ${styles.cardB} p-6`} data-motion="drift">
                 <span
                   data-editable="transcriptLabel"
                   className="inline-block rounded-full bg-(--theme-primary-subtle) px-3 py-1 text-[12.5px] font-bold text-(--theme-primary)"

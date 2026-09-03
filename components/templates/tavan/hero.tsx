@@ -101,7 +101,7 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
                 <span className="font-bold tabular-nums">{formatPercent(percent, "fa")}</span>
               </div>
               <div className={styles.track}>
-                <span className={styles.trackFill} style={{ width: `${percent}%` }} />
+                <span className={styles.trackFill} data-motion="wash" style={{ width: `${percent}%` }} />
               </div>
             </div>
           </RemovableSlot>

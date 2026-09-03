@@ -14,7 +14,11 @@
        liveness so the movement always means the same thing.
 
    Nothing a person reads ever moves: these attributes go on decorative layers
-   and on badges whose text is already short and static. */
+   and on badges whose text is already short and static.
+
+   Unlike the entry reveal, ambient motion stays ON inside the editor canvas:
+   "does my site feel alive?" is a question the manager answers there, and a
+   loop that never restarts cannot interrupt an edit. */
 
 /* `translate` / `rotate`, never `transform`: several templates already rotate
    their decorations in CSS, and animating `transform` would erase that. The
@@ -101,17 +105,32 @@
   animation: tpl-hue 16s ease-in-out infinite alternate;
 }
 
+/* Scroll-linked, not looping: a hero photo that slides against the page while
+   the visitor scrolls is the cheapest depth there is. The image is pre-scaled
+   1.06 in the markup so the travel never exposes an edge. */
+@keyframes tpl-parallax {
+  from {
+    translate: 0 -3%;
+  }
+  to {
+    translate: 0 3%;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  [data-motion='parallax'] {
+    animation: tpl-parallax linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+}
+
 [data-motion='live'] {
   animation: tpl-live 2.4s ease-in-out infinite;
 }
 
 [data-motion='signal'] {
   animation: tpl-signal 3.2s ease-in-out infinite;
-}
-
-[data-edit-mode] [data-motion],
-[data-edit-mode] [data-motion]:nth-of-type(even) {
-  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

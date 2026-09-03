@@ -21,14 +21,14 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.void}`}>
-      <div className={`${styles.stars} ${styles.dense}`} aria-hidden="true" />
-      <div className={styles.gridlines} aria-hidden="true" />
+      <div className={`${styles.stars} ${styles.dense}`} aria-hidden="true" data-motion="wash" />
+      <div className={styles.gridlines} aria-hidden="true" data-motion="wash" />
 
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <div className="mb-6 flex items-center gap-2.5">
-              <span className="size-2 rounded-full bg-(--theme-accent)" aria-hidden="true" />
+              <span data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" aria-hidden="true" />
               <span
                 data-editable="kicker"
                 className="text-[13px] font-medium tracking-[0.08em] text-current/70"
@@ -81,7 +81,7 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
               mode="fill"
               className={`${styles.orbit} min-h-[280px] overflow-hidden rounded-(--theme-border-radius)`}
             >
-              <div className={styles.orbit} aria-hidden="true">
+              <div className={styles.orbit} aria-hidden="true" data-motion="drift">
                 <span className={styles.ring} />
                 <span className={`${styles.ring} ${styles.ring2}`} />
                 <span className={`${styles.ring} ${styles.ring3}`} />

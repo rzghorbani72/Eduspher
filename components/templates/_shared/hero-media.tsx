@@ -63,7 +63,12 @@ export function HeroVisualSlot({
         data-media-editable={mediaKey}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={url} alt={alt} className="h-full w-full object-cover" />
+        <img
+          src={url}
+          alt={alt}
+          data-motion="parallax"
+          className="h-full w-full scale-[1.06] object-cover"
+        />
       </div>
     );
   }
