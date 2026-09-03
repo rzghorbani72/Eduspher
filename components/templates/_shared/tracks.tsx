@@ -1,5 +1,6 @@
 import { Container, SectionHead } from './section';
-import { list, text, type SectionConfig } from './types';
+import { list, text, type SectionConfig, type TemplateStoreContext } from './types';
+import { templateHref } from './routes';
 
 export interface TrackItem {
   index: string;
@@ -18,6 +19,7 @@ export interface TracksDefaults {
 interface TemplateTracksProps {
   id?: string;
   config?: SectionConfig;
+  storeContext?: TemplateStoreContext;
   defaults: TracksDefaults;
   tone?: 'page' | 'surface';
   columns?: 3 | 4;
@@ -32,6 +34,7 @@ const COLUMNS = {
 export function TemplateTracks({
   id,
   config,
+  storeContext,
   defaults,
   tone = 'page',
   columns = 3,
@@ -62,7 +65,7 @@ export function TemplateTracks({
               <h3 className="mt-2 text-[22px] font-bold">{item.title}</h3>
               <p className="text-[15px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
               <a
-                href="#courses"
+                href={templateHref(storeContext, 'courses')}
                 className="mt-auto pt-3 text-[13.5px] font-bold text-(--theme-primary) hover:underline"
               >
                 {item.meta} ←

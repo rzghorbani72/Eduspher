@@ -11,10 +11,11 @@ import { Container } from "./section";
 import { Button } from "./primitives";
 import { RemovableSlot } from "./removable-slot";
 import { flag, list, text, type SectionConfig } from "./types";
+import { templateHref, type TemplateRoute } from "./routes";
 
 export interface HeaderNavItem {
   label: string;
-  href: string;
+  route: TemplateRoute;
 }
 
 export interface HeaderDefaults {
@@ -122,7 +123,12 @@ export async function TemplateTopBar({
       editMode={editMode}
       className="inline-flex"
     >
-      <Button tone="primary" size="sm" href="/courses" editableKey="ctaText">
+      <Button
+        tone="primary"
+        size="sm"
+        href={templateHref(storeContext, "courses")}
+        editableKey="ctaText"
+      >
         {text(config, "ctaText", defaults.ctaText)}
       </Button>
     </RemovableSlot>
@@ -137,7 +143,7 @@ export async function TemplateTopBar({
     >
       {isAuthenticated ? (
         <Link
-          href="/account"
+          href={templateHref(storeContext, "account")}
           className="flex items-center gap-2 rounded-full border border-current/20 py-1 pe-3 ps-1 text-[14.5px] font-medium hover:opacity-90"
         >
           <AccountAvatar name={accountLabel} avatarUrl={accountAvatarUrl} />
@@ -145,7 +151,7 @@ export async function TemplateTopBar({
         </Link>
       ) : (
         <Link
-          href="/auth/login"
+          href={templateHref(storeContext, "login")}
           className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
         >
           {defaults.loginText}
@@ -182,7 +188,7 @@ export async function TemplateTopBar({
           className="flex items-center gap-6"
           style={{ minHeight: `${spec.height}px` }}
         >
-          <Link href="/" className="flex flex-none items-center gap-3">
+          <Link href={templateHref(storeContext, "home")} className="flex flex-none items-center gap-3">
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -219,8 +225,8 @@ export async function TemplateTopBar({
           >
             {nav.map((item) => (
               <a
-                key={item.href}
-                href={item.href}
+                key={item.route}
+                href={templateHref(storeContext, item.route)}
                 className={NAV_LINK_CLASS[spec.navStyle]}
               >
                 {item.label}
@@ -249,15 +255,15 @@ export async function TemplateTopBar({
               >
                 {nav.map((item) => (
                   <a
-                    key={item.href}
-                    href={item.href}
+                    key={item.route}
+                    href={templateHref(storeContext, item.route)}
                     className="block rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
                   >
                     {item.label}
                   </a>
                 ))}
                 <a
-                  href={isAuthenticated ? "/account" : "/auth/login"}
+                  href={templateHref(storeContext, isAuthenticated ? "account" : "login")}
                   className="flex items-center gap-2 rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
                 >
                   {isAuthenticated ? (
@@ -282,20 +288,23 @@ export async function TemplateTopBar({
   );
 }
 
-/** Nav shared by templates that expose the full section set. */
+/**
+ * Navigation is the same closed set of real pages on every template. In-page
+ * anchors used to live here, and they broke the moment a manager hid the
+ * section they pointed at.
+ */
 export const FULL_NAV: readonly HeaderNavItem[] = [
-  { label: "خانه", href: "/" },
-  { label: "دوره‌ها", href: "/courses" },
-  { label: "دسته‌ها", href: "#categories" },
-  { label: "مدرسان", href: "#teachers" },
+  { label: "خانه", route: "home" },
+  { label: "دوره‌ها", route: "courses" },
+  { label: "بسته‌ها", route: "bundles" },
+  { label: "وبلاگ", route: "blog" },
 ];
 
-/** Nav for templates without a category wall. */
+/** Kept as a separate export so templates can opt into a shorter bar. */
 export const COMPACT_NAV: readonly HeaderNavItem[] = [
-  { label: "خانه", href: "/" },
-  { label: "دوره‌ها", href: "/courses" },
-  { label: "مسیر یادگیری", href: "#showcase" },
-  { label: "مدرسان", href: "#teachers" },
+  { label: "خانه", route: "home" },
+  { label: "دوره‌ها", route: "courses" },
+  { label: "بسته‌ها", route: "bundles" },
 ];
 
 export function headerDefaults(

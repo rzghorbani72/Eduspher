@@ -6,6 +6,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
 import styles from './dastan.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface BoardItem {
   index: string;
@@ -56,7 +57,7 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
                 editMode={editMode}
                 className="inline-flex"
               >
-                <Button tone="primary" editableKey="ctaText" href="#courses">
+                <Button tone="primary" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
@@ -66,7 +67,7 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
                 editMode={editMode}
                 className="inline-flex"
               >
-                <Button tone="outline" editableKey="ctaSecondary" href="#showcase">
+                <Button tone="outline" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>

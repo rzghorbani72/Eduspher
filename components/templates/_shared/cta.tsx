@@ -1,6 +1,7 @@
 import { Container } from './section';
 import { Button } from './primitives';
-import { text, type SectionConfig } from './types';
+import { text, type SectionConfig, type TemplateStoreContext } from './types';
+import { templateHref } from './routes';
 
 export interface CtaDefaults {
   label: string;
@@ -13,6 +14,7 @@ export interface CtaDefaults {
 interface TemplateCtaProps {
   id?: string;
   config?: SectionConfig;
+  storeContext?: TemplateStoreContext;
   defaults: CtaDefaults;
   tone?: 'deep' | 'brand' | 'accent';
   /** Boxed designs inset the band into a rounded card instead of bleeding it. */
@@ -29,7 +31,14 @@ const TONE_CLASS = {
  * Closing band. One decision, one primary action, one fallback — never a wall
  * of competing offers.
  */
-export function TemplateCta({ id, config, defaults, tone = 'deep', boxed = false }: TemplateCtaProps) {
+export function TemplateCta({
+  id,
+  config,
+  storeContext,
+  defaults,
+  tone = 'deep',
+  boxed = false,
+}: TemplateCtaProps) {
   const body = (
     <div className="grid items-center gap-10 lg:grid-cols-[1.4fr_auto]">
       <div>
@@ -48,10 +57,20 @@ export function TemplateCta({ id, config, defaults, tone = 'deep', boxed = false
       </div>
 
       <div className="flex flex-wrap gap-3.5">
-        <Button tone={tone === 'brand' ? 'deep' : 'primary'} size="lg" editableKey="ctaText">
+        <Button
+          tone={tone === 'brand' ? 'deep' : 'primary'}
+          size="lg"
+          editableKey="ctaText"
+          href={templateHref(storeContext, 'register')}
+        >
           {text(config, 'ctaText', defaults.ctaText)}
         </Button>
-        <Button tone="ghost-on-deep" size="lg" editableKey="ctaSecondary">
+        <Button
+          tone="ghost-on-deep"
+          size="lg"
+          editableKey="ctaSecondary"
+          href={templateHref(storeContext, 'courses')}
+        >
           {text(config, 'ctaSecondary', defaults.ctaSecondary)}
         </Button>
       </div>

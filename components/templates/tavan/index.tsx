@@ -58,6 +58,6 @@ export const TAVAN_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={TAVAN_DEFAULTS.teachers} tone="surface" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={TAVAN_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={TAVAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={TAVAN_DEFAULTS.cta} tone="deep" />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={TAVAN_DEFAULTS.footer} />,
 };

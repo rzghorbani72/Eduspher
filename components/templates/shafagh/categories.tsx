@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import styles from './shafagh.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface TrackItem {
   count: string;
@@ -17,7 +18,7 @@ interface TrackItem {
  * grid tears holes in the auto-placement. `wide` marks the lead tracks, which
  * get a tinted plate and a larger title instead of their own column span.
  */
-export function ShafaghCategories({ id, config }: TemplateSectionProps) {
+export function ShafaghCategories({ id, config, storeContext }: TemplateSectionProps) {
   const d = SHAFAGH_DEFAULTS.categories;
   const items = list<TrackItem>(config, 'items', d.items);
 
@@ -32,7 +33,7 @@ export function ShafaghCategories({ id, config }: TemplateSectionProps) {
 
         <div>
           {items.map((item, index) => (
-            <a key={item.title} href="#courses" className={`${styles.row} block`}>
+            <a key={item.title} href={templateHref(storeContext, 'courses')} className={`${styles.row} block`}>
               <span className={styles.hair} aria-hidden="true" />
               <div
                 className={`flex items-center gap-6 py-7 transition-[padding] duration-200 ${

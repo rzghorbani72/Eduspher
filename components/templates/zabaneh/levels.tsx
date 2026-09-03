@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ZABANEH_DEFAULTS } from './defaults';
 import styles from './zabaneh.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface LevelStep {
   code: string;
@@ -15,7 +16,7 @@ interface LevelStep {
  * Zabaneh's signature section: the CEFR ladder as six cards, each carrying a
  * fill bar so the distance still travelled is visible at a glance.
  */
-export function ZabanehLevels({ id, config }: TemplateSectionProps) {
+export function ZabanehLevels({ id, config, storeContext }: TemplateSectionProps) {
   const d = ZABANEH_DEFAULTS.levels;
   const steps = list<LevelStep>(config, 'steps', d.steps);
 
@@ -53,7 +54,7 @@ export function ZabanehLevels({ id, config }: TemplateSectionProps) {
 
         <div className="mt-9 flex flex-col gap-4 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 md:flex-row md:items-center md:justify-between">
           <p className="max-w-[62ch] text-[15px] leading-[1.85] text-(--theme-muted)">{d.footNote}</p>
-          <a href="#cta" className="whitespace-nowrap text-[14.5px] font-bold text-(--theme-primary) hover:underline">
+          <a href={templateHref(storeContext, 'register')} className="whitespace-nowrap text-[14.5px] font-bold text-(--theme-primary) hover:underline">
             {d.footCta} ←
           </a>
         </div>

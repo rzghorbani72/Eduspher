@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
 import styles from './dastan.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface FeatureItem {
   kicker: string;
@@ -13,7 +14,7 @@ interface FeatureItem {
 const RULE_CLASS = [styles.featRule, `${styles.featRule} ${styles.featRule2}`, `${styles.featRule} ${styles.featRule3}`];
 
 /** Ruled editorial columns plus a full-width proof strip carrying one big number. */
-export function DastanFeatures({ id, config }: TemplateSectionProps) {
+export function DastanFeatures({ id, config, storeContext }: TemplateSectionProps) {
   const d = DASTAN_DEFAULTS.features;
   const items = list<FeatureItem>(config, 'items', d.items);
 
@@ -55,7 +56,7 @@ export function DastanFeatures({ id, config }: TemplateSectionProps) {
             <h3 className="text-[21px] font-bold leading-[1.4]">{d.highlight.title}</h3>
             <p className="mt-2 text-[15px] leading-[1.8] text-(--theme-muted)">{d.highlight.body}</p>
           </div>
-          <Button tone="outline" size="sm">
+          <Button tone="outline" size="sm" href={templateHref(storeContext, 'register')}>
             {d.highlight.ctaText}
           </Button>
         </div>

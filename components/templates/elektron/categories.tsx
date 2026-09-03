@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ELEKTRON_DEFAULTS } from './defaults';
 import styles from './elektron.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface TrackItem {
   count: string;
@@ -14,7 +15,7 @@ interface TrackItem {
  * row with the brand colour and insets it slightly, so the whole list behaves
  * like one control surface instead of six competing tiles.
  */
-export function ElektronCategories({ id, config }: TemplateSectionProps) {
+export function ElektronCategories({ id, config, storeContext }: TemplateSectionProps) {
   const d = ELEKTRON_DEFAULTS.categories;
   const items = list<TrackItem>(config, 'items', d.items);
 
@@ -29,7 +30,7 @@ export function ElektronCategories({ id, config }: TemplateSectionProps) {
 
         <div>
           {items.map((item, index) => (
-            <a key={item.title} href="#courses" className={`${styles.track} flex items-center gap-6 py-7`}>
+            <a key={item.title} href={templateHref(storeContext, 'courses')} className={`${styles.track} flex items-center gap-6 py-7`}>
               <span aria-hidden="true" className={`${styles.trackNo} flex-none text-[15px] font-bold`}>
                 {String(index + 1).padStart(2, '0')}
               </span>

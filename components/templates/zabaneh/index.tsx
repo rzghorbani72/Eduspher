@@ -49,6 +49,6 @@ export const ZABANEH_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={ZABANEH_DEFAULTS.teachers} tone="page" avatarShape="round" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={ZABANEH_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={ZABANEH_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={ZABANEH_DEFAULTS.cta} tone="deep" />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ZABANEH_DEFAULTS.footer} />,
 };

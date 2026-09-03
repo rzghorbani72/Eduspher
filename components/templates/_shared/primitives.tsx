@@ -14,7 +14,8 @@ const BUTTON_TONE: Record<ButtonTone, string> = {
 interface ButtonProps {
   tone?: ButtonTone;
   size?: 'sm' | 'md' | 'lg';
-  href?: string;
+  /** Required: a template button always goes somewhere. Use `templateHref`. */
+  href: string;
   className?: string;
   editableKey?: string;
   children: ReactNode;
@@ -36,17 +37,10 @@ export function Button({
 }: ButtonProps) {
   const classes = `inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-(--theme-border-radius) border font-bold transition-[opacity,color,border-color,transform] duration-150 hover:-translate-y-0.5 ${BUTTON_TONE[tone]} ${BUTTON_SIZE[size]} ${className}`;
 
-  if (href) {
-    return (
-      <a href={href} className={classes}>
-        <span data-editable={editableKey}>{children}</span>
-      </a>
-    );
-  }
   return (
-    <button type="button" className={classes}>
+    <a href={href} className={classes}>
       <span data-editable={editableKey}>{children}</span>
-    </button>
+    </a>
   );
 }
 

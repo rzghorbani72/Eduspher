@@ -6,6 +6,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ELEKTRON_DEFAULTS } from './defaults';
 import styles from './elektron.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface HeroStat {
   value: string;
@@ -55,7 +56,7 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
 
             <div className="mt-9 flex flex-wrap items-center gap-3.5">
               <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href="#courses" className="!rounded-full">
+                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')} className="!rounded-full">
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
@@ -64,7 +65,7 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
                   tone="ghost-on-deep"
                   size="lg"
                   editableKey="ctaSecondary"
-                  href="#categories"
+                  href={templateHref(storeContext, 'register')}
                   className="!rounded-full"
                 >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}

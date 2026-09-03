@@ -57,6 +57,6 @@ export const ELEKTRON_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={ELEKTRON_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={ELEKTRON_DEFAULTS.cta} tone="deep" boxed />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={ELEKTRON_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={ELEKTRON_DEFAULTS.cta} tone="deep" boxed />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ELEKTRON_DEFAULTS.footer} />,
 };

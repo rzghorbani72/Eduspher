@@ -1,6 +1,7 @@
 import { Container } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
+import { templateHref } from '../_shared/routes';
 
 interface KitchenItem {
   index: string;
@@ -10,7 +11,7 @@ interface KitchenItem {
 }
 
 /** Asymmetric tile wall: one lead tile spans two rows, four sit beside it. */
-export function DastanCategories({ id, config }: TemplateSectionProps) {
+export function DastanCategories({ id, config, storeContext }: TemplateSectionProps) {
   const d = DASTAN_DEFAULTS.categories;
   const items = list<KitchenItem>(config, 'items', d.items);
 
@@ -33,7 +34,7 @@ export function DastanCategories({ id, config }: TemplateSectionProps) {
           {items.map((item) => (
             <a
               key={item.title}
-              href="#courses"
+              href={templateHref(storeContext, 'courses')}
               className={`group flex min-h-[158px] flex-col justify-between rounded-(--theme-border-radius) border p-6 transition-colors duration-200 ${
                 item.lead
                   ? 'border-(--theme-deep) bg-(--theme-deep) text-(--theme-on-deep) hover:bg-(--theme-primary) hover:text-(--theme-on-primary) lg:row-span-2'

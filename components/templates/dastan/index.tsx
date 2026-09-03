@@ -59,6 +59,6 @@ export const DASTAN_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={DASTAN_DEFAULTS.teachers} tone="deep" avatarShape="round" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={DASTAN_DEFAULTS.cta} tone="brand" />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={DASTAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={DASTAN_DEFAULTS.cta} tone="brand" />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={DASTAN_DEFAULTS.footer} />,
 };

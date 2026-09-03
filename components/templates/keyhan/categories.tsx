@@ -1,6 +1,7 @@
 import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { KEYHAN_DEFAULTS } from './defaults';
+import { templateHref } from '../_shared/routes';
 
 interface TopicItem {
   count: string;
@@ -10,7 +11,7 @@ interface TopicItem {
 }
 
 /** Asymmetric tile grid — two lead tiles span the full row, three sit 1-up. */
-export function KeyhanCategories({ id, config }: TemplateSectionProps) {
+export function KeyhanCategories({ id, config, storeContext }: TemplateSectionProps) {
   const d = KEYHAN_DEFAULTS.categories;
   const items = list<TopicItem>(config, 'items', d.items);
 
@@ -27,7 +28,7 @@ export function KeyhanCategories({ id, config }: TemplateSectionProps) {
           {items.map((item) => (
             <a
               key={item.title}
-              href="#courses"
+              href={templateHref(storeContext, 'courses')}
               className={`group flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 transition-[transform,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary) ${
                 item.wide ? 'md:col-span-3 lg:col-span-3' : ''
               }`}

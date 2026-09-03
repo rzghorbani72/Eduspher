@@ -59,6 +59,6 @@ export const SHAFAGH_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={SHAFAGH_DEFAULTS.teachers} tone="page" avatarShape="round" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={SHAFAGH_DEFAULTS.cta} tone="deep" boxed />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={SHAFAGH_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={SHAFAGH_DEFAULTS.cta} tone="deep" boxed />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={SHAFAGH_DEFAULTS.footer} />,
 };

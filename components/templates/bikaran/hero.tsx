@@ -6,6 +6,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { BIKARAN_DEFAULTS } from './defaults';
 import styles from './bikaran.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface HeroStat {
   value: string;
@@ -61,12 +62,12 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
 
             <div className="mt-8 flex flex-wrap gap-3.5">
               <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
+                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
               <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="outline" size="lg" editableKey="ctaSecondary" href="#showcase">
+                <Button tone="outline" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>

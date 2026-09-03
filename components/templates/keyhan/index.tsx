@@ -53,6 +53,6 @@ export const KEYHAN_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={KEYHAN_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={KEYHAN_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={KEYHAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={KEYHAN_DEFAULTS.cta} tone="deep" />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={KEYHAN_DEFAULTS.footer} />,
 };

@@ -6,6 +6,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { SHABTAB_DEFAULTS } from './defaults';
 import styles from './shabtab.module.css';
+import { templateHref } from '../_shared/routes';
 
 // Up to four photos — the manager can upload more than one to turn the static
 // screenshot into an auto-rotating slideshow.
@@ -44,7 +45,7 @@ export function ShabtabHero({ id, config, storeContext }: TemplateSectionProps) 
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3.5">
           <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
+            <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>

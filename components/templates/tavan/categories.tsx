@@ -2,6 +2,7 @@ import { Container, SectionHead } from '../_shared/section';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { TAVAN_DEFAULTS } from './defaults';
 import styles from './tavan.module.css';
+import { templateHref } from '../_shared/routes';
 
 interface TrackItem {
   index: string;
@@ -10,7 +11,7 @@ interface TrackItem {
   meta: string;
 }
 
-export function TavanCategories({ id, config }: TemplateSectionProps) {
+export function TavanCategories({ id, config, storeContext }: TemplateSectionProps) {
   const d = TAVAN_DEFAULTS.categories;
   const items = list<TrackItem>(config, 'items', d.items);
 
@@ -39,7 +40,7 @@ export function TavanCategories({ id, config }: TemplateSectionProps) {
               <h3 className="mt-2 text-[23px] font-bold">{item.title}</h3>
               <p className="text-[15px] leading-[1.85] text-(--theme-muted)">{item.body}</p>
               <a
-                href="#courses"
+                href={templateHref(storeContext, 'courses')}
                 className="mt-auto pt-3 text-[13.5px] font-bold text-(--theme-primary) hover:underline"
               >
                 {item.meta} ←

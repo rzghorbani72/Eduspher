@@ -1,5 +1,6 @@
 import { Container, SectionHead } from "./section";
 import { Button } from "./primitives";
+import { templateHref } from "./routes";
 import { loadTemplateCourses } from "./courses-data";
 import { TemplateCourseCard, type CourseCardSpec } from "./course-card";
 import { SectionEmptyState } from "@/components/ui-blocks/slot-grid";
@@ -75,7 +76,7 @@ export async function TemplateCourses({
               ))}
             </div>
             <div className="mt-10">
-              <Button tone="outline" href="/courses" editableKey="ctaText">
+              <Button tone="outline" href={templateHref(storeContext, 'courses')} editableKey="ctaText">
                 {text(config, "ctaText", defaults.ctaText)}
               </Button>
             </div>

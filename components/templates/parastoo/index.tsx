@@ -58,8 +58,8 @@ export const PARASTOO_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={PARASTOO_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config }) => (
-    <TemplateCta id={id} config={config} defaults={PARASTOO_DEFAULTS.cta} tone="accent" boxed />
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={PARASTOO_DEFAULTS.cta} tone="accent" boxed />
   ),
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={PARASTOO_DEFAULTS.footer} />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={PARASTOO_DEFAULTS.footer} />,
 };

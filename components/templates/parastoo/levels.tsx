@@ -3,6 +3,7 @@ import { Button, Initials } from '../_shared/primitives';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { PARASTOO_DEFAULTS } from './defaults';
 import styles from './parastoo.module.css';
+import { templateHref } from '../_shared/routes';
 
 type NodeTone = 'primary' | 'accent' | 'secondary' | 'plain';
 
@@ -33,7 +34,7 @@ const KNOB_TONE: Record<NodeTone, string> = {
  * Parastoo's signature section: the ten-level spine over a weekly leaderboard.
  * Progression is the product, so it gets the tall inverted band.
  */
-export function ParastooLevels({ id, config }: TemplateSectionProps) {
+export function ParastooLevels({ id, config, storeContext }: TemplateSectionProps) {
   const d = PARASTOO_DEFAULTS.levels;
   const nodes = list<LevelNode>(config, 'nodes', d.nodes);
   const rows = list<BoardRow>(config, 'boardRows', d.boardRows);
@@ -119,7 +120,7 @@ export function ParastooLevels({ id, config }: TemplateSectionProps) {
             </span>
             <h3 className="mt-3 text-[24px] font-bold">{d.challenge.title}</h3>
             <p className="mt-3 text-[15px] leading-[1.8] opacity-90">{d.challenge.body}</p>
-            <Button tone="deep" className="mt-6">
+            <Button tone="deep" className="mt-6" href={templateHref(storeContext, 'register')}>
               {d.challenge.ctaText}
             </Button>
           </div>

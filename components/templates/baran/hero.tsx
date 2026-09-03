@@ -6,6 +6,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { BARAN_DEFAULTS } from './defaults';
 import styles from './baran.module.css';
+import { templateHref } from '../_shared/routes';
 
 // Up to four photos — the manager can upload more than one to turn the static
 // screenshot into an auto-rotating slideshow.
@@ -46,7 +47,7 @@ export function BaranHero({ id, config, storeContext }: TemplateSectionProps) {
 
         <div className="mt-8 flex flex-col items-center gap-3">
           <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="primary" size="lg" editableKey="ctaText" href="#courses">
+            <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>

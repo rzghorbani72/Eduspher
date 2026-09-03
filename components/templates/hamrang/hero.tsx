@@ -5,6 +5,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { HAMRANG_DEFAULTS } from './defaults';
 import styles from './hamrang.module.css';
+import { templateHref } from '../_shared/routes';
 
 // Up to four photos — the manager can upload more than one to turn the static
 // screenshot into an auto-rotating slideshow.
@@ -48,12 +49,12 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3.5">
           <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="deep" size="lg" editableKey="ctaText" href="#courses" className="!rounded-full">
+            <Button tone="deep" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')} className="!rounded-full">
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>
           <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-            <Button tone="outline" size="lg" editableKey="ctaSecondary" className="!rounded-full">
+            <Button tone="outline" size="lg" editableKey="ctaSecondary" className="!rounded-full" href={templateHref(storeContext, 'courses')}>
               {text(config, 'ctaSecondary', d.ctaSecondary)}
             </Button>
           </RemovableSlot>

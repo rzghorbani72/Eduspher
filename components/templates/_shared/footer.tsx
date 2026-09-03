@@ -2,7 +2,8 @@ import { getCurrentAcademy } from '@/lib/api/server';
 import { PlatformTrustBadge } from '@/components/academy/platform-trust-badge';
 import { PoweredBy } from '@/components/shared/powered-by';
 import { Container } from './section';
-import { list, text, type SectionConfig } from './types';
+import { list, text, type SectionConfig, type TemplateStoreContext } from './types';
+import { templateHref } from './routes';
 
 export interface FooterColumn {
   title: string;
@@ -17,6 +18,7 @@ export interface FooterContact {
 interface TemplateFooterProps {
   id?: string;
   config?: SectionConfig;
+  storeContext?: TemplateStoreContext;
   defaults: {
     about: string;
     legal: string;
@@ -26,42 +28,47 @@ interface TemplateFooterProps {
   };
 }
 
-const DEFAULT_COLUMNS: readonly FooterColumn[] = [
-  {
-    title: 'آموزش',
-    links: [
-      { label: 'همهٔ دوره‌ها', href: '/courses' },
-      { label: 'دسته‌بندی‌ها', href: '/courses' },
-      { label: 'مدرسان', href: '/about' },
-    ],
-  },
-  {
-    title: 'آکادمی',
-    links: [
-      { label: 'دربارهٔ ما', href: '/about' },
-      { label: 'تماس با ما', href: '/contact' },
-      { label: 'وبلاگ', href: '/blog' },
-    ],
-  },
-  {
-    title: 'پشتیبانی',
-    links: [
-      { label: 'پرسش‌های پرتکرار', href: '/faq' },
-      { label: 'قوانین و مقررات', href: '/legal/terms' },
-      { label: 'حریم خصوصی', href: '/legal/privacy' },
-    ],
-  },
-];
+/**
+ * Only pages this academy actually has. A footer is where dead links hide
+ * longest, so the list is built from the same closed route map the buttons use.
+ */
+function defaultColumns(
+  storeContext: TemplateStoreContext | undefined
+): readonly FooterColumn[] {
+  return [
+    {
+      title: 'آموزش',
+      links: [
+        { label: 'همهٔ دوره‌ها', href: templateHref(storeContext, 'courses') },
+        { label: 'بسته‌های آموزشی', href: templateHref(storeContext, 'bundles') },
+        { label: 'وبلاگ', href: templateHref(storeContext, 'blog') },
+      ],
+    },
+    {
+      title: 'حساب کاربری',
+      links: [
+        { label: 'ورود', href: templateHref(storeContext, 'login') },
+        { label: 'ثبت‌نام', href: templateHref(storeContext, 'register') },
+        { label: 'حساب من', href: templateHref(storeContext, 'account') },
+      ],
+    },
+  ];
+}
 
 /**
  * All seven designs land on the same footer skeleton: a brand column with a
  * short "about" and social row, three link columns, and a contact column. One
  * component keeps that consistent while every label stays editable per academy.
  */
-export async function TemplateSiteFooter({ id, config, defaults }: TemplateFooterProps) {
+export async function TemplateSiteFooter({
+  id,
+  config,
+  storeContext,
+  defaults,
+}: TemplateFooterProps) {
   const academy = await getCurrentAcademy().catch(() => null);
   const academyName = academy?.name ?? 'آکادمی';
-  const columns = list<FooterColumn>(config, 'columns', defaults.columns ?? DEFAULT_COLUMNS);
+  const columns = list<FooterColumn>(config, 'columns', defaults.columns ?? defaultColumns(storeContext));
   const contact = list<FooterContact>(config, 'contact', defaults.contact ?? []);
   const socials = list<{ label: string; href: string }>(config, 'socials', defaults.socials ?? []);
   const year = new Date().toLocaleDateString('fa-IR-u-ca-persian', { year: 'numeric' });

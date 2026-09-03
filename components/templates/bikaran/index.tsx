@@ -51,6 +51,6 @@ export const BIKARAN_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={BIKARAN_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config }) => <TemplateCta id={id} config={config} defaults={BIKARAN_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config }) => <TemplateSiteFooter id={id} config={config} defaults={BIKARAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={BIKARAN_DEFAULTS.cta} tone="deep" />,
+  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={BIKARAN_DEFAULTS.footer} />,
 };
