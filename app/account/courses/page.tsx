@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import Link from "@/components/ui/link";
 import { getCourseAccess } from "@/lib/api/account-server";
 import { getAcademyBySlug, getEnrollments } from "@/lib/api/server";
+import type { LanguageCode } from "@/lib/i18n/config";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
@@ -81,6 +82,7 @@ export default async function AccountCoursesPage() {
         title={translate("account.activeCourses")}
         enrollments={active}
         storeSlug={slugForPaths}
+        language={language}
       />
 
       {extraAccess.length > 0 ? (
@@ -95,6 +97,7 @@ export default async function AccountCoursesPage() {
         title={translate("account.completedCourses")}
         enrollments={completed}
         storeSlug={slugForPaths}
+        language={language}
       />
     </div>
   );
@@ -104,12 +107,14 @@ function CourseSection({
   title,
   enrollments,
   storeSlug,
+  language,
 }: {
   title: string;
   enrollments: Awaited<ReturnType<typeof getEnrollments>> extends null
     ? never
     : NonNullable<Awaited<ReturnType<typeof getEnrollments>>>["enrollments"];
   storeSlug: string | null;
+  language: LanguageCode;
 }) {
   if (enrollments.length === 0) return null;
 
@@ -119,11 +124,13 @@ function CourseSection({
         {title}
       </h2>
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-        {enrollments.map((enrollment) => (
+        {enrollments.map((enrollment, index) => (
           <EnrolledCourseCard
             key={enrollment.id}
             enrollment={enrollment}
             storeSlug={storeSlug}
+            language={language}
+            index={index}
           />
         ))}
       </div>

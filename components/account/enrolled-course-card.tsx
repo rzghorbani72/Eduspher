@@ -1,9 +1,23 @@
-"use client";
-
 import Link from "@/components/ui/link";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { useLocaleFormat } from "@/hooks/use-locale-digits";
-import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
+import { TemplateCourseCard } from "@/components/templates/_shared/course-card";
+import type { TemplateCourse } from "@/components/templates/_shared/courses-data";
+import { resolveTemplateCourseCard } from "@/components/templates/registry";
+import { getActiveTemplateKey } from "@/lib/active-template";
+import type { LanguageCode } from "@/lib/i18n/config";
+import { t } from "@/lib/i18n/server-translations";
+import { buildAcademyPath, formatPercent } from "@/lib/utils";
+
+interface EnrolledCourse {
+  id: string | number;
+  title: string;
+  slug: string;
+  is_free: boolean;
+  Image?: { publicUrl: string } | null;
+  Category?: { name: string } | null;
+  author?: { display_name: string } | null;
+  /** The teacher, as the enrollments endpoint returns them. */
+  Profile?: { display_name: string } | null;
+}
 
 interface EnrolledCourseCardProps {
   enrollment: {
@@ -11,99 +25,121 @@ interface EnrolledCourseCardProps {
     status: string;
     progress_percent: number;
     last_accessed: string;
-    course?: {
-      id: string | number;
-      title: string;
-      slug: string;
-      is_free: boolean;
-      Image?: { publicUrl: string } | null;
-      Category?: { name: string } | null;
-      author?: { display_name: string } | null;
-      Season?: Array<{
-        Lesson?: Array<{ lesson_type?: string | null }>;
-      }> | null;
-    } | null;
+    course?: EnrolledCourse | null;
   };
   storeSlug: string | null;
+  language: LanguageCode;
+  /** Position in the grid — picks the template's thumbnail tone round-robin. */
+  index?: number;
 }
 
-export function EnrolledCourseCard({
+/**
+ * A purchased course in "my courses". It draws the academy's own course card —
+ * the same one the storefront uses — and only swaps the price footer for the
+ * progress bar and the continue button, so a student sees one card design
+ * everywhere on the academy.
+ */
+export async function EnrolledCourseCard({
   enrollment,
   storeSlug,
+  language,
+  index = 0,
 }: EnrolledCourseCardProps) {
-  const { t } = useTranslation();
-  const format = useLocaleFormat();
   const course = enrollment.course;
   if (!course) return null;
 
-  const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/window.svg";
+  const translate = (key: string) => t(key, language);
   const href = buildAcademyPath(storeSlug, `/learn/${course.id}`);
   const progress = Math.min(Math.round(enrollment.progress_percent), 100);
+  const isCompleted = enrollment.status === "COMPLETED";
+  const teacherName =
+    course.author?.display_name ?? course.Profile?.display_name ?? null;
+
+  const templateCourse: TemplateCourse = {
+    id: String(course.id),
+    title: course.title,
+    href,
+    priceLabel: "",
+    isFree: course.is_free,
+    isLive: false,
+    teacherName,
+    teacherInitials: teacherName?.trim().charAt(0) ?? "—",
+    levelLabel: course.Category?.name ?? null,
+    lessonsLabel: null,
+    durationLabel: null,
+    ratingLabel: null,
+    coverUrl: course.Image?.publicUrl ?? null,
+  };
+
+  const footer = (
+    <div className="space-y-3">
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between text-[13px] text-(--theme-muted)">
+          <span>
+            {isCompleted
+              ? translate("account.statusCompleted")
+              : translate("account.progress")}
+          </span>
+          <span className="font-bold text-(--theme-foreground)">
+            {formatPercent(progress, language)}
+          </span>
+        </div>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-(--theme-surface-alt)">
+          <div
+            className="h-1.5 rounded-full bg-(--theme-primary)"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+      <Link
+        href={href}
+        className="inline-flex h-10 w-full items-center justify-center rounded-(--theme-border-radius) bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90"
+      >
+        {translate("account.continueLearning")} →
+      </Link>
+    </div>
+  );
+
+  const spec = resolveTemplateCourseCard(await getActiveTemplateKey());
+  if (!spec) {
+    return <FallbackCard course={templateCourse} footer={footer} />;
+  }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-theme bg-card shadow-sm overflow-hidden transition-all hover:shadow-md hover:border-(--theme-primary)/30">
-      {/* Cover */}
-      <div className="relative h-44 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={coverUrl}
-          alt={course.title}
-          className="h-full w-full object-cover"
-        />
-        {enrollment.status === "COMPLETED" && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-            <span className="rounded-full bg-green-500 px-3 py-1 text-xs font-bold text-white">
-              {t("account.statusCompleted")}
-            </span>
-          </div>
-        )}
-      </div>
+    <TemplateCourseCard
+      course={templateCourse}
+      spec={spec}
+      index={index}
+      footer={footer}
+    />
+  );
+}
 
-      {/* Body */}
+/** Academies on no template keep a plain card in the same shape. */
+function FallbackCard({
+  course,
+  footer,
+}: {
+  course: TemplateCourse;
+  footer: React.ReactNode;
+}) {
+  return (
+    <article className="flex flex-col overflow-hidden rounded-2xl border border-theme bg-card shadow-sm">
+      <div
+        className="h-40 bg-(--theme-primary)/15 bg-cover bg-center"
+        style={
+          course.coverUrl ? { backgroundImage: `url(${course.coverUrl})` } : undefined
+        }
+      />
       <div className="flex flex-1 flex-col gap-3 p-5">
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 text-xs">
-          {course.Category && (
-            <span className="rounded-full border border-theme px-2.5 py-0.5 text-muted">
-              {course.Category.name}
-            </span>
-          )}
-        </div>
-
-        {/* Title */}
-        <p className="font-bold text-(--theme-foreground) leading-snug line-clamp-2">
+        <p className="font-bold leading-snug text-(--theme-foreground)">
           {course.title}
         </p>
-
-        {/* Author */}
-        {course.author && (
-          <p className="text-sm text-muted">{course.author.display_name}</p>
-        )}
-
-        {/* Progress */}
-        <div className="space-y-1.5 mt-auto">
-          <div className="flex items-center justify-between text-xs text-muted">
-            <span>{t("account.progress")}</span>
-            <span className="font-semibold text-(--theme-primary-ink)">
-              {format.percent(progress)}
-            </span>
-          </div>
-          <div className="h-1.5 w-full rounded-full bg-surface-alt overflow-hidden">
-            <div
-              className="h-1.5 rounded-full bg-(--theme-primary) transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-
-        {/* CTA */}
-        <Link
-          href={href}
-          className="mt-2 inline-flex h-10 w-full items-center justify-center rounded-full bg-(--theme-primary) text-(--theme-on-primary) text-sm font-semibold shadow-sm transition-all hover:opacity-90 hover:scale-[1.02]"
-        >
-          {t("account.continueLearning")} →
-        </Link>
+        {course.teacherName ? (
+          <p className="text-sm text-muted">{course.teacherName}</p>
+        ) : null}
+        <div className="mt-auto border-t border-theme pt-3.5">{footer}</div>
       </div>
-    </div>
+    </article>
   );
 }

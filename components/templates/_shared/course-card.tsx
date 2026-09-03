@@ -1,3 +1,6 @@
+import type { ReactNode } from "react";
+
+import { resolveAssetUrl } from "@/lib/utils";
 import { Button, Initials } from "./primitives";
 import type { TemplateCourse } from "./courses-data";
 import { isSampleRecord } from "./sample-data";
@@ -19,17 +22,35 @@ export function TemplateCourseCard({
   course,
   spec,
   index = 0,
+  footer,
 }: {
   course: TemplateCourse;
   spec: CourseCardSpec;
   index?: number;
+  /** Replaces the price/rating row — the account pages close with progress. */
+  footer?: ReactNode;
 }) {
   const thumbClassName = `${spec.thumbClassName} ${spec.thumbTones[index % spec.thumbTones.length]}`;
+  // The cover is painted as a background over the template's gradient, so a
+  // missing or unreachable image simply leaves the gradient — an <img> would
+  // leave a broken-image box instead.
+  const coverUrl = resolveAssetUrl(course.coverUrl);
 
   return (
     <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
       <a href={course.href} className="block">
-        <div className={thumbClassName}>
+        <div
+          className={thumbClassName}
+          style={
+            coverUrl
+              ? {
+                  backgroundImage: `url(${coverUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : undefined
+          }
+        >
           {isSampleRecord(course.id) ? (
             <span className="absolute top-3 end-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-deep)/85 px-2.5 py-1 text-[11px] font-bold text-(--theme-on-deep)">
               نمونهٔ پیش‌نمایش
@@ -62,22 +83,28 @@ export function TemplateCourseCard({
           </p>
         ) : null}
 
-        <p className="flex flex-wrap gap-3.5 border-t border-(--theme-border-color) pt-3 text-[13px] text-(--theme-muted)">
-          {course.durationLabel ? <span>{course.durationLabel}</span> : null}
-          {course.lessonsLabel ? <span>{course.lessonsLabel}</span> : null}
-        </p>
+        {course.durationLabel || course.lessonsLabel ? (
+          <p className="flex flex-wrap gap-3.5 border-t border-(--theme-border-color) pt-3 text-[13px] text-(--theme-muted)">
+            {course.durationLabel ? <span>{course.durationLabel}</span> : null}
+            {course.lessonsLabel ? <span>{course.lessonsLabel}</span> : null}
+          </p>
+        ) : null}
 
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-(--theme-border-color) pt-3.5">
-          <span className="text-[17px] font-bold">{course.priceLabel}</span>
-          {spec.footer === "action" ? (
-            <Button tone="deep" size="sm" href={course.href}>
-              جزئیات
-            </Button>
-          ) : course.ratingLabel ? (
-            <span className="text-[13px] font-bold text-(--theme-accent)">
-              ★ {course.ratingLabel}
-            </span>
-          ) : null}
+        <div className="mt-auto border-t border-(--theme-border-color) pt-3.5">
+          {footer ?? (
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[17px] font-bold">{course.priceLabel}</span>
+              {spec.footer === "action" ? (
+                <Button tone="deep" size="sm" href={course.href}>
+                  جزئیات
+                </Button>
+              ) : course.ratingLabel ? (
+                <span className="text-[13px] font-bold text-(--theme-accent)">
+                  ★ {course.ratingLabel}
+                </span>
+              ) : null}
+            </div>
+          )}
         </div>
       </div>
     </article>
