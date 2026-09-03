@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 
 import { useTranslation } from "@/lib/i18n/hooks";
+import { isLiveCourse } from "@/lib/courses/live-course";
 import type { CourseSummary } from "@/lib/api/types";
 import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
 import { CourseOverview } from "@/components/courses/course-overview";
@@ -44,7 +45,9 @@ export function CourseDetailTabs({
       { key: "overview", label: t("courses.tabIntro") },
       { key: "curriculum", label: t("courses.tabCurriculum") },
     ];
-    if (stats.liveCount > 0) {
+    // A recorded course has no live timetable, even if an old lesson still
+    // carries a live session.
+    if (isLiveCourse(course) && stats.liveCount > 0) {
       list.push({ key: "live", label: t("courses.tabLive") });
     }
     list.push(
@@ -52,7 +55,7 @@ export function CourseDetailTabs({
       { key: "reviews", label: t("courses.tabReviews") },
     );
     return list;
-  }, [stats.liveCount, t]);
+  }, [course, stats.liveCount, t]);
 
   const [activeTab, setActiveTab] = useState<TabKey>("curriculum");
 
