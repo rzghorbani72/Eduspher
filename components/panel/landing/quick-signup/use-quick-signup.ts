@@ -28,6 +28,8 @@ import { LANDING } from "../landing.messages";
 const M = LANDING.quickSignup;
 const SLUG_DEBOUNCE_MS = 400;
 const RESEND_SECONDS = 90;
+const IR_COUNTRY: CountryCode =
+  getCountryByCode("IR") ?? getDefaultCountry();
 
 export type QuickSignupStep = "identity" | "phone" | "otp" | "done";
 
@@ -51,9 +53,7 @@ export function useQuickSignup(onFinished?: () => void) {
   const [slug, setSlug] = useState("");
   const [slugStatus, setSlugStatus] = useState<SlugStatus>("idle");
   const [phone, setPhone] = useState("");
-  const [country, setCountry] = useState<CountryCode>(
-    () => getCountryByCode("IR") ?? getDefaultCountry(),
-  );
+  const country = IR_COUNTRY;
   const [otp, setOtp] = useState("");
   const [accepted, setAccepted] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,9 +109,10 @@ export function useQuickSignup(onFinished?: () => void) {
     };
   }, [slug]);
 
-  /** The API always wants E.164; the input holds the local number. */
-  const fullPhone = phone
-    ? getFullPhoneNumber(cleanPhoneNumber(phone, country), country)
+  /** Local input may keep a leading 0 (09…); API always wants E.164. */
+  const nationalPhone = phone ? cleanPhoneNumber(phone, country) : "";
+  const fullPhone = nationalPhone
+    ? getFullPhoneNumber(nationalPhone, country)
     : "";
 
   const guard = useCallback(
@@ -149,7 +150,7 @@ export function useQuickSignup(onFinished?: () => void) {
   }, [guard, name, slug, slugStatus]);
 
   const submitPhone = useCallback(() => {
-    const problem = !isValidPhoneNumber(phone, country)
+    const problem = !isValidPhoneNumber(nationalPhone, country)
       ? M.phoneInvalid
       : !accepted
         ? M.legalRequired
@@ -161,7 +162,7 @@ export function useQuickSignup(onFinished?: () => void) {
       setResendIn(RESEND_SECONDS);
       setStep("otp");
     });
-  }, [accepted, country, fullPhone, guard, phone]);
+  }, [accepted, country, fullPhone, guard, nationalPhone]);
 
   const resendOtp = useCallback(() => {
     if (resendIn > 0) return Promise.resolve();
@@ -224,8 +225,6 @@ export function useQuickSignup(onFinished?: () => void) {
     phone,
     setPhone,
     fullPhone,
-    country,
-    setCountry,
     otp,
     setOtp,
     accepted,

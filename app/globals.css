@@ -2391,23 +2391,6 @@ select[class*="rounded-sm"] {
 .qs-dialog textarea {
   color-scheme: light;
 }
-.qs-phone {
-  direction: ltr;
-}
-.qs-phone button,
-.qs-phone input {
-  background: var(--qs-surface);
-  border-color: var(--qs-line);
-  color: var(--qs-ink);
-}
-.qs-phone [class*="absolute"][class*="z-50"] {
-  background: var(--qs-surface);
-  border-color: var(--qs-line);
-  color: var(--qs-ink);
-}
-.qs-phone [class*="absolute"][class*="z-50"] button {
-  color: var(--qs-ink);
-}
 .qs-otp input {
   background: var(--qs-surface);
   border-color: var(--qs-line);

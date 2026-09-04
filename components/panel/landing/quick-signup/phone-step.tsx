@@ -1,30 +1,45 @@
 "use client";
 
-import { PhoneInput } from "@/components/ui/phone-input";
+import { toEnglishDigits } from "@/lib/phone-utils";
+import { useLocaleDigits } from "@/hooks/use-locale-digits";
 import { LANDING } from "../landing.messages";
 import { DialogButton } from "./dialog-button";
 import type { useQuickSignup } from "./use-quick-signup";
 
 const M = LANDING.quickSignup;
+/** Same locked Iran field as AdminPanel AuthPhoneField — no country picker. */
+const PHONE_PLACEHOLDER = "0921 *** ** **";
+const IRAN_PHONE_MAX_LENGTH = 11;
 
 export function PhoneStep({
   flow,
 }: {
   flow: ReturnType<typeof useQuickSignup>;
 }) {
+  const localeDigits = useLocaleDigits();
+
   return (
     <div className="space-y-4">
       <div>
         <span className="mb-1.5 block text-[13px] font-semibold text-lp-ink">
           {M.phoneLabel}
         </span>
-        <PhoneInput
-          value={flow.phone}
-          onChange={flow.setPhone}
-          defaultCountry={flow.country}
-          onCountryChange={flow.setCountry}
-          className="qs-phone"
-          inputClassName="h-12 border-lp-line-2 bg-white text-[15px] text-[#181c20]"
+        <input
+          type="tel"
+          dir="ltr"
+          inputMode="tel"
+          autoComplete="tel"
+          autoFocus
+          maxLength={IRAN_PHONE_MAX_LENGTH}
+          placeholder={localeDigits(PHONE_PLACEHOLDER)}
+          value={localeDigits(flow.phone)}
+          onChange={(event) => {
+            const digits = toEnglishDigits(event.target.value)
+              .replace(/\D/g, "")
+              .slice(0, IRAN_PHONE_MAX_LENGTH);
+            flow.setPhone(digits);
+          }}
+          className="h-12 w-full rounded-lp border border-lp-line-2 bg-transparent px-3.5 text-[15px] text-[#181c20] outline-none transition-colors placeholder:text-lp-muted focus:border-lp-ink/30"
         />
         <p className="mt-1.5 text-[12px] text-lp-muted">{M.phoneHint}</p>
       </div>
