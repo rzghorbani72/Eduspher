@@ -31,6 +31,20 @@ const RESEND_SECONDS = 90;
 const IR_COUNTRY: CountryCode =
   getCountryByCode("IR") ?? getDefaultCountry();
 
+type LegalVersions = { terms: string | null; privacy: string | null };
+
+async function loadLegalVersions(): Promise<LegalVersions> {
+  try {
+    const docs = await getLegalDocuments();
+    return {
+      terms: docs.find((d) => d.type === "TERMS")?.version ?? null,
+      privacy: docs.find((d) => d.type === "PRIVACY")?.version ?? null,
+    };
+  } catch {
+    return { terms: null, privacy: null };
+  }
+}
+
 export type QuickSignupStep = "identity" | "phone" | "otp" | "done";
 
 export type QuickSignupResult = {
@@ -60,20 +74,27 @@ export function useQuickSignup(onFinished?: () => void) {
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<QuickSignupResult | null>(null);
   const [resendIn, setResendIn] = useState(0);
-  const legal = useRef<{ terms: string | null; privacy: string | null }>({
+  const legal = useRef<LegalVersions>({
     terms: null,
     privacy: null,
   });
 
   useEffect(() => {
-    getLegalDocuments()
-      .then((docs) => {
-        legal.current = {
-          terms: docs.find((d) => d.type === "TERMS")?.version ?? null,
-          privacy: docs.find((d) => d.type === "PRIVACY")?.version ?? null,
-        };
-      })
-      .catch(() => undefined);
+    let active = true;
+    loadLegalVersions().then((versions) => {
+      if (active) legal.current = versions;
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  /** Prefetch may still be in flight — resolve (or re-fetch) before consent is sent. */
+  const ensureLegalVersions = useCallback(async (): Promise<LegalVersions> => {
+    if (legal.current.terms && legal.current.privacy) return legal.current;
+    const versions = await loadLegalVersions();
+    legal.current = versions;
+    return versions;
   }, []);
 
   useEffect(() => {
@@ -154,15 +175,24 @@ export function useQuickSignup(onFinished?: () => void) {
       ? M.phoneInvalid
       : !accepted
         ? M.legalRequired
-        : !legal.current.terms || !legal.current.privacy
-          ? M.legalUnavailable
-          : null;
+        : null;
     return guard(problem, async () => {
+      const { terms, privacy } = await ensureLegalVersions();
+      if (!terms || !privacy) {
+        throw new Error(M.legalUnavailable);
+      }
       await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
       setResendIn(RESEND_SECONDS);
       setStep("otp");
     });
-  }, [accepted, country, fullPhone, guard, nationalPhone]);
+  }, [
+    accepted,
+    country,
+    ensureLegalVersions,
+    fullPhone,
+    guard,
+    nationalPhone,
+  ]);
 
   const resendOtp = useCallback(() => {
     if (resendIn > 0) return Promise.resolve();
@@ -175,13 +205,12 @@ export function useQuickSignup(onFinished?: () => void) {
   const submitOtp = useCallback(
     (code?: string) => {
       const value = (code ?? otp).trim();
-      const { terms, privacy } = legal.current;
-      const problem = !value
-        ? M.otpRequired
-        : !terms || !privacy
-          ? M.legalUnavailable
-          : null;
+      const problem = !value ? M.otpRequired : null;
       return guard(problem, async () => {
+        const { terms, privacy } = await ensureLegalVersions();
+        if (!terms || !privacy) {
+          throw new Error(M.legalUnavailable);
+        }
         await verifyPhoneOtp(
           fullPhone,
           value,
@@ -190,8 +219,8 @@ export function useQuickSignup(onFinished?: () => void) {
         await quickSignup({
           phone_number: fullPhone,
           display_name: name.trim(),
-          accepted_terms_version: terms as string,
-          accepted_privacy_version: privacy as string,
+          accepted_terms_version: terms,
+          accepted_privacy_version: privacy,
         });
         const started = await quickStartAcademy({
           name: name.trim(),
@@ -207,7 +236,7 @@ export function useQuickSignup(onFinished?: () => void) {
         onFinished?.();
       });
     },
-    [fullPhone, guard, name, onFinished, otp, slug],
+    [ensureLegalVersions, fullPhone, guard, name, onFinished, otp, slug],
   );
 
   const back = useCallback(() => {

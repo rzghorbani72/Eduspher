@@ -233,7 +233,9 @@ async function handleResponse<T>(
     // the visitor is sent to login. On a sign-in call there is no session yet —
     // 401 is "wrong credentials" and must throw, or the form treats the empty
     // result as a successful login and redirects with no session.
-    if (response.status === 401 && retryFn) {
+    // skipRefresh callers (public marketing / legal) must also throw, not
+    // redirect — a stale cookie must not kill the landing signup.
+    if (response.status === 401 && retryFn && !skipRefresh) {
       redirectToLogin();
       return null as unknown as T;
     }
@@ -646,11 +648,22 @@ export type LegalDocumentSummary = {
   type: string;
   version: string;
   title: string;
-  published_at: string;
+  published_at: string | null;
 };
 
-export const getLegalDocuments = (options?: RequestOptions) => {
-  return getJson<LegalDocumentSummary[]>(`/legal/documents`, options);
+/**
+ * Public list of current legal docs. Always skipRefresh: a stale session cookie
+ * must not redirect the landing signup away or return null mid-flow.
+ */
+export const getLegalDocuments = async (
+  options?: RequestOptions,
+): Promise<LegalDocumentSummary[]> => {
+  const raw = await getJson<
+    LegalDocumentSummary[] | { data?: LegalDocumentSummary[] }
+  >(`/legal/documents`, { ...options, skipRefresh: true });
+  if (Array.isArray(raw)) return raw;
+  if (raw && typeof raw === "object" && Array.isArray(raw.data)) return raw.data;
+  return [];
 };
 
 export type LegalPendingDocument = {

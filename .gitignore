@@ -48,4 +48,4 @@ next-env.d.ts
 .last-run.json
 
 # Local knowledge-graph cache (lives at monorepo root, not in this app)
-/graphify-out/
+graphify-out/
