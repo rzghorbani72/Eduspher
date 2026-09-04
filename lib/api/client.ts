@@ -615,9 +615,9 @@ export type QuickSignupPayload = {
 };
 
 /**
- * Landing fast flow, step 1: turn a verified phone into a logged-in manager.
- * No password — the OTP just verified IS the credential. Opens the session, so
- * `quickStartAcademy` can run immediately after.
+ * Landing fast flow, after OTP: open a session for a new OR existing phone
+ * (existing → login; new → register). No password — the OTP just verified IS
+ * the credential. Then `quickStartAcademy` creates the academy.
  */
 export const quickSignup = (
   payload: QuickSignupPayload,

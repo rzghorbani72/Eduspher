@@ -221,6 +221,8 @@ export function useQuickSignup(onFinished?: () => void) {
           value,
           OtpType.REGISTER_PHONE_VERIFICATION,
         );
+        // New phone → register; existing phone → login. Either way a MANAGER
+        // session is open so quick-start can create (another) academy.
         await quickSignup({
           phone_number: fullPhone,
           display_name: name.trim(),
