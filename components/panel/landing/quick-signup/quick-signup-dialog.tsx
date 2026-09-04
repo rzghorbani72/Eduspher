@@ -57,7 +57,7 @@ export function QuickSignupDialog({ onClose }: Props) {
         aria-modal="true"
         aria-label={M.title}
         dir="rtl"
-        className="relative w-full max-w-[460px] rounded-2xl bg-white p-6 shadow-2xl sm:p-8"
+        className="qs-dialog relative w-full max-w-[460px] rounded-2xl bg-white p-6 text-[#181c20] shadow-2xl sm:p-8 [color-scheme:light]"
       >
         <button
           type="button"

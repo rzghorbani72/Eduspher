@@ -15,7 +15,7 @@ export function OtpStep({ flow }: { flow: ReturnType<typeof useQuickSignup> }) {
         {M.otpSentTo.replace("{phone}", toPersianDigits(flow.fullPhone))}
       </p>
 
-      <div dir="ltr" className="flex justify-center">
+      <div dir="ltr" className="qs-otp flex justify-center">
         <OtpBoxInput
           value={flow.otp}
           onChange={flow.setOtp}

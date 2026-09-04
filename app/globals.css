@@ -2378,6 +2378,42 @@ select[class*="rounded-sm"] {
   border-color: hsl(var(--destructive));
 }
 
+/* Quick-signup dialog: always a white light surface. OS dark color-scheme and
+   theme tokens (bg-card) would otherwise paint PhoneInput / OTP / bare inputs
+   navy — same trap auth solves with --auth-card-bg. */
+.qs-dialog {
+  color-scheme: light;
+  --qs-surface: #ffffff;
+  --qs-ink: #181c20;
+  --qs-line: #e5e7eb;
+}
+.qs-dialog input,
+.qs-dialog textarea {
+  color-scheme: light;
+}
+.qs-phone {
+  direction: ltr;
+}
+.qs-phone button,
+.qs-phone input {
+  background: var(--qs-surface);
+  border-color: var(--qs-line);
+  color: var(--qs-ink);
+}
+.qs-phone [class*="absolute"][class*="z-50"] {
+  background: var(--qs-surface);
+  border-color: var(--qs-line);
+  color: var(--qs-ink);
+}
+.qs-phone [class*="absolute"][class*="z-50"] button {
+  color: var(--qs-ink);
+}
+.qs-otp input {
+  background: var(--qs-surface);
+  border-color: var(--qs-line);
+  color: var(--qs-ink);
+}
+
 /* Multi-line field on the auth card — same white surface as .auth-input, but
    rounded as a box instead of a pill because the text wraps. */
 .auth-textarea {

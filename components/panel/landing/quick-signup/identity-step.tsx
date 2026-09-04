@@ -44,7 +44,7 @@ export function IdentityStep({
               flow.setSlug(toSlug(value));
             }
           }}
-          className="h-12 w-full rounded-lp border border-lp-line-2 px-3.5 text-[15px] text-lp-ink outline-none transition-colors focus:border-lp-ink/30"
+          className="h-12 w-full rounded-lp border border-lp-line-2 bg-transparent px-3.5 text-[15px] text-[#181c20] outline-none transition-colors placeholder:text-lp-muted focus:border-lp-ink/30"
         />
       </label>
 
@@ -67,7 +67,7 @@ export function IdentityStep({
             value={flow.slug}
             placeholder={M.slugPlaceholder}
             onChange={(event) => flow.setSlug(toSlug(event.target.value))}
-            className="min-w-0 flex-1 bg-transparent px-3.5 text-[15px] text-lp-ink outline-none"
+            className="min-w-0 flex-1 bg-transparent px-3.5 text-[15px] text-[#181c20] outline-none placeholder:text-lp-muted"
           />
           <span className="flex shrink-0 items-center gap-1.5 border-l border-lp-line-2 bg-black/[0.03] px-3 text-[12px] text-lp-muted">
             .{ACADEMY_DOMAIN}

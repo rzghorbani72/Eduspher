@@ -23,7 +23,8 @@ export function PhoneStep({
           onChange={flow.setPhone}
           defaultCountry={flow.country}
           onCountryChange={flow.setCountry}
-          inputClassName="h-12 text-[15px]"
+          className="qs-phone"
+          inputClassName="h-12 border-lp-line-2 bg-white text-[15px] text-[#181c20]"
         />
         <p className="mt-1.5 text-[12px] text-lp-muted">{M.phoneHint}</p>
       </div>
