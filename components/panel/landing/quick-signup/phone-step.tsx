@@ -77,6 +77,7 @@ export function PhoneStep({
       <DialogButton
         label={M.continue}
         pending={flow.pending}
+        disabled={!flow.canSubmitPhone}
         onClick={flow.submitPhone}
       />
       <DialogButton label={M.back} variant="ghost" onClick={flow.back} />

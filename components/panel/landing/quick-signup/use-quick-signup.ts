@@ -130,11 +130,17 @@ export function useQuickSignup(onFinished?: () => void) {
     };
   }, [slug]);
 
-  /** Local input may keep a leading 0 (09…); API always wants E.164. */
   const nationalPhone = phone ? cleanPhoneNumber(phone, country) : "";
   const fullPhone = nationalPhone
     ? getFullPhoneNumber(nationalPhone, country)
     : "";
+  const phoneValid = isValidPhoneNumber(nationalPhone, country);
+  const canSubmitPhone = phoneValid && accepted;
+
+  useEffect(() => {
+    if (step !== "phone") return;
+    setError(null);
+  }, [phone, accepted, step]);
 
   const guard = useCallback(
     async (message: string | null, action: () => Promise<void>) => {
@@ -171,7 +177,7 @@ export function useQuickSignup(onFinished?: () => void) {
   }, [guard, name, slug, slugStatus]);
 
   const submitPhone = useCallback(() => {
-    const problem = !isValidPhoneNumber(nationalPhone, country)
+    const problem = !phoneValid
       ? M.phoneInvalid
       : !accepted
         ? M.legalRequired
@@ -187,11 +193,10 @@ export function useQuickSignup(onFinished?: () => void) {
     });
   }, [
     accepted,
-    country,
     ensureLegalVersions,
     fullPhone,
     guard,
-    nationalPhone,
+    phoneValid,
   ]);
 
   const resendOtp = useCallback(() => {
@@ -254,6 +259,8 @@ export function useQuickSignup(onFinished?: () => void) {
     phone,
     setPhone,
     fullPhone,
+    phoneValid,
+    canSubmitPhone,
     otp,
     setOtp,
     accepted,

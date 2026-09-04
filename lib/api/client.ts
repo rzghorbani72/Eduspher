@@ -23,9 +23,15 @@ const getCookieValue = (name: string) => {
  * Which academy this browser is on: the cookie the tenant middleware set, then
  * the build-time default. Every tenant-scoped call must go through this — a
  * second, hand-rolled copy is how one flow ends up on a different academy.
+ *
+ * Empty string counts as missing: panel-root clears academy cookies with
+ * `value=""` / maxAge 0, and `??` would otherwise keep "" and break headers.
  */
-export const resolveAcademyId = (): string | null =>
-  getCookieValue(env.academyIdCookie) ?? env.defaultAcademyId;
+export const resolveAcademyId = (): string | null => {
+  const fromCookie = getCookieValue(env.academyIdCookie)?.trim();
+  if (fromCookie) return fromCookie;
+  return env.defaultAcademyId;
+};
 
 const getAcademyId = (): string => {
   const academyId = resolveAcademyId();
@@ -38,7 +44,8 @@ const getAcademyId = (): string => {
 };
 
 const getAcademySlug = (): string | null => {
-  return getCookieValue(env.academySlugCookie);
+  const slug = getCookieValue(env.academySlugCookie)?.trim();
+  return slug || null;
 };
 
 let csrfBootstrap: Promise<string | null> | null = null;
@@ -652,17 +659,34 @@ export type LegalDocumentSummary = {
 };
 
 /**
- * Public list of current legal docs. Always skipRefresh: a stale session cookie
- * must not redirect the landing signup away or return null mid-flow.
+ * Public list of current legal docs. Platform marketing has no academy cookie
+ * (panel-root clears it), so this must NOT go through buildHeaders/getAcademyId
+ * — same reason postPublicJson exists for the contact form.
  */
 export const getLegalDocuments = async (
   options?: RequestOptions,
 ): Promise<LegalDocumentSummary[]> => {
-  const raw = await getJson<
-    LegalDocumentSummary[] | { data?: LegalDocumentSummary[] }
-  >(`/legal/documents`, { ...options, skipRefresh: true });
-  if (Array.isArray(raw)) return raw;
-  if (raw && typeof raw === "object" && Array.isArray(raw.data)) return raw.data;
+  const response = await fetch(`${getBaseUrl()}/legal/documents`, {
+    method: "GET",
+    credentials: "include",
+    headers: { Accept: "application/json" },
+    signal: options?.signal,
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw Object.assign(new Error(response.statusText || "Request failed"), {
+      status: response.status,
+    });
+  }
+  const raw = (await response.json()) as unknown;
+  if (Array.isArray(raw)) return raw as LegalDocumentSummary[];
+  if (
+    raw &&
+    typeof raw === "object" &&
+    Array.isArray((raw as { data?: unknown }).data)
+  ) {
+    return (raw as { data: LegalDocumentSummary[] }).data;
+  }
   return [];
 };
 
