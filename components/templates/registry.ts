@@ -12,6 +12,11 @@ import { HAMRANG_SECTIONS } from './hamrang';
 import { BARAN_SECTIONS } from './baran';
 import { SHAFAGH_SECTIONS } from './shafagh';
 import { ELEKTRON_SECTIONS } from './elektron';
+import { ROUZAN_SECTIONS } from './rouzan';
+import { DANESHVAR_SECTIONS } from './daneshvar';
+import { PELEH_SECTIONS } from './peleh';
+import { ANDISHEH_SECTIONS } from './andisheh';
+import { SHAPARAK_SECTIONS } from './shaparak';
 import { KEYHAN_COURSE_CARD } from './keyhan';
 import { TAVAN_COURSE_CARD } from './tavan';
 import { DASTAN_COURSE_CARD } from './dastan';
@@ -21,6 +26,11 @@ import { ZABANEH_COURSE_CARD } from './zabaneh';
 import { BIKARAN_COURSE_CARD } from './bikaran';
 import { SHAFAGH_COURSE_CARD } from './shafagh';
 import { ELEKTRON_COURSE_CARD } from './elektron';
+import { ROUZAN_COURSE_CARD } from './rouzan';
+import { DANESHVAR_COURSE_CARD } from './daneshvar';
+import { PELEH_COURSE_CARD } from './peleh';
+import { ANDISHEH_COURSE_CARD } from './andisheh';
+import { SHAPARAK_COURSE_CARD } from './shaparak';
 import type { CourseCardSpec } from './_shared/course-card';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
@@ -51,6 +61,11 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   baran: BARAN_SECTIONS,
   shafagh: SHAFAGH_SECTIONS,
   elektron: ELEKTRON_SECTIONS,
+  rouzan: ROUZAN_SECTIONS,
+  daneshvar: DANESHVAR_SECTIONS,
+  peleh: PELEH_SECTIONS,
+  andisheh: ANDISHEH_SECTIONS,
+  shaparak: SHAPARAK_SECTIONS,
 };
 
 export function resolveTemplateSection(
@@ -77,6 +92,11 @@ const TEMPLATE_COURSE_CARDS: Partial<Record<TemplateKey, CourseCardSpec>> = {
   bikaran: BIKARAN_COURSE_CARD,
   shafagh: SHAFAGH_COURSE_CARD,
   elektron: ELEKTRON_COURSE_CARD,
+  rouzan: ROUZAN_COURSE_CARD,
+  daneshvar: DANESHVAR_COURSE_CARD,
+  peleh: PELEH_COURSE_CARD,
+  andisheh: ANDISHEH_COURSE_CARD,
+  shaparak: SHAPARAK_COURSE_CARD,
 };
 
 export function resolveTemplateCourseCard(style: unknown): CourseCardSpec | null {

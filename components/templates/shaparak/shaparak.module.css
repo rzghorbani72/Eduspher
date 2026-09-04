@@ -1,0 +1,136 @@
+/*
+ * Shaparak — "playground": a page for a teacher of programming for children.
+ *
+ * The look is carried by soft blobs, sticker-like cards with a hard offset
+ * shadow, and a stack of colourful command blocks standing in for a child's
+ * first program. Every colour reads a --theme-* variable.
+ */
+
+.stage {
+  background:
+    radial-gradient(
+      55% 50% at 88% 4%,
+      color-mix(in srgb, var(--theme-accent) 22%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      50% 45% at 4% 96%,
+      color-mix(in srgb, var(--theme-primary) 20%, transparent) 0%,
+      transparent 62%
+    ),
+    var(--theme-background);
+  color: var(--theme-foreground);
+}
+
+/* Soft blob, used behind the media frame so nothing on the page is a rectangle. */
+.blob {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 46% 54% 38% 62% / 55% 42% 58% 45%;
+  filter: blur(10px);
+  opacity: 0.55;
+}
+.blobA {
+  inset-block-start: -8%;
+  inset-inline-end: -6%;
+  width: 42%;
+  aspect-ratio: 1;
+  background: color-mix(in srgb, var(--theme-accent) 45%, transparent);
+}
+.blobB {
+  inset-block-end: -12%;
+  inset-inline-start: -8%;
+  width: 34%;
+  aspect-ratio: 1;
+  background: color-mix(in srgb, var(--theme-primary) 40%, transparent);
+}
+
+/*
+ * Sticker: a rounded card with a hard offset shadow instead of a soft blur.
+ * The offset is logical so it flips correctly in RTL.
+ */
+.sticker {
+  border: 2px solid var(--theme-secondary);
+  border-radius: calc(var(--theme-border-radius) + 10px);
+  background: var(--theme-surface);
+  box-shadow: -6px 6px 0 0 var(--theme-secondary);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.sticker:hover {
+  transform: translateY(-4px);
+  box-shadow: -8px 10px 0 0 var(--theme-secondary);
+}
+
+/*
+ * Command blocks — the visual quote of a block editor. Each block has a notch
+ * on its start edge so the stack reads as interlocking pieces.
+ */
+.block {
+  position: relative;
+  border-radius: 12px;
+  padding: 13px 18px;
+  font-weight: 700;
+  color: var(--theme-on-primary);
+  box-shadow: 0 4px 0 0 color-mix(in srgb, var(--theme-secondary) 30%, transparent);
+}
+.block::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: -6px;
+  translate: 0 -50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: inherit;
+}
+.blockA { background: var(--theme-primary); }
+.blockB { background: var(--theme-accent); color: var(--theme-on-accent); }
+.blockC { background: color-mix(in srgb, var(--theme-primary) 65%, var(--theme-secondary)); }
+.blockD { background: color-mix(in srgb, var(--theme-accent) 70%, var(--theme-primary)); }
+
+/* Badge pill under the hero, addressed at parents. */
+.badge {
+  border: 2px solid color-mix(in srgb, var(--theme-secondary) 22%, transparent);
+  border-radius: 9999px;
+  background: var(--theme-surface);
+}
+
+/* Icon tile on the reason stickers. */
+.iconTile {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--theme-primary-subtle);
+  color: var(--theme-primary);
+  font-size: 20px;
+}
+
+/* Age-group card: the age is a big friendly badge, not a label. */
+.ageBadge {
+  display: inline-grid;
+  place-items: center;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  background: var(--theme-accent);
+  color: var(--theme-on-accent);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Empty course thumbnails: flat playful tints. */
+.tA { background: color-mix(in srgb, var(--theme-primary) 22%, var(--theme-surface-alt)); }
+.tB { background: color-mix(in srgb, var(--theme-accent) 26%, var(--theme-surface-alt)); }
+.tC { background: color-mix(in srgb, var(--theme-primary) 12%, var(--theme-surface-alt)); }
+.tD { background: var(--theme-surface-alt); }
+
+/*
+ * Card/row titles inside a linked block. The wrapper is an <a>, so the global
+ * `a { color: primary }` base rule would tint every heading — pin it back.
+ */
+.cardTitle {
+  color: var(--theme-foreground);
+}

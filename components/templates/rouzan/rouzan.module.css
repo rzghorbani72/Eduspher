@@ -1,0 +1,137 @@
+/*
+ * Rouzan — "aperture": a bright, near-white personal site for a fullstack
+ * programming teacher. The look is carried by huge tight type, one vivid
+ * brand colour and a single editor-window frame around the intro video.
+ * Every colour reads a --theme-* variable. No letter-spacing on Persian text.
+ */
+
+.page {
+  background: var(--theme-background);
+  color: var(--theme-foreground);
+}
+
+/* Soft halo behind the headline so the white page still has a centre. */
+.halo {
+  position: absolute;
+  inset-block-start: -28%;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  width: min(1100px, 130%);
+  aspect-ratio: 2 / 1;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.35;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--theme-primary) 45%, transparent),
+    transparent
+  );
+}
+
+/* The editor window the intro video sits inside. */
+.window {
+  border: 1px solid var(--theme-border-color);
+  border-radius: calc(var(--theme-border-radius) + 6px);
+  background: var(--theme-surface);
+  box-shadow: 0 40px 90px -40px color-mix(in srgb, var(--theme-secondary) 45%, transparent);
+  overflow: hidden;
+}
+.windowBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-block-end: 1px solid var(--theme-border-color);
+  background: var(--theme-surface-alt);
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--theme-muted) 45%, transparent);
+}
+.dotLive {
+  background: var(--theme-primary);
+}
+/* Latin-only filename tab — mono is safe here, never on Persian digits. */
+.tab {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: var(--theme-muted);
+  direction: ltr;
+}
+
+/* Chip row under the headline. */
+.chip {
+  border: 1px solid var(--theme-border-color);
+  background: var(--theme-surface);
+  border-radius: 9999px;
+}
+
+/* Numbered reason cards: the number is the only decoration. */
+.reasonNo {
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--theme-primary) 34%, transparent);
+}
+
+/*
+ * Learning-path steps, connected by a single rule down the page. The row is an
+ * <a>, so the global `a { color: primary }` base rule would tint the title and
+ * make it compete with the primary step label — pin it to the foreground.
+ */
+.stepTitle {
+  color: var(--theme-foreground);
+}
+.step {
+  position: relative;
+  border-inline-start: 2px solid var(--theme-border-color);
+  transition: border-color 0.2s;
+}
+.step:hover {
+  border-inline-start-color: var(--theme-primary);
+}
+.stepDot {
+  position: absolute;
+  inset-inline-start: -7px;
+  inset-block-start: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: var(--theme-background);
+  border: 2px solid var(--theme-primary);
+}
+
+/* Empty course thumbnails: flat tints, no gradients. */
+.tA { background: color-mix(in srgb, var(--theme-primary) 12%, var(--theme-surface-alt)); }
+.tB { background: color-mix(in srgb, var(--theme-accent) 14%, var(--theme-surface-alt)); }
+.tC { background: color-mix(in srgb, var(--theme-secondary) 8%, var(--theme-surface-alt)); }
+.tD { background: var(--theme-surface-alt); }
+
+/*
+ * Empty-state play mark for the video frame. A video-first hero with a blank
+ * grey box reads as broken; this says "a reel belongs here" before one is
+ * picked, and disappears with the placeholder once it is.
+ */
+.playMark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+  box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--theme-primary) 70%, transparent);
+}
+.playMark::before {
+  content: '';
+  /*
+   * Triangle drawn with borders so no icon library is pulled into a server
+   * component. Physical `left`, not logical: a play glyph points right in RTL
+   * too — media transport controls are not mirrored.
+   */
+  border-block: 11px solid transparent;
+  border-left: 18px solid currentColor;
+  border-right: 0;
+  margin-left: -4px;
+}

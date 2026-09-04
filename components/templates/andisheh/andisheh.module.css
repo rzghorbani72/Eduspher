@@ -1,0 +1,163 @@
+/*
+ * Andisheh — "pipeline": a dark terminal stage for an AI & DevOps mentor.
+ *
+ * The look is carried by a scanline field, a cold glow behind the content and
+ * a deployment-pipeline rail under the headline. Every colour reads a
+ * --theme-* variable. Monospace is scoped to latin tokens only: it breaks the
+ * shaping of Persian digits, so it never touches Persian text.
+ */
+
+.stage {
+  background:
+    radial-gradient(
+      65% 55% at 82% -8%,
+      color-mix(in srgb, var(--theme-primary) 22%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      55% 50% at 6% 108%,
+      color-mix(in srgb, var(--theme-accent) 20%, transparent) 0%,
+      transparent 62%
+    ),
+    var(--theme-deep);
+  color: var(--theme-on-deep);
+}
+
+/* Fine scanline field — the terminal texture the whole stage sits on. */
+.scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 100% 4px;
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 82%);
+}
+
+/* Latin-only monospace: safe for filenames and short codes, never for fa. */
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* Terminal window around the demo video. */
+.term {
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 34%, transparent);
+  border-radius: var(--theme-border-radius);
+  background: color-mix(in srgb, var(--theme-on-deep) 5%, transparent);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 40px 90px -36px color-mix(in srgb, var(--theme-primary) 70%, transparent);
+  overflow: hidden;
+}
+.termBar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 14px;
+  border-block-end: 1px solid color-mix(in srgb, var(--theme-on-deep) 14%, transparent);
+  background: color-mix(in srgb, var(--theme-on-deep) 6%, transparent);
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--theme-on-deep) 30%, transparent);
+}
+.dotLive {
+  background: var(--theme-primary);
+  box-shadow: 0 0 12px var(--theme-primary);
+}
+
+/* Pipeline rail: connected stages, the shape of the whole curriculum. */
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.stageNode {
+  position: relative;
+  flex: 1 1 150px;
+  padding-block: 18px;
+  padding-inline: 18px;
+  border-block-start: 2px solid color-mix(in srgb, var(--theme-primary) 40%, transparent);
+}
+.stageNode::before {
+  content: '';
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-start: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--theme-primary);
+  box-shadow: 0 0 14px var(--theme-primary);
+}
+
+/* Chip used for capabilities and codes. */
+.chip {
+  border: 1px solid color-mix(in srgb, var(--theme-on-deep) 20%, transparent);
+  background: color-mix(in srgb, var(--theme-on-deep) 6%, transparent);
+  border-radius: 9999px;
+}
+
+/* Approach cards on the light page below the stage. */
+.card {
+  border: 1px solid var(--theme-border-color);
+  background: var(--theme-surface);
+  border-radius: var(--theme-border-radius);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover {
+  border-color: var(--theme-primary);
+  transform: translateY(-3px);
+}
+.cardNo {
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-primary);
+}
+
+/* Specialisation rows: a left rail that lights up on hover. */
+.track {
+  border-inline-start: 2px solid var(--theme-border-color);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.track:hover {
+  border-inline-start-color: var(--theme-primary);
+  background: color-mix(in srgb, var(--theme-primary) 6%, transparent);
+}
+
+/* Empty course thumbnails: flat cold tones. */
+.tA { background: var(--theme-deep); }
+.tB { background: color-mix(in srgb, var(--theme-primary) 26%, var(--theme-deep)); }
+.tC { background: color-mix(in srgb, var(--theme-accent) 24%, var(--theme-deep)); }
+.tD { background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt)); }
+
+/* Empty-state play mark for the demo frame — see rouzan for the rationale. */
+.playMark {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--theme-primary) 50%, transparent);
+  background: color-mix(in srgb, var(--theme-primary) 14%, transparent);
+  color: var(--theme-primary);
+  box-shadow: 0 0 26px -6px var(--theme-primary);
+}
+.playMark::before {
+  content: '';
+  /*
+   * Triangle drawn with borders so no icon library is pulled into a server
+   * component. Physical `left`, not logical: a play glyph points right in RTL
+   * too — media transport controls are not mirrored.
+   */
+  border-block: 10px solid transparent;
+  border-left: 16px solid currentColor;
+  border-right: 0;
+  margin-left: -4px;
+}

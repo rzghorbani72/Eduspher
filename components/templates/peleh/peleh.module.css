@@ -1,0 +1,118 @@
+/*
+ * Peleh — "step": a motivating page for a konkur & highschool teacher.
+ *
+ * The look is carried by a stair motif climbing the hero, oversized rank
+ * numerals used as proof, and a warm off-white ground that keeps the red
+ * readable. Every colour reads a --theme-* variable.
+ */
+
+.stage {
+  background:
+    radial-gradient(
+      70% 60% at 92% 0%,
+      color-mix(in srgb, var(--theme-accent) 20%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--theme-background);
+  color: var(--theme-foreground);
+}
+
+/*
+ * The stair: a repeating step drawn with two gradients, climbing away from the
+ * text. Decoration only, so it is masked out before it reaches the content.
+ */
+.stairs {
+  position: absolute;
+  /* Media side, never behind the copy: ruled lines under text hurt reading. */
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  width: 46%;
+  height: 52%;
+  pointer-events: none;
+  opacity: 0.5;
+  /*
+   * Only the treads, not a full grid: a second axis turned the motif into a
+   * table. Each step is one short riser drawn with a repeating gradient, then
+   * sheared so the run climbs away from the text.
+   */
+  background-image: repeating-linear-gradient(
+    to top,
+    transparent 0 62px,
+    color-mix(in srgb, var(--theme-primary) 45%, transparent) 62px 64px
+  );
+  mask-image: linear-gradient(
+    to top,
+    #000 0%,
+    color-mix(in srgb, #000 30%, transparent) 55%,
+    transparent 88%
+  );
+}
+
+/* Countdown plate — the one urgent element above the fold. */
+.countdown {
+  border: 2px solid var(--theme-primary);
+  border-radius: var(--theme-border-radius);
+  background: color-mix(in srgb, var(--theme-primary) 8%, var(--theme-surface));
+}
+.countdownValue {
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-primary);
+}
+
+/* Rank card: the numeral is the proof, so it carries the weight. */
+.rank {
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--theme-border-radius);
+  background: var(--theme-surface);
+  box-shadow: 0 18px 40px -28px color-mix(in srgb, var(--theme-secondary) 55%, transparent);
+}
+.rankNo {
+  font-variant-numeric: tabular-nums;
+  color: var(--theme-primary);
+  line-height: 1;
+}
+
+/* Numbered rules: a filled step tile in front of each. */
+.stepTile {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--theme-border-radius);
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Grade ladder: each rung sits one step further in than the last. */
+.rung {
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--theme-border-radius);
+  background: var(--theme-surface);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.rung:hover {
+  border-color: var(--theme-primary);
+  transform: translateY(-3px);
+}
+.rungBadge {
+  background: var(--theme-accent);
+  color: var(--theme-on-accent);
+  border-radius: 9999px;
+}
+
+/* Empty course thumbnails: flat warm tints. */
+.tA { background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt)); }
+.tB { background: color-mix(in srgb, var(--theme-accent) 18%, var(--theme-surface-alt)); }
+.tC { background: var(--theme-surface-alt); }
+.tD { background: color-mix(in srgb, var(--theme-secondary) 9%, var(--theme-surface-alt)); }
+
+/*
+ * Card/row titles inside a linked block. The wrapper is an <a>, so the global
+ * `a { color: primary }` base rule would tint every heading — pin it back.
+ */
+.cardTitle {
+  color: var(--theme-foreground);
+}

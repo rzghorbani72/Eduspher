@@ -1,0 +1,100 @@
+/*
+ * Daneshvar — "scholar": an academic page for a university teacher.
+ *
+ * The look is carried by hairline rules, a brass keyline under headings and a
+ * deep navy ground: the visual language of a printed course handout rather
+ * than a marketing page. Every colour reads a --theme-* variable.
+ */
+
+.paper {
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--theme-primary) 6%, transparent) 0%,
+      transparent 55%
+    ),
+    var(--theme-background);
+  color: var(--theme-foreground);
+}
+
+/* Faint ruled paper behind the hero — the only texture on the page. */
+.rules {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--theme-secondary) 7%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 100% 34px;
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+}
+
+/* Brass keyline: the one ornament, used to open a block of text. */
+.keyline::before {
+  content: '';
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin-block-end: 18px;
+  background: var(--theme-accent);
+}
+
+/* Portrait / intro-video frame, matted like a plate in a journal. */
+.plate {
+  border: 1px solid var(--theme-border-strong);
+  background: var(--theme-surface);
+  padding: 10px;
+  box-shadow: 0 24px 60px -34px color-mix(in srgb, var(--theme-secondary) 60%, transparent);
+}
+.plateInner {
+  border: 1px solid var(--theme-border-color);
+  background: var(--theme-surface-alt);
+}
+
+/* Affiliation list — a hairline between each entry, no bullets. */
+.affiliation {
+  border-block-start: 1px solid var(--theme-border-color);
+}
+.affiliation:last-child {
+  border-block-end: 1px solid var(--theme-border-color);
+}
+
+/* Lettered method entries. The letter sits in a ruled box, like a figure label. */
+.letter {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border: 1px solid var(--theme-border-strong);
+  color: var(--theme-primary);
+  font-weight: 700;
+}
+
+/* Research-area entries: a bordered block that warms on hover. */
+.area {
+  border: 1px solid var(--theme-border-color);
+  background: var(--theme-surface);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.area:hover {
+  border-color: var(--theme-accent);
+  background: color-mix(in srgb, var(--theme-accent) 6%, var(--theme-surface));
+}
+
+/* Empty course thumbnails: flat academic tints. */
+.tA { background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt)); }
+.tB { background: color-mix(in srgb, var(--theme-accent) 12%, var(--theme-surface-alt)); }
+.tC { background: var(--theme-surface-alt); }
+.tD { background: color-mix(in srgb, var(--theme-secondary) 10%, var(--theme-surface-alt)); }
+
+/*
+ * Card/row titles inside a linked block. The wrapper is an <a>, so the global
+ * `a { color: primary }` base rule would tint every heading — pin it back.
+ */
+.cardTitle {
+  color: var(--theme-foreground);
+}

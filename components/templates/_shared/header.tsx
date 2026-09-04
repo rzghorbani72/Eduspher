@@ -71,10 +71,13 @@ const TONE_CLASS = {
 const NAV_LINK_CLASS = {
   plain:
     "text-current px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
+  // The underline/border variants draw their rule on the link box itself, so
+  // they need their own horizontal padding: the nav row's `gap-1` alone left
+  // 4px between words and the items read as one run-on string.
   underline:
-    "text-current border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
+    "text-current mx-1.5 border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
   border:
-    "text-current border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
+    "text-current mx-1.5 border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
   pill: "text-current rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)",
 } as const;
 
