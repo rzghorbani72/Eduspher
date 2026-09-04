@@ -2,8 +2,8 @@
 
 > One of five **personal-brand teacher** templates: a single instructor selling their own
 > teaching, as opposed to the fourteen institution templates. Self-contained — paste
-> everything below the line into a fresh Claude Design chat, or hand it straight to
-> Claude Code to redesign in place.
+> everything below the line into a fresh Claude Code chat. The template already exists
+> and renders, so it is redesigned in place, in code; there is no mockup step.
 >
 > **Stack:** Next.js 16 App Router · React 19 (server components by default) ·
 > TypeScript strict · Tailwind v4 (CSS-first `@theme`) + one CSS Module per template ·
@@ -136,30 +136,52 @@ photo, or an "about our institution" band.
 9. `cta` — closing conversion band
 10. `footer` — four column groups, contact, legal line
 
-### 5. If you are drawing artboards (Claude Design)
+### 5. How to work
 
-An artboard is one screen drawn at a fixed width. Produce four:
-
-1. **Home page, 1440px** — the full section order above.
-2. **Hero, three states side by side** — no media, a photo, a video playing. This is the
-   state most often got wrong in implementation.
-3. **Dark palette** — the hero plus one mid-page section.
-4. **390px mobile** — hero through the courses grid, no horizontal scroll.
-
-### 6. Output order
+The template already exists and renders. Redesign it **in place**, in code — there is no
+mockup step.
 
 1. One line: the teacher and their world — invented, but specific and Iranian.
 2. The design brief from §3.
-3. The home page — then stop for review.
-4. On go-ahead: the remaining views.
-5. A closing note: final palette token table (light + dark hex), which of the ten
-   sections you used, what motion you intend and where, and one paragraph on what makes
+3. Rewrite `defaults.ts` (all Persian copy) and the hero — `hero.tsx` plus the template's
+   CSS module. Render it and **stop for review**:
+   `http://localhost:5000/preview/blocks?template=<key>&sample=1&only=hero`
+4. On go-ahead: the remaining sections, then the whole page at
+   `?template=<key>&sample=1`.
+5. A closing note: the final palette token table (light + dark), which of the ten
+   sections you used, what motion you added and where, and one paragraph on what makes
    this template unmistakable next to the other four.
 
-### 7. Then implement it
+Check the hero in all three media states — no media, a photo, a video — because that is
+the state most often got wrong. Check 390px for horizontal scroll, and confirm Persian
+digits render correctly.
 
-Hand the approved design, plus
-`edusphere/templates/template-redesign-prompt.md` (Part B — the implementation
-contract), to Claude Code. That file carries the file layout, the section props
-contract, the media slots, the backdrop and motion tokens, the `--theme-*` list, the
-three registries that must agree, and the traps that have already cost time here.
+> Scroll-reveal will make a full-page screenshot look blank below the fold: sections sit
+> at `opacity: 0` until they enter the viewport. Scroll first, or force `opacity: 1`
+> before capturing. That is not a bug in your design.
+
+### 6. The implementation contract
+
+Read `edusphere/templates/template-redesign-prompt.md` (**Part B**) before writing code.
+It carries the file layout, the section props contract, how copy is made canvas-editable,
+which hero media slot to use, the backdrop and motion tokens, the full `--theme-*` list,
+the three registries that must agree, and the traps that have already cost time in this
+repo.
+
+Two of those are worth repeating here, because they are invisible until they bite:
+
+- **`section h2` is force-sized.** `app/globals.css` sets `.ui-blocks-root section h2` to
+  the theme heading scale at ≥768px and it beats a utility class. Use `<h2>` only for real
+  section headings; a small label must be a `<span>` or `<p>`.
+- **Linked cards tint their own headings.** A card wrapped in `<a>` inherits the global
+  `a { color: primary }`. Pin the title back with a module class setting
+  `color: var(--theme-foreground)`.
+
+### 7. Definition of done
+
+- [ ] `npx tsc --noEmit` clean in `edusphere`, and `npm run build` clean
+- [ ] Renders with no console errors; every section re-tints when the design system changes
+- [ ] Hero looks finished with no media, with a photo, and with a video
+- [ ] Persian digits correct; no `letter-spacing` and no monospace on Persian
+- [ ] 390px with no horizontal scroll; motion stills under `prefers-reduced-motion`
+- [ ] Every file under ~200 lines; no hardcoded colours

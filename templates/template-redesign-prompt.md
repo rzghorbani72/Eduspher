@@ -4,10 +4,12 @@
 > scratch; this one **redesigns five templates that already ship**, so the output has to
 > land back on an existing key, palette slot and section map.
 >
-> ```
-> Claude Design  → artboards per template          (this file, part A)
-> Claude Code    → components/templates/<key>/*    (this file, part B)
-> ```
+> There is no mockup step: these templates already render, so they are redesigned in
+> place, in code. Part A is the design brief, Part B the implementation contract, and
+> both go to Claude Code together.
+>
+> **Per-template prompts live in `redesign/` — one self-contained file each. Use those
+> to run a single template; use this file for the shared rules and Part B.**
 
 ## The five templates
 
@@ -48,10 +50,12 @@ by *who the site is for*, not by topic. Keep that separation visible in the rede
 
 ---
 
-# PART A — the prompt to paste into Claude Design
+# PART A — the design brief
 
 Run **one template per chat**. Set `TEMPLATE` to a row from the table above and paste
-everything from the line below to the end of Part A.
+everything from the line below to the end of Part A, together with Part B.
+
+(For a single template, prefer the ready-made self-contained file in `redesign/`.)
 
 ---
 
@@ -155,47 +159,41 @@ Each of the five must be unmistakable next to the others: different grid, differ
 navigation shape, different hero composition, different card style, different colour
 temperature.
 
-### 4. Artboards to produce
-
-**Artboard 1 — the home page**, in this section order. This is the part that becomes the
-real template, so the sections must map one-to-one:
+### 4. Sections — the home page maps one-to-one onto these
 
 1. `header` — sticky bar, logo, nav, login + primary CTA
-2. `hero` — the template's signature composition, including the media frame
+2. `hero` — the signature composition, including the media frame
 3. `marquee` — a scrolling strip of topics or stats
 4. `features` — why this teacher (differentiated, not three clone cards)
-5. `courses` — 6–9 course cards: title, level, duration, rating, price in Toman.
-   **Flat tinted thumbnail, no photo.**
-6. `categories` — a browse or learning-path section specific to this teacher
-7. `showcase` — the dense data area (schedule, publications, exam calendar, workshops)
-8. `teachers` — assistants / lab group / support team, as fits the vertical
-9. `cta` — the closing conversion band
+5. `courses` — 6–9 cards: title, level, duration, rating, Toman price. **Flat tinted
+   thumbnail, no photo.**
+6. `categories` — the browse / learning-path section
+7. `showcase` — the dense data area
+8. `teachers` — assistants, lab group, or support team
+9. `cta` — closing conversion band
 10. `footer` — four column groups, contact, legal line
 
-**Artboard 2 — the hero, three states**, side by side: no media, a photo, a video
-playing. This is the state most likely to be got wrong in implementation.
-
-**Artboard 3 — the dark palette**, showing the hero and one mid-page section.
-
-**Artboard 4 — 390px mobile**, hero through the courses grid. No horizontal scroll at
-any width.
-
-### 5. Output order
+### 5. How to work
 
 1. One line: the teacher and their world (invented, but specific and Iranian).
 2. The design brief from §3.
-3. Artboard 1 — then stop for review.
-4. On go-ahead: artboards 2–4.
+3. Rewrite `defaults.ts` and the hero, render it, and **stop for review**:
+   `http://localhost:5000/preview/blocks?template=<key>&sample=1&only=hero`
+4. On go-ahead: the remaining sections, then the whole page at `?template=<key>&sample=1`.
 5. A closing note: the final palette token table (light + dark hex), which of the ten
-   sections you used, what motion you intend and where, and one paragraph on what makes
+   sections you used, what motion you added and where, and one paragraph on what makes
    this template unmistakable next to the other four.
+
+Check the hero in all three media states — no media, a photo, a video. Scroll-reveal
+holds sections at `opacity: 0` until they enter the viewport, so a full-page screenshot
+looks blank below the fold; scroll first, or force `opacity: 1` before capturing.
 
 ---
 
 # PART B — the implementation contract
 
-Hand this to Claude Code together with the approved artboards. It is what makes the
-design portable instead of a one-off page.
+Read this before writing code. It is what makes the redesign land in the template system
+instead of becoming a one-off page.
 
 ## Where the code goes
 
