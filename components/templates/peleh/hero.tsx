@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { PELEH_DEFAULTS } from './defaults';
 import styles from './peleh.module.css';
@@ -30,6 +31,7 @@ export function PelehHero({ id, config, storeContext }: TemplateSectionProps) {
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.stage}`}>
+      <Backdrop variant="aurora" motion="wash" className="opacity-45" />
       <div className={styles.stairs} aria-hidden="true" />
 
       <Container className="relative z-[1] py-(--theme-section-padding-y)">

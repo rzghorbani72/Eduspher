@@ -3,6 +3,7 @@ import { Button, Pill } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { PARASTOO_DEFAULTS } from './defaults';
 import styles from './parastoo.module.css';
@@ -28,6 +29,7 @@ export function ParastooHero({ id, config, storeContext }: TemplateSectionProps)
 
   return (
     <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="grain" className="opacity-40" />
       <span className={styles.blobA} aria-hidden="true" data-motion="drift" />
       <span className={styles.blobB} aria-hidden="true" data-motion="drift" />
 

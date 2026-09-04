@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { KEYHAN_DEFAULTS } from './defaults';
 import styles from './keyhan.module.css';
@@ -23,6 +24,7 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.void}`}>
+      <Backdrop variant="aurora" tone="deep" motion="drift" className="opacity-70" />
       <div className={`${styles.stars} ${styles.dense}`} aria-hidden="true" data-motion="wash" />
       <div className={styles.gridlines} aria-hidden="true" data-motion="wash" />
 

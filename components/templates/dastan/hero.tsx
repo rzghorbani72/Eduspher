@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DASTAN_DEFAULTS } from './defaults';
 import styles from './dastan.module.css';
@@ -27,8 +28,9 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="bg-(--theme-background) text-(--theme-foreground)">
-      <Container className="py-(--theme-section-padding-y)">
+    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="grain" />
+      <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-start gap-16 lg:grid-cols-[1.15fr_0.85fr]">
           <div>
             <p className="mb-5 flex items-center gap-3 text-[13px] font-medium tracking-[0.16em] text-(--theme-primary)">

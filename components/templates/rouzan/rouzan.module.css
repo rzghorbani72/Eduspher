@@ -14,8 +14,9 @@
 .halo {
   position: absolute;
   inset-block-start: -28%;
-  inset-inline-start: 50%;
-  translate: -50% 0;
+  /* Auto inline margins, not inset+translate — see backdrop.module.css. */
+  inset-inline: 0;
+  margin-inline: auto;
   width: min(1100px, 130%);
   aspect-ratio: 2 / 1;
   pointer-events: none;

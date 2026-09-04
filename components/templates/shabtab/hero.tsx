@@ -2,6 +2,7 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { SHABTAB_DEFAULTS } from './defaults';
@@ -22,6 +23,8 @@ export function ShabtabHero({ id, config, storeContext }: TemplateSectionProps) 
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.stage}`}>
+      <Backdrop variant="aurora" tone="deep" motion="drift" />
+      <Backdrop variant="grid" tone="deep" />
       <Container className="relative z-[1] py-(--theme-section-padding-y) text-center">
         <span
           data-editable="tag"

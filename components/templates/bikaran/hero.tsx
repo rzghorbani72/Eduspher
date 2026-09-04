@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { BIKARAN_DEFAULTS } from './defaults';
 import styles from './bikaran.module.css';
@@ -40,8 +41,9 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="bg-(--theme-background) text-(--theme-foreground)">
-      <Container className="py-(--theme-section-padding-y)">
+    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="grain" />
+      <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span

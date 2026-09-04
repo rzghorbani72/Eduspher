@@ -1,6 +1,7 @@
 import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { HAMRANG_DEFAULTS } from './defaults';
@@ -20,8 +21,10 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
   const editMode = storeContext?.editMode ?? false;
 
   return (
-    <section id={id || 'hero'} className="bg-(--theme-background) text-(--theme-foreground)">
-      <Container className="py-(--theme-section-padding-y) text-center">
+    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="aurora" motion="drift" />
+      <Backdrop variant="grain" />
+      <Container className="relative z-[1] py-(--theme-section-padding-y) text-center">
         <RemovableSlot config={config} flagKey="showTag" editMode={editMode} className="inline-flex">
           <span
             data-editable="tag"

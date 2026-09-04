@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { TAVAN_DEFAULTS } from './defaults';
 import styles from './tavan.module.css';
@@ -23,7 +24,9 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
 
   return (
     <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-deep) text-(--theme-on-deep)">
-      <Container className="py-(--theme-section-padding-y)">
+      <Backdrop variant="aurora" tone="deep" motion="drift" />
+      <Backdrop variant="grid" tone="deep" />
+      <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
             <span

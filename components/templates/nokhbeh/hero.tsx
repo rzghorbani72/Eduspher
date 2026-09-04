@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVisualSlot } from '../_shared/hero-media';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { NOKHBEH_DEFAULTS } from './defaults';
 import styles from './nokhbeh.module.css';
@@ -28,6 +29,7 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
 
   return (
     <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="grain" className="opacity-40" />
       <div className={styles.paperGrid} aria-hidden="true" />
 
       <Container className="relative z-[2] py-(--theme-section-padding-y)">

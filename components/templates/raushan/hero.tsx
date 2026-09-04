@@ -2,6 +2,7 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { RAUSHAN_DEFAULTS } from './defaults';
@@ -20,8 +21,9 @@ export function RaushanHero({ id, config, storeContext }: TemplateSectionProps) 
   const editMode = storeContext?.editMode ?? false;
 
   return (
-    <section id={id || 'hero'} className="bg-(--theme-background) text-(--theme-foreground)">
-      <Container className="py-(--theme-section-padding-y)">
+    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="aurora" motion="wash" className="opacity-60" />
+      <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-16 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <span

@@ -2,6 +2,7 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { BARAN_DEFAULTS } from './defaults';
@@ -22,6 +23,7 @@ export function BaranHero({ id, config, storeContext }: TemplateSectionProps) {
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden text-(--theme-foreground) ${styles.wash}`}>
+      <Backdrop variant="grain" />
       <Container className="relative z-[1] py-(--theme-section-padding-y) text-center">
         <RemovableSlot config={config} flagKey="showTag" editMode={editMode} className="inline-flex">
           <span

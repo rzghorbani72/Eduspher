@@ -81,7 +81,12 @@ export function HeroSlideshowSlot({
               preset="banner"
               fill
               priority={i === 0}
-              className="object-cover transition-opacity duration-700"
+              // Same scroll-linked drift `HeroVisualSlot` gives its single
+              // photo: the slideshow slot is what ten templates use, so
+              // without this most heroes had no depth at all. Pre-scaled so
+              // the travel never exposes an edge.
+              data-motion="parallax"
+              className="scale-[1.06] object-cover transition-opacity duration-700"
               style={{ opacity: i === active ? 1 : 0 }}
             />
           ))}

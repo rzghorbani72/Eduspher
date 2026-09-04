@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVideoSlot } from '../_shared/hero-video-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ANDISHEH_DEFAULTS } from './defaults';
 import styles from './andisheh.module.css';
@@ -28,6 +29,7 @@ export function AndishehHero({ id, config, storeContext }: TemplateSectionProps)
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.stage}`}>
+      <Backdrop variant="aurora" tone="deep" motion="drift" />
       <div className={styles.scan} aria-hidden="true" />
 
       <Container className="relative z-[1] py-(--theme-section-padding-y)">

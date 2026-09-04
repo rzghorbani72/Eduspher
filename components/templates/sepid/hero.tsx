@@ -2,6 +2,7 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { SEPID_DEFAULTS } from './defaults';
@@ -20,8 +21,9 @@ export function SepidHero({ id, config, storeContext }: TemplateSectionProps) {
   const editMode = storeContext?.editMode ?? false;
 
   return (
-    <section id={id || 'hero'} className="bg-(--theme-background) text-(--theme-foreground)">
-      <Container className="py-(--theme-section-padding-y) text-center">
+    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+      <Backdrop variant="spotlight" motion="wash" />
+      <Container className="relative z-[1] py-(--theme-section-padding-y) text-center">
         <h1 className="mx-auto max-w-[20ch] text-[clamp(34px,5.6vw,64px)] font-bold leading-[1.1] tracking-[-0.03em]">
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}

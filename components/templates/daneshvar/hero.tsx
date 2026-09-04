@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { DANESHVAR_DEFAULTS } from './defaults';
 import styles from './daneshvar.module.css';
@@ -31,6 +32,7 @@ export function DaneshvarHero({ id, config, storeContext }: TemplateSectionProps
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.paper}`}>
       <div className={styles.rules} aria-hidden="true" />
+      <Backdrop variant="grain" className="opacity-40" />
 
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-start gap-14 lg:grid-cols-[1.1fr_0.9fr]">

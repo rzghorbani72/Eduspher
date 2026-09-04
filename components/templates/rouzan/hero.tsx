@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroVideoSlot } from '../_shared/hero-video-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ROUZAN_DEFAULTS } from './defaults';
 import styles from './rouzan.module.css';
@@ -29,6 +30,7 @@ export function RouzanHero({ id, config, storeContext }: TemplateSectionProps) {
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.page}`}>
       <span className={styles.halo} aria-hidden="true" data-motion="wash" />
+      <Backdrop variant="grain" className="opacity-35" />
 
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="mx-auto max-w-[54rem] text-center">

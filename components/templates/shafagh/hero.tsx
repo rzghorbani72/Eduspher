@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { SHAFAGH_DEFAULTS } from './defaults';
 import styles from './shafagh.module.css';
@@ -32,6 +33,8 @@ export function ShafaghHero({ id, config, storeContext }: TemplateSectionProps) 
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden text-(--theme-foreground) ${styles.wash}`}>
+      <Backdrop variant="aurora" motion="drift" className="opacity-55" />
+      <Backdrop variant="grain" />
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>

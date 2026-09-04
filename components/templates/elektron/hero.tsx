@@ -3,6 +3,7 @@ import { Button } from '../_shared/primitives';
 import { EditableAccent } from '../_shared/editable-accent';
 import { HeroSlideshowSlot } from '../_shared/hero-slideshow-slot';
 import { RemovableSlot } from '../_shared/removable-slot';
+import { Backdrop } from '../_shared/backdrop';
 import { list, text, type TemplateSectionProps } from '../_shared/types';
 import { ELEKTRON_DEFAULTS } from './defaults';
 import styles from './elektron.module.css';
@@ -33,6 +34,7 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
 
   return (
     <section id={id || 'hero'} className={`relative overflow-hidden ${styles.stage}`}>
+      <Backdrop variant="aurora" tone="deep" motion="drift" className="opacity-70" />
       <div className={styles.mesh} aria-hidden="true" data-motion="wash" />
 
       <Container className="relative z-[2] py-(--theme-section-padding-y)">

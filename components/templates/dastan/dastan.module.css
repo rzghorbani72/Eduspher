@@ -114,11 +114,13 @@
 .logoMark::before {
   content: '';
   position: absolute;
-  inset-inline-start: 50%;
+  /* Auto inline margins: inset-inline-start is logical but translateX is not,
+     so the pair mis-centres the mark in RTL. */
+  inset-inline: 0;
+  margin-inline: auto;
   bottom: 9px;
   width: 22px;
   height: 13px;
-  transform: translateX(-50%);
   border-radius: 0 0 11px 11px;
   background: var(--theme-on-primary);
   box-shadow: 0 -4px 0 -1px var(--theme-on-primary);

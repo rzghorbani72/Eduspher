@@ -1,0 +1,147 @@
+/* ── Shared backdrops ────────────────────────────────────────────────────────
+   The atmosphere layers every template used to hand-roll in its own module.
+   Centralising them means a section keeps the same depth when it is mixed into
+   another template's page, and a palette change re-tints all of them at once.
+
+   Rules these follow, same as the rest of the template system:
+     · every colour reads a --theme-* variable — no literals, so the manager's
+       palette drives the whole backdrop;
+     · they are decoration: `pointer-events: none`, `aria-hidden`, and they
+       never sit above content;
+     · motion is opt-in through `data-motion` (see template-ambient.css), so a
+       backdrop is static unless a template asks for movement.
+*/
+
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/*
+ * Aurora — two or three soft colour fields bleeding in from the edges. The
+ * modern "mesh gradient" look, built from the brand colours rather than a
+ * fixed palette, and masked away from the centre so text never sits on a
+ * colour boundary.
+ */
+.aurora::before,
+.aurora::after {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  /*
+   * Tuned for a LIGHT ground, which is the harder case: full-strength brand
+   * colour behind dark text reads as a wash, not as depth. The colour is
+   * diluted before the opacity is applied, so the field tints the page rather
+   * than covering it. Dark grounds take it back up in `.auroraDeep`.
+   */
+  filter: blur(92px);
+  opacity: 0.26;
+}
+.aurora::before {
+  inset-block-start: -30%;
+  inset-inline-end: -12%;
+  width: 58%;
+  aspect-ratio: 1;
+  background: color-mix(in srgb, var(--theme-primary) 58%, transparent);
+}
+.aurora::after {
+  inset-block-end: -34%;
+  inset-inline-start: -14%;
+  width: 48%;
+  aspect-ratio: 1;
+  background: color-mix(in srgb, var(--theme-accent) 58%, transparent);
+}
+/* On a dark ground the same fields need less blur and full colour to register. */
+.auroraDeep::before,
+.auroraDeep::after {
+  filter: blur(58px);
+  opacity: 0.38;
+}
+.auroraDeep::before {
+  background: var(--theme-primary);
+}
+.auroraDeep::after {
+  background: var(--theme-accent);
+}
+
+/*
+ * Grain — a single tiling SVG noise tile. It is what keeps a large flat colour
+ * field from looking like an empty div, and it costs one small data URI rather
+ * than an image request.
+ */
+.grain {
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+}
+
+/*
+ * Ruled grid — the technical/analytic ground. Fades out downward so it never
+ * competes with the content that follows it.
+ */
+.grid {
+  opacity: 0.4;
+  background-image:
+    linear-gradient(to left, var(--tpl-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--tpl-grid-line) 1px, transparent 1px);
+  background-size: var(--tpl-grid-size, 56px) var(--tpl-grid-size, 56px);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
+  --tpl-grid-line: color-mix(in srgb, var(--theme-foreground) 7%, transparent);
+}
+.gridOnDeep {
+  --tpl-grid-line: color-mix(in srgb, var(--theme-on-deep) 7%, transparent);
+}
+
+/*
+ * Glow band — a one-line gradient rule. Used to close a section or underline a
+ * bar; with `data-motion="hue"` the gradient travels along it.
+ */
+.band {
+  position: relative;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(
+    to left,
+    transparent,
+    var(--theme-primary),
+    var(--theme-accent),
+    var(--theme-primary),
+    transparent
+  );
+}
+
+/*
+ * Spotlight — a single conic sweep behind a hero's focal point. Reads as light
+ * falling on the subject rather than as a coloured shape.
+ */
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset-block-start: -60%;
+  /*
+   * Centred with auto inline margins, not `inset-inline-start: 50%` plus a
+   * translate: `translate` is physical while the inset is logical, so that
+   * pairing pushes the layer off-canvas in RTL.
+   */
+  inset-inline: 0;
+  margin-inline: auto;
+  width: 120%;
+  aspect-ratio: 1;
+  /*
+   * A conic sweep spreads its colour over a far larger area than the aurora's
+   * blobs, so it needs a stronger mix to register at all — at aurora strength
+   * it was invisible on a light ground.
+   */
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    transparent 0deg,
+    color-mix(in srgb, var(--theme-primary) 36%, transparent) 60deg,
+    transparent 140deg,
+    color-mix(in srgb, var(--theme-accent) 28%, transparent) 220deg,
+    transparent 310deg
+  );
+  filter: blur(72px);
+  opacity: 0.5;
+}
