@@ -9,12 +9,11 @@ import { cn } from "@/lib/utils";
 import { Container } from "./landing-container";
 import { LANDING } from "./landing.messages";
 import { SectionHeading } from "./section-heading";
-import { StartFreeLink } from "./quick-signup/start-free-link";
 
 type Cycle = "monthly" | "quarterly";
 
 type Props = {
-  registerUrl: string;
+  loginUrl: string;
   /** Live plans. Prices come from here; the tagline and feature list stay curated. */
   plans?: PublicPlan[];
   /** "h1" when the section is the whole page, not a block on the landing page. */
@@ -57,7 +56,23 @@ function resolveMonthlyToman(
   return FALLBACK_MONTHLY[planId] ?? 0;
 }
 
-export function PricingSection({ registerUrl, plans = [], as }: Props) {
+function panelPlanLoginUrl(
+  loginUrl: string,
+  planId: string,
+  cycle: Cycle,
+): string {
+  const url = new URL(
+    loginUrl,
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://admin.mentoma.ir",
+  );
+  url.searchParams.set("plan", planId);
+  url.searchParams.set("period", cycle);
+  return url.toString();
+}
+
+export function PricingSection({ loginUrl, plans = [], as }: Props) {
   const [cycle, setCycle] = useState<Cycle>("monthly");
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
@@ -206,8 +221,8 @@ export function PricingSection({ registerUrl, plans = [], as }: Props) {
                   ))}
                 </ul>
 
-                <StartFreeLink
-                  href={registerUrl}
+                <a
+                  href={panelPlanLoginUrl(loginUrl, plan.id, cycle)}
                   className={cn(
                     "mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors",
                     isFeatured
@@ -216,7 +231,7 @@ export function PricingSection({ registerUrl, plans = [], as }: Props) {
                   )}
                 >
                   {plan.cta}
-                </StartFreeLink>
+                </a>
               </article>
             );
           })}

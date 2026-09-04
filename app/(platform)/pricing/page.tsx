@@ -24,7 +24,7 @@ export default async function PricingPage() {
 
   return (
     <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
-      <PricingSection as="h1" registerUrl={adminRegisterUrl} plans={plans} />
+      <PricingSection as="h1" loginUrl={adminLoginUrl} plans={plans} />
       <FaqSection />
       <CtaSection registerUrl={adminRegisterUrl} demoUrl="/academies" />
 

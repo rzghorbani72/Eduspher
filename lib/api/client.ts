@@ -669,6 +669,11 @@ export const quickStartAcademy = (
   );
 };
 
+/** Mint a 60s code so the panel origin can open the same session. */
+export const createPanelHandoff = (options?: RequestOptions) => {
+  return postJson<{ code?: string }>("/auth/panel-handoff", {}, options);
+};
+
 export const checkAcademySlug = (slug: string, options?: RequestOptions) => {
   return getPublicJson<{ available: boolean }>(
     `/academies/slug-available?slug=${encodeURIComponent(slug)}`,

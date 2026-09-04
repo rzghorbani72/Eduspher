@@ -398,5 +398,6 @@ export const LANDING = {
     viewSite: "مشاهده وب‌سایت",
     goToPanel: "ورود به پنل مدیریت",
     trialNote: "۱۴ روز رایگان، بدون نیاز به کارت بانکی.",
+    redirecting: "در حال ورود به پنل مدیریت…",
   },
 } as const;

@@ -9,6 +9,7 @@ import {
   quickStartAcademy,
   sendPhoneOtp,
   verifyPhoneOtp,
+  createPanelHandoff,
 } from "@/lib/api/client";
 import { OtpType } from "@/lib/constants";
 import {
@@ -45,7 +46,7 @@ async function loadLegalVersions(): Promise<LegalVersions> {
   }
 }
 
-export type QuickSignupStep = "identity" | "phone" | "otp" | "done";
+export type QuickSignupStep = "identity" | "phone" | "otp" | "redirecting" | "done";
 
 export type QuickSignupResult = {
   siteUrl: string;
@@ -234,13 +235,25 @@ export function useQuickSignup(onFinished?: () => void) {
           private_domain: slug,
         });
         const createdSlug = started.data?.slug ?? slug;
-        setResult({
-          siteUrl: academySiteUrl(createdSlug),
-          panelUrl: getAdminPanelUrl("/dashboard"),
-          siteReady: started.site_ready !== false,
-        });
-        setStep("done");
-        onFinished?.();
+        try {
+          setStep("redirecting");
+          const handed = await createPanelHandoff();
+          const code = handed.code;
+          if (!code) throw new Error("missing handoff code");
+          const handoff = new URL(getAdminPanelUrl("/auth/handoff"));
+          handoff.searchParams.set("code", code);
+          handoff.searchParams.set("next", "/dashboard?setup=1");
+          window.location.assign(handoff.toString());
+          return;
+        } catch {
+          setResult({
+            siteUrl: academySiteUrl(createdSlug),
+            panelUrl: getAdminPanelUrl("/login"),
+            siteReady: started.site_ready !== false,
+          });
+          setStep("done");
+          onFinished?.();
+        }
       });
     },
     [ensureLegalVersions, fullPhone, guard, name, onFinished, otp, slug],

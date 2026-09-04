@@ -29,10 +29,11 @@ type Props = {
 export function QuickSignupDialog({ onClose }: Props) {
   const flow = useQuickSignup();
   const done = flow.step === "done";
+  const redirecting = flow.step === "redirecting";
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !flow.pending) onClose();
+      if (event.key === "Escape" && !flow.pending && !redirecting) onClose();
     };
     document.addEventListener("keydown", onKey);
     const { overflow } = document.body.style;
@@ -41,7 +42,7 @@ export function QuickSignupDialog({ onClose }: Props) {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = overflow;
     };
-  }, [flow.pending, onClose]);
+  }, [flow.pending, redirecting, onClose]);
 
   if (typeof document === "undefined") return null;
 
@@ -49,7 +50,7 @@ export function QuickSignupDialog({ onClose }: Props) {
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !flow.pending) onClose();
+        if (event.target === event.currentTarget && !flow.pending && !redirecting) onClose();
       }}
     >
       <div
@@ -62,14 +63,14 @@ export function QuickSignupDialog({ onClose }: Props) {
         <button
           type="button"
           onClick={onClose}
-          disabled={flow.pending}
+          disabled={flow.pending || redirecting}
           aria-label={M.close}
           className="absolute end-4 top-4 rounded-full p-1.5 text-lp-muted transition-colors hover:bg-black/5 hover:text-lp-ink disabled:opacity-40"
         >
           <X className="h-4 w-4" />
         </button>
 
-        {!done && (
+        {!done && !redirecting && (
           <header className="mb-6 text-center">
             <h2 className="text-xl font-extrabold text-lp-ink">{M.title}</h2>
             <p className="mt-1.5 text-sm text-lp-muted">{M.subtitle}</p>
@@ -80,6 +81,11 @@ export function QuickSignupDialog({ onClose }: Props) {
         {flow.step === "identity" && <IdentityStep flow={flow} />}
         {flow.step === "phone" && <PhoneStep flow={flow} />}
         {flow.step === "otp" && <OtpStep flow={flow} />}
+        {redirecting && (
+          <p className="py-8 text-center text-sm font-semibold text-lp-ink">
+            {M.redirecting}
+          </p>
+        )}
         {done && flow.result && <SuccessStep result={flow.result} />}
 
         {flow.error && !done && (
