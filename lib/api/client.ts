@@ -86,7 +86,10 @@ const buildHeaders = async (
   options?: { mutate?: boolean },
 ): Promise<HeadersInit> => {
   const headers = new Headers(additionalHeaders);
-  headers.set("X-Academy-ID", getAcademyId());
+  const academyId = resolveAcademyId();
+  if (academyId) {
+    headers.set("X-Academy-ID", academyId);
+  }
 
   const academySlug = getAcademySlug();
   if (academySlug) {
@@ -343,10 +346,28 @@ export const postJson = async <T>(
 };
 
 /**
- * POST from a page with no academy context (the platform contact form).
- * `postJson` always stamps `X-Academy-ID` and throws on the root domain, where
- * no academy cookie exists — this one only bootstraps CSRF and sends the body.
+ * GET/POST from platform pages with no tenant context (marketing root, contact
+ * form, landing quick-signup). Skips X-Academy-ID — panel-root clears the
+ * academy cookie and signup must not depend on a fake default academy id.
  */
+export const getPublicJson = async <T>(
+  path: string,
+  options?: RequestOptions,
+): Promise<T> => {
+  const makeRequest = async (): Promise<T> => {
+    const response = await fetch(`${getBaseUrl()}${path}`, {
+      method: "GET",
+      credentials: "include",
+      headers: { Accept: "application/json" },
+      signal: options?.signal,
+      cache: "no-store",
+    });
+    return handleResponse<T>(response, () => makeRequest(), true);
+  };
+
+  return makeRequest();
+};
+
 export const postPublicJson = async <T>(
   path: string,
   body: Record<string, unknown>,
@@ -623,7 +644,11 @@ export const quickSignup = (
   payload: QuickSignupPayload,
   options?: RequestOptions,
 ) => {
-  return postJson<AuthResponse>("/auth/quick-signup", { ...payload }, options);
+  return postPublicJson<AuthResponse>(
+    "/auth/quick-signup",
+    { ...payload },
+    options,
+  );
 };
 
 export type QuickStartResult = {
@@ -645,7 +670,7 @@ export const quickStartAcademy = (
 };
 
 export const checkAcademySlug = (slug: string, options?: RequestOptions) => {
-  return getJson<{ available: boolean }>(
+  return getPublicJson<{ available: boolean }>(
     `/academies/slug-available?slug=${encodeURIComponent(slug)}`,
     options,
   );
@@ -860,7 +885,7 @@ export const sendPhoneOtp = (
   type: string,
   options?: RequestOptions,
 ) => {
-  return postJson<{ message: string; status: string }>(
+  return postPublicJson<{ message: string; status: string }>(
     "/auth/otp/send-phone",
     {
       phone_number,
@@ -917,7 +942,7 @@ export const verifyPhoneOtp = (
   type: string,
   options?: RequestOptions,
 ) => {
-  return postJson<{ message: string; status: string; success?: boolean }>(
+  return postPublicJson<{ message: string; status: string; success?: boolean }>(
     "/auth/otp/verify-phone",
     {
       phone_number,

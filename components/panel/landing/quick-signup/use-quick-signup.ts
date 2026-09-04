@@ -246,6 +246,12 @@ export function useQuickSignup(onFinished?: () => void) {
     [ensureLegalVersions, fullPhone, guard, name, onFinished, otp, slug],
   );
 
+  const editPhone = useCallback(() => {
+    setError(null);
+    setOtp("");
+    setStep("phone");
+  }, []);
+
   const back = useCallback(() => {
     setError(null);
     setStep((current) => (current === "otp" ? "phone" : "identity"));
@@ -276,5 +282,6 @@ export function useQuickSignup(onFinished?: () => void) {
     submitOtp,
     resendOtp,
     back,
+    editPhone,
   };
 }

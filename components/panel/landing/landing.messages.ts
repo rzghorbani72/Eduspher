@@ -378,8 +378,10 @@ export const LANDING = {
     legalRequired: "برای ادامه باید قوانین را بپذیرید.",
     legalUnavailable: "قوانین در دسترس نیست. کمی بعد دوباره تلاش کنید.",
 
+    otpSentBeforePhone: "کد به شماره",
+    otpSentAfterPhone: "ارسال شد.",
+    edit: "ویرایش",
     otpLabel: "کد تأیید",
-    otpSentTo: "کد به شماره {phone} ارسال شد.",
     otpRequired: "کد تأیید را وارد کنید.",
     otpResend: "ارسال دوباره کد",
     otpResendIn: "ارسال دوباره تا {seconds} ثانیه دیگر",
@@ -393,7 +395,7 @@ export const LANDING = {
     doneSubtitle: "وب‌سایتت ساخته و منتشر شد. حالا انتخاب کن از کجا شروع کنی.",
     doneSiteFallback:
       "آکادمی ساخته شد. وب‌سایتت را از پنل، بخش «ظاهر سایت» تکمیل کن.",
-    viewSite: "وب‌سایتم را ببین",
+    viewSite: "مشاهده وب‌سایت",
     goToPanel: "ورود به پنل مدیریت",
     trialNote: "۱۴ روز رایگان، بدون نیاز به کارت بانکی.",
   },
