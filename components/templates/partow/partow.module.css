@@ -1,0 +1,404 @@
+/*
+ * Partow — "beam": the centred, card-led sibling of Rouzan for a single
+ * programming teacher. Rouzan looks into the teacher's editor; Partow puts the
+ * claim in the middle of the page and lets one reel, one grid and one FAQ carry
+ * the rest.
+ *
+ * Every colour reads a --theme-* variable. Latin tokens use mono; Persian text
+ * and Persian digits never do.
+ */
+
+/* ── container ─────────────────────────────────────────────────────────── */
+
+.wrap {
+  max-width: var(--theme-container-max-width);
+  margin-inline: auto;
+  padding-inline: 40px;
+}
+
+/* Latin-only token. Mono is safe here; it would break Persian digits. */
+.tok {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-size: 0.86em;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--theme-primary);
+}
+
+/* Latin star runs stay LTR so the row reads the same in an RTL page. */
+.stars {
+  color: var(--theme-primary);
+  letter-spacing: 2px;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* ── hero ──────────────────────────────────────────────────────────────── */
+
+.caret {
+  display: inline-block;
+  width: 0.36em;
+  height: 0.74em;
+  background: var(--theme-primary);
+  vertical-align: -0.06em;
+  margin-inline-start: 0.12em;
+  animation: blink 1.15s steps(1, end) infinite;
+}
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.trustSep {
+  width: 1px;
+  height: 16px;
+  background: var(--theme-border-color);
+}
+
+.fact {
+  padding-inline-end: 26px;
+  border-inline-end: 1px solid var(--theme-border-color);
+}
+.fact:last-child {
+  border-inline-end: 0;
+  padding-inline-end: 0;
+}
+
+/* ── media card: hero reel and the instructor reel share it ────────────── */
+
+.media {
+  border: 1px solid var(--theme-border-strong);
+  border-radius: var(--theme-border-radius);
+  background: var(--theme-surface);
+  overflow: hidden;
+  box-shadow: 0 34px 80px -46px color-mix(in srgb, var(--theme-secondary) 50%, transparent);
+}
+.mediaBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--theme-surface-alt);
+  border-block-end: 1px solid var(--theme-border-color);
+  font-size: 12px;
+  color: var(--theme-muted);
+}
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--theme-border-strong);
+}
+.dots i:first-child {
+  background: var(--theme-primary);
+}
+.dots i:nth-child(2) {
+  background: var(--theme-accent);
+}
+
+/* Hatch + wash over the empty frame: says "a reel belongs here", not "broken". */
+.frame {
+  position: relative;
+  background: var(--theme-deep);
+}
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    112deg,
+    color-mix(in srgb, var(--theme-on-deep) 5%, transparent) 0 2px,
+    transparent 2px 12px
+  );
+  pointer-events: none;
+}
+.frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 46%,
+    color-mix(in srgb, var(--theme-primary) 24%, transparent),
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+.play {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+  box-shadow: 0 16px 44px -12px color-mix(in srgb, var(--theme-primary) 70%, transparent);
+}
+.play::before {
+  content: '';
+  /*
+   * Triangle from borders so no icon library reaches a server component.
+   * Physical `left`, not logical: a play glyph points right in RTL too —
+   * media transport controls are never mirrored.
+   */
+  border-block: 14px solid transparent;
+  border-left: 22px solid currentColor;
+  border-right: 0;
+  margin-left: -5px;
+}
+
+.frameCap {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--theme-deep) 92%, transparent),
+    transparent
+  );
+  color: var(--theme-on-deep);
+}
+.timeline {
+  position: absolute;
+  z-index: 2;
+  inset-inline: 20px;
+  inset-block-end: 64px;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--theme-on-deep) 20%, transparent);
+}
+.timeline i {
+  display: block;
+  width: 14%;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--theme-primary);
+}
+
+/* ── courses: gradient thumbnails ──────────────────────────────────────── */
+
+.g1 {
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    color-mix(in srgb, var(--theme-primary) 40%, var(--theme-accent))
+  );
+}
+.g2 {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-accent) 70%, var(--theme-primary)),
+    var(--theme-primary)
+  );
+}
+.g3 {
+  background: linear-gradient(
+    135deg,
+    var(--theme-accent),
+    color-mix(in srgb, var(--theme-accent) 45%, var(--theme-deep))
+  );
+}
+.g4 {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-primary) 65%, var(--theme-deep)),
+    var(--theme-accent)
+  );
+}
+
+.rateBox {
+  display: inline-flex;
+  gap: 3px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: var(--theme-accent-subtle);
+  color: var(--theme-accent);
+  letter-spacing: 2px;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-size: 12px;
+}
+
+/* ── features: alternating rows ────────────────────────────────────────── */
+
+.ficon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--theme-primary-subtle);
+  color: var(--theme-primary);
+  font-size: 17px;
+}
+
+/*
+ * Hatched plate where a screenshot goes. Presets ship every image as null, so
+ * this is the default state of the row, not a broken-image fallback.
+ */
+.fig {
+  position: relative;
+  border: 1px solid var(--theme-border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--theme-surface-alt);
+}
+.fig::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    118deg,
+    color-mix(in srgb, var(--theme-primary) 14%, transparent) 0 3px,
+    transparent 3px 15px
+  );
+}
+.figLabel {
+  position: relative;
+  color: var(--theme-muted);
+  background: color-mix(in srgb, var(--theme-background) 80%, transparent);
+  border: 1px solid var(--theme-border-color);
+  padding: 7px 11px;
+  border-radius: 7px;
+}
+
+/* ── testimonials ──────────────────────────────────────────────────────── */
+
+.tcard {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--theme-border-color);
+  border-radius: 14px;
+  background: var(--theme-card-bg);
+  transition: border-color 0.18s;
+}
+.tcard:hover {
+  border-color: var(--theme-border-strong);
+}
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--theme-primary-subtle);
+  color: var(--theme-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ── showcase: FAQ accordion ───────────────────────────────────────────── */
+
+/* Native <details> so the list opens with no JS on a server-rendered page. */
+.acc {
+  border-block-start: 1px solid var(--theme-foreground);
+}
+.acc details {
+  border-block-end: 1px solid var(--theme-border-color);
+}
+.acc summary {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding-block: 22px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+.acc summary::-webkit-details-marker {
+  display: none;
+}
+.accNo {
+  flex: none;
+  min-width: 3ch;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--theme-primary);
+}
+.accMark {
+  flex: none;
+  font-family: ui-monospace, Menlo, monospace;
+  color: var(--theme-muted);
+  font-size: 15px;
+}
+.acc details[open] .accMark {
+  color: var(--theme-primary);
+}
+/* One glyph, swapped by state — no JS and no duplicated markup. */
+.accMark::before {
+  content: '[+]';
+}
+.acc details[open] .accMark::before {
+  content: '[−]';
+}
+.accBody {
+  padding-block-end: 24px;
+  padding-inline-start: calc(3ch + 18px);
+  font-size: 15px;
+  color: var(--theme-muted);
+  line-height: 1.95;
+  max-width: 78ch;
+}
+
+/* ── responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 980px) {
+  .wrap {
+    padding-inline: 26px;
+  }
+}
+
+@media (max-width: 640px) {
+  .wrap {
+    padding-inline: 18px;
+  }
+  .fact {
+    border-inline-end: 0;
+    padding-inline-end: 0;
+  }
+  .play {
+    width: 62px;
+    height: 62px;
+  }
+  .timeline {
+    inset-block-end: 58px;
+  }
+  .accBody {
+    padding-inline-start: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    opacity: 1;
+    animation: none;
+  }
+  .tcard {
+    transition: none;
+  }
+}

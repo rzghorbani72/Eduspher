@@ -22,6 +22,7 @@ export const TEMPLATE_KEYS = [
   'peleh',
   'andisheh',
   'shaparak',
+  'partow',
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];

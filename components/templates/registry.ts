@@ -17,6 +17,7 @@ import { DANESHVAR_SECTIONS } from './daneshvar';
 import { PELEH_SECTIONS } from './peleh';
 import { ANDISHEH_SECTIONS } from './andisheh';
 import { SHAPARAK_SECTIONS } from './shaparak';
+import { PARTOW_SECTIONS } from './partow';
 import { KEYHAN_COURSE_CARD } from './keyhan';
 import { TAVAN_COURSE_CARD } from './tavan';
 import { DASTAN_COURSE_CARD } from './dastan';
@@ -31,6 +32,7 @@ import { DANESHVAR_COURSE_CARD } from './daneshvar';
 import { PELEH_COURSE_CARD } from './peleh';
 import { ANDISHEH_COURSE_CARD } from './andisheh';
 import { SHAPARAK_COURSE_CARD } from './shaparak';
+import { PARTOW_COURSE_CARD } from './partow';
 import type { CourseCardSpec } from './_shared/course-card';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
@@ -66,6 +68,7 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   peleh: PELEH_SECTIONS,
   andisheh: ANDISHEH_SECTIONS,
   shaparak: SHAPARAK_SECTIONS,
+  partow: PARTOW_SECTIONS,
 };
 
 export function resolveTemplateSection(
@@ -97,6 +100,7 @@ const TEMPLATE_COURSE_CARDS: Partial<Record<TemplateKey, CourseCardSpec>> = {
   peleh: PELEH_COURSE_CARD,
   andisheh: ANDISHEH_COURSE_CARD,
   shaparak: SHAPARAK_COURSE_CARD,
+  partow: PARTOW_COURSE_CARD,
 };
 
 export function resolveTemplateCourseCard(style: unknown): CourseCardSpec | null {
