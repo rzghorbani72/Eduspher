@@ -2,29 +2,30 @@ import type { TemplateSectionMap } from '../registry-types';
 import { TemplateTopBar, headerDefaults, FULL_NAV } from '../_shared/header';
 import { TemplateMarquee } from '../_shared/marquee';
 import { TemplateSiteFooter } from '../_shared/footer';
-import { TemplateTeachers } from '../_shared/teachers';
-import { TemplateCta } from '../_shared/cta';
-import { TemplateCourses } from '../_shared/courses';
-import type { CourseCardSpec } from '../_shared/course-card';
-import { TemplateDataTable } from '../_shared/data-table';
 import { ROUZAN_DEFAULTS } from './defaults';
 import { RouzanHero } from './hero';
 import { RouzanFeatures } from './features';
+import { RouzanCourses } from './courses';
 import { RouzanCategories } from './categories';
-import styles from './rouzan.module.css';
+import { RouzanShowcase } from './showcase';
+import { RouzanTeachers } from './teachers';
+import { RouzanCta } from './cta';
 
-/** Rouzan — fullstack programming teacher: bright page, huge type, video hero. */
+export { ROUZAN_COURSE_CARD } from './course-card-spec';
+
+/**
+ * Rouzan — a fullstack programming teacher's personal site.
+ *
+ * A near-white page carried by large type and whitespace, with the intro reel
+ * framed as a code-editor window — the one piece of chrome on the page. Its own
+ * sections share one container so the content edge lines up throughout; the
+ * header, marquee and footer stay shared.
+ */
 const ROUZAN_HEADER = headerDefaults({
   tagline: 'دوره‌های برنامه‌نویسی فول‌استک',
-  ctaText: 'شروع رایگان',
+  ctaText: 'شروع یادگیری',
   nav: FULL_NAV,
 });
-
-export const ROUZAN_COURSE_CARD: CourseCardSpec = {
-  thumbTones: [styles.tA, styles.tB, styles.tC, styles.tD],
-  thumbClassName: 'relative aspect-video overflow-hidden',
-  footer: 'rating',
-};
 
 export const ROUZAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
@@ -38,29 +39,23 @@ export const ROUZAN_SECTIONS: TemplateSectionMap = {
   ),
   hero: RouzanHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={ROUZAN_DEFAULTS.marquee.items} tone="deep" separator="slash" />
-  ),
-  features: RouzanFeatures,
-  courses: ({ id, config, storeContext }) => (
-    <TemplateCourses
+    <TemplateMarquee
       id={id}
       config={config}
-      storeContext={storeContext}
-      defaults={ROUZAN_DEFAULTS.courses}
-      card={ROUZAN_COURSE_CARD}
-      tone="page"
+      fallbackItems={ROUZAN_DEFAULTS.marquee.items}
+      tone="deep"
+      separator="diamond"
     />
   ),
+  features: RouzanFeatures,
+  // Async server component: wrapped so the map keeps its sync element type.
+  courses: ({ id, config, storeContext }) => (
+    <RouzanCourses id={id} config={config} storeContext={storeContext} />
+  ),
   categories: RouzanCategories,
-  showcase: ({ id, config }) => (
-    <TemplateDataTable id={id} config={config} defaults={ROUZAN_DEFAULTS.showcase} tone="page" />
-  ),
-  teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={ROUZAN_DEFAULTS.teachers} tone="surface" avatarShape="round" />
-  ),
-  cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={ROUZAN_DEFAULTS.cta} tone="deep" boxed />
-  ),
+  showcase: RouzanShowcase,
+  teachers: RouzanTeachers,
+  cta: RouzanCta,
   footer: ({ id, config, storeContext }) => (
     <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ROUZAN_DEFAULTS.footer} />
   ),

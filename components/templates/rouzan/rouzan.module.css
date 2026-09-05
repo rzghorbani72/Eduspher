@@ -1,138 +1,481 @@
 /*
- * Rouzan — "aperture": a bright, near-white personal site for a fullstack
- * programming teacher. The look is carried by huge tight type, one vivid
- * brand colour and a single editor-window frame around the intro video.
- * Every colour reads a --theme-* variable. No letter-spacing on Persian text.
+ * Rouzan — "aperture": a bright, editorial personal site for a fullstack
+ * programming teacher. Its one piece of chrome is the editor window the intro
+ * reel sits inside; everything else is type and whitespace.
+ *
+ * Every colour reads a --theme-* variable. Latin tokens use mono; Persian text
+ * and Persian digits never do.
  */
 
-.page {
-  background: var(--theme-background);
-  color: var(--theme-foreground);
-}
+/* ── container ─────────────────────────────────────────────────────────── */
 
-/* Soft halo behind the headline so the white page still has a centre. */
-.halo {
-  position: absolute;
-  inset-block-start: -28%;
-  /* Auto inline margins, not inset+translate — see backdrop.module.css. */
-  inset-inline: 0;
+/* Shared by every section so the content edge lines up down the whole page. */
+.wrap {
+  max-width: var(--theme-container-max-width);
   margin-inline: auto;
-  width: min(1100px, 130%);
-  aspect-ratio: 2 / 1;
-  pointer-events: none;
-  border-radius: 9999px;
-  filter: blur(80px);
-  opacity: 0.35;
-  background: radial-gradient(
-    closest-side,
-    color-mix(in srgb, var(--theme-primary) 45%, transparent),
-    transparent
-  );
+  padding-inline: 36px;
 }
 
-/* The editor window the intro video sits inside. */
-.window {
-  border: 1px solid var(--theme-border-color);
-  border-radius: calc(var(--theme-border-radius) + 6px);
-  background: var(--theme-surface);
-  box-shadow: 0 40px 90px -40px color-mix(in srgb, var(--theme-secondary) 45%, transparent);
-  overflow: hidden;
+/* Latin-only token. Mono is safe here; it would break Persian digits. */
+.tok {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-size: 0.86em;
 }
-.windowBar {
+
+.leadLbl {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--theme-primary);
+}
+
+/* ── hero ──────────────────────────────────────────────────────────────── */
+
+/* Soft wash under the media half so the near-white page still has a centre. */
+.heroWash {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 52%;
+  background: linear-gradient(to left, var(--theme-surface-alt), transparent);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.caret {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.86em;
+  background: var(--theme-primary);
+  vertical-align: -0.06em;
+  margin-inline-start: 0.12em;
+  animation: blink 1.15s steps(1, end) infinite;
+}
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.fact {
+  padding-inline-end: 30px;
+  margin-inline-end: 30px;
+  border-inline-end: 1px solid var(--theme-border-color);
+}
+.fact:last-child {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── editor window ─────────────────────────────────────────────────────── */
+
+/*
+ * Bleeds past the container on wide screens so the window reads as a real
+ * panel the page is looking into, not a boxed screenshot.
+ */
+.win {
+  margin-inline-end: -92px;
+  border: 1px solid var(--theme-border-strong);
+  border-radius: 14px;
+  background: var(--theme-surface);
+  overflow: hidden;
+  box-shadow: 0 26px 60px -28px color-mix(in srgb, var(--theme-secondary) 40%, transparent);
+}
+.winBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--theme-surface-alt);
+  border-block-end: 1px solid var(--theme-border-color);
+}
+.dots {
+  display: flex;
+  gap: 6px;
+}
+.dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--theme-border-strong);
+}
+.dots i:first-child {
+  background: var(--theme-primary);
+}
+.winTab {
+  font-size: 12.5px;
+  color: var(--theme-muted);
+  background: var(--theme-background);
+  border: 1px solid var(--theme-border-color);
+  border-radius: 6px;
+  padding: 3px 10px;
+}
+.winFoot {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px;
-  border-block-end: 1px solid var(--theme-border-color);
-  background: var(--theme-surface-alt);
-}
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: color-mix(in srgb, var(--theme-muted) 45%, transparent);
-}
-.dotLive {
-  background: var(--theme-primary);
-}
-/* Latin-only filename tab — mono is safe here, never on Persian digits. */
-.tab {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
-  color: var(--theme-muted);
-  direction: ltr;
-}
-
-/* Chip row under the headline. */
-.chip {
-  border: 1px solid var(--theme-border-color);
+  padding: 12px 16px;
+  border-block-start: 1px solid var(--theme-border-color);
   background: var(--theme-surface);
-  border-radius: 9999px;
+  font-size: 12.5px;
+  color: var(--theme-muted);
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
 
-/* Numbered reason cards: the number is the only decoration. */
-.reasonNo {
-  font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--theme-primary) 34%, transparent);
-}
-
-/*
- * Learning-path steps, connected by a single rule down the page. The row is an
- * <a>, so the global `a { color: primary }` base rule would tint the title and
- * make it compete with the primary step label — pin it to the foreground.
- */
-.stepTitle {
-  color: var(--theme-foreground);
-}
-.step {
+/* Diagonal hatch over the empty frame: says "a reel belongs here", not "broken". */
+.frame {
   position: relative;
-  border-inline-start: 2px solid var(--theme-border-color);
-  transition: border-color 0.2s;
+  background: var(--theme-deep);
 }
-.step:hover {
-  border-inline-start-color: var(--theme-primary);
-}
-.stepDot {
+.frame::before {
+  content: '';
   position: absolute;
-  inset-inline-start: -7px;
-  inset-block-start: 6px;
-  width: 12px;
-  height: 12px;
-  border-radius: 9999px;
-  background: var(--theme-background);
-  border: 2px solid var(--theme-primary);
+  inset: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--theme-on-deep) 5%, transparent) 0 2px,
+    transparent 2px 11px
+  );
+  pointer-events: none;
 }
 
-/* Empty course thumbnails: flat tints, no gradients. */
-.tA { background: color-mix(in srgb, var(--theme-primary) 12%, var(--theme-surface-alt)); }
-.tB { background: color-mix(in srgb, var(--theme-accent) 14%, var(--theme-surface-alt)); }
-.tC { background: color-mix(in srgb, var(--theme-secondary) 8%, var(--theme-surface-alt)); }
-.tD { background: var(--theme-surface-alt); }
-
-/*
- * Empty-state play mark for the video frame. A video-first hero with a blank
- * grey box reads as broken; this says "a reel belongs here" before one is
- * picked, and disappears with the placeholder once it is.
- */
-.playMark {
+.play {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 9999px;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
   background: var(--theme-primary);
   color: var(--theme-on-primary);
-  box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--theme-primary) 70%, transparent);
+  box-shadow: 0 12px 34px -8px color-mix(in srgb, var(--theme-primary) 60%, transparent);
 }
-.playMark::before {
+.play::before {
   content: '';
   /*
-   * Triangle drawn with borders so no icon library is pulled into a server
-   * component. Physical `left`, not logical: a play glyph points right in RTL
-   * too — media transport controls are not mirrored.
+   * Triangle from borders so no icon library reaches a server component.
+   * Physical `left`, not logical: a play glyph points right in RTL too —
+   * media transport controls are never mirrored.
    */
-  border-block: 11px solid transparent;
-  border-left: 18px solid currentColor;
+  border-block: 13px solid transparent;
+  border-left: 21px solid currentColor;
   border-right: 0;
-  margin-left: -4px;
+  margin-left: -5px;
+}
+
+.frameCap {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--theme-deep) 92%, transparent),
+    transparent
+  );
+  color: var(--theme-on-deep);
+}
+.progress {
+  position: absolute;
+  inset-inline: 18px;
+  inset-block-end: 52px;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--theme-on-deep) 22%, transparent);
+}
+.progress i {
+  display: block;
+  width: 14%;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--theme-primary);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--theme-accent);
+  font-weight: 500;
+}
+.live i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+/* ── features ──────────────────────────────────────────────────────────── */
+
+.card {
+  border: 1px solid var(--theme-border-color);
+  border-radius: 16px;
+  background: var(--theme-card-bg);
+  transition: border-color 0.18s, transform 0.18s;
+}
+.cardHover:hover {
+  border-color: var(--theme-foreground);
+  transform: translateY(-2px);
+}
+
+/* Mock code-review panel — the one literal illustration on the page. */
+.review {
+  border: 1px dashed var(--theme-border-strong);
+  border-radius: 12px;
+  background: var(--theme-background);
+}
+.reviewAdd {
+  color: var(--theme-accent);
+}
+.reviewDel {
+  color: var(--theme-primary);
+}
+
+.guarantee {
+  border: 1px solid var(--theme-border-color);
+  border-radius: 16px;
+  background: var(--theme-primary-subtle);
+}
+
+/* ── courses ───────────────────────────────────────────────────────────── */
+/* Empty course thumbnails: flat tints, no gradients. */
+.tA {
+  background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface));
+}
+.tB {
+  background: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-surface));
+}
+.tC {
+  background: color-mix(in srgb, var(--theme-secondary) 12%, var(--theme-surface));
+}
+.tD {
+  background: var(--theme-surface-alt);
+}
+
+
+/* ── paths ─────────────────────────────────────────────────────────────── */
+
+.path {
+  position: relative;
+  border: 1px solid var(--theme-border-color);
+  border-radius: 16px;
+  background: var(--theme-surface);
+}
+/* The recommended path lifts out of the row instead of shouting with colour. */
+.pathHi {
+  background: var(--theme-deep);
+  color: var(--theme-on-deep);
+  border-color: var(--theme-deep);
+}
+.pathHi .pathMeta,
+.pathHi .stepMeta {
+  color: color-mix(in srgb, var(--theme-on-deep) 62%, transparent);
+}
+.pathMeta {
+  color: var(--theme-muted);
+}
+.pathStep {
+  border-block-end: 1px solid var(--theme-hairline);
+}
+.pathHi .pathStep {
+  border-block-end-color: color-mix(in srgb, var(--theme-on-deep) 14%, transparent);
+}
+.pathStep:last-child {
+  border-block-end: 0;
+}
+.stepNo {
+  color: var(--theme-primary);
+}
+.stepMeta {
+  color: var(--theme-muted);
+}
+.ptag {
+  position: absolute;
+  inset-block-start: -12px;
+  inset-inline-start: 24px;
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+/* ── showcase: live class table ────────────────────────────────────────── */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+.table th {
+  text-align: start;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--theme-on-deep) 55%, transparent);
+  padding: 0 14px 12px;
+  border-block-end: 1px solid color-mix(in srgb, var(--theme-on-deep) 24%, transparent);
+}
+.table td {
+  padding: 16px 14px;
+  border-block-end: 1px solid color-mix(in srgb, var(--theme-on-deep) 11%, transparent);
+  vertical-align: middle;
+}
+.table tbody tr:hover td {
+  background: color-mix(in srgb, var(--theme-on-deep) 5%, transparent);
+}
+.rowSub {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--theme-on-deep) 55%, transparent);
+}
+
+.st {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+  border-radius: 6px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+.stLive {
+  color: var(--theme-accent);
+  border-color: var(--theme-accent);
+}
+.stLive i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--theme-accent);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.stFew {
+  color: var(--theme-primary);
+  border-color: var(--theme-primary);
+}
+.stFull {
+  color: color-mix(in srgb, var(--theme-on-deep) 45%, transparent);
+  border-color: color-mix(in srgb, var(--theme-on-deep) 26%, transparent);
+}
+
+/* ── teachers ──────────────────────────────────────────────────────────── */
+
+.mentor {
+  border: 1px solid var(--theme-border-color);
+  border-radius: 16px;
+  background: var(--theme-surface);
+  overflow: hidden;
+  transition: border-color 0.18s;
+}
+.mentor:hover {
+  border-color: var(--theme-foreground);
+}
+/* Monogram stands in for a photo — every preset ships images as null. */
+.mono {
+  aspect-ratio: 5 / 4;
+  display: grid;
+  place-items: center;
+  border-block-end: 1px solid var(--theme-border-color);
+  background: var(--theme-surface-alt);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--theme-primary);
+}
+.monoA {
+  color: var(--theme-accent);
+}
+.monoB {
+  color: var(--theme-foreground);
+  opacity: 0.85;
+}
+.role {
+  color: var(--theme-primary);
+}
+
+/* ── cta ───────────────────────────────────────────────────────────────── */
+
+.ctaSide {
+  border-inline-start: 1px solid var(--theme-border-color);
+  padding-inline-start: 38px;
+}
+.ctaRow {
+  border-block-end: 1px solid var(--theme-hairline);
+}
+.ctaRow:last-child {
+  border-block-end: 0;
+}
+
+/* ── responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+  .wrap {
+    padding-inline: 24px;
+  }
+  .win {
+    margin-inline-end: 0;
+  }
+  .ctaSide {
+    border-inline-start: 0;
+    padding-inline-start: 0;
+    border-block-start: 1px solid var(--theme-border-color);
+    padding-block-start: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .wrap {
+    padding-inline: 18px;
+  }
+  .fact {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .play {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    opacity: 1;
+    animation: none;
+  }
+  .live i,
+  .stLive i {
+    animation: none;
+  }
+  .card,
+  .cardHover,
+  .mentor {
+    transition: none;
+  }
 }
