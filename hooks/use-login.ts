@@ -170,6 +170,10 @@ export function useLogin() {
           setNotRegistered(true);
           return;
         }
+        if (next === "panel_blocked") {
+          setError(t("auth.noSignInMethodAvailable"));
+          return;
+        }
         setIdentity(result);
         if (next === "otp") {
           sendLoginOtp();

@@ -565,6 +565,8 @@ export type AccountIdentity = {
   captcha_required: boolean;
   /** Member of some other academy, but not of this one (the panel uses it). */
   member_elsewhere?: boolean;
+  /** Staff panel only: banned or deactivated panel account. */
+  panel_blocked?: boolean;
 };
 
 /**
