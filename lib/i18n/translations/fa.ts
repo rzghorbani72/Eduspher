@@ -1388,6 +1388,8 @@ export const fa = {
     paths: "نقشه راه‌ها",
     articles: "مقالات",
     noRoadmaps: "هنوز نقشه راهی تعریف نشده است.",
+    pathBadge: "مسیر یادگیری",
+    viewPath: "دیدن مسیر",
     viewCourse: "مشاهده دوره",
   },
   abuse: {

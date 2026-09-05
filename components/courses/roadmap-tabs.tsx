@@ -27,6 +27,10 @@ interface Roadmap {
   icon: string;
   description: string;
   courses: RoadmapCourse[];
+  /** Set when the path is a real purchasable bundle, absent for a category. */
+  slug?: string | null;
+  price?: number | null;
+  comparePrice?: number | null;
 }
 
 interface Article {
@@ -114,6 +118,28 @@ export function RoadmapTabs({ roadmaps, articles, store, language }: RoadmapTabs
                   <p className="text-sm text-muted">{selectedRoadmap.description}</p>
                 )}
               </div>
+
+              {/* A real bundle can be bought as one path; a category cannot. */}
+              {selectedRoadmap.slug && (
+                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-theme bg-card p-4">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg font-bold text-[var(--theme-foreground)]">
+                      {formatCurrencyWithAcademy(selectedRoadmap.price ?? 0, store)}
+                    </span>
+                    {selectedRoadmap.comparePrice ? (
+                      <s className="text-sm text-muted">
+                        {formatCurrencyWithAcademy(selectedRoadmap.comparePrice, store)}
+                      </s>
+                    ) : null}
+                  </div>
+                  <Link
+                    href={buildPath(`/roadmap/${selectedRoadmap.slug}`)}
+                    className="ms-auto rounded-lg bg-[var(--theme-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--theme-on-primary)] transition-opacity hover:opacity-90"
+                  >
+                    {t("roadmap.viewPath")}
+                  </Link>
+                </div>
+              )}
 
               {/* Timeline */}
               <div className="relative space-y-0">

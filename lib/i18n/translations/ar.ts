@@ -879,6 +879,8 @@ export const ar = {
     paths: "خرائط الطريق",
     articles: "المقالات",
     noRoadmaps: "لم يتم تحديد أي خريطة طريق بعد.",
+    pathBadge: "مسار تعلم",
+    viewPath: "عرض المسار",
     viewCourse: "عرض الدورة",
   },
   abuse: {

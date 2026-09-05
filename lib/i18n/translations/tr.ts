@@ -903,6 +903,8 @@ export const tr = {
     paths: "Yol haritaları",
     articles: "Makaleler",
     noRoadmaps: "Henüz bir yol haritası tanımlanmadı.",
+    pathBadge: "Öğrenme yolu",
+    viewPath: "Yolu görüntüle",
     viewCourse: "Kursu görüntüle",
   },
   abuse: {

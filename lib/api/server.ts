@@ -838,11 +838,25 @@ export interface PublicBundleOffer {
   id: string;
   type: PublicOfferingType;
   title: string | null;
+  slug: string | null;
   description: string | null;
   price: number;
+  /** Struck-through "before" figure; null when the bundle is not discounted. */
+  compare_at_price: number | null;
   currency: string;
   access_duration_days: number | null;
-  Courses: Array<{ Course: { id: string; title: string } }>;
+  /** Ordered by `sort_order` server-side — a bundle is taught in this sequence. */
+  Courses: Array<{
+    sort_order: number;
+    Course: {
+      id: string;
+      title: string;
+      slug: string;
+      short_description: string | null;
+      duration: number | null;
+      lessons_count: number;
+    };
+  }>;
 }
 
 export async function getAcademyBundlesPublic(): Promise<PublicBundleOffer[]> {
@@ -853,6 +867,17 @@ export async function getAcademyBundlesPublic(): Promise<PublicBundleOffer[]> {
     },
   ).catch(() => []);
   return Array.isArray(result) ? result : [];
+}
+
+/** One bundle by slug, for its own learning-path page. Null when not found. */
+export async function getAcademyBundlePublic(
+  slug: string,
+): Promise<PublicBundleOffer | null> {
+  const result = await serverFetchRaw<PublicBundleOffer>(
+    `/offers/public/bundles/${encodeURIComponent(slug)}`,
+    { method: "GET" },
+  ).catch(() => null);
+  return result && typeof result === "object" && "id" in result ? result : null;
 }
 
 export interface PublicPaymentPlan {

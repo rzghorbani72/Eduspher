@@ -7,6 +7,7 @@ import {
   getBlogArticles,
   getCurrentAcademy,
   getAcademyBySlug,
+  getAcademyBundlesPublic,
 } from "@/lib/api/server";
 import { getAcademyContext } from "@/lib/store-context";
 import {
@@ -50,12 +51,13 @@ export default async function RoadmapPage() {
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const [categories, coursePayload, articles, currentAcademy] =
+  const [categories, coursePayload, articles, currentAcademy, bundles] =
     await Promise.all([
       getCategories().catch(() => []),
       getCourses({ limit: 100, published: true }).catch(() => null),
       getBlogArticles(storeContext.slug).catch(() => []),
       getCurrentAcademy().catch(() => null),
+      getAcademyBundlesPublic().catch(() => []),
     ]);
 
   let academy = currentAcademy;
@@ -71,14 +73,46 @@ export default async function RoadmapPage() {
 
   const courses = coursePayload?.courses ?? [];
 
-  // Group courses by category to create roadmaps
-  const roadmaps = categories
+  // A bundle spanning several courses IS a learning path: the manager chose the
+  // courses and their order, and priced the whole sequence. Those are the real
+  // roadmaps.
+  const bundleRoadmaps = bundles
+    .filter((bundle) => bundle.Courses.length > 1)
+    .map((bundle) => ({
+      id: bundle.id,
+      slug: bundle.slug,
+      name: bundle.title ?? "",
+      icon: "\u{1F9ED}",
+      description: bundle.description ?? "",
+      price: bundle.price,
+      comparePrice: bundle.compare_at_price,
+      courses: bundle.Courses.map((entry, idx) => ({
+        id: entry.Course.id,
+        step: idx + 1,
+        title: entry.Course.title,
+        short_description: entry.Course.short_description ?? "",
+        price: 0,
+        is_free: false,
+        lessons_count: entry.Course.lessons_count,
+        duration: entry.Course.duration,
+        level: "",
+      })),
+    }))
+    .filter((r) => r.name && r.courses.length > 0);
+
+  // Fallback for an academy that has not built a bundle yet: group its courses
+  // by category so the page is still useful. These are not ordered or priced as
+  // a path, so they carry no slug and no bundle price.
+  const categoryRoadmaps = categories
     .filter((cat) => courses.some((c) => c.Category?.id === cat.id))
     .map((cat) => ({
       id: cat.id,
+      slug: null,
       name: cat.name,
-      icon: cat.icon ?? "📚",
+      icon: cat.icon ?? "\u{1F4DA}",
       description: cat.description ?? "",
+      price: null,
+      comparePrice: null,
       courses: courses
         .filter((c) => c.Category?.id === cat.id)
         .map((c, idx) => ({
@@ -90,10 +124,12 @@ export default async function RoadmapPage() {
           is_free: c.is_free,
           lessons_count: c.lessons_count,
           duration: c.duration,
-          level: c.is_certificate ? "پیشرفته" : idx === 0 ? "مقدماتی" : "متوسط",
+          level: "",
         })),
     }))
     .filter((r) => r.courses.length > 0);
+
+  const roadmaps = bundleRoadmaps.length > 0 ? bundleRoadmaps : categoryRoadmaps;
 
   const store =
     (academy as Parameters<typeof formatCurrencyWithAcademy>[1]) ?? null;

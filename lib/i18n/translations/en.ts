@@ -1396,6 +1396,8 @@ export const en = {
     paths: "Roadmaps",
     articles: "Articles",
     noRoadmaps: "No roadmap has been defined yet.",
+    pathBadge: "Learning path",
+    viewPath: "View path",
     viewCourse: "View course",
   },
   abuse: {
