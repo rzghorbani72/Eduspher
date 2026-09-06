@@ -184,9 +184,9 @@ export default async function CourseDetailPage({
     : (previewMedia.find((item) => item.videoId)?.lessonId ?? null);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
   const learnPath = buildPath(`/learn/${course.id}`);
-  // An owner keeps the full learning player; everyone else gets the public
-  // free-lesson page, which needs no account.
-  const previewBasePath = isEnrolled ? learnPath : null;
+  // Free lessons open the full learning page for everyone, enrolled or not —
+  // the page itself only requires sign-in, not a purchase, for a free lesson.
+  const previewBasePath = learnPath;
 
   const relatedCourses = await getCourses({
     published: true,
