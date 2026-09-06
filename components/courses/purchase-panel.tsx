@@ -12,7 +12,6 @@ import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { totalOf } from "@/lib/courses/purchase-options";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
 import { MyAccessPanel } from "@/components/courses/my-access-panel";
-import { accessTargetFor } from "@/lib/courses/access-target";
 
 export interface CurrencyConfig {
   currency?: string;
@@ -61,11 +60,12 @@ export function PurchasePanel({
 }: PurchasePanelProps) {
   const { t } = useTranslation();
   const enrollmentClosed = useEnrollmentClosed();
-  const { purchase, pendingKey, error, gateways, reset } = usePurchase({ loginHref });
+  const { purchase, pendingKey, error, gateways, reset } = usePurchase({
+    loginHref,
+  });
   const [confirming, setConfirming] = useState(false);
   const ownedOptions = options.filter((option) => option.owned);
-  const firstBuyable = options.find((option) => !option.owned) ?? options[0];
-  const [selectedKey, setSelectedKey] = useState(firstBuyable?.key ?? "");
+  const [selectedKey, setSelectedKey] = useState(options[0]?.key ?? "");
 
   const selected =
     options.find((option) => option.key === selectedKey) ?? options[0];
@@ -81,50 +81,53 @@ export function PurchasePanel({
       language,
     );
 
+  // A student who already holds this course — bought it, was granted it by a
+  // teacher or manager, or reaches it through their student group — is a paid
+  // student: they see how to keep going, never a price again.
+  const hasAccess = ownedOptions.length > 0 || continueHref !== null;
+
+  if (hasAccess) {
+    return (
+      <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
+        {ownedOptions.length > 0 ? (
+          <MyAccessPanel
+            owned={ownedOptions}
+            learnHref={continueHref ?? learnHref}
+            liveClassesHref={liveClassesHref}
+            tutoringHref={tutoringHref}
+          />
+        ) : (
+          <div className="px-5 py-5 text-center">
+            <p className="text-xs font-bold text-(--theme-foreground)">
+              {t("courses.alreadyEnrolled")}
+            </p>
+            <a
+              href={continueHref ?? learnHref}
+              className="cd-cta-btn mt-2.5 flex h-11 w-full items-center justify-center rounded-full text-sm font-extrabold text-white transition-all hover:-translate-y-0.5"
+            >
+              {t("courses.continueLearning")}
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (!selected) return null;
 
   const isBusy = pendingKey === selected.key;
   const disabled = isBusy || enrollmentClosed;
-  // An owned way is not bought again — the call to action enters it instead.
-  const ownedTarget = selected.owned
-    ? accessTargetFor(selected, { learnHref, liveClassesHref, tutoringHref })
-    : null;
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
-      {ownedOptions.length > 0 ? (
-        <MyAccessPanel
-          owned={ownedOptions}
-          learnHref={continueHref ?? learnHref}
-          liveClassesHref={liveClassesHref}
-          tutoringHref={tutoringHref}
-        />
-      ) : continueHref ? (
-        <div className="border-b border-theme bg-(--theme-primary)/8 px-5 py-4 text-center">
-          <p className="text-xs font-bold text-(--theme-foreground)">
-            {t("courses.alreadyEnrolled")}
-          </p>
-          <a
-            href={continueHref}
-            className="cd-cta-btn mt-2.5 flex h-11 w-full items-center justify-center rounded-full text-sm font-extrabold text-white transition-all hover:-translate-y-0.5"
-          >
-            {t("courses.continueLearning")}
-          </a>
-        </div>
-      ) : null}
-
       <div className="px-6 pt-6 pb-2">
         <h2 className="text-lg font-black text-(--theme-foreground)">
-          {ownedOptions.length > 0 || continueHref
-            ? t("courses.addAnotherMethod")
-            : t("courses.chooseEnrollMethod")}
+          {t("courses.chooseEnrollMethod")}
         </h2>
         <p className="mt-1 text-[13px] text-(--theme-muted)">
-          {ownedOptions.length > 0 || continueHref
-            ? t("courses.addAnotherMethodHint")
-            : options.length > 1
-              ? t("courses.chooseEnrollMethodHint")
-              : t("courses.singleEnrollMethodHint")}
+          {options.length > 1
+            ? t("courses.chooseEnrollMethodHint")
+            : t("courses.singleEnrollMethodHint")}
         </p>
       </div>
 
@@ -142,37 +145,33 @@ export function PurchasePanel({
       </div>
 
       <div className="px-5 pb-5">
-        {ownedTarget ? (
-          <a
-            href={ownedTarget.href}
-            className="cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all hover:-translate-y-0.5"
-          >
-            {t(ownedTarget.actionKey)}
-          </a>
-        ) : (
-          <button
-            type="button"
-            disabled={disabled}
-            title={
-              enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined
-            }
-            onClick={() => setConfirming(true)}
-            className={cn(
-              "cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all",
-              disabled ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",
-            )}
-          >
-            {enrollmentClosed
-              ? t("academyStatus.enrollmentClosedShort")
-              : isBusy
-                ? t("common.loading")
-                : t(CTA_KEY[selected.kind] ?? "courses.ctaBuy")}
-          </button>
-        )}
+        <button
+          type="button"
+          disabled={disabled}
+          title={
+            enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined
+          }
+          onClick={() => setConfirming(true)}
+          className={cn(
+            "cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all",
+            disabled
+              ? "cursor-not-allowed opacity-60"
+              : "hover:-translate-y-0.5",
+          )}
+        >
+          {enrollmentClosed
+            ? t("academyStatus.enrollmentClosedShort")
+            : isBusy
+              ? t("common.loading")
+              : t(CTA_KEY[selected.kind] ?? "courses.ctaBuy")}
+        </button>
 
         {selected.installments && (
           <p className="cd-price mt-2.5 text-center text-xs text-(--theme-muted)">
-            {t("courses.installmentTotal").replace("{total}", fmt(totalOf(selected)))}
+            {t("courses.installmentTotal").replace(
+              "{total}",
+              fmt(totalOf(selected)),
+            )}
           </p>
         )}
 

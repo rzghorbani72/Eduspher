@@ -22,6 +22,7 @@ import {
   getCoursePaymentPlans,
   getPublicLesson,
 } from "@/lib/api/server";
+import { getCourseAccess } from "@/lib/api/account-server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
@@ -140,19 +141,26 @@ export default async function CourseDetailPage({
     tutoringOffers,
   );
 
-  // Owning the course replaces the whole buy box with a "keep going" link.
-  const enrollment = user
-    ? await getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
-    : null;
+  // Holding the course replaces the whole buy box with a "keep going" link.
+  // A student can hold it without ever paying — a teacher or manager grant, or
+  // a student group they belong to — so the canonical access list decides,
+  // not the enrollment rows.
+  const [enrollment, courseAccess] = await Promise.all([
+    user
+      ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
+      : null,
+    user ? getCourseAccess() : [],
+  ]);
   // Staff get the whole academy's enrollments from this endpoint, so the row
   // must belong to the viewer before it counts as "I own this course".
   const isEnrolled = Boolean(
     user &&
-    enrollment?.enrollments?.some(
-      (item) =>
-        String(item.profile_id) === String(user.id) &&
-        (item.status === "ACTIVE" || item.status === "COMPLETED"),
-    ),
+    (courseAccess.some((row) => row.course_id === course.id) ||
+      enrollment?.enrollments?.some(
+        (item) =>
+          String(item.profile_id) === String(user.id) &&
+          (item.status === "ACTIVE" || item.status === "COMPLETED"),
+      )),
   );
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
