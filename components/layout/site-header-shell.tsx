@@ -3,7 +3,16 @@
 import { useShell } from "@/components/providers/shell-provider";
 import { SiteHeaderClient } from "./site-header-client";
 
-export function SiteHeaderShell() {
+/**
+ * `previewMode` is the editor render: it always shows the logged-out auth
+ * button, so a manager previewing their site sees the control their visitors
+ * see instead of their own account chip.
+ */
+export function SiteHeaderShell({
+  previewMode = false,
+}: {
+  previewMode?: boolean;
+}) {
   const {
     isPanelRoot,
     headerDisplayName,
@@ -16,7 +25,7 @@ export function SiteHeaderShell() {
     <SiteHeaderClient
       displayName={headerDisplayName}
       avatarUrl={headerAvatarUrl}
-      isAuthenticated={headerIsAuthenticated}
+      isAuthenticated={previewMode ? false : headerIsAuthenticated}
       isPanelRoot={isPanelRoot}
       requestHost={requestHost}
     />

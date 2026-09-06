@@ -31,12 +31,23 @@ interface BlocksRendererProps {
     editMode?: boolean;
   };
   includeHeaderFooter?: boolean; // Option to include header/footer in blocks renderer
+  /**
+   * Editor/gallery render. The header then always shows the logged-out auth
+   * button, so the manager sees the control their visitors see instead of their
+   * own storefront session.
+   */
+  previewMode?: boolean;
 }
 
-export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = false }: BlocksRendererProps) {
+export function BlocksRenderer({
+  blocks,
+  storeContext,
+  includeHeaderFooter = false,
+  previewMode = false,
+}: BlocksRendererProps) {
   if (!blocks || blocks.length === 0) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('[BlocksRenderer] No blocks provided');
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[BlocksRenderer] No blocks provided");
     }
     return null;
   }
@@ -44,8 +55,11 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
   const visibleBlocks = blocks
     .filter((block) => {
       if (block.isVisible === false) return false;
-      if (block.type === 'placeholder') return false;
-      if (!includeHeaderFooter && (block.type === "header" || block.type === "footer")) {
+      if (block.type === "placeholder") return false;
+      if (
+        !includeHeaderFooter &&
+        (block.type === "header" || block.type === "footer")
+      ) {
         return false;
       }
       return true;
@@ -53,8 +67,8 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   if (visibleBlocks.length === 0) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('[BlocksRenderer] No visible blocks after filtering');
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[BlocksRenderer] No visible blocks after filtering");
     }
     return null;
   }
@@ -66,7 +80,10 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
           // One of the seven gallery templates owns this section type — render
           // its own design. Anything it does not implement falls through to the
           // shared blocks below, so legacy styles keep working unchanged.
-          const TemplateSection = resolveTemplateSection(block.config?.style, block.type);
+          const TemplateSection = resolveTemplateSection(
+            block.config?.style,
+            block.type,
+          );
           if (TemplateSection) {
             return (
               <TemplateSection
@@ -80,43 +97,143 @@ export function BlocksRenderer({ blocks, storeContext, includeHeaderFooter = fal
 
           switch (block.type) {
             case "header":
-              return <HeaderBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <HeaderBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                  previewMode={previewMode}
+                />
+              );
             case "hero":
-              return <HeroBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
+              return (
+                <HeroBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                  storeContext={storeContext}
+                />
+              );
             case "slideshow":
-              return <HeroBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} blockType="slideshow" />;
+              return (
+                <HeroBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                  storeContext={storeContext}
+                  blockType="slideshow"
+                />
+              );
             case "features":
-              return <FeaturesBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <FeaturesBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "courses":
-              return <CoursesBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
+              return (
+                <CoursesBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                  storeContext={storeContext}
+                />
+              );
             case "testimonials":
-              return <TestimonialsBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <TestimonialsBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "membership":
-              return <MembershipBlock key={block.id} id={block.id} config={block.config} storeContext={storeContext} />;
+              return (
+                <MembershipBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                  storeContext={storeContext}
+                />
+              );
             case "footer":
-              return <FooterBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <FooterBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "marquee":
-              return <MarqueeBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <MarqueeBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "course-grid":
-              return <CourseGridBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <CourseGridBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "cta":
-              return <CtaBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <CtaBlock key={block.id} id={block.id} config={block.config} />
+              );
             case "categories":
-              return <CategoriesBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <CategoriesBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "projects":
-              return <ProjectsBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <ProjectsBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "videos":
-              return <VideosBlock key={block.id} id={block.id} config={block.config} />;
+              return (
+                <VideosBlock
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             case "sidebar":
-              return <SidebarBlockServer key={block.id} id={block.id} config={block.config} />;
+              return (
+                <SidebarBlockServer
+                  key={block.id}
+                  id={block.id}
+                  config={block.config}
+                />
+              );
             default:
               return null;
           }
         } catch (error) {
-          console.error(`Error rendering block ${block.id} (${block.type}):`, error);
+          console.error(
+            `Error rendering block ${block.id} (${block.type}):`,
+            error,
+          );
           return (
-            <div key={block.id} className="p-4 bg-(--theme-surface-alt) border border-(--theme-border-color) rounded-lg">
-              <p className="text-(--theme-foreground)">Error rendering block: {block.type}</p>
+            <div
+              key={block.id}
+              className="p-4 bg-(--theme-surface-alt) border border-(--theme-border-color) rounded-lg"
+            >
+              <p className="text-(--theme-foreground)">
+                Error rendering block: {block.type}
+              </p>
             </div>
           );
         }

@@ -27,9 +27,15 @@ interface HeaderBlockProps {
     minimal?: boolean;
     style?: "default" | "code" | "creative";
   };
+  /** Editor preview: force the logged-out auth button (see BlocksRenderer). */
+  previewMode?: boolean;
 }
 
-export function HeaderBlock({ id, config }: HeaderBlockProps) {
+export function HeaderBlock({
+  id,
+  config,
+  previewMode = false,
+}: HeaderBlockProps) {
   const sticky = config?.sticky !== false;
   const transparent = config?.transparent === true;
   const compact = config?.compact === true;
@@ -37,11 +43,11 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
   const style = config?.style ?? "default";
 
   if (style === "code") {
-    return <CodeHeader id={id} sticky={sticky} />;
+    return <CodeHeader id={id} sticky={sticky} previewMode={previewMode} />;
   }
 
   if (style === "creative") {
-    return <CreativeHeader id={id} sticky={sticky} />;
+    return <CreativeHeader id={id} sticky={sticky} previewMode={previewMode} />;
   }
 
   // A plain wrapper, not a <header>: SiteHeaderShell renders the banner
@@ -70,7 +76,7 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
             : undefined
         }
       >
-        <SiteHeaderShell />
+        <SiteHeaderShell previewMode={previewMode} />
       </div>
     </div>
   );
@@ -78,10 +84,19 @@ export function HeaderBlock({ id, config }: HeaderBlockProps) {
 
 // ── Creative — studio header with centered search + warm nav ─────────────────
 
-function CreativeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
+function CreativeHeader({
+  id,
+  sticky,
+  previewMode,
+}: {
+  id?: string;
+  sticky: boolean;
+  previewMode?: boolean;
+}) {
   const router = useRouter();
   const { name: academyName } = useAcademyContext();
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated: signedIn } = useAuthContext();
+  const isAuthenticated = previewMode ? false : signedIn;
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
@@ -203,10 +218,19 @@ function CreativeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
 
 // ── Code — programming-academy header with search + brand nav ────────────────
 
-function CodeHeader({ id, sticky }: { id?: string; sticky: boolean }) {
+function CodeHeader({
+  id,
+  sticky,
+  previewMode,
+}: {
+  id?: string;
+  sticky: boolean;
+  previewMode?: boolean;
+}) {
   const router = useRouter();
   const { name: academyName } = useAcademyContext();
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated: signedIn } = useAuthContext();
+  const isAuthenticated = previewMode ? false : signedIn;
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [query, setQuery] = useState("");

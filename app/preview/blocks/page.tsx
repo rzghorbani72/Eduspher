@@ -115,7 +115,12 @@ export default async function PreviewBlocksPage({
     (preset.theme?.text_direction as "ltr" | "rtl" | undefined) ?? "rtl";
 
   return (
-    <div style={canvasStyle} dir={canvasDir} data-theme-canvas data-edit-mode={edit || undefined}>
+    <div
+      style={canvasStyle}
+      dir={canvasDir}
+      data-theme-canvas
+      data-edit-mode={edit || undefined}
+    >
       {edit && <PreviewEditBridge />}
       {blocks.map((block, index) => {
         const animate = !edit && block.type !== "header";
@@ -142,6 +147,7 @@ export default async function PreviewBlocksPage({
               <BlocksRenderer
                 blocks={[block]}
                 includeHeaderFooter
+                previewMode
                 storeContext={storeContext}
               />
             )}
