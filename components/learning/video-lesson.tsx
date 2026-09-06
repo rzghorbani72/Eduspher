@@ -42,6 +42,8 @@ export function VideoLesson({
         onHeartbeat={onHeartbeat}
         className="shadow-sm"
       />
+      {/* Silence when saving is not allowed: "you may not download this" on every
+          lesson reads as a restriction notice, not as information. */}
       {canDownload && downloadUrl ? (
         <a
           href={downloadUrl}
@@ -50,11 +52,7 @@ export function VideoLesson({
           <Download className="size-4" aria-hidden="true" />
           {t("learning.downloadVideo")}
         </a>
-      ) : (
-        <p className="text-xs text-muted-foreground">
-          {t("learning.downloadRestricted")}
-        </p>
-      )}
+      ) : null}
     </div>
   );
 }

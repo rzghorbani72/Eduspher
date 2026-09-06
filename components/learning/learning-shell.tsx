@@ -1,21 +1,25 @@
 "use client";
 
-import { CheckCircle2, Menu, PanelRightClose } from "lucide-react";
-import { useState } from "react";
+import { PanelRightClose } from "lucide-react";
+import { useMemo, useState } from "react";
 
-import { AssignmentPanel } from "@/components/learning/assignment-panel";
+import { FreePreviewBanner } from "@/components/learning/free-preview-banner";
 import { LearningCurriculum } from "@/components/learning/learning-curriculum";
-import { LiveLesson } from "@/components/learning/live-lesson";
-import { VideoLesson } from "@/components/learning/video-lesson";
-import { LessonQuiz } from "@/components/quiz/lesson-quiz";
-import { SafeHtml } from "@/components/safe-html";
-import { Button } from "@/components/ui/button";
+import { LessonBody } from "@/components/learning/lesson-body";
+import { LessonHeader } from "@/components/learning/lesson-header";
+import { LessonNavFooter } from "@/components/learning/lesson-nav-footer";
+import { Unavailable } from "@/components/learning/unavailable";
 import type { LessonSummary, SeasonSummary } from "@/lib/api/types";
 import { getLearningLesson, getProgress } from "@/lib/api/learning";
 import { useLessonProgress } from "@/hooks/use-lesson-progress";
 import { useApiQuery } from "@/hooks/use-api-query";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, resolveAssetUrl } from "@/lib/utils";
+import {
+  completionPercent,
+  flattenLessons,
+  neighboursOf,
+} from "@/lib/learning/lesson-list";
+import { cn, toPersianDigits } from "@/lib/utils";
 
 interface LearningShellProps {
   courseId: string;
@@ -37,7 +41,7 @@ export function LearningShell({
   currentProfileId,
   storeSlug,
 }: LearningShellProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [curriculumOpen, setCurriculumOpen] = useState(false);
   const lessonId = String(selectedLesson.id);
   const {
@@ -52,142 +56,88 @@ export function LearningShell({
     queryKey: ["course-progress", courseId],
     queryFn: (signal) => getProgress({ courseId }, { signal }),
   });
-  const lessonType = (
-    selectedLesson.lesson_type ??
-    lesson?.lesson_type ??
-    "TEXT"
-  ).toUpperCase();
-  const { progress, initialPosition, heartbeat, complete, saving, saveFailed } =
-    useLessonProgress(enrollmentId, lessonId, {
-      useVideoHeartbeat: lessonType === "VIDEO",
-    });
-  const completedLessonIds = new Set(
-    courseProgress?.progress
-      .filter((item) => item.status === "COMPLETED")
-      .map((item) => item.lesson_id) ?? [],
-  );
-  if (progress?.status === "COMPLETED") completedLessonIds.add(lessonId);
 
-  const markComplete = async () => {
-    const saved = await complete();
-    if (saved) await refreshCourseProgress();
-  };
+  const flatLessons = useMemo(() => flattenLessons(seasons), [seasons]);
+  const { previous, next, current } = neighboursOf(flatLessons, lessonId);
 
   const type = (
     lesson?.lesson_type ??
     selectedLesson.lesson_type ??
     "TEXT"
   ).toUpperCase();
-  const documentUrl = resolveAssetUrl(lesson?.Document?.publicUrl);
+  const { progress, initialPosition, heartbeat, complete, saving, saveFailed } =
+    useLessonProgress(enrollmentId, lessonId, {
+      useVideoHeartbeat: type === "VIDEO",
+    });
+
+  const completedLessonIds = new Set(
+    courseProgress?.progress
+      .filter((item) => item.status === "COMPLETED")
+      .map((item) => item.lesson_id) ?? [],
+  );
+  if (progress?.status === "COMPLETED") completedLessonIds.add(lessonId);
+  const percent = completionPercent(
+    flatLessons.length,
+    completedLessonIds.size,
+  );
+
+  const markComplete = async () => {
+    const saved = await complete();
+    if (saved) await refreshCourseProgress();
+  };
+
   // The server resolves this: the allow_download_* flags are per access route,
   // so only the backend knows which one applies to THIS student. Reading the
   // raw flags here would offer a download the server then refuses.
   const canDownload = lesson?.can_download === true;
+  const isPreviewing = enrollmentId === null;
 
   return (
     <div className="mx-auto max-w-[1500px]">
-      <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0">
-          <p className="truncate text-sm text-muted-foreground">
-            {courseTitle}
-          </p>
-          <h1 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
-            {selectedLesson.title}
-          </h1>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          className="lg:hidden"
-          aria-expanded={curriculumOpen}
-          onClick={() => setCurriculumOpen((open) => !open)}
-        >
-          <Menu className="size-4" aria-hidden="true" />
-          {t("learning.curriculum")}
-        </Button>
-      </header>
+      <LessonHeader
+        courseId={courseId}
+        courseTitle={courseTitle}
+        lessonTitle={selectedLesson.title}
+        storeSlug={storeSlug}
+        position={current?.index ?? 0}
+        total={flatLessons.length}
+        curriculumOpen={curriculumOpen}
+        onToggleCurriculum={() => setCurriculumOpen((open) => !open)}
+      />
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <main className="min-w-0 space-y-6">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <main className="min-w-0 space-y-5">
+          {isPreviewing ? (
+            <FreePreviewBanner courseId={courseId} storeSlug={storeSlug} />
+          ) : null}
+
           {isLoading ? (
-            <div className="h-72 animate-pulse rounded-2xl bg-muted" />
+            <div className="aspect-video w-full animate-pulse rounded-2xl bg-muted" />
           ) : error || !lesson ? (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
-              {t("learning.lessonUnavailable")}
-            </div>
+            <Unavailable message={t("learning.lessonUnavailable")} tone="error" />
           ) : (
-            <>
-              {type === "VIDEO" ? (
-                <VideoLesson
-                  title={lesson.title}
-                  videoId={lesson.Video?.id}
-                  downloadUrl={resolveAssetUrl(lesson.video_download_url)}
-                  initialPosition={initialPosition}
-                  onHeartbeat={heartbeat}
-                  canDownload={canDownload}
-                />
-              ) : null}
-              {type === "TEXT" ? (
-                lesson.content || lesson.description ? (
-                  <SafeHtml
-                    html={lesson.content ?? lesson.description ?? ""}
-                    className="prose max-w-none rounded-2xl border border-border bg-card p-5 text-foreground shadow-sm dark:prose-invert sm:p-8"
-                  />
-                ) : (
-                  <Unavailable message={t("learning.textUnavailable")} />
-                )
-              ) : null}
-              {type === "LIVE" ? <LiveLesson lessonId={lessonId} /> : null}
-              {type === "QUIZ" ? (
-                <LessonQuiz
-                  lessonId={lessonId}
-                  currentProfileId={currentProfileId}
-                />
-              ) : null}
-              {type === "ASSIGNMENT" && enrollmentId ? (
-                <AssignmentPanel
-                  lessonId={lessonId}
-                  currentProfileId={currentProfileId}
-                />
-              ) : null}
-              {!["VIDEO", "TEXT", "LIVE", "QUIZ", "ASSIGNMENT"].includes(
-                type,
-              ) ? (
-                <Unavailable message={t("learning.lessonTypeUnavailable")} />
-              ) : null}
-              {documentUrl ? (
-                canDownload ? (
-                  <a
-                    href={documentUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
-                  >
-                    {t("learning.openLessonResource")}
-                  </a>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {t("learning.downloadRestricted")}
-                  </p>
-                )
-              ) : null}
-            </>
+            <LessonBody
+              lesson={lesson}
+              lessonId={lessonId}
+              type={type}
+              currentProfileId={currentProfileId}
+              enrollmentId={enrollmentId}
+              initialPosition={initialPosition}
+              onHeartbeat={heartbeat}
+              canDownload={canDownload}
+            />
           )}
 
-          <div className="flex justify-end border-t border-border pt-5">
-            <Button
-              type="button"
-              onClick={() => void markComplete()}
-              disabled={saving || progress?.status === "COMPLETED"}
-            >
-              <CheckCircle2 className="size-4" aria-hidden="true" />
-              {progress?.status === "COMPLETED"
-                ? t("learning.completed")
-                : saving
-                  ? t("common.saving")
-                  : t("learning.markComplete")}
-            </Button>
-          </div>
+          <LessonNavFooter
+            courseId={courseId}
+            storeSlug={storeSlug}
+            previous={previous}
+            next={next}
+            isCompleted={progress?.status === "COMPLETED"}
+            saving={saving}
+            onComplete={() => void markComplete()}
+            canTrackProgress={!isPreviewing}
+          />
           {saveFailed ? (
             <p role="alert" className="text-end text-sm text-destructive">
               {t("learning.progressSaveFailed")}
@@ -197,39 +147,67 @@ export function LearningShell({
 
         <aside
           className={cn(
-            "rounded-2xl border border-border bg-card p-3 shadow-sm lg:sticky lg:top-24 lg:block",
+            "rounded-2xl border border-border bg-card shadow-sm lg:sticky lg:top-24 lg:block",
             curriculumOpen ? "block" : "hidden",
           )}
         >
-          <div className="mb-3 flex items-center justify-between px-3 py-2">
-            <h2 className="font-semibold">{t("learning.curriculum")}</h2>
-            <button
-              type="button"
-              onClick={() => setCurriculumOpen(false)}
-              className="rounded-md p-1 text-muted-foreground hover:bg-muted lg:hidden"
-              aria-label={t("common.close")}
-            >
-              <PanelRightClose className="size-4" aria-hidden="true" />
-            </button>
+          <div className="border-b border-border p-4">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-sm font-bold">{t("learning.curriculum")}</h2>
+              <button
+                type="button"
+                onClick={() => setCurriculumOpen(false)}
+                className="rounded-md p-1 text-muted-foreground hover:bg-muted lg:hidden"
+                aria-label={t("common.close")}
+              >
+                <PanelRightClose className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+            {/* Progress needs an enrollment to be recorded against, so a preview
+                visitor is shown the lesson list without a permanent 0%. */}
+            {isPreviewing ? null : (
+              <>
+                <div
+                  className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted"
+                  role="progressbar"
+                  aria-valuenow={percent}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className="h-full rounded-full bg-primary transition-[width] duration-500"
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+                <p className="mt-1.5 text-[11px] text-muted-foreground">
+                  {t("learning.progressSummary")
+                    .replace(
+                      "{done}",
+                      toPersianDigits(completedLessonIds.size, language),
+                    )
+                    .replace(
+                      "{total}",
+                      toPersianDigits(flatLessons.length, language),
+                    )}
+                </p>
+              </>
+            )}
           </div>
-          <LearningCurriculum
-            courseId={courseId}
-            seasons={seasons}
-            selectedLessonId={lessonId}
-            completedLessonIds={completedLessonIds}
-            storeSlug={storeSlug}
-            lessonLabel={t("learning.curriculum")}
-          />
+
+          <div className="max-h-[60vh] overflow-y-auto p-2">
+            <LearningCurriculum
+              courseId={courseId}
+              seasons={seasons}
+              selectedLessonId={lessonId}
+              completedLessonIds={completedLessonIds}
+              storeSlug={storeSlug}
+              lessonLabel={t("learning.curriculum")}
+              language={language}
+              t={t}
+            />
+          </div>
         </aside>
       </div>
-    </div>
-  );
-}
-
-function Unavailable({ message }: { message: string }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
-      {message}
     </div>
   );
 }

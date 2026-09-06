@@ -999,6 +999,14 @@ export const en = {
     downloadVideo: "Download video",
     downloadRestricted:
       "Downloading this lesson is restricted by your academy.",
+    previousLesson: "Previous lesson",
+    nextLesson: "Next lesson",
+    lessonPosition: "Lesson {index} of {total}",
+    progressSummary: "{done} of {total} lessons completed",
+    freePreviewTitle: "This lesson is free",
+    freePreviewDescription: "Get the course to unlock every lesson, assignment and quiz.",
+    freePreviewCta: "View and buy the course",
+    assignmentNeedsEnrollment: "Enroll in this course to submit the assignment.",
     markComplete: "Mark as complete",
     completed: "Completed",
     progressSaveFailed:

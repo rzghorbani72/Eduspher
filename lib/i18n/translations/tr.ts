@@ -617,6 +617,14 @@ export const tr = {
     downloadVideo: "Videoyu indir",
     downloadRestricted:
       "Bu dersin indirilmesi akademiniz tarafından kısıtlanmıştır.",
+    previousLesson: "Önceki ders",
+    nextLesson: "Sonraki ders",
+    lessonPosition: "{total} dersten {index}. ders",
+    progressSummary: "{total} dersin {done} tanesi tamamlandı",
+    freePreviewTitle: "Bu ders ücretsiz",
+    freePreviewDescription: "Tüm dersleri, ödevleri ve sınavları açmak için kursu satın alın.",
+    freePreviewCta: "Kursu görüntüle ve satın al",
+    assignmentNeedsEnrollment: "Ödevi göndermek için bu kursa kaydolun.",
     markComplete: "Tamamlandı olarak işaretle",
     completed: "Tamamlandı",
     progressSaveFailed:
