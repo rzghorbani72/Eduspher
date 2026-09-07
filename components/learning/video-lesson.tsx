@@ -27,7 +27,7 @@ export function VideoLesson({
 
   if (!videoId) {
     return (
-      <div className="grid min-h-72 place-items-center rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+      <div className="grid aspect-video w-full place-items-center rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
         {t("learning.videoUnavailable")}
       </div>
     );
