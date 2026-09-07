@@ -4,6 +4,7 @@ import Link from "@/components/ui/link";
 import type { CourseAccessRow } from "@/lib/api/account-types";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/server-translations";
+import { accessTypeLabelKey } from "@/lib/courses/access-type";
 import { buildAcademyPath, formatDate } from "@/lib/utils";
 
 interface ExtraAccessListProps {
@@ -40,8 +41,13 @@ export function ExtraAccessList({
               href={buildAcademyPath(storeSlug, `/learn/${row.course_id}`)}
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-theme bg-card p-4 transition hover:border-(--theme-primary)/40"
             >
-              <span className="font-medium text-(--theme-foreground)">
-                {row.title}
+              <span className="min-w-0">
+                <span className="block font-medium text-(--theme-foreground)">
+                  {row.title}
+                </span>
+                <span className="block text-xs text-muted">
+                  {translate(accessTypeLabelKey(row.access_type))}
+                </span>
               </span>
               <span className="text-sm text-muted">
                 {row.expires_at

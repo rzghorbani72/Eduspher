@@ -1,5 +1,6 @@
 import { GraduationCap, PlayCircle, Radio } from "lucide-react";
 
+import type { CourseAccessType } from "@/lib/api/account-types";
 import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 
 export interface AccessHrefs {
@@ -34,6 +35,21 @@ export function accessTargetFor(
       href: liveClassesHref,
       actionKey: "courses.enterLiveClasses",
       icon: Radio,
+    };
+  }
+  return { href: learnHref, actionKey: "courses.enterLessons", icon: PlayCircle };
+}
+
+/** Where the "how you got in" row should send the student. */
+export function accessTargetForType(
+  type: CourseAccessType,
+  { learnHref, tutoringHref }: AccessHrefs,
+): AccessTarget {
+  if (type === "TUTORING") {
+    return {
+      href: tutoringHref,
+      actionKey: "courses.enterTutoring",
+      icon: GraduationCap,
     };
   }
   return { href: learnHref, actionKey: "courses.enterLessons", icon: PlayCircle };

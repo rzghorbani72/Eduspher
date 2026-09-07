@@ -12,6 +12,7 @@ import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { totalOf } from "@/lib/courses/purchase-options";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
 import { MyAccessPanel } from "@/components/courses/my-access-panel";
+import type { CourseAccessRow } from "@/lib/api/account-types";
 
 export interface CurrencyConfig {
   currency?: string;
@@ -32,6 +33,8 @@ interface PurchasePanelProps {
   learnHref: string;
   liveClassesHref: string;
   tutoringHref: string;
+  /** How this student got in, and until when. Null if they have no access. */
+  access: CourseAccessRow | null;
 }
 
 const CTA_KEY: Record<string, string> = {
@@ -57,6 +60,7 @@ export function PurchasePanel({
   learnHref,
   liveClassesHref,
   tutoringHref,
+  access,
 }: PurchasePanelProps) {
   const { t } = useTranslation();
   const enrollmentClosed = useEnrollmentClosed();
@@ -84,13 +88,15 @@ export function PurchasePanel({
   // A student who already holds this course — bought it, was granted it by a
   // teacher or manager, or reaches it through their student group — is a paid
   // student: they see how to keep going, never a price again.
-  const hasAccess = ownedOptions.length > 0 || continueHref !== null;
+  const hasAccess =
+    ownedOptions.length > 0 || continueHref !== null || access !== null;
 
   if (hasAccess) {
     return (
       <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
-        {ownedOptions.length > 0 ? (
+        {ownedOptions.length > 0 || access ? (
           <MyAccessPanel
+            access={access}
             owned={ownedOptions}
             learnHref={continueHref ?? learnHref}
             liveClassesHref={liveClassesHref}

@@ -304,6 +304,9 @@ export default async function CourseDetailPage({
               learnHref={learnPath}
               liveClassesHref={buildPath("/account/classes")}
               tutoringHref={buildPath("/account/tutoring")}
+              access={
+                courseAccess.find((row) => row.course_id === course.id) ?? null
+              }
             />
           </aside>
         </div>

@@ -54,12 +54,20 @@ export type AccessCourseRef = {
  * Note it carries no progress, so the courses page still joins it against
  * `GET /v1/enrollments`.
  */
+export type CourseAccessType =
+  | "STAFF_GRANT"
+  | "ONE_TIME"
+  | "BUNDLE"
+  | "SUBSCRIPTION"
+  | "TUTORING";
+
 export type CourseAccessRow = {
   course_id: string;
   title: string;
   slug: string | null;
   access: "OWNED" | "EXPIRING";
   expires_at: string | null;
+  access_type: CourseAccessType;
 };
 
 export type AssignmentSummary = {
