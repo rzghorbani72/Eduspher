@@ -97,7 +97,10 @@ export function VideoControls({ api, ready }: VideoControlsProps) {
         />
       </div>
 
-      <div className="mt-3 flex items-center gap-4 text-[#f3f2f2]">
+      {/* The control row runs left-to-right like any media player: play and the
+          clock on the left, the display controls on the right. The page around
+          it stays RTL. */}
+      <div dir="ltr" className="mt-3 flex items-center gap-4 text-[#f3f2f2]">
         <button
           type="button"
           onClick={api.togglePlay}
@@ -132,7 +135,7 @@ export function VideoControls({ api, ready }: VideoControlsProps) {
             aria-label={t("learning.volume")}
             className="h-1 w-[74px] cursor-pointer appearance-none rounded-full bg-white/25 accent-white"
             style={{
-              background: `linear-gradient(to left, #fff ${volume * 100}%, rgba(255,255,255,0.25) ${volume * 100}%)`,
+              background: `linear-gradient(to right, #fff ${volume * 100}%, rgba(255,255,255,0.25) ${volume * 100}%)`,
             }}
           />
         </div>
