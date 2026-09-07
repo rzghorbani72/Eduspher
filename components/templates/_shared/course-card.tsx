@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { resolveAssetUrl } from "@/lib/utils";
 import { sizedImageUrl } from "@/lib/images/sized-image-url";
-import { Button, Initials } from "./primitives";
+import { Initials } from "./primitives";
 import type { TemplateCourse } from "./courses-data";
 import { isSampleRecord } from "./sample-data";
 
@@ -38,8 +38,8 @@ export function TemplateCourseCard({
   const coverUrl = sizedImageUrl(resolveAssetUrl(course.coverUrl), 640);
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
-      <a href={course.href} className="block">
+    <article className="group flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
+      <a href={course.href} className="flex flex-1 flex-col cursor-pointer">
         <div
           className={thumbClassName}
           style={
@@ -68,46 +68,46 @@ export function TemplateCourseCard({
             </span>
           ) : null}
         </div>
-      </a>
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
-        <h3 className="text-[18.5px] font-bold leading-[1.45]">
-          <a href={course.href} className="hover:text-(--theme-primary)">
+        <div className="flex flex-1 flex-col gap-3 p-5">
+          <h3 className="text-[18.5px] font-bold leading-[1.45] group-hover:text-(--theme-primary)">
             {course.title}
-          </a>
-        </h3>
+          </h3>
 
-        {course.teacherName ? (
-          <p className="flex items-center gap-2.5 text-[13.5px] text-(--theme-muted)">
-            <Initials value={course.teacherInitials} className="size-7" />
-            {course.teacherName}
-          </p>
-        ) : null}
+          {course.teacherName ? (
+            <p className="flex items-center gap-2.5 text-[13.5px] text-(--theme-muted)">
+              <Initials value={course.teacherInitials} className="size-7" />
+              {course.teacherName}
+            </p>
+          ) : null}
 
-        {course.durationLabel || course.lessonsLabel ? (
-          <p className="flex flex-wrap gap-3.5 border-t border-(--theme-border-color) pt-3 text-[13px] text-(--theme-muted)">
-            {course.durationLabel ? <span>{course.durationLabel}</span> : null}
-            {course.lessonsLabel ? <span>{course.lessonsLabel}</span> : null}
-          </p>
-        ) : null}
+          {course.durationLabel || course.lessonsLabel ? (
+            <p className="flex flex-wrap gap-3.5 border-t border-(--theme-border-color) pt-3 text-[13px] text-(--theme-muted)">
+              {course.durationLabel ? <span>{course.durationLabel}</span> : null}
+              {course.lessonsLabel ? <span>{course.lessonsLabel}</span> : null}
+            </p>
+          ) : null}
 
-        <div className="mt-auto border-t border-(--theme-border-color) pt-3.5">
-          {footer ?? (
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-[17px] font-bold">{course.priceLabel}</span>
-              {spec.footer === "action" ? (
-                <Button tone="deep" size="sm" href={course.href}>
-                  جزئیات
-                </Button>
-              ) : course.ratingLabel ? (
-                <span className="text-[13px] font-bold text-(--theme-accent)">
-                  ★ {course.ratingLabel}
-                </span>
-              ) : null}
-            </div>
-          )}
+          <div className="mt-auto border-t border-(--theme-border-color) pt-3.5">
+            {footer ?? (
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-[17px] font-bold">{course.priceLabel}</span>
+                {spec.footer === "action" ? (
+                  <span
+                    className={`inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-(--theme-border-radius) border border-transparent bg-(--theme-deep) px-4 py-2.5 text-[14px] font-bold text-(--theme-on-deep) transition-opacity duration-150 group-hover:opacity-90`}
+                  >
+                    جزئیات
+                  </span>
+                ) : course.ratingLabel ? (
+                  <span className="text-[13px] font-bold text-(--theme-accent)">
+                    ★ {course.ratingLabel}
+                  </span>
+                ) : null}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </a>
     </article>
   );
 }
