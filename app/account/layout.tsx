@@ -36,7 +36,13 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   const returnTo = buildPath(currentPath);
 
   const session = await getSession();
-  if (!session?.profileId) {
+  // proxy.ts sets this when its own refresh attempt failed transiently (network
+  // blip / backend 5xx), not because the session was rejected. Repeating the
+  // redirect here on that same stale jwt would log a genuinely logged-in
+  // visitor out over a hiccup that has nothing to do with their session.
+  const refreshWasUnavailable =
+    headerStore.get("x-auth-refresh-unavailable") === "1";
+  if (!session?.profileId && !refreshWasUnavailable) {
     redirect(`${buildPath("/auth/login")}?redirect=${encodeURIComponent(returnTo)}`);
   }
 
@@ -45,7 +51,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // and the edge sends an authenticated visitor straight back out again.
   const [user, profile, academy] = await Promise.all([
     getCurrentUser().catch(() => null),
-    getProfile(String(session.profileId)),
+    session?.profileId ? getProfile(String(session.profileId)) : Promise.resolve(null),
     getCurrentAcademy()
       .catch(() => null)
       .then((found) =>

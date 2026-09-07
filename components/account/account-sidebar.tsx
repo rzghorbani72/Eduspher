@@ -1,5 +1,7 @@
 "use client";
 
+import { useTransition } from "react";
+
 import { AppImage } from "@/components/ui/app-image";
 import {
   Award,
@@ -12,6 +14,7 @@ import {
   GraduationCap,
   Home,
   LifeBuoy,
+  LogOut,
   Receipt,
   Repeat,
   UserRound,
@@ -22,6 +25,7 @@ import Link from "@/components/ui/link";
 import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { roleLabel } from "@/lib/account-labels";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { signOut } from "@/lib/sign-out";
 import { cn } from "@/lib/utils";
 
 interface AccountSidebarProps {
@@ -126,6 +130,13 @@ export function AccountSidebar({
   const format = useLocaleFormat();
   const homePath = basePath.replace(/\/account$/, "") || "/";
   const role = roleLabel(rawRole, t);
+  const [isPending, startTransition] = useTransition();
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      await signOut(homePath);
+    });
+  };
 
   return (
     <aside className="flex w-full flex-col gap-4 lg:sticky lg:top-24">
@@ -216,6 +227,16 @@ export function AccountSidebar({
         <Home size={16} className="shrink-0" />
         {t("account.backToHome")}
       </Link>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        disabled={isPending}
+        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60 lg:gap-3"
+      >
+        <LogOut size={16} className="shrink-0" />
+        {isPending ? t("common.loading") : t("auth.logout")}
+      </button>
     </aside>
   );
 }

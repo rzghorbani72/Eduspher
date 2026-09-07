@@ -700,6 +700,10 @@ export async function proxy(request: NextRequest) {
   // the visitor stays logged in for the full refresh-token lifetime (~7 days).
   let refreshedSetCookies: string[] = [];
   let dropRefreshCookie = false;
+  // "unavailable" means we could not prove the refresh token is dead (network
+  // blip / backend 5xx while calling our own refresh endpoint) — the visitor
+  // must not be bounced to login over that, only over an explicit rejection.
+  let refreshUnavailable = false;
 
   if (!isAuthenticated) {
     const refreshed = await refreshSession(request);
@@ -714,6 +718,8 @@ export async function proxy(request: NextRequest) {
       );
     } else if (refreshed.status === "invalid") {
       dropRefreshCookie = Boolean(request.cookies.get("refresh_token")?.value);
+    } else {
+      refreshUnavailable = true;
     }
   }
 
@@ -748,8 +754,10 @@ export async function proxy(request: NextRequest) {
     return redirectResponse;
   }
 
-  // If user is not authenticated and trying to access a protected route, redirect to login
-  if (!isAuthenticated && isProtectedRoute && !isPublicRoute) {
+  // If user is not authenticated and trying to access a protected route, redirect to login.
+  // Skip this when the refresh attempt itself was unavailable — a transient
+  // backend blip must not log out a visitor who may still hold a valid session.
+  if (!isAuthenticated && isProtectedRoute && !isPublicRoute && !refreshUnavailable) {
     // Build login URL with store slug if present - use absolute URL
     const loginPath = slugFromPath
       ? `/${slugFromPath}/auth/login`
@@ -798,6 +806,13 @@ export async function proxy(request: NextRequest) {
     "x-url-pathname",
     internalUrl?.pathname ?? requestUrl.pathname,
   );
+
+  // Lets a downstream server component know it must not repeat the login
+  // redirect on a stale/expired jwt — the refresh attempt above was
+  // inconclusive, not a proven-dead session.
+  if (refreshUnavailable) {
+    requestHeaders.set("x-auth-refresh-unavailable", "1");
+  }
 
   const response = internalUrl
     ? NextResponse.rewrite(internalUrl, {
