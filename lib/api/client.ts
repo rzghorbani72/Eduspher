@@ -1058,7 +1058,10 @@ export const updateStore = async (
 export type LessonLiveSession = {
   id: string;
   lesson_id: string;
+  /** Null for students — they join through `join_url` instead. */
   meeting_url: string | null;
+  /** Our own join route: re-checks access and records attendance, then forwards. */
+  join_url?: string | null;
   playback_url?: string | null;
   starts_at: string;
   ends_at?: string | null;

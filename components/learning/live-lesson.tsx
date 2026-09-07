@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { LiveStage } from "@/components/learning/live-stage";
 import { getLessonLiveSession } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { resolveAssetUrl } from "@/lib/utils";
 import { useApiQuery } from "@/hooks/use-api-query";
 import { queryKeys } from "@/lib/query/keys";
 import {
@@ -59,6 +60,9 @@ export function LiveLesson({
     );
   }
 
+  // Students get our join route (staff still get the room URL directly).
+  const joinUrl = resolveAssetUrl(data.join_url) ?? data.meeting_url ?? null;
+
   const scheduleLabel = formatLiveSchedule(
     schedule.startsAt,
     schedule.endsAt,
@@ -74,13 +78,13 @@ export function LiveLesson({
         teacherName={teacherName}
         scheduleLabel={scheduleLabel}
         startsAtMs={schedule.startsAt?.getTime() ?? null}
-        meetingUrl={data.meeting_url ?? null}
+        meetingUrl={joinUrl}
         playbackUrl={data.playback_url ?? null}
         calendarUrl={buildCalendarUrl(
           lessonTitle,
           schedule.startsAt,
           schedule.endsAt,
-          data.meeting_url ?? null,
+          joinUrl,
         )}
       />
 
