@@ -28,7 +28,7 @@ export function FreePreviewBanner({
           <p className="text-sm font-bold text-foreground">
             {t("learning.freePreviewTitle")}
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="mt-0.5 text-xs text-muted">
             {t("learning.freePreviewDescription")}
           </p>
         </div>

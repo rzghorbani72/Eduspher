@@ -72,7 +72,11 @@ export default async function LearningLessonPage({
       selectedLesson={selectedLesson}
       enrollmentId={enrollment ? String(enrollment.id) : null}
       currentProfileId={String(user.id)}
+      studentName={user.display_name ?? null}
       storeSlug={storeSlug}
+      teacherName={
+        course.Profile?.display_name ?? course.author?.display_name ?? null
+      }
     />
   );
 }

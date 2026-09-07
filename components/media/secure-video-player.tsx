@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Play, RotateCcw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-import { useTranslation } from "@/lib/i18n/hooks";
+import { VideoControls, formatClock } from "@/components/media/video-controls";
 import { useSecurePlayback } from "./use-secure-playback";
+import { useVideoControls } from "@/components/media/use-video-controls";
+import { useTranslation } from "@/lib/i18n/hooks";
 
 interface SecureVideoPlayerProps {
   videoId: string;
@@ -19,11 +22,11 @@ interface SecureVideoPlayerProps {
 }
 
 /**
- * The watermark sits in the bottom-right corner, clear of the control bar.
- * `right`, not `end`: this is placed over the video picture, which does not
+ * The watermark sits above the control bar, clear of it.
+ * `left`, not `end`: this is placed over the video picture, which does not
  * mirror in an RTL page the way the interface around it does.
  */
-const WATERMARK_POSITION = "bottom-16 right-6";
+const WATERMARK_POSITION = "bottom-[92px] left-[22px]";
 
 /**
  * The one video player for protected content.
@@ -47,9 +50,13 @@ export function SecureVideoPlayer({
   fill = false,
   className,
 }: SecureVideoPlayerProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { session, status } = useSecurePlayback(videoId, videoRef);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [retryToken, setRetryToken] = useState(0);
+  const [resumeOffered, setResumeOffered] = useState(initialPosition > 0);
+  const { session, status } = useSecurePlayback(videoId, videoRef, retryToken);
+  const controls = useVideoControls(videoRef, stageRef);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -72,29 +79,41 @@ export function SecureVideoPlayer({
     return () => video.removeEventListener("loadedmetadata", resume);
   }, [initialPosition, status]);
 
+  const shape = fill ? "h-full w-full" : "aspect-video w-full";
+
   if (status === "error") {
     // Same footprint as the player it replaces, so a failure never resizes the
     // slot it sits in.
     return (
       <div
-        className={`grid place-items-center rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-center text-sm text-muted-foreground ${
-          fill ? "h-full w-full" : "aspect-video w-full"
-        } ${className ?? ""}`}
+        className={`flex flex-col justify-center gap-3 rounded-[10px] bg-[#0d0c0c] px-[30px] text-[#f3f2f2] ${shape} ${className ?? ""}`}
       >
-        {t("learning.videoPlaybackFailed")}
+        <p className="text-[17px] font-extrabold">
+          {t("learning.videoPlaybackFailedTitle")}
+        </p>
+        <p className="text-[13px] text-white/60">
+          {t("learning.videoPlaybackFailed")}
+        </p>
+        <button
+          type="button"
+          onClick={() => setRetryToken((token) => token + 1)}
+          className="inline-flex w-fit items-center gap-2 rounded-lg bg-(--theme-primary) px-[18px] py-2.5 text-[13px] font-extrabold text-white"
+        >
+          <RotateCcw className="size-4" aria-hidden="true" />
+          {t("learning.tryAgain")}
+        </button>
       </div>
     );
   }
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl bg-black ${className ?? ""}`}
+      ref={stageRef}
+      className={`group relative overflow-hidden rounded-[10px] bg-[#0d0c0c] ${className ?? ""}`}
     >
       <video
         ref={videoRef}
-        controls
-        controlsList="nodownload noremoteplayback noplaybackrate"
-        disablePictureInPicture
+        controlsList="nodownload noremoteplayback"
         onContextMenu={(event) => event.preventDefault()}
         playsInline
         preload="metadata"
@@ -102,19 +121,59 @@ export function SecureVideoPlayer({
         aria-label={title}
         autoPlay={autoPlay}
         onEnded={onEnded}
+        onClick={controls.togglePlay}
+        onPlay={() => setResumeOffered(false)}
         onTimeUpdate={(event) => {
           if (event.currentTarget.paused) return;
           onHeartbeat?.(event.currentTarget.currentTime);
         }}
-        className={
-          fill ? "h-full w-full object-contain" : "aspect-video w-full"
-        }
+        className={fill ? "h-full w-full object-contain" : "aspect-video w-full"}
       />
+
+      {status === "ready" && !controls.playing ? (
+        <button
+          type="button"
+          onClick={controls.togglePlay}
+          aria-label={t("learning.play")}
+          className="absolute inset-0 grid place-items-center"
+        >
+          <span className="grid size-[84px] place-items-center rounded-full bg-(--theme-primary)/90 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+            <Play
+              className="size-[30px] translate-x-[2px] text-white"
+              fill="currentColor"
+              aria-hidden="true"
+            />
+          </span>
+        </button>
+      ) : null}
+
+      {status === "ready" && resumeOffered ? (
+        <div className="absolute end-[18px] top-[18px] flex items-center gap-3.5 rounded-lg border border-white/15 bg-[rgba(18,17,17,0.82)] px-3.5 py-2.5">
+          <RotateCcw className="size-4 text-white/70" aria-hidden="true" />
+          <span className="text-[13px] font-bold text-[#f3f2f2]">
+            {t("learning.continueFrom").replace(
+              "{time}",
+              formatClock(initialPosition, language),
+            )}
+          </span>
+          <span className="h-3.5 w-px bg-white/20" aria-hidden="true" />
+          <button
+            type="button"
+            onClick={() => {
+              controls.seekTo(0);
+              setResumeOffered(false);
+            }}
+            className="text-xs text-white/70 hover:text-white"
+          >
+            {t("learning.startFromBeginning")}
+          </button>
+        </div>
+      ) : null}
 
       {session?.watermark ? (
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute select-none rounded-md bg-black/25 px-2 py-1 text-[11px] font-medium text-white/60 ${WATERMARK_POSITION}`}
+          className={`pointer-events-none absolute select-none text-xs tracking-[0.05em] text-white/25 ${WATERMARK_POSITION}`}
         >
           {session.watermark}
         </span>
@@ -125,6 +184,8 @@ export function SecureVideoPlayer({
           {t("learning.videoLoading")}
         </span>
       ) : null}
+
+      <VideoControls api={controls} ready={status === "ready"} />
     </div>
   );
 }

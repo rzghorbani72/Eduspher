@@ -97,29 +97,29 @@ export function AssignmentSubmissionForm({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
+      <section className="rounded-2xl border border-theme bg-card p-5 shadow-sm sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold">{assignment.title}</h2>
             {assignment.description ? (
-              <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
+              <p className="mt-2 whitespace-pre-wrap text-sm text-muted">
                 {assignment.description}
               </p>
             ) : null}
           </div>
-          <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">
+          <span className="rounded-full bg-surface-alt px-3 py-1 text-xs font-medium">
             {format.number(assignment.max_score)} {t("learning.points")}
           </span>
         </div>
         {dueDate ? (
-          <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <p className="mt-4 flex items-center gap-2 text-sm text-muted">
             <Clock3 className="size-4" aria-hidden="true" />
             {t("learning.dueDate")}: {dueDate}
           </p>
         ) : null}
 
         {submission ? (
-          <div className="mt-6 rounded-xl bg-muted/50 p-4">
+          <div className="mt-6 rounded-xl bg-surface p-4">
             <p className="flex items-center gap-2 font-medium">
               <CheckCircle2
                 className="size-4 text-primary"
@@ -129,7 +129,7 @@ export function AssignmentSubmissionForm({
                 ? t("learning.graded")
                 : t("learning.submitted")}
               {submission.is_late ? (
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-normal">
+                <span className="rounded-full bg-surface-alt px-2 py-0.5 text-xs font-normal">
                   {t("learning.submittedLate")}
                 </span>
               ) : null}
@@ -169,11 +169,11 @@ export function AssignmentSubmissionForm({
             placeholder={t("learning.resourceLinkPlaceholder")}
             aria-label={t("learning.resourceLink")}
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted">
             {t("learning.uploadUnavailableNote")}
           </p>
           {formError ? (
-            <p className="text-sm text-destructive">{formError}</p>
+            <p className="text-sm text-red-600">{formError}</p>
           ) : null}
           <Button
             type="button"
@@ -188,7 +188,7 @@ export function AssignmentSubmissionForm({
       </section>
 
       {submission ? (
-        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
+        <section className="rounded-2xl border border-theme bg-card p-5 shadow-sm sm:p-7">
           <DiscussionThread
             submissionId={submission.id}
             currentProfileId={currentProfileId}

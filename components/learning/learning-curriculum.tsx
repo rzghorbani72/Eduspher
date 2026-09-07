@@ -1,16 +1,18 @@
 import {
-  CheckCircle2,
+  Check,
   ClipboardList,
   FileText,
   Headphones,
   HelpCircle,
   LockKeyhole,
+  Play,
   PlayCircle,
   Radio,
 } from "lucide-react";
 
 import Link from "@/components/ui/link";
-import type { LessonType, SeasonSummary } from "@/lib/api/types";
+import { MetaDot } from "@/components/learning/meta-dot";
+import type { LessonSummary, LessonType, SeasonSummary } from "@/lib/api/types";
 import { formatSeconds } from "@/components/courses/curriculum/format";
 import { flattenLessons } from "@/lib/learning/lesson-list";
 import { cn, buildAcademyPath, toPersianDigits } from "@/lib/utils";
@@ -23,6 +25,25 @@ const TYPE_ICON: Record<LessonType, typeof PlayCircle> = {
   ASSIGNMENT: ClipboardList,
   LIVE: Radio,
 };
+
+const TYPE_KEY: Record<LessonType, string> = {
+  VIDEO: "learning.typeVideo",
+  AUDIO: "learning.typeAudio",
+  TEXT: "learning.typeText",
+  QUIZ: "learning.typeQuiz",
+  ASSIGNMENT: "learning.typeAssignment",
+  LIVE: "learning.typeLive",
+};
+
+const DAY = 86_400_000;
+
+/** Days until a dated unlock, or null when the lesson is already open. */
+function daysUntilUnlock(lesson: LessonSummary): number | null {
+  if (!lesson.available_at) return null;
+  const at = new Date(lesson.available_at).getTime();
+  if (Number.isNaN(at) || at <= Date.now()) return null;
+  return Math.max(1, Math.ceil((at - Date.now()) / DAY));
+}
 
 interface LearningCurriculumProps {
   courseId: string;
@@ -52,89 +73,150 @@ export function LearningCurriculum({
   );
 
   return (
-    <nav aria-label={lessonLabel} className="space-y-4">
-      {seasons.map((season) => (
-        <section key={String(season.id)}>
-          <h3 className="px-2 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-            {season.title}
-          </h3>
-          <ol className="mt-1.5 space-y-0.5">
-            {(season.Lesson ?? []).map((lesson) => {
-              const lessonId = String(lesson.id);
-              const selected = lessonId === selectedLessonId;
-              const completed = completedLessonIds.has(lessonId);
-              const published = lesson.is_published !== false;
-              const Icon = TYPE_ICON[lesson.lesson_type ?? "TEXT"] ?? FileText;
-              const duration = formatSeconds(lesson.duration, language, t);
+    <nav aria-label={lessonLabel}>
+      {seasons.map((season) => {
+        const lessons = season.Lesson ?? [];
+        const seconds = lessons.reduce(
+          (total, lesson) => total + (lesson.duration ?? 0),
+          0,
+        );
+        return (
+          <section key={String(season.id)}>
+            <div className="flex items-center justify-between gap-3 border-b border-theme bg-surface px-[22px] py-3">
+              <h3 className="text-xs font-extrabold">{season.title}</h3>
+              {/* Separate spans, not one interpolated string: a "·" sitting
+                  between Persian digits and Persian words is a neutral
+                  character and gets reordered by the bidi algorithm. */}
+              <span className="flex shrink-0 items-center text-[11px] text-muted">
+                <span>
+                  {`${toPersianDigits(lessons.length, language)} ${t("courses.lesson")}`}
+                </span>
+                {seconds > 0 ? (
+                  <>
+                    <MetaDot />
+                    <span>{formatSeconds(seconds, language, t)}</span>
+                  </>
+                ) : null}
+              </span>
+            </div>
 
-              if (!published) {
-                return (
-                  <li key={lessonId}>
-                    <span className="flex min-h-11 items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-muted-foreground/70">
-                      <LockKeyhole className="size-4 shrink-0" aria-hidden="true" />
-                      <span className="truncate">{lesson.title}</span>
-                    </span>
-                  </li>
-                );
-              }
+            <ol>
+              {lessons.map((lesson) => {
+                const lessonId = String(lesson.id);
+                const selected = lessonId === selectedLessonId;
+                const completed = completedLessonIds.has(lessonId);
+                const unlockDays = daysUntilUnlock(lesson);
+                const locked =
+                  lesson.is_published === false || unlockDays !== null;
+                const type = lesson.lesson_type ?? "TEXT";
+                const Icon = TYPE_ICON[type] ?? FileText;
+                const duration = formatSeconds(lesson.duration, language, t);
 
-              return (
-                <li key={lessonId}>
-                  <Link
-                    href={buildAcademyPath(
-                      storeSlug,
-                      `/learn/${courseId}/${lessonId}`,
-                    )}
-                    aria-current={selected ? "page" : undefined}
-                    className={cn(
-                      "group flex min-h-11 items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors",
-                      selected
-                        ? "bg-primary/10 font-semibold text-primary"
-                        : "text-foreground hover:bg-muted",
-                    )}
-                  >
+                const body = (
+                  <>
                     <span
                       className={cn(
-                        "grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-bold",
+                        "grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-extrabold",
                         completed
-                          ? "bg-primary/15 text-primary"
+                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
                           : selected
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-muted-foreground",
+                            ? "bg-(--theme-primary) text-white"
+                            : locked
+                              ? "bg-surface-alt text-muted/70"
+                              : "bg-surface-alt text-muted",
                       )}
+                      aria-hidden="true"
                     >
                       {completed ? (
-                        <CheckCircle2 className="size-4" aria-hidden="true" />
+                        <Check className="size-3.5" strokeWidth={3} />
+                      ) : selected ? (
+                        <Play className="size-3" fill="currentColor" />
+                      ) : locked ? (
+                        <LockKeyhole className="size-3" />
                       ) : (
                         toPersianDigits(numbers.get(lessonId) ?? 0, language)
                       )}
                     </span>
 
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate">{lesson.title}</span>
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[11px] font-normal text-muted-foreground">
-                        <Icon className="size-3" aria-hidden="true" />
-                        {duration || t(`courses.kind${titleCase(lesson.lesson_type)}`)}
+                      <span className="flex items-start gap-2">
+                        <span
+                          className={cn(
+                            "flex-1 text-[13px] leading-[1.65]",
+                            selected
+                              ? "font-extrabold text-foreground"
+                              : locked
+                                ? "font-semibold text-muted/70"
+                                : completed
+                                  ? "font-semibold text-muted"
+                                  : "font-semibold text-foreground",
+                          )}
+                        >
+                          {lesson.title}
+                        </span>
+                        {lesson.is_free ? (
+                          <span className="shrink-0 rounded-full bg-(--theme-primary)/15 px-2 py-0.5 text-[10px] font-extrabold text-(--theme-primary-ink)">
+                            {t("courses.free")}
+                          </span>
+                        ) : null}
                       </span>
-                    </span>
 
-                    {lesson.is_free ? (
-                      <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
-                        {t("courses.free")}
+                      <span className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+                        <Icon className="size-3 shrink-0" aria-hidden="true" />
+                        <span>{t(TYPE_KEY[type])}</span>
+                        {duration ? (
+                          <>
+                            <MetaDot />
+                            <span>{duration}</span>
+                          </>
+                        ) : null}
                       </span>
-                    ) : null}
-                  </Link>
-                </li>
-              );
-            })}
-          </ol>
-        </section>
-      ))}
+
+                      {unlockDays !== null ? (
+                        <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-(--theme-primary)/15 px-2 py-1 text-[11px] font-semibold text-(--theme-primary-ink)">
+                          <LockKeyhole className="size-3" aria-hidden="true" />
+                          {t("learning.unlocksInDays").replace(
+                            "{days}",
+                            toPersianDigits(unlockDays, language),
+                          )}
+                        </span>
+                      ) : null}
+                    </span>
+                  </>
+                );
+
+                const rowClass = cn(
+                  "flex gap-3 border-b border-theme py-[13px] pe-[22px] transition-colors",
+                  selected
+                    ? "border-s-[3px] border-s-(--theme-primary) bg-(--theme-primary)/10 ps-[19px]"
+                    : cn("ps-[22px]", locked ? "" : "hover:bg-surface"),
+                );
+
+                return (
+                  <li key={lessonId}>
+                    {locked ? (
+                      <span className={cn(rowClass, "cursor-not-allowed")}>
+                        {body}
+                      </span>
+                    ) : (
+                      <Link
+                        href={buildAcademyPath(
+                          storeSlug,
+                          `/learn/${courseId}/${lessonId}`,
+                        )}
+                        aria-current={selected ? "page" : undefined}
+                        className={rowClass}
+                      >
+                        {body}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        );
+      })}
     </nav>
   );
-}
-
-function titleCase(type: LessonType | null | undefined): string {
-  const value = type ?? "TEXT";
-  return value.charAt(0) + value.slice(1).toLowerCase();
 }

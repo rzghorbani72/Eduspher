@@ -13,8 +13,8 @@ export function Unavailable({
       className={cn(
         "rounded-2xl border border-dashed p-6 text-center text-sm",
         tone === "error"
-          ? "border-destructive/30 bg-destructive/5 text-destructive"
-          : "border-border bg-muted/30 text-muted-foreground",
+          ? "border-red-500/30 bg-red-500/5 text-red-600"
+          : "border-theme bg-surface text-muted",
       )}
     >
       {message}

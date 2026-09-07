@@ -1,21 +1,33 @@
 "use client";
 
-import { CalendarClock, ExternalLink, Video } from "lucide-react";
+import { Info } from "lucide-react";
+import { useMemo } from "react";
 
-import { Button } from "@/components/ui/button";
+import { LiveStage } from "@/components/learning/live-stage";
 import { getLessonLiveSession } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { useApiQuery } from "@/hooks/use-api-query";
 import { queryKeys } from "@/lib/query/keys";
+import {
+  buildCalendarUrl,
+  formatLiveSchedule,
+  resolveLiveSchedule,
+} from "@/lib/learning/live-schedule";
 
 /** The join link is time-gated server-side, so re-poll to catch it opening. */
 const LIVE_SESSION_REFRESH_MS = 60_000;
 
 interface LiveLessonProps {
   lessonId: string;
+  lessonTitle: string;
+  teacherName: string | null;
 }
 
-export function LiveLesson({ lessonId }: LiveLessonProps) {
+export function LiveLesson({
+  lessonId,
+  lessonTitle,
+  teacherName,
+}: LiveLessonProps) {
   const { t, language } = useTranslation();
   const { data, error, isLoading } = useApiQuery({
     queryKey: queryKeys.liveLesson(lessonId),
@@ -23,82 +35,72 @@ export function LiveLesson({ lessonId }: LiveLessonProps) {
     refetchInterval: LIVE_SESSION_REFRESH_MS,
   });
 
+  const schedule = useMemo(
+    () => (data ? resolveLiveSchedule(data) : null),
+    [data],
+  );
+
   if (isLoading) {
     return (
-      <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+      <div className="grid aspect-video w-full place-items-center rounded-[10px] bg-[#0d0c0c] text-sm text-white/70">
+        {t("common.loading")}
+      </div>
     );
   }
 
-  if (error || !data) {
+  if (error || !data || !schedule) {
     return (
-      <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center">
+      <div className="rounded-[10px] border border-dashed border-theme bg-surface p-6 text-center">
         <p className="font-medium">{t("learning.liveUnavailable")}</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-muted">
           {t("learning.liveUnavailableDescription")}
         </p>
       </div>
     );
   }
 
-  const startsAt = new Date(data.starts_at);
-  const date = Number.isNaN(startsAt.getTime())
-    ? data.starts_at
-    : new Intl.DateTimeFormat(language, {
-        dateStyle: "full",
-        timeStyle: "short",
-        hourCycle: "h23",
-        timeZone: data.timezone || undefined,
-      }).format(startsAt);
+  const scheduleLabel = formatLiveSchedule(
+    schedule.startsAt,
+    schedule.endsAt,
+    data.timezone,
+    language,
+    t("learning.timeRangeTo"),
+  );
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
-      <div className="flex items-start gap-4">
-        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-          <Video className="size-5" aria-hidden="true" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h2 className="font-semibold">{t("learning.liveClass")}</h2>
-          <p className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
-            <CalendarClock
-              className="mt-0.5 size-4 shrink-0"
-              aria-hidden="true"
-            />
-            <span>{date}</span>
+    <div className="space-y-3">
+      <LiveStage
+        phase={schedule.phase}
+        teacherName={teacherName}
+        scheduleLabel={scheduleLabel}
+        startsAtMs={schedule.startsAt?.getTime() ?? null}
+        meetingUrl={data.meeting_url ?? null}
+        playbackUrl={data.playback_url ?? null}
+        calendarUrl={buildCalendarUrl(
+          lessonTitle,
+          schedule.startsAt,
+          schedule.endsAt,
+          data.meeting_url ?? null,
+        )}
+      />
+
+      {data.notes ? (
+        <div className="rounded-[10px] border border-theme bg-card p-4">
+          <p className="text-[11px] font-extrabold text-(--theme-primary-ink)">
+            {t("learning.teacherNote")}
           </p>
-          {data.notes ? (
-            <p className="mt-3 whitespace-pre-wrap text-sm">{data.notes}</p>
-          ) : null}
-          <div className="mt-5 flex flex-wrap gap-3">
-            {data.meeting_url ? (
-              <Button asChild>
-                <a
-                  href={data.meeting_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t("learning.joinClass")}
-                  <ExternalLink className="size-4" aria-hidden="true" />
-                </a>
-              </Button>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                {t("learning.joinLinkUnavailable")}
-              </p>
-            )}
-            {data.playback_url ? (
-              <Button asChild variant="outline">
-                <a
-                  href={data.playback_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {t("courses.livePlayback")}
-                </a>
-              </Button>
-            ) : null}
-          </div>
+          <p className="mt-1.5 whitespace-pre-wrap text-[13px] leading-[1.95]">
+            {data.notes}
+          </p>
         </div>
-      </div>
+      ) : null}
+
+      {schedule.phase === "LIVE" ? (
+        <div className="flex items-start gap-2.5 rounded-lg border border-theme bg-card px-3.5 py-3 text-[13px] text-muted">
+          <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <span>{t("learning.liveJoinHint")}</span>
+        </div>
+      ) : null}
     </div>
   );
 }

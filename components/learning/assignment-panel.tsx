@@ -25,19 +25,19 @@ export function AssignmentPanel({
 
   if (assignmentError) {
     return (
-      <p className="text-sm text-destructive">
+      <p className="text-sm text-red-600">
         {t("learning.assignmentUnavailable")}
       </p>
     );
   }
   if (!assignmentData) {
     return (
-      <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+      <p className="text-sm text-muted">{t("common.loading")}</p>
     );
   }
   if (!assignment) {
     return (
-      <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-dashed border-theme bg-surface p-6 text-center text-sm text-muted">
         {t("learning.assignmentUnavailable")}
       </div>
     );

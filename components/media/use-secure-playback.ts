@@ -29,6 +29,8 @@ type Status = "idle" | "loading" | "ready" | "error";
 export function useSecurePlayback(
   videoId: string | null | undefined,
   videoRef: React.RefObject<HTMLVideoElement | null>,
+  /** Bump to open a fresh watch session after a failure. */
+  retryToken = 0,
 ) {
   const [session, setSession] = useState<PlaybackSession | null>(null);
   const [status, setStatus] = useState<Status>("idle");
@@ -135,7 +137,7 @@ export function useSecurePlayback(
       destroyRef.current?.();
       destroyRef.current = null;
     };
-  }, [videoId, videoRef]);
+  }, [videoId, videoRef, retryToken]);
 
   return { session, status };
 }

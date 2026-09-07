@@ -8,27 +8,36 @@ import { SecureVideoPlayer } from "@/components/media/secure-video-player";
 interface VideoLessonProps {
   title: string;
   videoId?: string | null;
-  /** Only set when the server allows this student to save a copy. */
-  downloadUrl?: string | null;
   initialPosition: number;
   onHeartbeat: (position: number) => void;
+  /** Only set when the server allows this viewer to save a copy. */
+  downloadUrl?: string | null;
   canDownload?: boolean;
 }
 
+/**
+ * The recorded stage. On a lesson page downloads live in the attachments tab,
+ * so the link below is only rendered where a caller passes one.
+ */
 export function VideoLesson({
   title,
   videoId,
-  downloadUrl,
   initialPosition,
   onHeartbeat,
+  downloadUrl,
   canDownload = false,
 }: VideoLessonProps) {
   const { t } = useTranslation();
 
   if (!videoId) {
     return (
-      <div className="grid aspect-video w-full place-items-center rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
-        {t("learning.videoUnavailable")}
+      <div className="flex aspect-video w-full flex-col justify-center gap-2 rounded-[10px] border border-dashed border-theme bg-surface px-8 text-center">
+        <p className="text-base font-extrabold">
+          {t("learning.videoUnavailable")}
+        </p>
+        <p className="text-[13px] text-muted">
+          {t("learning.videoUnavailableDescription")}
+        </p>
       </div>
     );
   }
@@ -42,12 +51,10 @@ export function VideoLesson({
         onHeartbeat={onHeartbeat}
         className="shadow-sm"
       />
-      {/* Silence when saving is not allowed: "you may not download this" on every
-          lesson reads as a restriction notice, not as information. */}
       {canDownload && downloadUrl ? (
         <a
           href={downloadUrl}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-(--theme-primary-ink) underline-offset-4 hover:underline"
         >
           <Download className="size-4" aria-hidden="true" />
           {t("learning.downloadVideo")}
