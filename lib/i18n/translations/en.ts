@@ -198,6 +198,8 @@ export const en = {
     tabInstructor: "Instructor",
     tabReviews: "Reviews",
     aboutCourse: "About this course",
+    showMore: "Show more",
+    showLess: "Show less",
     courseInstructor: "Course instructor",
     noInstructorInfo: "Instructor information is not available.",
     hours: "hours",

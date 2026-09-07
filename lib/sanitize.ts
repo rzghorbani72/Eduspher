@@ -13,6 +13,12 @@ export function sanitizeHtml(
   dirty: string,
   config?: Config
 ): string {
+  // DOMPurify needs a browser DOM. Markdown already escapes raw HTML
+  // before parse, so the server can return the marked output as-is.
+  if (typeof window === "undefined") {
+    return dirty;
+  }
+
   // Default configuration - allows common formatting tags
   const defaultConfig: Config = {
     ALLOWED_TAGS: [
@@ -71,6 +77,9 @@ export function sanitizeRichText(dirty: string): string {
  * Use for user-generated content that should not contain any HTML
  */
 export function sanitizePlainText(dirty: string): string {
+  if (typeof window === "undefined") {
+    return dirty.replace(/<[^>]*>/g, "");
+  }
   return DOMPurify.sanitize(dirty, {
     ALLOWED_TAGS: [],
     ALLOWED_ATTR: [],

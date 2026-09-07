@@ -5,8 +5,10 @@ import type { CourseContentStats } from "@/lib/courses/curriculum";
 import { formatDate, toPersianDigits } from "@/lib/utils";
 import { t } from "@/lib/i18n/server-translations";
 import { isLiveCourse } from "@/lib/courses/live-course";
+import { renderMarkdown } from "@/lib/markdown";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { AppImage } from "@/components/ui/app-image";
+import { CollapsibleHtml } from "@/components/courses/collapsible-html";
 
 interface CourseHeroProps {
   course: CourseSummary;
@@ -46,6 +48,8 @@ export function CourseHero({
   // Only the course type decides this: a recorded course never reads as live,
   // even if an old lesson still carries a live session.
   const isLive = isLiveCourse(course);
+  const descriptionMarkdown =
+    course.description?.trim() || course.short_description?.trim() || "";
 
   return (
     <section className="cd-hero relative overflow-hidden -mt-8 sm:-mt-10 lg:-mt-12">
@@ -97,11 +101,14 @@ export function CourseHero({
           {course.title}
         </h1>
 
-        {course.short_description && (
-          <p className="cd-hero-desc mt-3.5 max-w-[680px] text-lg leading-relaxed">
-            {course.short_description}
-          </p>
-        )}
+        {descriptionMarkdown ? (
+          <CollapsibleHtml
+            html={renderMarkdown(descriptionMarkdown)}
+            className="prose-description cd-hero-desc mt-3.5 max-w-[680px] text-lg leading-relaxed"
+            collapsedClassName="max-h-[7.5rem]"
+            toggleClassName="text-white/90 hover:text-white"
+          />
+        ) : null}
 
         <div className="mt-6 flex flex-wrap items-center gap-5">
           {course.rating != null && course.rating > 0 && (

@@ -197,6 +197,8 @@ export const fa = {
     tabInstructor: "مدرس",
     tabReviews: "نظرات",
     aboutCourse: "دربارهٔ این دوره",
+    showMore: "نمایش بیشتر",
+    showLess: "نمایش کمتر",
     courseInstructor: "مدرس این دوره",
     noInstructorInfo: "اطلاعات مدرس موجود نیست.",
     hours: "ساعت",

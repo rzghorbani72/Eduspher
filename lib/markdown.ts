@@ -63,11 +63,26 @@ function healPaddedEmphasis(markdown: string): string {
   );
 }
 
+/**
+ * ATX headings only work at the start of a line. Authors often type
+ * `## Title` in the middle of a paragraph, so a newline is inserted first.
+ */
+function healInlineHeadings(markdown: string): string {
+  return markdown.replace(
+    /(?<!^)(?<!\n)[ \t]+(#{1,4}[ \t]+\S)/gm,
+    "\n\n$1",
+  );
+}
+
 function toHtml(markdown: string): string {
-  const html = marked.parse(escapeRawHtml(healPaddedEmphasis(markdown)), {
-    async: false,
-    breaks: true,
-  });
+  const html = marked.parse(
+    healInlineHeadings(escapeRawHtml(healPaddedEmphasis(markdown))),
+    {
+      async: false,
+      breaks: true,
+      gfm: true,
+    },
+  );
   return stripUnsafeHrefs(html);
 }
 

@@ -26,6 +26,7 @@ import { getCourseAccess } from "@/lib/api/account-server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
+import { markdownToPlainText } from "@/lib/markdown";
 import { getAcademyShareImageUrl } from "@/lib/seo/share-image";
 import { t } from "@/lib/i18n/server-translations";
 import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
@@ -59,9 +60,9 @@ export async function generateMetadata({
   const title = course.meta_title?.trim() || course.title;
   const description = truncate(
     course.meta_description?.trim() ||
-      course.short_description ||
-      course.description ||
-      course.title,
+      markdownToPlainText(
+        course.short_description || course.description || course.title,
+      ),
     160,
   );
   const keywords = course.keywords ?? [];

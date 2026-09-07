@@ -1,5 +1,6 @@
 import type { CourseSummary } from "@/lib/api/types";
 import type { CourseContentStats } from "@/lib/courses/curriculum";
+import { markdownToPlainText } from "@/lib/markdown";
 
 interface CourseJsonLdInput {
   course: CourseSummary;
@@ -38,9 +39,9 @@ export function buildCourseJsonLd({
     name: course.title,
     description:
       course.meta_description?.trim() ||
-      course.short_description ||
-      course.description ||
-      course.title,
+      markdownToPlainText(
+        course.short_description || course.description || course.title,
+      ),
     url: canonicalUrl,
     inLanguage: course.language ?? "fa",
     provider: {

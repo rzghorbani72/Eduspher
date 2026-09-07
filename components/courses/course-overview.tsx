@@ -6,6 +6,7 @@ import Link from "@/components/ui/link";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { toPersianDigits } from "@/lib/utils";
 import { renderMarkdown } from "@/lib/markdown";
+import { CollapsibleHtml } from "@/components/courses/collapsible-html";
 import type { CourseSummary } from "@/lib/api/types";
 import type { CourseContentStats } from "@/lib/courses/curriculum";
 import { parseAuthoredList } from "@/lib/courses/curriculum";
@@ -90,9 +91,11 @@ export function CourseOverview({
           <h2 className="mb-3 text-xl font-black text-(--theme-foreground)">
             {t("courses.aboutCourse")}
           </h2>
-          <div
+          <CollapsibleHtml
+            html={renderMarkdown(course.description)}
             className="prose-description text-sm leading-loose text-(--theme-muted)"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(course.description) }}
+            collapsedClassName="max-h-[12rem]"
+            toggleClassName="text-(--theme-primary)"
           />
         </div>
       )}

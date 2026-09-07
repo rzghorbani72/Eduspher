@@ -2823,3 +2823,7 @@ select[class*="rounded-sm"] {
   border-top: 1px solid currentColor;
   opacity: 0.2;
 }
+.prose-description s,
+.prose-description del {
+  text-decoration: line-through;
+}
