@@ -15,6 +15,7 @@ test.describe('edusphere security headers (smoke)', () => {
     expect(h['x-content-type-options']).toBe('nosniff');
     expect(h['referrer-policy']).toBeTruthy();
     expect(h['content-security-policy']).toContain("frame-ancestors 'none'");
+    expect(h['content-security-policy']).toContain('worker-src');
     // No legacy powered-by leak.
     expect(h['x-powered-by']).toBeFalsy();
   });
