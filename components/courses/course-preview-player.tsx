@@ -51,6 +51,7 @@ export function CoursePreviewPlayer({
             key={videoId}
             videoId={videoId}
             title={selected?.title ?? coverAlt}
+            poster={coverUrl}
             autoPlay={autoPlay}
             fill
             className="h-full w-full"

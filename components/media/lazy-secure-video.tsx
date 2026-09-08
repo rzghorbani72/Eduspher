@@ -37,6 +37,7 @@ export function LazySecureVideo({
       <SecureVideoPlayer
         videoId={videoId}
         title={title}
+        poster={poster}
         autoPlay
         fill
         className={className}

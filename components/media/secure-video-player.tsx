@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { VideoControls, formatClock } from "@/components/media/video-controls";
 import { useSecurePlayback } from "./use-secure-playback";
+import { VideoPreparingPoster } from "./video-preparing-poster";
 import { useVideoControls } from "@/components/media/use-video-controls";
 import { useTranslation } from "@/lib/i18n/hooks";
 
@@ -18,6 +19,8 @@ interface SecureVideoPlayerProps {
   autoPlay?: boolean;
   /** Fill the parent box instead of holding a 16:9 ratio of its own. */
   fill?: boolean;
+  /** Shown until the first frame plays — course cover, or the video poster. */
+  poster?: string | null;
   className?: string;
 }
 
@@ -48,6 +51,7 @@ export function SecureVideoPlayer({
   onEnded,
   autoPlay = false,
   fill = false,
+  poster = null,
   className,
 }: SecureVideoPlayerProps) {
   const { t, language } = useTranslation();
@@ -55,8 +59,10 @@ export function SecureVideoPlayer({
   const stageRef = useRef<HTMLDivElement>(null);
   const [retryToken, setRetryToken] = useState(0);
   const [resumeOffered, setResumeOffered] = useState(initialPosition > 0);
+  const [hasStarted, setHasStarted] = useState(false);
   const { session, status } = useSecurePlayback(videoId, videoRef, retryToken);
   const controls = useVideoControls(videoRef, stageRef);
+  const posterSrc = poster ?? session?.poster;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -117,18 +123,25 @@ export function SecureVideoPlayer({
         onContextMenu={(event) => event.preventDefault()}
         playsInline
         preload="metadata"
-        poster={session?.poster ?? undefined}
+        poster={posterSrc ?? undefined}
         aria-label={title}
         autoPlay={autoPlay}
         onEnded={onEnded}
         onClick={controls.togglePlay}
-        onPlay={() => setResumeOffered(false)}
+        onPlay={() => {
+          setResumeOffered(false);
+          setHasStarted(true);
+        }}
         onTimeUpdate={(event) => {
           if (event.currentTarget.paused) return;
           onHeartbeat?.(event.currentTarget.currentTime);
         }}
         className={fill ? "h-full w-full object-contain" : "aspect-video w-full"}
       />
+
+      {posterSrc && !hasStarted ? (
+        <VideoPreparingPoster src={posterSrc} />
+      ) : null}
 
       {status === "ready" && !controls.playing ? (
         <button
@@ -180,7 +193,7 @@ export function SecureVideoPlayer({
       ) : null}
 
       {status === "loading" ? (
-        <span className="pointer-events-none absolute inset-0 grid place-items-center text-sm text-white/70">
+        <span className="pointer-events-none absolute inset-0 grid place-items-center bg-black/25 text-sm text-white/90">
           {t("learning.videoLoading")}
         </span>
       ) : null}
