@@ -14,7 +14,14 @@ type Cycle = "monthly" | "quarterly";
 
 type Props = {
   loginUrl: string;
-  /** Live plans. Prices come from here; the tagline and feature list stay curated. */
+  /**
+   * Live plans. Price and the feature bullets both come from here — the
+   * bullets are generated server-side from the same limits the plan actually
+   * enforces (see Backend/prisma/plans.seed.ts), so they can never drift from
+   * what a manager really gets. Tagline/name/CTA stay curated prose; the
+   * `features` arrays below `LANDING.pricing.plans` are a fallback only, for
+   * when the API could not be reached at all.
+   */
   plans?: PublicPlan[];
   /** "h1" when the section is the whole page, not a block on the landing page. */
   as?: "h1" | "h2";
@@ -133,6 +140,10 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
             const upcoming = live?.upcoming_price ?? null;
             const isFeatured = plan.featured;
             const showDiscount = cycle === "quarterly" && q.discountPercent > 0;
+            const features =
+              live?.features && live.features.length > 0
+                ? live.features
+                : plan.features;
 
             return (
               <article
@@ -205,7 +216,7 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
                 ) : null}
 
                 <ul className="mt-6 flex flex-1 flex-col gap-2.5">
-                  {plan.features.map((feature) => (
+                  {features.map((feature) => (
                     <li
                       key={feature}
                       className="flex items-start gap-2 text-[13px] leading-[1.7] text-lp-ink/80"
