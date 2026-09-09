@@ -17,9 +17,9 @@ import { useLessonProgress } from "@/hooks/use-lesson-progress";
 import { useApiQuery } from "@/hooks/use-api-query";
 import { useTranslation } from "@/lib/i18n/hooks";
 import {
-  completionPercent,
   flattenLessons,
   neighboursOf,
+  watchPercent,
 } from "@/lib/learning/lesson-list";
 import {
   buildAcademyPath,
@@ -83,7 +83,7 @@ export function LearningShell({
   ).toUpperCase();
   const { progress, initialPosition, heartbeat, complete, saving, saveFailed } =
     useLessonProgress(enrollmentId, lessonId, {
-      useVideoHeartbeat: type === "VIDEO",
+      useVideoHeartbeat: type === "VIDEO" || type === "AUDIO",
     });
 
   const completedLessonIds = new Set(
@@ -92,10 +92,10 @@ export function LearningShell({
       .map((item) => item.lesson_id) ?? [],
   );
   if (progress?.status === "COMPLETED") completedLessonIds.add(lessonId);
-  const percent = completionPercent(
-    flatLessons.length,
-    completedLessonIds.size,
-  );
+  const percent = watchPercent(flatLessons, [
+    ...(courseProgress?.progress ?? []),
+    ...(progress ? [progress] : []),
+  ]);
 
   const markComplete = async () => {
     const saved = await complete();

@@ -14,7 +14,7 @@ interface SecureVideoPlayerProps {
   title: string;
   /** Seconds to resume from, 0 for the start. */
   initialPosition?: number;
-  onHeartbeat?: (position: number) => void;
+  onHeartbeat?: (position: number, duration?: number) => void;
   onEnded?: () => void;
   autoPlay?: boolean;
   /** Fill the parent box instead of holding a 16:9 ratio of its own. */
@@ -150,7 +150,12 @@ export function SecureVideoPlayer({
         }}
         onTimeUpdate={(event) => {
           if (event.currentTarget.paused) return;
-          onHeartbeat?.(event.currentTarget.currentTime);
+          onHeartbeat?.(
+            event.currentTarget.currentTime,
+            Number.isFinite(event.currentTarget.duration)
+              ? event.currentTarget.duration
+              : undefined,
+          );
         }}
         className={fill ? "h-full w-full object-contain" : "aspect-video w-full"}
       />

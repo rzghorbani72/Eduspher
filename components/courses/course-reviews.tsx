@@ -84,6 +84,12 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
         <CourseReviewForm courseId={courseId} onSubmitted={loadReviews} />
       )}
 
+      {isLoggedIn && data?.summary.is_enrolled && !data.summary.can_review && (
+        <p className="cd-review-card rounded-2xl border p-5 text-sm text-(--theme-muted)">
+          {t("courses.reviewWatchHalf")}
+        </p>
+      )}
+
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-(--theme-primary)" />

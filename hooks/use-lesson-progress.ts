@@ -15,6 +15,7 @@ import { useApiQuery } from "@/hooks/use-api-query";
 import { queryKeys } from "@/lib/query/keys";
 
 const HEARTBEAT_SECONDS = 15;
+const SEEK_GAP_SECONDS = 2.5;
 
 /**
  * Progress belongs to an enrollment. A free lesson opened by someone who has not
@@ -47,6 +48,7 @@ export function useLessonProgress(
   const lastSavedPosition = useRef(0);
   const currentPosition = useRef(0);
   const lastHeartbeatAt = useRef(0);
+  const mediaDuration = useRef(0);
   const pendingSave = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
@@ -98,19 +100,25 @@ export function useLessonProgress(
   );
 
   const persistVideoHeartbeat = useCallback(
-    async (position: number, activeSeconds: number, segmentStart: number) => {
+    async (
+      position: number,
+      activeSeconds: number,
+      segmentStart: number,
+      duration?: number,
+    ) => {
       if (!enrollmentId) return false;
       await awaitPending();
       setSaving(true);
       setSaveFailed(false);
       const request = (async () => {
-        await recordVideoHeartbeat({
+        const result = await recordVideoHeartbeat({
           lessonId,
           enrollmentId,
           lastPosition: position,
           activeSeconds,
           segmentStart,
           segmentEnd: position,
+          duration,
         });
         lastSavedPosition.current = position;
         lastHeartbeatAt.current = position;
@@ -122,6 +130,10 @@ export function useLessonProgress(
                   ...current,
                   last_position: position,
                   watch_time: (current.watch_time ?? 0) + activeSeconds,
+                  covered_seconds:
+                    result.covered_seconds ?? current.covered_seconds,
+                  media_duration:
+                    result.media_duration ?? current.media_duration,
                   status:
                     current.status === "COMPLETED"
                       ? "COMPLETED"
@@ -129,6 +141,7 @@ export function useLessonProgress(
                 }
               : current,
         );
+        void queryClient.invalidateQueries({ queryKey: ["course-progress"] });
       })();
       pendingSave.current = request;
       try {
@@ -147,18 +160,29 @@ export function useLessonProgress(
   );
 
   const heartbeat = useCallback(
-    (position: number) => {
+    (position: number, duration?: number) => {
+      if (duration && Number.isFinite(duration) && duration > 0) {
+        mediaDuration.current = duration;
+      }
+      const previous = currentPosition.current;
+      const jump = position - previous;
       currentPosition.current = position;
-      const delta = position - lastHeartbeatAt.current;
-      if (delta < HEARTBEAT_SECONDS) return;
+      if (jump < 0 || jump > SEEK_GAP_SECONDS) {
+        lastHeartbeatAt.current = position;
+        return;
+      }
+
+      const played = position - lastHeartbeatAt.current;
+      if (played < HEARTBEAT_SECONDS) return;
 
       if (useVideoHeartbeat) {
         const segmentStart = lastHeartbeatAt.current;
         lastHeartbeatAt.current = position;
         void persistVideoHeartbeat(
           position,
-          Math.min(120, Math.max(1, Math.floor(delta))),
+          Math.min(120, Math.max(1, Math.floor(played))),
           Math.floor(segmentStart),
+          mediaDuration.current || undefined,
         );
         return;
       }
@@ -179,6 +203,7 @@ export function useLessonProgress(
           position,
           Math.min(120, Math.max(1, Math.floor(delta))),
           Math.floor(lastHeartbeatAt.current),
+          mediaDuration.current || undefined,
         );
         return;
       }

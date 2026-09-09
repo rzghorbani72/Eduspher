@@ -589,6 +589,7 @@ export const ar = {
     videoLoading: "جارٍ تجهيز التشغيل الآمن…",
     videoPlaybackFailed: "تعذر تشغيل هذا الفيديو. يرجى تحديث الصفحة.",
     videoUnavailable: "لم يتم نشر فيديو الدرس بعد.",
+    audioUnavailable: "لم يتم نشر صوت الدرس بعد.",
     textUnavailable: "لم يتم نشر نص الدرس بعد.",
     liveClass: "صف مباشر",
     liveUnavailable: "تفاصيل الصف المباشر غير متاحة",

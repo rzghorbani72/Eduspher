@@ -9,7 +9,7 @@ interface VideoLessonProps {
   title: string;
   videoId?: string | null;
   initialPosition: number;
-  onHeartbeat: (position: number) => void;
+  onHeartbeat: (position: number, duration?: number) => void;
   /** Only set when the server allows this viewer to save a copy. */
   downloadUrl?: string | null;
   canDownload?: boolean;

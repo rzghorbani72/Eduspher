@@ -45,3 +45,41 @@ export function completionPercent(
   if (total <= 0) return 0;
   return Math.min(100, Math.round((completed / total) * 100));
 }
+
+export type LessonWatchProgress = {
+  lesson_id: string;
+  status?: string | null;
+  covered_seconds?: number | null;
+  media_duration?: number | null;
+};
+
+/** Unique watch/listen coverage + completed exams, as 0–100. */
+export function watchPercent(
+  lessons: readonly FlatLesson[],
+  progressRows: readonly LessonWatchProgress[],
+): number {
+  if (lessons.length === 0) return 0;
+  const byId = new Map(progressRows.map((row) => [row.lesson_id, row]));
+  let total = 0;
+  for (const item of lessons) {
+    const row = byId.get(item.id);
+    const type = (item.lesson.lesson_type ?? "TEXT").toUpperCase();
+    if (type === "VIDEO" || type === "AUDIO") {
+      const duration =
+        row?.media_duration ||
+        item.lesson.duration ||
+        item.lesson.Video?.duration ||
+        item.lesson.Audio?.duration ||
+        0;
+      const covered = row?.covered_seconds ?? 0;
+      if (duration > 0) {
+        total += Math.min(1, covered / duration);
+      } else {
+        total += row?.status === "COMPLETED" ? 1 : 0;
+      }
+    } else {
+      total += row?.status === "COMPLETED" ? 1 : 0;
+    }
+  }
+  return Math.min(100, Math.round((total / lessons.length) * 100));
+}

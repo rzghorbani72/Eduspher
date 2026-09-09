@@ -23,6 +23,8 @@ export interface LearningProgress {
   status: ProgressStatus;
   watch_time: number;
   last_position: number;
+  covered_seconds?: number;
+  media_duration?: number;
   completed_at?: string | null;
   updated_at: string;
   Lesson?: {
@@ -276,25 +278,33 @@ export const recordVideoHeartbeat = async (payload: {
   activeSeconds: number;
   segmentStart?: number;
   segmentEnd?: number;
+  duration?: number;
 }) => {
-  const response = await postJson<Envelope<{ id: string }>>(
-    "/learning-record/video-heartbeat",
-    {
-      lesson_id: payload.lessonId,
-      enrollment_id: payload.enrollmentId,
-      last_position: Math.max(0, Math.floor(payload.lastPosition)),
-      active_seconds: Math.min(
-        120,
-        Math.max(0, Math.floor(payload.activeSeconds)),
-      ),
-      ...(payload.segmentStart !== undefined
-        ? { segment_start: Math.max(0, Math.floor(payload.segmentStart)) }
-        : {}),
-      ...(payload.segmentEnd !== undefined
-        ? { segment_end: Math.max(0, Math.floor(payload.segmentEnd)) }
-        : {}),
-    },
-  );
+  const response = await postJson<
+    Envelope<{
+      id: string;
+      covered_seconds?: number;
+      media_duration?: number;
+      progress_percent?: number;
+    }>
+  >("/learning-record/video-heartbeat", {
+    lesson_id: payload.lessonId,
+    enrollment_id: payload.enrollmentId,
+    last_position: Math.max(0, Math.floor(payload.lastPosition)),
+    active_seconds: Math.min(
+      120,
+      Math.max(0, Math.floor(payload.activeSeconds)),
+    ),
+    ...(payload.segmentStart !== undefined
+      ? { segment_start: Math.max(0, Math.floor(payload.segmentStart)) }
+      : {}),
+    ...(payload.segmentEnd !== undefined
+      ? { segment_end: Math.max(0, Math.floor(payload.segmentEnd)) }
+      : {}),
+    ...(payload.duration !== undefined && payload.duration > 0
+      ? { duration: Math.max(1, Math.floor(payload.duration)) }
+      : {}),
+  });
   return response.data;
 };
 

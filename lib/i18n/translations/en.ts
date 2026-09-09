@@ -264,6 +264,8 @@ export const en = {
     submittingReview: "Submitting…",
     reviewSubmitted: "Thanks! Your review has been saved.",
     reviewEnrollFirst: "Only enrolled students can review this course.",
+    reviewWatchHalf:
+      "You can leave a rating after watching at least half of this course. Progress is counted from the video and audio you actually play, and from exams you submit.",
     reviewError: "Could not submit your review. Please try again.",
     curriculumTitle: "Course content",
     sectionsLabel: "sections",
@@ -1047,6 +1049,7 @@ export const en = {
     videoLoading: "Preparing secure playback…",
     videoPlaybackFailed: "This video could not be played. Please refresh the page.",
     videoUnavailable: "The lesson video has not been published yet.",
+    audioUnavailable: "The lesson audio has not been published yet.",
     textUnavailable: "The lesson text has not been published yet.",
     liveClass: "Live class",
     liveUnavailable: "Live class details are unavailable",

@@ -3,6 +3,7 @@ export interface MediaAsset {
   publicUrl: string;
   title?: string | null;
   alt?: string | null;
+  duration?: number | null;
 }
 
 export interface CategorySummary {

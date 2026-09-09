@@ -1,5 +1,6 @@
 "use client";
 
+import { AudioLesson } from "@/components/learning/audio-lesson";
 import { AssignmentPanel } from "@/components/learning/assignment-panel";
 import {
   LessonAttachments,
@@ -16,7 +17,7 @@ import type { LessonDetail } from "@/lib/api/learning";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { resolveAssetUrl, toPersianDigits } from "@/lib/utils";
 
-const KNOWN_TYPES = ["VIDEO", "TEXT", "LIVE", "QUIZ", "ASSIGNMENT"];
+const KNOWN_TYPES = ["VIDEO", "AUDIO", "TEXT", "LIVE", "QUIZ", "ASSIGNMENT"];
 
 interface LessonBodyProps {
   lesson: LessonDetail;
@@ -25,7 +26,7 @@ interface LessonBodyProps {
   currentProfileId: string;
   enrollmentId: string | null;
   initialPosition: number;
-  onHeartbeat: (position: number) => void;
+  onHeartbeat: (position: number, duration?: number) => void;
   canDownload: boolean;
   /** Shown on the live stage; null when the course has no named teacher. */
   teacherName: string | null;
@@ -57,6 +58,13 @@ export function LessonBody({
       <VideoLesson
         title={lesson.title}
         videoId={lesson.Video?.id}
+        initialPosition={initialPosition}
+        onHeartbeat={onHeartbeat}
+      />
+    ) : type === "AUDIO" ? (
+      <AudioLesson
+        title={lesson.title}
+        audioId={lesson.Audio?.id}
         initialPosition={initialPosition}
         onHeartbeat={onHeartbeat}
       />

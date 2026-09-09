@@ -42,10 +42,12 @@ export function CourseReviewForm({ courseId, onSubmitted }: CourseReviewFormProp
       setContent("");
       setMessage({ type: "success", text: t("courses.reviewSubmitted") });
     } catch (error) {
-      const notEnrolled = error instanceof Error && /enroll/i.test(error.message);
+      const blocked =
+        error instanceof Error &&
+        (/enroll/i.test(error.message) || /half/i.test(error.message));
       setMessage({
         type: "error",
-        text: notEnrolled ? t("courses.reviewEnrollFirst") : t("courses.reviewError"),
+        text: blocked ? t("courses.reviewWatchHalf") : t("courses.reviewError"),
       });
     } finally {
       setIsSubmitting(false);

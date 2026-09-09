@@ -606,6 +606,7 @@ export const tr = {
     videoLoading: "Güvenli oynatma hazırlanıyor…",
     videoPlaybackFailed: "Bu video oynatılamadı. Lütfen sayfayı yenileyin.",
     videoUnavailable: "Ders videosu henüz yayınlanmadı.",
+    audioUnavailable: "Ders sesi henüz yayınlanmadı.",
     textUnavailable: "Ders metni henüz yayınlanmadı.",
     liveClass: "Canlı ders",
     liveUnavailable: "Canlı ders ayrıntıları kullanılamıyor",
