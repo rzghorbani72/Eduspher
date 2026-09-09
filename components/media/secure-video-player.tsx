@@ -60,7 +60,12 @@ export function SecureVideoPlayer({
   const [retryToken, setRetryToken] = useState(0);
   const [resumeOffered, setResumeOffered] = useState(initialPosition > 0);
   const [hasStarted, setHasStarted] = useState(false);
-  const { session, status } = useSecurePlayback(videoId, videoRef, retryToken);
+  const { session, status } = useSecurePlayback(
+    videoId,
+    videoRef,
+    retryToken,
+    initialPosition,
+  );
   const controls = useVideoControls(videoRef, stageRef);
   const posterSrc = poster ?? session?.poster;
 
@@ -70,6 +75,11 @@ export function SecureVideoPlayer({
     const resume = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) {
         video.currentTime = initialPosition;
+        return;
+      }
+      if (initialPosition >= video.duration - 1) {
+        video.currentTime = 0;
+        setResumeOffered(false);
         return;
       }
       video.currentTime = Math.min(
@@ -85,6 +95,12 @@ export function SecureVideoPlayer({
     return () => video.removeEventListener("loadedmetadata", resume);
   }, [initialPosition, status]);
 
+  useEffect(() => {
+    if (!autoPlay || status !== "ready") return;
+    void videoRef.current?.play().catch(() => undefined);
+  }, [autoPlay, status]);
+
+  const buffering = status === "loading" || controls.waiting;
   const shape = fill ? "h-full w-full" : "aspect-video w-full";
 
   if (status === "error") {
@@ -122,7 +138,7 @@ export function SecureVideoPlayer({
         controlsList="nodownload noremoteplayback"
         onContextMenu={(event) => event.preventDefault()}
         playsInline
-        preload="metadata"
+        preload="auto"
         poster={posterSrc ?? undefined}
         aria-label={title}
         autoPlay={autoPlay}
@@ -143,7 +159,7 @@ export function SecureVideoPlayer({
         <VideoPreparingPoster src={posterSrc} />
       ) : null}
 
-      {status === "ready" && !controls.playing ? (
+      {status === "ready" && !controls.playing && !buffering ? (
         <button
           type="button"
           onClick={controls.togglePlay}
@@ -160,7 +176,7 @@ export function SecureVideoPlayer({
         </button>
       ) : null}
 
-      {status === "ready" && resumeOffered ? (
+      {status === "ready" && resumeOffered && !buffering ? (
         <div className="absolute end-[18px] top-[18px] flex items-center gap-3.5 rounded-lg border border-white/15 bg-[rgba(18,17,17,0.82)] px-3.5 py-2.5">
           <RotateCcw className="size-4 text-white/70" aria-hidden="true" />
           <span className="text-[13px] font-bold text-[#f3f2f2]">
@@ -192,7 +208,7 @@ export function SecureVideoPlayer({
         </span>
       ) : null}
 
-      {status === "loading" ? (
+      {buffering ? (
         <span className="pointer-events-none absolute inset-0 grid place-items-center bg-black/25 text-sm text-white/90">
           {t("learning.videoLoading")}
         </span>

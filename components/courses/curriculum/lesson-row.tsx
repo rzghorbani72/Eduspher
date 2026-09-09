@@ -145,18 +145,24 @@ export function LessonRow({
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const playButtonClass =
-    "grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-(--theme-primary) transition-transform hover:scale-110";
+  const rowClass = cn(
+    "group flex w-full items-center gap-3 px-4 py-3.5 text-start transition-colors",
+    (playsInCover || canOpen) &&
+      "cursor-pointer hover:bg-(--theme-surface)",
+    isRunning && "bg-[rgba(239,68,68,0.04)]",
+    isPlaying &&
+      "bg-[color-mix(in_srgb,var(--theme-primary)_8%,transparent)]",
+  );
 
-  return (
-    <li
-      className={cn(
-        "flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-(--theme-surface)",
-        isRunning && "bg-[rgba(239,68,68,0.04)]",
-        isPlaying &&
-          "bg-[color-mix(in_srgb,var(--theme-primary)_8%,transparent)]",
-      )}
-    >
+  const playIconClass =
+    "grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] text-(--theme-primary) transition-transform group-hover:scale-110 motion-reduce:group-hover:scale-100";
+
+  const openLabel = `${
+    lesson.isPreview ? t("courses.free") : t("courses.openLesson")
+  }: ${lesson.title}`;
+
+  const rowBody = (
+    <>
       <span
         className={cn(
           "grid h-9 w-9 shrink-0 place-items-center rounded-lg",
@@ -208,26 +214,10 @@ export function LessonRow({
       )}
 
       <span className="flex w-9 shrink-0 justify-end">
-        {playsInCover ? (
-          <button
-            type="button"
-            onClick={playHere}
-            aria-label={`${t("courses.free")}: ${lesson.title}`}
-            aria-pressed={isPlaying}
-            className={playButtonClass}
-          >
+        {playsInCover || canOpen ? (
+          <span className={playIconClass} aria-hidden>
             <Play className="h-4 w-4" />
-          </button>
-        ) : canOpen && previewHref ? (
-          <Link
-            href={previewHref}
-            aria-label={`${
-              lesson.isPreview ? t("courses.free") : t("courses.openLesson")
-            }: ${lesson.title}`}
-            className={playButtonClass}
-          >
-            <Play className="h-4 w-4" />
-          </Link>
+          </span>
         ) : (
           <Lock
             className="h-4 w-4 text-(--theme-muted)"
@@ -235,6 +225,34 @@ export function LessonRow({
           />
         )}
       </span>
-    </li>
+    </>
   );
+
+  if (playsInCover) {
+    return (
+      <li>
+        <button
+          type="button"
+          onClick={playHere}
+          aria-label={openLabel}
+          aria-pressed={isPlaying}
+          className={rowClass}
+        >
+          {rowBody}
+        </button>
+      </li>
+    );
+  }
+
+  if (canOpen && previewHref) {
+    return (
+      <li>
+        <Link href={previewHref} aria-label={openLabel} className={rowClass}>
+          {rowBody}
+        </Link>
+      </li>
+    );
+  }
+
+  return <li className={rowClass}>{rowBody}</li>;
 }

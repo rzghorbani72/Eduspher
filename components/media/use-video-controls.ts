@@ -14,6 +14,7 @@ export interface VideoControlsState {
   rate: number;
   fullscreen: boolean;
   pipActive: boolean;
+  waiting: boolean;
 }
 
 export interface VideoControlsApi extends VideoControlsState {
@@ -47,6 +48,7 @@ export function useVideoControls(
     rate: 1,
     fullscreen: false,
     pipActive: false,
+    waiting: false,
   });
 
   useEffect(() => {
@@ -69,8 +71,10 @@ export function useVideoControls(
         muted: video.muted,
         rate: video.playbackRate,
       });
-    const onPlay = () => patch({ playing: true });
+    const onPlay = () => patch({ playing: true, waiting: false });
     const onPause = () => patch({ playing: false });
+    const onWaiting = () => patch({ waiting: true });
+    const onCanPlay = () => patch({ waiting: false });
     const onVolume = () => patch({ volume: video.volume, muted: video.muted });
     const onRate = () => patch({ rate: video.playbackRate });
     const onPipOn = () => patch({ pipActive: true });
@@ -82,6 +86,9 @@ export function useVideoControls(
     video.addEventListener("durationchange", onMeta);
     video.addEventListener("play", onPlay);
     video.addEventListener("pause", onPause);
+    video.addEventListener("waiting", onWaiting);
+    video.addEventListener("canplay", onCanPlay);
+    video.addEventListener("playing", onCanPlay);
     video.addEventListener("volumechange", onVolume);
     video.addEventListener("ratechange", onRate);
     video.addEventListener("enterpictureinpicture", onPipOn);
@@ -95,6 +102,9 @@ export function useVideoControls(
       video.removeEventListener("durationchange", onMeta);
       video.removeEventListener("play", onPlay);
       video.removeEventListener("pause", onPause);
+      video.removeEventListener("waiting", onWaiting);
+      video.removeEventListener("canplay", onCanPlay);
+      video.removeEventListener("playing", onCanPlay);
       video.removeEventListener("volumechange", onVolume);
       video.removeEventListener("ratechange", onRate);
       video.removeEventListener("enterpictureinpicture", onPipOn);

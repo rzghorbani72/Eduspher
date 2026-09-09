@@ -32,10 +32,14 @@ export function useSecurePlayback(
   videoRef: React.RefObject<HTMLVideoElement | null>,
   /** Bump to open a fresh watch session after a failure. */
   retryToken = 0,
+  /** Seconds to start buffering from. Not an effect dep — a new videoId restarts. */
+  startPosition = 0,
 ) {
   const [session, setSession] = useState<PlaybackSession | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const destroyRef = useRef<(() => void) | null>(null);
+  const startAtRef = useRef(startPosition);
+  startAtRef.current = startPosition;
 
   useEffect(() => {
     if (!videoId) {
@@ -72,10 +76,26 @@ export function useSecurePlayback(
       const element = videoRef.current;
       if (!element) return;
 
+      // MANIFEST_PARSED is not playable: the AES key and first segment still
+      // have to land. canplay is the first moment a click will start, not stall.
+      const markReady = () => {
+        if (!cancelled) setStatus("ready");
+      };
+      const armCanPlay = () => {
+        if (element.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+          markReady();
+          return;
+        }
+        element.addEventListener("canplay", markReady, { once: true });
+      };
+
       // Not converted yet: play the original route rather than show a dead player.
       if (next.tier === "legacy") {
+        element.preload = "auto";
         element.src = next.playlistUrl;
-        setStatus("ready");
+        armCanPlay();
+        destroyRef.current = () =>
+          element.removeEventListener("canplay", markReady);
         return;
       }
 
@@ -84,8 +104,11 @@ export function useSecurePlayback(
       const { default: Hls } = await import("hls.js");
       if (!Hls.isSupported()) {
         if (element.canPlayType("application/vnd.apple.mpegurl")) {
+          element.preload = "auto";
           element.src = next.playlistUrl;
-          setStatus("ready");
+          armCanPlay();
+          destroyRef.current = () =>
+            element.removeEventListener("canplay", markReady);
           return;
         }
         setStatus("error");
@@ -95,6 +118,7 @@ export function useSecurePlayback(
       const hls = new Hls({
         enableWorker: true,
         lowLatencyMode: false,
+        autoStartLoad: false,
         // A lesson segment is several MB, and our students watch on slow mobile
         // links while the bytes may still be proxied from object storage. The
         // stock 20s fragment timeout gives up on a connection that is merely
@@ -108,7 +132,16 @@ export function useSecurePlayback(
       });
       hls.loadSource(next.playlistUrl);
       hls.attachMedia(element);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => setStatus("ready"));
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (cancelled) return;
+        const duration = Number.isFinite(element.duration)
+          ? element.duration
+          : 0;
+        let start = startAtRef.current;
+        if (duration > 0 && start >= duration - 1) start = 0;
+        hls.startLoad(start > 0 ? start : -1);
+        armCanPlay();
+      });
 
       // A fatal network or media error is usually a hiccup, not a dead video.
       // Try to resume a bounded number of times before giving up, so one lost
@@ -134,7 +167,10 @@ export function useSecurePlayback(
         });
       });
 
-      destroyRef.current = () => hls.destroy();
+      destroyRef.current = () => {
+        element.removeEventListener("canplay", markReady);
+        hls.destroy();
+      };
     }
 
     return () => {
