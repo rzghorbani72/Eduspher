@@ -3,6 +3,7 @@ import { Button } from "./primitives";
 import { templateHref } from "./routes";
 import { loadTemplateCourses } from "./courses-data";
 import { TemplateCourseCard, type CourseCardSpec } from "./course-card";
+import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
 import { SectionEmptyState } from "@/components/ui-blocks/slot-grid";
 import { text, type SectionConfig, type TemplateStoreContext } from "./types";
 
@@ -65,7 +66,7 @@ export async function TemplateCourses({
           />
         ) : (
           <>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={COURSE_CARD_GRID_CLASS}>
               {courses.map((course, index) => (
                 <TemplateCourseCard
                   key={course.id}

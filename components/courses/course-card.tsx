@@ -3,12 +3,19 @@
 import Link from "@/components/ui/link";
 import { BookOpen, CalendarClock, Clock } from "lucide-react";
 
-import type { CourseSummary } from "@/lib/api/types";
-import { buildAcademyPath, formatCurrencyWithAcademy, hashToIndex, resolveAssetUrl, toPersianDigits } from "@/lib/utils";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { isLiveCourse, seatPriceOf } from "@/lib/courses/live-course";
+import { COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout";
 import { formatMinutes } from "@/components/courses/curriculum/format";
 import { AppImage } from "@/components/ui/app-image";
+import { isLiveCourse, seatPriceOf } from "@/lib/courses/live-course";
+import { useTranslation } from "@/lib/i18n/hooks";
+import type { CourseSummary } from "@/lib/api/types";
+import {
+  buildAcademyPath,
+  formatCurrencyWithAcademy,
+  hashToIndex,
+  resolveAssetUrl,
+  toPersianDigits,
+} from "@/lib/utils";
 
 interface CourseCardProps {
   course: CourseSummary;
@@ -73,10 +80,10 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
   return (
     <Link
       href={detailHref}
-      className="group flex h-full flex-col overflow-hidden rounded-[26px] border bg-(--cc-card) border-(--cc-bd) shadow-[var(--cc-sh-sm)] transition-all duration-300 hover:-translate-y-1.5 hover:border-(--cc-brand) hover:shadow-[var(--cc-sh)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--cc-brand)"
+      className="group flex h-full w-full min-w-0 flex-col overflow-hidden rounded-[26px] border bg-(--cc-card) border-(--cc-bd) shadow-[var(--cc-sh-sm)] transition-all duration-300 hover:-translate-y-1.5 hover:border-(--cc-brand) hover:shadow-[var(--cc-sh)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--cc-brand)"
     >
       <div
-        className="relative h-[172px] overflow-hidden"
+        className={COURSE_CARD_THUMB_CLASS}
         style={coverUrl ? undefined : { background: thumbGradient }}
       >
         {coverUrl ? (

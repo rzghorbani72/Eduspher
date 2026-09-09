@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 
-import { resolveAssetUrl } from "@/lib/utils";
+import { COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout";
 import { sizedImageUrl } from "@/lib/images/sized-image-url";
+import { cn, resolveAssetUrl } from "@/lib/utils";
 import { Initials } from "./primitives";
 import type { TemplateCourse } from "./courses-data";
 import { isSampleRecord } from "./sample-data";
@@ -38,10 +39,10 @@ export function TemplateCourseCard({
   const coverUrl = sizedImageUrl(resolveAssetUrl(course.coverUrl), 640);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
+    <article className="group flex h-full w-full min-w-0 flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
       <a href={course.href} className="flex flex-1 flex-col cursor-pointer">
         <div
-          className={thumbClassName}
+          className={cn(thumbClassName, COURSE_CARD_THUMB_CLASS)}
           style={
             coverUrl
               ? {

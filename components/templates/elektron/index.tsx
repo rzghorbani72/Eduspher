@@ -22,7 +22,7 @@ const ELEKTRON_HEADER = headerDefaults({
 
 export const ELEKTRON_COURSE_CARD: CourseCardSpec = {
   thumbTones: [styles.tA, styles.tB, styles.tC, styles.tD],
-  thumbClassName: 'relative aspect-video overflow-hidden',
+  thumbClassName: 'relative aspect-[4/3] overflow-hidden',
 };
 
 export const ELEKTRON_SECTIONS: TemplateSectionMap = {

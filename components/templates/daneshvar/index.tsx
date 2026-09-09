@@ -22,7 +22,7 @@ const DANESHVAR_HEADER = headerDefaults({
 
 export const DANESHVAR_COURSE_CARD: CourseCardSpec = {
   thumbTones: [styles.tA, styles.tB, styles.tC, styles.tD],
-  thumbClassName: 'relative aspect-[16/10] overflow-hidden',
+  thumbClassName: 'relative aspect-[4/3] overflow-hidden',
 };
 
 export const DANESHVAR_SECTIONS: TemplateSectionMap = {

@@ -11,6 +11,6 @@ import styles from './partow.module.css';
  */
 export const PARTOW_COURSE_CARD: CourseCardSpec = {
   thumbTones: [styles.g1, styles.g2, styles.g3, styles.g4],
-  thumbClassName: 'relative aspect-video overflow-hidden',
+  thumbClassName: 'relative aspect-[4/3] overflow-hidden',
   footer: 'rating',
 };

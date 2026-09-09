@@ -2,6 +2,7 @@ import { GraduationCap, Plus } from "lucide-react";
 
 import { AccountPageHeader } from "@/components/account/account-page-header";
 import { EnrolledCourseCard } from "@/components/account/enrolled-course-card";
+import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
 import { ExtraAccessList } from "@/components/account/courses/extra-access-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "@/components/ui/link";
@@ -123,7 +124,7 @@ function CourseSection({
       <h2 className="text-lg font-semibold text-(--theme-foreground)">
         {title}
       </h2>
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      <div className={COURSE_CARD_GRID_CLASS}>
         {enrollments.map((enrollment, index) => (
           <EnrolledCourseCard
             key={enrollment.id}

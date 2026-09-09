@@ -16,7 +16,7 @@ interface SlotGridProps {
 // centered so the result reads as intentional. Owner size overrides arrive as
 // clamped CSS custom properties; styling is theme-variable-only per the
 // design-system contract.
-export function SlotGrid({ config, minBasisFallback = "280px", className, children }: SlotGridProps) {
+export function SlotGrid({ config, minBasisFallback = "310px", className, children }: SlotGridProps) {
   const vars = buildSlotStyleVars(config?.slotStyle, minBasisFallback);
   const items = Children.toArray(children);
 
@@ -30,8 +30,8 @@ export function SlotGrid({ config, minBasisFallback = "280px", className, childr
           key={i}
           className="min-w-0"
           style={{
-            flex: "1 1 var(--slot-basis, 280px)",
-            maxWidth: "min(100%, calc(var(--slot-basis, 280px) * 1.35))",
+            flex: "1 1 var(--slot-basis, 310px)",
+            maxWidth: "min(100%, calc(var(--slot-basis, 310px) * 1.35))",
             minHeight: "var(--slot-h, auto)",
             padding: "var(--slot-pad, 0px)",
           }}

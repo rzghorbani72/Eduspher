@@ -62,7 +62,8 @@
 
 .thumb {
   position: relative;
-  height: 146px;
+  aspect-ratio: 4 / 3;
+  height: auto;
   overflow: hidden;
 }
 .t1 { background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-deep)); }

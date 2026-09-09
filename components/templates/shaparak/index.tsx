@@ -22,7 +22,7 @@ const SHAPARAK_HEADER = headerDefaults({
 
 export const SHAPARAK_COURSE_CARD: CourseCardSpec = {
   thumbTones: [styles.tA, styles.tB, styles.tC, styles.tD],
-  thumbClassName: 'relative aspect-[16/10] overflow-hidden',
+  thumbClassName: 'relative aspect-[4/3] overflow-hidden',
   footer: 'action',
 };
 

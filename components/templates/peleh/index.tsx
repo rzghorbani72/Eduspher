@@ -22,7 +22,7 @@ const PELEH_HEADER = headerDefaults({
 
 export const PELEH_COURSE_CARD: CourseCardSpec = {
   thumbTones: [styles.tA, styles.tB, styles.tC, styles.tD],
-  thumbClassName: 'relative aspect-[16/10] overflow-hidden',
+  thumbClassName: 'relative aspect-[4/3] overflow-hidden',
   footer: 'action',
 };
 

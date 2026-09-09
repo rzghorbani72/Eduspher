@@ -1,5 +1,5 @@
-import { getCourses, getCurrentUser, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
-import { CourseCard } from "@/components/courses/course-card";
+import { getCourses, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
+import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
 import { buildAcademyPath } from "@/lib/utils";
@@ -40,7 +40,7 @@ const featuredSectionStyle = {
 };
 
 const basisFor = (cols: number): string =>
-  cols >= 4 ? "260px" : cols === 2 ? "440px" : "320px";
+  cols >= 4 ? "310px" : cols === 2 ? "440px" : "310px";
 
 export async function CoursesBlock({ id, config, storeContext }: CoursesBlockProps) {
   const title = config?.title;
@@ -50,21 +50,16 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const layout = config?.layout || "grid";
   const showViewAll = config?.showViewAll !== false;
 
-  const [coursePayload, user, currentAcademy] = await Promise.all([
+  const [coursePayload, currentAcademy] = await Promise.all([
     getCourses({
       limit,
       published: true,
       ...(storeContext?.academyId ? { academy_id: storeContext.academyId } : {}),
     }).catch(() => null),
-    getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
   ]);
 
   const courses = coursePayload?.courses || [];
-  const storeCurrency =
-    user?.currentAcademy ||
-    (currentAcademy as { currency?: string; currency_symbol?: string; currency_position?: "before" | "after" }) ||
-    null;
 
   let storeForLang = currentAcademy;
   if (!storeForLang && storeContext?.slug) {
@@ -79,7 +74,12 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const resolved = resolveSlots(courses, config?.slots, limit);
   const courseNodes = resolved.map((slot, i) =>
     slot.kind === "live" ? (
-      <CourseCard key={i} course={slot.data} storeSlug={storeContext?.isSubdomain ? null : (storeContext?.slug ?? null)} store={storeCurrency} />
+      <TemplatedCourseCard
+        key={i}
+        course={slot.data}
+        index={i}
+        storeSlug={storeContext?.isSubdomain ? null : (storeContext?.slug ?? null)}
+      />
     ) : (
       <PlaceholderCard key={i} text={slot.text} />
     ),
@@ -177,7 +177,12 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
           <div data-dynamic="true" className="space-y-5">
             {resolved.map((slot, i) =>
               slot.kind === "live" ? (
-                <CourseCard key={i} course={slot.data} storeSlug={storeContext?.isSubdomain ? null : (storeContext?.slug ?? null)} />
+                <TemplatedCourseCard
+                  key={i}
+                  course={slot.data}
+                  index={i}
+                  storeSlug={storeContext?.isSubdomain ? null : (storeContext?.slug ?? null)}
+                />
               ) : (
                 <PlaceholderCard key={i} text={slot.text} />
               ),

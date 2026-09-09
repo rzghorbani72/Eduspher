@@ -4,6 +4,7 @@ import { BookOpen } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
+import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
 import { CourseFilters } from "@/components/courses/course-filters";
 import { CourseSearch } from "@/components/courses/course-search";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -182,7 +183,7 @@ export default async function CoursesPage({
 
       {courses.length > 0 ? (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
-          <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+          <div className={COURSE_CARD_GRID_CLASS}>
             {courses.map((course, index) => (
               <div
                 key={course.id}

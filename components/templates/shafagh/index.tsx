@@ -24,7 +24,7 @@ const SHAFAGH_HEADER = headerDefaults({
 
 export const SHAFAGH_COURSE_CARD: CourseCardSpec = {
   thumbTones: SHAFAGH_THUMBS,
-  thumbClassName: 'relative aspect-video overflow-hidden',
+  thumbClassName: 'relative aspect-[4/3] overflow-hidden',
 };
 
 export const SHAFAGH_SECTIONS: TemplateSectionMap = {

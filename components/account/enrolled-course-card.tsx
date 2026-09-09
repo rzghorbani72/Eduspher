@@ -1,11 +1,12 @@
 import Link from "@/components/ui/link";
+import { COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout";
 import { TemplateCourseCard } from "@/components/templates/_shared/course-card";
 import type { TemplateCourse } from "@/components/templates/_shared/courses-data";
 import { resolveTemplateCourseCard } from "@/components/templates/registry";
 import { getActiveTemplateKey } from "@/lib/active-template";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/server-translations";
-import { buildAcademyPath, formatPercent } from "@/lib/utils";
+import { buildAcademyPath, cn, formatPercent } from "@/lib/utils";
 
 interface EnrolledCourse {
   id: string | number;
@@ -124,9 +125,12 @@ function FallbackCard({
   footer: React.ReactNode;
 }) {
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-theme bg-card shadow-sm">
+    <article className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-theme bg-card shadow-sm">
       <div
-        className="h-40 bg-(--theme-primary)/15 bg-cover bg-center"
+        className={cn(
+          COURSE_CARD_THUMB_CLASS,
+          "bg-(--theme-primary)/15 bg-cover bg-center",
+        )}
         style={
           course.coverUrl ? { backgroundImage: `url(${course.coverUrl})` } : undefined
         }

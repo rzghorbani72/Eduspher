@@ -19,6 +19,7 @@
     "log:catalog:check": "cd .. && node Backend/tools/build-log-catalog.mjs --check"
   },
   "dependencies": {
+    "@animateicons/react": "^0.5.0",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-slot": "^1.2.4",
     "@tanstack/react-query": "^5.101.4",

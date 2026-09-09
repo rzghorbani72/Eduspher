@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@animateicons/react':
+        specifier: ^0.5.0
+        version: 0.5.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.10.0(react-hook-form@7.68.0(react@19.2.1))
@@ -117,6 +120,13 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@alloc/quick-lru/-/quick-lru-5.2.0.tgz}
     engines: {node: '>=10'}
+
+  '@animateicons/react@0.5.0':
+    resolution: {integrity: sha512-dM41NHJ/3plrR0y6gJoAj98br9yXq2DyDfr4QSDHP1tIH8XKGx6sTm+iJMnv7/E8ao1u9dqckCaxvr/LlgdU4A==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@animateicons/react/-/react-0.5.0.tgz}
+    engines: {node: '>=18.17.0'}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/@babel/code-frame/-/code-frame-7.27.1.tgz}
@@ -1259,9 +1269,6 @@ packages:
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     peerDependencies:
       unrs-resolver: ^1.0.0
-    peerDependenciesMeta:
-      unrs-resolver:
-        optional: true
 
   eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.9.tgz}
@@ -2411,6 +2418,11 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
+  '@animateicons/react@0.5.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+    dependencies:
+      react: 19.2.1
+      react-dom: 19.2.1(react@19.2.1)
+
   '@babel/code-frame@7.27.1':
     dependencies:
       '@babel/helper-validator-identifier': 7.28.5
@@ -3547,7 +3559,6 @@ snapshots:
     dependencies:
       get-tsconfig: 4.13.0
       stable-hash-x: 0.2.0
-    optionalDependencies:
       unrs-resolver: 1.11.1
     optional: true
 

@@ -14,6 +14,7 @@ interface StaticCourse {
   stars?: string;
 }
 
+import { COURSE_CARD_GRID_CLASS, COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout";
 import { PlaceholderCard } from "./slot-grid";
 import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
 import { getCurrentAcademy } from "@/lib/api/server";
@@ -120,7 +121,7 @@ export async function CourseGridBlock({ id, config }: CourseGridBlockProps) {
           ))}
         </div>
 
-        <div className="grid gap-[24px] md:grid-cols-2 lg:grid-cols-3">
+        <div className={COURSE_CARD_GRID_CLASS}>
           {resolveSlots(courses, config?.slots, courses.length).map((slot, i) => {
             if (slot.kind !== "live") return <PlaceholderCard key={i} text={slot.text} />;
             const course = slot.data;
@@ -129,7 +130,7 @@ export async function CourseGridBlock({ id, config }: CourseGridBlockProps) {
               key={i}
               className="overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-background) transition-transform duration-200 hover:-translate-y-1"
             >
-              <div className="relative h-[180px] overflow-hidden">
+              <div className={COURSE_CARD_THUMB_CLASS}>
                 <div
                   className={`flex h-full items-center justify-center ${THUMB_GRADIENTS[i % THUMB_GRADIENTS.length]}`}
                 >
@@ -224,13 +225,13 @@ function CodeCourseGrid({ id, config }: CourseGridBlockProps) {
             <span className="text-[13.5px] font-semibold text-(--theme-primary)">{viewAllText}</span>
           </div>
 
-          <div className="grid gap-[22px] md:grid-cols-2 lg:grid-cols-3">
+          <div className={COURSE_CARD_GRID_CLASS}>
             {courses.map((course, i) => (
               <div
                 key={i}
                 className="overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-card-bg) transition-transform duration-200 hover:-translate-y-1"
               >
-                <div className="relative h-[168px] overflow-hidden">
+                <div className={COURSE_CARD_THUMB_CLASS}>
                   <div className={`flex h-full items-center justify-center ${THUMB_GRADIENTS[i % THUMB_GRADIENTS.length]}`}>
                     <span className="text-[12px] font-semibold text-white/85">{course.thumbLabel}</span>
                   </div>
@@ -310,13 +311,13 @@ function CreativeCourseGrid({ id, config }: CourseGridBlockProps) {
           <span className="text-[14px] font-extrabold text-(--theme-primary)">{viewAllText}</span>
         </div>
 
-        <div className="grid gap-[20px] sm:grid-cols-2 lg:grid-cols-4">
+        <div className={COURSE_CARD_GRID_CLASS}>
           {courses.map((course, i) => (
             <div
               key={i}
               className="group overflow-hidden rounded-(--theme-border-radius) border-2 border-(--theme-border-color) bg-(--theme-surface) transition-all duration-200 hover:-translate-y-1 hover:border-(--theme-primary)"
             >
-              <div className="relative h-[160px] overflow-hidden">
+              <div className={COURSE_CARD_THUMB_CLASS}>
                 <div className={`h-full w-full ${CREATIVE_CG_GRADIENTS[i % CREATIVE_CG_GRADIENTS.length]}`} />
                 <span className="absolute right-3 top-3 rounded-full bg-(--theme-primary) px-[10px] py-[4px] text-[10px] font-extrabold text-(--theme-on-primary)">
                   {course.tag}

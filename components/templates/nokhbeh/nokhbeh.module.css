@@ -84,7 +84,8 @@
 
 .thumb {
   position: relative;
-  height: 140px;
+  aspect-ratio: 4 / 3;
+  height: auto;
   overflow: hidden;
   background: var(--theme-deep);
 }

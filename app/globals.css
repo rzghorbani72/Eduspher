@@ -16,6 +16,24 @@
 }
 @import "tailwindcss";
 
+.account-nav-child-active::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: calc(-0.625rem - 1px);
+  inset-inline-end: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 14px;
+  background: var(--theme-primary);
+  border-radius: 2px;
+}
+
+[dir="rtl"] .account-nav-child-active::after {
+  left: auto;
+  right: calc(-0.625rem - 1px);
+}
+
 /* ── Semantic theme utilities ─────────────────────────────────────────────────
    These map Tailwind utility names onto the live `--theme-*` variables, so
    `bg-card`, `text-muted` or `border-theme` follow whichever academy theme is

@@ -2,6 +2,7 @@ import { Button } from '../_shared/primitives';
 import { templateHref } from '../_shared/routes';
 import { loadTemplateCourses } from '../_shared/courses-data';
 import { TemplateCourseCard } from '../_shared/course-card';
+import { COURSE_CARD_GRID_CLASS } from '@/components/courses/course-card-layout';
 import { SectionEmptyState } from '@/components/ui-blocks/slot-grid';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { ROUZAN_DEFAULTS } from './defaults';
@@ -49,7 +50,7 @@ export async function RouzanCourses({ id, config, storeContext }: TemplateSectio
               subtitle="اولین دورهٔ خود را از بخش «دوره‌ها» در داشبورد بسازید تا اینجا نمایش داده شود."
             />
           ) : (
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={`mt-10 ${COURSE_CARD_GRID_CLASS}`}>
               {courses.map((course, index) => (
                 <TemplateCourseCard
                   key={course.id}

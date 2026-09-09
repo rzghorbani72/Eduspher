@@ -6,11 +6,11 @@ import {
   getBlogArticles,
   getCategories,
   getCourses,
-  getCurrentUser,
   getCurrentAcademy,
   getAcademyBySlug,
 } from "@/lib/api/server";
-import { CourseCard } from "@/components/courses/course-card";
+import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
+import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
 import {
   resolveAssetUrl,
   truncate,
@@ -38,7 +38,6 @@ export async function AcademyHomePage() {
     articles,
     coursePayload,
     themeAndTemplate,
-    user,
     currentAcademy,
     publicAcademy,
   ] = await Promise.all([
@@ -48,7 +47,6 @@ export async function AcademyHomePage() {
       typeof getCourses
     >[0]).catch(() => null),
     getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
-    getCurrentUser().catch(() => null),
     getCurrentAcademy().catch(() => null),
     storeContext.slug
       ? getAcademyBySlug(storeContext.slug).catch(() => null)
@@ -59,14 +57,6 @@ export async function AcademyHomePage() {
   const featuredCourses = coursePayload?.courses ?? [];
   const primaryAcademy = publicAcademy;
   const storeDisplayName = primaryAcademy?.name ?? storeContext.name;
-  const storeCurrency =
-    user?.currentAcademy ||
-    (currentAcademy as {
-      currency?: string;
-      currency_symbol?: string;
-      currency_position?: "before" | "after";
-    }) ||
-    null;
   const paStats = primaryAcademy as {
     student_count?: number;
     mentor_count?: number;
@@ -379,16 +369,16 @@ export async function AcademyHomePage() {
           {featuredCourses.length ? (
             <div
               data-gsap="stagger"
-              className="grid gap-7 sm:grid-cols-2 xl:grid-cols-3"
+              className={COURSE_CARD_GRID_CLASS}
             >
-              {featuredCourses.map((course) => (
-                <CourseCard
+              {featuredCourses.map((course, index) => (
+                <TemplatedCourseCard
                   key={course.id}
                   course={course}
+                  index={index}
                   storeSlug={
                     storeContext.isSubdomain ? null : storeContext.slug
                   }
-                  store={storeCurrency}
                 />
               ))}
             </div>

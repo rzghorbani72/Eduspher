@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
+import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
 import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
 import { CourseHero } from "@/components/courses/course-hero";
 import { CoursePreviewPlayer } from "@/components/courses/course-preview-player";
@@ -328,7 +329,7 @@ export default async function CourseDetailPage({
           <h2 className="text-2xl font-bold tracking-tight text-(--theme-foreground)">
             {translate("courses.youMightAlsoLike")}
           </h2>
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className={COURSE_CARD_GRID_CLASS}>
             {relatedCourses.courses
               .filter((item) => item.id !== course.id)
               .map((item, index) => (
