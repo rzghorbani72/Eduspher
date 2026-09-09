@@ -228,6 +228,8 @@ export const fa = {
     tutoringSessions: "{count} جلسه",
     alreadyEnrolled: "تو در این دوره ثبت‌نام کرده‌ای",
     continueLearning: "ادامهٔ یادگیری",
+    startLearning: "شروع یادگیری",
+    yourProgress: "پیشرفت تو",
     ctaBuy: "خرید دوره",
     ctaStartInstallments: "شروع پرداخت قسطی",
     ctaRequestPrivate: "درخواست دسترسی",

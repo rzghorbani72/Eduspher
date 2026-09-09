@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { EnrolledSideCta, EnrolledSideOverview } from "@/components/courses/enrolled-side-overview";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatDate } from "@/lib/utils";
 import type { CourseAccessRow, CourseAccessType } from "@/lib/api/account-types";
+import type { CourseContentStats } from "@/lib/courses/curriculum";
 import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { accessTypeLabelKey } from "@/lib/courses/access-type";
 import {
@@ -36,12 +38,14 @@ interface MyAccessPanelProps {
   learnHref: string;
   liveClassesHref: string;
   tutoringHref: string;
+  stats: CourseContentStats;
+  progressPercent: number | null;
+  isCertificate: boolean;
 }
 
 /**
- * Shows how this student got into the course and until when. Extra owned
- * offerings that open a different place (live class, tutoring) stay listed
- * as shortcuts.
+ * Enrolled sidebar: course stats and how this student got in, then
+ * continue into the lessons.
  */
 export function MyAccessPanel({
   access,
@@ -49,6 +53,9 @@ export function MyAccessPanel({
   learnHref,
   liveClassesHref,
   tutoringHref,
+  stats,
+  progressPercent,
+  isCertificate,
 }: MyAccessPanelProps) {
   const { t, language } = useTranslation();
   const hrefs = { learnHref, liveClassesHref, tutoringHref };
@@ -58,8 +65,8 @@ export function MyAccessPanel({
   const extraOwned = access
     ? owned.filter((option) => accessTargetFor(option, hrefs).href !== accessTarget?.href)
     : owned;
-
-  if (!access && extraOwned.length === 0) return null;
+  const ctaHref = accessTarget?.href ?? learnHref;
+  const showAccess = Boolean(access && accessTarget) || extraOwned.length > 0;
 
   const untilLabel = (expiresAt: string | null) =>
     expiresAt
@@ -67,38 +74,50 @@ export function MyAccessPanel({
       : t("courses.lifetimeAccess");
 
   return (
-    <div className="border-b border-theme bg-(--theme-primary)/8 px-5 py-4">
-      <p className="text-xs font-black text-(--theme-foreground)">
-        {t("courses.myAccessTitle")}
-      </p>
+    <div>
+      <EnrolledSideOverview
+        progressPercent={progressPercent}
+        stats={stats}
+        isCertificate={isCertificate}
+      />
 
-      <ul className="mt-3 space-y-2">
-        {access && accessTarget ? (
-          <AccessLink
-            href={accessTarget.href}
-            icon={ACCESS_ICON[accessType]}
-            title={t(accessTypeLabelKey(accessType))}
-            subtitle={untilLabel(access.expires_at)}
-          />
-        ) : null}
+      {showAccess ? (
+        <div className="border-y border-theme bg-(--theme-primary)/8 px-5 py-4">
+          <h3 className="text-xs font-black text-(--theme-foreground)">
+            {t("courses.myAccessTitle")}
+          </h3>
 
-        {extraOwned.map((option) => {
-          const target = accessTargetFor(option, hrefs);
-          return (
-            <AccessLink
-              key={option.key}
-              href={target.href}
-              icon={target.icon}
-              title={option.title ?? t(`courses.offering${option.kind}`)}
-              subtitle={
-                option.accessExpiresAt
-                  ? untilLabel(option.accessExpiresAt)
-                  : t(target.actionKey)
-              }
-            />
-          );
-        })}
-      </ul>
+          <ul className="mt-3 space-y-2">
+            {access && accessTarget ? (
+              <AccessLink
+                href={accessTarget.href}
+                icon={ACCESS_ICON[accessType]}
+                title={t(accessTypeLabelKey(accessType))}
+                subtitle={untilLabel(access.expires_at)}
+              />
+            ) : null}
+
+            {extraOwned.map((option) => {
+              const target = accessTargetFor(option, hrefs);
+              return (
+                <AccessLink
+                  key={option.key}
+                  href={target.href}
+                  icon={target.icon}
+                  title={option.title ?? t(`courses.offering${option.kind}`)}
+                  subtitle={
+                    option.accessExpiresAt
+                      ? untilLabel(option.accessExpiresAt)
+                      : t(target.actionKey)
+                  }
+                />
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
+
+      <EnrolledSideCta href={ctaHref} progressPercent={progressPercent} />
     </div>
   );
 }

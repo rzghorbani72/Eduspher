@@ -228,6 +228,8 @@ export const en = {
     tutoringSessions: "{count} sessions",
     alreadyEnrolled: "You are enrolled in this course",
     continueLearning: "Continue learning",
+    startLearning: "Start learning",
+    yourProgress: "Your progress",
     ctaBuy: "Buy course",
     ctaStartInstallments: "Start instalment plan",
     ctaRequestPrivate: "Request access",

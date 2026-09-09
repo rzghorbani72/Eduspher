@@ -13,6 +13,7 @@ import { totalOf } from "@/lib/courses/purchase-options";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
 import { MyAccessPanel } from "@/components/courses/my-access-panel";
 import type { CourseAccessRow } from "@/lib/api/account-types";
+import type { CourseContentStats } from "@/lib/courses/curriculum";
 
 export interface CurrencyConfig {
   currency?: string;
@@ -35,6 +36,9 @@ interface PurchasePanelProps {
   tutoringHref: string;
   /** How this student got in, and until when. Null if they have no access. */
   access: CourseAccessRow | null;
+  stats: CourseContentStats;
+  progressPercent: number | null;
+  isCertificate: boolean;
 }
 
 const CTA_KEY: Record<string, string> = {
@@ -61,6 +65,9 @@ export function PurchasePanel({
   liveClassesHref,
   tutoringHref,
   access,
+  stats,
+  progressPercent,
+  isCertificate,
 }: PurchasePanelProps) {
   const { t } = useTranslation();
   const enrollmentClosed = useEnrollmentClosed();
@@ -94,27 +101,16 @@ export function PurchasePanel({
   if (hasAccess) {
     return (
       <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
-        {ownedOptions.length > 0 || access ? (
-          <MyAccessPanel
-            access={access}
-            owned={ownedOptions}
-            learnHref={continueHref ?? learnHref}
-            liveClassesHref={liveClassesHref}
-            tutoringHref={tutoringHref}
-          />
-        ) : (
-          <div className="px-5 py-5 text-center">
-            <p className="text-xs font-bold text-(--theme-foreground)">
-              {t("courses.alreadyEnrolled")}
-            </p>
-            <a
-              href={continueHref ?? learnHref}
-              className="cd-cta-btn mt-2.5 flex h-11 w-full items-center justify-center rounded-full text-sm font-extrabold text-white transition-all hover:-translate-y-0.5"
-            >
-              {t("courses.continueLearning")}
-            </a>
-          </div>
-        )}
+        <MyAccessPanel
+          access={access}
+          owned={ownedOptions}
+          learnHref={continueHref ?? learnHref}
+          liveClassesHref={liveClassesHref}
+          tutoringHref={tutoringHref}
+          stats={stats}
+          progressPercent={progressPercent}
+          isCertificate={isCertificate}
+        />
       </div>
     );
   }

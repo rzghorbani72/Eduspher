@@ -154,15 +154,22 @@ export default async function CourseDetailPage({
   ]);
   // Staff get the whole academy's enrollments from this endpoint, so the row
   // must belong to the viewer before it counts as "I own this course".
+  const myEnrollment = user
+    ? enrollment?.enrollments?.find(
+        (item) => String(item.profile_id) === String(user.id),
+      )
+    : undefined;
   const isEnrolled = Boolean(
     user &&
-    (courseAccess.some((row) => row.course_id === course.id) ||
-      enrollment?.enrollments?.some(
-        (item) =>
-          String(item.profile_id) === String(user.id) &&
-          (item.status === "ACTIVE" || item.status === "COMPLETED"),
-      )),
+      (courseAccess.some((row) => row.course_id === course.id) ||
+        (myEnrollment &&
+          (myEnrollment.status === "ACTIVE" ||
+            myEnrollment.status === "COMPLETED"))),
   );
+  const progressPercent =
+    myEnrollment && Number.isFinite(myEnrollment.progress_percent)
+      ? Math.min(100, Math.max(0, Math.round(myEnrollment.progress_percent)))
+      : null;
 
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
   const promoVideoId = course.Video?.id ?? null;
@@ -308,6 +315,9 @@ export default async function CourseDetailPage({
               access={
                 courseAccess.find((row) => row.course_id === course.id) ?? null
               }
+              stats={stats}
+              progressPercent={isEnrolled ? progressPercent : null}
+              isCertificate={Boolean(course.is_certificate)}
             />
           </aside>
         </div>
