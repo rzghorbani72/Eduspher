@@ -897,6 +897,7 @@ export const sendPhoneOtp = (
     {
       phone_number,
       type,
+      academy_id: resolveAcademyId() ?? undefined,
     },
     options,
   );
@@ -909,7 +910,11 @@ export const loginByPhoneOtp = (
 ) => {
   return postJson<AuthResponse>(
     "/auth/login-by-phone-otp",
-    { phone_number, otp },
+    {
+      phone_number,
+      otp,
+      academy_id: resolveAcademyId() ?? undefined,
+    },
     options,
   );
 };
@@ -921,7 +926,11 @@ export const loginByEmailOtp = (
 ) => {
   return postJson<AuthResponse>(
     "/auth/login-by-email-otp",
-    { email, otp },
+    {
+      email,
+      otp,
+      academy_id: resolveAcademyId() ?? undefined,
+    },
     options,
   );
 };

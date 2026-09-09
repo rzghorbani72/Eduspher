@@ -2,21 +2,8 @@
 
 import { logout as logoutRequest } from "@/lib/api/client";
 import { logout as logoutAction } from "@/app/actions/auth";
-
-/** UI preferences are not user data, so they survive sign-out. */
-const KEEP_KEYS = ["preferred_language", "landing-theme", "academy-theme-mode"];
-
-function wipeBrowserStorage(): void {
-  for (const store of [window.localStorage, window.sessionStorage]) {
-    try {
-      for (const key of Object.keys(store)) {
-        if (!KEEP_KEYS.includes(key)) store.removeItem(key);
-      }
-    } catch {
-      // Storage can be blocked (private mode); the redirect below still applies.
-    }
-  }
-}
+import { env } from "@/lib/env";
+import { wipeNonPlatformClient } from "@/lib/wipe-non-platform-storage";
 
 /**
  * The one way to sign out. The browser call is what revokes the refresh token
@@ -30,6 +17,10 @@ export async function signOut(redirectTo: string): Promise<void> {
 
   if (typeof window === "undefined") return;
 
-  wipeBrowserStorage();
+  wipeNonPlatformClient([
+    env.academyIdCookie,
+    env.academySlugCookie,
+    env.academyNameCookie,
+  ]);
   window.location.replace(redirectTo);
 }

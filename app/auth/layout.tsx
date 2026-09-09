@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AuthShell } from "@/components/auth/auth-shell";
+import { AnonymousAuthGate } from "@/components/auth/anonymous-auth-gate";
 import { getAcademyContext } from "@/lib/store-context";
 import { getAcademyBySlug } from "@/lib/api/server";
 import { resolveAssetUrl } from "@/lib/utils";
@@ -40,13 +41,15 @@ export default async function AuthLayout({
   const logoGlyph = academyName.trim().charAt(0) || "✦";
 
   return (
-    <AuthShell
-      academyName={academyName}
-      academySubtitle={academySubtitle ?? undefined}
-      logoUrl={resolveLogoUrl(academy)}
-      logoGlyph={logoGlyph}
-    >
-      {children}
-    </AuthShell>
+    <AnonymousAuthGate>
+      <AuthShell
+        academyName={academyName}
+        academySubtitle={academySubtitle ?? undefined}
+        logoUrl={resolveLogoUrl(academy)}
+        logoGlyph={logoGlyph}
+      >
+        {children}
+      </AuthShell>
+    </AnonymousAuthGate>
   );
 }
