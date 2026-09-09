@@ -652,6 +652,8 @@ export type PublicPlan = {
     courses: number;
     tutoring_students: number;
     storage_gb: number;
+    /** Delivered media traffic allowed per calendar month, in GB. */
+    monthly_traffic_gb: number;
   };
   features: string[];
   is_most_popular: boolean;

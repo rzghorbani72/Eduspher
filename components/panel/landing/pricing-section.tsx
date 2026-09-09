@@ -49,10 +49,16 @@ function quarterlyFromMonthly(monthly: number): {
   return { charged, full, discountPercent };
 }
 
+/**
+ * Only used when the API is unreachable, so the pricing page renders a number
+ * instead of a zero. The live plan row is authoritative — if the owner edits a
+ * price, these stay stale by design and must be refreshed when a tier is
+ * repriced for good.
+ */
 const FALLBACK_MONTHLY: Record<string, number> = {
-  starter: 2_800_000,
-  growth: 5_800_000,
-  business: 9_000_000,
+  starter: 3_000_000,
+  growth: 6_500_000,
+  business: 11_000_000,
 };
 
 function resolveMonthlyToman(

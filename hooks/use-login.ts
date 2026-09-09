@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "react-toastify";
 
@@ -45,7 +45,6 @@ export type LoginStep =
  * `lib/auth-identify.ts`.
  */
 export function useLogin() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
@@ -107,10 +106,11 @@ export function useLogin() {
     const { loadAndMergeCart } = await import("@/app/actions/cart");
     loadAndMergeCart().catch(() => {});
     toast.success(t("auth.loginSuccess"), { toastId: "login-success" });
-    // The route guard sent us here with the page the visitor actually wanted;
-    // otherwise the visitor lands back on the academy home page.
-    router.push(safeRedirectPath(searchParams.get("redirect"), buildPath("/")));
-    router.refresh();
+    // Hard navigation: the account layout re-checks auth server-side on every
+    // navigation, and a client-side router.push can race the cookie write and
+    // bounce back to the first login step. A full reload always sees the
+    // committed cookie (same fix as AdminPanel's use-delayed-redirect.ts).
+    window.location.href = safeRedirectPath(searchParams.get("redirect"), buildPath("/"));
   }
 
   function failed(err: unknown) {
