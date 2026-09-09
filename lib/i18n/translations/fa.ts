@@ -152,6 +152,7 @@ export const fa = {
     featured: "ویژه",
     certificate: "گواهینامه",
     certificateAwarded: "اعطا شده",
+    certificateIncluded: "شامل شده",
     certificateNotIncluded: "شامل نشده",
     formatSelfPaced: "پیش‌نمایش خودآموز",
     formatMentorGuided: "گروه راهنمایی شده توسط مربی",

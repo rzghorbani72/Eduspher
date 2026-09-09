@@ -130,6 +130,7 @@ export const tr = {
     featured: "Öne Çıkan",
     certificate: "Sertifika",
     certificateAwarded: "Verildi",
+    certificateIncluded: "Dahil",
     certificateNotIncluded: "Dahil değil",
     formatSelfPaced: "Kendi hızınızda önizleme",
     formatMentorGuided: "Mentör rehberliğinde grup",

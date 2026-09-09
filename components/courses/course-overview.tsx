@@ -76,7 +76,7 @@ export function CourseOverview({
     {
       key: "certificate",
       value: course.is_certificate
-        ? t("courses.certificateAwarded")
+        ? t("courses.certificateIncluded")
         : t("courses.certificateNotIncluded"),
       label: t("courses.certificate"),
     },

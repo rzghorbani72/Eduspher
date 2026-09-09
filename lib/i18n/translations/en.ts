@@ -153,6 +153,7 @@ export const en = {
     featured: "Featured",
     certificate: "Certificate",
     certificateAwarded: "Awarded",
+    certificateIncluded: "Included",
     certificateNotIncluded: "Not included",
     formatSelfPaced: "Self-paced preview",
     formatMentorGuided: "Mentor-guided cohort",

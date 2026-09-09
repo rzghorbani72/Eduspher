@@ -5,7 +5,7 @@ import type { AccountNavSection } from "@/components/account/account-nav-section
 import { AnimatedHoverIcon } from "@/components/account/animated-hover-icon";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type AccountNavGroupProps = {
   section: AccountNavSection;
@@ -26,11 +26,13 @@ export function AccountNavGroup({
     currentPath.startsWith(`/account${item.segment}`),
   );
   const [expanded, setExpanded] = useState(true);
+  const [hadActiveChild, setHadActiveChild] = useState(hasActiveChild);
   const [hovered, setHovered] = useState(false);
 
-  useEffect(() => {
+  if (hasActiveChild !== hadActiveChild) {
+    setHadActiveChild(hasActiveChild);
     if (hasActiveChild) setExpanded(true);
-  }, [hasActiveChild]);
+  }
 
   return (
     <div>

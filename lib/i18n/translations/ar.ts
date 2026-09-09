@@ -128,6 +128,7 @@ export const ar = {
     featured: "مميز",
     certificate: "شهادة",
     certificateAwarded: "تم منحها",
+    certificateIncluded: "متضمنة",
     certificateNotIncluded: "غير متضمنة",
     formatSelfPaced: "معاينة ذاتية",
     formatMentorGuided: "مجموعة موجهة من المرشد",

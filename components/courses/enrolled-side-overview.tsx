@@ -77,7 +77,7 @@ function buildFacts(
     },
     isCertificate && {
       key: "certificate",
-      value: t("courses.certificateAwarded"),
+      value: t("courses.certificateIncluded"),
       label: t("courses.certificate"),
       icon: Award,
     },
