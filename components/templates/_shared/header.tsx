@@ -11,7 +11,7 @@ import { AccountAvatar } from "@/components/layout/account-avatar";
 import { Container } from "./section";
 import { Button } from "./primitives";
 import { RemovableSlot } from "./removable-slot";
-import { flag, list, text, type SectionConfig } from "./types";
+import { list, text, type SectionConfig } from "./types";
 import { templateHref, type TemplateRoute } from "./routes";
 import { editableList, editableItem } from "./editable-list";
 
@@ -117,9 +117,7 @@ export async function TemplateTopBar({
   const isAuthenticated = Boolean(user);
   const accountLabel = user?.display_name?.trim() || defaults.accountText;
   const accountAvatarUrl = resolveAssetUrl(user?.avatar?.url);
-
-  // The manager can swap which action sits closest to the page edge.
-  const reversed = flag(config, "reverseActions", false);
+  const loginText = text(config, "loginText", defaults.loginText);
 
   const ctaSlot = (
     <RemovableSlot
@@ -140,12 +138,7 @@ export async function TemplateTopBar({
   );
 
   const accountSlot = (
-    <RemovableSlot
-      config={config}
-      flagKey="showLogin"
-      editMode={editMode}
-      className="hidden sm:inline-flex"
-    >
+    <div className="hidden sm:inline-flex">
       {isAuthenticated ? (
         <Link
           href={templateHref(storeContext, "account")}
@@ -159,12 +152,10 @@ export async function TemplateTopBar({
           href={templateHref(storeContext, "login")}
           className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
         >
-          <span data-editable="loginText">
-            {text(config, "loginText", defaults.loginText)}
-          </span>
+          <span data-editable="loginText">{loginText}</span>
         </Link>
       )}
-    </RemovableSlot>
+    </div>
   );
 
   const borderClass = spec.thickBorder
@@ -245,8 +236,8 @@ export async function TemplateTopBar({
           </nav>
 
           <div className="ms-auto flex flex-none items-center gap-3">
-            {reversed ? ctaSlot : accountSlot}
-            {reversed ? accountSlot : ctaSlot}
+            {ctaSlot}
+            {accountSlot}
 
             {/* CSS-only mobile menu: native disclosure, no JavaScript. */}
             <details className="relative lg:hidden">
@@ -286,7 +277,7 @@ export async function TemplateTopBar({
                       <span className="truncate">{accountLabel}</span>
                     </>
                   ) : (
-                    defaults.loginText
+                    loginText
                   )}
                 </a>
               </div>
