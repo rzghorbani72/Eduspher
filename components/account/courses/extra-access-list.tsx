@@ -5,6 +5,7 @@ import type { CourseAccessRow } from "@/lib/api/account-types";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/server-translations";
 import { accessTypeLabelKey } from "@/lib/courses/access-type";
+import { learnPath } from "@/lib/content-paths";
 import { buildAcademyPath, formatDate } from "@/lib/utils";
 
 interface ExtraAccessListProps {
@@ -38,7 +39,10 @@ export function ExtraAccessList({
         {rows.map((row) => (
           <li key={row.course_id}>
             <Link
-              href={buildAcademyPath(storeSlug, `/learn/${row.course_id}`)}
+              href={buildAcademyPath(
+                storeSlug,
+                learnPath(row.slug || row.course_id),
+              )}
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-theme bg-card p-4 transition hover:border-(--theme-primary)/40"
             >
               <span className="min-w-0">

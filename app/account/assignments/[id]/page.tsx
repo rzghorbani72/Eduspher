@@ -12,6 +12,7 @@ import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
 import { scoreLabel } from "@/lib/account-labels";
+import { learnPath } from "@/lib/content-paths";
 import { buildAcademyPath, formatDate, formatNumber } from "@/lib/utils";
 
 export default async function AssignmentDetailPage({
@@ -41,7 +42,10 @@ export default async function AssignmentDetailPage({
   const translate = (key: string) => t(key, language);
   const submission =
     submissions.find((item) => item.assignment_id === assignment.id) ?? null;
-  const courseId = assignment.Lesson?.Season?.course_id;
+  const courseSlug =
+    assignment.Lesson?.Course?.slug ??
+    assignment.Lesson?.Season?.Course?.slug;
+  const lessonSlug = assignment.Lesson?.slug;
 
   return (
     <div className="space-y-6">
@@ -58,11 +62,11 @@ export default async function AssignmentDetailPage({
         description={assignment.Lesson?.Season?.Course?.title ?? undefined}
         icon={ClipboardList}
         actions={
-          courseId ? (
+          courseSlug && lessonSlug ? (
             <Link
               href={buildAcademyPath(
                 slugForPaths,
-                `/learn/${courseId}/${assignment.lesson_id}`,
+                learnPath(courseSlug, lessonSlug),
               )}
               className="inline-flex h-10 items-center rounded-full bg-(--theme-primary) px-5 text-sm font-semibold text-(--theme-on-primary) transition-opacity hover:opacity-90"
             >

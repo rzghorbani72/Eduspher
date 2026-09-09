@@ -403,13 +403,14 @@ export async function getCourses(params?: {
 }
 
 export async function getCourseById(id: string | number) {
+  const key = encodeURIComponent(String(id));
   try {
-    const result = await serverFetch<CourseSummary>(`/courses/${id}`);
+    const result = await serverFetch<CourseSummary>(`/courses/${key}`);
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
       const fallback = await serverFetch<CourseSummary>(
-        `/courses/public/${id}`,
+        `/courses/public/${key}`,
         {
           includeAuth: false,
         },
@@ -426,9 +427,12 @@ export async function getCourseById(id: string | number) {
  * is the panel's editor view and returns a different, narrower shape.
  */
 export async function getPublicCourseDetail(id: string) {
-  const result = await serverFetch<CourseSummary>(`/courses/public/${id}`, {
-    includeAuth: false,
-  }).catch(() => null);
+  const result = await serverFetch<CourseSummary>(
+    `/courses/public/${encodeURIComponent(id)}`,
+    {
+      includeAuth: false,
+    },
+  ).catch(() => null);
   return result?.data ?? null;
 }
 

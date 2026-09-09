@@ -10,6 +10,7 @@ import type { CourseSummary } from "@/lib/api/types";
 import { useStorePath } from "@/components/providers/store-provider";
 import { CheckCircle, Loader2, AlertCircle, X } from "lucide-react";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
+import { coursePath } from "@/lib/content-paths";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 interface CheckoutFormProps {
@@ -145,7 +146,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           // For free courses or direct enrollment
           setSuccess(true);
           setTimeout(() => {
-            router.push(buildPath(`/courses/${course.id}`));
+            router.push(buildPath(coursePath(course.slug)));
             router.refresh();
           }, 1500);
         } else {

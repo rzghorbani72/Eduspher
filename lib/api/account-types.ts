@@ -44,6 +44,7 @@ export type AccountUser = {
 export type AccessCourseRef = {
   id: string;
   title: string;
+  slug?: string;
   cover_url?: string | null;
 };
 
@@ -80,6 +81,8 @@ export type AssignmentSummary = {
   Lesson?: {
     id: string;
     title: string;
+    slug?: string;
+    Course?: AccessCourseRef | null;
     Season?: {
       id: string;
       course_id: string;

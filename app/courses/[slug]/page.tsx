@@ -27,6 +27,7 @@ import { getCourseAccess } from "@/lib/api/account-server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
+import { coursePath, learnPath } from "@/lib/content-paths";
 import { markdownToPlainText } from "@/lib/markdown";
 import { getAcademyShareImageUrl } from "@/lib/seo/share-image";
 import { t } from "@/lib/i18n/server-translations";
@@ -43,16 +44,16 @@ import {
 } from "@/lib/seo/course-json-ld";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
 
-type PageParams = Promise<{ id: string }>;
+type PageParams = Promise<{ slug: string }>;
 
 export async function generateMetadata({
   params,
 }: {
   params: PageParams;
 }): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
   const [course, ctx] = await Promise.all([
-    getPublicCourseDetail(id),
+    getPublicCourseDetail(slug),
     getSeoRequestContext(),
   ]);
   if (!course) return { title: "404" };
@@ -99,13 +100,15 @@ export default async function CourseDetailPage({
 }: {
   params: PageParams;
 }) {
-  const { id } = await params;
+  const { slug } = await params;
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
+  const course = await getPublicCourseDetail(slug);
+  if (!course) return notFound();
+
   const [
-    course,
     user,
     tutoringOffers,
     tutoringGroups,
@@ -113,16 +116,13 @@ export default async function CourseDetailPage({
     paymentPlans,
     seoCtx,
   ] = await Promise.all([
-    getPublicCourseDetail(id),
     getCurrentUser().catch(() => null),
-    getTutoringOffersPublic(id).catch(() => []),
-    getTutoringGroupsPublic(id).catch(() => []),
-    getCourseOfferingsPublic(id).catch(() => []),
-    getCoursePaymentPlans(id),
+    getTutoringOffersPublic(course.id).catch(() => []),
+    getTutoringGroupsPublic(course.id).catch(() => []),
+    getCourseOfferingsPublic(course.id).catch(() => []),
+    getCoursePaymentPlans(course.id),
     getSeoRequestContext(),
   ]);
-
-  if (!course) return notFound();
 
   const { academy, language, currencyConfig } = await resolveAcademyForRequest(
     user,
@@ -200,10 +200,10 @@ export default async function CourseDetailPage({
     ? null
     : (previewMedia.find((item) => item.videoId)?.lessonId ?? null);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
-  const learnPath = buildPath(`/learn/${course.id}`);
+  const learnPathHref = buildPath(learnPath(course.slug));
   // Free lessons open the full learning page for everyone, enrolled or not —
   // the page itself only requires sign-in, not a purchase, for a free lesson.
-  const previewBasePath = learnPath;
+  const previewBasePath = learnPathHref;
 
   const relatedCourses = await getCourses({
     published: true,
@@ -276,7 +276,7 @@ export default async function CourseDetailPage({
                 hasLessonAccess={isEnrolled}
                 prerequisiteHref={
                   course.PrerequisiteCourse
-                    ? buildPath(`/courses/${course.PrerequisiteCourse.id}`)
+                    ? buildPath(coursePath(course.PrerequisiteCourse.slug))
                     : null
                 }
                 instructorAvatarUrl={avatarUrl}
@@ -290,7 +290,7 @@ export default async function CourseDetailPage({
                   currencyConfig={currencyConfig}
                   language={language}
                   loginHref={buildPath(
-                    `/auth/login?redirect=/courses/${course.id}`,
+                    `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
                   )}
                 />
               </div>
@@ -307,10 +307,10 @@ export default async function CourseDetailPage({
               language={language}
               currencyConfig={currencyConfig}
               loginHref={buildPath(
-                `/auth/login?redirect=/courses/${course.id}`,
+                `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
               )}
-              continueHref={isEnrolled ? learnPath : null}
-              learnHref={learnPath}
+              continueHref={isEnrolled ? learnPathHref : null}
+              learnHref={learnPathHref}
               liveClassesHref={buildPath("/account/classes")}
               tutoringHref={buildPath("/account/tutoring")}
               access={

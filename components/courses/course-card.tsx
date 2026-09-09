@@ -7,6 +7,7 @@ import { COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout
 import { formatMinutes } from "@/components/courses/curriculum/format";
 import { AppImage } from "@/components/ui/app-image";
 import { isLiveCourse, seatPriceOf } from "@/lib/courses/live-course";
+import { coursePath } from "@/lib/content-paths";
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { CourseSummary } from "@/lib/api/types";
 import {
@@ -44,7 +45,7 @@ const LIVE_RED = "#e11d48";
 
 export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCardProps) => {
   const { t, language } = useTranslation();
-  const detailHref = buildAcademyPath(storeSlug, `/courses/${course.id}`);
+  const detailHref = buildAcademyPath(storeSlug, coursePath(course.slug));
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl);
   const thumbGradient = THUMB_GRADIENTS[hashToIndex(course.id, THUMB_GRADIENTS.length)];
   const monogram = course.title.trim().charAt(0);

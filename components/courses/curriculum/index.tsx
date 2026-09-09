@@ -21,7 +21,7 @@ import { useNow } from "@/lib/hooks/use-now";
 interface CourseCurriculumProps {
   seasons: CurriculumSeasonView[];
   stats: CourseContentStats;
-  /** Link prefix for owners, e.g. `/learn/<courseId>`. Null plays in place. */
+  /** Link prefix for owners, e.g. `/learn/<course-slug>`. Null plays in place. */
   previewBasePath: string | null;
   /** The student holds the recorded lessons, so nothing here is locked. */
   hasLessonAccess?: boolean;
@@ -153,7 +153,7 @@ export function CourseCurriculum({
                         previewHref={
                           (lesson.isPreview || hasLessonAccess) &&
                           previewBasePath
-                            ? `${previewBasePath}/${lesson.id}`
+                            ? `${previewBasePath}/${encodeURIComponent(lesson.slug || lesson.id)}`
                             : null
                         }
                         unlocked={hasLessonAccess}

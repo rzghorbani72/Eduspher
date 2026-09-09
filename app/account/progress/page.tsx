@@ -12,6 +12,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
+import { learnPath } from "@/lib/content-paths";
 import {
   buildAcademyPath,
   formatDate,
@@ -71,7 +72,10 @@ export default async function AccountProgressPage() {
             return (
               <Link
                 key={row.id}
-                href={buildAcademyPath(slugForPaths, `/learn/${row.course_id}`)}
+                href={buildAcademyPath(
+                  slugForPaths,
+                  learnPath(row.Course?.slug || row.course_id),
+                )}
                 className="rounded-2xl border border-theme bg-card p-5 shadow-sm transition hover:border-(--theme-primary)/40"
               >
                 <p className="font-semibold text-(--theme-foreground)">

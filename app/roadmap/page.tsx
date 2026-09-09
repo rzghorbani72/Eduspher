@@ -88,6 +88,7 @@ export default async function RoadmapPage() {
       comparePrice: bundle.compare_at_price,
       courses: bundle.Courses.map((entry, idx) => ({
         id: entry.Course.id,
+        slug: entry.Course.slug,
         step: idx + 1,
         title: entry.Course.title,
         short_description: entry.Course.short_description ?? "",
@@ -117,6 +118,7 @@ export default async function RoadmapPage() {
         .filter((c) => c.Category?.id === cat.id)
         .map((c, idx) => ({
           id: c.id,
+          slug: c.slug,
           step: idx + 1,
           title: c.title,
           short_description: c.short_description ?? "",

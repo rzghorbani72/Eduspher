@@ -8,9 +8,11 @@ import { useStorePath } from "@/components/providers/store-provider";
 import { formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
 import { formatMinutes } from "@/components/courses/curriculum/format";
 import { AppImage } from "@/components/ui/app-image";
+import { coursePath } from "@/lib/content-paths";
 
 interface RoadmapCourse {
   id: string;
+  slug: string;
   step: number;
   title: string;
   short_description: string;
@@ -191,7 +193,7 @@ export function RoadmapTabs({ roadmaps, articles, store, language }: RoadmapTabs
                               : formatCurrencyWithAcademy(course.price, store, undefined, language)}
                           </p>
                           <Link
-                            href={buildPath(`/courses/${course.id}`)}
+                            href={buildPath(coursePath(course.slug))}
                             className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--theme-primary)] transition-all hover:gap-2"
                           >
                             {t("roadmap.viewCourse") || "مشاهده دوره"} →

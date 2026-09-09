@@ -13,12 +13,14 @@ import { getMyTutoringGroups } from "@/lib/api/account-server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
+import { learnPath } from "@/lib/content-paths";
 import { buildAcademyPath, formatDate } from "@/lib/utils";
 
 type LiveLesson = {
   id: string;
   title: string;
-  courseId: string;
+  courseSlug: string;
+  lessonSlug: string;
   courseTitle: string;
   startsAt: string | null;
 };
@@ -70,7 +72,8 @@ export default async function AccountClassesPage() {
             .map((lesson) => ({
               id: String(lesson.id),
               title: lesson.title,
-              courseId: String(course.id),
+              courseSlug: course.slug,
+              lessonSlug: lesson.slug ?? lesson.id,
               courseTitle: course.title,
               startsAt:
                 (lesson as { live_starts_at?: string | null }).live_starts_at ??
@@ -160,7 +163,7 @@ function LessonList({
           <Link
             href={buildAcademyPath(
               storeSlug,
-              `/learn/${lesson.courseId}/${lesson.id}`,
+              learnPath(lesson.courseSlug, lesson.lessonSlug),
             )}
             className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-theme bg-card p-4 transition hover:border-(--theme-primary)/40"
           >

@@ -91,7 +91,7 @@ export type LearningSummary = {
     status: string;
     last_accessed: string | null;
     video_heartbeats: number;
-    Course?: { id: string; title: string } | null;
+    Course?: { id: string; title: string; slug?: string } | null;
   }>;
 };
 
@@ -125,7 +125,7 @@ export type TutoringEngagementRow = {
   status: string;
   starts_at: string | null;
   ends_at: string | null;
-  Course?: { id: string; title: string } | null;
+  Course?: { id: string; title: string; slug?: string } | null;
   Tutor?: { id: string; display_name: string } | null;
 };
 

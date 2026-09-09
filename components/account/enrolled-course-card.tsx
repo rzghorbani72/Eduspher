@@ -6,6 +6,7 @@ import { resolveTemplateCourseCard } from "@/components/templates/registry";
 import { getActiveTemplateKey } from "@/lib/active-template";
 import type { LanguageCode } from "@/lib/i18n/config";
 import { t } from "@/lib/i18n/server-translations";
+import { learnPath } from "@/lib/content-paths";
 import { buildAcademyPath, cn, formatPercent } from "@/lib/utils";
 
 interface EnrolledCourse {
@@ -50,7 +51,7 @@ export async function EnrolledCourseCard({
   if (!course) return null;
 
   const translate = (key: string) => t(key, language);
-  const href = buildAcademyPath(storeSlug, `/learn/${course.id}`);
+  const href = buildAcademyPath(storeSlug, learnPath(course.slug));
   const progress = Math.min(Math.round(enrollment.progress_percent), 100);
   const isCompleted = enrollment.status === "COMPLETED";
   const teacherName =

@@ -37,6 +37,7 @@ export interface UnlockRule {
 
 export interface CurriculumLessonView {
   id: string;
+  slug: string;
   title: string;
   description: string | null;
   type: LessonType;
@@ -106,6 +107,7 @@ const resolveDownloadable = (lesson: LessonSummary): boolean =>
 
 const toLessonView = (lesson: LessonSummary): CurriculumLessonView => ({
   id: lesson.id,
+  slug: lesson.slug ?? lesson.id,
   title: lesson.title,
   description: lesson.description ?? null,
   type: resolveType(lesson),

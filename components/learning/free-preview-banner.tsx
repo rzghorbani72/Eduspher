@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 import Link from "@/components/ui/link";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { coursePath } from "@/lib/content-paths";
 import { buildAcademyPath } from "@/lib/utils";
 
 /**
@@ -12,10 +13,10 @@ import { buildAcademyPath } from "@/lib/utils";
  * lesson is the sales pitch, so the way to buy has to be on this page.
  */
 export function FreePreviewBanner({
-  courseId,
+  courseSlug,
   storeSlug,
 }: {
-  courseId: string;
+  courseSlug: string;
   storeSlug: string | null;
 }) {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ export function FreePreviewBanner({
         </div>
       </div>
       <Button asChild size="sm" className="shrink-0">
-        <Link href={buildAcademyPath(storeSlug, `/courses/${courseId}`)}>
+        <Link href={buildAcademyPath(storeSlug, coursePath(courseSlug))}>
           {t("learning.freePreviewCta")}
         </Link>
       </Button>

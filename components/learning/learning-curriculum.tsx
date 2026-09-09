@@ -15,6 +15,7 @@ import { MetaDot } from "@/components/learning/meta-dot";
 import type { LessonSummary, LessonType, SeasonSummary } from "@/lib/api/types";
 import { formatSeconds } from "@/components/courses/curriculum/format";
 import { flattenLessons } from "@/lib/learning/lesson-list";
+import { learnPath } from "@/lib/content-paths";
 import { cn, buildAcademyPath, toPersianDigits } from "@/lib/utils";
 
 const TYPE_ICON: Record<LessonType, typeof PlayCircle> = {
@@ -46,7 +47,7 @@ function daysUntilUnlock(lesson: LessonSummary): number | null {
 }
 
 interface LearningCurriculumProps {
-  courseId: string;
+  courseSlug: string;
   seasons: SeasonSummary[];
   selectedLessonId: string;
   completedLessonIds: ReadonlySet<string>;
@@ -57,7 +58,7 @@ interface LearningCurriculumProps {
 }
 
 export function LearningCurriculum({
-  courseId,
+  courseSlug,
   seasons,
   selectedLessonId,
   completedLessonIds,
@@ -202,7 +203,7 @@ export function LearningCurriculum({
                       <Link
                         href={buildAcademyPath(
                           storeSlug,
-                          `/learn/${courseId}/${lessonId}`,
+                          learnPath(courseSlug, lesson.slug ?? lesson.id),
                         )}
                         aria-current={selected ? "page" : undefined}
                         className={rowClass}

@@ -17,6 +17,7 @@ import {
   PLATFORM_SITEMAP_PATHS,
   getSitemapPriority,
 } from "@/lib/seo/platform-pages";
+import { coursePath } from "@/lib/content-paths";
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 
@@ -138,7 +139,7 @@ async function academySitemap(
 
   for (const course of coursePayload?.courses ?? []) {
     rows.push(
-      entry(host, `/courses/${course.id}`, {
+      entry(host, coursePath(course.slug), {
         priority: 0.8,
         changeFrequency: "weekly",
         lastModified: now,

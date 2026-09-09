@@ -30,9 +30,11 @@ import {
 } from "@/lib/utils";
 import { formatSeconds } from "@/components/courses/curriculum/format";
 import { initialsOf } from "@/lib/learning/live-schedule";
+import { coursePath } from "@/lib/content-paths";
 
 interface LearningShellProps {
   courseId: string;
+  courseSlug: string;
   courseTitle: string;
   seasons: SeasonSummary[];
   selectedLesson: LessonSummary;
@@ -48,6 +50,7 @@ interface LearningShellProps {
 
 export function LearningShell({
   courseId,
+  courseSlug,
   courseTitle,
   seasons,
   selectedLesson,
@@ -181,7 +184,7 @@ export function LearningShell({
     <div className="mx-auto max-w-[1500px] overflow-hidden rounded-2xl border border-theme bg-background shadow-sm">
       <div className="flex h-[60px] items-center gap-4 border-b border-theme bg-card px-4 sm:px-8">
         <Link
-          href={buildAcademyPath(storeSlug, `/courses/${courseId}`)}
+          href={buildAcademyPath(storeSlug, coursePath(courseSlug))}
           title={courseTitle}
           className="flex min-w-0 items-center gap-2 text-[13px] font-semibold text-muted transition-colors hover:text-foreground"
         >
@@ -235,7 +238,7 @@ export function LearningShell({
         <main className="min-w-0 px-4 pb-10 pt-[26px] sm:px-8">
           {isPreviewing ? (
             <div className="mb-5">
-              <FreePreviewBanner courseId={courseId} storeSlug={storeSlug} />
+              <FreePreviewBanner courseSlug={courseSlug} storeSlug={storeSlug} />
             </div>
           ) : null}
 
@@ -329,7 +332,7 @@ export function LearningShell({
 
           <div className="max-h-[65vh] overflow-y-auto">
             <LearningCurriculum
-              courseId={courseId}
+              courseSlug={courseSlug}
               seasons={seasons}
               selectedLessonId={lessonId}
               completedLessonIds={completedLessonIds}
@@ -343,7 +346,7 @@ export function LearningShell({
       </div>
 
       <LessonNavFooter
-        courseId={courseId}
+        courseSlug={courseSlug}
         storeSlug={storeSlug}
         previous={previous}
         next={next}

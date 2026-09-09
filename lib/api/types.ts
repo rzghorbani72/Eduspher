@@ -63,6 +63,7 @@ export interface LessonAssignmentSummary {
 
 export interface LessonSummary {
   id: string;
+  slug?: string;
   course_id?: string;
   title: string;
   description?: string | null;

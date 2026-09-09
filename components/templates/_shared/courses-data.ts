@@ -1,6 +1,7 @@
 import { getCourses } from '@/lib/api/server';
 import { getAcademyCurrency, type CurrencyConfig } from '@/lib/courses/academy-context';
 import { buildAcademyPath, formatCurrencyWithAcademy, toPersianDigits } from '@/lib/utils';
+import { coursePath } from '@/lib/content-paths';
 import type { CourseSummary } from '@/lib/api/types';
 import { isLiveCourse, seatPriceOf } from '@/lib/courses/live-course';
 import type { TemplateStoreContext } from './types';
@@ -90,7 +91,7 @@ export function toTemplateCourse(
   return {
     id: course.id,
     title: course.title,
-    href: buildAcademyPath(storeSlug, `/courses/${course.id}`),
+    href: buildAcademyPath(storeSlug, coursePath(course.slug)),
     // A live course is priced by the seat, so its own price/free flag says nothing.
     priceLabel: isLive
       ? seatPrice

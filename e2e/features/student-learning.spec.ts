@@ -4,7 +4,7 @@ import { STUDENT_EMAIL, studentLogin } from "../helpers/auth";
 
 test.describe("Student learning route — authentication", () => {
   test("redirects an anonymous learner to login", async ({ page }) => {
-    await page.goto("/learn/course-id/lesson-id");
+    await page.goto("/learn/course-slug/lesson-slug");
 
     await expect(page).toHaveURL(/\/auth\/login/);
     await expect(page).toHaveURL(/redirect=/);

@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation";
 import Link from "@/components/ui/link";
 import type { FlatLesson } from "@/lib/learning/lesson-list";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { learnPath } from "@/lib/content-paths";
 import { buildAcademyPath } from "@/lib/utils";
 
 interface LessonNavFooterProps {
-  courseId: string;
+  courseSlug: string;
   storeSlug: string | null;
   previous: FlatLesson | null;
   next: FlatLesson | null;
@@ -30,7 +31,7 @@ const STEP =
  * each step names the lesson it leads to rather than only its direction.
  */
 export function LessonNavFooter({
-  courseId,
+  courseSlug,
   storeSlug,
   previous,
   next,
@@ -42,7 +43,7 @@ export function LessonNavFooter({
   const { t } = useTranslation();
   const router = useRouter();
   const href = (lesson: FlatLesson) =>
-    buildAcademyPath(storeSlug, `/learn/${courseId}/${lesson.id}`);
+    buildAcademyPath(storeSlug, learnPath(courseSlug, lesson.lesson.slug ?? lesson.id));
 
   // One button ends the lesson: record it, then move on. A failed save keeps the
   // student here with the error visible — advancing would bury a lost record.
