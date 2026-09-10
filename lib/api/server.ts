@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { cookies, headers as nextHeaders } from "next/headers";
 
+import { decodePathSegment } from "@/lib/content-paths";
 import { getBackendApiBaseUrl, env } from "@/lib/env";
 import { logger } from "@/lib/logging/app-logger";
 import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
@@ -403,7 +404,7 @@ export async function getCourses(params?: {
 }
 
 export async function getCourseById(id: string | number) {
-  const key = encodeURIComponent(String(id));
+  const key = encodeURIComponent(decodePathSegment(String(id)));
   try {
     const result = await serverFetch<CourseSummary>(`/courses/${key}`);
     return result.data;
@@ -428,7 +429,7 @@ export async function getCourseById(id: string | number) {
  */
 export async function getPublicCourseDetail(id: string) {
   const result = await serverFetch<CourseSummary>(
-    `/courses/public/${encodeURIComponent(id)}`,
+    `/courses/public/${encodeURIComponent(decodePathSegment(id))}`,
     {
       includeAuth: false,
     },

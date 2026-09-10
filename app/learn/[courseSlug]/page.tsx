@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCourseById, getEnrollments } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
-import { coursePath, learnPath } from "@/lib/content-paths";
+import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
@@ -16,7 +16,8 @@ export default async function LearningCoursePage({
 }: {
   params: PageParams;
 }) {
-  const { courseSlug } = await params;
+  const { courseSlug: courseSlugParam } = await params;
+  const courseSlug = decodePathSegment(courseSlugParam);
   const [session, storeContext] = await Promise.all([
     getSession(),
     getAcademyContext(),

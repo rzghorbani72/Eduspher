@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { LearningShell } from "@/components/learning/learning-shell";
 import { getCourseById, getCurrentUser, getEnrollments } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
-import { coursePath, learnPath } from "@/lib/content-paths";
+import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
 import { getAcademyContext } from "@/lib/store-context";
 import { buildAcademyPath } from "@/lib/utils";
 
@@ -14,7 +14,10 @@ export default async function LearningLessonPage({
 }: {
   params: PageParams;
 }) {
-  const { courseSlug, lessonSlug } = await params;
+  const { courseSlug: courseSlugParam, lessonSlug: lessonSlugParam } =
+    await params;
+  const courseSlug = decodePathSegment(courseSlugParam);
+  const lessonSlug = decodePathSegment(lessonSlugParam);
   const [session, storeContext] = await Promise.all([
     getSession(),
     getAcademyContext(),

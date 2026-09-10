@@ -27,7 +27,7 @@ import { getCourseAccess } from "@/lib/api/account-server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
-import { coursePath, learnPath } from "@/lib/content-paths";
+import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
 import { markdownToPlainText } from "@/lib/markdown";
 import { getAcademyShareImageUrl } from "@/lib/seo/share-image";
 import { t } from "@/lib/i18n/server-translations";
@@ -53,7 +53,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const [course, ctx] = await Promise.all([
-    getPublicCourseDetail(slug),
+    getPublicCourseDetail(decodePathSegment(slug)),
     getSeoRequestContext(),
   ]);
   if (!course) return { title: "404" };
@@ -101,11 +101,12 @@ export default async function CourseDetailPage({
   params: PageParams;
 }) {
   const { slug } = await params;
+  const courseKey = decodePathSegment(slug);
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const course = await getPublicCourseDetail(slug);
+  const course = await getPublicCourseDetail(courseKey);
   if (!course) return notFound();
 
   const [
