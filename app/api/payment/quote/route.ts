@@ -23,18 +23,17 @@ export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt")?.value;
   const academyId = cookieStore.get(env.academyIdCookie)?.value;
-  const csrf = cookieStore.get("csrf-token")?.value;
   const seats = Number(body.seats);
+  // Prefer the browser Cookie header so Nest sees the same csrf-token the
+  // client holds; Bearer alone is enough after CSRF middleware skips it.
+  const cookieHeader = request.headers.get("cookie") ?? undefined;
 
   const response = await fetch(`${backendApiBaseUrl}/payments/checkout/quote`, {
     method: "POST",
     headers: buildInternalBackendHeaders({
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(academyId ? { "X-Academy-ID": academyId } : {}),
-      // Fallback when INTERNAL_API_KEY is unset: Nest CSRF needs both sides.
-      ...(csrf
-        ? { "X-CSRF-Token": csrf, Cookie: `csrf-token=${csrf}` }
-        : {}),
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
     }),
     body: JSON.stringify({
       ...selector,

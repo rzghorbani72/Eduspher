@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt")?.value;
   const academyId = cookieStore.get(env.academyIdCookie)?.value;
-  const csrf = cookieStore.get("csrf-token")?.value;
+  const cookieHeader = request.headers.get("cookie") ?? undefined;
   const origin = request.headers.get("origin") || env.backendOrigin;
   const provider =
     typeof body.provider === "string" ? body.provider : undefined;
@@ -37,9 +37,7 @@ export async function POST(request: NextRequest) {
     headers: buildInternalBackendHeaders({
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(academyId ? { "X-Academy-ID": academyId } : {}),
-      ...(csrf
-        ? { "X-CSRF-Token": csrf, Cookie: `csrf-token=${csrf}` }
-        : {}),
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
     }),
     body: JSON.stringify({
       ...selector,

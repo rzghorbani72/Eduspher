@@ -48,10 +48,28 @@ export const useCheckoutQuote = (
         const data = await response.json().catch(() => null);
         if (!response.ok) {
           setQuote(null);
-          notifyApiError(parseApiError(response.status, data));
+          // Legacy BFF `{ success, error }` still appears until every pod rolls.
+          const legacyError =
+            data &&
+            typeof data === "object" &&
+            typeof (data as { error?: unknown }).error === "string"
+              ? {
+                  status: response.status,
+                  code:
+                    typeof (data as { code?: unknown }).code === "string"
+                      ? (data as { code: string }).code
+                      : `HTTP_${response.status}`,
+                  message: (data as { error: string }).error,
+                }
+              : null;
+          notifyApiError(legacyError ?? parseApiError(response.status, data));
           return;
         }
-        setQuote(data?.data ? (data.data as CheckoutQuote) : null);
+        const quotePayload =
+          data?.data ??
+          (data?.success ? data.quote : null) ??
+          null;
+        setQuote(quotePayload ? (quotePayload as CheckoutQuote) : null);
       } catch (error) {
         setQuote(null);
         notifyApiError(error);
