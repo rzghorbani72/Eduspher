@@ -1425,12 +1425,33 @@ export interface CourseQnA {
   } | null;
 }
 
+function isCourseQnA(value: unknown): value is CourseQnA {
+  if (typeof value !== "object" || value === null) return false;
+  if (!("id" in value) || !("question" in value)) return false;
+  return typeof value.id === "string" && typeof value.question === "string";
+}
+
+function qnaItemsFromPayload(payload: unknown): CourseQnA[] {
+  if (Array.isArray(payload)) {
+    return payload.filter(isCourseQnA);
+  }
+  if (
+    payload !== null &&
+    typeof payload === "object" &&
+    "items" in payload &&
+    Array.isArray(payload.items)
+  ) {
+    return payload.items.filter(isCourseQnA);
+  }
+  return [];
+}
+
 export async function getCourseQnAs(courseId: number) {
   try {
-    const result = await serverFetch<CourseQnA[]>(`/courses/${courseId}/qna`, {
+    const result = await serverFetch<unknown>(`/courses/${courseId}/qna`, {
       includeAuth: true,
     });
-    return result.data ?? [];
+    return qnaItemsFromPayload(result.data);
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
       return [];

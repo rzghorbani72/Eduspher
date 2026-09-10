@@ -1116,7 +1116,6 @@ export const getLessonLiveSession = async (
 export interface CourseQnA {
   id: string;
   course_id: string;
-  user_id: string;
   profile_id: string;
   question: string;
   answer: string | null;
@@ -1124,19 +1123,20 @@ export interface CourseQnA {
   answered_by: string | null;
   answered_at: string | null;
   created_at: string;
-  updated_at: string;
-  user?: {
-    id: string;
-    name: string;
-  };
+  mine?: boolean;
   profile?: {
     id: string;
     display_name: string;
-  };
+  } | null;
   answerer?: {
     id: string;
     display_name: string;
   } | null;
+}
+
+export interface CourseQnAList {
+  items: CourseQnA[];
+  can_moderate: boolean;
 }
 
 export const getCourseQnAs = async (
@@ -1146,9 +1146,13 @@ export const getCourseQnAs = async (
   const response = await getJson<{
     message: string;
     status: string;
-    data: CourseQnA[];
+    data: CourseQnAList | CourseQnA[];
   }>(`/courses/${courseId}/qna`, options);
-  return response.data ?? [];
+  const payload = response.data;
+  if (Array.isArray(payload)) {
+    return { items: payload, can_moderate: false };
+  }
+  return payload ?? { items: [], can_moderate: false };
 };
 
 export const createCourseQnA = async (

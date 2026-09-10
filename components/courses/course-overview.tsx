@@ -73,11 +73,9 @@ export function CourseOverview({
       value: t(DIFFICULTY_KEY[course.difficulty] ?? "courses.beginner"),
       label: t("courses.difficulty"),
     },
-    {
+    course.is_certificate && {
       key: "certificate",
-      value: course.is_certificate
-        ? t("courses.certificateIncluded")
-        : t("courses.certificateNotIncluded"),
+      value: t("courses.certificateIncluded"),
       label: t("courses.certificate"),
     },
   ].filter((fact): fact is { key: string; value: string; label: string } =>

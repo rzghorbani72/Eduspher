@@ -127,11 +127,9 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
         </div>
       )}
 
-      {isLoggedIn && (
-        <div className="border-theme border-t pt-6">
-          <CourseQnA courseId={courseId} isLoggedIn={isLoggedIn} userRole={undefined} />
-        </div>
-      )}
+      <div className="border-theme border-t pt-6">
+        <CourseQnA courseId={courseId} isLoggedIn={isLoggedIn} />
+      </div>
     </section>
   );
 }
