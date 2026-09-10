@@ -10,10 +10,10 @@ import { isLiveCourse, seatPriceOf } from "@/lib/courses/live-course";
 import { coursePath } from "@/lib/content-paths";
 import { useTranslation } from "@/lib/i18n/hooks";
 import type { CourseSummary } from "@/lib/api/types";
+import { courseCoverGradient } from "@/lib/courses/course-cover";
 import {
   buildAcademyPath,
   formatCurrencyWithAcademy,
-  hashToIndex,
   resolveAssetUrl,
   toPersianDigits,
 } from "@/lib/utils";
@@ -28,18 +28,6 @@ interface CourseCardProps {
   } | null;
 }
 
-// Decorative thumbnail gradients (used when a course has no cover image).
-const THUMB_GRADIENTS = [
-  "linear-gradient(135deg,#7c6cff,#4f8cff)",
-  "linear-gradient(135deg,#ff7eb3,#ff6a5e)",
-  "linear-gradient(135deg,#11998e,#38ef7d)",
-  "linear-gradient(135deg,#fa8b34,#f5af19)",
-  "linear-gradient(135deg,#4f8cff,#23d5ab)",
-  "linear-gradient(135deg,#a64bf4,#6d5efc)",
-  "linear-gradient(135deg,#f857a6,#ff5858)",
-  "linear-gradient(135deg,#0ea5e9,#6366f1)",
-] as const;
-
 const FREE_GREEN = "#10b981";
 const LIVE_RED = "#e11d48";
 
@@ -47,7 +35,7 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
   const { t, language } = useTranslation();
   const detailHref = buildAcademyPath(storeSlug, coursePath(course.slug));
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl);
-  const thumbGradient = THUMB_GRADIENTS[hashToIndex(course.id, THUMB_GRADIENTS.length)];
+  const thumbGradient = courseCoverGradient(course.id);
   const monogram = course.title.trim().charAt(0);
   const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
 

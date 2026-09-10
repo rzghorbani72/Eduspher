@@ -173,7 +173,7 @@ export default async function CourseDetailPage({
       ? Math.min(100, Math.max(0, Math.round(myEnrollment.progress_percent)))
       : null;
 
-  const coverUrl = resolveAssetUrl(course.Image?.publicUrl) ?? "/globe.svg";
+  const coverUrl = resolveAssetUrl(course.Image?.publicUrl);
   const promoVideoId = course.Video?.id ?? null;
 
   // Free lessons play inside the cover player, so their media is loaded with
@@ -264,7 +264,9 @@ export default async function CourseDetailPage({
           <div className="min-w-0">
             <CoursePreviewPlayer
               promoVideoId={promoVideoId}
+              courseId={course.id}
               coverUrl={coverUrl}
+              courseTitle={course.title}
               coverAlt={course.Image?.alt ?? course.title}
               hasPreviewLessons={stats.previewCount > 0}
             />

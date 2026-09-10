@@ -6,13 +6,16 @@ import { useEffect, useRef } from "react";
 import { SafeHtml } from "@/components/safe-html";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { usePreviewPlayer } from "@/components/courses/preview-player-context";
+import { CourseCoverPlaceholder } from "@/components/courses/course-cover-placeholder";
 import { SecureVideoPlayer } from "@/components/media/secure-video-player";
 import { AppImage } from "@/components/ui/app-image";
 
 interface CoursePreviewPlayerProps {
   /** Course promo video, shown until the visitor picks a free lesson. */
   promoVideoId: string | null;
-  coverUrl: string;
+  courseId: string;
+  coverUrl: string | null;
+  courseTitle: string;
   coverAlt: string;
   hasPreviewLessons: boolean;
 }
@@ -23,7 +26,9 @@ interface CoursePreviewPlayerProps {
  */
 export function CoursePreviewPlayer({
   promoVideoId,
+  courseId,
   coverUrl,
+  courseTitle,
   coverAlt,
   hasPreviewLessons,
 }: CoursePreviewPlayerProps) {
@@ -31,6 +36,7 @@ export function CoursePreviewPlayer({
   const player = usePreviewPlayer();
   const selected = player?.selected ?? null;
   const videoId = selected?.videoId ?? (selected ? null : promoVideoId);
+  const placeholderHeading = selected?.title ?? courseTitle;
   const audioUrl = selected?.audioUrl ?? null;
   const autoPlay = player?.autoPlay ?? false;
   const mediaRef = useRef<HTMLVideoElement & HTMLAudioElement>(null);
@@ -45,6 +51,13 @@ export function CoursePreviewPlayer({
   return (
     <div id="course-preview-player" className="scroll-mt-24">
       <div className="cd-preview-card group relative">
+        {!coverUrl ? (
+          <CourseCoverPlaceholder
+            courseId={courseId}
+            heading={placeholderHeading}
+            className="absolute inset-0"
+          />
+        ) : null}
         {videoId ? (
           <SecureVideoPlayer
             // Remount on source change so the new video loads and plays.
@@ -54,9 +67,9 @@ export function CoursePreviewPlayer({
             poster={coverUrl}
             autoPlay={autoPlay}
             fill
-            className="h-full w-full"
+            className="relative z-10 h-full w-full"
           />
-        ) : (
+        ) : coverUrl ? (
           <>
             <AppImage
               src={coverUrl}
@@ -67,6 +80,8 @@ export function CoursePreviewPlayer({
             />
             <div className="cd-preview-overlay" />
           </>
+        ) : (
+          <div className="cd-preview-overlay pointer-events-none absolute inset-0 z-10" />
         )}
         {hasPreviewLessons && (
           <span className="cd-preview-label absolute top-3 end-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
