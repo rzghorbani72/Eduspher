@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 import type { PurchaseSelector } from "@/components/purchase/use-purchase";
+import { parseApiError } from "@/lib/api/api-error";
+import { notifyApiError } from "@/lib/api/notify-api-error";
 
 export type CheckoutQuote = {
   title: string;
@@ -44,9 +46,15 @@ export const useCheckoutQuote = (
           }),
         });
         const data = await response.json().catch(() => null);
-        setQuote(data?.success ? (data.quote as CheckoutQuote) : null);
-      } catch {
+        if (!response.ok) {
+          setQuote(null);
+          notifyApiError(parseApiError(response.status, data));
+          return;
+        }
+        setQuote(data?.data ? (data.data as CheckoutQuote) : null);
+      } catch (error) {
         setQuote(null);
+        notifyApiError(error);
       } finally {
         setLoading(false);
       }

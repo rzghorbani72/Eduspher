@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
+import { parseApiError } from "@/lib/api/api-error";
+import { notifyApiError } from "@/lib/api/notify-api-error";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { logger } from "@/lib/logging/app-logger";
 
@@ -75,53 +77,64 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           }),
         });
 
-        if (response.status === 401) {
-          window.location.assign(loginHref);
-          return { ok: false, needsGateway: false };
-        }
-
         const data = await response.json().catch(() => null);
+        const payload =
+          data && typeof data === "object" && "data" in data
+            ? (data.data as Record<string, unknown> | null)
+            : null;
 
-        if (!response.ok || !data?.success) {
+        if (!response.ok) {
           logger.error("Payments", "CheckoutStartFailed", {
             kind,
             amount,
             http_status: response.status,
           });
-          const message = data?.error ?? t("checkout.paymentFailed");
-          setError(message);
-          toast.error(message);
+          const parsed = parseApiError(response.status, data);
+          const ux = notifyApiError(parsed, { loginHref });
+          if (ux !== "login_required") {
+            setError(parsed.message || t("checkout.paymentFailed"));
+          }
           return { ok: false, needsGateway: false };
         }
 
-        if (Array.isArray(data.gateways) && data.gateways.length > 0) {
-          setGateways(data.gateways as PurchaseGateway[]);
+        const availableGateways = Array.isArray(payload?.available_gateways)
+          ? (payload.available_gateways as PurchaseGateway[])
+          : [];
+        if (payload?.needs_gateway_selection && availableGateways.length > 0) {
+          setGateways(availableGateways);
           logger.ok("Payments", "CheckoutGatewayPrompted", {
             kind,
             amount,
-            gateway_count: data.gateways.length,
+            gateway_count: availableGateways.length,
           });
           return { ok: false, needsGateway: true };
         }
 
+        const redirectUrl =
+          typeof payload?.redirect_url === "string" ? payload.redirect_url : null;
+
         logger.ok("Payments", "CheckoutStarted", {
           kind,
           amount,
-          gateway_redirect: Boolean(data.redirect_url),
+          gateway_redirect: Boolean(redirectUrl),
         });
 
-        if (data.redirect_url) {
-          window.location.assign(data.redirect_url);
+        if (redirectUrl) {
+          window.location.assign(redirectUrl);
           return { ok: true, needsGateway: false };
         }
 
         toast.success(t("checkout.paymentSuccess"));
         router.refresh();
         return { ok: true, needsGateway: false };
-      } catch {
-        logger.error("Payments", "CheckoutStartFailed", { kind, amount, http_status: 0 });
+      } catch (error) {
+        logger.error("Payments", "CheckoutStartFailed", {
+          kind,
+          amount,
+          http_status: 0,
+        });
+        notifyApiError(error);
         setError(t("checkout.paymentFailed"));
-        toast.error(t("checkout.paymentFailed"));
         return { ok: false, needsGateway: false };
       } finally {
         setPendingKey(null);

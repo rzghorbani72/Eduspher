@@ -28,6 +28,16 @@ export const tr = {
     tagline: "Sınırsız öğren",
     free: "Ücretsiz",
   },
+  errors: {
+    loginRequired: "Devam etmek için lütfen giriş yapın.",
+    forbidden: "Bu işlemi yapma izniniz yok.",
+    notFound: "Aradığınız öğe bulunamadı.",
+    rateLimited: "Çok fazla deneme. Lütfen biraz bekleyip tekrar deneyin.",
+    csrfRetry: "Güvenlik oturumu yenileniyor. Lütfen tekrar deneyin.",
+    legalConsent: "Devam etmek için güncel koşulları kabul edin.",
+    server: "Sunucu tarafında bir sorun oluştu. Lütfen biraz sonra tekrar deneyin.",
+    generic: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+  },
   currency: {
     toman: "Toman",
     rial: "Riyal",

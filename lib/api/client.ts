@@ -1,6 +1,7 @@
 "use client";
 
 import type { AuthResponse } from "@/lib/api/types";
+import { notifyLoginRequiredAndRedirect } from "@/lib/api/notify-api-error";
 import { getClientBackendApiBaseUrl, env } from "@/lib/env";
 
 const withTrailingSlash = (value: string) =>
@@ -154,18 +155,15 @@ async function refreshToken(): Promise<boolean> {
 }
 
 /**
- * Redirect to login page
+ * Session is gone — snackbar with Go to login, then soft redirect.
  */
 function redirectToLogin(): void {
-  if (typeof window !== "undefined") {
-    const currentPath = window.location.pathname + window.location.search;
-    const storeSlug = getAcademySlug();
-    const loginPath = storeSlug ? `/${storeSlug}/auth/login` : "/auth/login";
-    if (!currentPath.includes("/login")) {
-      const redirectUrl = `${loginPath}?redirect=${encodeURIComponent(currentPath)}`;
-      window.location.href = redirectUrl;
-    }
+  if (typeof window === "undefined") return;
+  const currentPath = window.location.pathname + window.location.search;
+  if (currentPath.includes("/auth/login") || currentPath.includes("/login")) {
+    return;
   }
+  notifyLoginRequiredAndRedirect();
 }
 
 export const LEGAL_CONSENT_REQUIRED_CODE = "LEGAL_CONSENT_REQUIRED";

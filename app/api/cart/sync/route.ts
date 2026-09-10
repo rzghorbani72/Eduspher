@@ -1,49 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { getSession } from "@/lib/auth/session";
 import { syncCart, UnauthorizedError } from "@/lib/api/server";
 
+/**
+ * POST /api/cart/sync — cookie-auth bridge to Nest `/cart/sync`.
+ * On Nest failure, syncCart throws; clients treat non-OK as soft fail.
+ */
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
-    if (!session || !session.profileId) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
+    if (!session?.profileId) {
+      return new NextResponse(null, { status: 401 });
     }
 
     const body = await request.json();
     const { items } = body;
-
     if (!Array.isArray(items)) {
-      return NextResponse.json(
-        { success: false, error: "Invalid items format" },
-        { status: 400 }
-      );
+      return new NextResponse(null, { status: 400 });
     }
 
-    // Sync cart to backend
     const result = await syncCart(items);
-
     return NextResponse.json({
-      success: true,
       message: result.message || "Cart synced successfully",
       removedItems: result.removedItems,
     });
   } catch (error) {
     if (error instanceof UnauthorizedError) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
+      return new NextResponse(null, { status: 401 });
     }
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : "Failed to sync cart",
-      },
-      { status: 500 }
-    );
+    return new NextResponse(null, { status: 500 });
   }
 }
-

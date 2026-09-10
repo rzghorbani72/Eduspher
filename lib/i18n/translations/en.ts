@@ -29,6 +29,16 @@ export const en = {
       "Your online institute — courses, teachers, and students in one place",
     free: "Free",
   },
+  errors: {
+    loginRequired: "Please sign in to continue.",
+    forbidden: "You do not have permission to do this.",
+    notFound: "What you were looking for was not found.",
+    rateLimited: "Too many attempts. Please wait a moment and try again.",
+    csrfRetry: "Your security session is refreshing. Please try again.",
+    legalConsent: "Please accept the updated terms to continue.",
+    server: "Something went wrong on our side. Please try again in a moment.",
+    generic: "Something went wrong. Please try again.",
+  },
   currency: {
     toman: "Toman",
     rial: "Rial",
