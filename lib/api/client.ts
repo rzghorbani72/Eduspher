@@ -1210,11 +1210,14 @@ export interface CourseReview {
   };
 }
 
+export type RatingCounts = [number, number, number, number, number];
+
 export interface CourseReviewsResponse {
   reviews: CourseReview[];
   summary: {
     avg_rating: number;
     total_reviews: number;
+    counts: RatingCounts;
     can_review: boolean;
     is_enrolled: boolean;
   };

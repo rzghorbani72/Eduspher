@@ -2764,6 +2764,21 @@ select[class*="rounded-sm"] {
   background: var(--theme-card-bg);
   border-color: var(--theme-border-color);
 }
+.cd-star-fill {
+  color: #f5a623;
+  fill: #f5a623;
+}
+.cd-rating-bar-track {
+  background: color-mix(in srgb, var(--theme-primary) 12%, transparent);
+}
+.cd-rating-bar {
+  background: var(--theme-primary);
+}
+.cd-review-field {
+  background: var(--theme-surface);
+  border-color: var(--theme-border-color);
+  color: var(--theme-foreground);
+}
 
 /* Rendered Markdown descriptions (course, season, lesson). Kept small and
    local so no typography plugin is needed. */
