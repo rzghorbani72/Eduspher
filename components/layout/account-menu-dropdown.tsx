@@ -102,9 +102,9 @@ export function AccountMenuDropdown({
       </ul>
       <div
         className={cn(
-          "my-1.5 h-px",
-          deepTone ? "bg-current/15" : "bg-theme",
-        )}
+ "my-1.5 h-px",
+ deepTone ? "bg-current/15" : "bg-theme",
+ )}
         aria-hidden
       />
       <button
@@ -112,11 +112,11 @@ export function AccountMenuDropdown({
         onClick={handleLogout}
         disabled={pending}
         className={cn(
-          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors disabled:opacity-60",
-          deepTone
-            ? "text-red-300 hover:bg-white hover:text-red-700"
-            : "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40",
-        )}
+ "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-start text-sm font-medium transition-colors disabled:opacity-60",
+ deepTone
+ ? "text-red-300 hover:bg-white hover:text-red-700"
+ : "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40",
+ )}
       >
         <LogOut className="size-4 shrink-0" aria-hidden />
         {pending ? t("common.loading") : t("auth.logout")}
@@ -148,7 +148,7 @@ export function AccountMenuDropdown({
 
       <div
         className={cn(
-          "absolute end-0 top-[calc(100%+8px)] z-50 w-56 overflow-hidden rounded-xl border p-1.5 shadow-(--theme-shadow)",
+ "absolute end-0 top-[calc(100%+8px)] z-50 w-56 overflow-hidden rounded-xl border p-1.5 ",
           deepTone
             ? "border-current/18 bg-(--theme-deep) text-(--theme-on-deep)"
             : "border-theme bg-(--theme-surface) text-(--theme-foreground)",

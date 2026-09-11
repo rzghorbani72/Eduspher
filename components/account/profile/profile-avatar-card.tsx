@@ -152,7 +152,7 @@ export function ProfileAvatarCard({
             size="sm"
             disabled={busy}
             onClick={() => inputRef.current?.click()}
-            className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
+            className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) hover:bg-surface hover:text-(--theme-foreground)"
           >
             {busy ? (
               <Loader2

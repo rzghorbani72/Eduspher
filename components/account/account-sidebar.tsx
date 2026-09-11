@@ -74,10 +74,10 @@ export function AccountSidebar({
             width={64}
             height={64}
             sizes="64px"
-            className="h-12 w-12 shrink-0 rounded-full object-cover shadow-lg lg:h-16 lg:w-16"
+            className="h-12 w-12 shrink-0 rounded-full object-cover lg:h-16 lg:w-16"
           />
         ) : (
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-(--theme-primary) text-xl font-bold text-(--theme-on-primary) shadow-lg shadow-(--theme-primary)/30 lg:h-16 lg:w-16 lg:text-2xl">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-(--theme-primary) text-xl font-bold text-(--theme-on-primary) lg:h-16 lg:w-16 lg:text-2xl">
             {initialsOf(displayName)}
           </div>
         )}

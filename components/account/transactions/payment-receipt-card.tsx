@@ -27,7 +27,7 @@ export function PaymentReceiptCard({
     toPersianDigits(formatCurrencyWithAcademy(value, academy), language);
 
   return (
-    <section className="space-y-4 rounded-2xl border border-theme bg-card p-5 shadow-sm">
+    <section className="space-y-4 rounded-2xl border border-theme bg-card p-5 ">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-theme pb-3">
         <h2 className="text-base font-semibold text-(--theme-foreground)">
           {translate("account.receipt")}

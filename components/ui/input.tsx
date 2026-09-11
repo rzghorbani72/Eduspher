@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         type={type}
         {...(isControlled ? { value: String(value) } : {})}
         className={cn(
-          "flex h-11 w-full rounded-lg border px-4 text-base shadow-sm transition-colors placeholder:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)]",
+          "flex h-11 w-full rounded-xl border bg-surface px-4 text-sm text-(--theme-foreground) transition-colors placeholder:text-muted placeholder:opacity-70 focus-visible:border-(--theme-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--theme-primary)/20",
           className
         )}
         style={{ ...inputBaseStyle, ...style }}

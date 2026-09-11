@@ -76,7 +76,7 @@ export default async function AccountProgressPage() {
                   slugForPaths,
                   learnPath(row.Course?.slug || row.course_id),
                 )}
-                className="rounded-2xl border border-theme bg-card p-5 shadow-sm transition hover:border-(--theme-primary)/40"
+                className="rounded-2xl border border-theme bg-card p-5 transition hover:border-(--theme-primary)/40"
               >
                 <p className="font-semibold text-(--theme-foreground)">
                   {row.Course?.title ?? translate("account.unknown")}

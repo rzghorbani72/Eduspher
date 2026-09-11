@@ -71,7 +71,7 @@ export default async function AccountCoursesPage() {
           action={
             <Link
               href={buildPath("/courses")}
-              className="inline-flex h-11 items-center rounded-full bg-(--theme-primary) px-6 text-sm font-semibold text-(--theme-on-primary) shadow-lg transition-all hover:scale-105"
+              className="inline-flex h-11 items-center rounded-full bg-(--theme-primary) px-6 text-sm font-semibold text-(--theme-on-primary) transition-all hover:scale-105"
             >
               {translate("account.browseCourses")}
             </Link>

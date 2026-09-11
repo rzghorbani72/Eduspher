@@ -91,7 +91,7 @@ export const EditDisplayNameForm = ({
           variant="ghost"
           size="sm"
           onClick={() => setIsEditing(true)}
-          className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
+          className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) hover:bg-surface hover:text-(--theme-foreground)"
         >
           <Edit2 className="size-3.5 shrink-0" aria-hidden="true" />
           {t("common.edit")}
@@ -117,9 +117,9 @@ export const EditDisplayNameForm = ({
               setError(null);
             }}
             className={cn(
-              "ps-10",
-              error && "border-amber-500 focus:border-amber-500",
-            )}
+ "ps-10",
+ error && "border-amber-500 focus:border-amber-500",
+ )}
             placeholder={t("account.displayNamePlaceholder")}
             maxLength={255}
             autoFocus

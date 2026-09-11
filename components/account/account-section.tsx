@@ -26,7 +26,7 @@ export function AccountSection({
   return (
     <section
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-theme bg-card p-5 shadow-sm sm:p-6",
+        "flex h-full flex-col rounded-2xl border border-theme bg-card p-5 sm:p-6",
         className,
       )}
     >

@@ -126,11 +126,11 @@ function FallbackCard({
   footer: React.ReactNode;
 }) {
   return (
-    <article className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-theme bg-card shadow-sm">
+    <article className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-theme bg-card ">
       <div
         className={cn(
-          COURSE_CARD_THUMB_CLASS,
-          "bg-(--theme-primary)/15 bg-cover bg-center",
+ COURSE_CARD_THUMB_CLASS,
+ "bg-(--theme-primary)/15 bg-cover bg-center",
         )}
         style={
           course.coverUrl ? { backgroundImage: `url(${course.coverUrl})` } : undefined

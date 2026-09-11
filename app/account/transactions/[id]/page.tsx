@@ -83,7 +83,7 @@ export default async function TransactionDetailPage({
         }
       />
 
-      <section className="rounded-2xl border border-theme bg-card p-5 shadow-sm">
+      <section className="rounded-2xl border border-theme bg-card p-5 ">
         <dl className="grid gap-3 sm:grid-cols-2">
           <Row
             label={translate("account.transactionAmount")}

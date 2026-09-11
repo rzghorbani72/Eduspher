@@ -57,7 +57,7 @@ export default async function AccountTutoringPage() {
             return (
               <li
                 key={engagement.id}
-                className="rounded-xl border border-theme bg-card p-4 shadow-sm"
+                className="rounded-xl border border-theme bg-card p-4 "
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
