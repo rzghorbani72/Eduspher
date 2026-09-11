@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { buildInternalBackendHeaders } from "@/lib/backend-internal";
 import { backendApiBaseUrl, env } from "@/lib/env";
 import { SELECTOR_KEYS } from "@/lib/payment/initiate-checkout";
+import { resolvePublicRequestOrigin } from "@/lib/public-request-origin";
 
 /**
  * POST /api/payment/initiate — cookie-auth proxy to Nest `POST /payments/checkout`.
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
   const token = cookieStore.get("jwt")?.value;
   const academyId = cookieStore.get(env.academyIdCookie)?.value;
   const cookieHeader = request.headers.get("cookie") ?? undefined;
-  const origin = request.headers.get("origin") || env.backendOrigin;
+  const academyOrigin = resolvePublicRequestOrigin(request);
   const provider =
     typeof body.provider === "string" ? body.provider : undefined;
   const seats = Number(body.seats);
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
   const callback_url =
     provider === "SAMAN_SEP"
       ? `${env.appUrl}/payment/saman-callback`
-      : `${origin}/payment/callback`;
+      : `${academyOrigin}/payment/callback`;
 
   const response = await fetch(`${backendApiBaseUrl}/payments/checkout`, {
     method: "POST",

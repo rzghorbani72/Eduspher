@@ -7,6 +7,7 @@ import { decodePathSegment } from "@/lib/content-paths";
 import { getBackendApiBaseUrl, env } from "@/lib/env";
 import { logger } from "@/lib/logging/app-logger";
 import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
+import { resolvePublicOriginFromHeaders } from "@/lib/public-request-origin";
 
 /**
  * Custom error class for 401 Unauthorized errors
@@ -789,13 +790,9 @@ export async function initiateCheckoutPayment(data: {
   provider?: "BITPAY" | "PAYPING" | "SAMAN_SEP";
 }) {
   const headerStore = await nextHeaders();
-  const proto =
-    headerStore?.get?.("x-forwarded-proto") ??
-    (process.env.NODE_ENV === "development" ? "http" : "https");
-  const host = headerStore?.get?.("host");
   const fallbackBaseUrl =
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const baseUrl = host ? `${proto}://${host}` : fallbackBaseUrl;
+  const baseUrl = resolvePublicOriginFromHeaders(headerStore, fallbackBaseUrl);
 
   const payload = {
     ...data,
@@ -1085,13 +1082,9 @@ export async function initiateAcademyPlanPayment(data: {
   mobile?: string;
 }) {
   const headerStore = await nextHeaders();
-  const proto =
-    headerStore?.get?.("x-forwarded-proto") ??
-    (process.env.NODE_ENV === "development" ? "http" : "https");
-  const host = headerStore?.get?.("host");
   const fallbackBaseUrl =
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
-  const baseUrl = host ? `${proto}://${host}` : fallbackBaseUrl;
+  const baseUrl = resolvePublicOriginFromHeaders(headerStore, fallbackBaseUrl);
 
   const result = await serverFetchRaw<{
     status: string;

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 import { backendApiBaseUrl, env } from "@/lib/env";
 import { buildInternalBackendHeaders } from "@/lib/backend-internal";
+import { resolvePublicRequestOrigin } from "@/lib/public-request-origin";
 
 /**
  * The one return URL every gateway can be sent to, so checkout never has to know
@@ -73,7 +74,8 @@ const verifyWith = async (
 };
 
 const handle = async (request: NextRequest) => {
-  const origin = new URL(request.url).origin;
+  // Do not use request.url — Docker HOSTNAME=0.0.0.0 poisons its origin.
+  const origin = resolvePublicRequestOrigin(request);
   const params = await readParams(request);
 
   // BitPay: trans_id + id_get on the redirect (official callback). payment_id
