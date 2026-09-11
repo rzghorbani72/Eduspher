@@ -1,19 +1,18 @@
 "use client";
 
-import Link from "@/components/ui/link";
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { Menu, X } from "lucide-react";
 
-import { signOut } from "@/lib/sign-out";
+import Link from "@/components/ui/link";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/components/providers/auth-provider";
 import {
   useAcademyContext,
   useStorePath,
 } from "@/components/providers/store-provider";
-import { AccountAvatar } from "@/components/layout/account-avatar";
+import { AccountMenuDropdown } from "@/components/layout/account-menu-dropdown";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { ThemeToggle } from "@/components/theme/theme-toggle-button";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -35,14 +34,13 @@ export function SiteHeaderClient({
   isPanelRoot,
   requestHost,
 }: SiteHeaderClientProps) {
-  const { isAuthenticated, setAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const { name: storeName, slug: storeSlug } = useAcademyContext();
   const pathname = usePathname();
   const pathSlug = slugFromPathname(pathname);
   const onAcademySite = Boolean(pathSlug ?? storeSlug);
   const buildPath = useStorePath();
   const { t } = useTranslation();
-  const [pending, startTransition] = useTransition();
   const [mobileOpen, setMobileOpen] = useState(false);
   const adminLoginUrl = getAdminPanelUrl("/login", requestHost);
 
@@ -59,7 +57,7 @@ export function SiteHeaderClient({
             { href: "/roadmap", label: t("navigation.roadmap") },
             { href: "/about", label: t("navigation.aboutAcademy") },
           ],
-    [showPanelNav, t]
+    [showPanelNav, t],
   );
 
   const toggleMobile = useCallback(() => {
@@ -68,15 +66,8 @@ export function SiteHeaderClient({
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
-  const handleLogout = () => {
-    startTransition(async () => {
-      setAuthenticated(false);
-      closeMobile();
-      await signOut(buildPath("/"));
-    });
-  };
-
   const authStatus = isAuthenticated ?? initialAuth;
+  const accountLabel = displayName || t("account.profile");
 
   return (
     <header
@@ -100,7 +91,9 @@ export function SiteHeaderClient({
             {storeName}
           </span>
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--theme-primary) text-(--theme-on-primary) shadow-lg shadow-(--theme-primary)/30 transition-transform hover:scale-105">
-            <span className="text-base font-black">{storeName?.charAt(0) || "A"}</span>
+            <span className="text-base font-black">
+              {storeName?.charAt(0) || "A"}
+            </span>
           </span>
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
@@ -134,27 +127,11 @@ export function SiteHeaderClient({
               {t("panel.managerLogin")}
             </a>
           ) : authStatus ? (
-            <Link
-              href={buildPath("/account")}
-              className="flex max-w-[min(100vw-8rem,14rem)] items-center gap-2 rounded-full border py-1 pl-1 pr-3 transition-all hover:opacity-[0.92] md:max-w-none"
-              style={{
-                borderColor: "var(--theme-border-strong)",
-                backgroundColor: "var(--theme-card-bg)",
-                color: "var(--theme-foreground)",
-              }}
-            >
-              <AccountAvatar
-                name={displayName || t("account.myCourses")}
-                avatarUrl={avatarUrl}
-                size={36}
-              />
-              <span
-                className="truncate text-sm font-medium"
-                style={{ color: "var(--theme-foreground)" }}
-              >
-                {displayName || t("account.myCourses")}
-              </span>
-            </Link>
+            <AccountMenuDropdown
+              displayName={accountLabel}
+              avatarUrl={avatarUrl}
+              className="hidden sm:block"
+            />
           ) : (
             <Link
               href={buildPath("/auth/login")}
@@ -163,7 +140,9 @@ export function SiteHeaderClient({
               {t("auth.login")} / {t("auth.register")}
             </Link>
           )}
-          {!showPanelNav ? <NotificationBell isAuthenticated={authStatus} /> : null}
+          {!showPanelNav ? (
+            <NotificationBell isAuthenticated={authStatus} />
+          ) : null}
         </div>
         <button
           type="button"
@@ -220,43 +199,19 @@ export function SiteHeaderClient({
                   {t("panel.managerLogin")}
                 </a>
               ) : authStatus ? (
-                <>
-                  <Link
-                    href={buildPath("/account")}
-                    onClick={closeMobile}
-                    className="flex items-center gap-3 rounded-full border px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
-                    style={{
-                      borderColor: "var(--theme-border-strong)",
-                      backgroundColor: "var(--theme-card-bg)",
-                      color: "var(--theme-foreground)",
-                    }}
-                  >
-                    <AccountAvatar
-                      name={displayName || t("account.myCourses")}
-                      avatarUrl={avatarUrl}
-                      size={36}
-                    />
-                    {displayName || t("account.myCourses")}
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
-                    disabled={pending}
-                  >
-                    {pending ? t("common.loading") : t("auth.logout")}
-                  </button>
-                </>
+                <AccountMenuDropdown
+                  displayName={accountLabel}
+                  avatarUrl={avatarUrl}
+                  inline
+                />
               ) : (
-                <>
-                  <Link
-                    href={buildPath("/auth/login")}
-                    onClick={closeMobile}
-                    className="rounded-full bg-[var(--theme-primary)] px-5 py-2.5 text-center text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)]"
-                  >
-                    {t("auth.login")} / {t("auth.register")}
-                  </Link>
-                </>
+                <Link
+                  href={buildPath("/auth/login")}
+                  onClick={closeMobile}
+                  className="rounded-full bg-[var(--theme-primary)] px-5 py-2.5 text-center text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-primary)]"
+                >
+                  {t("auth.login")} / {t("auth.register")}
+                </Link>
               )}
             </div>
           </div>

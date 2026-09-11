@@ -280,8 +280,8 @@ export const AddContactForm = ({
         <div className="space-y-2">
           <Label htmlFor="email">{t("account.email")}</Label>
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Mail className="h-5 w-5 text-muted" />
+            <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+              <Mail className="size-5 text-muted" aria-hidden="true" />
             </div>
             <Input
               id="email"
@@ -299,7 +299,7 @@ export const AddContactForm = ({
                 setEmailError(error);
               }}
               className={cn(
-                "pl-10",
+                "ps-10",
                 emailError && "border-amber-500 focus:border-amber-500",
               )}
               autoComplete="email"

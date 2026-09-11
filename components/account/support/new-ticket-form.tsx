@@ -25,7 +25,7 @@ interface Props {
 }
 
 const fieldClass =
-  "w-full rounded-lg border border-theme bg-surface px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none";
+  "h-11 w-full rounded-full border border-theme bg-surface px-4 text-sm text-foreground focus:border-primary focus:outline-none";
 
 export function NewTicketForm({ onCreated, onCancel }: Props) {
   const { t } = useTranslation();
@@ -74,8 +74,8 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <div className="space-y-1">
+    <form onSubmit={submit} className="mx-auto max-w-2xl space-y-5">
+      <div className="space-y-1.5">
         <Label>{t("support.responsible")}</Label>
         <select
           aria-label={t("support.responsible")}
@@ -93,15 +93,25 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
         </select>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <Label>{t("support.subject")}</Label>
-        <Input value={subject} onChange={(e) => setSubject(e.target.value)} maxLength={255} required />
+        <Input
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          maxLength={255}
+          required
+        />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-1">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1.5">
           <Label>{t("support.category")}</Label>
-          <select aria-label={t("support.category")} className={fieldClass} value={category} onChange={(e) => setCategory(e.target.value as TicketCategory)}>
+          <select
+            aria-label={t("support.category")}
+            className={fieldClass}
+            value={category}
+            onChange={(e) => setCategory(e.target.value as TicketCategory)}
+          >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
                 {t(`support.categories.${c}`)}
@@ -109,9 +119,14 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
             ))}
           </select>
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <Label>{t("support.priority")}</Label>
-          <select aria-label={t("support.priority")} className={fieldClass} value={priority} onChange={(e) => setPriority(e.target.value as TicketPriority)}>
+          <select
+            aria-label={t("support.priority")}
+            className={fieldClass}
+            value={priority}
+            onChange={(e) => setPriority(e.target.value as TicketPriority)}
+          >
             {PRIORITIES.map((p) => (
               <option key={p} value={p}>
                 {t(`support.priorities.${p}`)}
@@ -121,33 +136,53 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <Label>{t("support.message")}</Label>
-        <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={5} maxLength={5000} placeholder={t("support.messagePlaceholder")} required />
+        <Textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          rows={5}
+          maxLength={5000}
+          placeholder={t("support.messagePlaceholder")}
+          required
+        />
       </div>
 
       <AttachmentInput imageIds={imageIds} onChange={setImageIds} />
 
-      <label className="flex items-center gap-2 text-sm text-foreground">
-        <input type="checkbox" checked={requestCall} onChange={(e) => setRequestCall(e.target.checked)} />
+      <label className="flex items-center gap-2 rounded-xl bg-surface px-3.5 py-3 text-sm text-(--theme-foreground)">
+        <input
+          type="checkbox"
+          checked={requestCall}
+          onChange={(e) => setRequestCall(e.target.checked)}
+          className="size-4 rounded border-theme"
+        />
         {t("support.requestCall")}
       </label>
-      {requestCall && (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
+      {requestCall ? (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
             <Label>{t("support.phone")}</Label>
-            <Input value={phone} onChange={(e) => setPhone(e.target.value)} required={requestCall} />
+            <Input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required={requestCall}
+            />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label>{t("support.preferredTime")}</Label>
-            <Input type="datetime-local" value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} />
+            <Input
+              type="datetime-local"
+              value={preferredTime}
+              onChange={(e) => setPreferredTime(e.target.value)}
+            />
           </div>
         </div>
-      )}
+      ) : null}
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3 pt-1">
         <Button type="submit" loading={submitting} disabled={submitting}>
           {submitting ? t("support.sending") : t("support.submit")}
         </Button>

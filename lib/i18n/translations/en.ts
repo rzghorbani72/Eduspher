@@ -1448,6 +1448,8 @@ export const en = {
     submitRating: "Submit rating",
     thanks: "Thanks for your feedback!",
     empty: "You have no tickets yet",
+    emptyDescription:
+      "Open a ticket when you need help with a course, payment, or class — your teacher or manager will reply here.",
     loading: "Loading…",
     error: "Something went wrong. Please try again.",
     createdBy: "From",

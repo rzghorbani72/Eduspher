@@ -2,24 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { ArrowLeft, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
+import { AccountSection } from "@/components/account/account-section";
+import { StatusPill } from "@/components/account/status-pill";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatDate } from "@/lib/utils";
 import {
   getSupportTicket,
   rateSupportTicket,
   replySupportTicket,
   type TicketDetail,
-  type TicketMessageView,
 } from "@/lib/api/client";
 import { AttachmentInput } from "./attachment-input";
-import {
-  attachmentUrl,
-  formatSystemEvent,
-  statusBadgeVariant,
-} from "./support-format";
+import { formatSystemEvent, ticketStatusTone } from "./support-format";
+import { TicketMessageItem } from "./ticket-message-item";
 
 interface Props {
   ticketId: string;
@@ -41,7 +38,7 @@ export function TicketThread({ ticketId, onBack }: Props) {
       .then(setTicket)
       .catch(() => setError(t("support.error")));
   useEffect(() => {
-    load();
+    void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticketId]);
 
@@ -80,177 +77,125 @@ export function TicketThread({ ticketId, onBack }: Props) {
     }
   };
 
-  if (!ticket)
-    return <p className="p-6 text-sm text-muted">{t("support.loading")}</p>;
+  if (!ticket) {
+    return (
+      <AccountSection>
+        <p className="text-sm text-muted">{t("support.loading")}</p>
+      </AccountSection>
+    );
+  }
 
   const canRate =
     ticket.capabilities.isAuthor &&
     (ticket.status === "RESOLVED" || ticket.status === "CLOSED");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <button
         type="button"
         onClick={onBack}
-        className="flex items-center gap-1 text-sm text-muted hover:text-primary"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-(--theme-primary-ink)"
       >
-        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />{" "}
+        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
         {t("support.backToList")}
       </button>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold text-foreground">
-          {ticket.subject}
-        </h2>
-        <div className="flex items-center gap-2">
-          <Badge variant={statusBadgeVariant(ticket.status)}>
-            {t(`support.statuses.${ticket.status}`)}
-          </Badge>
-          <Badge variant="outline">
-            {t(`support.categories.${ticket.category}`)}
-          </Badge>
-        </div>
-      </div>
-      {ticket.AssignedTo && (
-        <p className="text-xs text-muted">
-          {t("support.assignedTo")}: {ticket.AssignedTo.display_name}
-        </p>
-      )}
-
-      <ul className="space-y-3">
-        {ticket.Message.map((m) => (
-          <MessageItem
-            key={m.id}
-            ticketId={ticketId}
-            message={m}
-            authorIsMe={m.author_id === ticket.CreatedBy?.id}
-            systemText={formatSystemEvent(m, t)}
-          />
-        ))}
-      </ul>
-
-      {ticket.status !== "CLOSED" && (
-        <div className="space-y-2 rounded-lg border border-theme p-3">
-          <Textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            rows={3}
-            maxLength={5000}
-            placeholder={t("support.replyPlaceholder")}
-          />
-          <AttachmentInput imageIds={imageIds} onChange={setImageIds} />
-          <Button
-            onClick={sendReply}
-            loading={busy}
-            disabled={busy || !body.trim()}
-            size="sm"
-          >
-            {t("support.send")}
-          </Button>
-        </div>
-      )}
-
-      {canRate && !ticket.Rating && (
-        <div className="space-y-2 rounded-lg border border-theme p-3">
-          <p className="text-sm font-medium text-foreground">
-            {t("support.rateTitle")}
-          </p>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setScore(n)}
-                aria-label={`${n}`}
-              >
-                <Star
-                  className={`h-6 w-6 ${n <= score ? "fill-amber-400 text-amber-400" : "text-muted"}`}
-                />
-              </button>
-            ))}
+      <AccountSection
+        title={ticket.subject}
+        description={
+          ticket.AssignedTo
+            ? `${t("support.assignedTo")}: ${ticket.AssignedTo.display_name}`
+            : undefined
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill
+              label={t(`support.statuses.${ticket.status}`)}
+              tone={ticketStatusTone(ticket.status)}
+            />
+            <StatusPill
+              label={t(`support.categories.${ticket.category}`)}
+              tone="neutral"
+            />
           </div>
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            rows={2}
-            placeholder={t("support.ratePlaceholder")}
-          />
-          <Button
-            onClick={submitRating}
-            loading={busy}
-            disabled={busy || !score}
-            size="sm"
-          >
-            {t("support.submitRating")}
-          </Button>
-        </div>
-      )}
-      {ticket.Rating && (
-        <p className="text-sm text-emerald-600">{t("support.thanks")}</p>
-      )}
-
-      {error && <p className="text-sm text-red-500">{error}</p>}
-    </div>
-  );
-}
-
-function MessageItem({
-  ticketId,
-  message,
-  authorIsMe,
-  systemText,
-}: {
-  ticketId: string;
-  message: TicketMessageView;
-  authorIsMe: boolean;
-  systemText: string;
-}) {
-  const { t, language } = useTranslation();
-
-  if (message.kind === "SYSTEM_EVENT") {
-    return (
-      <li className="flex items-center justify-center gap-1 text-center text-xs text-muted">
-        {systemText}
-      </li>
-    );
-  }
-  return (
-    <li
-      className={`max-w-[85%] rounded-lg p-3 text-sm ${authorIsMe ? "ms-auto bg-primary-subtle" : "bg-surface"}`}
-    >
-      <div className="mb-1 flex items-center gap-2 text-xs text-muted">
-        <span className="font-medium text-foreground">
-          {message.Author?.display_name ?? "—"}
-        </span>
-        <span>{formatDate(message.created_at, language, true)}</span>
-        {message.kind === "INTERNAL_NOTE" && (
-          <span className="rounded bg-amber-100 px-1 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-            {t("support.internalNote")}
-          </span>
-        )}
-      </div>
-      <p className="whitespace-pre-wrap break-words text-foreground">
-        {message.body}
-      </p>
-      {message.Attachment.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {message.Attachment.map((a) => (
-            <a
-              key={a.id}
-              href={attachmentUrl(ticketId, a.id)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={attachmentUrl(ticketId, a.id)}
-                alt=""
-                className="h-20 w-20 rounded border border-theme object-cover"
-              />
-            </a>
+        }
+      >
+        <ul className="space-y-3">
+          {ticket.Message.map((m) => (
+            <TicketMessageItem
+              key={m.id}
+              ticketId={ticketId}
+              message={m}
+              authorIsMe={m.author_id === ticket.CreatedBy?.id}
+              systemText={formatSystemEvent(m, t)}
+            />
           ))}
-        </div>
-      )}
-    </li>
+        </ul>
+
+        {ticket.status !== "CLOSED" ? (
+          <div className="mt-5 space-y-3 rounded-2xl border border-theme bg-surface/50 p-4">
+            <Textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              rows={3}
+              maxLength={5000}
+              placeholder={t("support.replyPlaceholder")}
+            />
+            <AttachmentInput imageIds={imageIds} onChange={setImageIds} />
+            <Button
+              onClick={sendReply}
+              loading={busy}
+              disabled={busy || !body.trim()}
+              size="sm"
+            >
+              {t("support.send")}
+            </Button>
+          </div>
+        ) : null}
+
+        {canRate && !ticket.Rating ? (
+          <div className="mt-5 space-y-3 rounded-2xl border border-theme bg-surface/50 p-4">
+            <p className="text-sm font-medium text-(--theme-foreground)">
+              {t("support.rateTitle")}
+            </p>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setScore(n)}
+                  aria-label={`${n}`}
+                  className="rounded-lg p-0.5 transition-transform hover:scale-110"
+                >
+                  <Star
+                    className={`size-6 ${n <= score ? "fill-amber-400 text-amber-400" : "text-muted"}`}
+                  />
+                </button>
+              ))}
+            </div>
+            <Textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              rows={2}
+              placeholder={t("support.ratePlaceholder")}
+            />
+            <Button
+              onClick={submitRating}
+              loading={busy}
+              disabled={busy || !score}
+              size="sm"
+            >
+              {t("support.submitRating")}
+            </Button>
+          </div>
+        ) : null}
+
+        {ticket.Rating ? (
+          <p className="mt-4 text-sm text-emerald-600">{t("support.thanks")}</p>
+        ) : null}
+
+        {error ? <p className="mt-3 text-sm text-red-500">{error}</p> : null}
+      </AccountSection>
+    </div>
   );
 }

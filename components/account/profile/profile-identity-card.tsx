@@ -1,9 +1,11 @@
 "use client";
 
-import { BadgeCheck, ShieldAlert } from "lucide-react";
+import { BadgeCheck, ShieldAlert, UserRound } from "lucide-react";
 
+import { AccountSection } from "@/components/account/account-section";
 import { AddContactForm } from "@/components/account/add-contact-form";
 import { EditDisplayNameForm } from "@/components/account/edit-display-name-form";
+import { StatusPill } from "@/components/account/status-pill";
 import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 
@@ -36,49 +38,46 @@ export function ProfileIdentityCard({
   const { phone: formatPhone } = useLocaleFormat();
 
   return (
-    <div className="space-y-5 rounded-xl border border-theme bg-card p-5 shadow-sm">
-      <div>
-        <h3 className="mb-4 text-base font-semibold text-(--theme-foreground)">
-          {t("account.identity")}
-        </h3>
+    <AccountSection title={t("account.identity")} icon={UserRound}>
+      <div className="space-y-5">
         <EditDisplayNameForm
           profileId={profileId}
           currentDisplayName={displayName}
         />
-      </div>
 
-      <dl className="space-y-2 text-sm">
-        <ContactRow
-          label={t("account.email")}
-          value={email}
-          confirmed={emailConfirmed}
-          confirmedLabel={t("account.verified")}
-          unconfirmedLabel={t("account.notVerified")}
-        />
-        <ContactRow
-          label={t("account.phone")}
-          value={phoneNumber ? formatPhone(phoneNumber) : null}
-          confirmed={phoneConfirmed}
-          confirmedLabel={t("account.verified")}
-          unconfirmedLabel={t("account.notVerified")}
-        />
-      </dl>
-
-      {needsSecondaryMethod ? (
-        <div className="border-t border-theme pt-4">
-          <h4 className="mb-3 text-sm font-semibold text-(--theme-foreground)">
-            {secondaryMethod === "email"
-              ? t("account.addEmail")
-              : t("account.addPhoneNumber")}
-          </h4>
-          <AddContactForm
-            method={secondaryMethod}
-            primaryMethod={primaryMethod}
-            defaultCountryCode={defaultCountryCode}
+        <dl className="space-y-2">
+          <ContactRow
+            label={t("account.email")}
+            value={email}
+            confirmed={emailConfirmed}
+            confirmedLabel={t("account.verified")}
+            unconfirmedLabel={t("account.notVerified")}
           />
-        </div>
-      ) : null}
-    </div>
+          <ContactRow
+            label={t("account.phone")}
+            value={phoneNumber ? formatPhone(phoneNumber) : null}
+            confirmed={phoneConfirmed}
+            confirmedLabel={t("account.verified")}
+            unconfirmedLabel={t("account.notVerified")}
+          />
+        </dl>
+
+        {needsSecondaryMethod ? (
+          <div className="rounded-2xl border border-dashed border-theme bg-surface/60 p-4">
+            <h3 className="mb-3 text-sm font-semibold text-(--theme-foreground)">
+              {secondaryMethod === "email"
+                ? t("account.addEmail")
+                : t("account.addPhoneNumber")}
+            </h3>
+            <AddContactForm
+              method={secondaryMethod}
+              primaryMethod={primaryMethod}
+              defaultCountryCode={defaultCountryCode}
+            />
+          </div>
+        ) : null}
+      </div>
+    </AccountSection>
   );
 }
 
@@ -97,22 +96,24 @@ function ContactRow({
 }) {
   if (!value) return null;
   return (
-    <div className="flex items-center justify-between gap-3">
-      <dt className="text-muted">{label}</dt>
-      <dd className="flex items-center gap-2 font-medium text-(--theme-foreground)">
-        <span className="break-all" dir="ltr">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="flex min-w-0 items-center gap-2 font-medium text-(--theme-foreground)">
+        <span className="break-all text-sm" dir="ltr">
           {value}
         </span>
         {confirmed ? (
-          <span className="inline-flex items-center gap-1 text-xs text-green-600">
-            <BadgeCheck className="size-3.5" aria-hidden="true" />
-            {confirmedLabel}
-          </span>
+          <StatusPill
+            label={confirmedLabel}
+            tone="success"
+            icon={<BadgeCheck className="size-3.5" aria-hidden="true" />}
+          />
         ) : (
-          <span className="inline-flex items-center gap-1 text-xs text-amber-600">
-            <ShieldAlert className="size-3.5" aria-hidden="true" />
-            {unconfirmedLabel}
-          </span>
+          <StatusPill
+            label={unconfirmedLabel}
+            tone="warning"
+            icon={<ShieldAlert className="size-3.5" aria-hidden="true" />}
+          />
         )}
       </dd>
     </div>

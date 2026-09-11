@@ -7,7 +7,7 @@ import {
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
 import { sizedImageUrl } from "@/lib/images/sized-image-url";
-import { AccountAvatar } from "@/components/layout/account-avatar";
+import { AccountMenuDropdown } from "@/components/layout/account-menu-dropdown";
 import { Container } from "./section";
 import { Button } from "./primitives";
 import { RemovableSlot } from "./removable-slot";
@@ -140,13 +140,11 @@ export async function TemplateTopBar({
   const accountSlot = (
     <div className="hidden sm:inline-flex">
       {isAuthenticated ? (
-        <Link
-          href={templateHref(storeContext, "account")}
-          className="flex items-center gap-2 rounded-full border border-current/20 py-1 pe-3 ps-1 text-[14.5px] font-medium hover:opacity-90"
-        >
-          <AccountAvatar name={accountLabel} avatarUrl={accountAvatarUrl} />
-          <span className="max-w-[10rem] truncate">{accountLabel}</span>
-        </Link>
+        <AccountMenuDropdown
+          displayName={accountLabel}
+          avatarUrl={accountAvatarUrl}
+          deepTone={spec.tone === "deep"}
+        />
       ) : (
         <Link
           href={templateHref(storeContext, "login")}
@@ -263,23 +261,23 @@ export async function TemplateTopBar({
                     {item.label}
                   </a>
                 ))}
-                <a
-                  href={templateHref(storeContext, isAuthenticated ? "account" : "login")}
-                  className="flex items-center gap-2 rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
-                >
-                  {isAuthenticated ? (
-                    <>
-                      <AccountAvatar
-                        name={accountLabel}
-                        avatarUrl={accountAvatarUrl}
-                        size={28}
-                      />
-                      <span className="truncate">{accountLabel}</span>
-                    </>
-                  ) : (
-                    loginText
-                  )}
-                </a>
+                {isAuthenticated ? (
+                  <div className="mt-1 border-t border-current/10 pt-1">
+                    <AccountMenuDropdown
+                      displayName={accountLabel}
+                      avatarUrl={accountAvatarUrl}
+                      deepTone={spec.tone === "deep"}
+                      inline
+                    />
+                  </div>
+                ) : (
+                  <a
+                    href={templateHref(storeContext, "login")}
+                    className="flex items-center gap-2 rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
+                  >
+                    {loginText}
+                  </a>
+                )}
               </div>
             </details>
           </div>

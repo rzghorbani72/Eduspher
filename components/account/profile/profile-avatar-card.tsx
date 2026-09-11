@@ -3,8 +3,9 @@
 import { AppImage } from "@/components/ui/app-image";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, Loader2, Trash2 } from "lucide-react";
+import { Camera, Loader2, Trash2, ImageIcon } from "lucide-react";
 
+import { AccountSection } from "@/components/account/account-section";
 import { Button } from "@/components/ui/button";
 import { updateProfile, uploadImage } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -61,7 +62,9 @@ export function ProfileAvatarCard({
       router.refresh();
     } catch (err) {
       logger.error("Account", "AvatarUpdateFailed", { size_bytes: file.size });
-      setError(err instanceof Error ? err.message : t("account.avatarUploadFailed"));
+      setError(
+        err instanceof Error ? err.message : t("account.avatarUploadFailed"),
+      );
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -69,30 +72,29 @@ export function ProfileAvatarCard({
   }
 
   return (
-    <div className="rounded-xl border border-theme bg-card p-5 shadow-sm">
-      <h3 className="mb-1 text-base font-semibold text-(--theme-foreground)">
-        {t("account.avatar")}
-      </h3>
-      <p className="mb-4 text-sm text-muted">{t("account.avatarDescription")}</p>
-
-      <div className="flex items-center gap-4">
+    <AccountSection
+      title={t("account.avatar")}
+      description={t("account.avatarDescription")}
+      icon={ImageIcon}
+    >
+      <div className="flex flex-1 flex-col items-center justify-center gap-5 py-2 text-center">
         {avatarUrl ? (
           <AppImage
             src={avatarUrl}
             alt={displayName}
             preset="avatar"
-            width={80}
-            height={80}
-            sizes="80px"
-            className="h-20 w-20 rounded-full object-cover"
+            width={112}
+            height={112}
+            sizes="112px"
+            className="size-28 rounded-full object-cover ring-4 ring-(--theme-border)"
           />
         ) : (
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-(--theme-primary) text-2xl font-bold text-(--theme-on-primary)">
+          <div className="flex size-28 items-center justify-center rounded-full bg-(--theme-primary) text-3xl font-bold text-(--theme-on-primary) ring-4 ring-(--theme-border)">
             {initials}
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <input
             ref={inputRef}
             type="file"
@@ -105,15 +107,16 @@ export function ProfileAvatarCard({
           />
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
             disabled={busy}
             onClick={() => inputRef.current?.click()}
+            className="border border-(--theme-border) bg-white text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
           >
             {busy ? (
-              <Loader2 className="me-2 size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <Camera className="me-2 size-4" />
+              <Camera className="size-4" />
             )}
             {busy ? t("account.uploadingAvatar") : t("account.uploadAvatar")}
           </Button>
@@ -130,13 +133,15 @@ export function ProfileAvatarCard({
                   logger.ok("Account", "AvatarRemoved", {});
                   router.refresh();
                 } catch (err) {
-                  setError(err instanceof Error ? err.message : t("common.error"));
+                  setError(
+                    err instanceof Error ? err.message : t("common.error"),
+                  );
                 } finally {
                   setBusy(false);
                 }
               }}
             >
-              <Trash2 className="me-2 size-4" />
+              <Trash2 className="size-4" />
               {t("account.removeAvatar")}
             </Button>
           ) : null}
@@ -144,11 +149,13 @@ export function ProfileAvatarCard({
       </div>
 
       {error ? (
-        <p className="mt-3 text-sm text-red-600" role="alert">
+        <p className="mt-3 text-center text-sm text-red-600" role="alert">
           {error}
         </p>
       ) : null}
-      {message ? <p className="mt-3 text-sm text-green-600">{message}</p> : null}
-    </div>
+      {message ? (
+        <p className="mt-3 text-center text-sm text-green-600">{message}</p>
+      ) : null}
+    </AccountSection>
   );
 }

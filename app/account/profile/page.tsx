@@ -42,12 +42,7 @@ export default async function ProfilePage() {
         icon={UserRound}
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <ProfileAvatarCard
-          profileId={profileId}
-          displayName={profile?.display_name ?? user?.display_name ?? ""}
-          avatarUrl={profile?.avatar?.url ?? null}
-        />
+      <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <ProfileIdentityCard
           profileId={profileId}
           displayName={profile?.display_name ?? user?.display_name ?? ""}
@@ -59,6 +54,11 @@ export default async function ProfilePage() {
           primaryMethod={primaryMethod}
           needsSecondaryMethod={!secondaryValue || !secondaryConfirmed}
           defaultCountryCode={academy?.country_code ?? undefined}
+        />
+        <ProfileAvatarCard
+          profileId={profileId}
+          displayName={profile?.display_name ?? user?.display_name ?? ""}
+          avatarUrl={profile?.avatar?.url ?? null}
         />
       </div>
 

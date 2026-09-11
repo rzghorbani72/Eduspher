@@ -34,3 +34,14 @@ export function statusBadgeVariant(status: TicketStatus): "default" | "soft" | "
   if (status === "OPEN" || status === "REOPENED") return "default";
   return "soft";
 }
+
+/** StatusPill tone for ticket list / thread chrome. */
+export function ticketStatusTone(
+  status: TicketStatus,
+): "success" | "warning" | "danger" | "info" | "neutral" {
+  if (status === "RESOLVED" || status === "CLOSED") return "success";
+  if (status === "WAITING_ON_USER") return "warning";
+  if (status === "OPEN" || status === "REOPENED") return "info";
+  if (status === "IN_PROGRESS") return "neutral";
+  return "neutral";
+}

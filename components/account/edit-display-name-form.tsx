@@ -72,30 +72,30 @@ export const EditDisplayNameForm = ({
 
   if (!isEditing) {
     return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface">
-              <User className="h-5 w-5 text-muted" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                {t("account.displayName")}
-              </p>
-              <p className="text-sm text-muted">{currentDisplayName}</p>
-            </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-card ring-1 ring-(--theme-border)">
+            <User className="size-5 text-muted" aria-hidden="true" />
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setIsEditing(true)}
-            className="h-8"
-          >
-            <Edit2 className="me-1 h-4 w-4" />
-            {t("common.edit")}
-          </Button>
+          <div className="min-w-0">
+            <p className="text-xs font-medium text-muted">
+              {t("account.displayName")}
+            </p>
+            <p className="truncate text-sm font-semibold text-(--theme-foreground)">
+              {currentDisplayName}
+            </p>
+          </div>
         </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsEditing(true)}
+          className="border border-(--theme-border) bg-white text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
+        >
+          <Edit2 className="size-4" />
+          {t("common.edit")}
+        </Button>
       </div>
     );
   }

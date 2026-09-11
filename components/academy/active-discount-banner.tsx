@@ -7,6 +7,7 @@ import {
   formatActiveDiscountOffer,
   type PublicActiveDiscount,
 } from "@/lib/discounts/format-active-discount";
+import { useLocaleFormat } from "@/hooks/use-locale-digits";
 import { useTranslation } from "@/lib/i18n/hooks";
 
 type ActiveDiscountBannerProps = {
@@ -52,7 +53,11 @@ function DiscountCodeButton({
       onClick={handleCopy}
       aria-label={copyLabel}
       title={copyLabel}
-      className="mx-0.5 cursor-pointer border-0 bg-transparent p-0 font-mono text-[0.95em] font-extrabold tracking-wider text-black underline decoration-2 underline-offset-2 hover:opacity-80"
+      className="mx-0.5 inline-flex cursor-pointer items-center rounded-md border-0 px-1.5 py-0.5 font-mono text-[0.95em] font-extrabold tracking-wider transition-opacity hover:opacity-90"
+      style={{
+        backgroundColor: "var(--theme-on-primary)",
+        color: "var(--theme-primary)",
+      }}
     >
       {copied ? copiedLabel : code}
     </button>
@@ -65,6 +70,7 @@ export function ActiveDiscountBanner({
   currencyCode = "IRR",
 }: ActiveDiscountBannerProps) {
   const { t, language } = useTranslation();
+  const format = useLocaleFormat();
 
   if (discounts.length === 0) return null;
 
@@ -73,10 +79,11 @@ export function ActiveDiscountBanner({
 
   const labels = {
     percentOff: (percent: number) =>
-      tr("activeDiscount.percentOff", { percent }),
+      tr("activeDiscount.percentOff", { percent: format.number(percent) }),
     fixedOff: (amount: string) => tr("activeDiscount.fixedOff", { amount }),
     fullOff: () => t("activeDiscount.fullOff"),
-    freeTrial: (days: number) => tr("activeDiscount.freeTrial", { days }),
+    freeTrial: (days: number) =>
+      tr("activeDiscount.freeTrial", { days: format.number(days) }),
   };
 
   const latestEnd = discounts.reduce((latest, discount) => {

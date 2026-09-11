@@ -1,11 +1,12 @@
 "use client";
 
+import { AccountSection } from "@/components/account/account-section";
 import { ActiveSessions } from "@/components/account/active-sessions";
 
 export function ProfileSessionsCard() {
   return (
-    <div className="rounded-xl border border-theme bg-card p-5 shadow-sm">
+    <AccountSection>
       <ActiveSessions />
-    </div>
+    </AccountSection>
   );
 }
