@@ -2,7 +2,7 @@ import { Container } from '../_shared/section';
 import { Button } from '../_shared/primitives';
 import { HeroVideoBanner, HeroVideoOverlay } from '../_shared/hero-video-banner';
 import { RemovableSlot } from '../_shared/removable-slot';
-import { list, text, type TemplateSectionProps } from '../_shared/types';
+import { featureVisible, list, text, type TemplateSectionProps } from '../_shared/types';
 import { templateHref } from '../_shared/routes';
 import { editableList, editableItem } from '../_shared/editable-list';
 import { PARDEH_DEFAULTS } from './defaults';
@@ -25,16 +25,16 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
   const editMode = storeContext?.editMode ?? false;
   const a = heroAlign(config);
   const stats = list<HeroStat>(config, 'stats', d.stats);
+  // The wash only exists to keep copy readable, so bare footage gets none.
+  const hasCopy = ['showKicker', 'showTitle', 'showSubtitle', 'showHeroCta', 'showHeroCtaSecondary'].some((key) =>
+    featureVisible(config, key)
+  );
 
   return (
     <section id={id || 'hero'} className="relative py-0! text-white">
       <HeroVideoBanner
         config={config}
-        overlay={
-          <RemovableSlot config={config} flagKey="showOverlay" editMode={editMode} ghost>
-            <HeroVideoOverlay />
-          </RemovableSlot>
-        }
+        overlay={hasCopy ? <HeroVideoOverlay /> : null}
         placeholder={
           <div className={`${styles.emptySlot} flex h-full w-full items-center justify-center p-10 text-center`}>
             <span className={styles.grain} aria-hidden="true" />
