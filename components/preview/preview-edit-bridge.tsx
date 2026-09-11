@@ -189,6 +189,9 @@ function showBlockToolbar(blockEl: HTMLElement) {
 type MediaPickRequest = {
   blockId: string;
   fieldKey: string;
+  // `video` slots skip the canvas byte cap: the panel sends them through the
+  // quota-checked direct video upload instead of the image endpoint.
+  kind?: "image" | "video";
   // Set only for "restore with photo": the visibility flag to also turn on
   // once the upload succeeds, so both changes land as one config patch and
   // the slot restore never triggers a second, dialog-killing reload.
@@ -200,10 +203,14 @@ function attachMediaUploadButtons(
   requestPick: (target: MediaPickRequest) => void,
 ) {
   root
-    .querySelectorAll<HTMLElement>("[data-media-editable]")
+    .querySelectorAll<HTMLElement>(
+      "[data-media-editable],[data-video-editable]",
+    )
     .forEach((slot) => {
       if (slot.querySelector(`.${MEDIA_BTN_CLASS}`)) return;
-      const fieldKey = slot.dataset.mediaEditable!;
+      const kind = slot.dataset.videoEditable ? "video" : "image";
+      const fieldKey = (slot.dataset.mediaEditable ??
+        slot.dataset.videoEditable)!;
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = MEDIA_BTN_CLASS;
@@ -239,13 +246,30 @@ function attachMediaUploadButtons(
         if (!blockId) return;
         // File picker must open in this document — parent cannot call input.click()
         // from postMessage (user-activation is lost across the iframe boundary).
-        requestPick({ blockId, fieldKey });
+        requestPick({ blockId, fieldKey, kind });
       });
+      if (kind === "video") {
+        btn.dataset.idleLabel = "↑ بارگذاری ویدیو";
+        btn.textContent = btn.dataset.idleLabel;
+        Object.assign(btn.style, {
+          // Corner of the banner: the centre is where the headline sits.
+          top: "24px",
+          left: "auto",
+          insetInlineStart: "24px",
+          transform: "none",
+          width: "auto",
+          height: "auto",
+          padding: "12px 20px",
+          fontSize: "14px",
+          opacity: "1",
+        });
+      }
       slot.addEventListener("mouseenter", () => {
         btn.style.opacity = "1";
       });
       slot.addEventListener("mouseleave", () => {
-        if (btn.dataset.uploading !== "1") btn.style.opacity = "0";
+        if (btn.dataset.uploading !== "1" && kind !== "video")
+          btn.style.opacity = "0";
       });
       if (getComputedStyle(slot).position === "static")
         slot.style.position = "relative";
@@ -265,10 +289,16 @@ function setMediaButtonUploading(
 ) {
   btn.disabled = uploading;
   btn.dataset.uploading = uploading ? "1" : "";
-  btn.style.opacity = uploading ? "1" : "0";
+  btn.style.opacity = uploading || btn.dataset.idleLabel ? "1" : "0";
   btn.style.cursor = uploading ? "default" : "pointer";
-  btn.style.fontSize = uploading ? "12px" : "18px";
-  btn.textContent = uploading ? `${Math.round(percent)}%` : "\u2191";
+  btn.style.fontSize = uploading
+    ? "12px"
+    : btn.dataset.idleLabel
+      ? "14px"
+      : "18px";
+  btn.textContent = uploading
+    ? `${Math.round(percent)}%`
+    : (btn.dataset.idleLabel ?? "\u2191");
 }
 
 function attachRemovableRestoreButtons(
@@ -1015,7 +1045,7 @@ export function PreviewEditBridge() {
       // it is what has to show the progress.
       if (data.type === "media-uploading" && data.blockId && data.fieldKey) {
         const slot = document.querySelector<HTMLElement>(
-          `[data-block-id="${data.blockId}"] [data-media-editable="${data.fieldKey}"]`,
+          `[data-block-id="${data.blockId}"] [data-media-editable="${data.fieldKey}"], [data-block-id="${data.blockId}"] [data-video-editable="${data.fieldKey}"]`,
         );
         const btn = slot?.querySelector<HTMLButtonElement>(
           `.${MEDIA_BTN_CLASS}`,
@@ -1059,6 +1089,8 @@ export function PreviewEditBridge() {
 
     const requestMediaPick = (target: MediaPickRequest) => {
       pendingMedia = target;
+      fileInput.accept =
+        target.kind === "video" ? "video/mp4" : "image/*,image/gif,image/webp";
       fileInput.click();
     };
 
@@ -1069,7 +1101,7 @@ export function PreviewEditBridge() {
       fileInput.value = "";
       if (!file || !pending) return;
 
-      if (file.size > MAX_CANVAS_MEDIA_BYTES) {
+      if (pending.kind !== "video" && file.size > MAX_CANVAS_MEDIA_BYTES) {
         postMessageToPanel({
           source: "template-editor",
           type: "media-error",
@@ -1085,6 +1117,7 @@ export function PreviewEditBridge() {
           type: "media-file-selected",
           blockId: pending.blockId,
           fieldKey: pending.fieldKey,
+          kind: pending.kind ?? "image",
           restoreKey: pending.restoreKey,
           fileName: file.name,
           mimeType: file.type || "image/jpeg",

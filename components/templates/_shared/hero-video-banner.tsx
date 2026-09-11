@@ -1,7 +1,7 @@
 // No 'use client': a plain <video> with no hooks, so it stays server-renderable.
-import type { ReactNode } from 'react';
-import { resolveHeroVideoPoster, resolveHeroVideoUrl } from './hero-video-slot';
-import type { SectionConfig } from './types';
+import type { ReactNode } from "react";
+import { resolveHeroVideoPoster, resolveHeroVideoUrl } from "./hero-video-slot";
+import type { SectionConfig } from "./types";
 
 /**
  * Full-bleed looping video banner — the hero *is* the video. It always plays
@@ -11,10 +11,11 @@ import type { SectionConfig } from './types';
  *
  * Reads the same `heroVideoUrl` / `heroVideoPoster` keys the sidebar picker
  * writes; the autoplay flag is ignored on purpose — a banner never pauses.
+ * `data-video-editable` lets the editor canvas upload a video right on the hero.
  */
 export function HeroVideoBanner({
   config,
-  className = '',
+  className = "",
   children,
   placeholder,
 }: {
@@ -29,6 +30,7 @@ export function HeroVideoBanner({
 
   return (
     <div
+      data-video-editable="heroVideoUrl"
       className={`relative isolate flex min-h-[clamp(520px,78vh,820px)] w-full flex-col overflow-hidden ${className}`}
     >
       {url ? (
