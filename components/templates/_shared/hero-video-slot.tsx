@@ -2,6 +2,7 @@
 // server-renderable and can be called from both server and client heroes.
 import type { ReactNode } from 'react';
 import { resolveAssetUrl } from '@/lib/utils';
+import { getBackendApiBaseUrl } from '@/lib/env';
 import { resolveBoxStyle } from './hero-box';
 import type { SectionConfig } from './types';
 
@@ -12,10 +13,15 @@ export const HERO_VIDEO_KEYS = {
   autoplay: 'heroVideoAutoplay',
 } as const;
 
+/**
+ * A hero video is stored as the API's relative stream path (`/videos/stream/:id`),
+ * so unlike a static asset it must resolve under the versioned API base.
+ */
 export function resolveHeroVideoUrl(config?: SectionConfig): string | null {
   const raw = config?.[HERO_VIDEO_KEYS.url];
   if (typeof raw !== 'string' || !raw.trim()) return null;
-  return resolveAssetUrl(raw);
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `${getBackendApiBaseUrl()}${raw.startsWith('/') ? raw : `/${raw}`}`;
 }
 
 export function resolveHeroVideoPoster(config?: SectionConfig): string | null {
