@@ -21,6 +21,7 @@ export function RemovableSlot({
   className = '',
   children,
   mediaKey,
+  ghost = false,
 }: {
   config?: SectionConfig;
   flagKey: string;
@@ -28,6 +29,8 @@ export function RemovableSlot({
   className?: string;
   children: ReactNode;
   mediaKey?: string;
+  /** Half-transparent placeholder, for slots that sit over a video or photo. */
+  ghost?: boolean;
 }) {
   const visible = featureVisible(config, flagKey);
 
@@ -46,14 +49,12 @@ export function RemovableSlot({
       type="button"
       data-removable-restore={flagKey}
       data-removable-restore-media={mediaKey}
-      className={`${PLACEHOLDER_CLASS} ${className}`.trim()}
+      className={`${PLACEHOLDER_CLASS} ${ghost ? 'opacity-50' : ''} ${className}`.trim()}
     >
       <span className="text-xl leading-none text-zinc-400" aria-hidden="true">
         +
       </span>
-      <span className="text-xs font-semibold text-zinc-600">
-        {mediaKey ? 'بارگذاری عکس' : 'بازگرداندن بلوک'}
-      </span>
+      <span className="text-xs font-semibold text-zinc-600">{mediaKey ? 'بارگذاری عکس' : 'بازگرداندن بلوک'}</span>
     </button>
   );
 }

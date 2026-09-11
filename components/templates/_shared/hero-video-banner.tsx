@@ -1,7 +1,7 @@
 // No 'use client': a plain <video> with no hooks, so it stays server-renderable.
-import type { ReactNode } from "react";
-import { resolveHeroVideoPoster, resolveHeroVideoUrl } from "./hero-video-slot";
-import type { SectionConfig } from "./types";
+import type { ReactNode } from 'react';
+import { resolveHeroVideoPoster, resolveHeroVideoUrl } from './hero-video-slot';
+import type { SectionConfig } from './types';
 
 /**
  * Full-bleed looping video banner — the hero *is* the video. It always plays
@@ -13,17 +13,30 @@ import type { SectionConfig } from "./types";
  * writes; the autoplay flag is ignored on purpose — a banner never pauses.
  * `data-video-editable` lets the editor canvas upload a video right on the hero.
  */
+/** Dark wash that keeps copy readable over any footage. */
+export function HeroVideoOverlay() {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--theme-deep)_82%,transparent),color-mix(in_srgb,var(--theme-deep)_38%,transparent))]"
+    />
+  );
+}
+
 export function HeroVideoBanner({
   config,
-  className = "",
+  className = '',
   children,
   placeholder,
+  overlay = <HeroVideoOverlay />,
 }: {
   config?: SectionConfig;
   className?: string;
   children?: ReactNode;
   /** Shown behind the copy until the manager picks a video. */
   placeholder?: ReactNode;
+  /** Pass a removable wrapper so a manager can show the footage untouched. */
+  overlay?: ReactNode;
 }) {
   const url = resolveHeroVideoUrl(config);
   const poster = resolveHeroVideoPoster(config) ?? undefined;
@@ -50,10 +63,7 @@ export function HeroVideoBanner({
       ) : (
         <div className="absolute inset-0 -z-20">{placeholder}</div>
       )}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--theme-deep)_82%,transparent),color-mix(in_srgb,var(--theme-deep)_38%,transparent))]"
-      />
+      {overlay}
       {children}
     </div>
   );
