@@ -83,7 +83,7 @@ export default async function AccountTransactionsPage() {
       id: "method",
       header: translate("account.transactionMethod"),
       cell: (payment) =>
-        gatewayLabel(payment.gateway ?? payment.provider, translate),
+        gatewayLabel(payment.provider ?? payment.gateway, translate),
     },
     {
       id: "amount",

@@ -109,7 +109,7 @@ export default async function TransactionDetailPage({
           />
           <Row
             label={translate("account.transactionMethod")}
-            value={gatewayLabel(payment.gateway ?? payment.provider, translate)}
+            value={gatewayLabel(payment.provider ?? payment.gateway, translate)}
           />
           {payment.refund_amount ? (
             <Row
