@@ -255,7 +255,7 @@ export const ar = {
     payNow: "ادفع",
     couponInvalid: "رمز الخصم هذا غير صالح.",
     couponApplied: "تم تطبيق رمز الخصم.",
-    vatIncluded: "يشمل {percent}٪ ضريبة القيمة المضافة",
+    vatIncluded: "{percent}٪ ضريبة القيمة المضافة",
     chooseGatewayHint: "اختر البوابة البنكية التي تريد الدفع من خلالها.",
     orderSummary: "ملخص الطلب",
     total: "المجموع",

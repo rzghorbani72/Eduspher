@@ -11,7 +11,7 @@ export type CheckoutQuote = {
   base_amount: number;
   discount_amount: number;
   final_amount: number;
-  /** Already inside final_amount — never added on top. */
+  /** Added on top of the discounted price — already inside final_amount. */
   vat_amount: number;
   vat_rate: number;
   coupon_applied: boolean;

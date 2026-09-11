@@ -38,8 +38,8 @@ interface CheckoutDialogProps {
 
 /**
  * The last step before the bank: what is being bought, what a coupon takes off,
- * the total (VAT included) and one Pay button — so nobody is redirected to a
- * gateway without seeing the exact amount first.
+ * the total (listed price − coupon + VAT) and one Pay button — so nobody is
+ * redirected to a gateway without seeing the exact amount first.
  */
 export function CheckoutDialog({
   selector,
@@ -166,20 +166,21 @@ export function CheckoutDialog({
                 tone="positive"
               />
             )}
+            {(quote?.vat_amount ?? 0) > 0 && (
+              <SummaryRow
+                label={t("checkout.vatIncluded").replace(
+                  "{percent}",
+                  toPersianDigits(String(percent), language),
+                )}
+                value={`+ ${fmt(quote?.vat_amount ?? 0)}`}
+              />
+            )}
             <div className="flex items-center justify-between border-t border-theme pt-2">
               <span className="font-bold text-(--theme-foreground)">{t("checkout.total")}</span>
               <span className="cd-price text-lg font-black text-(--theme-foreground)">
                 {loading ? "…" : fmt(total)}
               </span>
             </div>
-            {percent > 0 && (
-              <p className="text-[11px] text-muted">
-                {t("checkout.vatIncluded").replace(
-                  "{percent}",
-                  toPersianDigits(String(percent), language),
-                )}
-              </p>
-            )}
           </div>
 
           {gateways.length > 0 && (
