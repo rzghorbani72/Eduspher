@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 
 import { AccountPageHeader } from "@/components/account/account-page-header";
 import { StatusPill, toneForStatus } from "@/components/account/status-pill";
+import { PaymentMetaLines } from "@/components/account/transactions/payment-meta-lines";
 import { PaymentReceiptCard } from "@/components/account/transactions/payment-receipt-card";
 import { RefundRequestForm } from "@/components/account/transactions/refund-request-form";
 import Link from "@/components/ui/link";
 import { getPayment, getPaymentReceipt } from "@/lib/api/account-server";
 import { gatewayLabel } from "@/lib/account-labels";
+import { paymentTrackingCode } from "@/lib/payment-display";
 import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
@@ -58,6 +60,14 @@ export default async function TransactionDetailPage({
   const money = (value: number) =>
     toPersianDigits(formatCurrencyWithAcademy(value, academy), language);
 
+  const hasPaymentDetails = Boolean(
+    paymentTrackingCode(payment) ||
+      payment.coupon_code?.trim() ||
+      (payment.discount_amount != null && payment.discount_amount > 0) ||
+      payment.Order?.order_number?.trim() ||
+      payment.checkout_reference?.trim(),
+  );
+
   return (
     <div className="space-y-6">
       <Link
@@ -83,7 +93,7 @@ export default async function TransactionDetailPage({
         }
       />
 
-      <section className="rounded-2xl border border-theme bg-card p-5 ">
+      <section className="rounded-2xl border border-theme bg-card p-5">
         <dl className="grid gap-3 sm:grid-cols-2">
           <Row
             label={translate("account.transactionAmount")}
@@ -109,6 +119,20 @@ export default async function TransactionDetailPage({
           ) : null}
         </dl>
       </section>
+
+      {hasPaymentDetails ? (
+        <section className="rounded-2xl border border-theme bg-card p-5">
+          <h2 className="mb-3 text-sm font-semibold text-(--theme-foreground)">
+            {translate("account.paymentDetails")}
+          </h2>
+          <PaymentMetaLines
+            payment={payment}
+            t={translate}
+            money={money}
+            variant="rows"
+          />
+        </section>
+      ) : null}
 
       {receipt ? (
         <PaymentReceiptCard

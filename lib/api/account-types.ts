@@ -143,6 +143,12 @@ export type PaymentSummary = {
   status: PaymentStatus | string;
   provider: string | null;
   gateway: string | null;
+  /** Bank tracking / RefNum after verify. */
+  gateway_id: string | null;
+  /** Gateway token / authority before or during checkout. */
+  authority: string | null;
+  checkout_reference: string | null;
+  coupon_code: string | null;
   created_at: string;
   paid_at: string | null;
   refund_amount: number | null;

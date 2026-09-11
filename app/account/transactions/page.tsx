@@ -2,6 +2,7 @@ import { Receipt } from "lucide-react";
 
 import { AccountPageHeader } from "@/components/account/account-page-header";
 import { StatusPill, toneForStatus } from "@/components/account/status-pill";
+import { PaymentMetaLines } from "@/components/account/transactions/payment-meta-lines";
 import {
   DataList,
   type DataColumn,
@@ -56,17 +57,20 @@ export default async function AccountTransactionsPage() {
       id: "item",
       header: translate("account.transactionItem"),
       cell: (payment) => (
-        <Link
-          href={buildAcademyPath(
-            slugForPaths,
-            `/account/transactions/${payment.id}`,
-          )}
-          className="font-medium hover:underline"
-        >
-          {payment.Course?.title ??
-            payment.Order?.order_number ??
-            translate("account.unknown")}
-        </Link>
+        <div className="min-w-0">
+          <Link
+            href={buildAcademyPath(
+              slugForPaths,
+              `/account/transactions/${payment.id}`,
+            )}
+            className="font-medium hover:underline"
+          >
+            {payment.Course?.title ??
+              payment.Order?.order_number ??
+              translate("account.unknown")}
+          </Link>
+          <PaymentMetaLines payment={payment} t={translate} money={money} />
+        </div>
       ),
     },
     {
