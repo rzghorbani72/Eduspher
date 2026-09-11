@@ -18,6 +18,11 @@ export function resolveHeroVideoUrl(config?: SectionConfig): string | null {
   return resolveAssetUrl(raw);
 }
 
+export function resolveHeroVideoPoster(config?: SectionConfig): string | null {
+  const raw = config?.[HERO_VIDEO_KEYS.poster];
+  return typeof raw === 'string' ? resolveAssetUrl(raw) : null;
+}
+
 /**
  * Single-video hero visual — the video twin of `HeroSlideshowSlot`: same frame,
  * same ratio/height controls, same place in the layout, so a template can show
@@ -40,21 +45,11 @@ export function HeroVideoSlot({
   children?: ReactNode;
 }) {
   const url = resolveHeroVideoUrl(config);
-  const posterUrl =
-    resolveAssetUrl(
-      typeof config?.[HERO_VIDEO_KEYS.poster] === 'string'
-        ? (config[HERO_VIDEO_KEYS.poster] as string)
-        : null,
-    ) ??
-    poster ??
-    undefined;
+  const posterUrl = resolveHeroVideoPoster(config) ?? poster ?? undefined;
   const autoplay = config?.[HERO_VIDEO_KEYS.autoplay] === true;
 
   return (
-    <div
-      className={`relative overflow-hidden ${className}`}
-      style={resolveBoxStyle(config)}
-    >
+    <div className={`relative overflow-hidden ${className}`} style={resolveBoxStyle(config)}>
       {url ? (
         <div className="absolute inset-0">
           <video
@@ -75,9 +70,7 @@ export function HeroVideoSlot({
           />
         </div>
       ) : (
-        <div className="flex h-full w-full items-center justify-center">
-          {children}
-        </div>
+        <div className="flex h-full w-full items-center justify-center">{children}</div>
       )}
     </div>
   );

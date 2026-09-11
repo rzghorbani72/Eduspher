@@ -18,6 +18,7 @@ import { PELEH_SECTIONS } from './peleh';
 import { ANDISHEH_SECTIONS } from './andisheh';
 import { SHAPARAK_SECTIONS } from './shaparak';
 import { PARTOW_SECTIONS } from './partow';
+import { PARDEH_SECTIONS } from './pardeh';
 import { KEYHAN_COURSE_CARD } from './keyhan';
 import { TAVAN_COURSE_CARD } from './tavan';
 import { DASTAN_COURSE_CARD } from './dastan';
@@ -33,6 +34,7 @@ import { PELEH_COURSE_CARD } from './peleh';
 import { ANDISHEH_COURSE_CARD } from './andisheh';
 import { SHAPARAK_COURSE_CARD } from './shaparak';
 import { PARTOW_COURSE_CARD } from './partow';
+import { PARDEH_COURSE_CARD } from './pardeh';
 import type { CourseCardSpec } from './_shared/course-card';
 import type { TemplateKey, TemplateSectionMap, TemplateSectionType } from './registry-types';
 import { isTemplateKey } from './registry-types';
@@ -69,12 +71,10 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   andisheh: ANDISHEH_SECTIONS,
   shaparak: SHAPARAK_SECTIONS,
   partow: PARTOW_SECTIONS,
+  pardeh: PARDEH_SECTIONS,
 };
 
-export function resolveTemplateSection(
-  style: unknown,
-  type: string
-): ComponentType<TemplateSectionProps> | null {
+export function resolveTemplateSection(style: unknown, type: string): ComponentType<TemplateSectionProps> | null {
   if (!isTemplateKey(style)) return null;
   const sections = TEMPLATE_SECTIONS[style];
   return sections[type as TemplateSectionType] ?? null;
@@ -101,6 +101,7 @@ const TEMPLATE_COURSE_CARDS: Partial<Record<TemplateKey, CourseCardSpec>> = {
   andisheh: ANDISHEH_COURSE_CARD,
   shaparak: SHAPARAK_COURSE_CARD,
   partow: PARTOW_COURSE_CARD,
+  pardeh: PARDEH_COURSE_CARD,
 };
 
 export function resolveTemplateCourseCard(style: unknown): CourseCardSpec | null {

@@ -23,6 +23,7 @@ export const TEMPLATE_KEYS = [
   'andisheh',
   'shaparak',
   'partow',
+  'pardeh',
 ] as const;
 
 export type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -49,6 +50,4 @@ export type TemplateSectionType =
   | 'cta'
   | 'footer';
 
-export type TemplateSectionMap = Partial<
-  Record<TemplateSectionType, ComponentType<TemplateSectionProps>>
->;
+export type TemplateSectionMap = Partial<Record<TemplateSectionType, ComponentType<TemplateSectionProps>>>;
