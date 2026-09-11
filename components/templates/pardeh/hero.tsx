@@ -7,6 +7,7 @@ import { templateHref } from '../_shared/routes';
 import { editableList, editableItem } from '../_shared/editable-list';
 import { PARDEH_DEFAULTS } from './defaults';
 import styles from '../shafagh/shafagh.module.css';
+import { heroAlign } from '../_shared/hero-align';
 
 interface HeroStat {
   value: string;
@@ -22,6 +23,7 @@ interface HeroStat {
 export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = PARDEH_DEFAULTS.hero;
   const editMode = storeContext?.editMode ?? false;
+  const a = heroAlign(config);
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
@@ -42,7 +44,7 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
           </div>
         }
       >
-        <Container className="flex flex-1 flex-col items-center justify-center py-(--theme-section-padding-y) text-center">
+        <Container className={`flex flex-1 flex-col ${a.items} justify-center py-(--theme-section-padding-y) ${a.text}`}>
           <RemovableSlot config={config} flagKey="showKicker" editMode={editMode} ghost>
             <div className="flex items-center gap-3">
               <span
@@ -76,7 +78,7 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
             </p>
           </RemovableSlot>
 
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-3.5">
+          <div className={`mt-9 flex flex-wrap items-center ${a.justify} gap-3.5`}>
             <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} ghost className="inline-flex">
               <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
                 {text(config, 'ctaText', d.ctaText)}

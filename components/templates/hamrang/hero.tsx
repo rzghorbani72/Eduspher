@@ -7,6 +7,7 @@ import { text, type TemplateSectionProps } from '../_shared/types';
 import { HAMRANG_DEFAULTS } from './defaults';
 import styles from './hamrang.module.css';
 import { templateHref } from '../_shared/routes';
+import { heroAlign } from '../_shared/hero-align';
 
 // Up to four photos — the manager can upload more than one to turn the static
 // screenshot into an auto-rotating slideshow.
@@ -19,12 +20,13 @@ const SLIDE_KEYS = ['bgImage', 'bgImage2', 'bgImage3', 'bgImage4'] as const;
 export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = HAMRANG_DEFAULTS.hero;
   const editMode = storeContext?.editMode ?? false;
+  const a = heroAlign(config);
 
   return (
     <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
       <Backdrop variant="aurora" motion="drift" />
       <Backdrop variant="grain" />
-      <Container className="relative z-[1] py-(--theme-section-padding-y) text-center">
+      <Container className={`relative z-[1] py-(--theme-section-padding-y) ${a.text}`}>
         <RemovableSlot config={config} flagKey="showTag" editMode={editMode} className="inline-flex">
           <span
             data-editable="tag"
@@ -34,7 +36,7 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
           </span>
         </RemovableSlot>
 
-        <h1 className="mx-auto mt-6 max-w-[16ch] text-[clamp(38px,6.6vw,76px)] font-extrabold leading-[1.05] tracking-[-0.03em]">
+        <h1 className={`${a.block} mt-6 max-w-[16ch] text-[clamp(38px,6.6vw,76px)] font-extrabold leading-[1.05] tracking-[-0.03em]`}>
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <span data-editable="titleEm" className={styles.tag}>
             {text(config, 'titleEm', d.titleEm)}
@@ -45,12 +47,12 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
 
         <p
           data-editable="subtitle"
-          className="mx-auto mt-6 max-w-[48ch] text-[18px] leading-[1.85] text-(--theme-muted)"
+          className={`${a.block} mt-6 max-w-[48ch] text-[18px] leading-[1.85] text-(--theme-muted)`}
         >
           {text(config, 'subtitle', d.subtitle)}
         </p>
 
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3.5">
+        <div className={`mt-9 flex flex-wrap items-center ${a.justify} gap-3.5`}>
           <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
             <Button tone="deep" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')} className="!rounded-full">
               {text(config, 'ctaText', d.ctaText)}

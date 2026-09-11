@@ -7,6 +7,7 @@ import { RemovableSlot } from '../_shared/removable-slot';
 import { text, type TemplateSectionProps } from '../_shared/types';
 import { SEPID_DEFAULTS } from './defaults';
 import { templateHref } from '../_shared/routes';
+import { heroAlign } from '../_shared/hero-align';
 
 // Up to four photos — the manager can upload more than one to turn the static
 // screenshot into an auto-rotating slideshow.
@@ -19,12 +20,13 @@ const SLIDE_KEYS = ['bgImage', 'bgImage2', 'bgImage3', 'bgImage4'] as const;
 export function SepidHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = SEPID_DEFAULTS.hero;
   const editMode = storeContext?.editMode ?? false;
+  const a = heroAlign(config);
 
   return (
     <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
       <Backdrop variant="spotlight" motion="wash" />
-      <Container className="relative z-[1] py-(--theme-section-padding-y) text-center">
-        <h1 className="mx-auto max-w-[20ch] text-[clamp(34px,5.6vw,64px)] font-bold leading-[1.1] tracking-[-0.03em]">
+      <Container className={`relative z-[1] py-(--theme-section-padding-y) ${a.text}`}>
+        <h1 className={`${a.block} max-w-[20ch] text-[clamp(34px,5.6vw,64px)] font-bold leading-[1.1] tracking-[-0.03em]`}>
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
           <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -32,12 +34,12 @@ export function SepidHero({ id, config, storeContext }: TemplateSectionProps) {
 
         <p
           data-editable="subtitle"
-          className="mx-auto mt-5 max-w-[46ch] text-[17px] leading-[1.85] text-(--theme-muted)"
+          className={`${a.block} mt-5 max-w-[46ch] text-[17px] leading-[1.85] text-(--theme-muted)`}
         >
           {text(config, 'subtitle', d.subtitle)}
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className={`mt-8 flex flex-wrap items-center ${a.justify} gap-3`}>
           <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
             <Button tone="primary" size="md" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
               {text(config, 'ctaText', d.ctaText)}

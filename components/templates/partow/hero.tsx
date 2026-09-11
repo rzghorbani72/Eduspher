@@ -8,6 +8,7 @@ import { editableList, editableItem } from '../_shared/editable-list';
 import { PARTOW_DEFAULTS } from './defaults';
 import { Wrap, MediaBar } from './layout';
 import styles from './partow.module.css';
+import { heroAlign } from '../_shared/hero-align';
 
 interface HeroStat {
   value: string;
@@ -25,6 +26,7 @@ interface HeroStat {
 export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
   const d = PARTOW_DEFAULTS.hero;
   const editMode = storeContext?.editMode ?? false;
+  const a = heroAlign(config);
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
@@ -32,8 +34,8 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
       id={id || 'hero'}
       className="bg-(--theme-background) pt-24 text-(--theme-foreground) max-md:pt-14"
     >
-      <Wrap className="text-center">
-        <h1 className="mx-auto max-w-[24ch] text-[clamp(36px,5.2vw,68px)] font-bold leading-[1.2]">
+      <Wrap className={`${a.text}`}>
+        <h1 className={`${a.block} max-w-[24ch] text-[clamp(36px,5.2vw,68px)] font-bold leading-[1.2]`}>
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
           <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -42,12 +44,12 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
 
         <p
           data-editable="subtitle"
-          className="mx-auto mt-5.5 max-w-[52ch] text-[18px] leading-[1.85] text-(--theme-muted)"
+          className={`${a.block} mt-5.5 max-w-[52ch] text-[18px] leading-[1.85] text-(--theme-muted)`}
         >
           {text(config, 'subtitle', d.subtitle)}
         </p>
 
-        <div className="mt-8.5 flex flex-wrap justify-center gap-3">
+        <div className={`mt-8.5 flex flex-wrap ${a.justify} gap-3`}>
           <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
             <Button
               tone="primary"
@@ -77,7 +79,7 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
           </RemovableSlot>
         </div>
 
-        <div className="mt-6.5 flex flex-wrap items-center justify-center gap-x-4.5 gap-y-2.5 text-[13.5px] text-(--theme-muted)">
+        <div className={`mt-6.5 flex flex-wrap items-center ${a.justify} gap-x-4.5 gap-y-2.5 text-[13.5px] text-(--theme-muted)`}>
           <span>
             <span className={styles.stars} aria-hidden="true">
               ★★★★★
