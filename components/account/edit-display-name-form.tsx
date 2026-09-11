@@ -91,9 +91,9 @@ export const EditDisplayNameForm = ({
           variant="ghost"
           size="sm"
           onClick={() => setIsEditing(true)}
-          className="border border-(--theme-border) bg-white text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
+          className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
         >
-          <Edit2 className="size-4" />
+          <Edit2 className="size-3.5 shrink-0" aria-hidden="true" />
           {t("common.edit")}
         </Button>
       </div>

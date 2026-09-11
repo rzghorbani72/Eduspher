@@ -1,7 +1,6 @@
 "use client";
 
-import { AppImage } from "@/components/ui/app-image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, Loader2, Trash2, ImageIcon } from "lucide-react";
 
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { updateProfile, uploadImage } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { logger } from "@/lib/logging/app-logger";
+import { resolveAssetUrl } from "@/lib/utils";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ACCEPTED = ["image/png", "image/jpeg", "image/webp"];
@@ -28,9 +28,28 @@ export function ProfileAvatarCard({
   const { t } = useTranslation();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const objectUrlRef = useRef<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(() =>
+    resolveAssetUrl(avatarUrl),
+  );
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  useEffect(() => {
+    setPreviewUrl(resolveAssetUrl(avatarUrl));
+    setLoadFailed(false);
+  }, [avatarUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+    };
+  }, []);
 
   const initials = displayName
     .split(" ")
@@ -39,6 +58,8 @@ export function ProfileAvatarCard({
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  const showImage = Boolean(previewUrl) && !loadFailed;
 
   async function handleFile(file: File) {
     setError(null);
@@ -53,14 +74,34 @@ export function ProfileAvatarCard({
       return;
     }
 
+    // Instant local preview while the upload finishes.
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    const localPreview = URL.createObjectURL(file);
+    objectUrlRef.current = localPreview;
+    setPreviewUrl(localPreview);
+    setLoadFailed(false);
+
     setBusy(true);
     try {
       const image = await uploadImage(file, displayName || "avatar");
-      await updateProfile(profileId, { image_id: image.id });
+      const updated = await updateProfile(profileId, { image_id: image.id });
+      const nextUrl = resolveAssetUrl(
+        updated?.avatar?.url ?? image.publicUrl ?? image.url,
+      );
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setPreviewUrl(nextUrl);
       logger.ok("Account", "AvatarUpdated", { size_bytes: file.size });
       setMessage(t("account.avatarUpdated"));
       router.refresh();
     } catch (err) {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setPreviewUrl(resolveAssetUrl(avatarUrl));
       logger.error("Account", "AvatarUpdateFailed", { size_bytes: file.size });
       setError(
         err instanceof Error ? err.message : t("account.avatarUploadFailed"),
@@ -78,14 +119,14 @@ export function ProfileAvatarCard({
       icon={ImageIcon}
     >
       <div className="flex flex-1 flex-col items-center justify-center gap-5 py-2 text-center">
-        {avatarUrl ? (
-          <AppImage
-            src={avatarUrl}
+        {showImage && previewUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={previewUrl}
             alt={displayName}
-            preset="avatar"
             width={112}
             height={112}
-            sizes="112px"
+            onError={() => setLoadFailed(true)}
             className="size-28 rounded-full object-cover ring-4 ring-(--theme-border)"
           />
         ) : (
@@ -111,16 +152,19 @@ export function ProfileAvatarCard({
             size="sm"
             disabled={busy}
             onClick={() => inputRef.current?.click()}
-            className="border border-(--theme-border) bg-white text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
+            className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) shadow-sm hover:bg-surface hover:text-(--theme-foreground)"
           >
             {busy ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Loader2
+                className="size-3.5 shrink-0 animate-spin"
+                aria-hidden="true"
+              />
             ) : (
-              <Camera className="size-4" />
+              <Camera className="size-3.5 shrink-0" aria-hidden="true" />
             )}
             {busy ? t("account.uploadingAvatar") : t("account.uploadAvatar")}
           </Button>
-          {avatarUrl ? (
+          {previewUrl ? (
             <Button
               type="button"
               variant="ghost"
@@ -130,6 +174,11 @@ export function ProfileAvatarCard({
                 setBusy(true);
                 try {
                   await updateProfile(profileId, { image_id: "" });
+                  if (objectUrlRef.current) {
+                    URL.revokeObjectURL(objectUrlRef.current);
+                    objectUrlRef.current = null;
+                  }
+                  setPreviewUrl(null);
                   logger.ok("Account", "AvatarRemoved", {});
                   router.refresh();
                 } catch (err) {
@@ -140,8 +189,9 @@ export function ProfileAvatarCard({
                   setBusy(false);
                 }
               }}
+              className="shrink-0 text-muted hover:text-(--theme-foreground)"
             >
-              <Trash2 className="size-4" />
+              <Trash2 className="size-3.5 shrink-0" aria-hidden="true" />
               {t("account.removeAvatar")}
             </Button>
           ) : null}

@@ -74,7 +74,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...buttonProps}
       >
         {shimmerEffect}
-        <span className="relative z-10">{children}</span>
+        <span className="relative z-10 inline-flex items-center justify-center gap-2 whitespace-nowrap">
+          {children}
+        </span>
       </Comp>
     );
   }

@@ -11,6 +11,7 @@ import { getSession } from "@/lib/auth/session";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
+import { resolveAssetUrl } from "@/lib/utils";
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -58,7 +59,9 @@ export default async function ProfilePage() {
         <ProfileAvatarCard
           profileId={profileId}
           displayName={profile?.display_name ?? user?.display_name ?? ""}
-          avatarUrl={profile?.avatar?.url ?? null}
+          avatarUrl={
+            resolveAssetUrl(profile?.avatar?.url ?? user?.avatar?.url) ?? null
+          }
         />
       </div>
 

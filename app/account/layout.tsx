@@ -9,7 +9,7 @@ import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from "@/lib/api/s
 import { getSession } from "@/lib/auth/session";
 import { NOINDEX_ROBOTS } from "@/lib/seo/crawl-policy";
 import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath } from "@/lib/utils";
+import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   robots: NOINDEX_ROBOTS,
@@ -66,7 +66,9 @@ export default async function AccountLayout({ children }: { children: ReactNode 
           <AccountSidebar
             displayName={profile?.display_name || user?.display_name || ""}
             contact={user?.email ?? user?.phone_number}
-            avatarUrl={profile?.avatar?.url ?? null}
+            avatarUrl={
+              resolveAssetUrl(profile?.avatar?.url ?? user?.avatar?.url) ?? null
+            }
             roleLabel={profile?.role_label ?? user?.role}
             isVerified={Boolean(user?.email_confirmed || user?.phone_confirmed)}
             academyName={academy?.name ?? academyContext.name}
