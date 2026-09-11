@@ -24,14 +24,10 @@ export async function POST(request: NextRequest) {
   const academyId = cookieStore.get(env.academyIdCookie)?.value;
   const cookieHeader = request.headers.get("cookie") ?? undefined;
   const academyOrigin = resolvePublicRequestOrigin(request);
-  const provider =
-    typeof body.provider === "string" ? body.provider : undefined;
   const seats = Number(body.seats);
 
-  const callback_url =
-    provider === "SAMAN_SEP"
-      ? `${env.appUrl}/payment/saman-callback`
-      : `${academyOrigin}/payment/callback`;
+  // Unified callback handles BitPay + Saman; the backend picks the owner-active rail.
+  const callback_url = `${academyOrigin}/payment/callback`;
 
   const response = await fetch(`${backendApiBaseUrl}/payments/checkout`, {
     method: "POST",
@@ -53,7 +49,8 @@ export async function POST(request: NextRequest) {
       ...(typeof body.mobile === "string" && body.mobile
         ? { mobile: body.mobile }
         : {}),
-      ...(provider ? { provider } : {}),
+      // Do not forward a client-picked provider: the owner-panel active rail
+      // (preferred: Saman) is the single source of truth for academy checkout.
       ...(seats > 1 ? { seats } : {}),
       ...(typeof body.join_code === "string" && body.join_code
         ? { join_code: body.join_code }
