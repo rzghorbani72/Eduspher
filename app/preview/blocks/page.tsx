@@ -122,6 +122,13 @@ export default async function PreviewBlocksPage({
       data-edit-mode={edit || undefined}
     >
       {edit && <PreviewEditBridge />}
+      {/* Cloned by the bridge when a section is deleted, so the slot appears
+          in place without a server rebuild. */}
+      {edit && (
+        <template data-placeholder-template>
+          <PlaceholderSection />
+        </template>
+      )}
       {blocks.map((block, index) => {
         const animate = !edit && block.type !== "header";
         // A hidden block still needs its wrapper (the bridge toggles it back on

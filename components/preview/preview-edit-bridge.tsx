@@ -146,6 +146,7 @@ function showBlockToolbar(blockEl: HTMLElement) {
       label: "↓",
       enabled: !pinned && hasMovableNeighbour(blockEl, "down"),
     },
+    { action: "edit", label: "✎", enabled: true },
     { action: "hide", label: "◌", enabled: true },
     { action: "delete", label: "×", enabled: !pinned },
   ].filter((a) => a.enabled);
@@ -168,6 +169,18 @@ function showBlockToolbar(blockEl: HTMLElement) {
     btn.addEventListener("mousedown", (e) => e.preventDefault());
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (action === "edit") {
+        document
+          .querySelectorAll(`.${SELECTED}`)
+          .forEach((n) => n.classList.remove(SELECTED));
+        blockEl.classList.add(SELECTED);
+        postMessageToPanel({
+          source: "template-editor",
+          type: "select",
+          blockId,
+        });
+        return;
+      }
       postMessageToPanel({
         source: "template-editor",
         type: "block-action",
@@ -785,6 +798,12 @@ export function PreviewEditBridge() {
         .querySelectorAll(`.${HOVER}`)
         .forEach((n) => n.classList.remove(HOVER));
       if (el && !el.classList.contains(SELECTED)) el.classList.add(HOVER);
+
+      // The toolbar follows the pointer and settles back on the selection.
+      const target = el ?? document.querySelector<HTMLElement>(`.${SELECTED}`);
+      const bar = document.getElementById(BLOCK_TOOLBAR_ID);
+      if (!target) return removeBlockToolbar();
+      if (bar?.parentElement !== target) showBlockToolbar(target);
     };
 
     // mousedown: the entry point for inline editing.
@@ -1001,6 +1020,22 @@ export function PreviewEditBridge() {
           else missing = true;
         }
         if (missing) requestReload();
+      }
+
+      // Delete — the section becomes an empty slot in place. The markup comes
+      // from the server-rendered <template>, so the DOM is never rebuilt.
+      if (data.type === "sync-placeholder" && data.blockId) {
+        const el = document.querySelector<HTMLElement>(
+          `[data-block-id="${data.blockId}"]`,
+        );
+        const tpl = document.querySelector<HTMLTemplateElement>(
+          "template[data-placeholder-template]",
+        );
+        if (!el || !tpl) return requestReload();
+        el.replaceChildren(tpl.content.cloneNode(true));
+        el.dataset.blockType = "placeholder";
+        el.style.display = "";
+        if (el.classList.contains(SELECTED)) showBlockToolbar(el);
       }
 
       if (data.type === "highlight") {
