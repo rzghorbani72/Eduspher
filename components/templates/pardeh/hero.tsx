@@ -25,7 +25,7 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="relative text-white">
+    <section id={id || 'hero'} className="relative py-0! text-white">
       <HeroVideoBanner
         config={config}
         placeholder={

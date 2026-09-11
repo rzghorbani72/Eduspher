@@ -31,7 +31,7 @@ export function HeroVideoBanner({
   return (
     <div
       data-video-editable="heroVideoUrl"
-      className={`relative isolate flex min-h-[clamp(520px,78vh,820px)] w-full flex-col overflow-hidden ${className}`}
+      className={`relative isolate flex min-h-svh w-full flex-col overflow-hidden ${className}`}
     >
       {url ? (
         <video
@@ -45,7 +45,7 @@ export function HeroVideoBanner({
           preload="auto"
           disablePictureInPicture
           aria-hidden="true"
-          className="absolute inset-0 -z-20 h-full w-full object-cover"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-top"
         />
       ) : (
         <div className="absolute inset-0 -z-20">{placeholder}</div>
