@@ -26,9 +26,13 @@ const GATEWAY_KEY: Record<string, string> = {
   ZARINPAL: "account.gatewayZarinpal",
   SAMAN: "account.gatewaySaman",
   SEP: "account.gatewaySaman",
+  SAMAN_SEP: "account.gatewaySaman",
+  MELLAT_BP: "account.gatewayMellat",
+  MELLAT: "account.gatewayMellat",
   WALLET: "account.gatewayWallet",
   MANUAL: "account.gatewayManual",
   FREE: "account.gatewayFree",
+  SIMULATOR: "account.gatewaySimulator",
 };
 
 const labelFrom = (

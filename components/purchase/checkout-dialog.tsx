@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AlertCircle, CheckCircle2, Loader2, Lock, X } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
+import { gatewayLabel } from "@/lib/account-labels";
 import { cn, formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
 import { useCheckoutQuote } from "@/components/purchase/use-checkout-quote";
 import { useDialogAction } from "@/hooks/use-dialog-action";
@@ -186,7 +187,13 @@ export function CheckoutDialog({
               <p className="text-xs font-bold text-(--theme-foreground)">
                 {t("checkout.chooseGateway")}
               </p>
-              {gateways.map((gateway) => (
+              {gateways.map((gateway) => {
+                const label = gatewayLabel(gateway.provider, t);
+                const showLabel =
+                  label.toUpperCase() === gateway.provider.toUpperCase()
+                    ? gateway.display_name
+                    : label;
+                return (
                 <button
                   key={gateway.provider}
                   type="button"
@@ -200,9 +207,10 @@ export function CheckoutDialog({
                   {busy && payingProvider === gateway.provider && (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   )}
-                  {gateway.display_name}
+                  {showLabel}
                 </button>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

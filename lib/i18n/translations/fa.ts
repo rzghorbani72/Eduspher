@@ -936,10 +936,12 @@ export const fa = {
     gatewayBitpay: "بیت‌پی",
     gatewayPayping: "پی‌پینگ",
     gatewayZarinpal: "زرین‌پال",
-    gatewaySaman: "بانک سامان",
+    gatewaySaman: "سداد سامان",
+    gatewayMellat: "به‌پرداخت ملت",
     gatewayWallet: "کیف پول",
     gatewayManual: "پرداخت دستی",
     gatewayFree: "رایگان",
+    gatewaySimulator: "شبیه‌ساز",
     // عددها و زمان‌های نسبی
     scoreOutOf: "{score} از {max}",
     videoSessionsCount: "{count} جلسه ویدیو",

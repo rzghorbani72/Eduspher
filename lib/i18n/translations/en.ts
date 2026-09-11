@@ -941,9 +941,11 @@ export const en = {
     gatewayPayping: "PayPing",
     gatewayZarinpal: "Zarinpal",
     gatewaySaman: "Saman Bank",
+    gatewayMellat: "Mellat Bank",
     gatewayWallet: "Wallet",
     gatewayManual: "Manual payment",
     gatewayFree: "Free",
+    gatewaySimulator: "Simulator",
     // Numbers and relative times
     scoreOutOf: "{score} of {max}",
     videoSessionsCount: "{count} video sessions",
