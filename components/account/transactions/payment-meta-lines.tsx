@@ -33,12 +33,13 @@ export function PaymentMetaLines({
   const orderNumber = payment.Order?.order_number?.trim() || null;
   const checkoutRef = payment.checkout_reference?.trim() || null;
 
-  const entries: { label: string; value: string; mono?: boolean }[] = [];
+  const entries: { label: string; value: string; mono?: boolean; ltr?: boolean }[] = [];
   if (tracking) {
     entries.push({
       label: t("account.trackingCode"),
       value: tracking,
       mono: true,
+      ltr: true,
     });
   }
   if (voucher) {
@@ -46,6 +47,7 @@ export function PaymentMetaLines({
       label: t("account.voucherApplied"),
       value: voucher,
       mono: true,
+      ltr: true,
     });
   }
   if (discount != null) {
@@ -59,6 +61,7 @@ export function PaymentMetaLines({
       label: t("account.orderNumber"),
       value: orderNumber,
       mono: true,
+      ltr: true,
     });
   }
   if (checkoutRef && checkoutRef !== tracking && checkoutRef !== orderNumber) {
@@ -66,6 +69,7 @@ export function PaymentMetaLines({
       label: t("account.paymentReference"),
       value: checkoutRef,
       mono: true,
+      ltr: true,
     });
   }
 
@@ -85,7 +89,7 @@ export function PaymentMetaLines({
                 "font-medium text-(--theme-foreground)",
                 entry.mono && "font-mono text-xs tracking-wide",
               )}
-              dir="ltr"
+              {...(entry.ltr ? { dir: "ltr" as const } : {})}
             >
               {entry.value}
             </dd>
@@ -105,7 +109,7 @@ export function PaymentMetaLines({
               "text-(--theme-foreground)",
               entry.mono && "font-mono tracking-wide",
             )}
-            dir="ltr"
+            {...(entry.ltr ? { dir: "ltr" as const } : {})}
           >
             {entry.value}
           </span>
