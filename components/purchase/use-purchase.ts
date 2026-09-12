@@ -8,7 +8,6 @@ import { parseApiError } from "@/lib/api/api-error";
 import { notifyApiError } from "@/lib/api/notify-api-error";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { logger } from "@/lib/logging/app-logger";
-import { track } from "@/lib/analytics/analytics";
 
 /** Exactly one of these identifies what is being bought. */
 export type PurchaseSelector =
@@ -119,7 +118,6 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           amount,
           gateway_redirect: Boolean(redirectUrl),
         });
-        track("StudentCheckoutStarted", { kind, amount_toman: amount });
 
         if (redirectUrl) {
           window.location.assign(redirectUrl);

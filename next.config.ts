@@ -45,7 +45,7 @@ const SECURITY_HEADERS = [
     key: "Content-Security-Policy",
     value: isDevelopment
       ? "default-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https:; style-src 'self' 'unsafe-inline' http://localhost:* https:; img-src 'self' data: blob: http://localhost:* https:; font-src 'self' data: http://localhost:* https:; connect-src 'self' http://localhost:* ws://localhost:* ws: wss: https:; media-src 'self' http://localhost:* https: blob: data:; worker-src 'self' blob:; frame-ancestors 'none';"
-      : "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self' https: blob: data:; worker-src 'self' blob:; frame-ancestors 'none';",
+      : "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; media-src 'self' https: blob: data:; worker-src 'self' blob:; frame-ancestors 'none';",
   },
 ];
 
@@ -80,15 +80,7 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN ||
       PRODUCTION_PUBLIC_DEFAULTS.BACKEND_ORIGIN
     ).replace(/\/$/, "");
-    const posthogHost = (process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "").replace(/\/$/, "");
-    const analyticsRewrites = posthogHost
-      ? [
-          { source: "/ingest/static/:path*", destination: `${posthogHost}/static/:path*` },
-          { source: "/ingest/:path*", destination: `${posthogHost}/:path*` },
-        ]
-      : [];
     return [
-      ...analyticsRewrites,
       {
         source: "/:lang(fa|en|ar|tr)/v1/:path*",
         destination: `${backendOrigin}/:lang/v1/:path*`,

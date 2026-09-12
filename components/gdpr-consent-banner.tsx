@@ -3,22 +3,13 @@
 import { useState, useSyncExternalStore } from 'react';
 import Link from '@/components/ui/link';
 import { logger } from '@/lib/logging/app-logger';
+import { getMarketingConsent, setMarketingConsent } from '@/lib/consent';
 
 const COOKIE_NAME = 'gdpr_consent';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 
-function getCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-function setCookie(name: string, value: string, maxAge: number): void {
-  document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
-}
-
 function cookieConsentNeeded(): boolean {
-  return typeof document !== 'undefined' && !getCookie(COOKIE_NAME);
+  return typeof document !== 'undefined' && getMarketingConsent() === null;
 }
 
 export function GdprConsentBanner() {
@@ -31,13 +22,13 @@ export function GdprConsentBanner() {
   const visible = needsConsent && !dismissed;
 
   function accept() {
-    setCookie(COOKIE_NAME, 'accepted', COOKIE_MAX_AGE);
+    setMarketingConsent(COOKIE_NAME, 'accepted', COOKIE_MAX_AGE);
     logger.event('Gdpr', 'ConsentAccepted', { surface: 'website' });
     setDismissed(true);
   }
 
   function decline() {
-    setCookie(COOKIE_NAME, 'declined', COOKIE_MAX_AGE);
+    setMarketingConsent(COOKIE_NAME, 'declined', COOKIE_MAX_AGE);
     logger.event('Gdpr', 'ConsentDeclined', { surface: 'website' });
     setDismissed(true);
   }

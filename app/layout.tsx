@@ -10,7 +10,6 @@ import {
 import { MainContainer } from "@/components/layout/main-container";
 import { getHeaderUser } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
-import { AnalyticsProvider } from "@/components/providers/analytics-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ShellProvider } from "@/components/providers/shell-provider";
 import { getRequestHost } from "@/lib/request-host";
@@ -43,6 +42,7 @@ import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
 import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
 import { resolveAssetUrl } from "@/lib/utils";
 import { GdprConsentBanner } from "@/components/gdpr-consent-banner";
+import { MarketingAnalytics } from "@/components/analytics/marketing-analytics";
 import { ToastContainerWrapper } from "@/components/providers/toast-container-wrapper";
 import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 
@@ -215,7 +215,6 @@ export default async function RootLayout({
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: themeCSS }}
         />
-        <AnalyticsProvider>
         <QueryProvider>
           <AuthProvider
             initialAuthenticated={isAuthenticated}
@@ -301,7 +300,10 @@ export default async function RootLayout({
                       </ScrollAnimationProvider>
                     </EnrollmentStatusProvider>
                     {process.env.NEXT_PUBLIC_GDPR_ENABLED === "true" && (
-                      <GdprConsentBanner />
+                      <>
+                        <GdprConsentBanner />
+                        <MarketingAnalytics />
+                      </>
                     )}
                     <ToastContainerWrapper />
                   </I18nProvider>
@@ -310,7 +312,6 @@ export default async function RootLayout({
             </ShellProvider>
           </AuthProvider>
         </QueryProvider>
-        </AnalyticsProvider>
       </body>
     </html>
   );
