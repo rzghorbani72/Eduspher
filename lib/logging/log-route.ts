@@ -36,12 +36,12 @@ export function sanitizeEntry(
     details[key] = typeof value === 'string' ? value.slice(0, MAX_STRING) : value;
   }
   return {
-    ...details,
-    ...stamp,
-    ts: new Date().toISOString(),
-    level,
     event,
     action,
+    level,
+    ts: new Date().toISOString(),
+    ...stamp,
+    ...details,
   };
 }
 
