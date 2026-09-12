@@ -10,6 +10,7 @@ import {
 import { MainContainer } from "@/components/layout/main-container";
 import { getHeaderUser } from "@/app/actions/auth";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { AnalyticsProvider } from "@/components/providers/analytics-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { ShellProvider } from "@/components/providers/shell-provider";
 import { getRequestHost } from "@/lib/request-host";
@@ -214,6 +215,7 @@ export default async function RootLayout({
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: themeCSS }}
         />
+        <AnalyticsProvider>
         <QueryProvider>
           <AuthProvider
             initialAuthenticated={isAuthenticated}
@@ -308,6 +310,7 @@ export default async function RootLayout({
             </ShellProvider>
           </AuthProvider>
         </QueryProvider>
+        </AnalyticsProvider>
       </body>
     </html>
   );

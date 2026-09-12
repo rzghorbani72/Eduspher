@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 
+import { identifyAnalytics } from "@/lib/analytics/analytics";
 import {
   type BrowserLogContext,
   setLogContext,
@@ -37,6 +38,7 @@ export const AuthProvider = ({
   const { user_id, academy_id, role } = logContext ?? {};
   useEffect(() => {
     setLogContext({ user_id, academy_id, role });
+    identifyAnalytics({ user_id, academy_id, role });
   }, [user_id, academy_id, role]);
 
   const setAuthenticated = useCallback((value: boolean) => {

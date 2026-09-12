@@ -1,4 +1,6 @@
 allowBuilds:
   '@parcel/watcher': true
+  '@sentry/cli': set this to true or false
+  core-js: set this to true or false
   sharp: true
   unrs-resolver: true

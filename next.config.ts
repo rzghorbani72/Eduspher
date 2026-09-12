@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -79,7 +80,15 @@ const nextConfig: NextConfig = {
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN ||
       PRODUCTION_PUBLIC_DEFAULTS.BACKEND_ORIGIN
     ).replace(/\/$/, "");
+    const posthogHost = (process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "").replace(/\/$/, "");
+    const analyticsRewrites = posthogHost
+      ? [
+          { source: "/ingest/static/:path*", destination: `${posthogHost}/static/:path*` },
+          { source: "/ingest/:path*", destination: `${posthogHost}/:path*` },
+        ]
+      : [];
     return [
+      ...analyticsRewrites,
       {
         source: "/:lang(fa|en|ar|tr)/v1/:path*",
         destination: `${backendOrigin}/:lang/v1/:path*`,
@@ -134,4 +143,13 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "rzghorbani72-mentoma",
+  project: process.env.SENTRY_PROJECT ?? "website",
+  // Errors and traces go through this same-origin route, so CSP and ad-blockers never see sentry.io.
+  tunnelRoute: "/monitoring",
+  silent: true,
+  // Source maps upload only when a CI token is present; local builds skip it.
+  sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
+  telemetry: false,
+});
