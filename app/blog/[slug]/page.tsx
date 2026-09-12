@@ -21,6 +21,7 @@ import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 import { buildAbsoluteUrl, seoDomains } from "@/lib/seo/domains";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
 import { sizedImageUrl } from "@/lib/images/sized-image-url";
+import { serializeJsonLd } from "@/lib/seo/json-ld-script";
 
 type PageParams = Promise<{
   slug: string;
@@ -135,11 +136,11 @@ export default async function BlogArticlePage({
     <article className="space-y-6">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbLd) }}
       />
       <header className="space-y-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <Badge variant="soft" className="w-fit">

@@ -43,6 +43,7 @@ import {
   buildBreadcrumbJsonLd,
 } from "@/lib/seo/course-json-ld";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
+import { serializeJsonLd } from "@/lib/seo/json-ld-script";
 
 type PageParams = Promise<{ slug: string }>;
 
@@ -235,11 +236,11 @@ export default async function CourseDetailPage({
     <div>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd) }}
       />
 
       <CourseHero

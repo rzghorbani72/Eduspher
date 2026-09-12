@@ -8,6 +8,7 @@ import { buildSiteMetadata } from "@/lib/seo/build-metadata";
 import { buildLandingFaqJsonLd } from "@/lib/seo/landing-faq-json-ld";
 import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
+import { serializeJsonLd } from "@/lib/seo/json-ld-script";
 
 export const revalidate = 300;
 
@@ -33,7 +34,7 @@ export default async function Home() {
       <PlatformOrganizationJsonLd />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd) }}
       />
       <LandingPage
         adminLoginUrl={adminLoginUrl}

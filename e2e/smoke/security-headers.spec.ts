@@ -25,4 +25,21 @@ test.describe('edusphere security headers (smoke)', () => {
     const csp = res!.headers()['content-security-policy'] ?? '';
     expect(csp).toContain("default-src 'self'");
   });
+
+  // JSON-LD carries academy/author-supplied text. JSON.stringify does not escape
+  // `<`, so an unescaped `</script>` in any field would close the tag and run the
+  // rest as HTML (stored XSS). serializeJsonLd escapes it to <.
+  test('JSON-LD blocks a </script> breakout and stays valid JSON', async ({ page }) => {
+    // JSON-LD only renders on API-backed routes (home / academy / blog).
+    test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
+    await page.goto('/');
+    const blocks = await page
+      .locator('script[type="application/ld+json"]')
+      .allTextContents();
+
+    for (const raw of blocks) {
+      expect(raw, 'no literal closing tag inside JSON-LD').not.toContain('</script');
+      expect(() => JSON.parse(raw), 'JSON-LD stays parseable').not.toThrow();
+    }
+  });
 });

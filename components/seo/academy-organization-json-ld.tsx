@@ -3,6 +3,7 @@ import { buildAcademyOrganizationJsonLd } from "@/lib/seo/organization-json-ld";
 import { getSeoRequestContext } from "@/lib/seo/request-context";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAssetUrl } from "@/lib/utils";
+import { serializeJsonLd } from "@/lib/seo/json-ld-script";
 
 /** Structured data for an academy home page, so search engines list the school. */
 export async function AcademyOrganizationJsonLd() {
@@ -27,7 +28,7 @@ export async function AcademyOrganizationJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
     />
   );
 }
