@@ -28,8 +28,7 @@ pnpm test:e2e                         # auto-starts next dev on :5000
 Happy-path login is skipped unless `E2E_BACKEND=1`. Verified recipe:
 
 ```bash
-# 1) seed a known academy + student (prints ACADEMY_ID)
-pnpm --dir ../Backend seed:e2e
+# 1) create a student + academy in your local dev DB (sign up through the UI)
 # 2) run the API (any free port, e.g. 3001)
 PORT=3001 NODE_ENV=development pnpm --dir ../Backend exec nest start &
 # 3) point edusphere at it + pass the seeded creds/academy
@@ -37,7 +36,7 @@ NEXT_PUBLIC_BACKEND_ORIGIN=http://localhost:3001 \
 E2E_BACKEND=1 \
 E2E_STUDENT_EMAIL=e2e.student.live@test.local \
 E2E_STUDENT_PASSWORD='Passw0rd!' \
-E2E_ACADEMY_ID=<cuid printed by seed:e2e> \
+E2E_ACADEMY_ID=<academy cuid> \
 pnpm test:e2e
 ```
 

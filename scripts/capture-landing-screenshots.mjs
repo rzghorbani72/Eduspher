@@ -21,7 +21,7 @@ const ACADEMY_WEB =
 const PHONE = process.env.DEMO_MANAGER_PHONE ?? '09000000100';
 const PASSWORD = process.env.DEMO_MANAGER_PASSWORD ?? 'Demo1234!';
 
-/** Demo course ids (seed-demo-showcase). Override via env if ids change. */
+/** Demo course ids from the local dev DB. Override via env. */
 const COURSE_A =
   process.env.DEMO_COURSE_A_ID ?? 'cmt4hzhah002y48lbtu9iv7w4';
 const COURSE_B =
