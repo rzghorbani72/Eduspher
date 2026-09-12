@@ -49,3 +49,6 @@ next-env.d.ts
 
 # Local knowledge-graph cache (lives at monorepo root, not in this app)
 graphify-out/
+
+# Sentry Config File
+.env.sentry-build-plugin
