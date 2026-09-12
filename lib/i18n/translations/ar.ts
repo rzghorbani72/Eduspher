@@ -33,6 +33,8 @@ export const ar = {
     forbidden: "ليس لديك صلاحية للقيام بذلك.",
     notFound: "لم يتم العثور على ما تبحث عنه.",
     rateLimited: "محاولات كثيرة. انتظر قليلاً ثم حاول مرة أخرى.",
+    requestStorm:
+      "تم إرسال عدد كبير من الطلبات غير المعتادة. تم تسجيل خروجك للأمان؛ يرجى تسجيل الدخول مرة أخرى.",
     csrfRetry: "جلسة الأمان تتجدد. يرجى المحاولة مرة أخرى.",
     legalConsent: "يرجى قبول الشروط المحدّثة للمتابعة.",
     server: "حدث خطأ في الخادم. حاول مرة أخرى بعد لحظات.",
@@ -69,7 +71,8 @@ export const ar = {
     groupClassesTitle: "Group classes",
     groupClassesSubtitle:
       "Scheduled classes with a set weekly time. A class starts once enough students have booked a seat.",
-    liveNoClassesYet: "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
+    liveNoClassesYet:
+      "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
     groupTerm: "Runs",
     groupStarts: "Starts",
     groupSeatsLeft: "Seats left",
@@ -615,7 +618,8 @@ export const ar = {
     lessonPosition: "الدرس {index} من {total}",
     progressSummary: "اكتمل {done} من {total} درسًا",
     freePreviewTitle: "هذا الدرس مجاني",
-    freePreviewDescription: "احصل على الدورة للوصول إلى جميع الدروس والواجبات والاختبارات.",
+    freePreviewDescription:
+      "احصل على الدورة للوصول إلى جميع الدروس والواجبات والاختبارات.",
     freePreviewCta: "عرض الدورة وشراؤها",
     assignmentNeedsEnrollment: "سجّل في هذه الدورة لإرسال الواجب.",
     markComplete: "وضع علامة مكتمل",

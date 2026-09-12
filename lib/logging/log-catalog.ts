@@ -4,116 +4,140 @@
  * the event/action/field lists are derived from the code and must not be edited
  * by hand. This file is the single index of every log this app can emit.
  */
-import type { LogCatalog } from './logger';
+import type { LogCatalog } from "./logger";
 
 export const LOG_CATALOG = {
   Account: {
-    description: 'The account area a student uses on the public website.',
+    description: "The account area a student uses on the public website.",
     actions: {
       AvatarRemoved: {
-        description: 'Account avatar removed.',
-        status: 'ok',
+        description: "Account avatar removed.",
+        status: "ok",
         fields: [] as const,
       },
       AvatarUpdated: {
-        description: 'Account avatar updated.',
-        status: 'ok',
-        fields: ['size_bytes'] as const,
+        description: "Account avatar updated.",
+        status: "ok",
+        fields: ["size_bytes"] as const,
       },
       AvatarUpdateFailed: {
-        description: 'Account avatar update failed.',
-        status: 'error',
-        fields: ['size_bytes'] as const,
+        description: "Account avatar update failed.",
+        status: "error",
+        fields: ["size_bytes"] as const,
       },
     },
   },
   Gdpr: {
-    description: 'Cookie and privacy consent captured in the browser.',
+    description: "Cookie and privacy consent captured in the browser.",
     actions: {
       ConsentAccepted: {
-        description: 'GDPR consent accepted.',
-        status: 'ok',
-        fields: ['surface'] as const,
+        description: "GDPR consent accepted.",
+        status: "ok",
+        fields: ["surface"] as const,
       },
       ConsentDeclined: {
-        description: 'GDPR consent declined.',
-        status: 'ok',
-        fields: ['surface'] as const,
+        description: "GDPR consent declined.",
+        status: "ok",
+        fields: ["surface"] as const,
       },
     },
   },
   Legal: {
-    description: 'Legal document publishing and user consent acceptance.',
+    description: "Legal document publishing and user consent acceptance.",
     actions: {
       ConsentAccepted: {
-        description: 'Legal consent accepted.',
-        status: 'ok',
-        fields: ['document_count'] as const,
+        description: "Legal consent accepted.",
+        status: "ok",
+        fields: ["document_count"] as const,
       },
       ConsentAcceptFailed: {
-        description: 'Legal consent accept failed.',
-        status: 'error',
-        fields: ['document_count'] as const,
+        description: "Legal consent accept failed.",
+        status: "error",
+        fields: ["document_count"] as const,
       },
     },
   },
   Media: {
-    description: 'Video and file storage, transcoding and secure playback.',
+    description: "Video and file storage, transcoding and secure playback.",
     actions: {
       PlaybackSessionFailed: {
-        description: 'Media playback session failed.',
-        status: 'error',
-        fields: ['error_name', 'video_id'] as const,
+        description: "Media playback session failed.",
+        status: "error",
+        fields: ["error_name", "video_id"] as const,
       },
       PlayerError: {
-        description: 'Media player error.',
-        status: 'error',
-        fields: ['error_details', 'error_type', 'video_id'] as const,
+        description: "Media player error.",
+        status: "error",
+        fields: ["error_details", "error_type", "video_id"] as const,
       },
     },
   },
   Payments: {
-    description: 'Student and academy payments: checkout, gateway callbacks, refunds.',
+    description:
+      "Student and academy payments: checkout, gateway callbacks, refunds.",
     actions: {
       CheckoutGatewayPrompted: {
-        description: 'Payments checkout gateway prompted.',
-        status: 'ok',
-        fields: ['amount', 'gateway_count', 'kind'] as const,
+        description: "Payments checkout gateway prompted.",
+        status: "ok",
+        fields: ["amount", "gateway_count", "kind"] as const,
       },
       CheckoutStarted: {
-        description: 'Payments checkout started.',
-        status: 'ok',
-        fields: ['amount', 'gateway_redirect', 'kind'] as const,
+        description: "Payments checkout started.",
+        status: "ok",
+        fields: ["amount", "gateway_redirect", "kind"] as const,
       },
       CheckoutStartFailed: {
-        description: 'Payments checkout start failed.',
-        status: 'error',
-        fields: ['amount', 'http_status', 'kind'] as const,
+        description: "Payments checkout start failed.",
+        status: "error",
+        fields: ["amount", "http_status", "kind"] as const,
       },
       RefundRequested: {
-        description: 'Payments refund requested.',
-        status: 'ok',
-        fields: ['has_reason'] as const,
+        description: "Payments refund requested.",
+        status: "ok",
+        fields: ["has_reason"] as const,
       },
       RefundRequestRejected: {
-        description: 'Payments refund request rejected.',
-        status: 'warn',
-        fields: ['has_reason'] as const,
+        description: "Payments refund request rejected.",
+        status: "warn",
+        fields: ["has_reason"] as const,
+      },
+    },
+  },
+  RequestStorm: {
+    description:
+      "Client-side circuit breaker: one API route called far above human speed.",
+    actions: {
+      Tripped: {
+        description:
+          "A single route exceeded the per-window hit limit in the student's browser; protected routes force a sign-out and storage wipe.",
+        status: "error",
+        fields: [
+          "count",
+          "is_protected",
+          "method",
+          "route",
+          "window_ms",
+        ] as const,
       },
     },
   },
   SitePreview: {
-    description: 'Preview rendering of an academy site template.',
+    description: "Preview rendering of an academy site template.",
     actions: {
       PresetEmpty: {
-        description: 'Site preview preset empty.',
-        status: 'warn',
-        fields: ['draft', 'has_preset', 'has_token', 'template_key'] as const,
+        description: "Site preview preset empty.",
+        status: "warn",
+        fields: ["draft", "has_preset", "has_token", "template_key"] as const,
       },
       PresetFetchFailed: {
-        description: 'Site preview preset fetch failed.',
-        status: 'error',
-        fields: ['draft', 'error_message', 'has_token', 'template_key'] as const,
+        description: "Site preview preset fetch failed.",
+        status: "error",
+        fields: [
+          "draft",
+          "error_message",
+          "has_token",
+          "template_key",
+        ] as const,
       },
     },
   },

@@ -3,11 +3,17 @@
 import type { AuthResponse } from "@/lib/api/types";
 import { notifyLoginRequiredAndRedirect } from "@/lib/api/notify-api-error";
 import { getClientBackendApiBaseUrl, env } from "@/lib/env";
+import { assertNoRequestStorm } from "@/lib/api/request-storm";
 
 const withTrailingSlash = (value: string) =>
   value.endsWith("/") ? value.slice(0, -1) : value;
 
 const getBaseUrl = () => withTrailingSlash(getClientBackendApiBaseUrl());
+
+const apiFetch = (path: string, init: RequestInit): Promise<Response> => {
+  assertNoRequestStorm(init.method ?? "GET", path, !isPreSessionAuthPath(path));
+  return fetch(`${getBaseUrl()}${path}`, init);
+};
 
 export type RequestOptions = {
   signal?: AbortSignal;
@@ -322,7 +328,7 @@ export const postJson = async <T>(
       { mutate: true },
     );
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "POST",
       credentials: "include",
       headers,
@@ -353,7 +359,7 @@ export const getPublicJson = async <T>(
   options?: RequestOptions,
 ): Promise<T> => {
   const makeRequest = async (): Promise<T> => {
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "GET",
       credentials: "include",
       headers: { Accept: "application/json" },
@@ -379,7 +385,7 @@ export const postPublicJson = async <T>(
     const csrfToken = await ensureCsrfToken();
     if (csrfToken) headers.set("X-CSRF-Token", csrfToken);
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "POST",
       credentials: "include",
       headers,
@@ -410,7 +416,7 @@ export const getJson = async <T>(
       Accept: "application/json",
     });
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "GET",
       credentials: "include",
       headers,
@@ -444,7 +450,7 @@ const putJson = async <T>(
       { mutate: true },
     );
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "PUT",
       credentials: "include",
       headers,
@@ -479,7 +485,7 @@ export const patchJson = async <T>(
       { mutate: true },
     );
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "PATCH",
       credentials: "include",
       headers,
@@ -512,7 +518,7 @@ const deleteJson = async <T>(
       { mutate: true },
     );
 
-    const response = await fetch(`${getBaseUrl()}${path}`, {
+    const response = await apiFetch(path, {
       method: "DELETE",
       credentials: "include",
       headers,
@@ -696,7 +702,7 @@ export type LegalDocumentSummary = {
 export const getLegalDocuments = async (
   options?: RequestOptions,
 ): Promise<LegalDocumentSummary[]> => {
-  const response = await fetch(`${getBaseUrl()}/legal/documents`, {
+  const response = await apiFetch("/legal/documents", {
     method: "GET",
     credentials: "include",
     headers: { Accept: "application/json" },
@@ -1028,7 +1034,7 @@ export const uploadImage = async (
   body.append("imagefile", file);
   body.append("alt", alt);
 
-  const response = await fetch(`${getBaseUrl()}/images/upload`, {
+  const response = await apiFetch("/images/upload", {
     method: "POST",
     credentials: "include",
     headers: await buildHeaders(
@@ -1659,7 +1665,7 @@ export const uploadSupportAttachment = async (
   form.append("file", file);
   // No Content-Type: the browser sets the multipart boundary itself.
   const headers = await buildHeaders({}, { mutate: true });
-  const response = await fetch(`${getBaseUrl()}/support/attachments`, {
+  const response = await apiFetch("/support/attachments", {
     method: "POST",
     credentials: "include",
     headers,

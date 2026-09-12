@@ -33,6 +33,8 @@ export const fa = {
     forbidden: "شما اجازهٔ انجام این کار را ندارید.",
     notFound: "موردی که دنبال آن بودید پیدا نشد.",
     rateLimited: "تعداد تلاش‌ها زیاد بود. کمی صبر کنید و دوباره تلاش کنید.",
+    requestStorm:
+      "درخواست‌های غیرعادی زیادی ارسال شد. برای امنیت از حساب خارج شدید؛ لطفاً دوباره وارد شوید.",
     csrfRetry: "نشست امنیتی تازه می‌شود. لطفاً دوباره تلاش کنید.",
     legalConsent: "برای ادامه باید قوانین به‌روزشده را بپذیرید.",
     server: "مشکلی در سرور رخ داد. لطفاً چند لحظه بعد دوباره تلاش کنید.",
@@ -84,7 +86,8 @@ export const fa = {
     groupClassesTitle: "کلاس‌های گروهی",
     groupClassesSubtitle:
       "کلاس‌هایی با زمان هفتگی مشخص. با رزرو صندلی به تعداد لازم، کلاس شروع می‌شود.",
-    liveNoClassesYet: "کلاس‌های این دوره به‌زودی اعلام می‌شود. برای اطلاع از زمان‌بندی با آکادمی در تماس باشید.",
+    liveNoClassesYet:
+      "کلاس‌های این دوره به‌زودی اعلام می‌شود. برای اطلاع از زمان‌بندی با آکادمی در تماس باشید.",
     groupTerm: "بازهٔ برگزاری",
     groupStarts: "شروع",
     groupSeatsLeft: "صندلی باقی‌مانده",
@@ -274,7 +277,8 @@ export const fa = {
     writeReviewHeading: "نظر تو",
     noReviewsYet:
       "هنوز نظری ثبت نشده است. اولین نفری باشید که تجربه‌اش را می‌نویسد!",
-    noReviewsDescription: "بعد از دیدن نیمی از دوره می‌توانی امتیاز و نظر بدهی.",
+    noReviewsDescription:
+      "بعد از دیدن نیمی از دوره می‌توانی امتیاز و نظر بدهی.",
     verifiedPurchase: "خرید تأییدشده",
     writeReview: "ثبت نظر",
     yourRating: "امتیاز شما",
@@ -1068,7 +1072,8 @@ export const fa = {
     teacherNote: "یادداشت استاد",
     completeAndContinue: "تکمیل شد، درس بعد",
     videoLoading: "آماده‌سازی پخش امن…",
-    videoPlaybackFailed: "پخش این ویدیو ممکن نشد. لطفاً صفحه را دوباره بارگذاری کنید.",
+    videoPlaybackFailed:
+      "پخش این ویدیو ممکن نشد. لطفاً صفحه را دوباره بارگذاری کنید.",
     videoUnavailable: "ویدیوی این درس هنوز منتشر نشده است.",
     audioUnavailable: "فایل صوتی این درس هنوز منتشر نشده است.",
     textUnavailable: "متن این درس هنوز منتشر نشده است.",
@@ -1085,9 +1090,11 @@ export const fa = {
     lessonPosition: "درس {index} از {total}",
     progressSummary: "{done} از {total} درس تکمیل شده",
     freePreviewTitle: "این درس رایگان است",
-    freePreviewDescription: "برای دسترسی به همهٔ درس‌ها، تمرین‌ها و آزمون‌های این دوره، دوره را تهیه کنید.",
+    freePreviewDescription:
+      "برای دسترسی به همهٔ درس‌ها، تمرین‌ها و آزمون‌های این دوره، دوره را تهیه کنید.",
     freePreviewCta: "مشاهده و تهیه دوره",
-    assignmentNeedsEnrollment: "برای ارسال تکلیف باید در این دوره ثبت‌نام کنید.",
+    assignmentNeedsEnrollment:
+      "برای ارسال تکلیف باید در این دوره ثبت‌نام کنید.",
     markComplete: "علامت‌گذاری به‌عنوان تکمیل‌شده",
     completed: "تکمیل‌شده",
     progressSaveFailed:

@@ -34,6 +34,8 @@ export const en = {
     forbidden: "You do not have permission to do this.",
     notFound: "What you were looking for was not found.",
     rateLimited: "Too many attempts. Please wait a moment and try again.",
+    requestStorm:
+      "Too many unusual requests were sent. You were signed out for safety; please sign in again.",
     csrfRetry: "Your security session is refreshing. Please try again.",
     legalConsent: "Please accept the updated terms to continue.",
     server: "Something went wrong on our side. Please try again in a moment.",
@@ -86,7 +88,8 @@ export const en = {
     groupClassesTitle: "Group classes",
     groupClassesSubtitle:
       "Scheduled classes with a set weekly time. A class starts once enough students have booked a seat.",
-    liveNoClassesYet: "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
+    liveNoClassesYet:
+      "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
     groupTerm: "Runs",
     groupStarts: "Starts",
     groupSeatsLeft: "Seats left",
@@ -1064,7 +1067,8 @@ export const en = {
     addToCalendar: "Add to calendar",
     joinOpensNewTab:
       "The class opens in a new tab and this page stays open. Joining records your attendance.",
-    joinOpensBeforeStart: "The join button opens shortly before the class starts.",
+    joinOpensBeforeStart:
+      "The join button opens shortly before the class starts.",
     joinLinkReady: "The join link is ready.",
     liveJoinHint:
       "If the link does not open, press the button again. The recording appears on this page after the class.",
@@ -1074,7 +1078,8 @@ export const en = {
     teacherNote: "Teacher's note",
     completeAndContinue: "Completed, next lesson",
     videoLoading: "Preparing secure playback…",
-    videoPlaybackFailed: "This video could not be played. Please refresh the page.",
+    videoPlaybackFailed:
+      "This video could not be played. Please refresh the page.",
     videoUnavailable: "The lesson video has not been published yet.",
     audioUnavailable: "The lesson audio has not been published yet.",
     textUnavailable: "The lesson text has not been published yet.",
@@ -1094,9 +1099,11 @@ export const en = {
     lessonPosition: "Lesson {index} of {total}",
     progressSummary: "{done} of {total} lessons completed",
     freePreviewTitle: "This lesson is free",
-    freePreviewDescription: "Get the course to unlock every lesson, assignment and quiz.",
+    freePreviewDescription:
+      "Get the course to unlock every lesson, assignment and quiz.",
     freePreviewCta: "View and buy the course",
-    assignmentNeedsEnrollment: "Enroll in this course to submit the assignment.",
+    assignmentNeedsEnrollment:
+      "Enroll in this course to submit the assignment.",
     markComplete: "Mark as complete",
     completed: "Completed",
     progressSaveFailed:
@@ -1298,7 +1305,8 @@ export const en = {
     published: "Published",
     pending: "Waiting for review",
     pendingYours: "Your question is waiting for review",
-    reviewHint: "Questions go live after a teacher or academy manager reviews them.",
+    reviewHint:
+      "Questions go live after a teacher or academy manager reviews them.",
     submittedPending: "Saved. It will appear after a teacher reviews it.",
     questionTooShort: "Please write at least 10 characters.",
     submitFailed: "Could not send. Please try again.",

@@ -33,9 +33,12 @@ export const tr = {
     forbidden: "Bu işlemi yapma izniniz yok.",
     notFound: "Aradığınız öğe bulunamadı.",
     rateLimited: "Çok fazla deneme. Lütfen biraz bekleyip tekrar deneyin.",
+    requestStorm:
+      "Çok fazla olağan dışı istek gönderildi. Güvenlik için oturumunuz kapatıldı; lütfen tekrar giriş yapın.",
     csrfRetry: "Güvenlik oturumu yenileniyor. Lütfen tekrar deneyin.",
     legalConsent: "Devam etmek için güncel koşulları kabul edin.",
-    server: "Sunucu tarafında bir sorun oluştu. Lütfen biraz sonra tekrar deneyin.",
+    server:
+      "Sunucu tarafında bir sorun oluştu. Lütfen biraz sonra tekrar deneyin.",
     generic: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
   },
   currency: {
@@ -69,7 +72,8 @@ export const tr = {
     groupClassesTitle: "Group classes",
     groupClassesSubtitle:
       "Scheduled classes with a set weekly time. A class starts once enough students have booked a seat.",
-    liveNoClassesYet: "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
+    liveNoClassesYet:
+      "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
     groupTerm: "Runs",
     groupStarts: "Starts",
     groupSeatsLeft: "Seats left",
@@ -635,7 +639,8 @@ export const tr = {
     lessonPosition: "{total} dersten {index}. ders",
     progressSummary: "{total} dersin {done} tanesi tamamlandı",
     freePreviewTitle: "Bu ders ücretsiz",
-    freePreviewDescription: "Tüm dersleri, ödevleri ve sınavları açmak için kursu satın alın.",
+    freePreviewDescription:
+      "Tüm dersleri, ödevleri ve sınavları açmak için kursu satın alın.",
     freePreviewCta: "Kursu görüntüle ve satın al",
     assignmentNeedsEnrollment: "Ödevi göndermek için bu kursa kaydolun.",
     markComplete: "Tamamlandı olarak işaretle",
@@ -794,7 +799,8 @@ export const tr = {
     published: "Yayında",
     pending: "İnceleme bekliyor",
     pendingYours: "Sorunuz inceleme bekliyor",
-    reviewHint: "Sorular öğretmen veya akademi yöneticisi inceledikten sonra yayınlanır.",
+    reviewHint:
+      "Sorular öğretmen veya akademi yöneticisi inceledikten sonra yayınlanır.",
     submittedPending: "Kaydedildi. Öğretmen inceledikten sonra görünecek.",
     questionTooShort: "En az 10 karakter yazın.",
     submitFailed: "Gönderilemedi. Lütfen tekrar deneyin.",

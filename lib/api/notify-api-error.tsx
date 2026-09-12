@@ -10,7 +10,11 @@ import {
   type ParsedApiError,
 } from "@/lib/api/api-error";
 import { env } from "@/lib/env";
-import { t as translate, DEFAULT_LANGUAGE, type LanguageCode } from "@/lib/i18n";
+import {
+  t as translate,
+  DEFAULT_LANGUAGE,
+  type LanguageCode,
+} from "@/lib/i18n";
 
 type NotifyOptions = {
   /** Prefer this when the caller already knows the academy login URL. */
@@ -19,7 +23,7 @@ type NotifyOptions = {
   silentKinds?: ReadonlyArray<ReturnType<typeof classifyApiError>>;
 };
 
-function readLanguage(): LanguageCode {
+export function readLanguage(): LanguageCode {
   if (typeof document === "undefined") return DEFAULT_LANGUAGE;
   const match = document.cookie.match(/(?:^|; )preferred_language=([^;]*)/);
   const raw = match ? decodeURIComponent(match[1]).toLowerCase() : "";
@@ -35,7 +39,9 @@ function readAcademySlug(): string | null {
   if (typeof document === "undefined") return null;
   const name = env.academySlugCookie;
   const match = document.cookie.match(
-    new RegExp(`(?:^|; )${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}=([^;]*)`),
+    new RegExp(
+      `(?:^|; )${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}=([^;]*)`,
+    ),
   );
   const value = match ? decodeURIComponent(match[1]).trim() : "";
   return value || null;
@@ -47,8 +53,7 @@ export function resolveStorefrontLoginHref(redirectTo?: string): string {
   const host = window.location.hostname.toLowerCase();
   const labels = host.split(".");
   const isLikelySubdomain =
-    labels.length >= 3 ||
-    (labels.length === 2 && labels[1] === "localhost");
+    labels.length >= 3 || (labels.length === 2 && labels[1] === "localhost");
   const reserved = new Set(["www", "api", "dashboard", "panel", "app"]);
   const onAcademySubdomain =
     isLikelySubdomain && !reserved.has(labels[0] ?? "");
@@ -61,8 +66,7 @@ export function resolveStorefrontLoginHref(redirectTo?: string): string {
       })();
 
   const target =
-    redirectTo ??
-    `${window.location.pathname}${window.location.search}`;
+    redirectTo ?? `${window.location.pathname}${window.location.search}`;
   if (!target || target.includes("/auth/login")) return path;
   return `${path}?redirect=${encodeURIComponent(target)}`;
 }
