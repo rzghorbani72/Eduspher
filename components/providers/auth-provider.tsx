@@ -5,9 +5,15 @@ import {
   type PropsWithChildren,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
+
+import {
+  type BrowserLogContext,
+  setLogContext,
+} from "@/lib/logging/browser-context";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -18,13 +24,20 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 type AuthProviderProps = PropsWithChildren<{
   initialAuthenticated?: boolean;
+  logContext?: BrowserLogContext;
 }>;
 
 export const AuthProvider = ({
   initialAuthenticated = false,
+  logContext,
   children,
 }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(initialAuthenticated);
+
+  const { user_id, academy_id, role } = logContext ?? {};
+  useEffect(() => {
+    setLogContext({ user_id, academy_id, role });
+  }, [user_id, academy_id, role]);
 
   const setAuthenticated = useCallback((value: boolean) => {
     setIsAuthenticated(value);

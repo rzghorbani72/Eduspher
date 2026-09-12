@@ -215,7 +215,14 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeCSS }}
         />
         <QueryProvider>
-          <AuthProvider initialAuthenticated={isAuthenticated}>
+          <AuthProvider
+            initialAuthenticated={isAuthenticated}
+            logContext={{
+              user_id: session?.userId,
+              academy_id: session?.academyId,
+              role: session?.roles[0],
+            }}
+          >
             <ShellProvider
               key={shellKey}
               isPanelRoot={isPanelRoot}

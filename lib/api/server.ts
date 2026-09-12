@@ -214,10 +214,14 @@ const baseFetch = async (
         },
       }
     : { cache: "no-store", next: { revalidate: 0 } };
+  // Only uncached calls get a correlation id — headers are part of Next's fetch cache key.
+  if (!isCacheable && !scopeHeaders.has("X-Request-Id")) {
+    scopeHeaders.set("X-Request-Id", crypto.randomUUID());
+  }
 
   const response = await fetch(url, {
     ...init,
-    headers,
+    headers: scopeHeaders,
     credentials: "include",
     ...cacheOptions,
   });
