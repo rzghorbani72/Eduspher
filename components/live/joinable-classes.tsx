@@ -61,56 +61,80 @@ export function JoinableClasses({
         </h3>
         <p className="text-xs text-muted">{t("live.joinClassHint")}</p>
       </div>
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {groups.map((group) => (
           <li
             key={group.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-theme bg-surface p-3"
+            className="space-y-3 rounded-2xl border border-theme bg-card p-4"
           >
-            <div className="min-w-0 space-y-1">
-              <p className="text-sm font-semibold text-(--theme-foreground)">
-                <span className="me-2 rounded-md bg-(--theme-primary-subtle) px-1.5 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 space-y-1">
+                <span className="inline-block rounded-md bg-(--theme-primary-subtle) px-2 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
                   {t(CLASS_SIZE_LABEL[classSizeOf(group.capacity)])}
                 </span>
-                {group.title}
-              </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted">
-                {group.Slots.map((slot, index) => (
-                  <li key={index} className="inline-flex items-center gap-1">
-                    <CalendarClock className="size-3.5" aria-hidden="true" />
-                    {t(weekdayLabelKey(slot.weekday) ?? "")}{" "}
+                <p className="truncate text-base font-bold text-(--theme-foreground)">
+                  {group.title}
+                </p>
+                {group.Tutor?.display_name ? (
+                  <p className="text-xs text-muted">
+                    {group.Tutor.display_name}
+                  </p>
+                ) : null}
+              </div>
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-surface px-2.5 py-1 text-xs text-muted">
+                <Users className="size-3.5" aria-hidden="true" />
+                {t("courses.groupSeatsLeft")}:{" "}
+                {formatNumber(group.seats_left, language)}
+              </span>
+            </div>
+
+            <ul className="flex flex-wrap gap-2">
+              {group.Slots.map((slot, index) => (
+                <li
+                  key={index}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-theme bg-surface px-2.5 py-1 text-xs text-(--theme-foreground)"
+                >
+                  <CalendarClock
+                    className="size-3.5 text-(--theme-primary)"
+                    aria-hidden="true"
+                  />
+                  {t(weekdayLabelKey(slot.weekday) ?? "")}
+                  <span dir="ltr">
                     {toPersianDigits(
                       `${minuteLabel(slot.start_minute)}–${minuteLabel(slot.start_minute + slot.duration_minutes)}`,
                       language,
                     )}
-                  </li>
-                ))}
-                <li className="inline-flex items-center gap-1">
-                  <Users className="size-3.5" aria-hidden="true" />
-                  {t("courses.groupSeatsLeft")}:{" "}
-                  {formatNumber(group.seats_left, language)}
+                  </span>
                 </li>
-              </ul>
+              ))}
+            </ul>
+
+            <div className="flex items-center justify-between gap-3 border-t border-theme pt-3">
+              <span className="text-xs text-muted">
+                {group.can_join_free
+                  ? t("live.joinClassCovered")
+                  : t("live.joinClassNeedsSeat")}
+              </span>
+              {group.can_join_free ? (
+                <button
+                  type="button"
+                  disabled={busyId !== null}
+                  onClick={() => void join(group)}
+                  className="rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60"
+                >
+                  {busyId === group.id
+                    ? t("common.loading")
+                    : t("live.joinClassButton")}
+                </button>
+              ) : (
+                <a
+                  href={`${courseHref}#class-${group.id}`}
+                  className="rounded-lg border border-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-primary-ink)"
+                >
+                  {t("live.joinClassBuySeat")}
+                </a>
+              )}
             </div>
-            {group.can_join_free ? (
-              <button
-                type="button"
-                disabled={busyId !== null}
-                onClick={() => void join(group)}
-                className="rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60"
-              >
-                {busyId === group.id
-                  ? t("common.loading")
-                  : t("live.joinClassButton")}
-              </button>
-            ) : (
-              <a
-                href={`${courseHref}#class-${group.id}`}
-                className="rounded-lg border border-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-primary-ink)"
-              >
-                {t("live.joinClassBuySeat")}
-              </a>
-            )}
           </li>
         ))}
       </ul>

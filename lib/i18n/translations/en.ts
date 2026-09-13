@@ -1040,6 +1040,8 @@ export const en = {
     joinClassTitle: "Classes you can join now",
     joinClassHint: "Instead of waiting for a timetable, take a seat in one of these classes. Joining is final: your private seat moves into that class.",
     joinClassButton: "Join this class",
+    joinClassCovered: "Covered by what you already paid",
+    joinClassNeedsSeat: "Costs more than your paid seat",
     joinClassBuySeat: "Buy a seat",
     joinClassConfirm: "Joining is final and turns your private class into a seat in this class. Continue?",
     joinClassFailed: "Could not join. Please try again.",
