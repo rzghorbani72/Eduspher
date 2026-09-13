@@ -2934,3 +2934,25 @@ select[class*="rounded-sm"] {
 .prose-description del {
   text-decoration: line-through;
 }
+
+/* Time picker popup (react-multi-date-picker): paint with the academy theme,
+   not the OS scheme, so the hour/minute boxes never go dark on a light page. */
+.rmdp-wrapper,
+.rmdp-time-picker div input {
+  background-color: var(--theme-surface);
+  color: var(--theme-foreground);
+}
+.rmdp-time-picker div input {
+  border-radius: 8px;
+  font-weight: 700;
+}
+.rmdp-time-picker .rmdp-arrow-container {
+  color: var(--theme-primary);
+}
+.rmdp-time-picker .rmdp-arrow-container:hover {
+  background-color: var(--theme-primary);
+  color: var(--theme-on-primary);
+}
+.rmdp-time-picker .rmdp-arrow {
+  border-color: currentColor;
+}

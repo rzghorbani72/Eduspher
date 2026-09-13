@@ -1,22 +1,22 @@
 "use client";
 
-import { CalendarPlus, Plus, Trash2 } from "lucide-react";
+import { CalendarPlus, Plus } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "@/components/ui/link";
-import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { TimePicker } from "@/components/ui/time-picker";
+import {
+  ClassRequestWindowRow,
+  type RequestWindow,
+} from "@/components/courses/class-request-window-row";
 import { postJson } from "@/lib/api/client";
-import { sortWeekdays, weekdayLabelKey } from "@/lib/courses/weekly-rule";
+import { sortWeekdays } from "@/lib/courses/weekly-rule";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { logger } from "@/lib/logging/app-logger";
 import { errorFields } from "@/lib/logging/error-fields";
-
-type Window = { weekday: number; from: string; to: string };
 
 const WEEK = sortWeekdays([0, 1, 2, 3, 4, 5, 6]);
 const toMinute = (time: string): number => {
@@ -46,15 +46,15 @@ export function ClassRequestForm({
 }: ClassRequestFormProps) {
   const { t } = useTranslation();
   const [seats, setSeats] = useState("1");
-  const [windows, setWindows] = useState<Window[]>([
-    { weekday: WEEK[0], from: "16:00", to: "18:00" },
+  const [windows, setWindows] = useState<RequestWindow[]>([
+    { weekday: WEEK[0], from: "16:00", duration: 90 },
   ]);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const update = (index: number, patch: Partial<Window>) =>
+  const update = (index: number, patch: Partial<RequestWindow>) =>
     setWindows((all) =>
       all.map((w, i) => (i === index ? { ...w, ...patch } : w)),
     );
@@ -70,7 +70,7 @@ export function ClassRequestForm({
         windows: windows.map((w) => ({
           weekday: w.weekday,
           start_minute: toMinute(w.from),
-          end_minute: toMinute(w.to),
+          end_minute: toMinute(w.from) + w.duration,
         })),
         note: note.trim() || undefined,
       });
@@ -136,46 +136,15 @@ export function ClassRequestForm({
       <div className="space-y-2">
         <Label>{t("courses.requestClassWindows")}</Label>
         {windows.map((w, index) => (
-          <div key={index} className="flex flex-wrap items-center gap-2">
-            <Select
-              value={w.weekday}
-              onChange={(e) =>
-                update(index, { weekday: Number(e.target.value) })
-              }
-              className="w-36"
-              aria-label={t("courses.requestClassDay")}
-            >
-              {WEEK.map((day) => (
-                <option key={day} value={day}>
-                  {t(weekdayLabelKey(day) ?? "")}
-                </option>
-              ))}
-            </Select>
-            <TimePicker
-              value={w.from}
-              onChange={(value) => update(index, { from: value })}
-              className="w-28"
-              aria-label={t("courses.requestClassFrom")}
-            />
-            <TimePicker
-              value={w.to}
-              onChange={(value) => update(index, { to: value })}
-              className="w-28"
-              aria-label={t("courses.requestClassTo")}
-            />
-            {windows.length > 1 ? (
-              <button
-                type="button"
-                onClick={() =>
-                  setWindows((all) => all.filter((_, i) => i !== index))
-                }
-                className="text-muted hover:text-(--theme-foreground)"
-                aria-label={t("common.delete")}
-              >
-                <Trash2 className="size-4" aria-hidden="true" />
-              </button>
-            ) : null}
-          </div>
+          <ClassRequestWindowRow
+            key={index}
+            window={w}
+            removable={windows.length > 1}
+            onChange={(patch) => update(index, patch)}
+            onRemove={() =>
+              setWindows((all) => all.filter((_, i) => i !== index))
+            }
+          />
         ))}
         {windows.length < 7 ? (
           <button
@@ -183,7 +152,7 @@ export function ClassRequestForm({
             onClick={() =>
               setWindows((all) => [
                 ...all,
-                { weekday: WEEK[0], from: "16:00", to: "18:00" },
+                { weekday: WEEK[0], from: "16:00", duration: 90 },
               ])
             }
             className="inline-flex items-center gap-1 text-xs font-semibold text-(--theme-primary-ink)"
