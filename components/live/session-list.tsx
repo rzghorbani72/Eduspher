@@ -1,51 +1,51 @@
 "use client";
 
-import {
-  CalendarClock,
-  CheckCircle2,
-  Circle,
-  Video,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, Circle, Radio, Video, XCircle } from "lucide-react";
 
 import type { MyTutoringGroupSession } from "@/lib/api/account-types";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, formatDate } from "@/lib/utils";
 import { useNow } from "@/lib/hooks/use-now";
+import { sessionName, sessionState } from "@/lib/live/session-state";
+import { cn, formatDate } from "@/lib/utils";
 
 interface SessionListProps {
   sessions: MyTutoringGroupSession[];
   selectedId: string | null;
   onSelect: (sessionId: string) => void;
+  /** Show the state as text too (the full-width "sessions" tab). */
+  detailed?: boolean;
 }
-
-const nameOf = (session: MyTutoringGroupSession, fallback: string): string =>
-  session.title ?? session.Topic?.title ?? fallback;
 
 /**
  * The timetable, read the way a curriculum sidebar reads: what each meeting
- * covers, which one is next, and which have already happened.
+ * covers, which one is on now, and which have already happened.
  */
 export function SessionList({
   sessions,
   selectedId,
   onSelect,
+  detailed = false,
 }: SessionListProps) {
   const { t, language } = useTranslation();
   const now = useNow();
 
-  const nextId = sessions.find(
-    (session) =>
-      session.status === "SCHEDULED" &&
-      new Date(session.ends_at ?? session.starts_at).getTime() >= now,
-  )?.id;
+  const stateLabel = {
+    cancelled: t("live.sessionCancelled"),
+    held: t("live.statusHeld"),
+    live: t("live.liveNow"),
+    upcoming: t("live.statusUpcoming"),
+  };
+
+  if (!sessions.length) {
+    return (
+      <p className="px-3 py-4 text-sm text-muted">{t("live.noSessionsYet")}</p>
+    );
+  }
 
   return (
     <ol className="space-y-1">
       {sessions.map((session, index) => {
-        const past =
-          new Date(session.ends_at ?? session.starts_at).getTime() < now;
-        const cancelled = session.status === "CANCELLED";
+        const state = sessionState(session, now);
         const selected = session.id === selectedId;
         return (
           <li key={session.id}>
@@ -56,17 +56,17 @@ export function SessionList({
               className={cn(
                 "flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-start transition-colors",
                 selected ? "bg-(--theme-primary)/10" : "hover:bg-surface",
-                cancelled && "opacity-60",
+                state === "cancelled" && "opacity-60",
               )}
             >
               <span className="mt-0.5 shrink-0 text-muted">
-                {cancelled ? (
+                {state === "cancelled" ? (
                   <XCircle className="size-4" aria-hidden="true" />
-                ) : past ? (
+                ) : state === "held" ? (
                   <CheckCircle2 className="size-4" aria-hidden="true" />
-                ) : session.id === nextId ? (
-                  <CalendarClock
-                    className="size-4 text-(--theme-primary)"
+                ) : state === "live" ? (
+                  <Radio
+                    className="size-4 animate-pulse text-(--theme-primary)"
                     aria-hidden="true"
                   />
                 ) : (
@@ -76,8 +76,13 @@ export function SessionList({
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5">
                   <span className="min-w-0 truncate text-sm font-medium">
-                    {nameOf(session, `${t("live.session")} ${index + 1}`)}
+                    {sessionName(session, `${t("live.session")} ${index + 1}`)}
                   </span>
+                  {state === "live" ? (
+                    <span className="rounded-full bg-(--theme-primary) px-1.5 py-0.5 text-[10px] font-bold text-(--theme-on-primary)">
+                      {t("live.liveNow")}
+                    </span>
+                  ) : null}
                   {session.recording?.url ? (
                     <Video
                       className="size-3.5 shrink-0 text-muted"
@@ -87,7 +92,9 @@ export function SessionList({
                 </span>
                 <span className="mt-0.5 block text-xs text-muted">
                   {formatDate(session.starts_at, language)}
-                  {cancelled ? ` · ${t("live.sessionCancelled")}` : ""}
+                  {detailed || state === "cancelled"
+                    ? ` · ${stateLabel[state]}`
+                    : ""}
                 </span>
               </span>
             </button>

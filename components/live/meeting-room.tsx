@@ -1,54 +1,54 @@
 "use client";
 
-import { ExternalLink, Radio, RefreshCw, Video } from "lucide-react";
+import { ExternalLink, Radio, RefreshCw, Video, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
+import type { MyTutoringGroupSession } from "@/lib/api/account-types";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatDate } from "@/lib/utils";
+import { useNow } from "@/lib/hooks/use-now";
 import { isEmbeddable } from "@/lib/live/embeddable";
+import { sessionState } from "@/lib/live/session-state";
+import { formatDate } from "@/lib/utils";
 
 /** The link is time-gated on the server, so re-poll to catch it opening. */
 const REFRESH_MS = 60_000;
 
 interface MeetingRoomProps {
-  /** Null whenever the joining window is shut — never a stale link. */
-  meetingUrl: string | null;
-  startsAt: string | null;
+  session: MyTutoringGroupSession | null;
   title: string;
-  language: string;
+  onGoAfterClass: () => void;
 }
 
 /**
- * Where the class actually happens. It takes the place the recorded course page
- * gives its video player, so a live student lands somewhere familiar.
+ * Where the class actually happens, for the meeting the student picked. It
+ * takes the place the recorded course page gives its video player. The join
+ * link is decided on the server, so "check again" is a server round trip.
  */
 export function MeetingRoom({
-  meetingUrl,
-  startsAt,
+  session,
   title,
-  language,
+  onGoAfterClass,
 }: MeetingRoomProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const router = useRouter();
+  const now = useNow();
   const [isRefreshing, startRefresh] = useTransition();
-  const [, setTick] = useState(0);
-
-  // The link is decided on the server, so a refresh is a server round trip.
   const refresh = () => startRefresh(() => router.refresh());
 
+  const state = session ? sessionState(session, now) : "upcoming";
+  const meetingUrl = session?.meeting_url ?? null;
+  const waiting = state === "upcoming" && !meetingUrl;
+
   useEffect(() => {
-    if (meetingUrl) return;
-    const timer = setInterval(() => {
-      setTick((n) => n + 1);
-      refresh();
-    }, REFRESH_MS);
+    if (!waiting) return;
+    const timer = setInterval(refresh, REFRESH_MS);
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meetingUrl]);
+  }, [waiting]);
 
-  if (meetingUrl && isEmbeddable(meetingUrl)) {
+  if (meetingUrl && state === "live" && isEmbeddable(meetingUrl)) {
     return (
       <div className="overflow-hidden rounded-2xl border border-theme bg-black">
         <iframe
@@ -61,45 +61,69 @@ export function MeetingRoom({
     );
   }
 
+  const Icon =
+    state === "live" ? Radio : state === "cancelled" ? XCircle : Video;
+
   return (
     <div className="rounded-2xl border border-theme bg-card p-6 text-center sm:p-10">
       <span className="mx-auto grid size-12 place-items-center rounded-xl bg-(--theme-primary)/10 text-(--theme-primary)">
-        {meetingUrl ? (
-          <Radio className="size-6 animate-pulse" aria-hidden="true" />
-        ) : (
-          <Video className="size-6" aria-hidden="true" />
-        )}
+        <Icon
+          className={state === "live" ? "size-6 animate-pulse" : "size-6"}
+          aria-hidden="true"
+        />
       </span>
       <h2 className="mt-4 text-lg font-bold">{title}</h2>
-      {startsAt ? (
+      {session ? (
         <p className="mt-1 text-sm text-muted">
-          {formatDate(startsAt, language)}
+          {formatDate(session.starts_at, language)}
         </p>
       ) : null}
 
-      {meetingUrl ? (
+      {state === "live" && meetingUrl ? (
         <Button asChild className="mt-5">
           <a href={meetingUrl} target="_blank" rel="noopener noreferrer">
             {t("live.joinClass")}
             <ExternalLink className="size-4" aria-hidden="true" />
           </a>
         </Button>
-      ) : (
+      ) : state === "held" ? (
         <div className="mt-5 space-y-3">
-          <p className="text-sm text-muted">{t("live.linkOpensSoon")}</p>
+          <p className="text-sm text-muted">
+            {t("live.sessionOver")} {t("live.sessionOverHint")}
+          </p>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            onClick={refresh}
-            disabled={isRefreshing}
+            onClick={onGoAfterClass}
           >
-            <RefreshCw
-              className={isRefreshing ? "size-4 animate-spin" : "size-4"}
-              aria-hidden="true"
-            />
-            {t("live.checkLinkAgain")}
+            {t("live.goAfterClass")}
           </Button>
+        </div>
+      ) : state === "cancelled" ? (
+        <p className="mt-5 text-sm text-muted">
+          {t("live.sessionCancelledHint")}
+        </p>
+      ) : (
+        <div className="mt-5 space-y-3">
+          <p className="text-sm text-muted">
+            {session ? t("live.linkOpensSoon") : t("live.noSessionsYet")}
+          </p>
+          {session ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={refresh}
+              disabled={isRefreshing}
+            >
+              <RefreshCw
+                className={isRefreshing ? "size-4 animate-spin" : "size-4"}
+                aria-hidden="true"
+              />
+              {t("live.checkLinkAgain")}
+            </Button>
+          ) : null}
         </div>
       )}
     </div>

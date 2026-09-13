@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Paperclip, Send, X } from "lucide-react";
+import { MessageAttachment } from "@/components/discussion/message-attachment";
 import {
   findDiscussionThread,
   getDiscussionThread,
   postDiscussionMessage,
+  uploadDiscussionAttachment,
   type DiscussionMessage,
   type DiscussionParent,
 } from "@/lib/api/client";
@@ -21,6 +23,8 @@ interface DiscussionThreadProps {
   /** A class-wide chat, or a student alone with their teacher. */
   groupId?: string;
   engagementId?: string;
+  /** One meeting of a live class. */
+  sessionId?: string;
   /** Existing thread id (skips the first lazy create); optional. */
   threadId?: string;
   currentProfileId?: string;
@@ -40,6 +44,7 @@ export function DiscussionThread({
   submissionId,
   groupId,
   engagementId,
+  sessionId,
   threadId,
   currentProfileId,
   title,
@@ -49,7 +54,9 @@ export function DiscussionThread({
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const activeThreadId = useRef<string | undefined>(threadId);
 
   const parent: DiscussionParent = attemptId
@@ -58,7 +65,9 @@ export function DiscussionThread({
       ? { submission_id: submissionId }
       : groupId
         ? { tutoring_group_id: groupId }
-        : { engagement_id: engagementId };
+        : sessionId
+          ? { tutoring_session_id: sessionId }
+          : { engagement_id: engagementId };
 
   const parentKey = JSON.stringify(parent);
 
@@ -86,13 +95,23 @@ export function DiscussionThread({
 
   const send = async () => {
     const text = body.trim();
-    if (!text) return;
+    if (!text && !file) return;
     setSending(true);
     setError(null);
     try {
-      const msg = await postDiscussionMessage(parent, text);
+      let documentId: string | undefined;
+      if (file) {
+        try {
+          documentId = (await uploadDiscussionAttachment(file)).id;
+        } catch {
+          setError(t("live.attachmentUploadFailed"));
+          return;
+        }
+      }
+      const msg = await postDiscussionMessage(parent, text, documentId);
       activeThreadId.current = msg.thread_id;
       setBody("");
+      setFile(null);
       await load();
       if (!activeThreadId.current) setMessages((prev) => [...prev, msg]);
     } catch {
@@ -134,14 +153,55 @@ export function DiscussionThread({
                 <p className="mb-1 text-xs opacity-70">
                   {m.Author?.display_name ?? t("account.unknown")}
                 </p>
-                <p className="whitespace-pre-wrap wrap-break-word">{m.body}</p>
+                {m.body ? (
+                  <p className="whitespace-pre-wrap wrap-break-word">
+                    {m.body}
+                  </p>
+                ) : null}
+                {m.Document ? (
+                  <MessageAttachment
+                    attachment={m.Document}
+                    mine={Boolean(mine)}
+                  />
+                ) : null}
               </div>
             </div>
           );
         })}
       </div>
 
+      {file ? (
+        <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-1.5 text-xs">
+          <Paperclip className="size-3.5" aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate">{file.name}</span>
+          <button
+            type="button"
+            onClick={() => setFile(null)}
+            aria-label={t("live.removeAttachment")}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+      ) : null}
       <div className="flex items-end gap-2">
+        <input
+          ref={fileInput}
+          type="file"
+          hidden
+          accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"
+          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => fileInput.current?.click()}
+          disabled={sending}
+          aria-label={t("live.attachFile")}
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
         <Textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
@@ -153,7 +213,7 @@ export function DiscussionThread({
         />
         <Button
           onClick={send}
-          disabled={sending || !body.trim()}
+          disabled={sending || (!body.trim() && !file)}
           size="sm"
           aria-label={t("learning.sendMessage")}
         >

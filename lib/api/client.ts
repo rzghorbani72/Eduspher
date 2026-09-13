@@ -1364,12 +1364,21 @@ export interface AnswerInput {
   answer_text?: string;
 }
 
+export interface DiscussionAttachment {
+  id: string;
+  title: string;
+  publicUrl: string | null;
+  mime_type: string | null;
+  size: number | null;
+}
+
 export interface DiscussionMessage {
   id: string;
   thread_id: string;
   body: string;
   created_at: string;
   Author?: { id: string; display_name: string | null };
+  Document?: DiscussionAttachment | null;
 }
 
 type Envelope<T> = { message: string; status: string; data: T };
@@ -1469,15 +1478,41 @@ export const findDiscussionThread = async (
 export const postDiscussionMessage = async (
   parent: DiscussionParent,
   body: string,
+  documentId?: string,
   options?: RequestOptions,
 ) =>
   (
     await postJson<Envelope<DiscussionMessage>>(
       `/discussions/messages`,
-      { ...parent, body },
+      { ...parent, body, ...(documentId ? { document_id: documentId } : {}) },
       options,
     )
   ).data;
+
+/** A file for a chat message; the id is then sent with the message. */
+export const uploadDiscussionAttachment = async (
+  file: File,
+  options?: RequestOptions,
+) => {
+  const form = new FormData();
+  form.append("file", file);
+  // No Content-Type: the browser sets the multipart boundary itself.
+  const headers = await buildHeaders({}, { mutate: true });
+  const response = await apiFetch("/discussions/attachments", {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: form,
+    signal: options?.signal,
+  });
+  return (
+    await handleResponse<Envelope<DiscussionAttachment>>(
+      response,
+      undefined,
+      true,
+    )
+  ).data;
+};
 
 // ----- Support tickets -----
 

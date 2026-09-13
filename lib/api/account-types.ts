@@ -56,11 +56,7 @@ export type AccessCourseRef = {
  * `GET /v1/enrollments`.
  */
 export type CourseAccessType =
-  | "STAFF_GRANT"
-  | "ONE_TIME"
-  | "BUNDLE"
-  | "SUBSCRIPTION"
-  | "TUTORING";
+  "STAFF_GRANT" | "ONE_TIME" | "BUNDLE" | "SUBSCRIPTION" | "TUTORING";
 
 export type CourseAccessRow = {
   course_id: string;
@@ -242,6 +238,8 @@ export type MyTutoringGroupSession = {
   ends_at: string | null;
   status: string;
   meeting_url?: string | null;
+  /** True only inside this meeting's joining window. */
+  link_open?: boolean;
   /** The teacher's name for this meeting; falls back to its topic. */
   title?: string | null;
   notes?: string | null;
@@ -280,6 +278,13 @@ export type SessionRecording = {
   url: string | null;
 };
 
+export type MySubmission = {
+  id: string;
+  status: "PENDING" | "SUBMITTED" | "GRADED" | "REJECTED";
+  score: number | null;
+  graded_at: string | null;
+};
+
 export type ClassAssignment = {
   id: string;
   title: string;
@@ -289,6 +294,8 @@ export type ClassAssignment = {
   is_required: boolean;
   tutoring_group_id: string | null;
   tutoring_session_id: string | null;
+  /** The reader's own hand-in; null when nothing was sent yet. */
+  my_submission: MySubmission | null;
 };
 
 export type CourseTopic = {
@@ -296,6 +303,9 @@ export type CourseTopic = {
   title: string;
   description: string | null;
   order: number;
+  /** True once a held meeting carried this topic. */
+  covered: boolean;
+  covered_session_id: string | null;
 };
 
 export type MyTutoringGroup = {
