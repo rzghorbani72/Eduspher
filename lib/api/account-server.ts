@@ -164,6 +164,15 @@ export const getTutoringGroupRoom = (groupId: string) =>
     return result.data ?? null;
   }, null);
 
+/** The 1:1 classroom. Same shape as a group room; null when not the student or tutor. */
+export const getTutoringEngagementRoom = (engagementId: string) =>
+  safe<TutoringGroupRoom | null>(async () => {
+    const result = await serverFetch<TutoringGroupRoom>(
+      `/tutoring/engagements/${engagementId}/room`,
+    );
+    return result.data ?? null;
+  }, null);
+
 export const getPayments = (params?: { page?: number; limit?: number }) =>
   safe<{ payments: PaymentSummary[]; pagination: PageMeta | null }>(
     async () => {

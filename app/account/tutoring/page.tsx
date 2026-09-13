@@ -9,7 +9,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
-import { coursePath, learnPath } from "@/lib/content-paths";
+import { coursePath } from "@/lib/content-paths";
 import { buildAcademyPath, formatDate } from "@/lib/utils";
 
 const STATUS_KEY: Record<string, string> = {
@@ -93,34 +93,22 @@ export default async function AccountTutoringPage() {
                     tone={toneForStatus(engagement.status)}
                   />
                 </div>
-                {isLive && nextSession?.meeting_url ? (
-                  <a
-                    href={nextSession.meeting_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
-                  >
-                    {translate("account.joinTutoringSession")}
-                    <ExternalLink className="size-3.5" aria-hidden="true" />
-                  </a>
-                ) : (
-                  <Link
-                    href={buildAcademyPath(
-                      slugForPaths,
-                      isLive
-                        ? learnPath(engagement.Course?.slug || engagement.course_id)
-                        : coursePath(
-                            engagement.Course?.slug || engagement.course_id,
-                          ),
-                    )}
-                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
-                  >
-                    {isLive
-                      ? translate("account.openTutoringCourse")
-                      : translate("account.tutoringRenew")}
-                    <ExternalLink className="size-3.5" aria-hidden="true" />
-                  </Link>
-                )}
+                <Link
+                  href={buildAcademyPath(
+                    slugForPaths,
+                    isLive
+                      ? `/account/tutoring/${engagement.id}`
+                      : coursePath(
+                          engagement.Course?.slug || engagement.course_id,
+                        ),
+                  )}
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+                >
+                  {isLive
+                    ? translate("account.openTutoringClass")
+                    : translate("account.tutoringRenew")}
+                  <ExternalLink className="size-3.5" aria-hidden="true" />
+                </Link>
               </li>
             );
           })}

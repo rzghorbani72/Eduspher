@@ -826,6 +826,7 @@ export const en = {
     tutoringCancelled: "Cancelled",
     tutoringRenew: "Renew",
     openTutoringCourse: "Open course",
+    openTutoringClass: "Open classroom",
     joinTutoringSession: "Join session",
     tutoringNextSession: "Next session",
     tutoringNoSessionScheduled: "No session scheduled yet",

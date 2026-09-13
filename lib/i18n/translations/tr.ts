@@ -564,6 +564,7 @@ export const tr = {
     tutoringActive: "Aktif",
     tutoringPending: "Beklemede",
     openTutoringCourse: "Kursu aç",
+    openTutoringClass: "Sınıfa gir",
     joinTutoringSession: "Oturuma katıl",
     tutoringNextSession: "Sonraki oturum",
     tutoringNoSessionScheduled: "Henüz planlanmış bir oturum yok",

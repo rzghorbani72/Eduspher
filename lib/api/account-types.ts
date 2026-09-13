@@ -339,8 +339,8 @@ export type TutoringGroupRoom = MyTutoringGroup & {
   assignments: ClassAssignment[];
   /** True only inside the joining window — drives the Join button. */
   link_open: boolean;
-  /** Parents for the two chats: the class together, and 1:1 with the teacher. */
-  group_thread_parent: string;
+  /** Parents for the two chats: the class together (null for a 1:1), and with the teacher. */
+  group_thread_parent: string | null;
   private_thread_parent: string | null;
 };
 

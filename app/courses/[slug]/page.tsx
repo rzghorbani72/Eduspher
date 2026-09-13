@@ -27,7 +27,28 @@ import {
 import {
   getCourseAccess,
   getMyTutoringGroups,
+  getTutoringEngagements,
 } from "@/lib/api/account-server";
+import type { CourseAccessRow } from "@/lib/api/account-types";
+
+async function resolveTutoringRoomPath(
+  courseId: string,
+  access: CourseAccessRow | null,
+): Promise<string> {
+  if (access?.access_type !== "TUTORING") return "/account/tutoring";
+  const [groups, engagements] = await Promise.all([
+    getMyTutoringGroups(),
+    getTutoringEngagements(),
+  ]);
+  const group = groups.find((row) => row.group.course_id === courseId)?.group;
+  if (group) return `/account/classes/${group.id}`;
+  const solo = engagements.find(
+    (row) =>
+      row.course_id === courseId &&
+      (row.status === "ACTIVE" || row.status === "PENDING"),
+  );
+  return solo ? `/account/tutoring/${solo.id}` : "/account/tutoring";
+}
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
@@ -179,16 +200,9 @@ export default async function CourseDetailPage({
   );
   const access =
     courseAccess.find((row) => row.course_id === course.id) ?? null;
-  // A tutoring student goes straight into their class room, not a list page.
-  const myGroup =
-    access?.access_type === "TUTORING"
-      ? (await getMyTutoringGroups()).find(
-          (row) => row.group.course_id === course.id,
-        )?.group ?? null
-      : null;
-  const tutoringHref = buildPath(
-    myGroup ? `/account/classes/${myGroup.id}` : "/account/tutoring",
-  );
+  // A tutoring student goes straight into their classroom, not a list page:
+  // the group room if they hold a seat, else their 1:1 room.
+  const tutoringHref = buildPath(await resolveTutoringRoomPath(course.id, access));
   const progressPercent =
     myEnrollment && Number.isFinite(myEnrollment.progress_percent)
       ? Math.min(100, Math.max(0, Math.round(myEnrollment.progress_percent)))

@@ -824,6 +824,7 @@ export const fa = {
     tutoringCancelled: "لغوشده",
     tutoringRenew: "تمدید",
     openTutoringCourse: "باز کردن دوره",
+    openTutoringClass: "ورود به کلاس",
     joinTutoringSession: "ورود به جلسه",
     tutoringNextSession: "جلسه بعدی",
     tutoringNoSessionScheduled: "هنوز جلسه‌ای زمان‌بندی نشده است",

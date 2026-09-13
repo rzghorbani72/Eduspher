@@ -548,6 +548,7 @@ export const ar = {
     tutoringActive: "نشط",
     tutoringPending: "قيد الانتظار",
     openTutoringCourse: "فتح الدورة",
+    openTutoringClass: "فتح الفصل",
     joinTutoringSession: "الانضمام إلى الجلسة",
     tutoringNextSession: "الجلسة القادمة",
     tutoringNoSessionScheduled: "لم تتم جدولة أي جلسة بعد",

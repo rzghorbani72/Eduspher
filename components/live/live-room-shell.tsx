@@ -36,7 +36,9 @@ interface LiveRoomShellProps {
 export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
   const { t, language } = useTranslation();
   const [tab, setTab] = useState<TabKey>("chat");
-  const [chatMode, setChatMode] = useState<ChatMode>("group");
+  const [chatMode, setChatMode] = useState<ChatMode>(
+    room.group_thread_parent ? "group" : "private",
+  );
   const [selectedId, setSelectedId] = useState<string | null>(
     room.next_session?.id ?? room.sessions[0]?.id ?? null,
   );
@@ -98,21 +100,21 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
           <div className="p-5">
             {tab === "chat" ? (
               <div className="space-y-4">
-                <div className="flex gap-1">
-                  <ChatModeButton
-                    active={chatMode === "group"}
-                    onClick={() => setChatMode("group")}
-                    label={t("live.chatGroup")}
-                  />
-                  {room.private_thread_parent ? (
+                {room.group_thread_parent && room.private_thread_parent ? (
+                  <div className="flex gap-1">
+                    <ChatModeButton
+                      active={chatMode === "group"}
+                      onClick={() => setChatMode("group")}
+                      label={t("live.chatGroup")}
+                    />
                     <ChatModeButton
                       active={chatMode === "private"}
                       onClick={() => setChatMode("private")}
                       label={t("live.chatPrivate")}
                     />
-                  ) : null}
-                </div>
-                {chatMode === "group" ? (
+                  </div>
+                ) : null}
+                {chatMode === "group" && room.group_thread_parent ? (
                   <DiscussionThread
                     key="group"
                     groupId={room.group_thread_parent}
