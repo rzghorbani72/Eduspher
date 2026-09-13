@@ -4,6 +4,7 @@ import { CalendarClock, Clock3, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { ClassRequestForm } from "@/components/courses/class-request-form";
+import { JoinableClasses } from "@/components/live/joinable-classes";
 import type { TutoringGroupRoom } from "@/lib/api/account-types";
 import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -11,6 +12,7 @@ import { toPersianDigits } from "@/lib/utils";
 
 interface PrivateScheduleRequestProps {
   room: TutoringGroupRoom;
+  courseHref: string;
   onOpenChat: () => void;
 }
 
@@ -24,11 +26,13 @@ const minuteLabel = (minute: number) =>
  */
 export function PrivateScheduleRequest({
   room,
+  courseHref,
   onOpenChat,
 }: PrivateScheduleRequestProps) {
   const { t, language } = useTranslation();
   const router = useRouter();
   const pending = room.pending_request ?? null;
+  const joinable = room.joinable_groups ?? [];
 
   return (
     <section className="rounded-2xl border border-theme bg-card p-6">
@@ -57,7 +61,22 @@ export function PrivateScheduleRequest({
         </div>
       </div>
 
+      {joinable.length ? (
+        <div className="mt-5 border-b border-theme pb-5">
+          <JoinableClasses
+            engagementId={room.id}
+            groups={joinable}
+            courseHref={courseHref}
+          />
+        </div>
+      ) : null}
+
       <div className="mt-5">
+        {joinable.length ? (
+          <h3 className="mb-3 text-sm font-black text-(--theme-foreground)">
+            {t("live.privateOrAskTimes")}
+          </h3>
+        ) : null}
         {pending ? (
           <ul className="flex flex-wrap gap-2">
             {pending.windows.map((w, index) => (

@@ -54,6 +54,7 @@ export default async function LiveLearningPage({
       <LiveRoomShell
         room={room}
         currentProfileId={session.profileId ?? ""}
+        courseHref={buildAcademyPath(storeSlug, coursePath(course.slug))}
         invitePath={
           room.invite_code
             ? buildAcademyPath(storeSlug, `/classes/join/${room.invite_code}`)

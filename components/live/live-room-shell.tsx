@@ -23,6 +23,7 @@ interface LiveRoomShellProps {
   room: TutoringGroupRoom;
   currentProfileId: string;
   invitePath: string | null;
+  courseHref: string;
 }
 
 /**
@@ -35,6 +36,7 @@ export function LiveRoomShell({
   room,
   currentProfileId,
   invitePath,
+  courseHref,
 }: LiveRoomShellProps) {
   const { t, language } = useTranslation();
   const [tab, setTab] = useState<LiveTabKey>("chat");
@@ -59,6 +61,7 @@ export function LiveRoomShell({
         {awaitingSchedule ? (
           <PrivateScheduleRequest
             room={room}
+            courseHref={courseHref}
             onOpenChat={() => setTab("chat")}
           />
         ) : (

@@ -142,6 +142,21 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Tutoring: {
+    description: 'Logs emitted by the Tutoring domain.',
+    actions: {
+      JoinClassFailed: {
+        description: 'Moving a 1:1 student into an open class failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      JoinedClassFromPrivate: {
+        description: 'A paid 1:1 student moved into an open class from the classroom.',
+        level: 'info',
+        fields: ['group_id'] as const,
+      },
+    },
+  },
 } as const satisfies LogCatalog;
 
 export type AppLogCatalog = typeof LOG_CATALOG;

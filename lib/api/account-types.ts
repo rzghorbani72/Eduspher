@@ -330,6 +330,21 @@ export type MyTutoringGroup = {
   } | null;
 };
 
+export type JoinableGroup = {
+  id: string;
+  title: string;
+  capacity: number;
+  seats_left: number;
+  seat_price: number;
+  /** The paid 1:1 seat covers this class; otherwise a seat must be bought. */
+  can_join_free: boolean;
+  status: string;
+  starts_on: string | null;
+  ends_on: string | null;
+  Slots: Omit<MyTutoringGroupSlot, "Lesson">[];
+  Tutor: { id: string; display_name: string | null } | null;
+};
+
 export type MyTutoringGroupRow = {
   engagement_id: string;
   engagement_status: string;
@@ -355,6 +370,8 @@ export type TutoringGroupRoom = MyTutoringGroup & {
     note: string | null;
     created_at: string;
   } | null;
+  /** Open classes a paid 1:1 student may take a seat in; empty once scheduled. */
+  joinable_groups?: JoinableGroup[];
   topics: CourseTopic[];
   /** Homework for the whole class and for individual meetings. */
   assignments: ClassAssignment[];

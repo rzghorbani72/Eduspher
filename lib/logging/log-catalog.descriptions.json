@@ -7,7 +7,8 @@
     "Media": "Video and file storage, transcoding and secure playback.",
     "Payments": "Student and academy payments: checkout, gateway callbacks, refunds.",
     "RequestStorm": "Client-side circuit breaker: one API route called far above human speed.",
-    "SitePreview": "Preview rendering of an academy site template."
+    "SitePreview": "Preview rendering of an academy site template.",
+    "Tutoring": "Logs emitted by the Tutoring domain."
   },
   "events": {
     "Account.AvatarRemoved": "Account avatar removed.",
@@ -28,6 +29,8 @@
     "Payments.RefundRequestRejected": "Payments refund request rejected.",
     "RequestStorm.Tripped": "A single route exceeded the per-window hit limit in the student's browser; protected routes force a sign-out and storage wipe.",
     "SitePreview.PresetEmpty": "Site preview preset empty.",
-    "SitePreview.PresetFetchFailed": "Site preview preset fetch failed."
+    "SitePreview.PresetFetchFailed": "Site preview preset fetch failed.",
+    "Tutoring.JoinClassFailed": "Moving a 1:1 student into an open class failed.",
+    "Tutoring.JoinedClassFromPrivate": "A paid 1:1 student moved into an open class from the classroom."
   }
 }

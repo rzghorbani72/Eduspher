@@ -9,6 +9,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
+import { coursePath } from "@/lib/content-paths";
 import { buildAcademyPath, formatNumber } from "@/lib/utils";
 
 /**
@@ -64,6 +65,10 @@ export default async function GroupClassPage({
       <LiveRoomShell
         room={room}
         currentProfileId={currentProfileId}
+        courseHref={buildAcademyPath(
+          academyContext.isSubdomain ? null : academyContext.slug,
+          coursePath(room.course_id),
+        )}
         invitePath={
           room.invite_code
             ? buildAcademyPath(
