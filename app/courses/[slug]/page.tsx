@@ -24,7 +24,10 @@ import {
   getCoursePaymentPlans,
   getPublicLesson,
 } from "@/lib/api/server";
-import { getCourseAccess } from "@/lib/api/account-server";
+import {
+  getCourseAccess,
+  getMyTutoringGroups,
+} from "@/lib/api/account-server";
 import { getAcademyContext } from "@/lib/store-context";
 import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
 import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
@@ -174,6 +177,18 @@ export default async function CourseDetailPage({
           (myEnrollment.status === "ACTIVE" ||
             myEnrollment.status === "COMPLETED"))),
   );
+  const access =
+    courseAccess.find((row) => row.course_id === course.id) ?? null;
+  // A tutoring student goes straight into their class room, not a list page.
+  const myGroup =
+    access?.access_type === "TUTORING"
+      ? (await getMyTutoringGroups()).find(
+          (row) => row.group.course_id === course.id,
+        )?.group ?? null
+      : null;
+  const tutoringHref = buildPath(
+    myGroup ? `/account/classes/${myGroup.id}` : "/account/tutoring",
+  );
   const progressPercent =
     myEnrollment && Number.isFinite(myEnrollment.progress_percent)
       ? Math.min(100, Math.max(0, Math.round(myEnrollment.progress_percent)))
@@ -322,10 +337,8 @@ export default async function CourseDetailPage({
               continueHref={isEnrolled ? learnPathHref : null}
               learnHref={learnPathHref}
               liveClassesHref={buildPath("/account/classes")}
-              tutoringHref={buildPath("/account/tutoring")}
-              access={
-                courseAccess.find((row) => row.course_id === course.id) ?? null
-              }
+              tutoringHref={tutoringHref}
+              access={access}
               stats={stats}
               progressPercent={isEnrolled ? progressPercent : null}
               isCertificate={Boolean(course.is_certificate)}
