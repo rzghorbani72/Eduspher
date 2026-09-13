@@ -3,6 +3,7 @@
 import { CalendarClock, Users } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
+import { seatPriceOfGroup } from "@/lib/courses/live-course";
 import { formatDate, formatNumber } from "@/lib/utils";
 import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import type { PublicTutoringGroup } from "@/lib/api/server";
@@ -36,7 +37,7 @@ export const TutoringGroupCard = ({
   enrolledHref,
 }: Props) => {
   const { t, language } = useTranslation();
-  const price = (group.Offer?.price ?? 0) * seats;
+  const price = seatPriceOfGroup(group) * seats;
   const waiting = group.status === "WAITING";
   const needed = Math.max(group.min_students - group.seats_taken, 0);
   const empty = group.seats_taken === 0;

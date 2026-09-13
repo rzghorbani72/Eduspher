@@ -1,7 +1,8 @@
 "use client";
 
-import { ExternalLink, Radio, Video } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ExternalLink, Radio, RefreshCw, Video } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -30,12 +31,21 @@ export function MeetingRoom({
   language,
 }: MeetingRoomProps) {
   const { t } = useTranslation();
+  const router = useRouter();
+  const [isRefreshing, startRefresh] = useTransition();
   const [, setTick] = useState(0);
+
+  // The link is decided on the server, so a refresh is a server round trip.
+  const refresh = () => startRefresh(() => router.refresh());
 
   useEffect(() => {
     if (meetingUrl) return;
-    const timer = setInterval(() => setTick((n) => n + 1), REFRESH_MS);
+    const timer = setInterval(() => {
+      setTick((n) => n + 1);
+      refresh();
+    }, REFRESH_MS);
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingUrl]);
 
   if (meetingUrl && isEmbeddable(meetingUrl)) {
@@ -75,7 +85,22 @@ export function MeetingRoom({
           </a>
         </Button>
       ) : (
-        <p className="mt-5 text-sm text-muted">{t("live.linkOpensSoon")}</p>
+        <div className="mt-5 space-y-3">
+          <p className="text-sm text-muted">{t("live.linkOpensSoon")}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={refresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCw
+              className={isRefreshing ? "size-4 animate-spin" : "size-4"}
+              aria-hidden="true"
+            />
+            {t("live.checkLinkAgain")}
+          </Button>
+        </div>
       )}
     </div>
   );

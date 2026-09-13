@@ -11,6 +11,7 @@ import {
   type PreviewMedia,
 } from "@/components/courses/preview-player-context";
 import { PurchasePanel } from "@/components/courses/purchase-panel";
+import { LiveCoursePanel } from "@/components/courses/live-course-panel";
 import { TutoringGroupsSection } from "@/components/courses/tutoring-groups-section";
 import {
   getCourses,
@@ -19,7 +20,6 @@ import {
   getPublicCourseDetail,
   getTutoringGroupsPublic,
   getCourseTopicsPublic,
-  getTutoringOffersPublic,
   getCourseOfferingsPublic,
   getCoursePaymentPlans,
   getPublicLesson,
@@ -111,25 +111,17 @@ export default async function CourseDetailPage({
   const course = await getPublicCourseDetail(courseKey);
   if (!course) return notFound();
 
-  const [
-    user,
-    tutoringOffers,
-    tutoringGroups,
-    courseOfferings,
-    paymentPlans,
-    seoCtx,
-    topics,
-  ] = await Promise.all([
-    getCurrentUser().catch(() => null),
-    getTutoringOffersPublic(course.id).catch(() => []),
-    getTutoringGroupsPublic(course.id).catch(() => []),
-    getCourseOfferingsPublic(course.id).catch(() => []),
-    getCoursePaymentPlans(course.id),
-    getSeoRequestContext(),
-    isLiveCourse(course)
-      ? getCourseTopicsPublic(course.id).catch(() => [])
-      : [],
-  ]);
+  const [user, tutoringGroups, courseOfferings, paymentPlans, seoCtx, topics] =
+    await Promise.all([
+      getCurrentUser().catch(() => null),
+      getTutoringGroupsPublic(course.id).catch(() => []),
+      getCourseOfferingsPublic(course.id).catch(() => []),
+      getCoursePaymentPlans(course.id),
+      getSeoRequestContext(),
+      isLiveCourse(course)
+        ? getCourseTopicsPublic(course.id).catch(() => [])
+        : [],
+    ]);
 
   const { academy, language, currencyConfig } = await resolveAcademyForRequest(
     user,
@@ -143,12 +135,7 @@ export default async function CourseDetailPage({
     course.lessons_count,
     course.duration,
   );
-  const options = buildPurchaseOptions(
-    course,
-    courseOfferings,
-    paymentPlans,
-    tutoringOffers,
-  );
+  const options = buildPurchaseOptions(course, courseOfferings, paymentPlans);
 
   // Holding the course replaces the whole buy box with a "keep going" link.
   // A student can hold it without ever paying — a teacher or manager grant, or
@@ -169,10 +156,10 @@ export default async function CourseDetailPage({
     : undefined;
   const isEnrolled = Boolean(
     user &&
-      (courseAccess.some((row) => row.course_id === course.id) ||
-        (myEnrollment &&
-          (myEnrollment.status === "ACTIVE" ||
-            myEnrollment.status === "COMPLETED"))),
+    (courseAccess.some((row) => row.course_id === course.id) ||
+      (myEnrollment &&
+        (myEnrollment.status === "ACTIVE" ||
+          myEnrollment.status === "COMPLETED"))),
   );
   const access =
     courseAccess.find((row) => row.course_id === course.id) ?? null;
@@ -317,22 +304,33 @@ export default async function CourseDetailPage({
           </div>
 
           <aside className="lg:sticky lg:top-[86px]">
-            <PurchasePanel
-              options={options}
-              language={language}
-              currencyConfig={currencyConfig}
-              loginHref={buildPath(
-                `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
-              )}
-              continueHref={isEnrolled ? learnPathHref : null}
-              learnHref={learnPathHref}
-              liveClassesHref={buildPath("/account/classes")}
-              tutoringHref={tutoringHref}
-              access={access}
-              stats={stats}
-              progressPercent={isEnrolled ? progressPercent : null}
-              isCertificate={Boolean(course.is_certificate)}
-            />
+            {isLiveCourse(course) && !isEnrolled ? (
+              <LiveCoursePanel
+                courseId={course.id}
+                hasOpenClasses={tutoringGroups.length > 0}
+                isLoggedIn={!!user}
+                loginHref={buildPath(
+                  `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
+                )}
+              />
+            ) : (
+              <PurchasePanel
+                options={options}
+                language={language}
+                currencyConfig={currencyConfig}
+                loginHref={buildPath(
+                  `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
+                )}
+                continueHref={isEnrolled ? learnPathHref : null}
+                learnHref={learnPathHref}
+                liveClassesHref={buildPath("/account/classes")}
+                tutoringHref={tutoringHref}
+                access={access}
+                stats={stats}
+                progressPercent={isEnrolled ? progressPercent : null}
+                isCertificate={Boolean(course.is_certificate)}
+              />
+            )}
           </aside>
         </div>
       </PreviewPlayerProvider>

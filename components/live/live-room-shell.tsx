@@ -39,13 +39,16 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
   const [chatMode, setChatMode] = useState<ChatMode>(
     room.group_thread_parent ? "group" : "private",
   );
+  // Before the class starts, the timetable shows the planned dates instead.
+  const timetable = room.sessions.length
+    ? room.sessions
+    : room.planned_sessions;
   const [selectedId, setSelectedId] = useState<string | null>(
-    room.next_session?.id ?? room.sessions[0]?.id ?? null,
+    room.next_session?.id ?? timetable[0]?.id ?? null,
   );
 
   const selected =
-    room.sessions.find((session) => session.id === selectedId) ??
-    room.next_session;
+    timetable.find((session) => session.id === selectedId) ?? room.next_session;
   const heading = selected?.title ?? selected?.Topic?.title ?? room.title;
 
   const tabs: { key: TabKey; label: string; icon: typeof MessageSquare }[] = [
@@ -61,7 +64,9 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
       <main className="min-w-0 space-y-6">
         <MeetingRoom
           meetingUrl={room.meeting_url}
-          startsAt={room.next_session?.starts_at ?? null}
+          startsAt={
+            room.next_session?.starts_at ?? timetable[0]?.starts_at ?? null
+          }
           title={heading}
           language={language}
         />
@@ -177,7 +182,7 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
 
             {tab === "sessions" ? (
               <ul className="divide-y divide-(--theme-hairline) text-sm">
-                {room.sessions.map((session) => (
+                {timetable.map((session) => (
                   <li
                     key={session.id}
                     className="flex flex-wrap items-center justify-between gap-2 py-3"
@@ -205,7 +210,7 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
           </span>
         </div>
         <SessionList
-          sessions={room.sessions}
+          sessions={timetable}
           selectedId={selectedId}
           onSelect={setSelectedId}
         />

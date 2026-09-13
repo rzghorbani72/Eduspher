@@ -27,6 +27,21 @@ export const LOG_CATALOG = {
       },
     },
   },
+  ClassRequest: {
+    description: 'Logs emitted by the ClassRequest domain.',
+    actions: {
+      SubmitFailed: {
+        description: 'Class request submit failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      Submitted: {
+        description: 'Class request submitted.',
+        level: 'info',
+        fields: ['course_id'] as const,
+      },
+    },
+  },
   Gdpr: {
     description: 'Cookie and privacy consent captured in the browser.',
     actions: {

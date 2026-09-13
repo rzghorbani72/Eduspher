@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
+import { seatPriceOfGroup } from "@/lib/courses/live-course";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
 import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
 import { usePurchase } from "@/components/purchase/use-purchase";
@@ -56,7 +57,7 @@ export const TutoringGroupsSection = ({
     const seats = seatsFor(group);
     return purchase(
       { tutoring_group_id: group.id },
-      (group.Offer?.price ?? 0) * seats,
+      seatPriceOfGroup(group) * seats,
       group.id,
       { seats, joinCode, provider, couponCode },
     );
@@ -102,7 +103,7 @@ export const TutoringGroupsSection = ({
       {confirming ? (
         <CheckoutDialog
           selector={{ tutoring_group_id: confirming.id }}
-          fallbackAmount={(confirming.Offer?.price ?? 0) * seatsFor(confirming)}
+          fallbackAmount={seatPriceOfGroup(confirming) * seatsFor(confirming)}
           fallbackTitle={confirming.title}
           currencyConfig={currencyConfig}
           language={language}

@@ -1,9 +1,5 @@
 import type { CourseSummary } from "@/lib/api/types";
-import type {
-  PublicCourseOffering,
-  PublicPaymentPlan,
-  PublicTutoringOffer,
-} from "@/lib/api/server";
+import type { PublicCourseOffering, PublicPaymentPlan } from "@/lib/api/server";
 
 /**
  * Everything a student can buy for one course, flattened into a single ranked
@@ -126,24 +122,6 @@ const fromPaymentPlan = (plan: PublicPaymentPlan): PurchaseOptionView => ({
   accessExpiresAt: null,
 });
 
-const fromTutoringOffer = (offer: PublicTutoringOffer): PurchaseOptionView => ({
-  key: offer.id,
-  kind: "TUTORING",
-  selector: { tutoring_offer_id: offer.id },
-  title: offer.title,
-  description: offer.description,
-  price: offer.price,
-  originalPrice: null,
-  discountPercent: null,
-  accessDurationDays: offer.duration_days,
-  includesLive: true,
-  installments: null,
-  tutorName: offer.Tutor?.display_name ?? null,
-  sessionsIncluded: offer.sessions_included,
-  owned: offer.owned ?? false,
-  accessExpiresAt: null,
-});
-
 /**
  * Falls back to the course's own price when the academy has not published any
  * Offer yet, so a freshly created course is still buyable.
@@ -173,16 +151,12 @@ export const buildPurchaseOptions = (
   course: CourseSummary,
   offerings: PublicCourseOffering[],
   paymentPlans: PublicPaymentPlan[],
-  tutoringOffers: PublicTutoringOffer[],
 ): PurchaseOptionView[] => {
-  // Seats are a live-course product; a recorded course never sells them, even
-  // if an old tutoring offer is still attached to it.
-  const seatOffers =
-    course.course_type === "LIVE" ? tutoringOffers.map(fromTutoringOffer) : [];
+  // A live course sells seats per class, never a course-level price.
+  if (course.course_type === "LIVE") return [];
   const options = [
     ...offerings.filter((o) => o.is_active).map((o) => fromOffering(o, course)),
     ...paymentPlans.map(fromPaymentPlan),
-    ...seatOffers,
   ];
 
   if (options.length === 0) options.push(fallbackOption(course));

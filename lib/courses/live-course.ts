@@ -17,3 +17,9 @@ export const seatPriceOf = (course: PricedCourse): number | null => {
     .filter((price) => price > 0);
   return prices.length ? Math.min(...prices) : null;
 };
+
+/** What one seat in this class costs: its own price, else the course's per-seat offer. */
+export const seatPriceOfGroup = (group: {
+  seat_price: number | null;
+  Offer: { price: number } | null;
+}): number => group.seat_price ?? group.Offer?.price ?? 0;

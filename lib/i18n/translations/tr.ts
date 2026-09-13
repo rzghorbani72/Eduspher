@@ -594,6 +594,7 @@ export const tr = {
   live: {
     joinClass: "Derse katıl",
     linkOpensSoon: "Katılım bağlantısı ders başlamadan kısa süre önce açılır.",
+    checkLinkAgain: "Bağlantıyı yeniden kontrol et",
     session: "Oturum",
     sessionCancelled: "iptal edildi",
     timetable: "Ders programı",

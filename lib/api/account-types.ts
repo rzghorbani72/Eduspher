@@ -334,6 +334,8 @@ export type TutoringGroupRoom = MyTutoringGroup & {
   membership: { id: string; status: string; seats_claimed: number } | null;
   next_session: MyTutoringGroupSession | null;
   sessions: MyTutoringGroupSession[];
+  /** Dates the class will meet, projected from its weekly slots before it starts. */
+  planned_sessions: MyTutoringGroupSession[];
   topics: CourseTopic[];
   /** Homework for the whole class and for individual meetings. */
   assignments: ClassAssignment[];

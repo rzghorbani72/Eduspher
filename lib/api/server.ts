@@ -965,6 +965,8 @@ export interface PublicTutoringGroup {
   join_deadline: string | null;
   visibility: "PUBLIC" | "PRIVATE";
   course_id: string;
+  /** Per-seat price of this class; null = the course's per-seat offer price. */
+  seat_price: number | null;
   Slots: PublicTutoringGroupSlot[];
   Tutor: { id: string; display_name: string | null } | null;
   Offer: { id: string; price: number; currency: string } | null;

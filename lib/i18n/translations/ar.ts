@@ -577,6 +577,7 @@ export const ar = {
   live: {
     joinClass: "الدخول إلى الصف",
     linkOpensSoon: "يُفتح رابط الدخول قبل بدء الصف بقليل.",
+    checkLinkAgain: "تحقّق من الرابط مجدداً",
     session: "جلسة",
     sessionCancelled: "أُلغيت",
     timetable: "جدول الجلسات",
