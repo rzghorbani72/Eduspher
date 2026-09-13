@@ -52,7 +52,10 @@ const isUnauthorizedError = (error: unknown): boolean => {
   return error instanceof Error && /401/.test(error.message);
 };
 
-import type { CertificateVerification } from "@/lib/api/account-types";
+import type {
+  CertificateVerification,
+  CourseTopic,
+} from "@/lib/api/account-types";
 import type { PublicActiveDiscount } from "@/lib/discounts/format-active-discount";
 import type {
   ApiEnvelope,
@@ -967,6 +970,17 @@ export interface PublicTutoringGroup {
   Offer: { id: string; price: number; currency: string } | null;
   /** True when the signed-in student already holds a seat in this class. */
   joined?: boolean;
+}
+
+/** Syllabus of a live course — what the meetings will cover. */
+export async function getCourseTopicsPublic(
+  courseId: string,
+): Promise<CourseTopic[]> {
+  const result = await serverFetchRaw<{ status: string; data: CourseTopic[] }>(
+    `/courses/${encodeURIComponent(courseId)}/topics`,
+    { method: "GET" },
+  );
+  return result.data ?? [];
 }
 
 /** Scheduled group classes of a course that anyone may join. */

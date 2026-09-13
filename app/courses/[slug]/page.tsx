@@ -18,6 +18,7 @@ import {
   getEnrollments,
   getPublicCourseDetail,
   getTutoringGroupsPublic,
+  getCourseTopicsPublic,
   getTutoringOffersPublic,
   getCourseOfferingsPublic,
   getCoursePaymentPlans,
@@ -117,6 +118,7 @@ export default async function CourseDetailPage({
     courseOfferings,
     paymentPlans,
     seoCtx,
+    topics,
   ] = await Promise.all([
     getCurrentUser().catch(() => null),
     getTutoringOffersPublic(course.id).catch(() => []),
@@ -124,6 +126,9 @@ export default async function CourseDetailPage({
     getCourseOfferingsPublic(course.id).catch(() => []),
     getCoursePaymentPlans(course.id),
     getSeoRequestContext(),
+    isLiveCourse(course)
+      ? getCourseTopicsPublic(course.id).catch(() => [])
+      : [],
   ]);
 
   const { academy, language, currencyConfig } = await resolveAcademyForRequest(
@@ -284,6 +289,7 @@ export default async function CourseDetailPage({
                     : null
                 }
                 instructorAvatarUrl={avatarUrl}
+                topics={topics}
               />
             </div>
 

@@ -294,6 +294,8 @@ export const en = {
     sectionsLabel: "sections",
     curriculumSubtitle:
       "Access to each session depends on your enrollment type and the teacher schedule.",
+    syllabusTitle: "Syllabus",
+    syllabusSubtitle: "What the live sessions of this course will cover.",
     expandAll: "Expand all",
     collapseAll: "Collapse all",
     kindVideo: "Lesson video",

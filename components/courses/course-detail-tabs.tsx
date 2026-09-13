@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { isLiveCourse } from "@/lib/courses/live-course";
 import type { CourseSummary } from "@/lib/api/types";
+import type { CourseTopic } from "@/lib/api/account-types";
 import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
 import { CourseOverview } from "@/components/courses/course-overview";
 import { CourseCurriculum } from "@/components/courses/curriculum";
@@ -21,6 +22,8 @@ interface CourseDetailTabsProps {
   hasLessonAccess?: boolean;
   prerequisiteHref: string | null;
   instructorAvatarUrl: string | null;
+  /** Live-course syllabus, shown when there are no recorded lessons. */
+  topics?: CourseTopic[];
 }
 
 type TabKey = "overview" | "curriculum" | "live" | "instructor" | "reviews";
@@ -32,6 +35,7 @@ export function CourseDetailTabs({
   hasLessonAccess = false,
   prerequisiteHref,
   instructorAvatarUrl,
+  topics = [],
 }: CourseDetailTabsProps) {
   const { t } = useTranslation();
   const seasons = useMemo(() => buildCurriculum(course), [course]);
@@ -107,6 +111,7 @@ export function CourseDetailTabs({
           stats={stats}
           previewBasePath={previewBasePath}
           hasLessonAccess={hasLessonAccess}
+          topics={topics}
         />
       )}
 

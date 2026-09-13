@@ -297,6 +297,8 @@ export const fa = {
     sectionsLabel: "بخش",
     curriculumSubtitle:
       "دسترسی به هر جلسه براساس نوع ثبت‌نام تو و زمان‌بندی مدرس مشخص می‌شود.",
+    syllabusTitle: "سرفصل‌ها",
+    syllabusSubtitle: "موضوعاتی که در جلسات زندهٔ این دوره پوشش داده می‌شود.",
     expandAll: "باز کردن همه",
     collapseAll: "بستن همه",
     kindVideo: "ویدیوی آموزشی",

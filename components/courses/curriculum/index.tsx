@@ -15,8 +15,10 @@ import {
   formatMinutes,
   formatSeconds,
 } from "@/components/courses/curriculum/format";
+import { CourseTopicList } from "@/components/courses/curriculum/topic-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useNow } from "@/lib/hooks/use-now";
+import type { CourseTopic } from "@/lib/api/account-types";
 
 interface CourseCurriculumProps {
   seasons: CurriculumSeasonView[];
@@ -25,6 +27,8 @@ interface CourseCurriculumProps {
   previewBasePath: string | null;
   /** The student holds the recorded lessons, so nothing here is locked. */
   hasLessonAccess?: boolean;
+  /** A live course teaches from a syllabus, not recorded lessons. */
+  topics?: CourseTopic[];
 }
 
 export function CourseCurriculum({
@@ -32,6 +36,7 @@ export function CourseCurriculum({
   stats,
   previewBasePath,
   hasLessonAccess = false,
+  topics = [],
 }: CourseCurriculumProps) {
   const { t, language } = useTranslation();
   const now = useNow();
@@ -50,6 +55,10 @@ export function CourseCurriculum({
         .join(" · "),
     [stats, language, t],
   );
+
+  if (seasons.length === 0 && topics.length > 0) {
+    return <CourseTopicList topics={topics} />;
+  }
 
   if (seasons.length === 0) {
     return (
