@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getCourseById, getEnrollments } from "@/lib/api/server";
 import { getSession } from "@/lib/auth/session";
 import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
+import { isLiveCourse } from "@/lib/courses/live-course";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
@@ -66,6 +67,11 @@ export default async function LearningCoursePage({
     redirect(
       buildAcademyPath(storeSlug, learnPath(course.slug, firstLesson.slug ?? firstLesson.id)),
     );
+  }
+
+  // A live course has a classroom instead of lessons.
+  if (isLiveCourse(course)) {
+    redirect(buildAcademyPath(storeSlug, `${learnPath(course.slug)}/live`));
   }
 
   const language = getAcademyLanguage(null, null);

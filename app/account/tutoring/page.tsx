@@ -9,7 +9,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
-import { coursePath } from "@/lib/content-paths";
+import { coursePath, learnPath } from "@/lib/content-paths";
 import { buildAcademyPath, formatDate } from "@/lib/utils";
 
 const STATUS_KEY: Record<string, string> = {
@@ -97,7 +97,7 @@ export default async function AccountTutoringPage() {
                   href={buildAcademyPath(
                     slugForPaths,
                     isLive
-                      ? `/account/tutoring/${engagement.id}`
+                      ? `${learnPath(engagement.Course?.slug || engagement.course_id)}/live`
                       : coursePath(
                           engagement.Course?.slug || engagement.course_id,
                         ),

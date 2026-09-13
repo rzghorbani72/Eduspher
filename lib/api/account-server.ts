@@ -173,6 +173,27 @@ export const getTutoringEngagementRoom = (engagementId: string) =>
     return result.data ?? null;
   }, null);
 
+/**
+ * The live classroom this student holds for a course: their group seat if
+ * they have one, else their 1:1 engagement. Null when they hold neither.
+ */
+export const getMyLiveRoomForCourse = async (
+  courseId: string,
+): Promise<TutoringGroupRoom | null> => {
+  const [groups, engagements] = await Promise.all([
+    getMyTutoringGroups(),
+    getTutoringEngagements(),
+  ]);
+  const group = groups.find((row) => row.group.course_id === courseId)?.group;
+  if (group) return getTutoringGroupRoom(group.id);
+  const solo = engagements.find(
+    (row) =>
+      row.course_id === courseId &&
+      (row.status === "ACTIVE" || row.status === "PENDING"),
+  );
+  return solo ? getTutoringEngagementRoom(solo.id) : null;
+};
+
 export const getPayments = (params?: { page?: number; limit?: number }) =>
   safe<{ payments: PaymentSummary[]; pagination: PageMeta | null }>(
     async () => {
