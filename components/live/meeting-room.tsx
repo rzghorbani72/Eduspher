@@ -6,12 +6,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatDate } from "@/lib/utils";
+import { isEmbeddable } from "@/lib/live/embeddable";
 
 /** The link is time-gated on the server, so re-poll to catch it opening. */
 const REFRESH_MS = 60_000;
-
-/** Providers that allow embedding. Everything else opens in a new tab. */
-const EMBEDDABLE = ["skyroom.online", "www.skyroom.online"];
 
 interface MeetingRoomProps {
   /** Null whenever the joining window is shut — never a stale link. */
@@ -20,14 +18,6 @@ interface MeetingRoomProps {
   title: string;
   language: string;
 }
-
-const isEmbeddable = (url: string): boolean => {
-  try {
-    return EMBEDDABLE.includes(new URL(url).hostname);
-  } catch {
-    return false;
-  }
-};
 
 /**
  * Where the class actually happens. It takes the place the recorded course page

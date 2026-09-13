@@ -15,6 +15,8 @@ interface LiveStageProps {
   /** When the class starts, in epoch ms; the clock counts to or from it. */
   startsAtMs: number | null;
   meetingUrl: string | null;
+  /** Whether the room behind meetingUrl can be shown in an iframe. */
+  embeddable?: boolean;
   playbackUrl: string | null;
   calendarUrl: string | null;
 }
@@ -31,6 +33,7 @@ export function LiveStage({
   scheduleLabel,
   startsAtMs,
   meetingUrl,
+  embeddable,
   playbackUrl,
   calendarUrl,
 }: LiveStageProps) {
@@ -99,6 +102,19 @@ export function LiveStage({
   }
 
   const isLive = phase === "LIVE";
+
+  if (isLive && meetingUrl && embeddable) {
+    return (
+      <div className="overflow-hidden rounded-[10px] border border-theme bg-black">
+        <iframe
+          src={meetingUrl}
+          title={scheduleLabel}
+          allow="camera; microphone; fullscreen; display-capture; autoplay"
+          className="aspect-video w-full"
+        />
+      </div>
+    );
+  }
 
   return (
     <div

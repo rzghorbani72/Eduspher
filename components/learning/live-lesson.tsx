@@ -79,6 +79,7 @@ export function LiveLesson({
         scheduleLabel={scheduleLabel}
         startsAtMs={schedule.startsAt?.getTime() ?? null}
         meetingUrl={joinUrl}
+        embeddable={Boolean(data.embeddable)}
         playbackUrl={data.playback_url ?? null}
         calendarUrl={buildCalendarUrl(
           lessonTitle,
