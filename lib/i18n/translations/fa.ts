@@ -543,6 +543,12 @@ export const fa = {
     acceptedOn: "تاریخ پذیرش",
     noAcceptances: "هنوز سندی را نپذیرفته‌اید.",
   },
+  cookieConsent: {
+    message: "برای ارائهٔ این سرویس و بهبود تجربهٔ شما از کوکی استفاده می‌کنیم.",
+    learnMore: "بیشتر بدانید",
+    decline: "رد کردن",
+    accept: "قبول دارم",
+  },
   auth: {
     login: "ورود",
     register: "ثبت‌نام",

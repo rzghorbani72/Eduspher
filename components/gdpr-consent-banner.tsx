@@ -4,6 +4,7 @@ import { useState, useSyncExternalStore } from 'react';
 import Link from '@/components/ui/link';
 import { logger } from '@/lib/logging/app-logger';
 import { getMarketingConsent, setMarketingConsent } from '@/lib/consent';
+import { useTranslation, useLanguage } from '@/lib/i18n/hooks';
 
 const COOKIE_NAME = 'gdpr_consent';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -14,6 +15,8 @@ function cookieConsentNeeded(): boolean {
 
 export function GdprConsentBanner() {
   const [dismissed, setDismissed] = useState(false);
+  const { t } = useTranslation();
+  const { direction } = useLanguage();
   const needsConsent = useSyncExternalStore(
     () => () => {},
     cookieConsentNeeded,
@@ -38,27 +41,28 @@ export function GdprConsentBanner() {
   return (
     <div
       role="dialog"
-      aria-label="Cookie consent"
-      className="fixed bottom-0 inset-x-0 z-50 flex items-center justify-between gap-4 border-t border-border bg-background px-4 py-3 shadow-lg sm:px-6"
+      dir={direction}
+      aria-label={t('cookieConsent.message')}
+      className="fixed inset-x-0 bottom-0 z-50 flex flex-col items-stretch gap-3 border-t border-border bg-background px-4 py-3 shadow-lg sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6"
     >
       <p className="text-sm text-muted-foreground">
-        We use cookies to deliver this service and to improve your experience.{' '}
+        {t('cookieConsent.message')}{' '}
         <Link href="/privacy" className="underline hover:text-foreground">
-          Learn more
+          {t('cookieConsent.learnMore')}
         </Link>
       </p>
-      <div className="flex shrink-0 gap-2">
+      <div className="flex shrink-0 justify-end gap-2">
         <button
           onClick={decline}
           className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
         >
-          Decline
+          {t('cookieConsent.decline')}
         </button>
         <button
           onClick={accept}
           className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
         >
-          Accept
+          {t('cookieConsent.accept')}
         </button>
       </div>
     </div>
