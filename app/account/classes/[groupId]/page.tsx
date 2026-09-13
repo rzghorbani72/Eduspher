@@ -9,7 +9,7 @@ import { getAcademyBySlug } from "@/lib/api/server";
 import { getAcademyLanguage } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/server-translations";
 import { getAcademyContext } from "@/lib/store-context";
-import { formatNumber } from "@/lib/utils";
+import { buildAcademyPath, formatNumber } from "@/lib/utils";
 
 /**
  * The class page only a member sees. Membership is decided by the backend on
@@ -61,7 +61,18 @@ export default async function GroupClassPage({
         </p>
       ) : null}
 
-      <LiveRoomShell room={room} currentProfileId={currentProfileId} />
+      <LiveRoomShell
+        room={room}
+        currentProfileId={currentProfileId}
+        invitePath={
+          room.invite_code
+            ? buildAcademyPath(
+                academyContext.isSubdomain ? null : academyContext.slug,
+                `/classes/join/${room.invite_code}`,
+              )
+            : null
+        }
+      />
     </div>
   );
 }

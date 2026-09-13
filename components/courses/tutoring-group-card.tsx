@@ -2,8 +2,14 @@
 
 import { CalendarClock, Users } from "lucide-react";
 
+import { TutoringGroupPricing } from "@/components/courses/tutoring-group-pricing";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { seatPriceOfGroup } from "@/lib/courses/live-course";
+import {
+  CLASS_SIZE_LABEL,
+  classSizeOf,
+  groupAnchorId,
+  seatPriceOfGroup,
+} from "@/lib/courses/live-course";
 import { formatDate, formatNumber } from "@/lib/utils";
 import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import type { PublicTutoringGroup } from "@/lib/api/server";
@@ -37,10 +43,10 @@ export const TutoringGroupCard = ({
   enrolledHref,
 }: Props) => {
   const { t, language } = useTranslation();
-  const price = seatPriceOfGroup(group) * seats;
+  const seatPrice = seatPriceOfGroup(group);
+  const price = seatPrice * seats;
   const waiting = group.status === "WAITING";
   const needed = Math.max(group.min_students - group.seats_taken, 0);
-  const empty = group.seats_taken === 0;
   // A student is buying a term, not just a weekday, so print the real dates.
   const termLabel = group.starts_on
     ? group.ends_on
@@ -49,8 +55,14 @@ export const TutoringGroupCard = ({
     : null;
 
   return (
-    <article className="space-y-3 rounded-2xl border border-(--theme-border-color) bg-card p-4">
+    <article
+      id={groupAnchorId(group.id)}
+      className="scroll-mt-24 space-y-3 rounded-2xl border border-(--theme-border-color) bg-card p-4"
+    >
       <header className="space-y-1">
+        <span className="inline-block rounded-md bg-(--theme-primary-subtle) px-2 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
+          {t(CLASS_SIZE_LABEL[classSizeOf(group.capacity)])}
+        </span>
         <h3 className="text-base font-semibold text-(--theme-foreground)">
           {group.title}
         </h3>
@@ -114,29 +126,13 @@ export const TutoringGroupCard = ({
         </p>
       ) : null}
 
-      {/* An empty class can be booked whole, so a student can bring their own
-          group instead of waiting for strangers to fill it. */}
-      {empty && group.capacity > 1 ? (
-        <label className="flex items-center justify-between gap-2 text-xs text-muted">
-          {t("courses.groupReserveWhole")}
-          <input
-            type="number"
-            min={1}
-            max={group.capacity}
-            dir="ltr"
-            value={seats}
-            onChange={(e) =>
-              onSeatsChange(
-                Math.min(
-                  Math.max(Number(e.target.value) || 1, 1),
-                  group.capacity,
-                ),
-              )
-            }
-            className="w-20 rounded-md border border-(--theme-border-color) bg-transparent px-2 py-1 text-end"
-          />
-        </label>
-      ) : null}
+      <TutoringGroupPricing
+        group={group}
+        seatPrice={seatPrice}
+        seats={seats}
+        format={format}
+        onSeatsChange={onSeatsChange}
+      />
 
       <div className="flex items-center justify-between gap-3">
         <span className="text-lg font-black text-(--theme-foreground)">
@@ -156,7 +152,9 @@ export const TutoringGroupCard = ({
             onClick={onJoin}
             className="rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60"
           >
-            {seats > 1 ? t("courses.groupBookWhole") : t("courses.groupJoin")}
+            {seats === group.capacity && group.capacity > 1
+              ? t("courses.groupBookWhole")
+              : t("courses.groupJoin")}
           </button>
         )}
       </div>

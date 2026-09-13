@@ -307,7 +307,8 @@ export default async function CourseDetailPage({
             {isLiveCourse(course) && !isEnrolled ? (
               <LiveCoursePanel
                 courseId={course.id}
-                hasOpenClasses={tutoringGroups.length > 0}
+                groups={tutoringGroups}
+                currencyConfig={currencyConfig}
                 isLoggedIn={!!user}
                 loginHref={buildPath(
                   `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,

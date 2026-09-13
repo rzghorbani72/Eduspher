@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "@/components/ui/link";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { TimePicker } from "@/components/ui/time-picker";
 import { postJson } from "@/lib/api/client";
 import { sortWeekdays, weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import { useTranslation } from "@/lib/i18n/hooks";
@@ -135,12 +137,12 @@ export function ClassRequestForm({
         <Label>{t("courses.requestClassWindows")}</Label>
         {windows.map((w, index) => (
           <div key={index} className="flex flex-wrap items-center gap-2">
-            <select
+            <Select
               value={w.weekday}
               onChange={(e) =>
                 update(index, { weekday: Number(e.target.value) })
               }
-              className="h-10 rounded-lg border border-theme bg-card px-3 text-sm"
+              className="w-36"
               aria-label={t("courses.requestClassDay")}
             >
               {WEEK.map((day) => (
@@ -148,18 +150,16 @@ export function ClassRequestForm({
                   {t(weekdayLabelKey(day) ?? "")}
                 </option>
               ))}
-            </select>
-            <Input
-              type="time"
+            </Select>
+            <TimePicker
               value={w.from}
-              onChange={(e) => update(index, { from: e.target.value })}
+              onChange={(value) => update(index, { from: value })}
               className="w-28"
               aria-label={t("courses.requestClassFrom")}
             />
-            <Input
-              type="time"
+            <TimePicker
               value={w.to}
-              onChange={(e) => update(index, { to: e.target.value })}
+              onChange={(value) => update(index, { to: value })}
               className="w-28"
               aria-label={t("courses.requestClassTo")}
             />

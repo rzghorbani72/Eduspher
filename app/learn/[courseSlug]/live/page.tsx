@@ -51,7 +51,15 @@ export default async function LiveLearningPage({
         description={room.Tutor?.display_name ?? course.title}
         icon={CalendarClock}
       />
-      <LiveRoomShell room={room} currentProfileId={session.profileId ?? ""} />
+      <LiveRoomShell
+        room={room}
+        currentProfileId={session.profileId ?? ""}
+        invitePath={
+          room.invite_code
+            ? buildAcademyPath(storeSlug, `/classes/join/${room.invite_code}`)
+            : null
+        }
+      />
     </div>
   );
 }

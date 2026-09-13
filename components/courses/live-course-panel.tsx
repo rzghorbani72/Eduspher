@@ -3,11 +3,16 @@
 import { CalendarClock } from "lucide-react";
 
 import { ClassRequestForm } from "@/components/courses/class-request-form";
+import { LiveClassOptions } from "@/components/courses/live-class-options";
+import type { CurrencyConfig } from "@/components/courses/purchase-panel";
+import type { PublicTutoringGroup } from "@/lib/api/server";
 import { useTranslation } from "@/lib/i18n/hooks";
+import { formatCurrencyWithAcademy } from "@/lib/utils";
 
 interface LiveCoursePanelProps {
   courseId: string;
-  hasOpenClasses: boolean;
+  groups: PublicTutoringGroup[];
+  currencyConfig: CurrencyConfig | null;
   isLoggedIn: boolean;
   loginHref: string;
 }
@@ -18,11 +23,15 @@ interface LiveCoursePanelProps {
  */
 export function LiveCoursePanel({
   courseId,
-  hasOpenClasses,
+  groups,
+  currencyConfig,
   isLoggedIn,
   loginHref,
 }: LiveCoursePanelProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const hasOpenClasses = groups.length > 0;
+  const format = (amount: number) =>
+    formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
@@ -40,13 +49,9 @@ export function LiveCoursePanel({
             : t("courses.liveNoClassesYet")}
         </p>
         {hasOpenClasses ? (
-          <a
-            href="#group-classes-title"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
-          >
-            <CalendarClock className="size-4" aria-hidden="true" />
-            {t("courses.liveSeeClasses")}
-          </a>
+          <div className="pt-2">
+            <LiveClassOptions groups={groups} format={format} />
+          </div>
         ) : null}
       </div>
       <div className="border-t border-theme px-6 py-5">

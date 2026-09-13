@@ -962,6 +962,7 @@ export interface PublicTutoringGroup {
   starts_on: string | null;
   ends_on: string | null;
   term_weeks: number;
+  session_count: number | null;
   join_deadline: string | null;
   visibility: "PUBLIC" | "PRIVATE";
   course_id: string;

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ClassAssignments } from "@/components/live/class-assignments";
 import { ClassChat } from "@/components/live/class-chat";
 import { ClassSyllabus } from "@/components/live/class-syllabus";
+import { InviteFriendsCard } from "@/components/live/invite-friends-card";
 import {
   LiveRoomTabs,
   type LiveTabKey,
@@ -21,6 +22,7 @@ import { formatNumber } from "@/lib/utils";
 interface LiveRoomShellProps {
   room: TutoringGroupRoom;
   currentProfileId: string;
+  invitePath: string | null;
 }
 
 /**
@@ -29,7 +31,11 @@ interface LiveRoomShellProps {
  * Everything below the stage is about the meeting picked in the timetable:
  * its chat, its homework, what it left behind.
  */
-export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
+export function LiveRoomShell({
+  room,
+  currentProfileId,
+  invitePath,
+}: LiveRoomShellProps) {
   const { t, language } = useTranslation();
   const [tab, setTab] = useState<LiveTabKey>("chat");
   // Before the class starts, the timetable shows the planned dates instead.
@@ -122,6 +128,14 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
           selectedId={selectedId}
           onSelect={setSelectedId}
         />
+        {invitePath && !room.is_tutor ? (
+          <div className="mt-3">
+            <InviteFriendsCard
+              invitePath={invitePath}
+              seatsLeft={room.seats_left}
+            />
+          </div>
+        ) : null}
       </aside>
     </div>
   );

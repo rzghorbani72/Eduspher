@@ -340,6 +340,8 @@ export type MyTutoringGroupRow = {
 export type TutoringGroupRoom = MyTutoringGroup & {
   /** Present only inside the join window — otherwise null, never a stale link. */
   meeting_url: string | null;
+  /** Share code while seats are still free, so a member can bring friends. */
+  invite_code: string | null;
   is_tutor: boolean;
   membership: { id: string; status: string; seats_claimed: number } | null;
   next_session: MyTutoringGroupSession | null;
