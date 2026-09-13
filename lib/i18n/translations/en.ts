@@ -824,6 +824,9 @@ export const en = {
     tutoringCancelled: "Cancelled",
     tutoringRenew: "Renew",
     openTutoringCourse: "Open course",
+    joinTutoringSession: "Join session",
+    tutoringNextSession: "Next session",
+    tutoringNoSessionScheduled: "No session scheduled yet",
     videoSessions: "video sessions",
     learningDataUnavailable:
       "Your learning data is temporarily unavailable. Please try again later.",

@@ -119,6 +119,14 @@ export const getLearningTimeline = (limit = 30) =>
     return result.data?.activities ?? [];
   }, []);
 
+export type TutoringSessionRow = {
+  id: string;
+  starts_at: string;
+  ends_at: string | null;
+  status: string;
+  meeting_url: string | null;
+};
+
 export type TutoringEngagementRow = {
   id: string;
   course_id: string;
@@ -127,6 +135,7 @@ export type TutoringEngagementRow = {
   ends_at: string | null;
   Course?: { id: string; title: string; slug?: string } | null;
   Tutor?: { id: string; display_name: string } | null;
+  Sessions?: TutoringSessionRow[];
 };
 
 export const getTutoringEngagements = () =>

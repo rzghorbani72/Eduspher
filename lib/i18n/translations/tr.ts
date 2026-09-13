@@ -564,6 +564,9 @@ export const tr = {
     tutoringActive: "Aktif",
     tutoringPending: "Beklemede",
     openTutoringCourse: "Kursu aç",
+    joinTutoringSession: "Oturuma katıl",
+    tutoringNextSession: "Sonraki oturum",
+    tutoringNoSessionScheduled: "Henüz planlanmış bir oturum yok",
     videoSessions: "video oturumu",
     learningDataUnavailable:
       "Öğrenme verileriniz geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",

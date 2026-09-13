@@ -54,6 +54,7 @@ export default async function AccountTutoringPage() {
           {engagements.map((engagement) => {
             const isLive =
               engagement.status === "ACTIVE" || engagement.status === "PENDING";
+            const nextSession = engagement.Sessions?.[0] ?? null;
             return (
               <li
                 key={engagement.id}
@@ -75,6 +76,13 @@ export default async function AccountTutoringPage() {
                         {formatDate(engagement.ends_at, language)}
                       </p>
                     ) : null}
+                    {isLive ? (
+                      <p className="mt-1 text-xs text-muted">
+                        {nextSession
+                          ? `${translate("account.tutoringNextSession")}: ${formatDate(nextSession.starts_at, language)}`
+                          : translate("account.tutoringNoSessionScheduled")}
+                      </p>
+                    ) : null}
                   </div>
                   <StatusPill
                     label={
@@ -85,30 +93,39 @@ export default async function AccountTutoringPage() {
                     tone={toneForStatus(engagement.status)}
                   />
                 </div>
-                <Link
-                  href={buildAcademyPath(
-                    slugForPaths,
-                    isLive
-                      ? learnPath(engagement.Course?.slug || engagement.course_id)
-                      : coursePath(
-                          engagement.Course?.slug || engagement.course_id,
-                        ),
-                  )}
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
-                >
-                  {isLive
-                    ? translate("account.openTutoringCourse")
-                    : translate("account.tutoringRenew")}
-                  <ExternalLink className="size-3.5" aria-hidden="true" />
-                </Link>
+                {isLive && nextSession?.meeting_url ? (
+                  <a
+                    href={nextSession.meeting_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+                  >
+                    {translate("account.joinTutoringSession")}
+                    <ExternalLink className="size-3.5" aria-hidden="true" />
+                  </a>
+                ) : (
+                  <Link
+                    href={buildAcademyPath(
+                      slugForPaths,
+                      isLive
+                        ? learnPath(engagement.Course?.slug || engagement.course_id)
+                        : coursePath(
+                            engagement.Course?.slug || engagement.course_id,
+                          ),
+                    )}
+                    className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+                  >
+                    {isLive
+                      ? translate("account.openTutoringCourse")
+                      : translate("account.tutoringRenew")}
+                    <ExternalLink className="size-3.5" aria-hidden="true" />
+                  </Link>
+                )}
               </li>
             );
           })}
         </ul>
       )}
-
-      {/* A student cannot list their own tutoring sessions: GET /v1/tutoring/sessions
-          is TEACHER+. Only engagements are shown until that endpoint opens up. */}
     </div>
   );
 }
