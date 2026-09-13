@@ -346,6 +346,13 @@ export type TutoringGroupRoom = MyTutoringGroup & {
   sessions: MyTutoringGroupSession[];
   /** Dates the class will meet, projected from its weekly slots before it starts. */
   planned_sessions: MyTutoringGroupSession[];
+  /** A private student's open "when can we meet" request; null once answered. */
+  pending_request?: {
+    id: string;
+    windows: { weekday: number; start_minute: number; end_minute: number }[];
+    note: string | null;
+    created_at: string;
+  } | null;
   topics: CourseTopic[];
   /** Homework for the whole class and for individual meetings. */
   assignments: ClassAssignment[];

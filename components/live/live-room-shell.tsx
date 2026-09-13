@@ -10,6 +10,7 @@ import {
   type LiveTabKey,
 } from "@/components/live/live-room-tabs";
 import { MeetingRoom } from "@/components/live/meeting-room";
+import { PrivateScheduleRequest } from "@/components/live/private-schedule-request";
 import { SessionAfterClass } from "@/components/live/session-after-class";
 import { SessionList } from "@/components/live/session-list";
 import type { TutoringGroupRoom } from "@/lib/api/account-types";
@@ -43,15 +44,24 @@ export function LiveRoomShell({ room, currentProfileId }: LiveRoomShellProps) {
   const isPlanned = selected ? selected.id.startsWith("planned-") : false;
   const realSelectedId = selected && !isPlanned ? selected.id : null;
   const heading = selected ? sessionName(selected, room.title) : room.title;
+  // A 1:1 class with nothing on the calendar yet: ask for times, not a player.
+  const awaitingSchedule = room.capacity === 1 && timetable.length === 0;
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
       <main className="min-w-0 space-y-6">
-        <MeetingRoom
-          session={selected}
-          title={heading}
-          onGoAfterClass={() => setTab("afterClass")}
-        />
+        {awaitingSchedule ? (
+          <PrivateScheduleRequest
+            room={room}
+            onOpenChat={() => setTab("chat")}
+          />
+        ) : (
+          <MeetingRoom
+            session={selected}
+            title={heading}
+            onGoAfterClass={() => setTab("afterClass")}
+          />
+        )}
 
         <div className="rounded-2xl border border-theme bg-card">
           <LiveRoomTabs value={tab} onChange={setTab} />

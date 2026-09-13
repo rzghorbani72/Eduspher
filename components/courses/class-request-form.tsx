@@ -26,6 +26,9 @@ interface ClassRequestFormProps {
   courseId: string;
   isLoggedIn: boolean;
   loginHref: string;
+  /** The student's own paid private class: one seat, asked from its classroom. */
+  engagementId?: string;
+  onDone?: () => void;
 }
 
 /**
@@ -36,6 +39,8 @@ export function ClassRequestForm({
   courseId,
   isLoggedIn,
   loginHref,
+  engagementId,
+  onDone,
 }: ClassRequestFormProps) {
   const { t } = useTranslation();
   const [seats, setSeats] = useState("1");
@@ -58,7 +63,8 @@ export function ClassRequestForm({
     try {
       await postJson("/class-requests", {
         course_id: courseId,
-        seats: Math.max(1, Number(seats) || 1),
+        engagement_id: engagementId,
+        seats: engagementId ? 1 : Math.max(1, Number(seats) || 1),
         windows: windows.map((w) => ({
           weekday: w.weekday,
           start_minute: toMinute(w.from),
@@ -67,6 +73,7 @@ export function ClassRequestForm({
         note: note.trim() || undefined,
       });
       setDone(true);
+      onDone?.();
       logger.ok("ClassRequest", "Submitted", { course_id: courseId });
     } catch (err) {
       setError(t("courses.requestClassFailed"));
@@ -104,21 +111,25 @@ export function ClassRequestForm({
         void submit();
       }}
     >
-      <div className="space-y-1.5">
-        <Label htmlFor="request-seats">{t("courses.requestClassSeats")}</Label>
-        <Input
-          id="request-seats"
-          type="number"
-          min={1}
-          max={50}
-          value={seats}
-          onChange={(e) => setSeats(e.target.value)}
-          className="max-w-32"
-        />
-        <p className="text-xs text-muted">
-          {t("courses.requestClassSeatsHint")}
-        </p>
-      </div>
+      {engagementId ? null : (
+        <div className="space-y-1.5">
+          <Label htmlFor="request-seats">
+            {t("courses.requestClassSeats")}
+          </Label>
+          <Input
+            id="request-seats"
+            type="number"
+            min={1}
+            max={50}
+            value={seats}
+            onChange={(e) => setSeats(e.target.value)}
+            className="max-w-32"
+          />
+          <p className="text-xs text-muted">
+            {t("courses.requestClassSeatsHint")}
+          </p>
+        </div>
+      )}
 
       <div className="space-y-2">
         <Label>{t("courses.requestClassWindows")}</Label>

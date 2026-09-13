@@ -39,13 +39,24 @@ export function LiveCoursePanel({
             ? t("courses.liveSeatsSoldPerClass")
             : t("courses.liveNoClassesYet")}
         </p>
+        {hasOpenClasses ? (
+          <a
+            href="#group-classes-title"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+          >
+            <CalendarClock className="size-4" aria-hidden="true" />
+            {t("courses.liveSeeClasses")}
+          </a>
+        ) : null}
       </div>
       <div className="border-t border-theme px-6 py-5">
         <h3 className="text-sm font-black text-(--theme-foreground)">
           {t("courses.requestClassTitle")}
         </h3>
         <p className="mt-1 mb-4 text-xs text-(--theme-muted)">
-          {t("courses.requestClassHint")}
+          {hasOpenClasses
+            ? t("courses.requestClassHintWithClasses")
+            : t("courses.requestClassHint")}
         </p>
         <ClassRequestForm
           courseId={courseId}
