@@ -87,7 +87,7 @@ export const formatCurrency = (
   },
 ) => {
   const {
-    currency = "USD",
+    currency = "IRR",
     currency_symbol,
     currency_position = "after",
     divideBy = 1,
@@ -123,19 +123,24 @@ export const formatCurrency = (
       useGrouping: true, // Enable thousand separators
     }).format(numericValue);
 
-    return currency_position === "before"
-      ? `${symbol}${formattedNumber}`
-      : `${formattedNumber} ${symbol}`;
+    return toPersianDigits(
+      currency_position === "before"
+        ? `${symbol}${formattedNumber}`
+        : `${formattedNumber} ${symbol}`,
+      language,
+    );
   }
 
-  // Use Intl.NumberFormat for standard currencies with thousand separators
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: currency || "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-    useGrouping: true, // Enable thousand separators
-  }).format(numericValue);
+  return toPersianDigits(
+    new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency || "IRR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+      useGrouping: true,
+    }).format(numericValue),
+    language,
+  );
 };
 
 /**
@@ -154,7 +159,11 @@ export const formatCurrencyWithAcademy = (
   language?: string,
 ) => {
   if (!academy) {
-    return formatCurrency(value, { divideBy: divideBy || 1 });
+    return formatCurrency(value, {
+      currency: "IRR",
+      divideBy: divideBy || 1,
+      language,
+    });
   }
 
   // Every price in this system is stored in the major unit (Toman, euro), so a
@@ -232,7 +241,7 @@ export const formatCurrencyWithAcademy = (
   }
 
   return formatCurrency(value, {
-    currency: academy.currency || "USD",
+    currency: academy.currency || "IRR",
     currency_symbol: academy.currency_symbol,
     currency_position: academy.currency_position || "after",
     divideBy: divideBy ?? defaultDivideBy,

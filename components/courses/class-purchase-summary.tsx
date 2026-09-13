@@ -68,17 +68,19 @@ export function ClassPurchaseSummary({
   return (
     <section className="space-y-2 rounded-xl border border-theme p-3">
       <p className="text-xs text-muted">{t("checkout.classSummaryTitle")}</p>
-      <p className="text-sm font-bold text-(--theme-foreground)">
-        <span className="me-2 rounded-md bg-(--theme-primary-subtle) px-1.5 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
+      <header className="space-y-1">
+        <span className="inline-block rounded-md bg-(--theme-primary-subtle) px-1.5 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
           {t(CLASS_SIZE_LABEL[classSizeOf(group.capacity)])}
         </span>
-        {group.title}
+        <p className="text-sm font-bold text-(--theme-foreground)">
+          {group.title}
+        </p>
         {group.Tutor?.display_name ? (
-          <span className="ms-2 text-xs font-normal text-muted">
-            {group.Tutor.display_name}
-          </span>
+          <p className="text-xs text-muted">
+            {t("checkout.teacher")}: {group.Tutor.display_name}
+          </p>
         ) : null}
-      </p>
+      </header>
       <SlotChips slots={group.Slots} />
       <ul className="space-y-1">
         {facts.map((fact) => (

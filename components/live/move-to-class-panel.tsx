@@ -12,7 +12,7 @@ import { postJson } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { logger } from "@/lib/logging/app-logger";
 import { errorFields } from "@/lib/logging/error-fields";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import { formatCurrency, formatNumber, toPersianDigits } from "@/lib/utils";
 
 interface MoveToClassPanelProps {
   engagementId: string;
@@ -50,7 +50,11 @@ export function MoveToClassPanel({
     : Math.min(group.seats_left, group.capacity - 1);
   const cost = seats * group.seat_price;
   const remaining = paidValue - cost;
-  const fmt = (amount: number) => formatCurrency(amount, { divideBy: 1 });
+  const fmt = (amount: number) =>
+    toPersianDigits(
+      formatCurrency(amount, { divideBy: 1, language }),
+      language,
+    );
 
   const move = async (count: number) => {
     setBusy(true);

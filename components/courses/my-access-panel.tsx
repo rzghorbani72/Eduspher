@@ -11,6 +11,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { EnrolledSideCta, EnrolledSideOverview } from "@/components/courses/enrolled-side-overview";
+import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatDate } from "@/lib/utils";
 import type { CourseAccessRow, CourseAccessType } from "@/lib/api/account-types";
@@ -80,6 +81,7 @@ export function MyAccessPanel({
         stats={stats}
         isCertificate={isCertificate}
       />
+      <CreditBalanceNote className="mx-5 mt-3" />
 
       {showAccess ? (
         <div className="border-y border-theme bg-(--theme-primary)/8 px-5 py-4">

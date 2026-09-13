@@ -10,6 +10,7 @@ import { usePurchase } from "@/components/purchase/use-purchase";
 import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import { TutoringGroupCard } from "@/components/courses/tutoring-group-card";
 import { ClassPurchaseSummary } from "@/components/courses/class-purchase-summary";
+import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
 import { useSeatHold } from "@/components/purchase/use-seat-hold";
 import type { PublicTutoringGroup } from "@/lib/api/server";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
@@ -84,6 +85,7 @@ export const TutoringGroupsSection = ({
         <p className="text-sm text-muted">
           {t("courses.groupClassesSubtitle")}
         </p>
+        <CreditBalanceNote />
       </div>
 
       {closed ? (

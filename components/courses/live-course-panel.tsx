@@ -5,6 +5,7 @@ import { CalendarClock } from "lucide-react";
 import { ClassRequestForm } from "@/components/courses/class-request-form";
 import { LiveClassOptions } from "@/components/courses/live-class-options";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
+import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
 import type { PublicTutoringGroup } from "@/lib/api/server";
 import { useTranslation } from "@/lib/i18n/hooks";
 import { formatCurrencyWithAcademy } from "@/lib/utils";
@@ -48,6 +49,7 @@ export function LiveCoursePanel({
             ? t("courses.liveSeatsSoldPerClass")
             : t("courses.liveNoClassesYet")}
         </p>
+        {isLoggedIn ? <CreditBalanceNote className="mt-3" /> : null}
         {hasOpenClasses ? (
           <div className="pt-2">
             <LiveClassOptions groups={groups} format={format} />

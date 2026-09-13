@@ -4,7 +4,7 @@ import { CalendarClock } from "lucide-react";
 
 import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { toPersianDigits } from "@/lib/utils";
+import { formatLtrValue } from "@/lib/utils";
 
 export type SlotLike = {
   weekday: number;
@@ -14,6 +14,16 @@ export type SlotLike = {
 
 export const minuteLabel = (minute: number) =>
   `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
+
+export const clockRangeLabel = (
+  startMinute: number,
+  durationMinutes: number,
+  language?: string,
+) =>
+  formatLtrValue(
+    `${minuteLabel(startMinute)}–${minuteLabel(startMinute + durationMinutes)}`,
+    language,
+  );
 
 /** The weekly meeting times of a class as small chips. */
 export function SlotChips({ slots }: { slots: SlotLike[] }) {
@@ -30,9 +40,10 @@ export function SlotChips({ slots }: { slots: SlotLike[] }) {
             aria-hidden="true"
           />
           {t(weekdayLabelKey(slot.weekday) ?? "")}
-          <span dir="ltr">
-            {toPersianDigits(
-              `${minuteLabel(slot.start_minute)}–${minuteLabel(slot.start_minute + slot.duration_minutes)}`,
+          <span className="cd-price">
+            {clockRangeLabel(
+              slot.start_minute,
+              slot.duration_minutes,
               language,
             )}
           </span>

@@ -50,7 +50,7 @@ export function LiveClassOptions({ groups, format }: LiveClassOptionsProps) {
               </span>
             </span>
             <span className="shrink-0 text-end">
-              <span className="block text-sm font-black text-(--theme-foreground)">
+              <span className="cd-price block text-sm font-black whitespace-nowrap text-(--theme-foreground)">
                 {format(seatPriceOfGroup(group))}
               </span>
               <span className="block text-[11px] text-muted">

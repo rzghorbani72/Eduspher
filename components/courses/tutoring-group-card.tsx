@@ -3,21 +3,18 @@
 import { CalendarClock, Users } from "lucide-react";
 
 import { TutoringGroupPricing } from "@/components/courses/tutoring-group-pricing";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { clockRangeLabel } from "@/components/live/slot-chips";
 import {
   CLASS_SIZE_LABEL,
   classSizeOf,
   groupAnchorId,
   seatPriceOfGroup,
+  sessionsOfGroup,
 } from "@/lib/courses/live-course";
+import { useTranslation } from "@/lib/i18n/hooks";
 import { formatDate, formatNumber } from "@/lib/utils";
 import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
 import type { PublicTutoringGroup } from "@/lib/api/server";
-
-const minutesToTime = (minutes: number): string =>
-  `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(
-    minutes % 60,
-  ).padStart(2, "0")}`;
 
 type Props = {
   group: PublicTutoringGroup;
@@ -47,12 +44,21 @@ export const TutoringGroupCard = ({
   const price = seatPrice * seats;
   const waiting = group.status === "WAITING";
   const needed = Math.max(group.min_students - group.seats_taken, 0);
+  const sessions = sessionsOfGroup(group);
+  const sessionLabel =
+    sessions > 0
+      ? t("courses.sessionCount").replace(
+          "{count}",
+          formatNumber(sessions, language),
+        )
+      : null;
   // A student is buying a term, not just a weekday, so print the real dates.
   const termLabel = group.starts_on
     ? group.ends_on
       ? `${t("courses.groupTerm")}: ${formatDate(group.starts_on, language)} – ${formatDate(group.ends_on, language)}`
       : `${t("courses.groupStarts")}: ${formatDate(group.starts_on, language)}`
     : null;
+  const termFacts = [sessionLabel, termLabel].filter(Boolean).join(" · ");
 
   return (
     <article
@@ -82,9 +88,12 @@ export const TutoringGroupCard = ({
               <CalendarClock className="size-4 shrink-0 text-(--theme-primary)" />
               <span>
                 {key ? t(key) : ""}{" "}
-                <span dir="ltr">
-                  {minutesToTime(slot.start_minute)}–
-                  {minutesToTime(slot.start_minute + slot.duration_minutes)}
+                <span className="cd-price">
+                  {clockRangeLabel(
+                    slot.start_minute,
+                    slot.duration_minutes,
+                    language,
+                  )}
                 </span>
               </span>
               {slot.Lesson ? (
@@ -97,9 +106,9 @@ export const TutoringGroupCard = ({
         })}
       </ul>
 
-      {termLabel ? (
+      {termFacts ? (
         <p className="text-xs font-medium text-(--theme-foreground)">
-          {termLabel}
+          {termFacts}
         </p>
       ) : null}
 
@@ -135,7 +144,7 @@ export const TutoringGroupCard = ({
       />
 
       <div className="flex items-center justify-between gap-3">
-        <span className="text-lg font-black text-(--theme-foreground)">
+        <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
           {format(price)}
         </span>
         {group.joined && enrolledHref ? (

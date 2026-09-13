@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 
 import { getJson } from "@/lib/api/client";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, toPersianDigits } from "@/lib/utils";
 
 /** Store credit the signed-in student holds in this academy; silent when none. */
 export function CreditBalanceNote({ className }: { className?: string }) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
@@ -26,7 +26,10 @@ export function CreditBalanceNote({ className }: { className?: string }) {
       <Wallet className="size-4" aria-hidden="true" />
       {t("checkout.creditAvailable").replace(
         "{amount}",
-        formatCurrency(balance, { divideBy: 1 }),
+        toPersianDigits(
+          formatCurrency(balance, { divideBy: 1, language }),
+          language,
+        ),
       )}
       <span className="font-normal text-muted">
         · {t("checkout.creditNotCash")}

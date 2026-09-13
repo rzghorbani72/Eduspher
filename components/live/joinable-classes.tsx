@@ -9,7 +9,7 @@ import { SlotChips } from "@/components/live/slot-chips";
 import type { JoinableGroup } from "@/lib/api/account-types";
 import { CLASS_SIZE_LABEL, classSizeOf } from "@/lib/courses/live-course";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatCurrency, formatNumber } from "@/lib/utils";
+import { formatCurrency, formatNumber, toPersianDigits } from "@/lib/utils";
 
 interface JoinableClassesProps {
   engagementId: string;
@@ -33,7 +33,11 @@ export function JoinableClasses({
   const { t, language } = useTranslation();
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const fmt = (amount: number) => formatCurrency(amount, { divideBy: 1 });
+  const fmt = (amount: number) =>
+    toPersianDigits(
+      formatCurrency(amount, { divideBy: 1, language }),
+      language,
+    );
 
   return (
     <section className="space-y-3">
