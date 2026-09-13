@@ -1717,3 +1717,16 @@ export const uploadSupportAttachment = async (
     )
   ).data;
 };
+
+export type SeatHold = { hold_id: string; seats: number; expires_at: string };
+
+/** Hold seats in a class from the moment the student confirms a selection. */
+export const holdSeats = (groupId: string, seats: number, joinCode?: string) =>
+  postJson<{ data: SeatHold }>(`/tutoring/groups/${groupId}/hold`, {
+    seats,
+    ...(joinCode ? { join_code: joinCode } : {}),
+  });
+
+/** Give held seats back when checkout is closed without paying. */
+export const releaseSeatHold = (groupId: string) =>
+  deleteJson<{ status: string }>(`/tutoring/groups/${groupId}/hold`);

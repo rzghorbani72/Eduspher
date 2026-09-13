@@ -10,6 +10,9 @@ export type CheckoutQuote = {
   title: string;
   base_amount: number;
   discount_amount: number;
+  /** Store credit spent on this purchase; `credit_balance` is what the student holds. */
+  credit_amount: number;
+  credit_balance: number;
   final_amount: number;
   /** Added on top of the discounted price — already inside final_amount. */
   vat_amount: number;
@@ -66,9 +69,7 @@ export const useCheckoutQuote = (
           return;
         }
         const quotePayload =
-          data?.data ??
-          (data?.success ? data.quote : null) ??
-          null;
+          data?.data ?? (data?.success ? data.quote : null) ?? null;
         setQuote(quotePayload ? (quotePayload as CheckoutQuote) : null);
       } catch (error) {
         setQuote(null);

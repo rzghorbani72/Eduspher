@@ -968,6 +968,8 @@ export interface PublicTutoringGroup {
   course_id: string;
   /** Per-seat price of this class; null = the course's per-seat offer price. */
   seat_price: number | null;
+  /** May one buyer take every seat (a private booking of the class)? */
+  whole_class_booking: boolean;
   Slots: PublicTutoringGroupSlot[];
   Tutor: { id: string; display_name: string | null } | null;
   Offer: { id: string; price: number; currency: string } | null;

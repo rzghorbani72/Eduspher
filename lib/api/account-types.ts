@@ -338,11 +338,23 @@ export type JoinableGroup = {
   seat_price: number;
   /** The paid 1:1 seat covers this class; otherwise a seat must be bought. */
   can_join_free: boolean;
+  whole_class_booking: boolean;
   status: string;
   starts_on: string | null;
   ends_on: string | null;
+  term_weeks: number;
+  session_count: number | null;
   Slots: Omit<MyTutoringGroupSlot, "Lesson">[];
   Tutor: { id: string; display_name: string | null } | null;
+};
+
+export type MoveToClassResult = {
+  group_id: string;
+  seats: number;
+  credit_granted: number;
+  credit_balance: number;
+  /** Seats the paid value could not cover; bought as a normal checkout. */
+  top_up: { seats: number; seat_price: number; cash_before_vat: number } | null;
 };
 
 export type MyTutoringGroupRow = {
@@ -372,6 +384,8 @@ export type TutoringGroupRoom = MyTutoringGroup & {
   } | null;
   /** Open classes a paid 1:1 student may take a seat in; empty once scheduled. */
   joinable_groups?: JoinableGroup[];
+  /** What the 1:1 was paid, pre-VAT; the budget a move spends. */
+  paid_value?: number;
   topics: CourseTopic[];
   /** Homework for the whole class and for individual meetings. */
   assignments: ClassAssignment[];

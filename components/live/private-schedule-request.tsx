@@ -2,6 +2,7 @@
 
 import { CalendarClock, Clock3, MessageCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 import { ClassRequestForm } from "@/components/courses/class-request-form";
 import { JoinableClasses } from "@/components/live/joinable-classes";
@@ -31,6 +32,7 @@ export function PrivateScheduleRequest({
 }: PrivateScheduleRequestProps) {
   const { t, language } = useTranslation();
   const router = useRouter();
+  const requestRef = useRef<HTMLDivElement>(null);
   const pending = room.pending_request ?? null;
   const joinable = room.joinable_groups ?? [];
 
@@ -66,12 +68,16 @@ export function PrivateScheduleRequest({
           <JoinableClasses
             engagementId={room.id}
             groups={joinable}
+            paidValue={room.paid_value ?? 0}
             courseHref={courseHref}
+            onKeepPrivate={() =>
+              requestRef.current?.scrollIntoView({ behavior: "smooth" })
+            }
           />
         </div>
       ) : null}
 
-      <div className="mt-5">
+      <div className="mt-5" ref={requestRef}>
         {joinable.length ? (
           <h3 className="mb-3 text-sm font-black text-(--theme-foreground)">
             {t("live.privateOrAskTimes")}

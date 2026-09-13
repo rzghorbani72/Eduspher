@@ -10,6 +10,7 @@ import { usePurchase } from "@/components/purchase/use-purchase";
 import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
 import { totalOf } from "@/lib/courses/purchase-options";
+import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
 import { PurchaseOptionRow } from "@/components/courses/purchase-option-row";
 import { MyAccessPanel } from "@/components/courses/my-access-panel";
 import type { CourseAccessRow } from "@/lib/api/account-types";
@@ -131,6 +132,7 @@ export function PurchasePanel({
             ? t("courses.chooseEnrollMethodHint")
             : t("courses.singleEnrollMethodHint")}
         </p>
+        <CreditBalanceNote className="mt-3" />
       </div>
 
       <div role="radiogroup" className="space-y-2.5 px-4 py-3">

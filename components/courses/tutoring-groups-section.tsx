@@ -9,6 +9,8 @@ import { useEnrollmentClosed } from "@/components/academy/enrollment-status-prov
 import { usePurchase } from "@/components/purchase/use-purchase";
 import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
 import { TutoringGroupCard } from "@/components/courses/tutoring-group-card";
+import { ClassPurchaseSummary } from "@/components/courses/class-purchase-summary";
+import { useSeatHold } from "@/components/purchase/use-seat-hold";
 import type { PublicTutoringGroup } from "@/lib/api/server";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
 
@@ -41,6 +43,12 @@ export const TutoringGroupsSection = ({
   const [confirming, setConfirming] = useState<PublicTutoringGroup | null>(
     null,
   );
+  const hold = useSeatHold({
+    groupId: confirming?.id ?? null,
+    seats: confirming ? (seatsByGroup[confirming.id] ?? 1) : 1,
+    joinCode,
+    enabled: Boolean(confirming),
+  });
 
   if (!groups.length) return null;
 
@@ -51,15 +59,16 @@ export const TutoringGroupsSection = ({
 
   const pay = (
     group: PublicTutoringGroup,
-    couponCode?: string,
-    provider?: string,
+    couponCode: string | undefined,
+    provider: string | undefined,
+    useCredit: boolean,
   ) => {
     const seats = seatsFor(group);
     return purchase(
       { tutoring_group_id: group.id },
       seatPriceOfGroup(group) * seats,
       group.id,
-      { seats, joinCode, provider, couponCode },
+      { seats, joinCode, provider, couponCode, useCredit },
     );
   };
 
@@ -112,8 +121,17 @@ export const TutoringGroupsSection = ({
             seats: seatsFor(confirming),
             ...(joinCode ? { join_code: joinCode } : {}),
           }}
-          onPay={(couponCode, provider) =>
-            pay(confirming, couponCode, provider)
+          summary={
+            <ClassPurchaseSummary
+              group={confirming}
+              seats={seatsFor(confirming)}
+              seatPrice={seatPriceOfGroup(confirming)}
+              format={format}
+            />
+          }
+          hold={hold}
+          onPay={(couponCode, provider, useCredit) =>
+            pay(confirming, couponCode, provider, useCredit)
           }
           onClose={() => {
             reset();

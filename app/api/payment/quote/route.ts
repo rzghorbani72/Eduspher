@@ -41,6 +41,9 @@ export async function POST(request: NextRequest) {
       ...(typeof body.join_code === "string" && body.join_code
         ? { join_code: body.join_code }
         : {}),
+      ...(body.use_credit === false || body.use_credit === "false"
+        ? { use_credit: false }
+        : {}),
       ...(typeof body.coupon_code === "string" && body.coupon_code
         ? { coupon_code: body.coupon_code }
         : {}),

@@ -61,14 +61,20 @@ export const TutoringGroupPricing = ({
             <input
               type="number"
               min={1}
-              max={group.seats_left}
+              max={
+                group.whole_class_booking
+                  ? group.seats_left
+                  : Math.min(group.seats_left, group.capacity - 1)
+              }
               dir="ltr"
               value={seats}
               onChange={(e) =>
                 onSeatsChange(
                   Math.min(
                     Math.max(Number(e.target.value) || 1, 1),
-                    group.seats_left,
+                    group.whole_class_booking
+                      ? group.seats_left
+                      : Math.min(group.seats_left, group.capacity - 1),
                   ),
                 )
               }

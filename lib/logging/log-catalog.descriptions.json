@@ -27,6 +27,8 @@
     "Payments.CheckoutStartFailed": "Payments checkout start failed.",
     "Payments.RefundRequested": "Payments refund requested.",
     "Payments.RefundRequestRejected": "Payments refund request rejected.",
+    "Payments.SeatHoldExpired": "The 10-minute seat hold ran out while the checkout dialog was open.",
+    "Payments.SeatHoldFailed": "Holding seats at checkout open failed (class full or not on sale).",
     "RequestStorm.Tripped": "A single route exceeded the per-window hit limit in the student's browser; protected routes force a sign-out and storage wipe.",
     "SitePreview.PresetEmpty": "Site preview preset empty.",
     "SitePreview.PresetFetchFailed": "Site preview preset fetch failed.",

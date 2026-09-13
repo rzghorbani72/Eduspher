@@ -34,6 +34,8 @@ type PayOptions = {
   /** Group class only: seats to book at once, and a private class share code. */
   seats?: number;
   joinCode?: string;
+  /** False keeps store credit for later and pays the full price now. */
+  useCredit?: boolean;
 };
 
 /**
@@ -72,8 +74,10 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
             amount,
             ...(options?.provider && { provider: options.provider }),
             ...(options?.couponCode && { coupon_code: options.couponCode }),
-            ...(options?.seats && options.seats > 1 && { seats: options.seats }),
+            ...(options?.seats &&
+              options.seats > 1 && { seats: options.seats }),
             ...(options?.joinCode && { join_code: options.joinCode }),
+            ...(options?.useCredit === false && { use_credit: false }),
           }),
         });
 
@@ -111,7 +115,9 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
         }
 
         const redirectUrl =
-          typeof payload?.redirect_url === "string" ? payload.redirect_url : null;
+          typeof payload?.redirect_url === "string"
+            ? payload.redirect_url
+            : null;
 
         logger.ok("Payments", "CheckoutStarted", {
           kind,

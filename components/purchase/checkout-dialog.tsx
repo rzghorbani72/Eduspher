@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { AlertCircle, CheckCircle2, Loader2, Lock, X } from "lucide-react";
+import { Loader2, Lock, X } from "lucide-react";
 
 import { useTranslation } from "@/lib/i18n/hooks";
-import { gatewayLabel } from "@/lib/account-labels";
 import { cn, formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
 import { useCheckoutQuote } from "@/components/purchase/use-checkout-quote";
 import { useDialogAction } from "@/hooks/use-dialog-action";
@@ -15,7 +14,11 @@ import type {
   PurchaseSelector,
 } from "@/components/purchase/use-purchase";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
-import { SummaryRow } from "@/components/purchase/summary-row";
+import { CouponField } from "@/components/purchase/coupon-field";
+import { CheckoutPriceRows } from "@/components/purchase/checkout-price-rows";
+import { GatewayButtons } from "@/components/purchase/gateway-buttons";
+import { HoldCountdown } from "@/components/purchase/hold-countdown";
+import type { SeatHoldState } from "@/components/purchase/use-seat-hold";
 
 interface CheckoutDialogProps {
   selector: PurchaseSelector;
@@ -29,11 +32,16 @@ interface CheckoutDialogProps {
   gateways: PurchaseGateway[];
   onPay: (
     couponCode: string | undefined,
-    provider?: string,
+    provider: string | undefined,
+    useCredit: boolean,
   ) => Promise<PurchaseOutcome | void>;
   onClose: () => void;
   /** Extra pricing inputs the selector cannot carry, e.g. group class seats. */
   extras?: Record<string, string | number>;
+  /** What exactly is being bought, in the buyer's words (class, times, seats). */
+  summary?: ReactNode;
+  /** Seats held while this dialog is open. */
+  hold?: SeatHoldState;
 }
 
 /**
@@ -51,13 +59,20 @@ export function CheckoutDialog({
   onPay,
   onClose,
   extras,
+  summary,
+  hold,
 }: CheckoutDialogProps) {
   const { t, language: uiLanguage } = useTranslation();
   const language = languageProp ?? uiLanguage;
   const [code, setCode] = useState("");
   const [applied, setApplied] = useState<string | undefined>(undefined);
+  const [useCredit, setUseCredit] = useState(true);
   const [payingProvider, setPayingProvider] = useState<string | null>(null);
-  const { quote, loading, reprice } = useCheckoutQuote(selector, true, extras);
+  const { quote, loading, reprice } = useCheckoutQuote(selector, true, {
+    ...extras,
+    ...(useCredit ? {} : { use_credit: "false" }),
+  });
+  const blocked = Boolean(hold?.expired || hold?.full);
   const { pending: busy, run } = useDialogAction(
     onClose,
     t("checkout.paymentFailed"),
@@ -66,18 +81,20 @@ export function CheckoutDialog({
   /** A gateway list is not an outcome, so only a real result closes the dialog. */
   const pay = (couponCode: string | undefined, provider?: string) =>
     void run(async () => {
-      const outcome = await onPay(couponCode, provider);
+      const outcome = await onPay(couponCode, provider, useCredit);
       return { keepOpen: Boolean(outcome && outcome.needsGateway) };
     });
 
   const fmt = (amount: number) =>
     toPersianDigits(
-      formatCurrencyWithAcademy(Math.round(amount), currencyConfig, undefined, language),
+      formatCurrencyWithAcademy(
+        Math.round(amount),
+        currencyConfig,
+        undefined,
+        language,
+      ),
       language,
     );
-
-  const total = quote?.final_amount ?? fallbackAmount;
-  const percent = Math.round((quote?.vat_rate ?? 0) * 100);
 
   const applyCode = async () => {
     const trimmed = code.trim();
@@ -86,7 +103,8 @@ export function CheckoutDialog({
   };
 
   /** Feedback belongs to the code that was actually priced, not to new typing. */
-  const codeIsPriced = applied !== undefined && code.trim() === applied && !loading;
+  const codeIsPriced =
+    applied !== undefined && code.trim() === applied && !loading;
   const couponAccepted = codeIsPriced && Boolean(quote?.coupon_applied);
   const couponRejected = codeIsPriced && Boolean(quote?.coupon_invalid);
 
@@ -100,7 +118,10 @@ export function CheckoutDialog({
       <div className="w-full max-w-md overflow-hidden rounded-2xl border border-theme bg-card shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-theme px-5 py-4">
           <div>
-            <h2 id="checkout-dialog-title" className="text-base font-black text-(--theme-foreground)">
+            <h2
+              id="checkout-dialog-title"
+              className="text-base font-black text-(--theme-foreground)"
+            >
               {t("checkout.confirmTitle")}
             </h2>
             <p className="mt-0.5 text-xs text-muted">
@@ -118,101 +139,48 @@ export function CheckoutDialog({
         </div>
 
         <div className="space-y-3 px-5 py-4 text-sm">
-          <div className="flex items-center gap-2">
-            <input
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              placeholder={t("checkout.discountCode")}
-              className={cn(
-                "h-11 min-w-0 flex-1 rounded-xl border bg-transparent px-3 text-sm text-(--theme-foreground) placeholder:text-muted outline-none focus:border-(--theme-primary)",
-                couponAccepted
-                  ? "border-emerald-500"
-                  : couponRejected
-                    ? "border-red-500"
-                    : "border-theme",
-              )}
+          {summary}
+          {hold ? (
+            <HoldCountdown
+              expiresAt={hold.expiresAt}
+              expired={hold.expired}
+              onExpired={hold.markExpired}
+              onRenew={hold.renew}
             />
-            <button
-              type="button"
-              onClick={() => void applyCode()}
-              disabled={loading}
-              className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl border border-theme px-4 text-xs font-bold text-(--theme-foreground) disabled:opacity-60"
-            >
-              {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              {t("checkout.applyDiscount")}
-            </button>
-          </div>
-
-          {couponAccepted && (
-            <p className="flex items-center gap-1.5 text-xs text-emerald-600">
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              {t("checkout.couponApplied")}
+          ) : null}
+          {hold?.full ? (
+            <p role="alert" className="text-xs text-red-600">
+              {t("courses.groupFull")}
             </p>
-          )}
-
-          {couponRejected && (
-            <p role="alert" className="flex items-center gap-1.5 text-xs text-red-600">
-              <AlertCircle className="h-3.5 w-3.5" />
-              {t("checkout.couponInvalid")}
-            </p>
-          )}
-
-          <div className="space-y-2 rounded-xl bg-surface p-3.5">
-            <SummaryRow label={t("checkout.itemPrice")} value={fmt(quote?.base_amount ?? fallbackAmount)} />
-            {(quote?.discount_amount ?? 0) > 0 && (
-              <SummaryRow
-                label={t("checkout.discount")}
-                value={`− ${fmt(quote?.discount_amount ?? 0)}`}
-                tone="positive"
-              />
-            )}
-            {(quote?.vat_amount ?? 0) > 0 && (
-              <SummaryRow
-                label={t("checkout.vatIncluded").replace(
-                  "{percent}",
-                  toPersianDigits(String(percent), language),
-                )}
-                value={`+ ${fmt(quote?.vat_amount ?? 0)}`}
-              />
-            )}
-            <div className="flex items-center justify-between border-t border-theme pt-2">
-              <span className="font-bold text-(--theme-foreground)">{t("checkout.total")}</span>
-              <span className="cd-price text-lg font-black text-(--theme-foreground)">
-                {loading ? "…" : fmt(total)}
-              </span>
-            </div>
-          </div>
+          ) : null}
+          <CouponField
+            code={code}
+            onCodeChange={setCode}
+            onApply={() => void applyCode()}
+            loading={loading}
+            accepted={couponAccepted}
+            rejected={couponRejected}
+          />
+          <CheckoutPriceRows
+            quote={quote}
+            fallbackAmount={fallbackAmount}
+            loading={loading}
+            useCredit={useCredit}
+            onUseCreditChange={setUseCredit}
+            fmt={fmt}
+          />
 
           {gateways.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-bold text-(--theme-foreground)">
-                {t("checkout.chooseGateway")}
-              </p>
-              {gateways.map((gateway) => {
-                const label = gatewayLabel(gateway.provider, t);
-                const showLabel =
-                  label.toUpperCase() === gateway.provider.toUpperCase()
-                    ? gateway.display_name
-                    : label;
-                return (
-                <button
-                  key={gateway.provider}
-                  type="button"
-                  disabled={busy}
-                  onClick={() => {
-                    setPayingProvider(gateway.provider);
-                    pay(couponAccepted ? applied : undefined, gateway.provider);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-xl border border-theme px-4 py-3 text-start text-sm font-bold text-(--theme-foreground) hover:bg-surface disabled:opacity-60"
-                >
-                  {busy && payingProvider === gateway.provider && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
-                  {showLabel}
-                </button>
-                );
-              })}
-            </div>
+            <GatewayButtons
+              gateways={gateways}
+              busy={busy}
+              disabled={blocked}
+              payingProvider={payingProvider}
+              onPick={(provider) => {
+                setPayingProvider(provider);
+                pay(couponAccepted ? applied : undefined, provider);
+              }}
+            />
           )}
         </div>
 
@@ -220,11 +188,13 @@ export function CheckoutDialog({
           {gateways.length === 0 && (
             <button
               type="button"
-              disabled={busy || loading}
+              disabled={busy || loading || blocked}
               onClick={() => pay(couponAccepted ? applied : undefined)}
               className={cn(
                 "cd-cta-btn flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold text-white",
-                busy || loading ? "cursor-not-allowed opacity-60" : "hover:-translate-y-0.5",
+                busy || loading || blocked
+                  ? "cursor-not-allowed opacity-60"
+                  : "hover:-translate-y-0.5",
               )}
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -240,5 +210,7 @@ export function CheckoutDialog({
     </div>
   );
 
-  return typeof document === "undefined" ? dialog : createPortal(dialog, document.body);
+  return typeof document === "undefined"
+    ? dialog
+    : createPortal(dialog, document.body);
 }

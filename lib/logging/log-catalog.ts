@@ -115,6 +115,16 @@ export const LOG_CATALOG = {
         level: 'warn',
         fields: ['has_reason'] as const,
       },
+      SeatHoldExpired: {
+        description: 'The 10-minute seat hold ran out while the checkout dialog was open.',
+        level: 'warn',
+        fields: ['group_id'] as const,
+      },
+      SeatHoldFailed: {
+        description: 'Holding seats at checkout open failed (class full or not on sale).',
+        level: 'warn',
+        fields: [] as const,
+      },
     },
   },
   RequestStorm: {
@@ -153,7 +163,7 @@ export const LOG_CATALOG = {
       JoinedClassFromPrivate: {
         description: 'A paid 1:1 student moved into an open class from the classroom.',
         level: 'info',
-        fields: ['group_id'] as const,
+        fields: ['credit_granted', 'group_id', 'seats'] as const,
       },
     },
   },
