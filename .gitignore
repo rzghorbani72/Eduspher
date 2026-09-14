@@ -47,8 +47,11 @@ next-env.d.ts
 /playwright/.cache/
 .last-run.json
 
-# Local knowledge-graph cache (lives at monorepo root, not in this app)
-graphify-out/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# AI tooling: skills + settings.json are committed; local state is not
+.claude/settings.local.json
+.claude/worktrees/
+graphify-out/

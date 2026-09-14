@@ -1,21 +1,35 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
+import prettier from 'eslint-config-prettier';
+import unusedImports from 'eslint-plugin-unused-imports';
+import { OVERSIZE_ALLOWLIST, MAX_LINES } from './eslint.oversize.mjs';
 
-const eslintConfig = defineConfig([
+const LINE_LIMITS = { skipBlankLines: true, skipComments: true };
+// Route folders like app/(x)/[id] contain glob metacharacters.
+const asGlob = (files) => files.map((f) => f.replace(/[[\]]/g, '\\$&'));
+
+export default defineConfig([
+  globalIgnores(['.claude/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'scripts/**/*.cjs', 'graphify-out/**', 'lib/logging/log-catalog.ts']),
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    // Node tooling scripts (CommonJS + sharp require)
-    "scripts/**/*.cjs",
-    "graphify-out/**",
-  ]),
+  prettier,
+  {
+    plugins: { 'unused-imports': unusedImports },
+    rules: {
+      'unused-imports/no-unused-imports': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-console': 'error',
+      'max-lines': ['error', { max: MAX_LINES, ...LINE_LIMITS }],
+      'max-lines-per-function': ['warn', { max: 80, ...LINE_LIMITS }],
+    },
+  },
+  {
+    files: ['e2e/**', 'tests/**', 'loadtests/**', 'components/ui/**', 'lib/i18n/translations/**'],
+    rules: { 'max-lines': 'off', 'max-lines-per-function': 'off' },
+  },
+  { files: ['scripts/**', 'tools/**', 'lib/logging/**', 'app/api/log/**'], rules: { 'no-console': 'off' } },
+  { files: asGlob(OVERSIZE_ALLOWLIST), rules: { 'max-lines': 'off' } },
 ]);
-
-export default eslintConfig;

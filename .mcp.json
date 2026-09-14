@@ -1,7 +1,8 @@
 {
   "mcpServers": {
-    "Sentry": {
-      "url": "https://mcp.sentry.dev/mcp/rzghorbani72-mentoma/javascript-nextjs"
-    }
+    "Sentry": { "url": "https://mcp.sentry.dev/mcp/rzghorbani72-mentoma/javascript-nextjs" },
+    "playwright": { "type": "stdio", "command": "npx", "args": ["-y", "@playwright/mcp@latest"] },
+    "context7": { "type": "stdio", "command": "npx", "args": ["-y", "@upstash/context7-mcp"] },
+    "figma-dev-mode-mcp-server": { "type": "http", "url": "http://127.0.0.1:3845/mcp" }
   }
 }

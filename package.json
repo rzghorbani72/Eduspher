@@ -6,8 +6,8 @@
     "dev": "next dev -p 5000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "prepare": "husky || true",
+    "lint": "eslint . && node tools/check-oversize-allowlist.mjs",
+    "prepare": "husky",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:smoke": "playwright test smoke",
@@ -15,8 +15,12 @@
     "load-test:basic": "k6 run loadtests/basic-frontend-load-test.js",
     "load-test:journey": "k6 run loadtests/user-journey-load-test.js",
     "load-test": "npm run load-test:basic",
-    "log:catalog": "cd .. && node Backend/tools/build-log-catalog.mjs",
-    "log:catalog:check": "cd .. && node Backend/tools/build-log-catalog.mjs --check"
+    "log:catalog": "node ../Backend/tools/build-log-catalog.mjs",
+    "log:catalog:check": "node ../Backend/tools/build-log-catalog.mjs --check",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@animateicons/react": "^0.5.0",
@@ -55,9 +59,23 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "husky": "^9.1.7",
+    "lint-staged": "^17.5.1",
+    "prettier": "^3.9.6",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.1.17",
     "ts-node": "^10.9.2",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }
