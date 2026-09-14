@@ -1,30 +1,30 @@
-import { marked } from "marked";
+import { marked } from 'marked';
 
-import { sanitizeHtml } from "@/lib/sanitize";
+import { sanitizeHtml } from '@/lib/sanitize';
 
 const ALLOWED_TAGS = [
-  "p",
-  "br",
-  "strong",
-  "em",
-  "u",
-  "s",
-  "del",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "ul",
-  "ol",
-  "li",
-  "a",
-  "blockquote",
-  "code",
-  "pre",
-  "hr",
+  'p',
+  'br',
+  'strong',
+  'em',
+  'u',
+  's',
+  'del',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'ul',
+  'ol',
+  'li',
+  'a',
+  'blockquote',
+  'code',
+  'pre',
+  'hr',
 ];
 
-const ALLOWED_ATTR = ["href", "target", "rel"];
+const ALLOWED_ATTR = ['href', 'target', 'rel'];
 
 const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/|#)/i;
 
@@ -37,10 +37,10 @@ const SAFE_HREF = /^(https?:\/\/|mailto:|tel:|\/|#)/i;
  */
 function escapeRawHtml(markdown: string): string {
   return markdown
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/&lt;(\/?)u&gt;/gi, "<$1u>");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/&lt;(\/?)u&gt;/gi, '<$1u>');
 }
 
 /** Drops `javascript:` and other non-navigational link targets. */
@@ -58,7 +58,7 @@ function stripUnsafeHrefs(html: string): string {
 function healPaddedEmphasis(markdown: string): string {
   return markdown.replace(
     /(\*\*|~~)(\s+)?([^\s*~][^*~\n]*?)(\s+)?\1/g,
-    (_match, marker: string, lead = "", text: string, trail = "") =>
+    (_match, marker: string, lead = '', text: string, trail = '') =>
       `${lead}${marker}${text}${marker}${trail}`,
   );
 }
@@ -68,21 +68,15 @@ function healPaddedEmphasis(markdown: string): string {
  * `## Title` in the middle of a paragraph, so a newline is inserted first.
  */
 function healInlineHeadings(markdown: string): string {
-  return markdown.replace(
-    /(?<!^)(?<!\n)[ \t]+(#{1,4}[ \t]+\S)/gm,
-    "\n\n$1",
-  );
+  return markdown.replace(/(?<!^)(?<!\n)[ \t]+(#{1,4}[ \t]+\S)/gm, '\n\n$1');
 }
 
 function toHtml(markdown: string): string {
-  const html = marked.parse(
-    healInlineHeadings(escapeRawHtml(healPaddedEmphasis(markdown))),
-    {
-      async: false,
-      breaks: true,
-      gfm: true,
-    },
-  );
+  const html = marked.parse(healInlineHeadings(escapeRawHtml(healPaddedEmphasis(markdown))), {
+    async: false,
+    breaks: true,
+    gfm: true,
+  });
   return stripUnsafeHrefs(html);
 }
 
@@ -97,13 +91,13 @@ export function renderMarkdown(markdown: string): string {
 /** Markdown reduced to readable plain text, for list rows and previews. */
 export function markdownToPlainText(markdown: string): string {
   return toHtml(markdown)
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, ' ')
     .trim();
 }

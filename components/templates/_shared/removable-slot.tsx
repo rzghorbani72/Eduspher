@@ -54,7 +54,9 @@ export function RemovableSlot({
       <span className="text-xl leading-none text-zinc-400" aria-hidden="true">
         +
       </span>
-      <span className="text-xs font-semibold text-zinc-600">{mediaKey ? 'بارگذاری عکس' : 'بازگرداندن بلوک'}</span>
+      <span className="text-xs font-semibold text-zinc-600">
+        {mediaKey ? 'بارگذاری عکس' : 'بازگرداندن بلوک'}
+      </span>
     </button>
   );
 }

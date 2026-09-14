@@ -12,10 +12,10 @@ export type PurchaseSelector = {
 };
 
 export const SELECTOR_KEYS = [
-  "course_id",
-  "offer_id",
-  "academy_plan_id",
-  "tutoring_offer_id",
-  "tutoring_group_id",
-  "payment_plan_id",
+  'course_id',
+  'offer_id',
+  'academy_plan_id',
+  'tutoring_offer_id',
+  'tutoring_group_id',
+  'payment_plan_id',
 ] as const satisfies readonly (keyof PurchaseSelector)[];

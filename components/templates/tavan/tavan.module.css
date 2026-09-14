@@ -99,10 +99,26 @@
     transparent 3px 16px
   );
 }
-.t1 { background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-deep)); }
-.t2 { background-image: linear-gradient(215deg, var(--theme-accent), var(--theme-deep)); }
-.t3 { background-image: linear-gradient(75deg, var(--theme-deep), color-mix(in srgb, var(--theme-primary) 70%, var(--theme-deep))); }
-.t4 { background-image: linear-gradient(300deg, color-mix(in srgb, var(--theme-accent) 70%, var(--theme-deep)), var(--theme-deep)); }
+.t1 {
+  background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-deep));
+}
+.t2 {
+  background-image: linear-gradient(215deg, var(--theme-accent), var(--theme-deep));
+}
+.t3 {
+  background-image: linear-gradient(
+    75deg,
+    var(--theme-deep),
+    color-mix(in srgb, var(--theme-primary) 70%, var(--theme-deep))
+  );
+}
+.t4 {
+  background-image: linear-gradient(
+    300deg,
+    color-mix(in srgb, var(--theme-accent) 70%, var(--theme-deep)),
+    var(--theme-deep)
+  );
+}
 
 /* Header logo mark: a clipped plate with two bar slots. */
 .logoMark {
@@ -121,5 +137,11 @@
   height: 6px;
   background: var(--theme-on-primary);
 }
-.logoMark::before { top: 13px; width: 26px; }
-.logoMark::after { top: 25px; width: 16px; }
+.logoMark::before {
+  top: 13px;
+  width: 26px;
+}
+.logoMark::after {
+  top: 25px;
+  width: 16px;
+}

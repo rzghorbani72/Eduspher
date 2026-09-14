@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
-import { Loader2, Lock, X } from "lucide-react";
+import { useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { Loader2, Lock, X } from 'lucide-react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, formatCurrencyWithAcademy, toPersianDigits } from "@/lib/utils";
-import { useCheckoutQuote } from "@/components/purchase/use-checkout-quote";
-import { useDialogAction } from "@/hooks/use-dialog-action";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn, formatCurrencyWithAcademy, toPersianDigits } from '@/lib/utils';
+import { useCheckoutQuote } from '@/components/purchase/use-checkout-quote';
+import { useDialogAction } from '@/hooks/use-dialog-action';
 import type {
   PurchaseGateway,
   PurchaseOutcome,
   PurchaseSelector,
-} from "@/components/purchase/use-purchase";
-import type { CurrencyConfig } from "@/components/courses/purchase-panel";
-import { CouponField } from "@/components/purchase/coupon-field";
-import { CheckoutPriceRows } from "@/components/purchase/checkout-price-rows";
-import { GatewayButtons } from "@/components/purchase/gateway-buttons";
-import { HoldCountdown } from "@/components/purchase/hold-countdown";
-import type { SeatHoldState } from "@/components/purchase/use-seat-hold";
+} from '@/components/purchase/use-purchase';
+import type { CurrencyConfig } from '@/components/courses/purchase-panel';
+import { CouponField } from '@/components/purchase/coupon-field';
+import { CheckoutPriceRows } from '@/components/purchase/checkout-price-rows';
+import { GatewayButtons } from '@/components/purchase/gateway-buttons';
+import { HoldCountdown } from '@/components/purchase/hold-countdown';
+import type { SeatHoldState } from '@/components/purchase/use-seat-hold';
 
 interface CheckoutDialogProps {
   selector: PurchaseSelector;
@@ -64,19 +64,16 @@ export function CheckoutDialog({
 }: CheckoutDialogProps) {
   const { t, language: uiLanguage } = useTranslation();
   const language = languageProp ?? uiLanguage;
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
   const [applied, setApplied] = useState<string | undefined>(undefined);
   const [useCredit, setUseCredit] = useState(true);
   const [payingProvider, setPayingProvider] = useState<string | null>(null);
   const { quote, loading, reprice } = useCheckoutQuote(selector, true, {
     ...extras,
-    ...(useCredit ? {} : { use_credit: "false" }),
+    ...(useCredit ? {} : { use_credit: 'false' }),
   });
   const blocked = Boolean(hold?.expired || hold?.full);
-  const { pending: busy, run } = useDialogAction(
-    onClose,
-    t("checkout.paymentFailed"),
-  );
+  const { pending: busy, run } = useDialogAction(onClose, t('checkout.paymentFailed'));
 
   /** A gateway list is not an outcome, so only a real result closes the dialog. */
   const pay = (couponCode: string | undefined, provider?: string) =>
@@ -87,12 +84,7 @@ export function CheckoutDialog({
 
   const fmt = (amount: number) =>
     toPersianDigits(
-      formatCurrencyWithAcademy(
-        Math.round(amount),
-        currencyConfig,
-        undefined,
-        language,
-      ),
+      formatCurrencyWithAcademy(Math.round(amount), currencyConfig, undefined, language),
       language,
     );
 
@@ -103,8 +95,7 @@ export function CheckoutDialog({
   };
 
   /** Feedback belongs to the code that was actually priced, not to new typing. */
-  const codeIsPriced =
-    applied !== undefined && code.trim() === applied && !loading;
+  const codeIsPriced = applied !== undefined && code.trim() === applied && !loading;
   const couponAccepted = codeIsPriced && Boolean(quote?.coupon_applied);
   const couponRejected = codeIsPriced && Boolean(quote?.coupon_invalid);
 
@@ -115,24 +106,24 @@ export function CheckoutDialog({
       aria-labelledby="checkout-dialog-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
     >
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-theme bg-card shadow-2xl">
-        <div className="flex items-start justify-between gap-3 border-b border-theme px-5 py-4">
+      <div className="border-theme bg-card w-full max-w-md overflow-hidden rounded-2xl border shadow-2xl">
+        <div className="border-theme flex items-start justify-between gap-3 border-b px-5 py-4">
           <div>
             <h2
               id="checkout-dialog-title"
               className="text-base font-black text-(--theme-foreground)"
             >
-              {t("checkout.confirmTitle")}
+              {t('checkout.confirmTitle')}
             </h2>
-            <p className="mt-0.5 text-xs text-muted">
-              {quote?.title ?? fallbackTitle ?? t("checkout.confirmHint")}
+            <p className="text-muted mt-0.5 text-xs">
+              {quote?.title ?? fallbackTitle ?? t('checkout.confirmHint')}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label={t("common.cancel")}
-            className="rounded-full p-1 text-muted hover:text-(--theme-foreground)"
+            aria-label={t('common.cancel')}
+            className="text-muted rounded-full p-1 hover:text-(--theme-foreground)"
           >
             <X className="h-4 w-4" />
           </button>
@@ -150,7 +141,7 @@ export function CheckoutDialog({
           ) : null}
           {hold?.full ? (
             <p role="alert" className="text-xs text-red-600">
-              {t("courses.groupFull")}
+              {t('courses.groupFull')}
             </p>
           ) : null}
           <CouponField
@@ -191,26 +182,24 @@ export function CheckoutDialog({
               disabled={busy || loading || blocked}
               onClick={() => pay(couponAccepted ? applied : undefined)}
               className={cn(
-                "cd-cta-btn flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold text-white",
+                'cd-cta-btn flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold text-white',
                 busy || loading || blocked
-                  ? "cursor-not-allowed opacity-60"
-                  : "hover:-translate-y-0.5",
+                  ? 'cursor-not-allowed opacity-60'
+                  : 'hover:-translate-y-0.5',
               )}
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-              {t("checkout.payNow")}
+              {t('checkout.payNow')}
             </button>
           )}
-          <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted">
+          <p className="text-muted flex items-center justify-center gap-1.5 text-[11px]">
             <Lock className="h-3 w-3" />
-            {t("courses.securePaymentNote")}
+            {t('courses.securePaymentNote')}
           </p>
         </div>
       </div>
     </div>
   );
 
-  return typeof document === "undefined"
-    ? dialog
-    : createPortal(dialog, document.body);
+  return typeof document === 'undefined' ? dialog : createPortal(dialog, document.body);
 }

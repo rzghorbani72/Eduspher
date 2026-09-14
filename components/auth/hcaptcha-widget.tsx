@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-const SCRIPT_SRC = "https://js.hcaptcha.com/1/api.js";
+const SCRIPT_SRC = 'https://js.hcaptcha.com/1/api.js';
 
 declare global {
   interface Window {
@@ -12,8 +12,8 @@ declare global {
         options: {
           sitekey: string;
           callback: (token: string) => void;
-          "expired-callback"?: () => void;
-        }
+          'expired-callback'?: () => void;
+        },
       ) => string;
       reset: (widgetId?: string) => void;
     };
@@ -24,10 +24,10 @@ function loadHCaptchaScript(): Promise<void> {
   if (window.hcaptcha) return Promise.resolve();
   const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
   if (existing) {
-    return new Promise((resolve) => existing.addEventListener("load", () => resolve()));
+    return new Promise((resolve) => existing.addEventListener('load', () => resolve()));
   }
   return new Promise((resolve) => {
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.src = SCRIPT_SRC;
     script.async = true;
     script.defer = true;
@@ -56,7 +56,7 @@ export function HCaptchaWidget({ onVerify }: { onVerify: (token: string) => void
       widgetId = window.hcaptcha.render(containerRef.current, {
         sitekey: siteKey,
         callback: onVerify,
-        "expired-callback": () => onVerify(""),
+        'expired-callback': () => onVerify(''),
       });
     });
 

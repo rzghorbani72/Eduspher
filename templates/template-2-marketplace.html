@@ -9,54 +9,36 @@
     </style>
     <script data-omelette-injected>
       (() => {
-        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var j = ['https://claude.ai', 'https://preview.claude.ai'];
         var x = true;
         var S = 30000;
         var f = 3000;
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
           const H = window.Babel;
-          const G = "om-src-id";
-          if (
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[G])
-          ) {
+          const G = 'om-src-id';
+          if (H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[G])) {
             H.registerPlugin(G, ({ types: Y }) => ({
               visitor: {
                 JSXOpeningElement(U, Q) {
                   const J = U.node;
-                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  if (J.name && J.name.type === 'JSXMemberExpression') return;
                   for (let V = 0; V < J.attributes.length; V++) {
                     const L = J.attributes[V];
-                    if (
-                      L.type === "JSXAttribute" &&
-                      L.name &&
-                      L.name.name === "data-om-id"
-                    )
-                      return;
+                    if (L.type === 'JSXAttribute' && L.name && L.name.name === 'data-om-id') return;
                   }
-                  const W =
-                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const W = (Q.file && Q.file.opts && Q.file.opts.filename) || '?';
                   const Z = J.loc && J.loc.start;
                   const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
                   J.attributes.push(
-                    Y.jsxAttribute(
-                      Y.jsxIdentifier("data-om-id"),
-                      Y.stringLiteral(z),
-                    ),
+                    Y.jsxAttribute(Y.jsxIdentifier('data-om-id'), Y.stringLiteral(z)),
                   );
                 },
               },
             }));
           }
-          const k = "om-text-extract";
+          const k = 'om-text-extract';
           let A = false;
-          if (
-            x &&
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[k])
-          ) {
+          if (x && H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[k])) {
             const Y = window.React;
             if (Y && Y.useSyncExternalStore && Y.createElement) {
               A = true;
@@ -81,8 +63,8 @@
               window.__OmT = function z(V) {
                 Y.useSyncExternalStore(W, Z, Z);
                 return Y.createElement(
-                  "span",
-                  { "data-om-text": V.i, className: "__om-t" },
+                  'span',
+                  { 'data-om-text': V.i, className: '__om-t' },
                   V.i in U ? U[V.i] : V.children,
                 );
               };
@@ -103,20 +85,17 @@
                   alt: 1,
                   title: 1,
                   label: 1,
-                  "aria-label": 1,
-                  "aria-description": 1,
-                  "aria-placeholder": 1,
+                  'aria-label': 1,
+                  'aria-description': 1,
+                  'aria-placeholder': 1,
                 };
                 const _ = ($, C) =>
                   z.logicalExpression(
-                    "??",
+                    '??',
                     z.memberExpression(
                       z.logicalExpression(
-                        "||",
-                        z.memberExpression(
-                          z.identifier("window"),
-                          z.identifier("__omTextO"),
-                        ),
+                        '||',
+                        z.memberExpression(z.identifier('window'), z.identifier('__omTextO')),
                         z.objectExpression([]),
                       ),
                       z.stringLiteral($),
@@ -124,28 +103,22 @@
                     ),
                     C,
                   );
-                const E = ($) =>
-                  ($.file && $.file.opts && $.file.opts.filename) || "?";
-                const B = ($) => ($.file && $.file.code) || "";
+                const E = ($) => ($.file && $.file.opts && $.file.opts.filename) || '?';
+                const B = ($) => ($.file && $.file.code) || '';
                 const b = ($, C) => {
                   const X = (F) =>
                     F &&
                     F.start != null &&
                     F.end != null &&
-                    (F.type === "StringLiteral" ||
-                      (F.type === "TemplateLiteral" &&
-                        F.expressions.length === 0))
+                    (F.type === 'StringLiteral' ||
+                      (F.type === 'TemplateLiteral' && F.expressions.length === 0))
                       ? [F.start, F.end]
                       : null;
                   const N = X(C);
                   if (N) return N;
-                  if (C && C.type === "Identifier") {
+                  if (C && C.type === 'Identifier') {
                     const F = $.scope.getBinding(C.name);
-                    if (
-                      F &&
-                      F.constant &&
-                      F.path.node.type === "VariableDeclarator"
-                    ) {
+                    if (F && F.constant && F.path.node.type === 'VariableDeclarator') {
                       return X(F.path.node.init);
                     }
                   }
@@ -158,22 +131,17 @@
                     F = true;
                     return z.jsxElement(
                       z.jsxOpeningElement(
-                        z.jsxIdentifier("__OmT"),
-                        [
-                          z.jsxAttribute(
-                            z.jsxIdentifier("i"),
-                            z.stringLiteral(K),
-                          ),
-                        ],
+                        z.jsxIdentifier('__OmT'),
+                        [z.jsxAttribute(z.jsxIdentifier('i'), z.stringLiteral(K))],
                         false,
                       ),
-                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      z.jsxClosingElement(z.jsxIdentifier('__OmT')),
                       [q],
                       false,
                     );
                   };
                   const D = N.children.map((K) => {
-                    if (K.type === "JSXText") {
+                    if (K.type === 'JSXText') {
                       if (K.start == null || K.end == null) return K;
                       const q = X.slice(K.start, K.end);
                       const R = q.length - q.trimStart().length;
@@ -181,7 +149,7 @@
                       if (R + m >= q.length) return K;
                       return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
                     }
-                    if (K.type === "JSXExpressionContainer") {
+                    if (K.type === 'JSXExpressionContainer') {
                       const q = b($, K.expression);
                       if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
                     }
@@ -197,23 +165,19 @@
                       const F = {};
                       for (let w = 0; w < X.attributes.length; w++) {
                         const D = X.attributes[w];
-                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        if (D.type !== 'JSXAttribute' || !D.name) continue;
                         const K = D.name.name;
                         if (!L[K]) continue;
-                        if (!D.value || D.value.type !== "StringLiteral")
-                          continue;
-                        if (D.value.start == null || D.value.end == null)
-                          continue;
+                        if (!D.value || D.value.type !== 'StringLiteral') continue;
+                        if (D.value.start == null || D.value.end == null) continue;
                         const q = `txt:${N}:${D.value.start}:${D.value.end}`;
                         F[K] = q;
-                        D.value = z.jsxExpressionContainer(
-                          _(q, z.stringLiteral(D.value.value)),
-                        );
+                        D.value = z.jsxExpressionContainer(_(q, z.stringLiteral(D.value.value)));
                       }
                       if (Object.keys(F).length) {
                         X.attributes.push(
                           z.jsxAttribute(
-                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.jsxIdentifier('data-om-text-attrs'),
                             z.stringLiteral(JSON.stringify(F)),
                           ),
                         );
@@ -222,8 +186,8 @@
                     JSXElement($, C) {
                       const X = $.node.openingElement;
                       const N = X && X.name && X.name.name;
-                      if (N === "__OmT") return;
-                      if (typeof N === "string" && V[N]) return;
+                      if (N === '__OmT') return;
+                      if (typeof N === 'string' && V[N]) return;
                       M($, E(C), B(C));
                     },
                     JSXFragment($, C) {
@@ -234,27 +198,17 @@
               });
             }
           }
-          const u = A
-            ? ["transform-react-jsx-source", G, k]
-            : ["transform-react-jsx-source", G];
+          const u = A ? ['transform-react-jsx-source', G, k] : ['transform-react-jsx-source', G];
           document
-            .querySelectorAll(
-              'script[type="text/babel"],script[type="text/jsx"]',
-            )
+            .querySelectorAll('script[type="text/babel"],script[type="text/jsx"]')
             .forEach((Y, U) => {
-              const Q = Y.getAttribute("data-plugins") || "";
+              const Q = Y.getAttribute('data-plugins') || '';
               const J = u.filter((W) => Q.indexOf(W) < 0);
               if (J.length) {
-                Y.setAttribute(
-                  "data-plugins",
-                  Q ? `${Q},${J.join(",")}` : J.join(","),
-                );
+                Y.setAttribute('data-plugins', Q ? `${Q},${J.join(',')}` : J.join(','));
               }
-              if (!Y.hasAttribute("data-filename")) {
-                Y.setAttribute(
-                  "data-filename",
-                  Y.getAttribute("src") || `inline-${U}`,
-                );
+              if (!Y.hasAttribute('data-filename')) {
+                Y.setAttribute('data-filename', Y.getAttribute('src') || `inline-${U}`);
               }
             });
         });
@@ -262,71 +216,69 @@
         if (y && y !== window) {
           const H = (Q, J) => {
             try {
-              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, '*');
             } catch {}
           };
-          ["log", "warn", "error"].forEach((Q) => {
+          ['log', 'warn', 'error'].forEach((Q) => {
             const J = console[Q];
             console[Q] = (...W) => {
               const Z = W.map((z) => {
                 try {
-                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                  return typeof z === 'object' ? JSON.stringify(z) : String(z);
                 } catch {
                   try {
                     return String(z);
                   } catch {
-                    return "[unstringifiable]";
+                    return '[unstringifiable]';
                   }
                 }
-              }).join(" ");
+              }).join(' ');
               H(Q, Z);
               J.apply(console, W);
             };
           });
           window.addEventListener(
-            "error",
+            'error',
             (Q) => {
               const J = Q.target;
               if (J && J !== window && J.tagName) {
-                const W = J.src || J.href || "";
-                H("resource_error", `${J.tagName} failed to load: ${W}`);
+                const W = J.src || J.href || '';
+                H('resource_error', `${J.tagName} failed to load: ${W}`);
               } else {
                 H(
-                  "error",
-                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                  'error',
+                  `${Q.message || 'Unknown error'} at ${Q.filename || '?'}:${Q.lineno || 0}:${Q.colno || 0}`,
                 );
               }
             },
             true,
           );
-          window.addEventListener("unhandledrejection", (Q) => {
+          window.addEventListener('unhandledrejection', (Q) => {
             const J = Q.reason;
-            const W =
-              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
-            H("error", `Unhandled rejection: ${W}`);
+            const W = J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H('error', `Unhandled rejection: ${W}`);
           });
           const G = () => {
             try {
               y.postMessage(
                 {
-                  type: "omelette:height",
+                  type: 'omelette:height',
                   height: document.documentElement.scrollHeight,
                 },
-                "*",
+                '*',
               );
             } catch {}
           };
-          if (document.readyState === "complete") G();
-          else window.addEventListener("load", G);
-          if (window.ResizeObserver)
-            new ResizeObserver(G).observe(document.documentElement);
+          if (document.readyState === 'complete') G();
+          else window.addEventListener('load', G);
+          if (window.ResizeObserver) new ResizeObserver(G).observe(document.documentElement);
           const k = {};
           let A = 0;
           window.claude = {
             complete(Q) {
               return new Promise((J, W) => {
                 if (!j.length) {
-                  W(new Error("claude.complete: no parent origin"));
+                  W(new Error('claude.complete: no parent origin'));
                   return;
                 }
                 const Z = `c${++A}`;
@@ -336,7 +288,7 @@
                     W(new Error(`claude.complete: no data for ${S / 1000}s`));
                   }, S);
                 const V = z();
-                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                k[Z] = { resolve: J, reject: W, text: '', t: V, arm: z };
                 try {
                   for (const L of j) {
                     y.postMessage({ __om_api: true, id: Z, body: Q }, L);
@@ -370,7 +322,7 @@
                       {
                         __om_file: true,
                         id: z,
-                        op: "write",
+                        op: 'write',
                         path: Q,
                         content: J,
                       },
@@ -391,27 +343,22 @@
               return JSON.stringify(String(Q));
             }
           };
-          window.addEventListener("message", (Q) => {
+          window.addEventListener('message', (Q) => {
             if (j.indexOf(Q.origin) < 0) return;
             if (Q.source !== y) return;
             const J = Q.data;
             if (!J) return;
-            if (J.type === "omelette-preview-refresh") {
+            if (J.type === 'omelette-preview-refresh') {
               if (
-                typeof J.token !== "string" ||
-                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
-                  J.token,
-                )
+                typeof J.token !== 'string' ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token)
               )
                 return;
-              const z = Math.max(
-                1,
-                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
-              );
+              const z = Math.max(1, Math.floor((J.expiresAt || 0) - Date.now() / 1000));
               document.cookie =
-                "__Host-omelette-preview=" +
+                '__Host-omelette-preview=' +
                 J.token +
-                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                '; Path=/; Secure; SameSite=None; Partitioned; Max-Age=' +
                 z;
               return;
             }
@@ -421,7 +368,7 @@
               clearTimeout(z.t);
               delete u[J.id];
               if (J.ok) z.resolve();
-              else z.reject(new Error(J.error || "write failed"));
+              else z.reject(new Error(J.error || 'write failed'));
               return;
             }
             if (J.__om_api_r) {
@@ -450,14 +397,11 @@
             if (!J.__om_eval) return;
             const W = J;
             const Z = (z) => {
-              Q.source.postMessage(
-                { ...z, __om_eval_r: 1, id: W.id },
-                Q.origin,
-              );
+              Q.source.postMessage({ ...z, __om_eval_r: 1, id: W.id }, Q.origin);
             };
             try {
               const z = (0, eval)(W.code);
-              if (z && typeof z.then === "function") {
+              if (z && typeof z.then === 'function') {
                 z.then(
                   (V) => Z({ ok: 1, v: U(V) }),
                   (V) => Z({ ok: 0, e: String(V) }),
@@ -476,53 +420,46 @@
     <meta charset="UTF-8" />
     <style>
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 300;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 400;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 500;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 600;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 700;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 800;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 900;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -553,7 +490,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         background: var(--white);
         color: var(--dark);
         line-height: 1.7;
@@ -1287,60 +1224,28 @@
       }
 
       .t1 {
-        background: linear-gradient(
-          135deg,
-          oklch(65% 0.18 280),
-          oklch(55% 0.22 300)
-        );
+        background: linear-gradient(135deg, oklch(65% 0.18 280), oklch(55% 0.22 300));
       }
       .t2 {
-        background: linear-gradient(
-          135deg,
-          oklch(68% 0.18 50),
-          oklch(62% 0.2 30)
-        );
+        background: linear-gradient(135deg, oklch(68% 0.18 50), oklch(62% 0.2 30));
       }
       .t3 {
-        background: linear-gradient(
-          135deg,
-          oklch(62% 0.2 168),
-          oklch(55% 0.18 195)
-        );
+        background: linear-gradient(135deg, oklch(62% 0.2 168), oklch(55% 0.18 195));
       }
       .t4 {
-        background: linear-gradient(
-          135deg,
-          oklch(60% 0.2 230),
-          oklch(52% 0.22 255)
-        );
+        background: linear-gradient(135deg, oklch(60% 0.2 230), oklch(52% 0.22 255));
       }
       .t5 {
-        background: linear-gradient(
-          135deg,
-          oklch(65% 0.18 15),
-          oklch(58% 0.2 340)
-        );
+        background: linear-gradient(135deg, oklch(65% 0.18 15), oklch(58% 0.2 340));
       }
       .t6 {
-        background: linear-gradient(
-          135deg,
-          oklch(70% 0.16 85),
-          oklch(63% 0.18 65)
-        );
+        background: linear-gradient(135deg, oklch(70% 0.16 85), oklch(63% 0.18 65));
       }
       .t7 {
-        background: linear-gradient(
-          135deg,
-          oklch(62% 0.2 200),
-          oklch(55% 0.22 225)
-        );
+        background: linear-gradient(135deg, oklch(62% 0.2 200), oklch(55% 0.22 225));
       }
       .t8 {
-        background: linear-gradient(
-          135deg,
-          oklch(68% 0.18 130),
-          oklch(60% 0.2 150)
-        );
+        background: linear-gradient(135deg, oklch(68% 0.18 130), oklch(60% 0.2 150));
       }
       .av-a {
         background: oklch(62% 0.18 280);
@@ -1365,42 +1270,42 @@
       /* ── Real sample images via picsum.photos ── */
       /* Course card thumbnails */
       .t1 {
-        background-image: url("https://picsum.photos/seed/uxdesign/400/225");
+        background-image: url('https://picsum.photos/seed/uxdesign/400/225');
         background-size: cover;
         background-position: center;
       }
       .t2 {
-        background-image: url("https://picsum.photos/seed/branding22/400/225");
+        background-image: url('https://picsum.photos/seed/branding22/400/225');
         background-size: cover;
         background-position: center;
       }
       .t3 {
-        background-image: url("https://picsum.photos/seed/python3/400/225");
+        background-image: url('https://picsum.photos/seed/python3/400/225');
         background-size: cover;
         background-position: center;
       }
       .t4 {
-        background-image: url("https://picsum.photos/seed/reactjs/400/225");
+        background-image: url('https://picsum.photos/seed/reactjs/400/225');
         background-size: cover;
         background-position: center;
       }
       .t5 {
-        background-image: url("https://picsum.photos/seed/webdev5/400/225");
+        background-image: url('https://picsum.photos/seed/webdev5/400/225');
         background-size: cover;
         background-position: center;
       }
       .t6 {
-        background-image: url("https://picsum.photos/seed/excel6/400/225");
+        background-image: url('https://picsum.photos/seed/excel6/400/225');
         background-size: cover;
         background-position: center;
       }
       .t7 {
-        background-image: url("https://picsum.photos/seed/marketing7/400/225");
+        background-image: url('https://picsum.photos/seed/marketing7/400/225');
         background-size: cover;
         background-position: center;
       }
       .t8 {
-        background-image: url("https://picsum.photos/seed/photo8/400/225");
+        background-image: url('https://picsum.photos/seed/photo8/400/225');
         background-size: cover;
         background-position: center;
       }
@@ -1412,16 +1317,16 @@
         background-position: center top !important;
       }
       .inst-avatar.av-a {
-        background-image: url("https://picsum.photos/id/1005/80/80");
+        background-image: url('https://picsum.photos/id/1005/80/80');
       }
       .inst-avatar.av-b {
-        background-image: url("https://picsum.photos/id/1012/80/80");
+        background-image: url('https://picsum.photos/id/1012/80/80');
       }
       .inst-avatar.av-c {
-        background-image: url("https://picsum.photos/id/1027/80/80");
+        background-image: url('https://picsum.photos/id/1027/80/80');
       }
       .inst-avatar.av-d {
-        background-image: url("https://picsum.photos/id/1074/80/80");
+        background-image: url('https://picsum.photos/id/1074/80/80');
       }
       /* Testimonial avatars */
       .testi-av {
@@ -1431,18 +1336,18 @@
         background-position: center top !important;
       }
       .testi-av.av-a {
-        background-image: url("https://picsum.photos/id/1006/64/64");
+        background-image: url('https://picsum.photos/id/1006/64/64');
       }
       .testi-av.av-b {
-        background-image: url("https://picsum.photos/id/1011/64/64");
+        background-image: url('https://picsum.photos/id/1011/64/64');
       }
       .testi-av.av-c {
-        background-image: url("https://picsum.photos/id/1025/64/64");
+        background-image: url('https://picsum.photos/id/1025/64/64');
       }
     </style>
 
     <style>
-      [data-theme="dark"] {
+      [data-theme='dark'] {
         --orange: oklch(70% 0.18 52);
         --orange-dark: oklch(60% 0.18 52);
         --orange-light: oklch(20% 0.06 52);
@@ -1455,127 +1360,127 @@
         --purple: oklch(65% 0.22 280);
         --star: #fbbf24;
       }
-      [data-theme="dark"] body {
+      [data-theme='dark'] body {
         background: #0f172a;
         color: #f1f5f9;
       }
-      [data-theme="dark"] .topbar {
+      [data-theme='dark'] .topbar {
         background: #1e293b;
       }
-      [data-theme="dark"] nav {
+      [data-theme='dark'] nav {
         background: #0f172a;
         border-color: #1e293b;
       }
-      [data-theme="dark"] .nav-logo {
+      [data-theme='dark'] .nav-logo {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .search-bar {
+      [data-theme='dark'] .search-bar {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .search-bar input {
+      [data-theme='dark'] .search-bar input {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .nav-link {
+      [data-theme='dark'] .nav-link {
         color: #cbd5e1;
       }
-      [data-theme="dark"] .btn-outline {
+      [data-theme='dark'] .btn-outline {
         border-color: #475569;
         color: #cbd5e1;
       }
-      [data-theme="dark"] .btn-outline:hover {
+      [data-theme='dark'] .btn-outline:hover {
         background: #1e293b;
       }
-      [data-theme="dark"] .btn-fill {
+      [data-theme='dark'] .btn-fill {
         background: #334155;
         border-color: #334155;
       }
-      [data-theme="dark"] .cat-strip {
+      [data-theme='dark'] .cat-strip {
         background: #0f172a;
         border-color: #1e293b;
       }
-      [data-theme="dark"] .cat-item {
+      [data-theme='dark'] .cat-item {
         color: #64748b;
       }
-      [data-theme="dark"] .cat-item:hover,
-      [data-theme="dark"] .cat-item.active {
+      [data-theme='dark'] .cat-item:hover,
+      [data-theme='dark'] .cat-item.active {
         color: #f1f5f9;
         border-color: #f1f5f9;
       }
-      [data-theme="dark"] .ccard {
+      [data-theme='dark'] .ccard {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .ccard:hover {
+      [data-theme='dark'] .ccard:hover {
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
       }
-      [data-theme="dark"] .ccard-title {
+      [data-theme='dark'] .ccard-title {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .ccard-instructor {
+      [data-theme='dark'] .ccard-instructor {
         color: #94a3b8;
       }
-      [data-theme="dark"] .ccard-count {
+      [data-theme='dark'] .ccard-count {
         color: #64748b;
       }
-      [data-theme="dark"] .ccard-meta {
+      [data-theme='dark'] .ccard-meta {
         color: #64748b;
       }
-      [data-theme="dark"] .price-now {
+      [data-theme='dark'] .price-now {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .price-was {
+      [data-theme='dark'] .price-was {
         color: #64748b;
       }
-      [data-theme="dark"] .section-header h2 {
+      [data-theme='dark'] .section-header h2 {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .cat-block {
+      [data-theme='dark'] .cat-block {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .cat-block:hover {
+      [data-theme='dark'] .cat-block:hover {
         border-color: var(--orange);
       }
-      [data-theme="dark"] .cat-name {
+      [data-theme='dark'] .cat-name {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .cat-count {
+      [data-theme='dark'] .cat-count {
         color: #64748b;
       }
-      [data-theme="dark"] .why-section {
+      [data-theme='dark'] .why-section {
         background: #1e293b;
       }
-      [data-theme="dark"] .why-title {
+      [data-theme='dark'] .why-title {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .why-item h4 {
+      [data-theme='dark'] .why-item h4 {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .why-item p {
+      [data-theme='dark'] .why-item p {
         color: #94a3b8;
       }
-      [data-theme="dark"] .inst-card {
+      [data-theme='dark'] .inst-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .inst-name {
+      [data-theme='dark'] .inst-name {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .inst-stat .is-val {
+      [data-theme='dark'] .inst-stat .is-val {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .testi-c {
+      [data-theme='dark'] .testi-c {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .testi-q {
+      [data-theme='dark'] .testi-q {
         color: #cbd5e1;
       }
-      [data-theme="dark"] .testi-nm {
+      [data-theme='dark'] .testi-nm {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .nav-cats {
+      [data-theme='dark'] .nav-cats {
         color: #f1f5f9;
       }
 
@@ -1596,8 +1501,7 @@
   </head>
   <body>
     <div class="topbar">
-      🔥 پیشنهاد ویژه — ۸۰٪ تخفیف روی دوره‌های برتر. تا یکشنبه فرصت داری.<a
-        href="#"
+      🔥 پیشنهاد ویژه — ۸۰٪ تخفیف روی دوره‌های برتر. تا یکشنبه فرصت داری.<a href="#"
         >همین حالا ببین</a
       >
     </div>
@@ -1614,9 +1518,7 @@
         <span style="font-size: 20px; cursor: pointer">🛒</span>
         <button class="btn-outline">ورود</button>
         <button class="btn-fill">ثبت‌نام</button>
-        <button class="theme-toggle-btn" id="themeBtn2" onclick="toggleT2()">
-          🌙
-        </button>
+        <button class="theme-toggle-btn" id="themeBtn2" onclick="toggleT2()">🌙</button>
       </div>
     </nav>
 
@@ -1638,8 +1540,8 @@
         <div class="hero-tag">جدید در منتوما</div>
         <h1>بدون محدودیت یاد بگیر.</h1>
         <p>
-          دسترسی به ۹۴٬۰۰۰+ دوره توسط متخصصان واقعی. همین امروز شروع کن و در
-          حرفه‌ات سرمایه‌گذاری کن.
+          دسترسی به ۹۴٬۰۰۰+ دوره توسط متخصصان واقعی. همین امروز شروع کن و در حرفه‌ات سرمایه‌گذاری
+          کن.
         </p>
         <div class="hero-search">
           <input type="text" placeholder="می‌خواهی چه چیزی یاد بگیری؟" />
@@ -1682,12 +1584,7 @@
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t1">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >UI/UX</span
               >
             </div>
@@ -1697,27 +1594,20 @@
             <div class="ccard-title">بوت‌کمپ کامل طراحی UI/UX ۱۴۰۵</div>
             <div class="ccard-instructor">سارا چن</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۹</span
-              ><span class="ccard-star">★★★★★</span
+              <span class="ccard-score">۴.۹</span><span class="ccard-star">★★★★★</span
               ><span class="ccard-count">(۱۲٬۳۰۴)</span>
             </div>
             <div class="ccard-meta">۳۲ ساعت · همه سطوح · به‌روز شده</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۴.۹۹</span
-            ><span class="price-was">$۸۴.۹۹</span
+            <span class="price-now">$۱۴.۹۹</span><span class="price-was">$۸۴.۹۹</span
             ><span class="price-badge-hot">پرفروش</span>
           </div>
         </div>
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t4">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >React</span
               >
             </div>
@@ -1727,27 +1617,20 @@
             <div class="ccard-title">ری‌اکت و تایپ‌اسکریپت — راهنمای کامل</div>
             <div class="ccard-instructor">الکس کیم</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۸</span
-              ><span class="ccard-star">★★★★★</span
+              <span class="ccard-score">۴.۸</span><span class="ccard-star">★★★★★</span
               ><span class="ccard-count">(۸٬۷۲۱)</span>
             </div>
             <div class="ccard-meta">۲۸ ساعت · متوسط</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۲.۹۹</span
-            ><span class="price-was">$۷۹.۹۹</span
+            <span class="price-now">$۱۲.۹۹</span><span class="price-was">$۷۹.۹۹</span
             ><span class="price-badge-hot">پرفروش</span>
           </div>
         </div>
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t2">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >برند</span
               >
             </div>
@@ -1757,27 +1640,20 @@
             <div class="ccard-title">مسترکلاس استراتژی برند و هویت بصری</div>
             <div class="ccard-instructor">میا تورز</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۷</span
-              ><span class="ccard-star">★★★★☆</span
+              <span class="ccard-score">۴.۷</span><span class="ccard-star">★★★★☆</span
               ><span class="ccard-count">(۳٬۴۰۵)</span>
             </div>
             <div class="ccard-meta">۱۸ ساعت · مبتدی</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۱.۹۹</span
-            ><span class="price-was">$۶۹.۹۹</span
+            <span class="price-now">$۱۱.۹۹</span><span class="price-was">$۶۹.۹۹</span
             ><span class="price-badge-new">جدید</span>
           </div>
         </div>
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t6">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >Excel</span
               >
             </div>
@@ -1787,15 +1663,13 @@
             <div class="ccard-title">اکسل — از صفر تا داشبورد حرفه‌ای</div>
             <div class="ccard-instructor">جوردن پارک</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۹</span
-              ><span class="ccard-star">★★★★★</span
+              <span class="ccard-score">۴.۹</span><span class="ccard-star">★★★★★</span
               ><span class="ccard-count">(۲۱٬۰۴۸)</span>
             </div>
             <div class="ccard-meta">۲۴ ساعت · همه سطوح</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۳.۹۹</span
-            ><span class="price-was">$۷۴.۹۹</span
+            <span class="price-now">$۱۳.۹۹</span><span class="price-was">$۷۴.۹۹</span
             ><span class="price-badge-hot">پرفروش</span>
           </div>
         </div>
@@ -1845,10 +1719,7 @@
       <div class="banner-inner">
         <div>
           <h2>منتوما برای تیم‌ها</h2>
-          <p>
-            دسترسی تمام تیم به ۹۴٬۰۰۰+ دوره. پیشرفت را رصد کن، بازده را بسنج، با
-            هم رشد کن.
-          </p>
+          <p>دسترسی تمام تیم به ۹۴٬۰۰۰+ دوره. پیشرفت را رصد کن، بازده را بسنج، با هم رشد کن.</p>
         </div>
         <button class="btn-white">← منتوما برای تیم‌ها</button>
       </div>
@@ -1863,12 +1734,7 @@
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t3">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >Python</span
               >
             </div>
@@ -1878,27 +1744,20 @@
             <div class="ccard-title">پایتون برای همه — از مبتدی تا پیشرفته</div>
             <div class="ccard-instructor">نادیا راس</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۸</span
-              ><span class="ccard-star">★★★★★</span
+              <span class="ccard-score">۴.۸</span><span class="ccard-star">★★★★★</span
               ><span class="ccard-count">(۱۸٬۲۰۰)</span>
             </div>
             <div class="ccard-meta">۴۰ ساعت · همه سطوح</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۴.۹۹</span
-            ><span class="price-was">$۸۹.۹۹</span
+            <span class="price-now">$۱۴.۹۹</span><span class="price-was">$۸۹.۹۹</span
             ><span class="price-badge-hot">پرفروش</span>
           </div>
         </div>
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t5">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >iOS</span
               >
             </div>
@@ -1908,27 +1767,20 @@
             <div class="ccard-title">توسعه iOS با SwiftUI — دوره کامل</div>
             <div class="ccard-instructor">کریس هاموند</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۷</span
-              ><span class="ccard-star">★★★★☆</span
+              <span class="ccard-score">۴.۷</span><span class="ccard-star">★★★★☆</span
               ><span class="ccard-count">(۶٬۵۴۰)</span>
             </div>
             <div class="ccard-meta">۳۶ ساعت · متوسط</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۲.۹۹</span
-            ><span class="price-was">$۷۹.۹۹</span
+            <span class="price-now">$۱۲.۹۹</span><span class="price-was">$۷۹.۹۹</span
             ><span class="price-badge-new">داغ</span>
           </div>
         </div>
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t7">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >Node.js</span
               >
             </div>
@@ -1938,46 +1790,35 @@
             <div class="ccard-title">میکروسرویس‌های Node.js و REST API</div>
             <div class="ccard-instructor">سام لیو</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۹</span
-              ><span class="ccard-star">★★★★★</span
+              <span class="ccard-score">۴.۹</span><span class="ccard-star">★★★★★</span
               ><span class="ccard-count">(۴٬۱۲۰)</span>
             </div>
             <div class="ccard-meta">۲۲ ساعت · پیشرفته</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۱۳.۹۹</span
-            ><span class="price-was">$۷۴.۹۹</span>
+            <span class="price-now">$۱۳.۹۹</span><span class="price-was">$۷۴.۹۹</span>
           </div>
         </div>
         <div class="ccard">
           <div class="ccard-thumb">
             <div class="thumb-bg t8">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 700;
-                  color: rgba(255, 255, 255, 0.85);
-                "
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255, 255, 255, 0.85)"
                 >Git</span
               >
             </div>
             <div class="play-btn"><div class="play-circle">▶</div></div>
           </div>
           <div class="ccard-body">
-            <div class="ccard-title">
-              گیت و گیت‌هاب — راهنمای توسعه‌دهنده حرفه‌ای
-            </div>
+            <div class="ccard-title">گیت و گیت‌هاب — راهنمای توسعه‌دهنده حرفه‌ای</div>
             <div class="ccard-instructor">تیلور بروکس</div>
             <div class="ccard-rating">
-              <span class="ccard-score">۴.۸</span
-              ><span class="ccard-star">★★★★★</span
+              <span class="ccard-score">۴.۸</span><span class="ccard-star">★★★★★</span
               ><span class="ccard-count">(۹٬۸۸۰)</span>
             </div>
             <div class="ccard-meta">۱۲ ساعت · همه سطوح</div>
           </div>
           <div class="ccard-price-row">
-            <span class="price-now">$۹.۹۹</span
-            ><span class="price-was">$۵۹.۹۹</span
+            <span class="price-now">$۹.۹۹</span><span class="price-was">$۵۹.۹۹</span
             ><span class="price-badge-hot">پرفروش</span>
           </div>
         </div>
@@ -1993,8 +1834,8 @@
             <div>
               <h4>مهارت‌های عملی و کاربردی</h4>
               <p>
-                هر دوره حول نتایج واقعی طراحی شده. آنچه کارفرمایان می‌خواهند،
-                توسط متخصصان میدانی تدریس می‌شود.
+                هر دوره حول نتایج واقعی طراحی شده. آنچه کارفرمایان می‌خواهند، توسط متخصصان میدانی
+                تدریس می‌شود.
               </p>
             </div>
           </div>
@@ -2003,8 +1844,7 @@
             <div>
               <h4>هر کجا، هر زمان یاد بگیر</h4>
               <p>
-                دروس را برای دسترسی آفلاین دانلود کن. موبایل، دسکتاپ، تبلت —
-                یادگیری همه جا با توست.
+                دروس را برای دسترسی آفلاین دانلود کن. موبایل، دسکتاپ، تبلت — یادگیری همه جا با توست.
               </p>
             </div>
           </div>
@@ -2013,8 +1853,7 @@
             <div>
               <h4>گواهینامه‌هایی که اهمیت دارند</h4>
               <p>
-                گواهینامه‌های تأییدشده برای هر دوره کسب کن و مستقیم به پروفایل
-                لینکدینت اضافه کن.
+                گواهینامه‌های تأییدشده برای هر دوره کسب کن و مستقیم به پروفایل لینکدینت اضافه کن.
               </p>
             </div>
           </div>
@@ -2118,8 +1957,8 @@
         <div class="testi-c">
           <div class="testi-stars2"><span>★★★★★</span></div>
           <div class="testi-q">
-            «پلتفرم‌های دیگری را هم امتحان کردم، اما کیفیت دوره‌های منتوما در
-            سطح دیگری است. مدرسان واقعاً در صنعت کار می‌کنند و این مشخص است.»
+            «پلتفرم‌های دیگری را هم امتحان کردم، اما کیفیت دوره‌های منتوما در سطح دیگری است. مدرسان
+            واقعاً در صنعت کار می‌کنند و این مشخص است.»
           </div>
           <div class="testi-who">
             <div class="testi-av av-a">جم</div>
@@ -2132,8 +1971,8 @@
         <div class="testi-c">
           <div class="testi-stars2"><span>★★★★★</span></div>
           <div class="testi-q">
-            «بوت‌کمپ کامل UX را در ۳ هفته تمام کردم و ماه بعدش پیشنهاد کار
-            گرفتم. پروژه‌های عملی کلید موفقیتم بودند.»
+            «بوت‌کمپ کامل UX را در ۳ هفته تمام کردم و ماه بعدش پیشنهاد کار گرفتم. پروژه‌های عملی
+            کلید موفقیتم بودند.»
           </div>
           <div class="testi-who">
             <div class="testi-av av-b">رض</div>
@@ -2146,8 +1985,8 @@
         <div class="testi-c">
           <div class="testi-stars2"><span>★★★★★</span></div>
           <div class="testi-q">
-            «ارزش فوق‌العاده‌ای دارد. کمتر از ۵۰ دلار برای دوره‌هایی پرداختم که
-            مهارت‌هایی به ارزش هزاران دلار به من دادند.»
+            «ارزش فوق‌العاده‌ای دارد. کمتر از ۵۰ دلار برای دوره‌هایی پرداختم که مهارت‌هایی به ارزش
+            هزاران دلار به من دادند.»
           </div>
           <div class="testi-who">
             <div class="testi-av av-c">لور</div>
@@ -2168,13 +2007,12 @@
         </div>
         <div class="footer-col">
           <h5>یادگیری</h5>
-          <a href="#">همه دوره‌ها</a><a href="#">دسته‌بندی‌ها</a
-          ><a href="#">مسیرها</a><a href="#">گواهینامه‌ها</a>
+          <a href="#">همه دوره‌ها</a><a href="#">دسته‌بندی‌ها</a><a href="#">مسیرها</a
+          ><a href="#">گواهینامه‌ها</a>
         </div>
         <div class="footer-col">
           <h5>تدریس</h5>
-          <a href="#">مدرس شو</a><a href="#">منابع مدرس</a
-          ><a href="#">برنامه افیلیت</a>
+          <a href="#">مدرس شو</a><a href="#">منابع مدرس</a><a href="#">برنامه افیلیت</a>
         </div>
         <div class="footer-col">
           <h5>شرکت</h5>
@@ -2183,41 +2021,36 @@
         </div>
         <div class="footer-col">
           <h5>پشتیبانی</h5>
-          <a href="#">مرکز راهنمایی</a><a href="#">تماس با ما</a
-          ><a href="#">حریم خصوصی</a><a href="#">شرایط استفاده</a>
+          <a href="#">مرکز راهنمایی</a><a href="#">تماس با ما</a><a href="#">حریم خصوصی</a
+          ><a href="#">شرایط استفاده</a>
         </div>
       </div>
-      <div class="footer-base">
-        <span>© ۱۴۰۵ منتوما</span><span>🌐 فارسی</span>
-      </div>
+      <div class="footer-base"><span>© ۱۴۰۵ منتوما</span><span>🌐 فارسی</span></div>
     </footer>
 
     <script>
-      document.querySelectorAll(".cat-item").forEach((c) => {
-        c.addEventListener("click", () => {
-          document
-            .querySelectorAll(".cat-item")
-            .forEach((x) => x.classList.remove("active"));
-          c.classList.add("active");
+      document.querySelectorAll('.cat-item').forEach((c) => {
+        c.addEventListener('click', () => {
+          document.querySelectorAll('.cat-item').forEach((x) => x.classList.remove('active'));
+          c.classList.add('active');
         });
       });
     </script>
 
     <script>
       (function () {
-        var saved = localStorage.getItem("Mentoma-theme-t2") || "light";
-        document.documentElement.setAttribute("data-theme", saved);
-        var btn = document.getElementById("themeBtn2");
-        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+        var saved = localStorage.getItem('Mentoma-theme-t2') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        var btn = document.getElementById('themeBtn2');
+        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
       })();
       function toggleT2() {
         var html = document.documentElement;
-        var isDark = html.getAttribute("data-theme") === "dark";
-        var next = isDark ? "light" : "dark";
-        html.setAttribute("data-theme", next);
-        document.getElementById("themeBtn2").textContent =
-          next === "dark" ? "☀️" : "🌙";
-        localStorage.setItem("Mentoma-theme-t2", next);
+        var isDark = html.getAttribute('data-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('themeBtn2').textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('Mentoma-theme-t2', next);
       }
     </script>
   </body>

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus } from 'lucide-react';
 
-import type { PublicTutoringGroup } from "@/lib/api/server";
-import { sessionsOfGroup } from "@/lib/courses/live-course";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, formatNumber } from "@/lib/utils";
+import type { PublicTutoringGroup } from '@/lib/api/server';
+import { sessionsOfGroup } from '@/lib/courses/live-course';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn, formatNumber } from '@/lib/utils';
 
 type Props = {
   group: PublicTutoringGroup;
@@ -16,13 +16,7 @@ type Props = {
 };
 
 /** Seat price, whole-class price, and how many seats to buy now. */
-export const TutoringGroupPricing = ({
-  group,
-  seatPrice,
-  seats,
-  format,
-  onSeatsChange,
-}: Props) => {
+export const TutoringGroupPricing = ({ group, seatPrice, seats, format, onSeatsChange }: Props) => {
   const { t, language } = useTranslation();
   const sessions = sessionsOfGroup(group);
   const maxSeats = group.whole_class_booking
@@ -31,18 +25,16 @@ export const TutoringGroupPricing = ({
 
   return (
     <>
-      <dl className="grid grid-cols-2 gap-3 rounded-xl bg-surface p-3">
+      <dl className="bg-surface grid grid-cols-2 gap-3 rounded-xl p-3">
         <div className="space-y-0.5">
-          <dt className="text-[11px] text-muted">
-            {t("courses.groupSeatPrice")}
-          </dt>
+          <dt className="text-muted text-[11px]">{t('courses.groupSeatPrice')}</dt>
           <dd className="cd-price text-sm font-black text-(--theme-foreground)">
             {format(seatPrice)}
           </dd>
           {sessions > 0 ? (
-            <dd className="text-[11px] text-muted">
-              {t("courses.groupPerSession").replace(
-                "{price}",
+            <dd className="text-muted text-[11px]">
+              {t('courses.groupPerSession').replace(
+                '{price}',
                 format(Math.round(seatPrice / sessions)),
               )}
             </dd>
@@ -50,9 +42,9 @@ export const TutoringGroupPricing = ({
         </div>
         {group.capacity > 1 ? (
           <div className="space-y-0.5">
-            <dt className="text-[11px] text-muted">
-              {t("courses.groupWholePrice").replace(
-                "{count}",
+            <dt className="text-muted text-[11px]">
+              {t('courses.groupWholePrice').replace(
+                '{count}',
                 formatNumber(group.capacity, language),
               )}
             </dt>
@@ -66,22 +58,20 @@ export const TutoringGroupPricing = ({
       {group.seats_left > 1 ? (
         <div className="space-y-1">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-muted">
-              {t("courses.groupReserveWhole")}
-            </span>
+            <span className="text-muted text-xs">{t('courses.groupReserveWhole')}</span>
             <div
               role="group"
-              aria-label={t("courses.groupReserveWhole")}
-              className="inline-flex h-9 items-center overflow-hidden rounded-lg border border-theme"
+              aria-label={t('courses.groupReserveWhole')}
+              className="border-theme inline-flex h-9 items-center overflow-hidden rounded-lg border"
             >
               <button
                 type="button"
-                aria-label={t("courses.seatsDecrease")}
+                aria-label={t('courses.seatsDecrease')}
                 disabled={seats <= 1}
                 onClick={() => onSeatsChange(seats - 1)}
                 className={cn(
-                  "grid size-9 place-items-center text-(--theme-foreground)",
-                  "hover:bg-surface disabled:opacity-40",
+                  'grid size-9 place-items-center text-(--theme-foreground)',
+                  'hover:bg-surface disabled:opacity-40',
                 )}
               >
                 <Minus className="size-3.5" aria-hidden="true" />
@@ -91,19 +81,19 @@ export const TutoringGroupPricing = ({
               </span>
               <button
                 type="button"
-                aria-label={t("courses.seatsIncrease")}
+                aria-label={t('courses.seatsIncrease')}
                 disabled={seats >= maxSeats}
                 onClick={() => onSeatsChange(seats + 1)}
                 className={cn(
-                  "grid size-9 place-items-center text-(--theme-foreground)",
-                  "hover:bg-surface disabled:opacity-40",
+                  'grid size-9 place-items-center text-(--theme-foreground)',
+                  'hover:bg-surface disabled:opacity-40',
                 )}
               >
                 <Plus className="size-3.5" aria-hidden="true" />
               </button>
             </div>
           </div>
-          <p className="text-[11px] text-muted">{t("courses.groupShareHint")}</p>
+          <p className="text-muted text-[11px]">{t('courses.groupShareHint')}</p>
         </div>
       ) : null}
     </>

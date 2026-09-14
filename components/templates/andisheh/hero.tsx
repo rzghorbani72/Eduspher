@@ -35,28 +35,52 @@ export function AndishehHero({ id, config, storeContext }: TemplateSectionProps)
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
-            <span className={`${styles.chip} inline-flex items-center gap-2.5 px-4 py-1.5 text-[13px] font-bold`}>
-              <span aria-hidden="true" data-motion="live" className="size-2 rounded-full bg-(--theme-primary)" />
+            <span
+              className={`${styles.chip} inline-flex items-center gap-2.5 px-4 py-1.5 text-[13px] font-bold`}
+            >
+              <span
+                aria-hidden="true"
+                data-motion="live"
+                className="size-2 rounded-full bg-(--theme-primary)"
+              />
               <span data-editable="kicker">{text(config, 'kicker', d.kicker)}</span>
             </span>
 
-            <h1 className="mt-7 text-[clamp(36px,5.4vw,64px)] font-extrabold leading-[1.08] tracking-[-0.035em]">
+            <h1 className="mt-7 text-[clamp(36px,5.4vw,64px)] leading-[1.08] font-extrabold tracking-[-0.035em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[52ch] text-[16.5px] leading-[1.9] text-current/70">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[52ch] text-[16.5px] leading-[1.9] text-current/70"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="ghost-on-deep"
                   size="lg"
@@ -89,7 +113,10 @@ export function AndishehHero({ id, config, storeContext }: TemplateSectionProps)
                 <span className={`${styles.dot} ${styles.dotLive}`} aria-hidden="true" />
                 <span className={styles.dot} aria-hidden="true" />
                 <span className={styles.dot} aria-hidden="true" />
-                <span className={`${styles.mono} text-[12px] text-current/55`} data-editable="videoTab">
+                <span
+                  className={`${styles.mono} text-[12px] text-current/55`}
+                  data-editable="videoTab"
+                >
                   {text(config, 'videoTab', d.videoTab)}
                 </span>
               </div>
@@ -109,7 +136,10 @@ export function AndishehHero({ id, config, storeContext }: TemplateSectionProps)
           <ol className={styles.rail} {...editableList('pipeline', pipeline)}>
             {pipeline.map((item, index) => (
               <li key={item.step} className={styles.stageNode}>
-                <span {...editableItem('pipeline', index, 'step')} className="block text-[15px] font-bold">
+                <span
+                  {...editableItem('pipeline', index, 'step')}
+                  className="block text-[15px] font-bold"
+                >
                   {item.step}
                 </span>
                 <span

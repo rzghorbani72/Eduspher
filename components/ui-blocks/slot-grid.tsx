@@ -1,6 +1,6 @@
-import { Children, type ReactNode } from "react";
-import { cn } from "@/lib/utils";
-import { buildSlotStyleVars, type SlotStyle } from "@/lib/slot-config";
+import { Children, type ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+import { buildSlotStyleVars, type SlotStyle } from '@/lib/slot-config';
 
 interface SlotGridProps {
   config?: { slotStyle?: SlotStyle } & Record<string, unknown>;
@@ -16,24 +16,29 @@ interface SlotGridProps {
 // centered so the result reads as intentional. Owner size overrides arrive as
 // clamped CSS custom properties; styling is theme-variable-only per the
 // design-system contract.
-export function SlotGrid({ config, minBasisFallback = "310px", className, children }: SlotGridProps) {
+export function SlotGrid({
+  config,
+  minBasisFallback = '310px',
+  className,
+  children,
+}: SlotGridProps) {
   const vars = buildSlotStyleVars(config?.slotStyle, minBasisFallback);
   const items = Children.toArray(children);
 
   return (
     <div
-      className={cn("flex flex-wrap justify-center", className)}
-      style={{ gap: "var(--slot-gap, 1.5rem)", ...vars }}
+      className={cn('flex flex-wrap justify-center', className)}
+      style={{ gap: 'var(--slot-gap, 1.5rem)', ...vars }}
     >
       {items.map((child, i) => (
         <div
           key={i}
           className="min-w-0"
           style={{
-            flex: "1 1 var(--slot-basis, 310px)",
-            maxWidth: "min(100%, calc(var(--slot-basis, 310px) * 1.35))",
-            minHeight: "var(--slot-h, auto)",
-            padding: "var(--slot-pad, 0px)",
+            flex: '1 1 var(--slot-basis, 310px)',
+            maxWidth: 'min(100%, calc(var(--slot-basis, 310px) * 1.35))',
+            minHeight: 'var(--slot-h, auto)',
+            padding: 'var(--slot-pad, 0px)',
           }}
         >
           {child}
@@ -50,8 +55,18 @@ export function SectionEmptyState({ title, subtitle }: { title: string; subtitle
   return (
     <div className="flex flex-col items-center justify-center gap-3 rounded-(--theme-border-radius) border border-dashed border-(--theme-border-strong) bg-(--theme-surface-alt) px-6 py-16 text-center">
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-(--theme-primary)">
-        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.5v11m5.5-5.5h-11M4 7a3 3 0 013-3h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7z" />
+        <svg
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.6}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 6.5v11m5.5-5.5h-11M4 7a3 3 0 013-3h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7z"
+          />
         </svg>
       </span>
       <p className="text-lg font-bold text-(--theme-foreground)">{title}</p>
@@ -66,7 +81,13 @@ export function PlaceholderCard({ text }: { text: string }) {
   return (
     <div className="flex h-full min-h-[140px] flex-col items-center justify-center gap-2 rounded-(--theme-border-radius) border border-dashed border-(--theme-border-strong) bg-(--theme-surface-alt) p-6 text-center">
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-(--theme-primary)">
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.8}
+        >
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
         </svg>
       </span>

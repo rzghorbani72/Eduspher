@@ -35,14 +35,19 @@ export function NokhbehQuiz({ id, config }: TemplateSectionProps) {
           {items.map((item, index) => (
             <article
               key={item.code}
-              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6"
+              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 shadow-(--theme-shadow)"
             >
-              <div className={`flex items-center justify-between text-[12.5px] text-(--theme-muted) ${styles.mono}`}>
+              <div
+                className={`flex items-center justify-between text-[12.5px] text-(--theme-muted) ${styles.mono}`}
+              >
                 <span {...editableItem('items', index, 'code')}>{item.code}</span>
                 <span {...editableItem('items', index, 'time')}>{item.time}</span>
               </div>
 
-              <p {...editableItem('items', index, 'question')} className="mt-4 text-[17px] font-bold leading-[1.7]">
+              <p
+                {...editableItem('items', index, 'question')}
+                className="mt-4 text-[17px] leading-[1.7] font-bold"
+              >
                 {item.question}
               </p>
 
@@ -67,10 +72,15 @@ export function NokhbehQuiz({ id, config }: TemplateSectionProps) {
                 className={`mt-4 rounded-(--theme-border-radius) border border-(--theme-border-color) p-4 ${styles.answer}`}
               >
                 <summary className="flex items-center justify-between gap-3 text-[14.5px] font-bold text-(--theme-primary)">
-                  <span data-editable="answerLabel">{text(config, 'answerLabel', d.answerLabel)}</span>
+                  <span data-editable="answerLabel">
+                    {text(config, 'answerLabel', d.answerLabel)}
+                  </span>
                   <span aria-hidden="true">+</span>
                 </summary>
-                <p {...editableItem('items', index, 'answer')} className="mt-3 text-[14.5px] font-bold">
+                <p
+                  {...editableItem('items', index, 'answer')}
+                  className="mt-3 text-[14.5px] font-bold"
+                >
                   {item.answer}
                 </p>
                 <p

@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { Star } from "lucide-react";
+import { Star } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 const STAR_VALUES = [1, 2, 3, 4, 5] as const;
 
 type ReviewStarsProps = {
   rating: number;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 };
 
 const SIZE_CLASS = {
-  sm: "h-3.5 w-3.5",
-  md: "h-5 w-5",
-  lg: "h-7 w-7",
+  sm: 'h-3.5 w-3.5',
+  md: 'h-5 w-5',
+  lg: 'h-7 w-7',
 } as const;
 
-export function ReviewStars({ rating, size = "sm", className }: ReviewStarsProps) {
+export function ReviewStars({ rating, size = 'sm', className }: ReviewStarsProps) {
   return (
-    <div className={cn("flex items-center gap-0.5", className)} aria-hidden>
+    <div className={cn('flex items-center gap-0.5', className)} aria-hidden>
       {STAR_VALUES.map((value) => (
         <Star
           key={value}
           className={cn(
             SIZE_CLASS[size],
-            value <= rating ? "cd-star-fill" : "text-(--theme-border-strong)",
+            value <= rating ? 'cd-star-fill' : 'text-(--theme-border-strong)',
           )}
         />
       ))}
@@ -69,8 +69,8 @@ export function ReviewStarPicker({
         >
           <Star
             className={cn(
-              "h-7 w-7 transition-colors",
-              value <= shown ? "cd-star-fill" : "text-(--theme-border-strong)",
+              'h-7 w-7 transition-colors',
+              value <= shown ? 'cd-star-fill' : 'text-(--theme-border-strong)',
             )}
           />
         </button>

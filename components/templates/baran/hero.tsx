@@ -24,10 +24,18 @@ export function BaranHero({ id, config, storeContext }: TemplateSectionProps) {
   const a = heroAlign(config);
 
   return (
-    <section id={id || 'hero'} className={`relative overflow-hidden text-(--theme-foreground) ${styles.wash}`}>
+    <section
+      id={id || 'hero'}
+      className={`relative overflow-hidden text-(--theme-foreground) ${styles.wash}`}
+    >
       <Backdrop variant="grain" />
       <Container className={`relative z-[1] py-(--theme-section-padding-y) ${a.text}`}>
-        <RemovableSlot config={config} flagKey="showTag" editMode={editMode} className="inline-flex">
+        <RemovableSlot
+          config={config}
+          flagKey="showTag"
+          editMode={editMode}
+          className="inline-flex"
+        >
           <span
             data-editable="tag"
             className="inline-block rounded-full bg-(--theme-surface) px-4 py-1.5 text-[13px] font-bold text-(--theme-primary) shadow-(--theme-shadow)"
@@ -36,7 +44,9 @@ export function BaranHero({ id, config, storeContext }: TemplateSectionProps) {
           </span>
         </RemovableSlot>
 
-        <h1 className={`${a.block} mt-6 max-w-[18ch] text-[clamp(34px,5.6vw,64px)] font-bold leading-[1.12] tracking-[-0.03em]`}>
+        <h1
+          className={`${a.block} mt-6 max-w-[18ch] text-[clamp(34px,5.6vw,64px)] leading-[1.12] font-bold tracking-[-0.03em]`}
+        >
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
           <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -50,8 +60,18 @@ export function BaranHero({ id, config, storeContext }: TemplateSectionProps) {
         </p>
 
         <div className={`mt-8 flex flex-col ${a.items} gap-3`}>
-          <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCta"
+            editMode={editMode}
+            className="inline-flex"
+          >
+            <Button
+              tone="primary"
+              size="lg"
+              editableKey="ctaText"
+              href={templateHref(storeContext, 'courses')}
+            >
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>
@@ -76,7 +96,10 @@ export function BaranHero({ id, config, storeContext }: TemplateSectionProps) {
             className="min-h-[260px] rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow)"
           >
             <div className="flex min-h-[260px] items-center justify-center p-10">
-              <span data-editable="photoCaption" className="text-[14px] font-medium text-(--theme-muted)">
+              <span
+                data-editable="photoCaption"
+                className="text-[14px] font-medium text-(--theme-muted)"
+              >
                 {text(config, 'photoCaption', d.photoCaption)}
               </span>
             </div>

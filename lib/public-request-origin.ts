@@ -1,19 +1,19 @@
-import type { NextRequest } from "next/server";
+import type { NextRequest } from 'next/server';
 
-import { env } from "@/lib/env";
+import { env } from '@/lib/env';
 
 /** Listen-all addresses from Docker `HOSTNAME=0.0.0.0` — never a public site. */
 const BIND_ALL_HOST = /^(0\.0\.0\.0|\[::\]|::)$/i;
 
 function hostnameOf(hostOrUrl: string): string {
-  const trimmed = hostOrUrl.trim().split(",")[0]?.trim() ?? "";
-  if (!trimmed) return "";
+  const trimmed = hostOrUrl.trim().split(',')[0]?.trim() ?? '';
+  if (!trimmed) return '';
   try {
-    if (trimmed.includes("://")) return new URL(trimmed).hostname;
+    if (trimmed.includes('://')) return new URL(trimmed).hostname;
   } catch {
-    return "";
+    return '';
   }
-  return trimmed.split(":")[0] ?? "";
+  return trimmed.split(':')[0] ?? '';
 }
 
 function isBindAllHost(hostOrUrl: string): boolean {
@@ -26,18 +26,18 @@ function isBindAllHost(hostOrUrl: string): boolean {
  */
 export function resolvePublicRequestOrigin(request: NextRequest): string {
   const proto =
-    request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ||
-    (process.env.NODE_ENV === "development" ? "http" : "https");
+    request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() ||
+    (process.env.NODE_ENV === 'development' ? 'http' : 'https');
 
-  const forwardedHost = request.headers.get("x-forwarded-host");
-  const hostHeader = request.headers.get("host");
-  const host = (forwardedHost ?? hostHeader)?.split(",")[0]?.trim();
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const hostHeader = request.headers.get('host');
+  const host = (forwardedHost ?? hostHeader)?.split(',')[0]?.trim();
 
   if (host && !isBindAllHost(host)) {
     return `${proto}://${host}`;
   }
 
-  const originHeader = request.headers.get("origin");
+  const originHeader = request.headers.get('origin');
   if (originHeader) {
     try {
       const origin = new URL(originHeader).origin;
@@ -58,19 +58,17 @@ export function resolvePublicOriginFromHeaders(
   fallback = env.appUrl,
 ): string {
   const proto =
-    headerStore.get("x-forwarded-proto")?.split(",")[0]?.trim() ||
-    (process.env.NODE_ENV === "development" ? "http" : "https");
-  const host = (
-    headerStore.get("x-forwarded-host") ?? headerStore.get("host")
-  )
-    ?.split(",")[0]
+    headerStore.get('x-forwarded-proto')?.split(',')[0]?.trim() ||
+    (process.env.NODE_ENV === 'development' ? 'http' : 'https');
+  const host = (headerStore.get('x-forwarded-host') ?? headerStore.get('host'))
+    ?.split(',')[0]
     ?.trim();
 
   if (host && !isBindAllHost(host)) {
     return `${proto}://${host}`;
   }
 
-  const clean = fallback.replace(/\/$/, "");
+  const clean = fallback.replace(/\/$/, '');
   if (!isBindAllHost(clean)) return clean;
   return env.irDomain;
 }

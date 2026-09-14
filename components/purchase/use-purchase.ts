@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
-import { parseApiError } from "@/lib/api/api-error";
-import { notifyApiError } from "@/lib/api/notify-api-error";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { logger } from "@/lib/logging/app-logger";
+import { parseApiError } from '@/lib/api/api-error';
+import { notifyApiError } from '@/lib/api/notify-api-error';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { logger } from '@/lib/logging/app-logger';
 
 /** Exactly one of these identifies what is being bought. */
 export type PurchaseSelector =
@@ -66,16 +66,15 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
       // One chart for every buying path; `kind` keeps them separable.
       const kind = Object.keys(selector)[0];
       try {
-        const response = await fetch("/api/payment/initiate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch('/api/payment/initiate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...selector,
             amount,
             ...(options?.provider && { provider: options.provider }),
             ...(options?.couponCode && { coupon_code: options.couponCode }),
-            ...(options?.seats &&
-              options.seats > 1 && { seats: options.seats }),
+            ...(options?.seats && options.seats > 1 && { seats: options.seats }),
             ...(options?.joinCode && { join_code: options.joinCode }),
             ...(options?.useCredit === false && { use_credit: false }),
           }),
@@ -83,20 +82,20 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
 
         const data = await response.json().catch(() => null);
         const payload =
-          data && typeof data === "object" && "data" in data
+          data && typeof data === 'object' && 'data' in data
             ? (data.data as Record<string, unknown> | null)
             : null;
 
         if (!response.ok) {
-          logger.error("Payments", "CheckoutStartFailed", {
+          logger.error('Payments', 'CheckoutStartFailed', {
             kind,
             amount,
             http_status: response.status,
           });
           const parsed = parseApiError(response.status, data);
           const ux = notifyApiError(parsed, { loginHref });
-          if (ux !== "login_required") {
-            setError(parsed.message || t("checkout.paymentFailed"));
+          if (ux !== 'login_required') {
+            setError(parsed.message || t('checkout.paymentFailed'));
           }
           return { ok: false, needsGateway: false };
         }
@@ -106,7 +105,7 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           : [];
         if (payload?.needs_gateway_selection && availableGateways.length > 0) {
           setGateways(availableGateways);
-          logger.ok("Payments", "CheckoutGatewayPrompted", {
+          logger.ok('Payments', 'CheckoutGatewayPrompted', {
             kind,
             amount,
             gateway_count: availableGateways.length,
@@ -114,12 +113,9 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           return { ok: false, needsGateway: true };
         }
 
-        const redirectUrl =
-          typeof payload?.redirect_url === "string"
-            ? payload.redirect_url
-            : null;
+        const redirectUrl = typeof payload?.redirect_url === 'string' ? payload.redirect_url : null;
 
-        logger.ok("Payments", "CheckoutStarted", {
+        logger.ok('Payments', 'CheckoutStarted', {
           kind,
           amount,
           gateway_redirect: Boolean(redirectUrl),
@@ -130,17 +126,17 @@ export const usePurchase = ({ loginHref }: PurchaseOptions) => {
           return { ok: true, needsGateway: false };
         }
 
-        toast.success(t("checkout.paymentSuccess"));
+        toast.success(t('checkout.paymentSuccess'));
         router.refresh();
         return { ok: true, needsGateway: false };
       } catch (error) {
-        logger.error("Payments", "CheckoutStartFailed", {
+        logger.error('Payments', 'CheckoutStartFailed', {
           kind,
           amount,
           http_status: 0,
         });
         notifyApiError(error);
-        setError(t("checkout.paymentFailed"));
+        setError(t('checkout.paymentFailed'));
         return { ok: false, needsGateway: false };
       } finally {
         setPendingKey(null);

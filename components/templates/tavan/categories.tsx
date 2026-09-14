@@ -36,18 +36,21 @@ export function TavanCategories({ id, config, storeContext }: TemplateSectionPro
           {items.map((item, index) => (
             <article
               key={item.title}
-              className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-7"
+              className="flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7 shadow-(--theme-shadow)"
             >
               <span
                 {...editableItem('items', index, 'index')}
-                className="text-[42px] font-bold leading-none tracking-[-0.05em] text-(--theme-primary) tabular-nums"
+                className="text-[42px] leading-none font-bold tracking-[-0.05em] text-(--theme-primary) tabular-nums"
               >
                 {item.index}
               </span>
               <h3 {...editableItem('items', index, 'title')} className="mt-2 text-[23px] font-bold">
                 {item.title}
               </h3>
-              <p {...editableItem('items', index, 'body')} className="text-[15px] leading-[1.85] text-(--theme-muted)">
+              <p
+                {...editableItem('items', index, 'body')}
+                className="text-[15px] leading-[1.85] text-(--theme-muted)"
+              >
                 {item.body}
               </p>
               <a

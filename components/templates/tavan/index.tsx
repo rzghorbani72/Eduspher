@@ -30,7 +30,19 @@ export const TAVAN_COURSE_CARD: CourseCardSpec = {
 
 export const TAVAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={TAVAN_HEADER} spec={{ tone: 'deep', height: 80, navStyle: 'plain', markClassName: styles.logoMark, accentBar: true }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={TAVAN_HEADER}
+      spec={{
+        tone: 'deep',
+        height: 80,
+        navStyle: 'plain',
+        markClassName: styles.logoMark,
+        accentBar: true,
+      }}
+    />
   ),
   hero: TavanHero,
   marquee: ({ id, config }) => (
@@ -58,6 +70,21 @@ export const TAVAN_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={TAVAN_DEFAULTS.teachers} tone="surface" />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={TAVAN_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={TAVAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={TAVAN_DEFAULTS.cta}
+      tone="deep"
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={TAVAN_DEFAULTS.footer}
+    />
+  ),
 };

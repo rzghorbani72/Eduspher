@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { AppImage } from "@/components/ui/app-image";
+import { AppImage } from '@/components/ui/app-image';
 
 /**
  * HLS attaches a MediaSource before the first frame exists, which clears the
@@ -9,14 +9,7 @@ import { AppImage } from "@/components/ui/app-image";
 export function VideoPreparingPoster({ src }: { src: string }) {
   return (
     <div className="pointer-events-none absolute inset-0">
-      <AppImage
-        src={src}
-        alt=""
-        preset="cover"
-        fill
-        priority
-        className="object-cover"
-      />
+      <AppImage src={src} alt="" preset="cover" fill priority className="object-cover" />
     </div>
   );
 }

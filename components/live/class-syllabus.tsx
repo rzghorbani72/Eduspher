@@ -1,14 +1,11 @@
-"use client";
+'use client';
 
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle } from 'lucide-react';
 
-import { EmptyState } from "@/components/ui/empty-state";
-import type {
-  CourseTopic,
-  MyTutoringGroupSession,
-} from "@/lib/api/account-types";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, formatDate, formatNumber } from "@/lib/utils";
+import { EmptyState } from '@/components/ui/empty-state';
+import type { CourseTopic, MyTutoringGroupSession } from '@/lib/api/account-types';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn, formatDate, formatNumber } from '@/lib/utils';
 
 interface ClassSyllabusProps {
   topics: CourseTopic[];
@@ -18,7 +15,7 @@ interface ClassSyllabusProps {
 /** The syllabus as a checklist: the teacher ticks a topic by holding its meeting. */
 export function ClassSyllabus({ topics, sessions }: ClassSyllabusProps) {
   const { t, language } = useTranslation();
-  if (!topics.length) return <EmptyState compact title={t("live.noTopics")} />;
+  if (!topics.length) return <EmptyState compact title={t('live.noTopics')} />;
 
   const done = topics.filter((topic) => topic.covered).length;
   const dateOf = (sessionId: string | null) => {
@@ -28,22 +25,20 @@ export function ClassSyllabus({ topics, sessions }: ClassSyllabusProps) {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-muted">
-        {t("live.topicsProgress")
-          .replace("{done}", formatNumber(done, language))
-          .replace("{total}", formatNumber(topics.length, language))}
+      <p className="text-muted text-xs">
+        {t('live.topicsProgress')
+          .replace('{done}', formatNumber(done, language))
+          .replace('{total}', formatNumber(topics.length, language))}
       </p>
       <ol className="space-y-3">
         {topics.map((topic) => {
-          const coveredOn = topic.covered
-            ? dateOf(topic.covered_session_id)
-            : null;
+          const coveredOn = topic.covered ? dateOf(topic.covered_session_id) : null;
           return (
             <li key={topic.id} className="flex gap-3">
               <span
                 className={cn(
-                  "mt-0.5 shrink-0",
-                  topic.covered ? "text-(--theme-primary)" : "text-muted",
+                  'mt-0.5 shrink-0',
+                  topic.covered ? 'text-(--theme-primary)' : 'text-muted',
                 )}
               >
                 {topic.covered ? (
@@ -55,20 +50,18 @@ export function ClassSyllabus({ topics, sessions }: ClassSyllabusProps) {
               <span className="min-w-0">
                 <span
                   className={cn(
-                    "block text-sm font-medium",
-                    topic.covered && "text-muted line-through",
+                    'block text-sm font-medium',
+                    topic.covered && 'text-muted line-through',
                   )}
                 >
                   {topic.title}
                 </span>
                 {topic.description ? (
-                  <span className="mt-0.5 block text-xs text-muted">
-                    {topic.description}
-                  </span>
+                  <span className="text-muted mt-0.5 block text-xs">{topic.description}</span>
                 ) : null}
                 {coveredOn ? (
                   <span className="mt-0.5 block text-xs text-(--theme-primary)">
-                    {t("live.coveredIn").replace("{date}", coveredOn)}
+                    {t('live.coveredIn').replace('{date}', coveredOn)}
                   </span>
                 ) : null}
               </span>

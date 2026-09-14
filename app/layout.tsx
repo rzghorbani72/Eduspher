@@ -1,50 +1,44 @@
-import type { Metadata } from "next";
-import { headers } from "next/headers";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { headers } from 'next/headers';
+import './globals.css';
 
-import { LegalConsentGate } from "@/components/legal/legal-consent-gate";
-import {
-  TemplateFooter,
-  TemplateHeader,
-} from "@/components/layout/template-chrome";
-import { MainContainer } from "@/components/layout/main-container";
-import { getHeaderUser } from "@/app/actions/auth";
-import { AuthProvider } from "@/components/providers/auth-provider";
-import { QueryProvider } from "@/components/providers/query-provider";
-import { ShellProvider } from "@/components/providers/shell-provider";
-import { getRequestHost } from "@/lib/request-host";
-import { StoreProvider } from "@/components/providers/store-provider";
-import { ThemeProvider } from "@/components/theme/theme-provider";
-import { ThemeDarkModeApplier } from "@/components/theme/theme-dark-mode-applier";
-import { ThemeLiveUpdater } from "@/components/theme/theme-live-updater";
-import { ThemeToggleButton } from "@/components/theme/theme-toggle-button";
-import { ThemeStyleSync } from "@/components/theme/theme-style-sync";
-import { I18nProvider } from "@/lib/i18n/provider";
-import { DocumentLangSync } from "@/lib/i18n/document-lang-sync";
-import { getAcademyContext } from "@/lib/store-context";
-import { getSession } from "@/lib/auth/session";
-import {
-  getStoreThemeAndTemplate,
-  generateThemeCSSVariables,
-} from "@/lib/theme-config";
+import { LegalConsentGate } from '@/components/legal/legal-consent-gate';
+import { TemplateFooter, TemplateHeader } from '@/components/layout/template-chrome';
+import { MainContainer } from '@/components/layout/main-container';
+import { getHeaderUser } from '@/app/actions/auth';
+import { AuthProvider } from '@/components/providers/auth-provider';
+import { QueryProvider } from '@/components/providers/query-provider';
+import { ShellProvider } from '@/components/providers/shell-provider';
+import { getRequestHost } from '@/lib/request-host';
+import { StoreProvider } from '@/components/providers/store-provider';
+import { ThemeProvider } from '@/components/theme/theme-provider';
+import { ThemeDarkModeApplier } from '@/components/theme/theme-dark-mode-applier';
+import { ThemeLiveUpdater } from '@/components/theme/theme-live-updater';
+import { ThemeToggleButton } from '@/components/theme/theme-toggle-button';
+import { ThemeStyleSync } from '@/components/theme/theme-style-sync';
+import { I18nProvider } from '@/lib/i18n/provider';
+import { DocumentLangSync } from '@/lib/i18n/document-lang-sync';
+import { getAcademyContext } from '@/lib/store-context';
+import { getSession } from '@/lib/auth/session';
+import { getStoreThemeAndTemplate, generateThemeCSSVariables } from '@/lib/theme-config';
 import {
   getCurrentAcademy,
   getAcademyBySlug,
   getAcademyEnrollmentStatus,
   getActiveStudentDiscounts,
-} from "@/lib/api/server";
-import { EnrollmentClosedBanner } from "@/components/academy/enrollment-closed-banner";
-import { ActiveDiscountBanner } from "@/components/academy/active-discount-banner";
-import { EnrollmentStatusProvider } from "@/components/academy/enrollment-status-provider";
-import { getAcademyLanguage, getAcademyDirection } from "@/lib/i18n/server";
-import { CreativeBackgroundLazy } from "@/components/motion/creative-background-lazy";
-import { PreviewModeBanner } from "@/components/theme/preview-mode-banner";
-import { ScrollAnimationProvider } from "@/components/motion/scroll-animation-provider";
-import { resolveAssetUrl } from "@/lib/utils";
-import { GdprConsentBanner } from "@/components/gdpr-consent-banner";
-import { MarketingAnalytics } from "@/components/analytics/marketing-analytics";
-import { ToastContainerWrapper } from "@/components/providers/toast-container-wrapper";
-import { buildSiteMetadata } from "@/lib/seo/build-metadata";
+} from '@/lib/api/server';
+import { EnrollmentClosedBanner } from '@/components/academy/enrollment-closed-banner';
+import { ActiveDiscountBanner } from '@/components/academy/active-discount-banner';
+import { EnrollmentStatusProvider } from '@/components/academy/enrollment-status-provider';
+import { getAcademyLanguage, getAcademyDirection } from '@/lib/i18n/server';
+import { CreativeBackgroundLazy } from '@/components/motion/creative-background-lazy';
+import { PreviewModeBanner } from '@/components/theme/preview-mode-banner';
+import { ScrollAnimationProvider } from '@/components/motion/scroll-animation-provider';
+import { resolveAssetUrl } from '@/lib/utils';
+import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
+import { MarketingAnalytics } from '@/components/analytics/marketing-analytics';
+import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
+import { buildSiteMetadata } from '@/lib/seo/build-metadata';
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildSiteMetadata();
@@ -60,28 +54,22 @@ export default async function RootLayout({
   const isAuthenticated = Boolean(session?.userId);
   const headersList = await headers();
   const requestHost = await getRequestHost();
-  const pathname = headersList.get("x-pathname") || "";
-  const urlPathname = headersList.get("x-url-pathname") || pathname;
+  const pathname = headersList.get('x-pathname') || '';
+  const urlPathname = headersList.get('x-url-pathname') || pathname;
   // Trust the middleware signal; fall back to URL check when middleware is not running.
   const isPanelRoot =
-    headersList.get("x-panel-root") === "1" ||
-    urlPathname === "/" ||
-    urlPathname === "";
+    headersList.get('x-panel-root') === '1' || urlPathname === '/' || urlPathname === '';
   // Standalone section/template render surface embedded by AdminPanel — no
   // header/footer/banner chrome, raw full-width children.
-  const isPreview =
-    urlPathname.startsWith("/preview") || pathname.startsWith("/preview");
+  const isPreview = urlPathname.startsWith('/preview') || pathname.startsWith('/preview');
   // Auth routes keep the site header/footer, but bring their own gradient
   // background, so only the creative background is stripped.
-  const isAuth =
-    urlPathname.startsWith("/auth") || pathname.startsWith("/auth");
+  const isAuth = urlPathname.startsWith('/auth') || pathname.startsWith('/auth');
   // Admin master-template preview: the draft renders on the academy path but
   // must look like a neutral sample site — strip academy chrome and identity so
   // no academy name/logo/imagery leaks into the master being authored.
-  const isSamplePreview = headersList.get("x-preview-sample") === "1";
-  const shellKey = isPanelRoot
-    ? "panel"
-    : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}`;
+  const isSamplePreview = headersList.get('x-preview-sample') === '1';
+  const shellKey = isPanelRoot ? 'panel' : `${storeContext.slug ?? ''}-${storeContext.id ?? 0}`;
   const headerUser =
     isAuthenticated && !isPanelRoot
       ? await getHeaderUser()
@@ -90,22 +78,18 @@ export default async function RootLayout({
   const { theme } = await getStoreThemeAndTemplate();
   const themeCSS = generateThemeCSSVariables(theme);
   const themeKey = isPanelRoot
-    ? "panel"
-    : `${storeContext.slug ?? ""}-${storeContext.id ?? 0}-${theme?.primary_color ?? "default"}`;
+    ? 'panel'
+    : `${storeContext.slug ?? ''}-${storeContext.id ?? 0}-${theme?.primary_color ?? 'default'}`;
 
   // Get store details for language and country (server-side)
   // Try to get current store first (requires auth), then fall back to public store by slug
   // The platform root has no academy, so every academy lookup below is a
   // guaranteed miss. Skipping them keeps the marketing page off the backend.
-  let currentAcademy = isPanelRoot
-    ? null
-    : await getCurrentAcademy().catch(() => null);
+  let currentAcademy = isPanelRoot ? null : await getCurrentAcademy().catch(() => null);
 
   // If no authenticated store, try to get public store by slug
   if (!currentAcademy && storeContext.slug) {
-    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(
-      () => null,
-    );
+    currentAcademy = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
 
   // Closed to new enrollments: the site stays up, so the banner explains it once
@@ -157,7 +141,7 @@ export default async function RootLayout({
   // theme.text_direction overrides the language-derived default so the manager
   // can set direction independently (e.g. English content in an RTL layout).
   const direction =
-    (theme?.text_direction as "ltr" | "rtl" | undefined) ??
+    (theme?.text_direction as 'ltr' | 'rtl' | undefined) ??
     getAcademyDirection(storeLanguage, countryCode);
 
   const bareLayout = isPanelRoot || isPreview || isSamplePreview;
@@ -165,16 +149,12 @@ export default async function RootLayout({
   // them (subdomain academies live at "/", path-based ones at "/{slug}").
   // MainContainer re-checks these on every client navigation.
   const academyHomePaths = isPanelRoot
-    ? ["/"]
-    : ["/", ...(storeContext.slug ? [`/${storeContext.slug}`] : [])];
+    ? ['/']
+    : ['/', ...(storeContext.slug ? [`/${storeContext.slug}`] : [])];
 
   // Determine data-theme attribute based on dark_mode setting
   const dataTheme =
-    theme?.dark_mode === false
-      ? "light"
-      : theme?.dark_mode === true
-        ? "dark"
-        : undefined;
+    theme?.dark_mode === false ? 'light' : theme?.dark_mode === true ? 'dark' : undefined;
 
   return (
     <html
@@ -185,7 +165,7 @@ export default async function RootLayout({
       // Don't force dark mode - let system preference handle it
       style={
         {
-          colorScheme: "light dark", // Support both, let system decide
+          colorScheme: 'light dark', // Support both, let system decide
         } as React.CSSProperties
       }
     >
@@ -205,8 +185,8 @@ export default async function RootLayout({
         className="antialiased"
         style={
           {
-            backgroundColor: "var(--theme-background)",
-            color: "var(--theme-foreground)",
+            backgroundColor: 'var(--theme-background)',
+            color: 'var(--theme-foreground)',
           } as React.CSSProperties
         }
       >
@@ -244,32 +224,24 @@ export default async function RootLayout({
                     countryCode={countryCode || undefined}
                   >
                     <DocumentLangSync />
-                    <EnrollmentStatusProvider
-                      closed={Boolean(enrollmentStatus?.disabled)}
-                    >
+                    <EnrollmentStatusProvider closed={Boolean(enrollmentStatus?.disabled)}>
                       <ScrollAnimationProvider enabled={!isPanelRoot}>
                         <div
-                          className="relative flex min-h-screen flex-col transition-colors duration-200 overflow-x-clip"
+                          className="relative flex min-h-screen flex-col overflow-x-clip transition-colors duration-200"
                           style={{
-                            backgroundColor: "var(--theme-background)",
-                            color: "var(--theme-foreground)",
+                            backgroundColor: 'var(--theme-background)',
+                            color: 'var(--theme-foreground)',
                           }}
                         >
                           {/* Creative animated background with gradients and flying icons */}
-                          {!isPreview &&
-                            !isSamplePreview &&
-                            !isAuth &&
-                            !isPanelRoot && (
-                              <CreativeBackgroundLazy
-                                theme={theme}
-                                storeIcons={validStoreIcons}
-                              />
-                            )}
+                          {!isPreview && !isSamplePreview && !isAuth && !isPanelRoot && (
+                            <CreativeBackgroundLazy theme={theme} storeIcons={validStoreIcons} />
+                          )}
 
                           {!bareLayout && activeStudentDiscounts.length > 0 && (
                             <ActiveDiscountBanner
                               discounts={activeStudentDiscounts}
-                              currencyCode={currentAcademy?.currency ?? "IRR"}
+                              currencyCode={currentAcademy?.currency ?? 'IRR'}
                             />
                           )}
                           {!bareLayout && <PreviewModeBanner />}
@@ -282,7 +254,7 @@ export default async function RootLayout({
                             />
                           )}
                           {!bareLayout && <TemplateHeader />}
-                          <main className="relative flex-1 z-10">
+                          <main className="relative z-10 flex-1">
                             <MainContainer
                               fullWidth={isPanelRoot || isSamplePreview}
                               homePaths={academyHomePaths}
@@ -293,13 +265,11 @@ export default async function RootLayout({
                           {!bareLayout && <TemplateFooter />}
                           {/* Pending terms 403 every authenticated call site-wide, not
                       just under /account, so the only way back in lives here. */}
-                          {isAuthenticated && !bareLayout && (
-                            <LegalConsentGate />
-                          )}
+                          {isAuthenticated && !bareLayout && <LegalConsentGate />}
                         </div>
                       </ScrollAnimationProvider>
                     </EnrollmentStatusProvider>
-                    {process.env.NEXT_PUBLIC_GDPR_ENABLED === "true" && (
+                    {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
                       <>
                         <GdprConsentBanner />
                         <MarketingAnalytics />

@@ -10,7 +10,16 @@ const LINE_LIMITS = { skipBlankLines: true, skipComments: true };
 const asGlob = (files) => files.map((f) => f.replace(/[[\]]/g, '\\$&'));
 
 export default defineConfig([
-  globalIgnores(['.claude/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'scripts/**/*.cjs', 'graphify-out/**', 'lib/logging/log-catalog.ts']),
+  globalIgnores([
+    '.claude/**',
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+    'scripts/**/*.cjs',
+    'graphify-out/**',
+    'lib/logging/log-catalog.ts',
+  ]),
   ...nextVitals,
   ...nextTs,
   prettier,
@@ -20,21 +29,37 @@ export default defineConfig([
       'unused-imports/no-unused-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
       'no-console': 'error',
       'max-lines': ['error', { max: MAX_LINES, ...LINE_LIMITS }],
       'max-lines-per-function': ['warn', { max: 80, ...LINE_LIMITS }],
     },
   },
   {
-    files: ['e2e/**', 'tests/**', 'loadtests/**', 'scripts/**', 'components/ui/**', 'lib/i18n/translations/**'],
+    files: [
+      'e2e/**',
+      'tests/**',
+      'loadtests/**',
+      'scripts/**',
+      'components/ui/**',
+      'lib/i18n/translations/**',
+    ],
     rules: { 'max-lines': 'off', 'max-lines-per-function': 'off' },
   },
   {
     files: ['e2e/**', 'tests/**'],
-    rules: { '@typescript-eslint/no-explicit-any': 'warn', '@typescript-eslint/no-non-null-assertion': 'warn' },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+    },
   },
-  { files: ['scripts/**', 'tools/**', 'lib/logging/**', 'app/api/log/**'], rules: { 'no-console': 'off' } },
+  {
+    files: ['scripts/**', 'tools/**', 'lib/logging/**', 'app/api/log/**'],
+    rules: { 'no-console': 'off' },
+  },
   { files: asGlob(OVERSIZE_ALLOWLIST), rules: { 'max-lines': 'off' } },
   {
     files: asGlob(LEGACY_ANY_ALLOWLIST),

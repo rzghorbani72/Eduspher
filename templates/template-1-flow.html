@@ -9,54 +9,36 @@
     </style>
     <script data-omelette-injected>
       (() => {
-        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var j = ['https://claude.ai', 'https://preview.claude.ai'];
         var x = true;
         var S = 30000;
         var f = 3000;
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
           const H = window.Babel;
-          const G = "om-src-id";
-          if (
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[G])
-          ) {
+          const G = 'om-src-id';
+          if (H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[G])) {
             H.registerPlugin(G, ({ types: Y }) => ({
               visitor: {
                 JSXOpeningElement(U, Q) {
                   const J = U.node;
-                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  if (J.name && J.name.type === 'JSXMemberExpression') return;
                   for (let V = 0; V < J.attributes.length; V++) {
                     const L = J.attributes[V];
-                    if (
-                      L.type === "JSXAttribute" &&
-                      L.name &&
-                      L.name.name === "data-om-id"
-                    )
-                      return;
+                    if (L.type === 'JSXAttribute' && L.name && L.name.name === 'data-om-id') return;
                   }
-                  const W =
-                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const W = (Q.file && Q.file.opts && Q.file.opts.filename) || '?';
                   const Z = J.loc && J.loc.start;
                   const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
                   J.attributes.push(
-                    Y.jsxAttribute(
-                      Y.jsxIdentifier("data-om-id"),
-                      Y.stringLiteral(z),
-                    ),
+                    Y.jsxAttribute(Y.jsxIdentifier('data-om-id'), Y.stringLiteral(z)),
                   );
                 },
               },
             }));
           }
-          const k = "om-text-extract";
+          const k = 'om-text-extract';
           let A = false;
-          if (
-            x &&
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[k])
-          ) {
+          if (x && H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[k])) {
             const Y = window.React;
             if (Y && Y.useSyncExternalStore && Y.createElement) {
               A = true;
@@ -81,8 +63,8 @@
               window.__OmT = function z(V) {
                 Y.useSyncExternalStore(W, Z, Z);
                 return Y.createElement(
-                  "span",
-                  { "data-om-text": V.i, className: "__om-t" },
+                  'span',
+                  { 'data-om-text': V.i, className: '__om-t' },
                   V.i in U ? U[V.i] : V.children,
                 );
               };
@@ -103,20 +85,17 @@
                   alt: 1,
                   title: 1,
                   label: 1,
-                  "aria-label": 1,
-                  "aria-description": 1,
-                  "aria-placeholder": 1,
+                  'aria-label': 1,
+                  'aria-description': 1,
+                  'aria-placeholder': 1,
                 };
                 const _ = ($, C) =>
                   z.logicalExpression(
-                    "??",
+                    '??',
                     z.memberExpression(
                       z.logicalExpression(
-                        "||",
-                        z.memberExpression(
-                          z.identifier("window"),
-                          z.identifier("__omTextO"),
-                        ),
+                        '||',
+                        z.memberExpression(z.identifier('window'), z.identifier('__omTextO')),
                         z.objectExpression([]),
                       ),
                       z.stringLiteral($),
@@ -124,28 +103,22 @@
                     ),
                     C,
                   );
-                const E = ($) =>
-                  ($.file && $.file.opts && $.file.opts.filename) || "?";
-                const B = ($) => ($.file && $.file.code) || "";
+                const E = ($) => ($.file && $.file.opts && $.file.opts.filename) || '?';
+                const B = ($) => ($.file && $.file.code) || '';
                 const b = ($, C) => {
                   const X = (F) =>
                     F &&
                     F.start != null &&
                     F.end != null &&
-                    (F.type === "StringLiteral" ||
-                      (F.type === "TemplateLiteral" &&
-                        F.expressions.length === 0))
+                    (F.type === 'StringLiteral' ||
+                      (F.type === 'TemplateLiteral' && F.expressions.length === 0))
                       ? [F.start, F.end]
                       : null;
                   const N = X(C);
                   if (N) return N;
-                  if (C && C.type === "Identifier") {
+                  if (C && C.type === 'Identifier') {
                     const F = $.scope.getBinding(C.name);
-                    if (
-                      F &&
-                      F.constant &&
-                      F.path.node.type === "VariableDeclarator"
-                    ) {
+                    if (F && F.constant && F.path.node.type === 'VariableDeclarator') {
                       return X(F.path.node.init);
                     }
                   }
@@ -158,22 +131,17 @@
                     F = true;
                     return z.jsxElement(
                       z.jsxOpeningElement(
-                        z.jsxIdentifier("__OmT"),
-                        [
-                          z.jsxAttribute(
-                            z.jsxIdentifier("i"),
-                            z.stringLiteral(K),
-                          ),
-                        ],
+                        z.jsxIdentifier('__OmT'),
+                        [z.jsxAttribute(z.jsxIdentifier('i'), z.stringLiteral(K))],
                         false,
                       ),
-                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      z.jsxClosingElement(z.jsxIdentifier('__OmT')),
                       [q],
                       false,
                     );
                   };
                   const D = N.children.map((K) => {
-                    if (K.type === "JSXText") {
+                    if (K.type === 'JSXText') {
                       if (K.start == null || K.end == null) return K;
                       const q = X.slice(K.start, K.end);
                       const R = q.length - q.trimStart().length;
@@ -181,7 +149,7 @@
                       if (R + m >= q.length) return K;
                       return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
                     }
-                    if (K.type === "JSXExpressionContainer") {
+                    if (K.type === 'JSXExpressionContainer') {
                       const q = b($, K.expression);
                       if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
                     }
@@ -197,23 +165,19 @@
                       const F = {};
                       for (let w = 0; w < X.attributes.length; w++) {
                         const D = X.attributes[w];
-                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        if (D.type !== 'JSXAttribute' || !D.name) continue;
                         const K = D.name.name;
                         if (!L[K]) continue;
-                        if (!D.value || D.value.type !== "StringLiteral")
-                          continue;
-                        if (D.value.start == null || D.value.end == null)
-                          continue;
+                        if (!D.value || D.value.type !== 'StringLiteral') continue;
+                        if (D.value.start == null || D.value.end == null) continue;
                         const q = `txt:${N}:${D.value.start}:${D.value.end}`;
                         F[K] = q;
-                        D.value = z.jsxExpressionContainer(
-                          _(q, z.stringLiteral(D.value.value)),
-                        );
+                        D.value = z.jsxExpressionContainer(_(q, z.stringLiteral(D.value.value)));
                       }
                       if (Object.keys(F).length) {
                         X.attributes.push(
                           z.jsxAttribute(
-                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.jsxIdentifier('data-om-text-attrs'),
                             z.stringLiteral(JSON.stringify(F)),
                           ),
                         );
@@ -222,8 +186,8 @@
                     JSXElement($, C) {
                       const X = $.node.openingElement;
                       const N = X && X.name && X.name.name;
-                      if (N === "__OmT") return;
-                      if (typeof N === "string" && V[N]) return;
+                      if (N === '__OmT') return;
+                      if (typeof N === 'string' && V[N]) return;
                       M($, E(C), B(C));
                     },
                     JSXFragment($, C) {
@@ -234,27 +198,17 @@
               });
             }
           }
-          const u = A
-            ? ["transform-react-jsx-source", G, k]
-            : ["transform-react-jsx-source", G];
+          const u = A ? ['transform-react-jsx-source', G, k] : ['transform-react-jsx-source', G];
           document
-            .querySelectorAll(
-              'script[type="text/babel"],script[type="text/jsx"]',
-            )
+            .querySelectorAll('script[type="text/babel"],script[type="text/jsx"]')
             .forEach((Y, U) => {
-              const Q = Y.getAttribute("data-plugins") || "";
+              const Q = Y.getAttribute('data-plugins') || '';
               const J = u.filter((W) => Q.indexOf(W) < 0);
               if (J.length) {
-                Y.setAttribute(
-                  "data-plugins",
-                  Q ? `${Q},${J.join(",")}` : J.join(","),
-                );
+                Y.setAttribute('data-plugins', Q ? `${Q},${J.join(',')}` : J.join(','));
               }
-              if (!Y.hasAttribute("data-filename")) {
-                Y.setAttribute(
-                  "data-filename",
-                  Y.getAttribute("src") || `inline-${U}`,
-                );
+              if (!Y.hasAttribute('data-filename')) {
+                Y.setAttribute('data-filename', Y.getAttribute('src') || `inline-${U}`);
               }
             });
         });
@@ -262,71 +216,69 @@
         if (y && y !== window) {
           const H = (Q, J) => {
             try {
-              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, '*');
             } catch {}
           };
-          ["log", "warn", "error"].forEach((Q) => {
+          ['log', 'warn', 'error'].forEach((Q) => {
             const J = console[Q];
             console[Q] = (...W) => {
               const Z = W.map((z) => {
                 try {
-                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                  return typeof z === 'object' ? JSON.stringify(z) : String(z);
                 } catch {
                   try {
                     return String(z);
                   } catch {
-                    return "[unstringifiable]";
+                    return '[unstringifiable]';
                   }
                 }
-              }).join(" ");
+              }).join(' ');
               H(Q, Z);
               J.apply(console, W);
             };
           });
           window.addEventListener(
-            "error",
+            'error',
             (Q) => {
               const J = Q.target;
               if (J && J !== window && J.tagName) {
-                const W = J.src || J.href || "";
-                H("resource_error", `${J.tagName} failed to load: ${W}`);
+                const W = J.src || J.href || '';
+                H('resource_error', `${J.tagName} failed to load: ${W}`);
               } else {
                 H(
-                  "error",
-                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                  'error',
+                  `${Q.message || 'Unknown error'} at ${Q.filename || '?'}:${Q.lineno || 0}:${Q.colno || 0}`,
                 );
               }
             },
             true,
           );
-          window.addEventListener("unhandledrejection", (Q) => {
+          window.addEventListener('unhandledrejection', (Q) => {
             const J = Q.reason;
-            const W =
-              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
-            H("error", `Unhandled rejection: ${W}`);
+            const W = J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H('error', `Unhandled rejection: ${W}`);
           });
           const G = () => {
             try {
               y.postMessage(
                 {
-                  type: "omelette:height",
+                  type: 'omelette:height',
                   height: document.documentElement.scrollHeight,
                 },
-                "*",
+                '*',
               );
             } catch {}
           };
-          if (document.readyState === "complete") G();
-          else window.addEventListener("load", G);
-          if (window.ResizeObserver)
-            new ResizeObserver(G).observe(document.documentElement);
+          if (document.readyState === 'complete') G();
+          else window.addEventListener('load', G);
+          if (window.ResizeObserver) new ResizeObserver(G).observe(document.documentElement);
           const k = {};
           let A = 0;
           window.claude = {
             complete(Q) {
               return new Promise((J, W) => {
                 if (!j.length) {
-                  W(new Error("claude.complete: no parent origin"));
+                  W(new Error('claude.complete: no parent origin'));
                   return;
                 }
                 const Z = `c${++A}`;
@@ -336,7 +288,7 @@
                     W(new Error(`claude.complete: no data for ${S / 1000}s`));
                   }, S);
                 const V = z();
-                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                k[Z] = { resolve: J, reject: W, text: '', t: V, arm: z };
                 try {
                   for (const L of j) {
                     y.postMessage({ __om_api: true, id: Z, body: Q }, L);
@@ -370,7 +322,7 @@
                       {
                         __om_file: true,
                         id: z,
-                        op: "write",
+                        op: 'write',
                         path: Q,
                         content: J,
                       },
@@ -391,27 +343,22 @@
               return JSON.stringify(String(Q));
             }
           };
-          window.addEventListener("message", (Q) => {
+          window.addEventListener('message', (Q) => {
             if (j.indexOf(Q.origin) < 0) return;
             if (Q.source !== y) return;
             const J = Q.data;
             if (!J) return;
-            if (J.type === "omelette-preview-refresh") {
+            if (J.type === 'omelette-preview-refresh') {
               if (
-                typeof J.token !== "string" ||
-                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
-                  J.token,
-                )
+                typeof J.token !== 'string' ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token)
               )
                 return;
-              const z = Math.max(
-                1,
-                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
-              );
+              const z = Math.max(1, Math.floor((J.expiresAt || 0) - Date.now() / 1000));
               document.cookie =
-                "__Host-omelette-preview=" +
+                '__Host-omelette-preview=' +
                 J.token +
-                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                '; Path=/; Secure; SameSite=None; Partitioned; Max-Age=' +
                 z;
               return;
             }
@@ -421,7 +368,7 @@
               clearTimeout(z.t);
               delete u[J.id];
               if (J.ok) z.resolve();
-              else z.reject(new Error(J.error || "write failed"));
+              else z.reject(new Error(J.error || 'write failed'));
               return;
             }
             if (J.__om_api_r) {
@@ -450,14 +397,11 @@
             if (!J.__om_eval) return;
             const W = J;
             const Z = (z) => {
-              Q.source.postMessage(
-                { ...z, __om_eval_r: 1, id: W.id },
-                Q.origin,
-              );
+              Q.source.postMessage({ ...z, __om_eval_r: 1, id: W.id }, Q.origin);
             };
             try {
               const z = (0, eval)(W.code);
-              if (z && typeof z.then === "function") {
+              if (z && typeof z.then === 'function') {
                 z.then(
                   (V) => Z({ ok: 1, v: U(V) }),
                   (V) => Z({ ok: 0, e: String(V) }),
@@ -476,39 +420,34 @@
     <meta charset="UTF-8" />
     <style>
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 400;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 500;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 700;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 800;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 900;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -538,7 +477,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         background: var(--bg);
         color: var(--navy);
         line-height: 1.8;
@@ -719,7 +658,7 @@
         gap: 6px;
       }
       .hero-link::before {
-        content: "←";
+        content: '←';
         transition: transform 0.2s;
       }
       .hero-link:hover::before {
@@ -787,29 +726,17 @@
         width: 100%;
         height: 160px;
         border-radius: 10px;
-        background: linear-gradient(
-          135deg,
-          oklch(68% 0.14 168),
-          oklch(55% 0.18 230)
-        );
+        background: linear-gradient(135deg, oklch(68% 0.14 168), oklch(55% 0.18 230));
         margin-bottom: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
       .course-thumb-2 {
-        background: linear-gradient(
-          135deg,
-          oklch(72% 0.18 50),
-          oklch(68% 0.2 20)
-        );
+        background: linear-gradient(135deg, oklch(72% 0.18 50), oklch(68% 0.2 20));
       }
       .course-thumb-3 {
-        background: linear-gradient(
-          135deg,
-          oklch(70% 0.18 260),
-          oklch(62% 0.2 290)
-        );
+        background: linear-gradient(135deg, oklch(70% 0.18 260), oklch(62% 0.2 290));
       }
       .thumb-label {
         font-size: 12px;
@@ -1472,7 +1399,7 @@
 
     <style>
       /* ── DARK MODE VARS ── */
-      [data-theme="dark"] {
+      [data-theme='dark'] {
         --mint: oklch(68% 0.14 168);
         --mint-light: oklch(20% 0.06 168);
         --mint-mid: oklch(40% 0.1 168);
@@ -1483,134 +1410,134 @@
         --bg: #0f172a;
         --white: #1e293b;
       }
-      [data-theme="dark"] body {
+      [data-theme='dark'] body {
         background: #0f172a;
         color: #e2e8f0;
       }
-      [data-theme="dark"] nav {
+      [data-theme='dark'] nav {
         background: rgba(15, 23, 42, 0.92);
         border-color: #1e293b;
       }
-      [data-theme="dark"] .nav-logo {
+      [data-theme='dark'] .nav-logo {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .nav-links a {
+      [data-theme='dark'] .nav-links a {
         color: #94a3b8;
       }
-      [data-theme="dark"] .nav-links a:hover {
+      [data-theme='dark'] .nav-links a:hover {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .btn-ghost {
+      [data-theme='dark'] .btn-ghost {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .btn-ghost:hover {
+      [data-theme='dark'] .btn-ghost:hover {
         background: #1e293b;
       }
-      [data-theme="dark"] .hero-card-main {
+      [data-theme='dark'] .hero-card-main {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .mini-card {
+      [data-theme='dark'] .mini-card {
         background: #0f172a;
         border-color: #334155;
       }
-      [data-theme="dark"] .mini-card .mc-val {
+      [data-theme='dark'] .mini-card .mc-val {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .floating-badge {
+      [data-theme='dark'] .floating-badge {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .badge-info .bi-val {
+      [data-theme='dark'] .badge-info .bi-val {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .marquee-section {
+      [data-theme='dark'] .marquee-section {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .feature-card {
+      [data-theme='dark'] .feature-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .feature-card h3 {
+      [data-theme='dark'] .feature-card h3 {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .feature-card p {
+      [data-theme='dark'] .feature-card p {
         color: #94a3b8;
       }
-      [data-theme="dark"] .courses-section {
+      [data-theme='dark'] .courses-section {
         background: #0f172a;
       }
-      [data-theme="dark"] .section-title {
+      [data-theme='dark'] .section-title {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .section-sub {
+      [data-theme='dark'] .section-sub {
         color: #94a3b8;
       }
-      [data-theme="dark"] .course-card {
+      [data-theme='dark'] .course-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .course-body .course-title {
+      [data-theme='dark'] .course-body .course-title {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .course-body .course-instructor {
+      [data-theme='dark'] .course-body .course-instructor {
         color: #64748b;
       }
-      [data-theme="dark"] .rating {
+      [data-theme='dark'] .rating {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .testi-card {
+      [data-theme='dark'] .testi-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .testi-quote {
+      [data-theme='dark'] .testi-quote {
         color: #cbd5e1;
       }
-      [data-theme="dark"] .testi-name {
+      [data-theme='dark'] .testi-name {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .pricing-section {
+      [data-theme='dark'] .pricing-section {
         background: oklch(15% 0.06 168);
       }
-      [data-theme="dark"] .price-card {
+      [data-theme='dark'] .price-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .price-amount {
+      [data-theme='dark'] .price-amount {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .price-features li {
+      [data-theme='dark'] .price-features li {
         color: #cbd5e1;
       }
-      [data-theme="dark"] .btn-plan {
+      [data-theme='dark'] .btn-plan {
         color: #e2e8f0;
         border-color: #334155;
       }
-      [data-theme="dark"] .btn-plan:hover {
+      [data-theme='dark'] .btn-plan:hover {
         background: #334155;
         color: #fff;
       }
-      [data-theme="dark"] .price-card.featured {
+      [data-theme='dark'] .price-card.featured {
         background: oklch(22% 0.04 250);
         border-color: oklch(30% 0.05 250);
       }
-      [data-theme="dark"] .cta-section {
+      [data-theme='dark'] .cta-section {
         background: #1e293b;
       }
-      [data-theme="dark"] .cta-inner h2 {
+      [data-theme='dark'] .cta-inner h2 {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .cta-inner p {
+      [data-theme='dark'] .cta-inner p {
         color: #94a3b8;
       }
-      [data-theme="dark"] .trust-text {
+      [data-theme='dark'] .trust-text {
         color: #94a3b8;
       }
-      [data-theme="dark"] .trust-text strong {
+      [data-theme='dark'] .trust-text strong {
         color: #e2e8f0;
       }
-      [data-theme="dark"] .hero-sub-text {
+      [data-theme='dark'] .hero-sub-text {
         color: #94a3b8;
       }
 
@@ -1647,23 +1574,16 @@
       <div class="nav-actions">
         <button class="btn-ghost">ورود</button>
         <button class="btn-primary">← شروع یادگیری</button>
-        <button class="theme-toggle-btn" id="themeBtn1" onclick="toggleT1()">
-          🌙
-        </button>
+        <button class="theme-toggle-btn" id="themeBtn1" onclick="toggleT1()">🌙</button>
       </div>
     </nav>
 
     <div style="max-width: 1240px; margin: 0 auto">
       <div class="hero">
         <div class="hero-content">
-          <div class="hero-tag">
-            <span></span>جدید — مسیرهای راهنمایی راه‌اندازی شد
-          </div>
+          <div class="hero-tag"><span></span>جدید — مسیرهای راهنمایی راه‌اندازی شد</div>
           <h1>دانش را کشف کن.<br /><em>هر مهارتی</em><br />را فتح کن.</h1>
-          <p>
-            با راهنمایی متخصصان و پروژه‌های عملی، در سرعت خودت یاد بگیر و
-            حرفه‌ات را شتاب بده.
-          </p>
+          <p>با راهنمایی متخصصان و پروژه‌های عملی، در سرعت خودت یاد بگیر و حرفه‌ات را شتاب بده.</p>
           <div class="hero-cta">
             <button class="btn-hero">شروع رایگان</button>
             <a href="#" class="hero-link">مرور دوره‌ها</a>
@@ -1678,13 +1598,10 @@
             </div>
             <div>
               <div class="stars-row">
-                <span class="star">★</span><span class="star">★</span
-                ><span class="star">★</span><span class="star">★</span
-                ><span class="star">★</span>
+                <span class="star">★</span><span class="star">★</span><span class="star">★</span
+                ><span class="star">★</span><span class="star">★</span>
               </div>
-              <div class="trust-text">
-                مورد اعتماد <strong>۱۲٬۴۰۰+</strong> یادگیرنده
-              </div>
+              <div class="trust-text">مورد اعتماد <strong>۱۲٬۴۰۰+</strong> یادگیرنده</div>
             </div>
           </div>
         </div>
@@ -1696,9 +1613,7 @@
             <div class="course-meta">
               <span class="course-tag">طراحی</span>
             </div>
-            <div class="course-title">
-              فیگما پیشرفته: از وایرفریم تا پروتوتایپ
-            </div>
+            <div class="course-title">فیگما پیشرفته: از وایرفریم تا پروتوتایپ</div>
             <div class="course-instructor">توسط سارا چن · ۹ درس</div>
             <div class="progress-wrap">
               <div class="progress-bar" style="width: 68%"></div>
@@ -1740,52 +1655,24 @@
     <div class="marquee-section">
       <div class="marquee-track">
         <div class="marquee-item">فیگما <span class="marquee-dot"></span></div>
-        <div class="marquee-item">
-          طراحی محصول <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          ری‌اکت و تایپ‌اسکریپت <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          استراتژی برند <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          موشن دیزاین <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          تحلیل داده <span class="marquee-dot"></span>
-        </div>
+        <div class="marquee-item">طراحی محصول <span class="marquee-dot"></span></div>
+        <div class="marquee-item">ری‌اکت و تایپ‌اسکریپت <span class="marquee-dot"></span></div>
+        <div class="marquee-item">استراتژی برند <span class="marquee-dot"></span></div>
+        <div class="marquee-item">موشن دیزاین <span class="marquee-dot"></span></div>
+        <div class="marquee-item">تحلیل داده <span class="marquee-dot"></span></div>
         <div class="marquee-item">رهبری <span class="marquee-dot"></span></div>
-        <div class="marquee-item">
-          ابزارهای نو-کد <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          استراتژی محتوا <span class="marquee-dot"></span>
-        </div>
+        <div class="marquee-item">ابزارهای نو-کد <span class="marquee-dot"></span></div>
+        <div class="marquee-item">استراتژی محتوا <span class="marquee-dot"></span></div>
         <div class="marquee-item">پایتون <span class="marquee-dot"></span></div>
         <div class="marquee-item">فیگما <span class="marquee-dot"></span></div>
-        <div class="marquee-item">
-          طراحی محصول <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          ری‌اکت و تایپ‌اسکریپت <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          استراتژی برند <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          موشن دیزاین <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          تحلیل داده <span class="marquee-dot"></span>
-        </div>
+        <div class="marquee-item">طراحی محصول <span class="marquee-dot"></span></div>
+        <div class="marquee-item">ری‌اکت و تایپ‌اسکریپت <span class="marquee-dot"></span></div>
+        <div class="marquee-item">استراتژی برند <span class="marquee-dot"></span></div>
+        <div class="marquee-item">موشن دیزاین <span class="marquee-dot"></span></div>
+        <div class="marquee-item">تحلیل داده <span class="marquee-dot"></span></div>
         <div class="marquee-item">رهبری <span class="marquee-dot"></span></div>
-        <div class="marquee-item">
-          ابزارهای نو-کد <span class="marquee-dot"></span>
-        </div>
-        <div class="marquee-item">
-          استراتژی محتوا <span class="marquee-dot"></span>
-        </div>
+        <div class="marquee-item">ابزارهای نو-کد <span class="marquee-dot"></span></div>
+        <div class="marquee-item">استراتژی محتوا <span class="marquee-dot"></span></div>
         <div class="marquee-item">پایتون <span class="marquee-dot"></span></div>
       </div>
     </div>
@@ -1806,8 +1693,8 @@
             همه آنچه برای رشد مهارت‌هایت نیاز داری
           </div>
           <div class="section-sub">
-            مسیرهای یادگیری ساختارمند، مربیان متخصص، و جامعه‌ای که در هر قدم
-            مسئولیت‌پذیرت نگه می‌دارد.
+            مسیرهای یادگیری ساختارمند، مربیان متخصص، و جامعه‌ای که در هر قدم مسئولیت‌پذیرت نگه
+            می‌دارد.
           </div>
         </div>
         <div class="features-grid">
@@ -1815,49 +1702,36 @@
             <div class="feature-icon">📐</div>
             <h3>تمرکز بر عمل</h3>
             <p>
-              هر دوره شامل پروژه‌های واقعی و تمرین‌هایی است که یادگیری را به
-              مهارت‌های پایدار تبدیل می‌کند.
+              هر دوره شامل پروژه‌های واقعی و تمرین‌هایی است که یادگیری را به مهارت‌های پایدار تبدیل
+              می‌کند.
             </p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">⏱</div>
             <h3>با سرعت خودت یاد بگیر</h3>
             <p>
-              دروس کوچک متناسب با برنامه‌ات. دقیقاً از همان‌جا که ماندی ادامه
-              بده، از هر دستگاهی.
+              دروس کوچک متناسب با برنامه‌ات. دقیقاً از همان‌جا که ماندی ادامه بده، از هر دستگاهی.
             </p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">🏅</div>
             <h3>گواهینامه کسب کن</h3>
-            <p>
-              با گواهینامه‌های تأییدشده برای هر دوره تکمیل‌شده، مستقیم به
-              لینکدین اضافه کن.
-            </p>
+            <p>با گواهینامه‌های تأییدشده برای هر دوره تکمیل‌شده، مستقیم به لینکدین اضافه کن.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">🧑‍🏫</div>
             <h3>مربیان متخصص</h3>
-            <p>
-              از متخصصانی یاد بگیر که در شرکت‌های برتر کار می‌کنند و تجربه
-              میدانی دارند.
-            </p>
+            <p>از متخصصانی یاد بگیر که در شرکت‌های برتر کار می‌کنند و تجربه میدانی دارند.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">🗺</div>
             <h3>مسیرهای ساختارمند</h3>
-            <p>
-              مسیرهای یادگیری طراحی‌شده که تو را از صفر تا آماده‌ی کار می‌رسانند
-              بدون سردرگمی.
-            </p>
+            <p>مسیرهای یادگیری طراحی‌شده که تو را از صفر تا آماده‌ی کار می‌رسانند بدون سردرگمی.</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">👥</div>
             <h3>جامعه فعال</h3>
-            <p>
-              به جامعه ۱۲٬۰۰۰+ یادگیرنده بپیوند. کارت را به اشتراک بذار، بازخورد
-              بگیر، رشد کن.
-            </p>
+            <p>به جامعه ۱۲٬۰۰۰+ یادگیرنده بپیوند. کارت را به اشتراک بذار، بازخورد بگیر، رشد کن.</p>
           </div>
         </div>
       </div>
@@ -1868,18 +1742,11 @@
         <div class="courses-header">
           <div>
             <div class="section-label">کتابخانه دوره‌ها</div>
-            <div class="section-title" style="margin-bottom: 0">
-              آموزش هوشمندتر UX/UI
-            </div>
+            <div class="section-title" style="margin-bottom: 0">آموزش هوشمندتر UX/UI</div>
           </div>
           <a
             href="#"
-            style="
-              font-size: 14px;
-              font-weight: 600;
-              color: var(--mint);
-              text-decoration: none;
-            "
+            style="font-size: 14px; font-weight: 600; color: var(--mint); text-decoration: none"
             >← مشاهده همه</a
           >
         </div>
@@ -1897,11 +1764,7 @@
               <div
                 class="course-thumb"
                 style="
-                  background: linear-gradient(
-                    135deg,
-                    oklch(68% 0.14 168),
-                    oklch(55% 0.18 230)
-                  );
+                  background: linear-gradient(135deg, oklch(68% 0.14 168), oklch(55% 0.18 230));
                 "
               >
                 <span class="thumb-label">فیگما</span>
@@ -1914,8 +1777,7 @@
               <div class="course-instructor">سارا چن · ۱۱ درس · ۳ واحد</div>
               <div class="course-footer">
                 <div class="rating">
-                  <span class="st">★★★★★</span><span>۴.۹</span
-                  ><span class="ct">(۳۴۲)</span>
+                  <span class="st">★★★★★</span><span>۴.۹</span><span class="ct">(۳۴۲)</span>
                 </div>
                 <div class="course-students">۲.۱هزار ثبت‌نام</div>
               </div>
@@ -1934,8 +1796,7 @@
               <div class="course-instructor">الکس کیم · ۱۳ درس · ۴ واحد</div>
               <div class="course-footer">
                 <div class="rating">
-                  <span class="st">★★★★★</span><span>۴.۸</span
-                  ><span class="ct">(۱۹۸)</span>
+                  <span class="st">★★★★★</span><span>۴.۸</span><span class="ct">(۱۹۸)</span>
                 </div>
                 <div class="course-students">۱.۸هزار ثبت‌نام</div>
               </div>
@@ -1954,8 +1815,7 @@
               <div class="course-instructor">میا تورز · ۹ درس · ۳ واحد</div>
               <div class="course-footer">
                 <div class="rating">
-                  <span class="st">★★★★★</span><span>۴.۷</span
-                  ><span class="ct">(۸۷)</span>
+                  <span class="st">★★★★★</span><span>۴.۷</span><span class="ct">(۸۷)</span>
                 </div>
                 <div class="course-students">۹۴۰ ثبت‌نام</div>
               </div>
@@ -1992,12 +1852,11 @@
       <div class="testimonials-grid">
         <div class="testi-card">
           <div class="testi-stars">
-            <span>★</span><span>★</span><span>★</span><span>★</span
-            ><span>★</span>
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           </div>
           <div class="testi-quote">
-            «دوره‌های منتوما به من کمک کرد اولین نقش UX خودم را در ۴ ماه پیدا
-            کنم. پروژه‌های عملی همه چیز را متفاوت کردند.»
+            «دوره‌های منتوما به من کمک کرد اولین نقش UX خودم را در ۴ ماه پیدا کنم. پروژه‌های عملی
+            همه چیز را متفاوت کردند.»
           </div>
           <div class="testi-author">
             <div class="testi-avatar av1">جو</div>
@@ -2009,12 +1868,11 @@
         </div>
         <div class="testi-card">
           <div class="testi-stars">
-            <span>★</span><span>★</span><span>★</span><span>★</span
-            ><span>★</span>
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           </div>
           <div class="testi-quote">
-            «۳ دوره را در یک ماه تمام کردم. مسیرهای ساختارمند تمرکزم را حفظ
-            کردند و مربیان فوق‌العاده پاسخگو بودند.»
+            «۳ دوره را در یک ماه تمام کردم. مسیرهای ساختارمند تمرکزم را حفظ کردند و مربیان
+            فوق‌العاده پاسخگو بودند.»
           </div>
           <div class="testi-author">
             <div class="testi-avatar av3">اِ</div>
@@ -2026,12 +1884,11 @@
         </div>
         <div class="testi-card">
           <div class="testi-stars">
-            <span>★</span><span>★</span><span>★</span><span>★</span
-            ><span>★</span>
+            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           </div>
           <div class="testi-quote">
-            «گواهینامه‌ای که از منتوما گرفتم، رزومه‌ام را از فیلتر کارگزین رد
-            کرد. واقعاً ارزشش را دارد.»
+            «گواهینامه‌ای که از منتوما گرفتم، رزومه‌ام را از فیلتر کارگزین رد کرد. واقعاً ارزشش را
+            دارد.»
           </div>
           <div class="testi-author">
             <div class="testi-avatar av2">دا</div>
@@ -2048,12 +1905,9 @@
       <div class="pricing-inner">
         <div style="text-align: center">
           <div class="section-label" style="text-align: center">قیمت‌گذاری</div>
-          <div class="section-title" style="text-align: center">
-            ساده و شفاف
-          </div>
+          <div class="section-title" style="text-align: center">ساده و شفاف</div>
           <div class="section-sub" style="margin: 0 auto">
-            طرحی متناسب با اهداف یادگیری خودت انتخاب کن. هر زمان ارتقا یا لغو
-            کن.
+            طرحی متناسب با اهداف یادگیری خودت انتخاب کن. هر زمان ارتقا یا لغو کن.
           </div>
         </div>
         <div class="pricing-grid">
@@ -2110,23 +1964,16 @@
 
     <div class="cta-section">
       <div class="cta-inner">
-        <div class="section-label" style="text-align: center">
-          همین امروز شروع کن
-        </div>
+        <div class="section-label" style="text-align: center">همین امروز شروع کن</div>
         <h2>یادگیری را شروع کن. رشد کن.</h2>
         <p>
-          به ۱۲٬۰۰۰+ یادگیرنده‌ای بپیوند که با دوره‌های متخصص‌محور منتوما
-          مهارت‌های واقعی می‌سازند.
+          به ۱۲٬۰۰۰+ یادگیرنده‌ای بپیوند که با دوره‌های متخصص‌محور منتوما مهارت‌های واقعی می‌سازند.
         </p>
         <div class="cta-btns">
           <button class="btn-hero">رایگان بپیوند</button>
           <button
             class="btn-ghost"
-            style="
-              border: 1.5px solid var(--border);
-              border-radius: 100px;
-              padding: 13px 24px;
-            "
+            style="border: 1.5px solid var(--border); border-radius: 100px; padding: 13px 24px"
           >
             مرور دوره‌ها
           </button>
@@ -2139,10 +1986,7 @@
         <div class="footer-top">
           <div class="footer-brand">
             <div class="footer-logo">منتوما</div>
-            <p>
-              ارتقای مهارت با دوره‌های متخصص‌محور برای همه سطوح. یاد بگیر، رشد
-              کن.
-            </p>
+            <p>ارتقای مهارت با دوره‌های متخصص‌محور برای همه سطوح. یاد بگیر، رشد کن.</p>
           </div>
           <div class="footer-col">
             <h4>پلتفرم</h4>
@@ -2156,8 +2000,8 @@
           </div>
           <div class="footer-col">
             <h4>قانونی</h4>
-            <a href="#">حریم خصوصی</a><a href="#">شرایط استفاده</a
-            ><a href="#">کوکی‌ها</a><a href="#">پشتیبانی</a>
+            <a href="#">حریم خصوصی</a><a href="#">شرایط استفاده</a><a href="#">کوکی‌ها</a
+            ><a href="#">پشتیبانی</a>
           </div>
         </div>
         <div class="footer-bottom">
@@ -2168,31 +2012,28 @@
     </footer>
 
     <script>
-      document.querySelectorAll(".pill").forEach((p) => {
-        p.addEventListener("click", () => {
-          document
-            .querySelectorAll(".pill")
-            .forEach((x) => x.classList.remove("active"));
-          p.classList.add("active");
+      document.querySelectorAll('.pill').forEach((p) => {
+        p.addEventListener('click', () => {
+          document.querySelectorAll('.pill').forEach((x) => x.classList.remove('active'));
+          p.classList.add('active');
         });
       });
     </script>
 
     <script>
       (function () {
-        var saved = localStorage.getItem("Mentoma-theme-t1") || "light";
-        document.documentElement.setAttribute("data-theme", saved);
-        var btn = document.getElementById("themeBtn1");
-        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+        var saved = localStorage.getItem('Mentoma-theme-t1') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        var btn = document.getElementById('themeBtn1');
+        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
       })();
       function toggleT1() {
         var html = document.documentElement;
-        var isDark = html.getAttribute("data-theme") === "dark";
-        var next = isDark ? "light" : "dark";
-        html.setAttribute("data-theme", next);
-        document.getElementById("themeBtn1").textContent =
-          next === "dark" ? "☀️" : "🌙";
-        localStorage.setItem("Mentoma-theme-t1", next);
+        var isDark = html.getAttribute('data-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('themeBtn1').textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('Mentoma-theme-t1', next);
       }
     </script>
   </body>

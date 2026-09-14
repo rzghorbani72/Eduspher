@@ -28,7 +28,7 @@ export type TemplateRoute = keyof typeof TEMPLATE_ROUTES;
  */
 export function templateHref(
   storeContext: TemplateStoreContext | undefined,
-  route: TemplateRoute
+  route: TemplateRoute,
 ): string {
   const slug = storeContext?.isSubdomain ? null : (storeContext?.slug ?? null);
   return buildAcademyPath(slug, TEMPLATE_ROUTES[route]);

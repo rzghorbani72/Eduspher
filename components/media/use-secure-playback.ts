@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { postJson } from "@/lib/api/client";
-import { logger } from "@/lib/logging/app-logger";
-import { toPlayableMediaUrl } from "./playable-media-url";
+import { postJson } from '@/lib/api/client';
+import { logger } from '@/lib/logging/app-logger';
+import { toPlayableMediaUrl } from './playable-media-url';
 
 /**
  * Opens a watch session for one video and keeps an hls.js instance attached to
@@ -14,7 +14,7 @@ import { toPlayableMediaUrl } from "./playable-media-url";
  * actually play something, and never blocks a page that merely shows a poster.
  */
 
-export type PlaybackTier = "encrypted" | "public" | "legacy";
+export type PlaybackTier = 'encrypted' | 'public' | 'legacy';
 
 export interface PlaybackSession {
   tier: PlaybackTier;
@@ -25,7 +25,7 @@ export interface PlaybackSession {
   expiresAt: string | null;
 }
 
-type Status = "idle" | "loading" | "ready" | "error";
+type Status = 'idle' | 'loading' | 'ready' | 'error';
 
 export function useSecurePlayback(
   videoId: string | null | undefined,
@@ -36,25 +36,22 @@ export function useSecurePlayback(
   startPosition = 0,
 ) {
   const [session, setSession] = useState<PlaybackSession | null>(null);
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useState<Status>('idle');
   const destroyRef = useRef<(() => void) | null>(null);
   const startAtRef = useRef(startPosition);
   startAtRef.current = startPosition;
 
   useEffect(() => {
     if (!videoId) {
-      setStatus("idle");
+      setStatus('idle');
       return;
     }
     let cancelled = false;
-    setStatus("loading");
+    setStatus('loading');
 
     (async () => {
       try {
-        const next = await postJson<PlaybackSession>(
-          `/videos/hls/session/${videoId}`,
-          {},
-        );
+        const next = await postJson<PlaybackSession>(`/videos/hls/session/${videoId}`, {});
         if (cancelled) return;
         const playable = {
           ...next,
@@ -64,10 +61,10 @@ export function useSecurePlayback(
         await attach(playable);
       } catch (error) {
         if (cancelled) return;
-        setStatus("error");
-        logger.error("Media", "PlaybackSessionFailed", {
+        setStatus('error');
+        logger.error('Media', 'PlaybackSessionFailed', {
           video_id: videoId,
-          error_name: error instanceof Error ? error.name : "unknown",
+          error_name: error instanceof Error ? error.name : 'unknown',
         });
       }
     })();
@@ -79,39 +76,37 @@ export function useSecurePlayback(
       // MANIFEST_PARSED is not playable: the AES key and first segment still
       // have to land. canplay is the first moment a click will start, not stall.
       const markReady = () => {
-        if (!cancelled) setStatus("ready");
+        if (!cancelled) setStatus('ready');
       };
       const armCanPlay = () => {
         if (element.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
           markReady();
           return;
         }
-        element.addEventListener("canplay", markReady, { once: true });
+        element.addEventListener('canplay', markReady, { once: true });
       };
 
       // Not converted yet: play the original route rather than show a dead player.
-      if (next.tier === "legacy") {
-        element.preload = "auto";
+      if (next.tier === 'legacy') {
+        element.preload = 'auto';
         element.src = next.playlistUrl;
         armCanPlay();
-        destroyRef.current = () =>
-          element.removeEventListener("canplay", markReady);
+        destroyRef.current = () => element.removeEventListener('canplay', markReady);
         return;
       }
 
       // iOS Safari has no Media Source Extensions, so hls.js cannot run there.
       // Native HLS works because every ticket travels in the URL, not a header.
-      const { default: Hls } = await import("hls.js");
+      const { default: Hls } = await import('hls.js');
       if (!Hls.isSupported()) {
-        if (element.canPlayType("application/vnd.apple.mpegurl")) {
-          element.preload = "auto";
+        if (element.canPlayType('application/vnd.apple.mpegurl')) {
+          element.preload = 'auto';
           element.src = next.playlistUrl;
           armCanPlay();
-          destroyRef.current = () =>
-            element.removeEventListener("canplay", markReady);
+          destroyRef.current = () => element.removeEventListener('canplay', markReady);
           return;
         }
-        setStatus("error");
+        setStatus('error');
         return;
       }
 
@@ -134,9 +129,7 @@ export function useSecurePlayback(
       hls.attachMedia(element);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (cancelled) return;
-        const duration = Number.isFinite(element.duration)
-          ? element.duration
-          : 0;
+        const duration = Number.isFinite(element.duration) ? element.duration : 0;
         let start = startAtRef.current;
         if (duration > 0 && start >= duration - 1) start = 0;
         hls.startLoad(start > 0 ? start : -1);
@@ -159,16 +152,16 @@ export function useSecurePlayback(
           hls.recoverMediaError();
           return;
         }
-        setStatus("error");
-        logger.error("Media", "PlayerError", {
-          video_id: videoId ?? "unknown",
+        setStatus('error');
+        logger.error('Media', 'PlayerError', {
+          video_id: videoId ?? 'unknown',
           error_type: data.type,
           error_details: data.details,
         });
       });
 
       destroyRef.current = () => {
-        element.removeEventListener("canplay", markReady);
+        element.removeEventListener('canplay', markReady);
         hls.destroy();
       };
     }

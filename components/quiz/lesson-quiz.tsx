@@ -23,7 +23,10 @@ interface LessonQuizProps {
   currentProfileId?: string;
 }
 
-type AnswerState = Record<string, { selected_option_id?: string; answer_boolean?: boolean; answer_text?: string }>;
+type AnswerState = Record<
+  string,
+  { selected_option_id?: string; answer_boolean?: boolean; answer_text?: string }
+>;
 
 /**
  * Student quiz experience: load the published quiz (answer keys already stripped
@@ -66,7 +69,10 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
     setSubmitting(true);
     setError(null);
     try {
-      const payload: AnswerInput[] = Object.entries(answers).map(([question_id, v]) => ({ question_id, ...v }));
+      const payload: AnswerInput[] = Object.entries(answers).map(([question_id, v]) => ({
+        question_id,
+        ...v,
+      }));
       if (payload.length) await saveQuizAnswers(attempt.id, payload);
       const result = await submitQuizAttempt(attempt.id);
       setAttempt(result);
@@ -77,8 +83,8 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
     }
   };
 
-  if (loading) return <p className="text-sm text-muted-foreground">{t('learning.loadingQuiz')}</p>;
-  if (error && !quiz) return <p className="text-sm text-destructive">{error}</p>;
+  if (loading) return <p className="text-muted-foreground text-sm">{t('learning.loadingQuiz')}</p>;
+  if (error && !quiz) return <p className="text-destructive text-sm">{error}</p>;
   if (!quiz || !attempt) return null;
 
   const submitted = attempt.status !== 'IN_PROGRESS';
@@ -92,19 +98,27 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
             <h3 className="text-lg font-semibold">{quiz.title}</h3>
             <Badge variant={attempt.passed ? 'success' : pending ? 'warning' : 'outline'}>
               {pending ? (
-                <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {t('learning.awaitingReview')}</span>
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> {t('learning.awaitingReview')}
+                </span>
               ) : attempt.passed ? (
-                <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> {t('learning.passed')}</span>
+                <span className="flex items-center gap-1">
+                  <CheckCircle2 className="h-3 w-3" /> {t('learning.passed')}
+                </span>
               ) : (
                 t('learning.notPassed')
               )}
             </Badge>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('learning.score')}: <span className="font-medium text-foreground">{attempt.score}</span> / {attempt.max_score}
+          <p className="text-muted-foreground mt-2 text-sm">
+            {t('learning.score')}:{' '}
+            <span className="text-foreground font-medium">{attempt.score}</span> /{' '}
+            {attempt.max_score}
             {pending && ` (${t('learning.shortAnswersPending')})`}
           </p>
-          {attempt.feedback && <p className="mt-3 rounded-md bg-muted p-3 text-sm">{attempt.feedback}</p>}
+          {attempt.feedback && (
+            <p className="bg-muted mt-3 rounded-md p-3 text-sm">{attempt.feedback}</p>
+          )}
         </Card>
 
         <Card className="p-6">
@@ -117,12 +131,13 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold">{quiz.title}</h3>
-      {quiz.description && <p className="text-sm text-muted-foreground">{quiz.description}</p>}
+      {quiz.description && <p className="text-muted-foreground text-sm">{quiz.description}</p>}
 
       {quiz.Question.map((q, i) => (
         <Card key={q.id} className="space-y-3 p-5">
           <p className="font-medium">
-            {i + 1}. {q.prompt} <span className="text-xs text-muted-foreground">({q.points} pts)</span>
+            {i + 1}. {q.prompt}{' '}
+            <span className="text-muted-foreground text-xs">({q.points} pts)</span>
           </p>
 
           {q.type === 'MULTIPLE_CHOICE' && (
@@ -170,7 +185,7 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
         </Card>
       ))}
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-destructive text-sm">{error}</p>}
       <Button onClick={submit} disabled={submitting}>
         {submitting ? t('learning.submittingQuiz') : t('learning.submitQuiz')}
       </Button>

@@ -1,37 +1,37 @@
 const RESERVED_PATH_SEGMENTS = new Set([
-  "",
-  "api",
-  "auth",
-  "images",
-  "static",
-  "_next",
-  "favicon.ico",
-  "robots.txt",
-  "sitemap.xml",
-  "s",
-  "courses",
-  "articles",
-  "academies",
-  "pricing",
-  "checkout",
-  "payment",
-  "account",
-  "about",
-  "paths",
-  "scholarships",
-  "careers",
-  "press",
-  "support",
-  "contact",
-  "status",
-  "legal",
+  '',
+  'api',
+  'auth',
+  'images',
+  'static',
+  '_next',
+  'favicon.ico',
+  'robots.txt',
+  'sitemap.xml',
+  's',
+  'courses',
+  'articles',
+  'academies',
+  'pricing',
+  'checkout',
+  'payment',
+  'account',
+  'about',
+  'paths',
+  'scholarships',
+  'careers',
+  'press',
+  'support',
+  'contact',
+  'status',
+  'legal',
 ]);
 
 export function slugFromPathname(pathname: string): string | null {
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname.split('/').filter(Boolean);
   if (segments.length === 0) return null;
 
-  if (segments[0] === "s" && segments[1]) {
+  if (segments[0] === 's' && segments[1]) {
     return segments[1];
   }
 
@@ -43,15 +43,12 @@ export function slugFromPathname(pathname: string): string | null {
   return first;
 }
 
-export function buildAcademyPathFromSlug(
-  slug: string | null,
-  path: string
-): string {
-  const normalized = path.startsWith("/") ? path : `/${path}`;
+export function buildAcademyPathFromSlug(slug: string | null, path: string): string {
+  const normalized = path.startsWith('/') ? path : `/${path}`;
   if (!slug) {
-    return normalized === "//" ? "/" : normalized;
+    return normalized === '//' ? '/' : normalized;
   }
-  if (normalized === "/") {
+  if (normalized === '/') {
     return `/${slug}`;
   }
   return `/${slug}${normalized}`;

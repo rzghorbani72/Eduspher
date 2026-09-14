@@ -1,12 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
-import {
-  applyThemeCssVariables,
-  type ThemeConfigInput,
-} from "@/lib/theme-apply";
+import { applyThemeCssVariables, type ThemeConfigInput } from '@/lib/theme-apply';
 
 type ThemeStyleSyncProps = {
   theme: ThemeConfigInput | null;

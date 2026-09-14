@@ -1,11 +1,5 @@
 <!doctype html>
-<html
-  data-src-ver="e6d6f80b"
-  lang="fa"
-  dir="rtl"
-  data-theme="light"
-  data-om-id="e6d6f80b:0"
->
+<html data-src-ver="e6d6f80b" lang="fa" dir="rtl" data-theme="light" data-om-id="e6d6f80b:0">
   <head data-om-id="e6d6f80b:1">
     <style data-omelette-injected>
       html,
@@ -15,54 +9,36 @@
     </style>
     <script data-omelette-injected>
       (() => {
-        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var j = ['https://claude.ai', 'https://preview.claude.ai'];
         var x = true;
         var S = 30000;
         var f = 3000;
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
           const H = window.Babel;
-          const G = "om-src-id";
-          if (
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[G])
-          ) {
+          const G = 'om-src-id';
+          if (H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[G])) {
             H.registerPlugin(G, ({ types: Y }) => ({
               visitor: {
                 JSXOpeningElement(U, Q) {
                   const J = U.node;
-                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  if (J.name && J.name.type === 'JSXMemberExpression') return;
                   for (let V = 0; V < J.attributes.length; V++) {
                     const L = J.attributes[V];
-                    if (
-                      L.type === "JSXAttribute" &&
-                      L.name &&
-                      L.name.name === "data-om-id"
-                    )
-                      return;
+                    if (L.type === 'JSXAttribute' && L.name && L.name.name === 'data-om-id') return;
                   }
-                  const W =
-                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const W = (Q.file && Q.file.opts && Q.file.opts.filename) || '?';
                   const Z = J.loc && J.loc.start;
                   const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
                   J.attributes.push(
-                    Y.jsxAttribute(
-                      Y.jsxIdentifier("data-om-id"),
-                      Y.stringLiteral(z),
-                    ),
+                    Y.jsxAttribute(Y.jsxIdentifier('data-om-id'), Y.stringLiteral(z)),
                   );
                 },
               },
             }));
           }
-          const k = "om-text-extract";
+          const k = 'om-text-extract';
           let A = false;
-          if (
-            x &&
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[k])
-          ) {
+          if (x && H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[k])) {
             const Y = window.React;
             if (Y && Y.useSyncExternalStore && Y.createElement) {
               A = true;
@@ -87,8 +63,8 @@
               window.__OmT = function z(V) {
                 Y.useSyncExternalStore(W, Z, Z);
                 return Y.createElement(
-                  "span",
-                  { "data-om-text": V.i, className: "__om-t" },
+                  'span',
+                  { 'data-om-text': V.i, className: '__om-t' },
                   V.i in U ? U[V.i] : V.children,
                 );
               };
@@ -109,20 +85,17 @@
                   alt: 1,
                   title: 1,
                   label: 1,
-                  "aria-label": 1,
-                  "aria-description": 1,
-                  "aria-placeholder": 1,
+                  'aria-label': 1,
+                  'aria-description': 1,
+                  'aria-placeholder': 1,
                 };
                 const _ = ($, C) =>
                   z.logicalExpression(
-                    "??",
+                    '??',
                     z.memberExpression(
                       z.logicalExpression(
-                        "||",
-                        z.memberExpression(
-                          z.identifier("window"),
-                          z.identifier("__omTextO"),
-                        ),
+                        '||',
+                        z.memberExpression(z.identifier('window'), z.identifier('__omTextO')),
                         z.objectExpression([]),
                       ),
                       z.stringLiteral($),
@@ -130,28 +103,22 @@
                     ),
                     C,
                   );
-                const E = ($) =>
-                  ($.file && $.file.opts && $.file.opts.filename) || "?";
-                const B = ($) => ($.file && $.file.code) || "";
+                const E = ($) => ($.file && $.file.opts && $.file.opts.filename) || '?';
+                const B = ($) => ($.file && $.file.code) || '';
                 const b = ($, C) => {
                   const X = (F) =>
                     F &&
                     F.start != null &&
                     F.end != null &&
-                    (F.type === "StringLiteral" ||
-                      (F.type === "TemplateLiteral" &&
-                        F.expressions.length === 0))
+                    (F.type === 'StringLiteral' ||
+                      (F.type === 'TemplateLiteral' && F.expressions.length === 0))
                       ? [F.start, F.end]
                       : null;
                   const N = X(C);
                   if (N) return N;
-                  if (C && C.type === "Identifier") {
+                  if (C && C.type === 'Identifier') {
                     const F = $.scope.getBinding(C.name);
-                    if (
-                      F &&
-                      F.constant &&
-                      F.path.node.type === "VariableDeclarator"
-                    ) {
+                    if (F && F.constant && F.path.node.type === 'VariableDeclarator') {
                       return X(F.path.node.init);
                     }
                   }
@@ -164,22 +131,17 @@
                     F = true;
                     return z.jsxElement(
                       z.jsxOpeningElement(
-                        z.jsxIdentifier("__OmT"),
-                        [
-                          z.jsxAttribute(
-                            z.jsxIdentifier("i"),
-                            z.stringLiteral(K),
-                          ),
-                        ],
+                        z.jsxIdentifier('__OmT'),
+                        [z.jsxAttribute(z.jsxIdentifier('i'), z.stringLiteral(K))],
                         false,
                       ),
-                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      z.jsxClosingElement(z.jsxIdentifier('__OmT')),
                       [q],
                       false,
                     );
                   };
                   const D = N.children.map((K) => {
-                    if (K.type === "JSXText") {
+                    if (K.type === 'JSXText') {
                       if (K.start == null || K.end == null) return K;
                       const q = X.slice(K.start, K.end);
                       const R = q.length - q.trimStart().length;
@@ -187,7 +149,7 @@
                       if (R + m >= q.length) return K;
                       return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
                     }
-                    if (K.type === "JSXExpressionContainer") {
+                    if (K.type === 'JSXExpressionContainer') {
                       const q = b($, K.expression);
                       if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
                     }
@@ -203,23 +165,19 @@
                       const F = {};
                       for (let w = 0; w < X.attributes.length; w++) {
                         const D = X.attributes[w];
-                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        if (D.type !== 'JSXAttribute' || !D.name) continue;
                         const K = D.name.name;
                         if (!L[K]) continue;
-                        if (!D.value || D.value.type !== "StringLiteral")
-                          continue;
-                        if (D.value.start == null || D.value.end == null)
-                          continue;
+                        if (!D.value || D.value.type !== 'StringLiteral') continue;
+                        if (D.value.start == null || D.value.end == null) continue;
                         const q = `txt:${N}:${D.value.start}:${D.value.end}`;
                         F[K] = q;
-                        D.value = z.jsxExpressionContainer(
-                          _(q, z.stringLiteral(D.value.value)),
-                        );
+                        D.value = z.jsxExpressionContainer(_(q, z.stringLiteral(D.value.value)));
                       }
                       if (Object.keys(F).length) {
                         X.attributes.push(
                           z.jsxAttribute(
-                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.jsxIdentifier('data-om-text-attrs'),
                             z.stringLiteral(JSON.stringify(F)),
                           ),
                         );
@@ -228,8 +186,8 @@
                     JSXElement($, C) {
                       const X = $.node.openingElement;
                       const N = X && X.name && X.name.name;
-                      if (N === "__OmT") return;
-                      if (typeof N === "string" && V[N]) return;
+                      if (N === '__OmT') return;
+                      if (typeof N === 'string' && V[N]) return;
                       M($, E(C), B(C));
                     },
                     JSXFragment($, C) {
@@ -240,27 +198,17 @@
               });
             }
           }
-          const u = A
-            ? ["transform-react-jsx-source", G, k]
-            : ["transform-react-jsx-source", G];
+          const u = A ? ['transform-react-jsx-source', G, k] : ['transform-react-jsx-source', G];
           document
-            .querySelectorAll(
-              'script[type="text/babel"],script[type="text/jsx"]',
-            )
+            .querySelectorAll('script[type="text/babel"],script[type="text/jsx"]')
             .forEach((Y, U) => {
-              const Q = Y.getAttribute("data-plugins") || "";
+              const Q = Y.getAttribute('data-plugins') || '';
               const J = u.filter((W) => Q.indexOf(W) < 0);
               if (J.length) {
-                Y.setAttribute(
-                  "data-plugins",
-                  Q ? `${Q},${J.join(",")}` : J.join(","),
-                );
+                Y.setAttribute('data-plugins', Q ? `${Q},${J.join(',')}` : J.join(','));
               }
-              if (!Y.hasAttribute("data-filename")) {
-                Y.setAttribute(
-                  "data-filename",
-                  Y.getAttribute("src") || `inline-${U}`,
-                );
+              if (!Y.hasAttribute('data-filename')) {
+                Y.setAttribute('data-filename', Y.getAttribute('src') || `inline-${U}`);
               }
             });
         });
@@ -268,71 +216,69 @@
         if (y && y !== window) {
           const H = (Q, J) => {
             try {
-              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, '*');
             } catch {}
           };
-          ["log", "warn", "error"].forEach((Q) => {
+          ['log', 'warn', 'error'].forEach((Q) => {
             const J = console[Q];
             console[Q] = (...W) => {
               const Z = W.map((z) => {
                 try {
-                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                  return typeof z === 'object' ? JSON.stringify(z) : String(z);
                 } catch {
                   try {
                     return String(z);
                   } catch {
-                    return "[unstringifiable]";
+                    return '[unstringifiable]';
                   }
                 }
-              }).join(" ");
+              }).join(' ');
               H(Q, Z);
               J.apply(console, W);
             };
           });
           window.addEventListener(
-            "error",
+            'error',
             (Q) => {
               const J = Q.target;
               if (J && J !== window && J.tagName) {
-                const W = J.src || J.href || "";
-                H("resource_error", `${J.tagName} failed to load: ${W}`);
+                const W = J.src || J.href || '';
+                H('resource_error', `${J.tagName} failed to load: ${W}`);
               } else {
                 H(
-                  "error",
-                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                  'error',
+                  `${Q.message || 'Unknown error'} at ${Q.filename || '?'}:${Q.lineno || 0}:${Q.colno || 0}`,
                 );
               }
             },
             true,
           );
-          window.addEventListener("unhandledrejection", (Q) => {
+          window.addEventListener('unhandledrejection', (Q) => {
             const J = Q.reason;
-            const W =
-              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
-            H("error", `Unhandled rejection: ${W}`);
+            const W = J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H('error', `Unhandled rejection: ${W}`);
           });
           const G = () => {
             try {
               y.postMessage(
                 {
-                  type: "omelette:height",
+                  type: 'omelette:height',
                   height: document.documentElement.scrollHeight,
                 },
-                "*",
+                '*',
               );
             } catch {}
           };
-          if (document.readyState === "complete") G();
-          else window.addEventListener("load", G);
-          if (window.ResizeObserver)
-            new ResizeObserver(G).observe(document.documentElement);
+          if (document.readyState === 'complete') G();
+          else window.addEventListener('load', G);
+          if (window.ResizeObserver) new ResizeObserver(G).observe(document.documentElement);
           const k = {};
           let A = 0;
           window.claude = {
             complete(Q) {
               return new Promise((J, W) => {
                 if (!j.length) {
-                  W(new Error("claude.complete: no parent origin"));
+                  W(new Error('claude.complete: no parent origin'));
                   return;
                 }
                 const Z = `c${++A}`;
@@ -342,7 +288,7 @@
                     W(new Error(`claude.complete: no data for ${S / 1000}s`));
                   }, S);
                 const V = z();
-                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                k[Z] = { resolve: J, reject: W, text: '', t: V, arm: z };
                 try {
                   for (const L of j) {
                     y.postMessage({ __om_api: true, id: Z, body: Q }, L);
@@ -376,7 +322,7 @@
                       {
                         __om_file: true,
                         id: z,
-                        op: "write",
+                        op: 'write',
                         path: Q,
                         content: J,
                       },
@@ -397,27 +343,22 @@
               return JSON.stringify(String(Q));
             }
           };
-          window.addEventListener("message", (Q) => {
+          window.addEventListener('message', (Q) => {
             if (j.indexOf(Q.origin) < 0) return;
             if (Q.source !== y) return;
             const J = Q.data;
             if (!J) return;
-            if (J.type === "omelette-preview-refresh") {
+            if (J.type === 'omelette-preview-refresh') {
               if (
-                typeof J.token !== "string" ||
-                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
-                  J.token,
-                )
+                typeof J.token !== 'string' ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token)
               )
                 return;
-              const z = Math.max(
-                1,
-                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
-              );
+              const z = Math.max(1, Math.floor((J.expiresAt || 0) - Date.now() / 1000));
               document.cookie =
-                "__Host-omelette-preview=" +
+                '__Host-omelette-preview=' +
                 J.token +
-                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                '; Path=/; Secure; SameSite=None; Partitioned; Max-Age=' +
                 z;
               return;
             }
@@ -427,7 +368,7 @@
               clearTimeout(z.t);
               delete u[J.id];
               if (J.ok) z.resolve();
-              else z.reject(new Error(J.error || "write failed"));
+              else z.reject(new Error(J.error || 'write failed'));
               return;
             }
             if (J.__om_api_r) {
@@ -456,14 +397,11 @@
             if (!J.__om_eval) return;
             const W = J;
             const Z = (z) => {
-              Q.source.postMessage(
-                { ...z, __om_eval_r: 1, id: W.id },
-                Q.origin,
-              );
+              Q.source.postMessage({ ...z, __om_eval_r: 1, id: W.id }, Q.origin);
             };
             try {
               const z = (0, eval)(W.code);
-              if (z && typeof z.then === "function") {
+              if (z && typeof z.then === 'function') {
                 z.then(
                   (V) => Z({ ok: 1, v: U(V) }),
                   (V) => Z({ ok: 0, e: String(V) }),
@@ -482,60 +420,49 @@
     <meta charset="UTF-8" data-om-id="e6d6f80b:2" />
     <style>
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 300;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 400;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 500;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 600;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 700;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 800;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 900;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
     </style>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-      data-om-id="e6d6f80b:3"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-om-id="e6d6f80b:3" />
     <title>منتوما — هنرمند</title>
 
     <style>
@@ -564,7 +491,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         background: var(--cream);
         color: var(--charcoal);
         line-height: 1.8;
@@ -574,7 +501,7 @@
       h2,
       h3,
       h4 {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
       }
 
       nav {
@@ -589,7 +516,7 @@
         z-index: 200;
       }
       .nav-logo {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 22px;
         font-weight: 700;
         color: var(--cream);
@@ -629,7 +556,7 @@
         color: var(--cream);
       }
       .btn-terra {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 12px;
         font-weight: 700;
         color: #fff;
@@ -657,7 +584,7 @@
         overflow: hidden;
       }
       .hero-left::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: -80px;
         left: -80px;
@@ -667,7 +594,7 @@
         border: 1px solid oklch(28% 0.03 50);
       }
       .hero-left::before {
-        content: "";
+        content: '';
         position: absolute;
         top: 40px;
         left: 40px;
@@ -686,7 +613,7 @@
         gap: 14px;
       }
       .hero-eyebrow::before {
-        content: "";
+        content: '';
         width: 32px;
         height: 1px;
         background: var(--terra);
@@ -717,7 +644,7 @@
         margin-bottom: 56px;
       }
       .btn-hero-terra {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 13px;
         font-weight: 700;
         color: #fff;
@@ -732,7 +659,7 @@
         transform: translateY(-1px);
       }
       .btn-hero-outline {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 13px;
         font-weight: 600;
         color: var(--cream);
@@ -793,11 +720,7 @@
       .tile-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          to top,
-          rgba(26, 26, 26, 0.82) 0%,
-          transparent 55%
-        );
+        background: linear-gradient(to top, rgba(26, 26, 26, 0.82) 0%, transparent 55%);
         transition: opacity 0.3s;
       }
       .hero-course-tile:hover .tile-overlay {
@@ -816,7 +739,7 @@
         margin-bottom: 4px;
       }
       .tile-name {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 15px;
         font-weight: 600;
         color: var(--cream);
@@ -882,7 +805,7 @@
         gap: 12px;
       }
       .section-eyebrow::before {
-        content: "";
+        content: '';
         width: 24px;
         height: 1px;
         background: var(--terra);
@@ -1034,7 +957,7 @@
         z-index: 0;
       }
       .creator-initial {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 120px;
         font-weight: 700;
         font-style: italic;
@@ -1058,7 +981,7 @@
         font-size: 24px;
       }
       .cb-val {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 22px;
         font-weight: 700;
         color: var(--charcoal);
@@ -1077,7 +1000,7 @@
         gap: 12px;
       }
       .si-eyebrow::before {
-        content: "";
+        content: '';
         width: 24px;
         height: 1px;
         background: var(--terra);
@@ -1092,7 +1015,7 @@
         border: 1px solid var(--border);
       }
       .cs-val {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 30px;
         font-weight: 700;
         color: var(--charcoal);
@@ -1111,7 +1034,7 @@
         padding-right: 28px;
       }
       .quote-block p {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 16px;
         font-style: italic;
         color: var(--char-mid);
@@ -1147,7 +1070,7 @@
         border-color: var(--terra);
       }
       .why-num {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 48px;
         font-weight: 700;
         font-style: italic;
@@ -1183,7 +1106,7 @@
         text-align: center;
       }
       .sb-val {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 50px;
         font-weight: 700;
         color: #fff;
@@ -1222,7 +1145,7 @@
         margin-bottom: 20px;
       }
       .testi-q {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 17px;
         font-style: italic;
         line-height: 1.7;
@@ -1262,7 +1185,7 @@
         overflow: hidden;
       }
       .cta-section::before {
-        content: "";
+        content: '';
         position: absolute;
         top: -120px;
         left: 50%;
@@ -1288,7 +1211,7 @@
       }
       .cta-eyebrow::before,
       .cta-eyebrow::after {
-        content: "";
+        content: '';
         width: 24px;
         height: 1px;
         background: var(--terra);
@@ -1335,7 +1258,7 @@
         margin-bottom: 56px;
       }
       .footer-brand-name {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 22px;
         font-weight: 700;
         color: var(--cream);
@@ -1382,39 +1305,19 @@
       }
 
       .art1 {
-        background: linear-gradient(
-          145deg,
-          oklch(68% 0.14 35),
-          oklch(58% 0.14 55)
-        );
+        background: linear-gradient(145deg, oklch(68% 0.14 35), oklch(58% 0.14 55));
       }
       .art2 {
-        background: linear-gradient(
-          145deg,
-          oklch(62% 0.18 250),
-          oklch(52% 0.2 275)
-        );
+        background: linear-gradient(145deg, oklch(62% 0.18 250), oklch(52% 0.2 275));
       }
       .art3 {
-        background: linear-gradient(
-          145deg,
-          oklch(70% 0.16 80),
-          oklch(62% 0.18 60)
-        );
+        background: linear-gradient(145deg, oklch(70% 0.16 80), oklch(62% 0.18 60));
       }
       .art4 {
-        background: linear-gradient(
-          145deg,
-          oklch(65% 0.16 158),
-          oklch(55% 0.18 180)
-        );
+        background: linear-gradient(145deg, oklch(65% 0.16 158), oklch(55% 0.18 180));
       }
       .art6 {
-        background: linear-gradient(
-          145deg,
-          oklch(68% 0.14 60),
-          oklch(60% 0.16 40)
-        );
+        background: linear-gradient(145deg, oklch(68% 0.14 60), oklch(60% 0.16 40));
       }
       .av-t {
         background: var(--terra);
@@ -1438,7 +1341,7 @@
     </style>
 
     <style>
-      [data-theme="dark"] {
+      [data-theme='dark'] {
         --cream: #1a120a;
         --cream-dark: #221810;
         --terra: oklch(62% 0.14 35);
@@ -1452,135 +1355,135 @@
         --border-dark: #3a2e22;
         --white: #221810;
       }
-      [data-theme="dark"] body {
+      [data-theme='dark'] body {
         background: #1a120a;
         color: #f1ede6;
       }
-      [data-theme="dark"] nav {
+      [data-theme='dark'] nav {
         background: #100c06;
       }
-      [data-theme="dark"] .nav-logo {
+      [data-theme='dark'] .nav-logo {
         color: #f1ede6;
       }
-      [data-theme="dark"] .nav-links a {
+      [data-theme='dark'] .nav-links a {
         color: oklch(55% 0.02 50);
       }
-      [data-theme="dark"] .nav-links a:hover {
+      [data-theme='dark'] .nav-links a:hover {
         color: #f1ede6;
       }
-      [data-theme="dark"] .nav-login {
+      [data-theme='dark'] .nav-login {
         color: oklch(50% 0.02 50);
       }
-      [data-theme="dark"] .hero-left {
+      [data-theme='dark'] .hero-left {
         background: #100c06;
       }
-      [data-theme="dark"] .hero-left::after,
-      [data-theme="dark"] .hero-left::before {
+      [data-theme='dark'] .hero-left::after,
+      [data-theme='dark'] .hero-left::before {
         border-color: oklch(22% 0.03 50);
       }
-      [data-theme="dark"] .hero h1 {
+      [data-theme='dark'] .hero h1 {
         color: #f1ede6;
       }
-      [data-theme="dark"] .hero-desc {
+      [data-theme='dark'] .hero-desc {
         color: oklch(55% 0.02 50);
       }
-      [data-theme="dark"] .btn-hero-outline {
+      [data-theme='dark'] .btn-hero-outline {
         color: #f1ede6;
         border-color: oklch(30% 0.02 50);
       }
-      [data-theme="dark"] .trust-copy {
+      [data-theme='dark'] .trust-copy {
         color: oklch(55% 0.02 50);
       }
-      [data-theme="dark"] .trust-copy strong {
+      [data-theme='dark'] .trust-copy strong {
         color: #f1ede6;
       }
-      [data-theme="dark"] .hero-right {
+      [data-theme='dark'] .hero-right {
         background: #221810;
       }
-      [data-theme="dark"] .cats-section {
+      [data-theme='dark'] .cats-section {
         background: #100c06;
       }
-      [data-theme="dark"] .cat-tab {
+      [data-theme='dark'] .cat-tab {
         color: oklch(42% 0.02 50);
       }
-      [data-theme="dark"] .cat-tab:hover {
+      [data-theme='dark'] .cat-tab:hover {
         color: #f1ede6;
       }
-      [data-theme="dark"] .course-card {
+      [data-theme='dark'] .course-card {
         background: #221810;
       }
-      [data-theme="dark"] .course-card:hover {
+      [data-theme='dark'] .course-card:hover {
         box-shadow: 0 24px 56px rgba(0, 0, 0, 0.4);
       }
-      [data-theme="dark"] .course-card-title {
+      [data-theme='dark'] .course-card-title {
         color: #f1ede6;
       }
-      [data-theme="dark"] .course-card-instructor {
+      [data-theme='dark'] .course-card-instructor {
         color: #9a8f84;
       }
-      [data-theme="dark"] .course-card-footer {
+      [data-theme='dark'] .course-card-footer {
         border-color: #2a2018;
       }
-      [data-theme="dark"] .cr-score {
+      [data-theme='dark'] .cr-score {
         color: #f1ede6;
       }
-      [data-theme="dark"] .mc {
+      [data-theme='dark'] .mc {
         background: #1a120a;
         border-color: #2a2018;
         color: #9a8f84;
       }
-      [data-theme="dark"] .spotlight-section {
+      [data-theme='dark'] .spotlight-section {
         background: #221810;
       }
-      [data-theme="dark"] .creator-stats {
+      [data-theme='dark'] .creator-stats {
         background: #2a2018;
         border-color: #3a2e22;
       }
-      [data-theme="dark"] .cs-val {
+      [data-theme='dark'] .cs-val {
         color: #f1ede6;
       }
-      [data-theme="dark"] .cs-label {
+      [data-theme='dark'] .cs-label {
         color: #9a8f84;
       }
-      [data-theme="dark"] .quote-block {
+      [data-theme='dark'] .quote-block {
         background: oklch(18% 0.06 35);
       }
-      [data-theme="dark"] .quote-block p {
+      [data-theme='dark'] .quote-block p {
         color: #d4cfc8;
       }
-      [data-theme="dark"] .why-card {
+      [data-theme='dark'] .why-card {
         background: #221810;
         border-color: #2a2018;
       }
-      [data-theme="dark"] .why-card h3 {
+      [data-theme='dark'] .why-card h3 {
         color: #f1ede6;
       }
-      [data-theme="dark"] .why-card p {
+      [data-theme='dark'] .why-card p {
         color: #9a8f84;
       }
-      [data-theme="dark"] .why-num {
+      [data-theme='dark'] .why-num {
         color: #3a2e22;
       }
-      [data-theme="dark"] .testi-section {
+      [data-theme='dark'] .testi-section {
         background: #221810;
       }
-      [data-theme="dark"] .testi-card {
+      [data-theme='dark'] .testi-card {
         background: #2a2018;
         border-color: #3a2e22;
       }
-      [data-theme="dark"] .testi-q {
+      [data-theme='dark'] .testi-q {
         color: #d4cfc8;
       }
-      [data-theme="dark"] .testi-who {
+      [data-theme='dark'] .testi-who {
         border-color: #3a2e22;
       }
-      [data-theme="dark"] .testi-name {
+      [data-theme='dark'] .testi-name {
         color: #f1ede6;
       }
-      [data-theme="dark"] .testi-role {
+      [data-theme='dark'] .testi-role {
         color: #9a8f84;
       }
-      [data-theme="dark"] .section-title-art {
+      [data-theme='dark'] .section-title-art {
         color: #f1ede6;
       }
 
@@ -1600,7 +1503,7 @@
       .theme-toggle-btn:hover {
         border-color: var(--terra);
       }
-      [data-theme="light"] .theme-toggle-btn {
+      [data-theme='light'] .theme-toggle-btn {
         background: oklch(88% 0.02 50);
         border-color: oklch(75% 0.03 50);
       }
@@ -1633,25 +1536,20 @@
 
     <div class="hero" data-om-id="e6d6f80b:17">
       <div class="hero-left" data-om-id="e6d6f80b:18">
-        <div class="hero-eyebrow" data-om-id="e6d6f80b:19">
-          دوره‌های خلاقانه آنلاین
-        </div>
+        <div class="hero-eyebrow" data-om-id="e6d6f80b:19">دوره‌های خلاقانه آنلاین</div>
         <h1 data-om-id="e6d6f80b:20">
-          هنرت را بساز،<br data-om-id="e6d6f80b:21" />مهارتت را<br
-            data-om-id="e6d6f80b:22"
-          /><em data-om-id="e6d6f80b:23">کامل کن</em>.
+          هنرت را بساز،<br data-om-id="e6d6f80b:21" />مهارتت را<br data-om-id="e6d6f80b:22" /><em
+            data-om-id="e6d6f80b:23"
+            >کامل کن</em
+          >.
         </h1>
         <p class="hero-desc" data-om-id="e6d6f80b:24">
-          هزاران دوره توسط هنرمندان، طراحان و خلاقان فعال. در سرعت خودت یاد بگیر
-          و یک تمرین واقعی توسعه بده.
+          هزاران دوره توسط هنرمندان، طراحان و خلاقان فعال. در سرعت خودت یاد بگیر و یک تمرین واقعی
+          توسعه بده.
         </p>
         <div class="hero-cta-row" data-om-id="e6d6f80b:25">
-          <button class="btn-hero-terra" data-om-id="e6d6f80b:26">
-            شروع رایگان
-          </button>
-          <button class="btn-hero-outline" data-om-id="e6d6f80b:27">
-            مرور دوره‌ها
-          </button>
+          <button class="btn-hero-terra" data-om-id="e6d6f80b:26">شروع رایگان</button>
+          <button class="btn-hero-outline" data-om-id="e6d6f80b:27">مرور دوره‌ها</button>
         </div>
         <div class="hero-trust" data-om-id="e6d6f80b:28">
           <div class="trust-avatars" data-om-id="e6d6f80b:29">
@@ -1685,8 +1583,7 @@
             </div>
           </div>
           <div class="trust-copy" data-om-id="e6d6f80b:38">
-            به <strong data-om-id="e6d6f80b:39">۲.۴ میلیون+</strong> یادگیرنده
-            خلاق پیوستند
+            به <strong data-om-id="e6d6f80b:39">۲.۴ میلیون+</strong> یادگیرنده خلاق پیوستند
           </div>
         </div>
       </div>
@@ -1699,7 +1596,7 @@
               align-items: flex-end;
               padding: 24px;
               position: relative;
-              background-image: url(&quot;https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=600&q=80&quot;);
+              background-image: url('https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=600&q=80');
               background-size: cover;
               background-position: center;
             "
@@ -1708,9 +1605,7 @@
             <div class="tile-overlay" data-om-id="e6d6f80b:43"></div>
             <div class="tile-info" data-om-id="e6d6f80b:44">
               <div class="tile-cat" data-om-id="e6d6f80b:45">تصویرسازی</div>
-              <div class="tile-name" data-om-id="e6d6f80b:46">
-                مقدمه‌ای بر تصویرسازی دیجیتال
-              </div>
+              <div class="tile-name" data-om-id="e6d6f80b:46">مقدمه‌ای بر تصویرسازی دیجیتال</div>
               <div class="tile-teacher" data-om-id="e6d6f80b:47">النا مورا</div>
             </div>
           </div>
@@ -1723,7 +1618,7 @@
               align-items: flex-end;
               padding: 24px;
               position: relative;
-              background-image: url(&quot;https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=600&q=80&quot;);
+              background-image: url('https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=600&q=80');
               background-size: cover;
               background-position: center;
             "
@@ -1732,12 +1627,8 @@
             <div class="tile-overlay" data-om-id="e6d6f80b:50"></div>
             <div class="tile-info" data-om-id="e6d6f80b:51">
               <div class="tile-cat" data-om-id="e6d6f80b:52">تایپوگرافی</div>
-              <div class="tile-name" data-om-id="e6d6f80b:53">
-                خط‌نویسی دستی برای مبتدیان
-              </div>
-              <div class="tile-teacher" data-om-id="e6d6f80b:54">
-                مارکوس رید
-              </div>
+              <div class="tile-name" data-om-id="e6d6f80b:53">خط‌نویسی دستی برای مبتدیان</div>
+              <div class="tile-teacher" data-om-id="e6d6f80b:54">مارکوس رید</div>
             </div>
           </div>
         </div>
@@ -1749,7 +1640,7 @@
               align-items: flex-end;
               padding: 24px;
               position: relative;
-              background-image: url(&quot;https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80&quot;);
+              background-image: url('https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=80');
               background-size: cover;
               background-position: center;
             "
@@ -1758,12 +1649,8 @@
             <div class="tile-overlay" data-om-id="e6d6f80b:57"></div>
             <div class="tile-info" data-om-id="e6d6f80b:58">
               <div class="tile-cat" data-om-id="e6d6f80b:59">نقاشی</div>
-              <div class="tile-name" data-om-id="e6d6f80b:60">
-                آبرنگ — منظره و نور
-              </div>
-              <div class="tile-teacher" data-om-id="e6d6f80b:61">
-                سوکی ناکامورا
-              </div>
+              <div class="tile-name" data-om-id="e6d6f80b:60">آبرنگ — منظره و نور</div>
+              <div class="tile-teacher" data-om-id="e6d6f80b:61">سوکی ناکامورا</div>
             </div>
           </div>
         </div>
@@ -1775,7 +1662,7 @@
               align-items: flex-end;
               padding: 24px;
               position: relative;
-              background-image: url(&quot;https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&q=80&quot;);
+              background-image: url('https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&q=80');
               background-size: cover;
               background-position: center;
             "
@@ -1784,9 +1671,7 @@
             <div class="tile-overlay" data-om-id="e6d6f80b:64"></div>
             <div class="tile-info" data-om-id="e6d6f80b:65">
               <div class="tile-cat" data-om-id="e6d6f80b:66">طراحی برند</div>
-              <div class="tile-name" data-om-id="e6d6f80b:67">
-                سیستم هویت بصری
-              </div>
+              <div class="tile-name" data-om-id="e6d6f80b:67">سیستم هویت بصری</div>
               <div class="tile-teacher" data-om-id="e6d6f80b:68">پیر آلار</div>
             </div>
           </div>
@@ -1812,19 +1697,14 @@
     <div class="courses-section" data-om-id="e6d6f80b:81">
       <div class="section-head" data-om-id="e6d6f80b:82">
         <div data-om-id="e6d6f80b:83">
-          <div class="section-eyebrow" data-om-id="e6d6f80b:84">
-            دوره‌های ویژه
-          </div>
+          <div class="section-eyebrow" data-om-id="e6d6f80b:84">دوره‌های ویژه</div>
           <div class="section-title-art" data-om-id="e6d6f80b:85">
-            انتخاب‌شده توسط<br data-om-id="e6d6f80b:86" /><em
-              data-om-id="e6d6f80b:87"
+            انتخاب‌شده توسط<br data-om-id="e6d6f80b:86" /><em data-om-id="e6d6f80b:87"
               >تیم سردبیری ما</em
             >
           </div>
         </div>
-        <a href="#" class="browse-link" data-om-id="e6d6f80b:88"
-          >← مشاهده همه دوره‌ها</a
-        >
+        <a href="#" class="browse-link" data-om-id="e6d6f80b:88">← مشاهده همه دوره‌ها</a>
       </div>
       <div class="courses-grid" data-om-id="e6d6f80b:89">
         <div class="course-card" data-om-id="e6d6f80b:90">
@@ -1833,7 +1713,7 @@
               class="ct-bg"
               style="
                 height: 100%;
-                background-image: url(&quot;https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=700&q=80&quot;);
+                background-image: url('https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=700&q=80');
                 background-size: cover;
                 background-position: center;
               "
@@ -1848,9 +1728,7 @@
             <h3 class="course-card-title" data-om-id="e6d6f80b:97">
               مقدمه‌ای بر تصویرسازی دیجیتال با پروکریت
             </h3>
-            <div class="course-card-instructor" data-om-id="e6d6f80b:98">
-              النا مورا · ۲۴ درس
-            </div>
+            <div class="course-card-instructor" data-om-id="e6d6f80b:98">النا مورا · ۲۴ درس</div>
             <div class="course-card-footer" data-om-id="e6d6f80b:99">
               <div
                 class="course-rating"
@@ -1874,7 +1752,7 @@
               class="ct-bg"
               style="
                 height: 100%;
-                background-image: url(&quot;https://images.unsplash.com/photo-1558655146-d09347e92766?w=700&q=80&quot;);
+                background-image: url('https://images.unsplash.com/photo-1558655146-d09347e92766?w=700&q=80');
                 background-size: cover;
                 background-position: center;
               "
@@ -1889,9 +1767,7 @@
             <h3 class="course-card-title" data-om-id="e6d6f80b:114">
               طراحی هویت برند: ساخت یک سیستم از صفر
             </h3>
-            <div class="course-card-instructor" data-om-id="e6d6f80b:115">
-              پیر آلار · ۳۲ درس
-            </div>
+            <div class="course-card-instructor" data-om-id="e6d6f80b:115">پیر آلار · ۳۲ درس</div>
             <div class="course-card-footer" data-om-id="e6d6f80b:116">
               <div
                 class="course-rating"
@@ -1915,7 +1791,7 @@
               class="ct-bg"
               style="
                 height: 100%;
-                background-image: url(&quot;https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=700&q=80&quot;);
+                background-image: url('https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=700&q=80');
                 background-size: cover;
                 background-position: center;
               "
@@ -1927,9 +1803,7 @@
           </div>
           <div class="course-card-body" data-om-id="e6d6f80b:129">
             <div class="course-cat-tag" data-om-id="e6d6f80b:130">نقاشی</div>
-            <h3 class="course-card-title" data-om-id="e6d6f80b:131">
-              آبرنگ بیانی: منظره‌ها و نور
-            </h3>
+            <h3 class="course-card-title" data-om-id="e6d6f80b:131">آبرنگ بیانی: منظره‌ها و نور</h3>
             <div class="course-card-instructor" data-om-id="e6d6f80b:132">
               سوکی ناکامورا · ۱۸ درس
             </div>
@@ -1961,11 +1835,7 @@
         </div>
         <div class="spotlight-grid" data-om-id="e6d6f80b:146">
           <div style="position: relative" data-om-id="e6d6f80b:147">
-            <div
-              class="creator-portrait"
-              style="background: none"
-              data-om-id="e6d6f80b:148"
-            >
+            <div class="creator-portrait" style="background: none" data-om-id="e6d6f80b:148">
               <img
                 src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=85"
                 style="
@@ -1981,19 +1851,13 @@
                 alt="النا مورا"
                 data-om-id="e6d6f80b:149"
               />
-              <div
-                class="portrait-frame"
-                style="z-index: 1"
-                data-om-id="e6d6f80b:150"
-              ></div>
+              <div class="portrait-frame" style="z-index: 1" data-om-id="e6d6f80b:150"></div>
             </div>
             <div class="creator-badge" data-om-id="e6d6f80b:151">
               <div class="cb-icon" data-om-id="e6d6f80b:152">🎨</div>
               <div data-om-id="e6d6f80b:153">
                 <div class="cb-val" data-om-id="e6d6f80b:154">۴.۹</div>
-                <div class="cb-label" data-om-id="e6d6f80b:155">
-                  امتیاز دوره
-                </div>
+                <div class="cb-label" data-om-id="e6d6f80b:155">امتیاز دوره</div>
               </div>
             </div>
           </div>
@@ -2025,9 +1889,8 @@
               "
               data-om-id="e6d6f80b:161"
             >
-              النا که در تهران مستقر است، ۱۲ سال به عنوان تصویرساز فریلنسر برای
-              مشتریان نشریاتی، آژانس‌ها و برندهای جهانی کار کرده. او کل فرآیند
-              خلاقانه‌اش را در هر درس می‌آورد.
+              النا که در تهران مستقر است، ۱۲ سال به عنوان تصویرساز فریلنسر برای مشتریان نشریاتی،
+              آژانس‌ها و برندهای جهانی کار کرده. او کل فرآیند خلاقانه‌اش را در هر درس می‌آورد.
             </p>
             <div class="creator-stats" data-om-id="e6d6f80b:162">
               <div data-om-id="e6d6f80b:163">
@@ -2040,9 +1903,7 @@
               </div>
               <div data-om-id="e6d6f80b:169">
                 <div class="cs-val" data-om-id="e6d6f80b:170">۴.۹★</div>
-                <div class="cs-label" data-om-id="e6d6f80b:171">
-                  میانگین امتیاز
-                </div>
+                <div class="cs-label" data-om-id="e6d6f80b:171">میانگین امتیاز</div>
               </div>
               <div data-om-id="e6d6f80b:172">
                 <div class="cs-val" data-om-id="e6d6f80b:173">۱۲ سال</div>
@@ -2051,15 +1912,12 @@
             </div>
             <div class="quote-block" data-om-id="e6d6f80b:175">
               <p data-om-id="e6d6f80b:176">
-                «من به همان شیوه‌ای تدریس می‌کنم که آرزو داشتم به من یاد داده
-                می‌شد — با صداقت درباره فرآیند، شکست، و آنچه واقعاً یک اثر هنری
-                را زنده می‌کند.»
+                «من به همان شیوه‌ای تدریس می‌کنم که آرزو داشتم به من یاد داده می‌شد — با صداقت
+                درباره فرآیند، شکست، و آنچه واقعاً یک اثر هنری را زنده می‌کند.»
               </p>
               <cite data-om-id="e6d6f80b:177">— النا مورا</cite>
             </div>
-            <button class="btn-hero-terra" data-om-id="e6d6f80b:178">
-              ← مشاهده دوره‌های او
-            </button>
+            <button class="btn-hero-terra" data-om-id="e6d6f80b:178">← مشاهده دوره‌های او</button>
           </div>
         </div>
       </div>
@@ -2069,26 +1927,20 @@
       <div data-om-id="e6d6f80b:180">
         <div class="section-eyebrow" data-om-id="e6d6f80b:181">چرا منتوما</div>
         <div class="section-title-art" data-om-id="e6d6f80b:182">
-          یک تجربه یادگیری<br data-om-id="e6d6f80b:183" /><em
-            data-om-id="e6d6f80b:184"
-            >متفاوت</em
-          >
+          یک تجربه یادگیری<br data-om-id="e6d6f80b:183" /><em data-om-id="e6d6f80b:184">متفاوت</em>
         </div>
       </div>
       <div class="why-grid" data-om-id="e6d6f80b:185">
         <div class="why-card" data-om-id="e6d6f80b:186">
           <div class="why-num" data-om-id="e6d6f80b:187">۰۱</div>
           <h3 data-om-id="e6d6f80b:188">تدریس توسط متخصصان واقعی</h3>
-          <p data-om-id="e6d6f80b:189">
-            هر مدرس یک متخصص فعال است — نه یک سازنده محتوای بی‌تجربه.
-          </p>
+          <p data-om-id="e6d6f80b:189">هر مدرس یک متخصص فعال است — نه یک سازنده محتوای بی‌تجربه.</p>
         </div>
         <div class="why-card" data-om-id="e6d6f80b:190">
           <div class="why-num" data-om-id="e6d6f80b:191">۰۲</div>
           <h3 data-om-id="e6d6f80b:192">یادگیری مبتنی بر پروژه</h3>
           <p data-om-id="e6d6f80b:193">
-            هر دوره با یک پروژه نهایی به پایان می‌رسد که در جامعه به اشتراک
-            می‌گذاری.
+            هر دوره با یک پروژه نهایی به پایان می‌رسد که در جامعه به اشتراک می‌گذاری.
           </p>
         </div>
         <div class="why-card" data-om-id="e6d6f80b:194">
@@ -2102,8 +1954,7 @@
           <div class="why-num" data-om-id="e6d6f80b:199">۰۴</div>
           <h3 data-om-id="e6d6f80b:200">جامعه خلاق جهانی</h3>
           <p data-om-id="e6d6f80b:201">
-            به ۲.۴ میلیون+ دانشجو در ۱۹۰ کشور بپیوند که با هم کار به اشتراک
-            می‌گذارند.
+            به ۲.۴ میلیون+ دانشجو در ۱۹۰ کشور بپیوند که با هم کار به اشتراک می‌گذارند.
           </p>
         </div>
       </div>
@@ -2132,18 +1983,14 @@
 
     <div class="testi-section" data-om-id="e6d6f80b:216">
       <div class="testi-inner" data-om-id="e6d6f80b:217">
-        <div class="section-eyebrow" data-om-id="e6d6f80b:218">
-          داستان‌های دانشجویان
-        </div>
-        <div class="section-title-art" data-om-id="e6d6f80b:219">
-          جامعه ما چه می‌گوید
-        </div>
+        <div class="section-eyebrow" data-om-id="e6d6f80b:218">داستان‌های دانشجویان</div>
+        <div class="section-title-art" data-om-id="e6d6f80b:219">جامعه ما چه می‌گوید</div>
         <div class="testi-grid" data-om-id="e6d6f80b:220">
           <div class="testi-card" data-om-id="e6d6f80b:221">
             <div class="testi-stars" data-om-id="e6d6f80b:222">★★★★★</div>
             <div class="testi-q" data-om-id="e6d6f80b:223">
-              «منتوما رابطه‌ام با یادگیری را متحول کرد. مدرسان هنرمندان
-              واقعی‌اند که دانش واقعی به اشتراک می‌گذارند.»
+              «منتوما رابطه‌ام با یادگیری را متحول کرد. مدرسان هنرمندان واقعی‌اند که دانش واقعی به
+              اشتراک می‌گذارند.»
             </div>
             <div class="testi-who" data-om-id="e6d6f80b:224">
               <div class="testi-av" data-om-id="e6d6f80b:225">
@@ -2154,20 +2001,16 @@
                 />
               </div>
               <div data-om-id="e6d6f80b:227">
-                <div class="testi-name" data-om-id="e6d6f80b:228">
-                  نادیا وایت
-                </div>
-                <div class="testi-role" data-om-id="e6d6f80b:229">
-                  تصویرساز، برلین
-                </div>
+                <div class="testi-name" data-om-id="e6d6f80b:228">نادیا وایت</div>
+                <div class="testi-role" data-om-id="e6d6f80b:229">تصویرساز، برلین</div>
               </div>
             </div>
           </div>
           <div class="testi-card" data-om-id="e6d6f80b:230">
             <div class="testi-stars" data-om-id="e6d6f80b:231">★★★★★</div>
             <div class="testi-q" data-om-id="e6d6f80b:232">
-              «دوره تصویرسازی النا را گرفتم و کاملاً روال کارم با پروکریت متحول
-              شد. الان مشتری‌های نشریاتی می‌گیرم.»
+              «دوره تصویرسازی النا را گرفتم و کاملاً روال کارم با پروکریت متحول شد. الان مشتری‌های
+              نشریاتی می‌گیرم.»
             </div>
             <div class="testi-who" data-om-id="e6d6f80b:233">
               <div class="testi-av" data-om-id="e6d6f80b:234">
@@ -2178,20 +2021,16 @@
                 />
               </div>
               <div data-om-id="e6d6f80b:236">
-                <div class="testi-name" data-om-id="e6d6f80b:237">
-                  کنجی موریتا
-                </div>
-                <div class="testi-role" data-om-id="e6d6f80b:238">
-                  تصویرساز فریلنسر
-                </div>
+                <div class="testi-name" data-om-id="e6d6f80b:237">کنجی موریتا</div>
+                <div class="testi-role" data-om-id="e6d6f80b:238">تصویرساز فریلنسر</div>
               </div>
             </div>
           </div>
           <div class="testi-card" data-om-id="e6d6f80b:239">
             <div class="testi-stars" data-om-id="e6d6f80b:240">★★★★★</div>
             <div class="testi-q" data-om-id="e6d6f80b:241">
-              «جامعه منتوما آن را از بقیه متمایز می‌کند. اشتراک‌گذاری کار و
-              گرفتن بازخورد، رشدم را شتاب داد.»
+              «جامعه منتوما آن را از بقیه متمایز می‌کند. اشتراک‌گذاری کار و گرفتن بازخورد، رشدم را
+              شتاب داد.»
             </div>
             <div class="testi-who" data-om-id="e6d6f80b:242">
               <div class="testi-av" data-om-id="e6d6f80b:243">
@@ -2202,12 +2041,8 @@
                 />
               </div>
               <div data-om-id="e6d6f80b:245">
-                <div class="testi-name" data-om-id="e6d6f80b:246">
-                  سوریا رستمی
-                </div>
-                <div class="testi-role" data-om-id="e6d6f80b:247">
-                  طراح گرافیک، تهران
-                </div>
+                <div class="testi-name" data-om-id="e6d6f80b:246">سوریا رستمی</div>
+                <div class="testi-role" data-om-id="e6d6f80b:247">طراح گرافیک، تهران</div>
               </div>
             </div>
           </div>
@@ -2217,24 +2052,18 @@
 
     <div class="cta-section" data-om-id="e6d6f80b:248">
       <div class="cta-inner" data-om-id="e6d6f80b:249">
-        <div class="cta-eyebrow" data-om-id="e6d6f80b:250">
-          تمرینت را شروع کن
-        </div>
+        <div class="cta-eyebrow" data-om-id="e6d6f80b:250">تمرینت را شروع کن</div>
         <h2 data-om-id="e6d6f80b:251">
           شروع به ساختن<br data-om-id="e6d6f80b:252" />چیزی
           <em data-om-id="e6d6f80b:253">زیبا</em> کن.
         </h2>
         <p data-om-id="e6d6f80b:254">
-          به ۲.۴ میلیون یادگیرنده بپیوند که با دوره‌های متخصص‌محور منتوما تمرین
-          خلاقانه‌شان را رشد می‌دهند.
+          به ۲.۴ میلیون یادگیرنده بپیوند که با دوره‌های متخصص‌محور منتوما تمرین خلاقانه‌شان را رشد
+          می‌دهند.
         </p>
         <div class="cta-btns" data-om-id="e6d6f80b:255">
-          <button class="btn-hero-terra" data-om-id="e6d6f80b:256">
-            ← شروع رایگان
-          </button>
-          <button class="btn-hero-outline" data-om-id="e6d6f80b:257">
-            مشاهده همه دوره‌ها
-          </button>
+          <button class="btn-hero-terra" data-om-id="e6d6f80b:256">← شروع رایگان</button>
+          <button class="btn-hero-outline" data-om-id="e6d6f80b:257">مشاهده همه دوره‌ها</button>
         </div>
       </div>
     </div>
@@ -2247,8 +2076,8 @@
               منتور<span data-om-id="e6d6f80b:263">یار</span>
             </div>
             <p data-om-id="e6d6f80b:264">
-              دوره‌های خلاقانه آنلاین توسط هنرمندان فعال. برای یادگیرندگانی که
-              حرفه‌شان را جدی می‌گیرند.
+              دوره‌های خلاقانه آنلاین توسط هنرمندان فعال. برای یادگیرندگانی که حرفه‌شان را جدی
+              می‌گیرند.
             </p>
           </div>
           <div class="footer-col" data-om-id="e6d6f80b:265">
@@ -2273,42 +2102,35 @@
           </div>
         </div>
         <div class="footer-base" data-om-id="e6d6f80b:282">
-          <span data-om-id="e6d6f80b:283"
-            >© ۱۴۰۵ منتوما. تمام حقوق محفوظ است.</span
-          >
-          <span data-om-id="e6d6f80b:284"
-            >ساخته شده با محبت · تهران و فراتر از آن</span
-          >
+          <span data-om-id="e6d6f80b:283">© ۱۴۰۵ منتوما. تمام حقوق محفوظ است.</span>
+          <span data-om-id="e6d6f80b:284">ساخته شده با محبت · تهران و فراتر از آن</span>
         </div>
       </div>
     </footer>
 
     <script>
-      document.querySelectorAll(".cat-tab").forEach((t) => {
-        t.addEventListener("click", () => {
-          document
-            .querySelectorAll(".cat-tab")
-            .forEach((x) => x.classList.remove("active"));
-          t.classList.add("active");
+      document.querySelectorAll('.cat-tab').forEach((t) => {
+        t.addEventListener('click', () => {
+          document.querySelectorAll('.cat-tab').forEach((x) => x.classList.remove('active'));
+          t.classList.add('active');
         });
       });
     </script>
 
     <script>
       (function () {
-        var saved = localStorage.getItem("Mentoma-theme-t5") || "light";
-        document.documentElement.setAttribute("data-theme", saved);
-        var btn = document.getElementById("themeBtn5");
-        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+        var saved = localStorage.getItem('Mentoma-theme-t5') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        var btn = document.getElementById('themeBtn5');
+        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
       })();
       function toggleT5() {
         var html = document.documentElement;
-        var isDark = html.getAttribute("data-theme") === "dark";
-        var next = isDark ? "light" : "dark";
-        html.setAttribute("data-theme", next);
-        document.getElementById("themeBtn5").textContent =
-          next === "dark" ? "☀️" : "🌙";
-        localStorage.setItem("Mentoma-theme-t5", next);
+        var isDark = html.getAttribute('data-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('themeBtn5').textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('Mentoma-theme-t5', next);
       }
     </script>
   </body>
@@ -2606,13 +2428,7 @@
           [21496, 21499]
         ],
         "parentId": "e6d6f80b:17",
-        "childIds": [
-          "e6d6f80b:19",
-          "e6d6f80b:20",
-          "e6d6f80b:24",
-          "e6d6f80b:25",
-          "e6d6f80b:28"
-        ]
+        "childIds": ["e6d6f80b:19", "e6d6f80b:20", "e6d6f80b:24", "e6d6f80b:25", "e6d6f80b:28"]
       },
       {
         "id": "e6d6f80b:19",
@@ -3863,12 +3679,7 @@
           [26786, 26793]
         ],
         "parentId": "e6d6f80b:107",
-        "childIds": [
-          "e6d6f80b:113",
-          "e6d6f80b:114",
-          "e6d6f80b:115",
-          "e6d6f80b:116"
-        ]
+        "childIds": ["e6d6f80b:113", "e6d6f80b:114", "e6d6f80b:115", "e6d6f80b:116"]
       },
       {
         "id": "e6d6f80b:113",
@@ -4089,12 +3900,7 @@
           [27815, 27822]
         ],
         "parentId": "e6d6f80b:124",
-        "childIds": [
-          "e6d6f80b:130",
-          "e6d6f80b:131",
-          "e6d6f80b:132",
-          "e6d6f80b:133"
-        ]
+        "childIds": ["e6d6f80b:130", "e6d6f80b:131", "e6d6f80b:132", "e6d6f80b:133"]
       },
       {
         "id": "e6d6f80b:130",
@@ -4541,12 +4347,7 @@
           [29811, 29820]
         ],
         "parentId": "e6d6f80b:156",
-        "childIds": [
-          "e6d6f80b:163",
-          "e6d6f80b:166",
-          "e6d6f80b:169",
-          "e6d6f80b:172"
-        ]
+        "childIds": ["e6d6f80b:163", "e6d6f80b:166", "e6d6f80b:169", "e6d6f80b:172"]
       },
       {
         "id": "e6d6f80b:163",
@@ -4839,12 +4640,7 @@
           [31505, 31508]
         ],
         "parentId": "e6d6f80b:179",
-        "childIds": [
-          "e6d6f80b:186",
-          "e6d6f80b:190",
-          "e6d6f80b:194",
-          "e6d6f80b:198"
-        ]
+        "childIds": ["e6d6f80b:186", "e6d6f80b:190", "e6d6f80b:194", "e6d6f80b:198"]
       },
       {
         "id": "e6d6f80b:186",
@@ -5069,12 +4865,7 @@
           [31999, 32002]
         ],
         "parentId": "e6d6f80b:202",
-        "childIds": [
-          "e6d6f80b:204",
-          "e6d6f80b:207",
-          "e6d6f80b:210",
-          "e6d6f80b:213"
-        ]
+        "childIds": ["e6d6f80b:204", "e6d6f80b:207", "e6d6f80b:210", "e6d6f80b:213"]
       },
       {
         "id": "e6d6f80b:204",
@@ -5645,12 +5436,7 @@
           [34598, 34601]
         ],
         "parentId": "e6d6f80b:248",
-        "childIds": [
-          "e6d6f80b:250",
-          "e6d6f80b:251",
-          "e6d6f80b:254",
-          "e6d6f80b:255"
-        ]
+        "childIds": ["e6d6f80b:250", "e6d6f80b:251", "e6d6f80b:254", "e6d6f80b:255"]
       },
       {
         "id": "e6d6f80b:250",
@@ -5802,12 +5588,7 @@
           [35508, 35513]
         ],
         "parentId": "e6d6f80b:259",
-        "childIds": [
-          "e6d6f80b:261",
-          "e6d6f80b:265",
-          "e6d6f80b:271",
-          "e6d6f80b:276"
-        ]
+        "childIds": ["e6d6f80b:261", "e6d6f80b:265", "e6d6f80b:271", "e6d6f80b:276"]
       },
       {
         "id": "e6d6f80b:261",
@@ -5871,13 +5652,7 @@
         "closeEnd": 35183,
         "textRuns": [],
         "parentId": "e6d6f80b:260",
-        "childIds": [
-          "e6d6f80b:266",
-          "e6d6f80b:267",
-          "e6d6f80b:268",
-          "e6d6f80b:269",
-          "e6d6f80b:270"
-        ]
+        "childIds": ["e6d6f80b:266", "e6d6f80b:267", "e6d6f80b:268", "e6d6f80b:269", "e6d6f80b:270"]
       },
       {
         "id": "e6d6f80b:266",
@@ -5949,12 +5724,7 @@
         "closeEnd": 35335,
         "textRuns": [],
         "parentId": "e6d6f80b:260",
-        "childIds": [
-          "e6d6f80b:272",
-          "e6d6f80b:273",
-          "e6d6f80b:274",
-          "e6d6f80b:275"
-        ]
+        "childIds": ["e6d6f80b:272", "e6d6f80b:273", "e6d6f80b:274", "e6d6f80b:275"]
       },
       {
         "id": "e6d6f80b:272",
@@ -6014,13 +5784,7 @@
         "closeEnd": 35508,
         "textRuns": [],
         "parentId": "e6d6f80b:260",
-        "childIds": [
-          "e6d6f80b:277",
-          "e6d6f80b:278",
-          "e6d6f80b:279",
-          "e6d6f80b:280",
-          "e6d6f80b:281"
-        ]
+        "childIds": ["e6d6f80b:277", "e6d6f80b:278", "e6d6f80b:279", "e6d6f80b:280", "e6d6f80b:281"]
       },
       {
         "id": "e6d6f80b:277",

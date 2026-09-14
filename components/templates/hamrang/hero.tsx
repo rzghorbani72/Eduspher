@@ -23,11 +23,19 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
   const a = heroAlign(config);
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Backdrop variant="aurora" motion="drift" />
       <Backdrop variant="grain" />
       <Container className={`relative z-[1] py-(--theme-section-padding-y) ${a.text}`}>
-        <RemovableSlot config={config} flagKey="showTag" editMode={editMode} className="inline-flex">
+        <RemovableSlot
+          config={config}
+          flagKey="showTag"
+          editMode={editMode}
+          className="inline-flex"
+        >
           <span
             data-editable="tag"
             className="inline-block rounded-full border border-(--theme-border-strong) px-4 py-1.5 text-[13px] font-bold"
@@ -36,7 +44,9 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
           </span>
         </RemovableSlot>
 
-        <h1 className={`${a.block} mt-6 max-w-[16ch] text-[clamp(38px,6.6vw,76px)] font-extrabold leading-[1.05] tracking-[-0.03em]`}>
+        <h1
+          className={`${a.block} mt-6 max-w-[16ch] text-[clamp(38px,6.6vw,76px)] leading-[1.05] font-extrabold tracking-[-0.03em]`}
+        >
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <span data-editable="titleEm" className={styles.tag}>
             {text(config, 'titleEm', d.titleEm)}
@@ -53,13 +63,35 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
         </p>
 
         <div className={`mt-9 flex flex-wrap items-center ${a.justify} gap-3.5`}>
-          <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="deep" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')} className="!rounded-full">
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCta"
+            editMode={editMode}
+            className="inline-flex"
+          >
+            <Button
+              tone="deep"
+              size="lg"
+              editableKey="ctaText"
+              href={templateHref(storeContext, 'courses')}
+              className="!rounded-full"
+            >
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>
-          <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-            <Button tone="outline" size="lg" editableKey="ctaSecondary" className="!rounded-full" href={templateHref(storeContext, 'courses')}>
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCtaSecondary"
+            editMode={editMode}
+            className="inline-flex"
+          >
+            <Button
+              tone="outline"
+              size="lg"
+              editableKey="ctaSecondary"
+              className="!rounded-full"
+              href={templateHref(storeContext, 'courses')}
+            >
               {text(config, 'ctaSecondary', d.ctaSecondary)}
             </Button>
           </RemovableSlot>
@@ -79,7 +111,10 @@ export function HamrangHero({ id, config, storeContext }: TemplateSectionProps) 
             className={`${styles.frame} min-h-[260px]`}
           >
             <div className="flex min-h-[260px] items-center justify-center bg-(--theme-surface-alt) p-10">
-              <span data-editable="photoCaption" className="text-[14px] font-bold text-(--theme-muted)">
+              <span
+                data-editable="photoCaption"
+                className="text-[14px] font-bold text-(--theme-muted)"
+              >
                 {text(config, 'photoCaption', d.photoCaption)}
               </span>
             </div>

@@ -1,39 +1,36 @@
-"use client";
+'use client';
 
-import { GraduationCap, School, Users } from "lucide-react";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { GraduationCap, School, Users } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 type PlatformRoleCardsProps = {
   adminLoginUrl: string;
   teacherRegisterUrl: string;
 };
 
-export function PlatformRoleCards({
-  adminLoginUrl,
-  teacherRegisterUrl,
-}: PlatformRoleCardsProps) {
+export function PlatformRoleCards({ adminLoginUrl, teacherRegisterUrl }: PlatformRoleCardsProps) {
   const { t } = useTranslation();
 
   const roles = [
     {
       icon: GraduationCap,
-      title: t("panel.studentTitle"),
-      description: t("panel.studentDescription"),
+      title: t('panel.studentTitle'),
+      description: t('panel.studentDescription'),
       cta: null as string | null,
     },
     {
       icon: Users,
-      title: t("panel.teacherTitle"),
-      description: t("panel.teacherDescription"),
+      title: t('panel.teacherTitle'),
+      description: t('panel.teacherDescription'),
       cta: teacherRegisterUrl,
-      ctaLabel: t("panel.teacherCta"),
+      ctaLabel: t('panel.teacherCta'),
     },
     {
       icon: School,
-      title: t("panel.managerTitle"),
-      description: t("panel.managerDescription"),
+      title: t('panel.managerTitle'),
+      description: t('panel.managerDescription'),
       cta: adminLoginUrl,
-      ctaLabel: t("panel.managerCta"),
+      ctaLabel: t('panel.managerCta'),
     },
   ];
 
@@ -44,11 +41,11 @@ export function PlatformRoleCards({
         return (
           <li
             key={role.title}
-            className="flex flex-col rounded-theme border p-5 shadow-sm"
+            className="rounded-theme flex flex-col border p-5 shadow-sm"
             style={{
-              borderColor: "var(--theme-border-color)",
-              backgroundColor: "var(--theme-card-bg)",
-              color: "var(--theme-foreground)",
+              borderColor: 'var(--theme-border-color)',
+              backgroundColor: 'var(--theme-card-bg)',
+              color: 'var(--theme-foreground)',
             }}
           >
             <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)]">

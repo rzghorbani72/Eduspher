@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Sparkles } from "lucide-react";
+import { Sparkles } from 'lucide-react';
 
-import Link from "@/components/ui/link";
-import { Button } from "@/components/ui/button";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { coursePath } from "@/lib/content-paths";
-import { buildAcademyPath } from "@/lib/utils";
+import Link from '@/components/ui/link';
+import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { coursePath } from '@/lib/content-paths';
+import { buildAcademyPath } from '@/lib/utils';
 
 /**
  * Shown to a visitor watching a free lesson without owning the course. The free
@@ -22,21 +22,17 @@ export function FreePreviewBanner({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-primary/25 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="border-primary/25 bg-primary/5 flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3">
-        <Sparkles className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+        <Sparkles className="text-primary mt-0.5 size-5 shrink-0" aria-hidden="true" />
         <div>
-          <p className="text-sm font-bold text-foreground">
-            {t("learning.freePreviewTitle")}
-          </p>
-          <p className="mt-0.5 text-xs text-muted">
-            {t("learning.freePreviewDescription")}
-          </p>
+          <p className="text-foreground text-sm font-bold">{t('learning.freePreviewTitle')}</p>
+          <p className="text-muted mt-0.5 text-xs">{t('learning.freePreviewDescription')}</p>
         </div>
       </div>
       <Button asChild size="sm" className="shrink-0">
         <Link href={buildAcademyPath(storeSlug, coursePath(courseSlug))}>
-          {t("learning.freePreviewCta")}
+          {t('learning.freePreviewCta')}
         </Link>
       </Button>
     </div>

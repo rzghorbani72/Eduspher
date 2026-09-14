@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 type Props = {
   reset: () => void;
@@ -13,7 +13,7 @@ export function AppErrorView({ reset }: Props) {
     <div
       dir="rtl"
       data-theme="light"
-      className="lp-root relative flex min-h-[80vh] items-center justify-center overflow-hidden bg-lp-hero px-6 py-16 text-center font-[Vazirmatn,system-ui,sans-serif] text-lp-ink antialiased"
+      className="lp-root bg-lp-hero text-lp-ink relative flex min-h-[80vh] items-center justify-center overflow-hidden px-6 py-16 text-center font-[Vazirmatn,system-ui,sans-serif] antialiased"
     >
       <div
         aria-hidden
@@ -26,46 +26,37 @@ export function AppErrorView({ reset }: Props) {
 
       <div className="relative z-10">
         <div className="relative mx-auto grid h-28 w-28 place-items-center">
-          <div
-            aria-hidden
-            className="absolute inset-0 rounded-full bg-lp-mint/25 blur-md"
-          />
+          <div aria-hidden className="bg-lp-mint/25 absolute inset-0 rounded-full blur-md" />
           {/* Plain img: global-error has no Next image pipeline guarantees */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo-mark.svg"
-            alt=""
-            width={56}
-            height={56}
-            className="relative"
-          />
+          <img src="/logo-mark.svg" alt="" width={56} height={56} className="relative" />
         </div>
 
-        <div className="mt-4 text-[clamp(72px,14vw,128px)] font-black leading-none text-lp-blue">
+        <div className="text-lp-blue mt-4 text-[clamp(72px,14vw,128px)] leading-none font-black">
           ۵۰۰
         </div>
 
-        <h1 className="mt-3 text-[clamp(22px,3vw,32px)] font-extrabold tracking-[-0.022em] text-lp-ink">
+        <h1 className="text-lp-ink mt-3 text-[clamp(22px,3vw,32px)] font-extrabold tracking-[-0.022em]">
           مشکلی پیش آمد
         </h1>
 
-        <p className="mx-auto mt-4 max-w-[440px] text-base leading-[1.85] text-lp-muted lg:text-[17px]">
-          نگران نباش — این از سمت ماست، نه تو. تیم فنی منتوما در حال بررسی است.
-          لطفاً چند لحظه دیگر دوباره تلاش کن.
+        <p className="text-lp-muted mx-auto mt-4 max-w-[440px] text-base leading-[1.85] lg:text-[17px]">
+          نگران نباش — این از سمت ماست، نه تو. تیم فنی منتوما در حال بررسی است. لطفاً چند لحظه دیگر
+          دوباره تلاش کن.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
             onClick={reset}
-            className="flex h-14 items-center justify-center rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
+            className="rounded-lp bg-lp-mint text-lp-ink shadow-lp-mint flex h-14 items-center justify-center px-8 text-[16px] font-bold transition-transform hover:-translate-y-0.5"
           >
             تلاش دوباره
           </button>
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- works in global-error when the router tree is down */}
           <a
             href="/contact"
-            className="flex h-14 items-center justify-center rounded-lp border border-lp-line-2 bg-white px-8 text-[15px] font-semibold text-lp-ink transition-colors hover:border-lp-ink/25"
+            className="rounded-lp border-lp-line-2 text-lp-ink hover:border-lp-ink/25 flex h-14 items-center justify-center border bg-white px-8 text-[15px] font-semibold transition-colors"
           >
             تماس با پشتیبانی
           </a>

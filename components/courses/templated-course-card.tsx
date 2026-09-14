@@ -1,10 +1,10 @@
-import { CourseCard } from "@/components/courses/course-card";
-import { TemplateCourseCard } from "@/components/templates/_shared/course-card";
-import { toTemplateCourse } from "@/components/templates/_shared/courses-data";
-import { resolveTemplateCourseCard } from "@/components/templates/registry";
-import { getActiveTemplateKey } from "@/lib/active-template";
-import { getAcademyCurrency } from "@/lib/courses/academy-context";
-import type { CourseSummary } from "@/lib/api/types";
+import { CourseCard } from '@/components/courses/course-card';
+import { TemplateCourseCard } from '@/components/templates/_shared/course-card';
+import { toTemplateCourse } from '@/components/templates/_shared/courses-data';
+import { resolveTemplateCourseCard } from '@/components/templates/registry';
+import { getActiveTemplateKey } from '@/lib/active-template';
+import { getAcademyCurrency } from '@/lib/courses/academy-context';
+import type { CourseSummary } from '@/lib/api/types';
 
 interface TemplatedCourseCardProps {
   course: CourseSummary;

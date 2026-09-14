@@ -1,11 +1,11 @@
-import { forwardRef } from "react";
-import type { ButtonHTMLAttributes } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { forwardRef } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "link";
-type ButtonSize = "sm" | "md" | "lg";
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'link';
+type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -15,37 +15,47 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60";
+  'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-60';
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-[var(--theme-primary)] text-[var(--theme-on-primary)] hover:opacity-90 focus-visible:outline-[var(--theme-primary)] transition-colors relative overflow-hidden",
+    'bg-[var(--theme-primary)] text-[var(--theme-on-primary)] hover:opacity-90 focus-visible:outline-[var(--theme-primary)] transition-colors relative overflow-hidden',
   secondary:
-    "bg-[var(--theme-secondary)] text-[var(--theme-on-secondary)] hover:opacity-90 focus-visible:outline-[var(--theme-secondary)] transition-colors relative overflow-hidden",
+    'bg-[var(--theme-secondary)] text-[var(--theme-on-secondary)] hover:opacity-90 focus-visible:outline-[var(--theme-secondary)] transition-colors relative overflow-hidden',
   outline:
-    "border border-[var(--theme-border-color)] bg-transparent text-[var(--theme-foreground)] hover:bg-[var(--theme-surface)] focus-visible:outline-[var(--theme-primary)] transition-colors",
+    'border border-[var(--theme-border-color)] bg-transparent text-[var(--theme-foreground)] hover:bg-[var(--theme-surface)] focus-visible:outline-[var(--theme-primary)] transition-colors',
   ghost:
-    "bg-transparent text-[var(--theme-foreground)] hover:bg-[var(--theme-surface)] focus-visible:outline-[var(--theme-border-strong)] transition-colors",
-  link: "bg-transparent text-[var(--theme-primary)] underline-offset-4 hover:underline focus-visible:outline-[var(--theme-primary)] transition-colors",
+    'bg-transparent text-[var(--theme-foreground)] hover:bg-[var(--theme-surface)] focus-visible:outline-[var(--theme-border-strong)] transition-colors',
+  link: 'bg-transparent text-[var(--theme-primary)] underline-offset-4 hover:underline focus-visible:outline-[var(--theme-primary)] transition-colors',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-9 px-4 text-sm",
-  md: "h-11 px-6 text-base",
-  lg: "h-12 px-8 text-lg",
+  sm: 'h-9 px-4 text-sm',
+  md: 'h-11 px-6 text-base',
+  lg: 'h-12 px-8 text-lg',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, children, variant = "primary", size = "md", loading, disabled, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      children,
+      variant = 'primary',
+      size = 'md',
+      loading,
+      disabled,
+      asChild = false,
+      ...props
+    },
+    ref,
+  ) => {
     const isDisabled = loading || disabled;
-    const Comp = asChild ? Slot : "button";
-    
+    const Comp = asChild ? Slot : 'button';
+
     // If asChild is true, we don't want to pass disabled/aria-busy to the child component
     // as it might be a Link or other non-button element
-    const buttonProps = asChild
-      ? props
-      : { ...props, disabled: isDisabled, "aria-busy": loading };
-    
+    const buttonProps = asChild ? props : { ...props, disabled: isDisabled, 'aria-busy': loading };
+
     // When asChild is true, Slot expects exactly one child element
     // So we render differently based on asChild
     if (asChild) {
@@ -62,10 +72,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     // Regular button with shimmer effect
-    const shimmerEffect = (variant === 'primary' || variant === 'secondary') ? (
-      <span className="absolute inset-0 animate-shimmer opacity-0 hover:opacity-100 transition-opacity duration-300" />
-    ) : null;
-    
+    const shimmerEffect =
+      variant === 'primary' || variant === 'secondary' ? (
+        <span className="animate-shimmer absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+      ) : null;
+
     return (
       <Comp
         ref={ref}
@@ -79,8 +90,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         </span>
       </Comp>
     );
-  }
+  },
 );
 
-Button.displayName = "Button";
-
+Button.displayName = 'Button';

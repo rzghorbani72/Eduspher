@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { MessageCircle } from "lucide-react";
+import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { MessageCircle } from 'lucide-react';
 
-import { CourseQnAForm } from "@/components/courses/course-qna-form";
-import { CourseQnAItem } from "@/components/courses/course-qna-item";
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/empty-state";
-import { useStorePath } from "@/components/providers/store-provider";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { getCourseQnAs, type CourseQnAList } from "@/lib/api/client";
+import { CourseQnAForm } from '@/components/courses/course-qna-form';
+import { CourseQnAItem } from '@/components/courses/course-qna-item';
+import { Button } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
+import { useStorePath } from '@/components/providers/store-provider';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { getCourseQnAs, type CourseQnAList } from '@/lib/api/client';
 
 type CourseQnASectionProps = {
   courseId: string;
@@ -19,10 +19,10 @@ type CourseQnASectionProps = {
 };
 
 const formatQnADate = (iso: string, language: string) =>
-  new Date(iso).toLocaleDateString(language === "fa" ? "fa-IR" : "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  new Date(iso).toLocaleDateString(language === 'fa' ? 'fa-IR' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
 export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
@@ -51,19 +51,13 @@ export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
     }
   }, [isLoggedIn, load]);
 
-  const loginHref = buildPath(
-    `/auth/login?redirect=${encodeURIComponent(pathname)}`,
-  );
+  const loginHref = buildPath(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
 
   return (
     <section className="space-y-5">
       <div>
-        <h2 className="text-xl font-black text-(--theme-foreground)">
-          {t("courseQnA.title")}
-        </h2>
-        <p className="mt-1 text-sm text-(--theme-muted)">
-          {t("courseQnA.reviewHint")}
-        </p>
+        <h2 className="text-xl font-black text-(--theme-foreground)">{t('courseQnA.title')}</h2>
+        <p className="mt-1 text-sm text-(--theme-muted)">{t('courseQnA.reviewHint')}</p>
       </div>
 
       {!isLoggedIn ? (
@@ -71,14 +65,14 @@ export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
           <EmptyState
             compact
             icon={<MessageCircle className="h-6 w-6 text-(--theme-primary)" />}
-            title={t("courseQnA.loginToAsk")}
-            description={t("courseQnA.loginToAskDescription")}
+            title={t('courseQnA.loginToAsk')}
+            description={t('courseQnA.loginToAskDescription')}
             action={
               <Button
                 asChild
                 className="cd-cta-btn h-11 px-6 text-sm font-extrabold text-white hover:scale-100"
               >
-                <Link href={loginHref}>{t("navigation.login")}</Link>
+                <Link href={loginHref}>{t('navigation.login')}</Link>
               </Button>
             }
           />
@@ -91,17 +85,15 @@ export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
             <div className="cd-review-card h-28 animate-pulse rounded-2xl border" />
           ) : loadFailed ? (
             <p className="cd-review-card rounded-2xl border p-5 text-sm font-semibold text-red-600">
-              {t("courseQnA.loadFailed")}
+              {t('courseQnA.loadFailed')}
             </p>
           ) : (list?.items ?? []).length === 0 ? (
             <div className="cd-review-card rounded-2xl border p-5">
               <EmptyState
                 compact
-                icon={
-                  <MessageCircle className="h-6 w-6 text-(--theme-primary)" />
-                }
-                title={t("courseQnA.noQuestionsYet")}
-                description={t("courseQnA.reviewHint")}
+                icon={<MessageCircle className="h-6 w-6 text-(--theme-primary)" />}
+                title={t('courseQnA.noQuestionsYet')}
+                description={t('courseQnA.reviewHint')}
               />
             </div>
           ) : (

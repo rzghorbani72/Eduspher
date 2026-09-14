@@ -27,7 +27,7 @@ export function t(key: string, language: LanguageCode = DEFAULT_LANGUAGE): strin
   const keys = key.split('.');
   const bundles = translations as unknown as Record<string, typeof en>;
   let value: unknown = bundles[language] ?? translations.en;
-  
+
   for (const k of keys) {
     if (value && typeof value === 'object' && k in value) {
       value = value[k as keyof typeof value];
@@ -44,7 +44,7 @@ export function t(key: string, language: LanguageCode = DEFAULT_LANGUAGE): strin
       return typeof fallback === 'string' ? fallback : key;
     }
   }
-  
+
   return typeof value === 'string' ? value : key;
 }
 
@@ -74,4 +74,3 @@ export { getLanguageConfig, getDefaultLanguageForCountry, isRTL, getTextDirectio
  */
 export type { LanguageCode, TextDirection, LanguageConfig } from './config';
 export { DEFAULT_LANGUAGE } from './config';
-

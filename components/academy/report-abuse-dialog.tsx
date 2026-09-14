@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
-import { getClientBackendApiBaseUrl } from "@/lib/env";
-import { useDialogAction } from "@/hooks/use-dialog-action";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { getClientBackendApiBaseUrl } from '@/lib/env';
+import { useDialogAction } from '@/hooks/use-dialog-action';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 /**
  * Report form on every academy site.
@@ -20,9 +20,9 @@ import { useTranslation } from "@/lib/i18n/hooks";
 export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState("");
-  const [email, setEmail] = useState("");
-  const { pending, run } = useDialogAction(() => setOpen(false), t("abuse.error"));
+  const [reason, setReason] = useState('');
+  const [email, setEmail] = useState('');
+  const { pending, run } = useDialogAction(() => setOpen(false), t('abuse.error'));
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -30,8 +30,8 @@ export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) 
       const response = await fetch(
         `${getClientBackendApiBaseUrl()}/compliance/public/abuse-reports`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             reported_url: window.location.href,
             reason: reason.trim(),
@@ -41,8 +41,8 @@ export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) 
         },
       );
       return response.ok
-        ? { ok: true, message: t("abuse.success") }
-        : { ok: false, message: t("abuse.error") };
+        ? { ok: true, message: t('abuse.success') }
+        : { ok: false, message: t('abuse.error') };
     });
   };
 
@@ -53,7 +53,7 @@ export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) 
         onClick={() => setOpen(true)}
         className="underline opacity-70 transition-opacity hover:opacity-100"
       >
-        {t("abuse.report")}
+        {t('abuse.report')}
       </button>
     );
   }
@@ -62,7 +62,7 @@ export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) 
     <div className="mt-2 rounded-lg border border-current/15 p-3">
       <form onSubmit={submit} className="space-y-2">
         <label className="block text-[12px]" htmlFor="abuse-reason">
-          {t("abuse.question")}
+          {t('abuse.question')}
         </label>
         <textarea
           id="abuse-reason"
@@ -78,7 +78,7 @@ export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) 
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder={t("abuse.emailPlaceholder")}
+          placeholder={t('abuse.emailPlaceholder')}
           className="w-full rounded border border-current/20 bg-transparent p-2 text-[12px]"
         />
         <div className="flex gap-2">
@@ -88,14 +88,14 @@ export function ReportAbuseDialog({ academyId }: { academyId?: string | null }) 
             className="flex items-center gap-1.5 rounded border border-current/30 px-3 py-1 text-[12px] disabled:opacity-50"
           >
             {pending && <Loader2 className="h-3 w-3 animate-spin" />}
-            {t("abuse.submit")}
+            {t('abuse.submit')}
           </button>
           <button
             type="button"
             onClick={() => setOpen(false)}
             className="px-3 py-1 text-[12px] opacity-70"
           >
-            {t("common.cancel")}
+            {t('common.cancel')}
           </button>
         </div>
       </form>

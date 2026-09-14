@@ -1,10 +1,5 @@
-import type {
-  CourseSummary,
-  LessonSummary,
-  LessonType,
-  SeasonSummary,
-} from "@/lib/api/types";
-import { parseWeeklyRule } from "./weekly-rule";
+import type { CourseSummary, LessonSummary, LessonType, SeasonSummary } from '@/lib/api/types';
+import { parseWeeklyRule } from './weekly-rule';
 
 /**
  * Turns the raw course payload into the rows the curriculum UI renders.
@@ -13,7 +8,7 @@ import { parseWeeklyRule } from "./weekly-rule";
  * with the browser.
  */
 
-export type LiveState = "upcoming" | "running" | "ended";
+export type LiveState = 'upcoming' | 'running' | 'ended';
 
 export interface LiveView {
   startsAt: string;
@@ -30,7 +25,7 @@ export interface LiveView {
 }
 
 export interface UnlockRule {
-  kind: "date" | "drip";
+  kind: 'date' | 'drip';
   /** ISO date for `date`, day count for `drip`. */
   value: string | number;
 }
@@ -77,22 +72,22 @@ export interface CourseContentStats {
   hasDripContent: boolean;
 }
 
-const LESSON_TYPE_FALLBACK: LessonType = "VIDEO";
+const LESSON_TYPE_FALLBACK: LessonType = 'VIDEO';
 
 const resolveType = (lesson: LessonSummary): LessonType => {
   if (lesson.lesson_type) return lesson.lesson_type;
-  if (lesson.LiveSession) return "LIVE";
-  if (lesson.Quiz) return "QUIZ";
-  if (lesson.Assignment) return "ASSIGNMENT";
-  if (lesson.Audio) return "AUDIO";
-  if (lesson.Video) return "VIDEO";
+  if (lesson.LiveSession) return 'LIVE';
+  if (lesson.Quiz) return 'QUIZ';
+  if (lesson.Assignment) return 'ASSIGNMENT';
+  if (lesson.Audio) return 'AUDIO';
+  if (lesson.Video) return 'VIDEO';
   return LESSON_TYPE_FALLBACK;
 };
 
 const resolveUnlock = (lesson: LessonSummary): UnlockRule | null => {
-  if (lesson.available_at) return { kind: "date", value: lesson.available_at };
+  if (lesson.available_at) return { kind: 'date', value: lesson.available_at };
   if (lesson.drip_days_after_enrollment && lesson.drip_days_after_enrollment > 0) {
-    return { kind: "drip", value: lesson.drip_days_after_enrollment };
+    return { kind: 'drip', value: lesson.drip_days_after_enrollment };
   }
   return null;
 };
@@ -100,9 +95,9 @@ const resolveUnlock = (lesson: LessonSummary): UnlockRule | null => {
 const resolveDownloadable = (lesson: LessonSummary): boolean =>
   Boolean(
     lesson.allow_download_free ||
-      lesson.allow_download_enrollment ||
-      lesson.allow_download_subscription ||
-      lesson.allow_download_tutoring,
+    lesson.allow_download_enrollment ||
+    lesson.allow_download_subscription ||
+    lesson.allow_download_tutoring,
   );
 
 const toLessonView = (lesson: LessonSummary): CurriculumLessonView => ({
@@ -164,24 +159,19 @@ export const buildContentStats = (
   fallbackMinutes?: number | null,
 ): CourseContentStats => {
   const lessons = seasons.flatMap((s) => s.lessons);
-  const countOf = (type: LessonType) =>
-    lessons.filter((l) => l.type === type).length;
+  const countOf = (type: LessonType) => lessons.filter((l) => l.type === type).length;
   // Course.duration is stored in minutes, so the lesson seconds are converted
   // once here and everything downstream keeps talking in minutes.
-  const totalMinutes = Math.round(
-    seasons.reduce((sum, s) => sum + s.totalSeconds, 0) / 60,
-  );
+  const totalMinutes = Math.round(seasons.reduce((sum, s) => sum + s.totalSeconds, 0) / 60);
 
   return {
     seasonCount: seasons.length,
     lessonCount: lessons.length || (fallbackLessonCount ?? 0),
     totalMinutes: totalMinutes || (fallbackMinutes ?? 0),
-    videoCount: countOf("VIDEO") + countOf("AUDIO"),
-    liveCount: lessons.filter((l) => l.live !== null || l.type === "LIVE").length,
-    quizCount: lessons.filter((l) => l.quiz !== null || l.type === "QUIZ").length,
-    assignmentCount: lessons.filter(
-      (l) => l.assignment !== null || l.type === "ASSIGNMENT",
-    ).length,
+    videoCount: countOf('VIDEO') + countOf('AUDIO'),
+    liveCount: lessons.filter((l) => l.live !== null || l.type === 'LIVE').length,
+    quizCount: lessons.filter((l) => l.quiz !== null || l.type === 'QUIZ').length,
+    assignmentCount: lessons.filter((l) => l.assignment !== null || l.type === 'ASSIGNMENT').length,
     previewCount: lessons.filter((l) => l.isPreview).length,
     downloadableCount: lessons.filter((l) => l.downloadable).length,
     hasDripContent: lessons.some((l) => l.unlock !== null),
@@ -190,9 +180,9 @@ export const buildContentStats = (
 
 /** Panel authors these as one item per line; blank lines are noise. */
 export const parseAuthoredList = (value?: string | null): string[] =>
-  (value ?? "")
+  (value ?? '')
     .split(/\r?\n/)
-    .map((line) => line.replace(/^\s*[-•*]\s*/, "").trim())
+    .map((line) => line.replace(/^\s*[-•*]\s*/, '').trim())
     .filter((line) => line.length > 0);
 
 export const liveStateAt = (live: LiveView, now: number): LiveState => {
@@ -203,14 +193,14 @@ export const liveStateAt = (live: LiveView, now: number): LiveState => {
     live.endsAt && !live.nextOccurrenceAt
       ? new Date(live.endsAt).getTime()
       : start + (live.durationMinutes ?? 60) * 60_000;
-  if (now < start) return "upcoming";
-  if (now <= end) return "running";
+  if (now < start) return 'upcoming';
+  if (now <= end) return 'running';
   // A repeating session is only really over once the series has run out.
   if (live.isRecurring) {
     const until = live.recurrenceUntil
       ? new Date(live.recurrenceUntil).getTime()
       : Number.POSITIVE_INFINITY;
-    return now < until ? "upcoming" : "ended";
+    return now < until ? 'upcoming' : 'ended';
   }
-  return "ended";
+  return 'ended';
 };

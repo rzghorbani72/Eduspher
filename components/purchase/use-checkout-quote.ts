@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
-import type { PurchaseSelector } from "@/components/purchase/use-purchase";
-import { parseApiError } from "@/lib/api/api-error";
-import { notifyApiError } from "@/lib/api/notify-api-error";
+import type { PurchaseSelector } from '@/components/purchase/use-purchase';
+import { parseApiError } from '@/lib/api/api-error';
+import { notifyApiError } from '@/lib/api/notify-api-error';
 
 export type CheckoutQuote = {
   title: string;
@@ -40,9 +40,9 @@ export const useCheckoutQuote = (
     async (couponCode?: string) => {
       setLoading(true);
       try {
-        const response = await fetch("/api/payment/quote", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch('/api/payment/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...(JSON.parse(key) as Record<string, unknown>),
             ...(couponCode && { coupon_code: couponCode }),
@@ -54,12 +54,12 @@ export const useCheckoutQuote = (
           // Legacy BFF `{ success, error }` still appears until every pod rolls.
           const legacyError =
             data &&
-            typeof data === "object" &&
-            typeof (data as { error?: unknown }).error === "string"
+            typeof data === 'object' &&
+            typeof (data as { error?: unknown }).error === 'string'
               ? {
                   status: response.status,
                   code:
-                    typeof (data as { code?: unknown }).code === "string"
+                    typeof (data as { code?: unknown }).code === 'string'
                       ? (data as { code: string }).code
                       : `HTTP_${response.status}`,
                   message: (data as { error: string }).error,
@@ -68,8 +68,7 @@ export const useCheckoutQuote = (
           notifyApiError(legacyError ?? parseApiError(response.status, data));
           return;
         }
-        const quotePayload =
-          data?.data ?? (data?.success ? data.quote : null) ?? null;
+        const quotePayload = data?.data ?? (data?.success ? data.quote : null) ?? null;
         setQuote(quotePayload ? (quotePayload as CheckoutQuote) : null);
       } catch (error) {
         setQuote(null);

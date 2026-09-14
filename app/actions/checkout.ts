@@ -1,11 +1,7 @@
-"use server";
+'use server';
 
-import { getSession } from "@/lib/auth/session";
-import {
-  createEnrollment,
-  createBasket,
-  initiateCheckoutPayment,
-} from "@/lib/api/server";
+import { getSession } from '@/lib/auth/session';
+import { createEnrollment, createBasket, initiateCheckoutPayment } from '@/lib/api/server';
 
 interface CheckoutRequest {
   course_id?: string;
@@ -24,15 +20,13 @@ interface CheckoutResult {
   bankRedirectUrl?: string;
 }
 
-export async function processCheckout(
-  request: CheckoutRequest
-): Promise<CheckoutResult> {
+export async function processCheckout(request: CheckoutRequest): Promise<CheckoutResult> {
   try {
     const session = await getSession();
     if (!session || !session.userId || !session.profileId) {
       return {
         success: false,
-        error: "You must be logged in to complete checkout",
+        error: 'You must be logged in to complete checkout',
       };
     }
 
@@ -40,13 +34,13 @@ export async function processCheckout(
     if (session.userId !== request.user_id || session.profileId !== request.profile_id) {
       return {
         success: false,
-        error: "Invalid user session",
+        error: 'Invalid user session',
       };
     }
 
     try {
-      const { getCourseById, getCart } = await import("@/lib/api/server");
-      
+      const { getCourseById, getCart } = await import('@/lib/api/server');
+
       // Determine course IDs - from request or cart
       let courseIds: string[] = [];
       if (request.course_ids && request.course_ids.length > 0) {
@@ -59,7 +53,7 @@ export async function processCheckout(
         if (cart && cart.items) {
           courseIds = cart.items.map((item: { course_id: string }) => item.course_id);
         }
-        
+
         // If no server cart, try to sync local cart first
         if (courseIds.length === 0) {
           // This would sync local cart to server, then get it
@@ -70,20 +64,18 @@ export async function processCheckout(
       if (courseIds.length === 0) {
         return {
           success: false,
-          error: "No courses selected",
+          error: 'No courses selected',
         };
       }
 
       // Fetch all courses to check if any are free
-      const courses = await Promise.all(
-        courseIds.map((id) => getCourseById(id).catch(() => null))
-      );
+      const courses = await Promise.all(courseIds.map((id) => getCourseById(id).catch(() => null)));
 
       const validCourses = courses.filter((c) => c !== null);
       if (validCourses.length === 0) {
         return {
           success: false,
-          error: "No valid courses found",
+          error: 'No valid courses found',
         };
       }
 
@@ -97,9 +89,9 @@ export async function processCheckout(
               course_id: course.id,
               user_id: request.user_id,
               profile_id: request.profile_id,
-              status: "ACTIVE",
-            })
-          )
+              status: 'ACTIVE',
+            }),
+          ),
         );
 
         return {
@@ -112,7 +104,7 @@ export async function processCheckout(
         return {
           success: false,
           error:
-            "Online payment currently supports one paid course per checkout. Please purchase courses one by one.",
+            'Online payment currently supports one paid course per checkout. Please purchase courses one by one.',
         };
       }
 
@@ -126,7 +118,7 @@ export async function processCheckout(
       if (!basket || !basket.id) {
         return {
           success: false,
-          error: "Failed to create basket",
+          error: 'Failed to create basket',
         };
       }
 
@@ -145,13 +137,13 @@ export async function processCheckout(
       };
     } catch (apiError) {
       const errorMessage =
-        apiError instanceof Error ? apiError.message : "Failed to process checkout";
-      
+        apiError instanceof Error ? apiError.message : 'Failed to process checkout';
+
       // Check if user is already enrolled
-      if (errorMessage.toLowerCase().includes("already enrolled")) {
+      if (errorMessage.toLowerCase().includes('already enrolled')) {
         return {
           success: false,
-          error: "You are already enrolled in this course",
+          error: 'You are already enrolled in this course',
         };
       }
 
@@ -161,12 +153,10 @@ export async function processCheckout(
       };
     }
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
     return {
       success: false,
       error: errorMessage,
     };
   }
 }
-
-

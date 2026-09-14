@@ -3,6 +3,7 @@
 Browser tests for the student storefront.
 
 ## Layout
+
 - `e2e/auth/` — student auth-form validation + happy-path login (`@backend`).
 - `e2e/smoke/` — **no backend needed**, all green in CI/dev:
   - `security-headers.spec.ts` — CSP / `X-Frame-Options: DENY` / nosniff / referrer (OWASP A05).
@@ -11,10 +12,12 @@ Browser tests for the student storefront.
 - `e2e/roles/` — `@backend` student persona journey (login → catalog → account/orders).
 
 ## Running
+
 edusphere is multi-tenant and resolves the academy on the server, so pages can
 call the API during SSR. Run the backend on `:3000` for reliable runs:
 
 ## Running
+
 edusphere is multi-tenant and resolves the academy on the server, so pages can
 call the API during SSR. Run the backend on `:3000` for reliable runs:
 
@@ -25,6 +28,7 @@ pnpm test:e2e                         # auto-starts next dev on :5000
 ```
 
 ## Backend-dependent specs (`@backend`)
+
 Happy-path login is skipped unless `E2E_BACKEND=1`. Verified recipe:
 
 ```bash

@@ -31,7 +31,10 @@ export function DaneshvarFeatures({ id, config }: TemplateSectionProps) {
                 {item.no}
               </span>
               <div className="min-w-0">
-                <h3 {...editableItem('items', index, 'title')} className="text-[19px] font-bold leading-[1.4]">
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className="text-[19px] leading-[1.4] font-bold"
+                >
                   {item.title}
                 </h3>
                 <p

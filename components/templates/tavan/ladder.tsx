@@ -27,7 +27,10 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
   const notes = list<LadderNote>(config, 'notes', d.notes);
 
   return (
-    <section id={id || 'showcase'} className="relative overflow-hidden bg-(--theme-deep) text-(--theme-on-deep)">
+    <section
+      id={id || 'showcase'}
+      className="relative overflow-hidden bg-(--theme-deep) text-(--theme-on-deep)"
+    >
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="mb-12">
           <span
@@ -38,11 +41,14 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
           </span>
           <h2
             data-editable="title"
-            className="mt-3 max-w-[24ch] text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]"
+            className="mt-3 max-w-[24ch] text-[clamp(28px,4vw,44px)] leading-[1.2] font-bold tracking-[-0.02em]"
           >
             {text(config, 'title', d.title)}
           </h2>
-          <p data-editable="subtitle" className="mt-4 max-w-[56ch] text-[16px] leading-[1.85] text-current/65">
+          <p
+            data-editable="subtitle"
+            className="mt-4 max-w-[56ch] text-[16px] leading-[1.85] text-current/65"
+          >
             {text(config, 'subtitle', d.subtitle)}
           </p>
         </div>
@@ -56,12 +62,15 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
             >
               <div className="grid gap-5 md:grid-cols-[150px_1fr_200px] md:items-center">
                 <div>
-                  <span {...editableItem('steps', index, 'range')} className="block text-[13px] text-current/60">
+                  <span
+                    {...editableItem('steps', index, 'range')}
+                    className="block text-[13px] text-current/60"
+                  >
                     {step.range}
                   </span>
                   <b
                     {...editableItem('steps', index, 'percent')}
-                    className="mt-1 block text-[26px] font-bold leading-none tracking-[-0.04em] text-(--theme-primary) tabular-nums"
+                    className="mt-1 block text-[26px] leading-none font-bold tracking-[-0.04em] text-(--theme-primary) tabular-nums"
                   >
                     {step.percent}
                   </b>
@@ -94,7 +103,10 @@ export function TavanLadder({ id, config }: TemplateSectionProps) {
               <dt className="text-current/60">
                 <span {...editableItem('notes', index, 'label')}>{note.label}</span>:
               </dt>
-              <dd {...editableItem('notes', index, 'value')} className="font-bold text-(--theme-primary)">
+              <dd
+                {...editableItem('notes', index, 'value')}
+                className="font-bold text-(--theme-primary)"
+              >
                 {note.value}
               </dd>
             </div>

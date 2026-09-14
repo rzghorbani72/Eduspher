@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { isLiveCourse } from "@/lib/courses/live-course";
-import type { CourseSummary } from "@/lib/api/types";
-import type { CourseTopic } from "@/lib/api/account-types";
-import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
-import { CourseOverview } from "@/components/courses/course-overview";
-import { CourseCurriculum } from "@/components/courses/curriculum";
-import { CourseLiveSchedule } from "@/components/courses/course-live-schedule";
-import { CourseInstructor } from "@/components/courses/course-instructor";
-import { CourseReviews } from "@/components/courses/course-reviews";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { isLiveCourse } from '@/lib/courses/live-course';
+import type { CourseSummary } from '@/lib/api/types';
+import type { CourseTopic } from '@/lib/api/account-types';
+import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
+import { CourseOverview } from '@/components/courses/course-overview';
+import { CourseCurriculum } from '@/components/courses/curriculum';
+import { CourseLiveSchedule } from '@/components/courses/course-live-schedule';
+import { CourseInstructor } from '@/components/courses/course-instructor';
+import { CourseReviews } from '@/components/courses/course-reviews';
 
 interface CourseDetailTabsProps {
   course: CourseSummary;
@@ -26,7 +26,7 @@ interface CourseDetailTabsProps {
   topics?: CourseTopic[];
 }
 
-type TabKey = "overview" | "curriculum" | "live" | "instructor" | "reviews";
+type TabKey = 'overview' | 'curriculum' | 'live' | 'instructor' | 'reviews';
 
 export function CourseDetailTabs({
   course,
@@ -46,22 +46,22 @@ export function CourseDetailTabs({
 
   const tabs = useMemo(() => {
     const list: { key: TabKey; label: string }[] = [
-      { key: "overview", label: t("courses.tabIntro") },
-      { key: "curriculum", label: t("courses.tabCurriculum") },
+      { key: 'overview', label: t('courses.tabIntro') },
+      { key: 'curriculum', label: t('courses.tabCurriculum') },
     ];
     // A recorded course has no live timetable, even if an old lesson still
     // carries a live session.
     if (isLiveCourse(course) && stats.liveCount > 0) {
-      list.push({ key: "live", label: t("courses.tabLive") });
+      list.push({ key: 'live', label: t('courses.tabLive') });
     }
     list.push(
-      { key: "instructor", label: t("courses.tabInstructor") },
-      { key: "reviews", label: t("courses.tabReviews") },
+      { key: 'instructor', label: t('courses.tabInstructor') },
+      { key: 'reviews', label: t('courses.tabReviews') },
     );
     return list;
   }, [course, stats.liveCount, t]);
 
-  const [activeTab, setActiveTab] = useState<TabKey>("curriculum");
+  const [activeTab, setActiveTab] = useState<TabKey>('curriculum');
 
   return (
     <div className="space-y-7">
@@ -78,17 +78,17 @@ export function CourseDetailTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActiveTab(tab.key)}
-              className={`relative min-w-fit flex-1 whitespace-nowrap rounded-full px-3 py-2.5 text-sm font-extrabold transition-colors duration-200 ${
+              className={`relative min-w-fit flex-1 rounded-full px-3 py-2.5 text-sm font-extrabold whitespace-nowrap transition-colors duration-200 ${
                 isActive
-                  ? "text-(--theme-foreground)"
-                  : "text-(--theme-muted) hover:text-(--theme-foreground)"
+                  ? 'text-(--theme-foreground)'
+                  : 'text-(--theme-muted) hover:text-(--theme-foreground)'
               }`}
             >
               {isActive && (
                 <motion.span
                   layoutId="cd-tab-bg"
                   className="absolute inset-0 rounded-full bg-(--theme-card-bg) shadow-sm"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 />
               )}
               <span className="relative z-10">{tab.label}</span>
@@ -97,15 +97,11 @@ export function CourseDetailTabs({
         })}
       </div>
 
-      {activeTab === "overview" && (
-        <CourseOverview
-          course={course}
-          stats={stats}
-          prerequisiteHref={prerequisiteHref}
-        />
+      {activeTab === 'overview' && (
+        <CourseOverview course={course} stats={stats} prerequisiteHref={prerequisiteHref} />
       )}
 
-      {activeTab === "curriculum" && (
+      {activeTab === 'curriculum' && (
         <CourseCurriculum
           seasons={seasons}
           stats={stats}
@@ -115,9 +111,9 @@ export function CourseDetailTabs({
         />
       )}
 
-      {activeTab === "live" && <CourseLiveSchedule seasons={seasons} />}
+      {activeTab === 'live' && <CourseLiveSchedule seasons={seasons} />}
 
-      {activeTab === "instructor" && (
+      {activeTab === 'instructor' && (
         <CourseInstructor
           author={course.author ?? course.Profile ?? null}
           avatarUrl={instructorAvatarUrl}
@@ -126,9 +122,7 @@ export function CourseDetailTabs({
         />
       )}
 
-      {activeTab === "reviews" && (
-        <CourseReviews courseId={course.id} isLoggedIn={isLoggedIn} />
-      )}
+      {activeTab === 'reviews' && <CourseReviews courseId={course.id} isLoggedIn={isLoggedIn} />}
     </div>
   );
 }

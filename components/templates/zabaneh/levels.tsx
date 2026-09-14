@@ -34,7 +34,7 @@ export function ZabanehLevels({ id, config, storeContext }: TemplateSectionProps
           {steps.map((step, index) => (
             <li
               key={step.code}
-              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6"
+              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 shadow-(--theme-shadow)"
             >
               <span
                 dir="ltr"
@@ -53,7 +53,9 @@ export function ZabanehLevels({ id, config, storeContext }: TemplateSectionProps
                 {step.body}
               </p>
               <p className="mt-3 text-[13px] font-bold text-(--theme-ink-2)">
-                <span data-editable="durationLabel">{text(config, 'durationLabel', d.durationLabel)}</span>{' '}
+                <span data-editable="durationLabel">
+                  {text(config, 'durationLabel', d.durationLabel)}
+                </span>{' '}
                 <span {...editableItem('steps', index, 'duration')}>{step.duration}</span>
               </p>
 
@@ -67,13 +69,16 @@ export function ZabanehLevels({ id, config, storeContext }: TemplateSectionProps
           ))}
         </ol>
 
-        <div className="mt-9 flex flex-col gap-4 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 md:flex-row md:items-center md:justify-between">
-          <p data-editable="footNote" className="max-w-[62ch] text-[15px] leading-[1.85] text-(--theme-muted)">
+        <div className="mt-9 flex flex-col gap-4 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 shadow-(--theme-shadow) md:flex-row md:items-center md:justify-between">
+          <p
+            data-editable="footNote"
+            className="max-w-[62ch] text-[15px] leading-[1.85] text-(--theme-muted)"
+          >
             {text(config, 'footNote', d.footNote)}
           </p>
           <a
             href={templateHref(storeContext, 'register')}
-            className="whitespace-nowrap text-[14.5px] font-bold text-(--theme-primary) hover:underline"
+            className="text-[14.5px] font-bold whitespace-nowrap text-(--theme-primary) hover:underline"
           >
             <span data-editable="footCta">{text(config, 'footCta', d.footCta)}</span> ←
           </a>

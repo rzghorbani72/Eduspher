@@ -36,7 +36,7 @@ export function RouzanCta({ id, config, storeContext }: TemplateSectionProps) {
             <div>
               <h2
                 data-editable="title"
-                className="max-w-[19ch] text-[clamp(28px,3.4vw,44px)] font-bold leading-[1.14]"
+                className="max-w-[19ch] text-[clamp(28px,3.4vw,44px)] leading-[1.14] font-bold"
               >
                 {text(config, 'title', d.title)}
               </h2>
@@ -47,7 +47,12 @@ export function RouzanCta({ id, config, storeContext }: TemplateSectionProps) {
                 {text(config, 'subtitle', d.subtitle)}
               </p>
 
-              <RemovableSlot config={config} flagKey="showCta" editMode={editMode} className="mt-6 inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showCta"
+                editMode={editMode}
+                className="mt-6 inline-flex"
+              >
                 <Button
                   tone="primary"
                   size="lg"
@@ -67,10 +72,16 @@ export function RouzanCta({ id, config, storeContext }: TemplateSectionProps) {
             <dl className={styles.ctaSide} {...editableList('facts', facts)}>
               {facts.map((fact, index) => (
                 <div key={fact.label} className={`${styles.ctaRow} py-3.5`}>
-                  <dd {...editableItem('facts', index, 'value')} className="block text-[19px] font-bold">
+                  <dd
+                    {...editableItem('facts', index, 'value')}
+                    className="block text-[19px] font-bold"
+                  >
                     {fact.value}
                   </dd>
-                  <dt {...editableItem('facts', index, 'label')} className="text-[13px] text-(--theme-muted)">
+                  <dt
+                    {...editableItem('facts', index, 'label')}
+                    className="text-[13px] text-(--theme-muted)"
+                  >
                     {fact.label}
                   </dt>
                 </div>

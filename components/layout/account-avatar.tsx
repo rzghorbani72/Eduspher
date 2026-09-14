@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { sizedImageUrl } from "@/lib/images/sized-image-url";
+import { useState } from 'react';
+import { sizedImageUrl } from '@/lib/images/sized-image-url';
 
 interface AccountAvatarProps {
   name: string;
@@ -16,12 +16,7 @@ interface AccountAvatarProps {
  * fallback — used both when there is no picture and when the picture fails to
  * load (expired storage link), so the header never shows a broken image.
  */
-export function AccountAvatar({
-  name,
-  avatarUrl,
-  size = 32,
-  className = "",
-}: AccountAvatarProps) {
+export function AccountAvatar({ name, avatarUrl, size = 32, className = '' }: AccountAvatarProps) {
   const [failed, setFailed] = useState(false);
   const showImage = Boolean(avatarUrl) && !failed;
 
@@ -31,9 +26,8 @@ export function AccountAvatar({
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        backgroundColor:
-          "color-mix(in srgb, var(--theme-primary) 22%, var(--theme-background))",
-        color: "var(--theme-primary)",
+        backgroundColor: 'color-mix(in srgb, var(--theme-primary) 22%, var(--theme-background))',
+        color: 'var(--theme-primary)',
       }}
       className={`flex shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-bold ${className}`}
     >

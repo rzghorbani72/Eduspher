@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface AccountSectionProps {
   title?: string;
@@ -26,7 +26,7 @@ export function AccountSection({
   return (
     <section
       className={cn(
-        "flex h-full flex-col rounded-2xl border border-theme bg-card p-5 sm:p-6",
+        'border-theme bg-card flex h-full flex-col rounded-2xl border p-5 sm:p-6',
         className,
       )}
     >
@@ -39,8 +39,8 @@ export function AccountSection({
                   className="flex size-8 shrink-0 items-center justify-center rounded-xl"
                   style={{
                     backgroundColor:
-                      "color-mix(in srgb, var(--theme-primary) 12%, var(--theme-background))",
-                    color: "var(--theme-primary-ink)",
+                      'color-mix(in srgb, var(--theme-primary) 12%, var(--theme-background))',
+                    color: 'var(--theme-primary-ink)',
                   }}
                 >
                   <Icon className="size-4" aria-hidden="true" />
@@ -48,18 +48,12 @@ export function AccountSection({
               ) : null}
               {title}
             </h2>
-            {description ? (
-              <p className="text-sm text-muted">{description}</p>
-            ) : null}
+            {description ? <p className="text-muted text-sm">{description}</p> : null}
           </div>
-          {actions ? (
-            <div className="flex shrink-0 items-center gap-2">{actions}</div>
-          ) : null}
+          {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
         </header>
       ) : null}
-      <div className={cn("flex min-h-0 flex-1 flex-col", bodyClassName)}>
-        {children}
-      </div>
+      <div className={cn('flex min-h-0 flex-1 flex-col', bodyClassName)}>{children}</div>
     </section>
   );
 }

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { User, Edit2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { updateProfile } from "@/lib/api/client";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { User, Edit2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { updateProfile } from '@/lib/api/client';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
 
 interface EditDisplayNameFormProps {
   profileId: string;
@@ -33,12 +33,12 @@ export const EditDisplayNameForm = ({
     e.preventDefault();
 
     if (!displayName.trim()) {
-      setError(t("account.displayNameRequired"));
+      setError(t('account.displayNameRequired'));
       return;
     }
 
     if (displayName.trim().length < 1 || displayName.trim().length > 255) {
-      setError(t("account.displayNameTooLong"));
+      setError(t('account.displayNameTooLong'));
       return;
     }
 
@@ -53,7 +53,7 @@ export const EditDisplayNameForm = ({
 
     try {
       await updateProfile(profileId, { display_name: displayName.trim() });
-      setMessage(t("account.displayNameUpdated"));
+      setMessage(t('account.displayNameUpdated'));
       setIsEditing(false);
       onSuccess?.();
       setTimeout(() => {
@@ -61,9 +61,7 @@ export const EditDisplayNameForm = ({
       }, 1500);
     } catch (err) {
       const errorMessage =
-        err instanceof Error
-          ? err.message
-          : t("account.displayNameUpdateFailed");
+        err instanceof Error ? err.message : t('account.displayNameUpdateFailed');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -72,15 +70,13 @@ export const EditDisplayNameForm = ({
 
   if (!isEditing) {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface px-3.5 py-3">
+      <div className="bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl px-3.5 py-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-card ring-1 ring-(--theme-border)">
-            <User className="size-5 text-muted" aria-hidden="true" />
+          <div className="bg-card flex size-10 shrink-0 items-center justify-center rounded-full ring-1 ring-(--theme-border)">
+            <User className="text-muted size-5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-muted">
-              {t("account.displayName")}
-            </p>
+            <p className="text-muted text-xs font-medium">{t('account.displayName')}</p>
             <p className="truncate text-sm font-semibold text-(--theme-foreground)">
               {currentDisplayName}
             </p>
@@ -91,10 +87,10 @@ export const EditDisplayNameForm = ({
           variant="ghost"
           size="sm"
           onClick={() => setIsEditing(true)}
-          className="shrink-0 border border-(--theme-border) bg-card text-(--theme-foreground) hover:bg-surface hover:text-(--theme-foreground)"
+          className="bg-card hover:bg-surface shrink-0 border border-(--theme-border) text-(--theme-foreground) hover:text-(--theme-foreground)"
         >
           <Edit2 className="size-3.5 shrink-0" aria-hidden="true" />
-          {t("common.edit")}
+          {t('common.edit')}
         </Button>
       </div>
     );
@@ -103,10 +99,10 @@ export const EditDisplayNameForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="display_name">{t("account.displayName")}</Label>
+        <Label htmlFor="display_name">{t('account.displayName')}</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-            <User className="h-5 w-5 text-muted" />
+            <User className="text-muted h-5 w-5" />
           </div>
           <Input
             id="display_name"
@@ -116,18 +112,13 @@ export const EditDisplayNameForm = ({
               setDisplayName(e.target.value);
               setError(null);
             }}
-            className={cn(
- "ps-10",
- error && "border-amber-500 focus:border-amber-500",
- )}
-            placeholder={t("account.displayNamePlaceholder")}
+            className={cn('ps-10', error && 'border-amber-500 focus:border-amber-500')}
+            placeholder={t('account.displayNamePlaceholder')}
             maxLength={255}
             autoFocus
           />
         </div>
-        {error && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>
-        )}
+        {error && <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>}
       </div>
 
       {message && !error && (
@@ -149,19 +140,15 @@ export const EditDisplayNameForm = ({
           disabled={isLoading}
           className="flex-1"
         >
-          {t("common.cancel")}
+          {t('common.cancel')}
         </Button>
         <Button
           type="submit"
-          disabled={
-            isLoading ||
-            !displayName.trim() ||
-            displayName.trim() === currentDisplayName
-          }
+          disabled={isLoading || !displayName.trim() || displayName.trim() === currentDisplayName}
           className="flex-1"
           loading={isLoading}
         >
-          {isLoading ? t("common.saving") : t("common.save")}
+          {isLoading ? t('common.saving') : t('common.save')}
         </Button>
       </div>
     </form>

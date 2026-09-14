@@ -35,7 +35,9 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
       className="bg-(--theme-background) pt-24 text-(--theme-foreground) max-md:pt-14"
     >
       <Wrap className={`${a.text}`}>
-        <h1 className={`${a.block} max-w-[24ch] text-[clamp(36px,5.2vw,68px)] font-bold leading-[1.2]`}>
+        <h1
+          className={`${a.block} max-w-[24ch] text-[clamp(36px,5.2vw,68px)] leading-[1.2] font-bold`}
+        >
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
           <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -50,7 +52,12 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
         </p>
 
         <div className={`mt-8.5 flex flex-wrap ${a.justify} gap-3`}>
-          <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCta"
+            editMode={editMode}
+            className="inline-flex"
+          >
             <Button
               tone="primary"
               size="lg"
@@ -79,7 +86,9 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
           </RemovableSlot>
         </div>
 
-        <div className={`mt-6.5 flex flex-wrap items-center ${a.justify} gap-x-4.5 gap-y-2.5 text-[13.5px] text-(--theme-muted)`}>
+        <div
+          className={`mt-6.5 flex flex-wrap items-center ${a.justify} gap-x-4.5 gap-y-2.5 text-[13.5px] text-(--theme-muted)`}
+        >
           <span>
             <span className={styles.stars} aria-hidden="true">
               ★★★★★
@@ -90,7 +99,9 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
             <span data-editable="ratingNote">{text(config, 'ratingNote', d.ratingNote)}</span>
           </span>
           <span className={styles.trustSep} aria-hidden="true" />
-          <span data-editable="trustStudents">{text(config, 'trustStudents', d.trustStudents)}</span>
+          <span data-editable="trustStudents">
+            {text(config, 'trustStudents', d.trustStudents)}
+          </span>
           <span className={styles.trustSep} aria-hidden="true" />
           <span data-editable="trustRefund">{text(config, 'trustRefund', d.trustRefund)}</span>
         </div>
@@ -140,7 +151,7 @@ export function PartowHero({ id, config, storeContext }: TemplateSectionProps) {
               <div key={stat.label} className={styles.fact}>
                 <dd
                   {...editableItem('stats', index, 'value')}
-                  className="block text-[30px] font-bold leading-[1.2]"
+                  className="block text-[30px] leading-[1.2] font-bold"
                 >
                   {stat.value}
                 </dd>

@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import { AcademyHomePage } from "@/components/academy/academy-home-page";
-import { AcademyOrganizationJsonLd } from "@/components/seo/academy-organization-json-ld";
-import { getAcademyBySlug, getPublicAcademies } from "@/lib/api/server";
-import { buildSiteMetadata } from "@/lib/seo/build-metadata";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
-import { truncate } from "@/lib/utils";
+import { AcademyHomePage } from '@/components/academy/academy-home-page';
+import { AcademyOrganizationJsonLd } from '@/components/seo/academy-organization-json-ld';
+import { getAcademyBySlug, getPublicAcademies } from '@/lib/api/server';
+import { buildSiteMetadata } from '@/lib/seo/build-metadata';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
+import { truncate } from '@/lib/utils';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -21,15 +21,12 @@ export async function generateMetadata({
     getSeoRequestContext(),
   ]);
   if (!academy) {
-    return { title: "404", robots: { index: false, follow: false } };
+    return { title: '404', robots: { index: false, follow: false } };
   }
 
   return buildSiteMetadata({
     title: academy.meta_title?.trim() || academy.name,
-    description: truncate(
-      academy.meta_description || academy.description || academy.name,
-      160,
-    ),
+    description: truncate(academy.meta_description || academy.description || academy.name, 160),
     ctx,
   });
 }
@@ -44,11 +41,7 @@ export async function generateMetadata({
  * directory is capped and only lists published academies. If the backend is
  * unreachable the page still renders, so a hiccup never takes the home down.
  */
-export default async function AcademyHome({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function AcademyHome({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const academy = await getAcademyBySlug(slug);
   if (!academy) {

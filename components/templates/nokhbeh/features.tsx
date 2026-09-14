@@ -28,16 +28,19 @@ export function NokhbehFeatures({ id, config }: TemplateSectionProps) {
           {items.map((item, index) => (
             <li
               key={item.step}
-              className="grid gap-5 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-7 md:grid-cols-[90px_1fr] md:items-start"
+              className="grid gap-5 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7 shadow-(--theme-shadow) md:grid-cols-[90px_1fr] md:items-start"
             >
               <span
                 {...editableItem('items', index, 'step')}
-                className={`text-[46px] font-bold leading-none text-(--theme-primary) opacity-40 ${styles.mono}`}
+                className={`text-[46px] leading-none font-bold text-(--theme-primary) opacity-40 ${styles.mono}`}
               >
                 {item.step}
               </span>
               <div>
-                <h3 {...editableItem('items', index, 'title')} className="text-[22px] font-bold leading-[1.35]">
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className="text-[22px] leading-[1.35] font-bold"
+                >
                   {item.title}
                 </h3>
                 <p

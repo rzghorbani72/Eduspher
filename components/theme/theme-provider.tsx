@@ -60,50 +60,45 @@ export function ThemeProvider({ children, initialTheme }: ThemeProviderProps) {
       return;
     }
 
-    const prefersDark = () =>
-      window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+    const prefersDark = () => window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
     const followsSystem =
-      theme.dark_mode === null ||
-      theme.dark_mode === undefined ||
-      theme.dark_mode === "null";
+      theme.dark_mode === null || theme.dark_mode === undefined || theme.dark_mode === 'null';
 
     setIsDark(resolveThemeIsDark(theme, prefersDark()));
 
     if (followsSystem) {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
-      mediaQuery.addEventListener("change", handler);
-      return () => mediaQuery.removeEventListener("change", handler);
+      mediaQuery.addEventListener('change', handler);
+      return () => mediaQuery.removeEventListener('change', handler);
     }
   }, [theme]);
 
   const animationType = theme?.background_animation_type || 'none';
-  const animationSpeed = (theme?.background_animation_speed || 'medium') as 'slow' | 'medium' | 'fast';
+  const animationSpeed = (theme?.background_animation_speed || 'medium') as
+    'slow' | 'medium' | 'fast';
   const svgPattern = theme?.background_svg_pattern || '';
-  const primaryColor = isDark 
-    ? (theme?.primary_color_dark || theme?.primary_color || '#60a5fa')
-    : (theme?.primary_color_light || theme?.primary_color || '#3b82f6');
+  const primaryColor = isDark
+    ? theme?.primary_color_dark || theme?.primary_color || '#60a5fa'
+    : theme?.primary_color_light || theme?.primary_color || '#3b82f6';
   const secondaryColor = isDark
-    ? (theme?.secondary_color_dark || theme?.secondary_color || '#818cf8')
-    : (theme?.secondary_color_light || theme?.secondary_color || '#6366f1');
+    ? theme?.secondary_color_dark || theme?.secondary_color || '#818cf8'
+    : theme?.secondary_color_light || theme?.secondary_color || '#6366f1';
 
   return (
     <ThemeContext.Provider value={{ theme, isDark, updateTheme: setTheme }}>
       <div className="relative min-h-screen">
         {animationType !== 'none' && (
           <AnimatedBackground
-            type={animationType as React.ComponentProps<typeof AnimatedBackground>["type"]}
+            type={animationType as React.ComponentProps<typeof AnimatedBackground>['type']}
             speed={animationSpeed}
             primaryColor={primaryColor}
             secondaryColor={secondaryColor}
           />
         )}
-        {svgPattern && (
-          <SVGPattern patternId={svgPattern} color={primaryColor} />
-        )}
+        {svgPattern && <SVGPattern patternId={svgPattern} color={primaryColor} />}
         {children}
       </div>
     </ThemeContext.Provider>
   );
 }
-

@@ -1,20 +1,16 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
-import { Clock3, Star } from "lucide-react";
+import { useCallback, useEffect, useState } from 'react';
+import { Clock3, Star } from 'lucide-react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn } from "@/lib/utils";
-import { CourseQnA } from "@/components/courses/course-qna";
-import { CourseReviewCard } from "@/components/courses/course-review-card";
-import { CourseReviewForm } from "@/components/courses/course-review-form";
-import { CourseReviewSummary } from "@/components/courses/course-review-summary";
-import { EmptyState } from "@/components/ui/empty-state";
-import {
-  getCourseReviews,
-  type CourseReviewsResponse,
-  type RatingCounts,
-} from "@/lib/api/client";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
+import { CourseQnA } from '@/components/courses/course-qna';
+import { CourseReviewCard } from '@/components/courses/course-review-card';
+import { CourseReviewForm } from '@/components/courses/course-review-form';
+import { CourseReviewSummary } from '@/components/courses/course-review-summary';
+import { EmptyState } from '@/components/ui/empty-state';
+import { getCourseReviews, type CourseReviewsResponse, type RatingCounts } from '@/lib/api/client';
 
 interface CourseReviewsProps {
   courseId: string;
@@ -22,22 +18,16 @@ interface CourseReviewsProps {
 }
 
 const formatReviewDate = (iso: string, language: string) =>
-  new Date(iso).toLocaleDateString(language === "fa" ? "fa-IR" : "en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  new Date(iso).toLocaleDateString(language === 'fa' ? 'fa-IR' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
 function countsOf(data: CourseReviewsResponse | null): RatingCounts {
   const fromApi = data?.summary.counts;
   if (fromApi?.length === 5) {
-    return [
-      fromApi[0] ?? 0,
-      fromApi[1] ?? 0,
-      fromApi[2] ?? 0,
-      fromApi[3] ?? 0,
-      fromApi[4] ?? 0,
-    ];
+    return [fromApi[0] ?? 0, fromApi[1] ?? 0, fromApi[2] ?? 0, fromApi[3] ?? 0, fromApi[4] ?? 0];
   }
   const counts = [0, 0, 0, 0, 0];
   for (const review of data?.reviews ?? []) {
@@ -79,15 +69,11 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-3 space-y-6 duration-300">
       <h2 className="text-xl font-black text-(--theme-foreground)">
-        {t("courses.studentReviewsTitle")}
+        {t('courses.studentReviewsTitle')}
       </h2>
 
       {showSummary && (
-        <CourseReviewSummary
-          avgRating={avgRating}
-          totalReviews={totalReviews}
-          counts={counts}
-        />
+        <CourseReviewSummary avgRating={avgRating} totalReviews={totalReviews} counts={counts} />
       )}
 
       {data?.summary.can_review && (
@@ -97,7 +83,7 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
       {isLoggedIn && data?.summary.is_enrolled && !data.summary.can_review && (
         <p className="cd-review-card flex items-start gap-3 rounded-2xl border p-5 text-sm leading-relaxed text-(--theme-muted)">
           <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-(--theme-primary)" />
-          {t("courses.reviewWatchHalf")}
+          {t('courses.reviewWatchHalf')}
         </p>
       )}
 
@@ -105,14 +91,14 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
         <div className="cd-review-card h-36 animate-pulse rounded-2xl border" />
       ) : loadFailed ? (
         <p className="cd-review-card rounded-2xl border p-5 text-sm text-red-600">
-          {t("courses.reviewError")}
+          {t('courses.reviewError')}
         </p>
       ) : reviews.length === 0 ? (
         <EmptyState
           compact
-          icon={<Star className={cn("h-6 w-6", showSummary ? "" : "cd-star-fill")} />}
-          title={t("courses.noReviewsYet")}
-          description={t("courses.noReviewsDescription")}
+          icon={<Star className={cn('h-6 w-6', showSummary ? '' : 'cd-star-fill')} />}
+          title={t('courses.noReviewsYet')}
+          description={t('courses.noReviewsDescription')}
         />
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -121,7 +107,7 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
               key={review.id}
               review={review}
               dateLabel={formatReviewDate(review.created_at, language)}
-              verifiedLabel={t("courses.verifiedPurchase")}
+              verifiedLabel={t('courses.verifiedPurchase')}
             />
           ))}
         </div>

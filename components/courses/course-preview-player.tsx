@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
- 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-import { SafeHtml } from "@/components/safe-html";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { usePreviewPlayer } from "@/components/courses/preview-player-context";
-import { CourseCoverPlaceholder } from "@/components/courses/course-cover-placeholder";
-import { SecureVideoPlayer } from "@/components/media/secure-video-player";
-import { AppImage } from "@/components/ui/app-image";
+import { SafeHtml } from '@/components/safe-html';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { usePreviewPlayer } from '@/components/courses/preview-player-context';
+import { CourseCoverPlaceholder } from '@/components/courses/course-cover-placeholder';
+import { SecureVideoPlayer } from '@/components/media/secure-video-player';
+import { AppImage } from '@/components/ui/app-image';
 
 interface CoursePreviewPlayerProps {
   /** Course promo video, shown until the visitor picks a free lesson. */
@@ -84,8 +83,8 @@ export function CoursePreviewPlayer({
           <div className="cd-preview-overlay pointer-events-none absolute inset-0 z-10" />
         )}
         {hasPreviewLessons && (
-          <span className="cd-preview-label absolute top-3 end-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
-            {t("courses.freePreview")}
+          <span className="cd-preview-label absolute end-3 top-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
+            {t('courses.freePreview')}
           </span>
         )}
       </div>
@@ -106,9 +105,7 @@ export function CoursePreviewPlayer({
 
       {selected && (
         <div className="mt-3">
-          <h2 className="text-base font-extrabold text-(--theme-foreground)">
-            {selected.title}
-          </h2>
+          <h2 className="text-base font-extrabold text-(--theme-foreground)">{selected.title}</h2>
           {selected.description && (
             <p className="mt-1 text-[13px] leading-6 text-(--theme-muted)">
               {selected.description}
@@ -117,7 +114,7 @@ export function CoursePreviewPlayer({
           {selected.content && (
             <SafeHtml
               html={selected.content}
-              className="prose mt-3 max-w-none text-(--theme-foreground) dark:prose-invert"
+              className="prose dark:prose-invert mt-3 max-w-none text-(--theme-foreground)"
             />
           )}
         </div>

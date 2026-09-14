@@ -1,12 +1,12 @@
-import Image, { type ImageProps } from "next/image";
-import type { ReactNode } from "react";
+import Image, { type ImageProps } from 'next/image';
+import type { ReactNode } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   IMAGE_BLUR_PLACEHOLDER,
   IMAGE_PRESETS,
   type ImagePresetName,
-} from "@/lib/images/image-presets";
+} from '@/lib/images/image-presets';
 
 /**
  * The single image component for edusphere. Use it instead of next/image or a
@@ -25,7 +25,7 @@ import {
 
 type Props = Omit<
   ImageProps,
-  "src" | "sizes" | "quality" | "priority" | "loading" | "placeholder"
+  'src' | 'sizes' | 'quality' | 'priority' | 'loading' | 'placeholder'
 > & {
   /** Nullable on purpose — most covers/avatars are optional in the API. */
   src: string | null | undefined;
@@ -37,7 +37,7 @@ type Props = Omit<
   /** Override the preset when a call site knows its real rendered width. */
   sizes?: string;
   /** Skip the blur, e.g. for a logo on a coloured background. */
-  placeholder?: "blur" | "empty";
+  placeholder?: 'blur' | 'empty';
 };
 
 export function AppImage({
@@ -46,7 +46,7 @@ export function AppImage({
   fallback = null,
   priority,
   sizes,
-  placeholder = "blur",
+  placeholder = 'blur',
   className,
   alt,
   ...rest
@@ -65,10 +65,10 @@ export function AppImage({
       quality={config.quality}
       priority={isPriority}
       // `priority` already implies eager; setting both is a React warning.
-      loading={isPriority ? undefined : "lazy"}
+      loading={isPriority ? undefined : 'lazy'}
       decoding="async"
       placeholder={placeholder}
-      blurDataURL={placeholder === "blur" ? IMAGE_BLUR_PLACEHOLDER : undefined}
+      blurDataURL={placeholder === 'blur' ? IMAGE_BLUR_PLACEHOLDER : undefined}
       className={cn(className)}
     />
   );

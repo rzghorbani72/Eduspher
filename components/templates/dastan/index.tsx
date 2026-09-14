@@ -29,7 +29,13 @@ export const DASTAN_COURSE_CARD: CourseCardSpec = {
 
 export const DASTAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={DASTAN_HEADER} spec={{ tone: 'page', height: 78, navStyle: 'border', markClassName: styles.logoMark }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={DASTAN_HEADER}
+      spec={{ tone: 'page', height: 78, navStyle: 'border', markClassName: styles.logoMark }}
+    />
   ),
   hero: DastanHero,
   marquee: ({ id, config }) => (
@@ -57,8 +63,29 @@ export const DASTAN_SECTIONS: TemplateSectionMap = {
     <TemplateDataTable id={id} config={config} defaults={DASTAN_DEFAULTS.schedule} tone="page" />
   ),
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={DASTAN_DEFAULTS.teachers} tone="deep" avatarShape="round" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={DASTAN_DEFAULTS.teachers}
+      tone="deep"
+      avatarShape="round"
+    />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={DASTAN_DEFAULTS.cta} tone="brand" />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={DASTAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={DASTAN_DEFAULTS.cta}
+      tone="brand"
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={DASTAN_DEFAULTS.footer}
+    />
+  ),
 };

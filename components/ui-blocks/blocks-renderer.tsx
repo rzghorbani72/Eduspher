@@ -1,19 +1,19 @@
-import { UIBlockConfig } from "@/lib/theme-config";
-import { HeroBlock } from "./hero-block";
-import { FeaturesBlock } from "./features-block";
-import { CoursesBlock } from "./courses-block";
-import { TestimonialsBlock } from "./testimonials-block";
-import { HeaderBlock } from "./header-block";
-import { FooterBlock } from "./footer-block";
-import { MembershipBlock } from "./membership-block";
-import { SidebarBlockServer } from "./sidebar-block-server";
-import { MarqueeBlock } from "./marquee-block";
-import { CourseGridBlock } from "./course-grid-block";
-import { CtaBlock } from "./cta-block";
-import { CategoriesBlock } from "./categories-block";
-import { ProjectsBlock } from "./projects-block";
-import { VideosBlock } from "./videos-block";
-import { resolveTemplateSection } from "@/components/templates/registry";
+import { UIBlockConfig } from '@/lib/theme-config';
+import { HeroBlock } from './hero-block';
+import { FeaturesBlock } from './features-block';
+import { CoursesBlock } from './courses-block';
+import { TestimonialsBlock } from './testimonials-block';
+import { HeaderBlock } from './header-block';
+import { FooterBlock } from './footer-block';
+import { MembershipBlock } from './membership-block';
+import { SidebarBlockServer } from './sidebar-block-server';
+import { MarqueeBlock } from './marquee-block';
+import { CourseGridBlock } from './course-grid-block';
+import { CtaBlock } from './cta-block';
+import { CategoriesBlock } from './categories-block';
+import { ProjectsBlock } from './projects-block';
+import { VideosBlock } from './videos-block';
+import { resolveTemplateSection } from '@/components/templates/registry';
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -46,8 +46,8 @@ export function BlocksRenderer({
   previewMode = false,
 }: BlocksRendererProps) {
   if (!blocks || blocks.length === 0) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[BlocksRenderer] No blocks provided");
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[BlocksRenderer] No blocks provided');
     }
     return null;
   }
@@ -55,11 +55,8 @@ export function BlocksRenderer({
   const visibleBlocks = blocks
     .filter((block) => {
       if (block.isVisible === false) return false;
-      if (block.type === "placeholder") return false;
-      if (
-        !includeHeaderFooter &&
-        (block.type === "header" || block.type === "footer")
-      ) {
+      if (block.type === 'placeholder') return false;
+      if (!includeHeaderFooter && (block.type === 'header' || block.type === 'footer')) {
         return false;
       }
       return true;
@@ -67,8 +64,8 @@ export function BlocksRenderer({
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   if (visibleBlocks.length === 0) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[BlocksRenderer] No visible blocks after filtering");
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[BlocksRenderer] No visible blocks after filtering');
     }
     return null;
   }
@@ -80,10 +77,7 @@ export function BlocksRenderer({
           // One of the seven gallery templates owns this section type — render
           // its own design. Anything it does not implement falls through to the
           // shared blocks below, so legacy styles keep working unchanged.
-          const TemplateSection = resolveTemplateSection(
-            block.config?.style,
-            block.type,
-          );
+          const TemplateSection = resolveTemplateSection(block.config?.style, block.type);
           if (TemplateSection) {
             return (
               <TemplateSection
@@ -96,7 +90,7 @@ export function BlocksRenderer({
           }
 
           switch (block.type) {
-            case "header":
+            case 'header':
               return (
                 <HeaderBlock
                   key={block.id}
@@ -105,7 +99,7 @@ export function BlocksRenderer({
                   previewMode={previewMode}
                 />
               );
-            case "hero":
+            case 'hero':
               return (
                 <HeroBlock
                   key={block.id}
@@ -114,7 +108,7 @@ export function BlocksRenderer({
                   storeContext={storeContext}
                 />
               );
-            case "slideshow":
+            case 'slideshow':
               return (
                 <HeroBlock
                   key={block.id}
@@ -124,15 +118,9 @@ export function BlocksRenderer({
                   blockType="slideshow"
                 />
               );
-            case "features":
-              return (
-                <FeaturesBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "courses":
+            case 'features':
+              return <FeaturesBlock key={block.id} id={block.id} config={block.config} />;
+            case 'courses':
               return (
                 <CoursesBlock
                   key={block.id}
@@ -141,15 +129,9 @@ export function BlocksRenderer({
                   storeContext={storeContext}
                 />
               );
-            case "testimonials":
-              return (
-                <TestimonialsBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "membership":
+            case 'testimonials':
+              return <TestimonialsBlock key={block.id} id={block.id} config={block.config} />;
+            case 'membership':
               return (
                 <MembershipBlock
                   key={block.id}
@@ -158,82 +140,33 @@ export function BlocksRenderer({
                   storeContext={storeContext}
                 />
               );
-            case "footer":
-              return (
-                <FooterBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "marquee":
-              return (
-                <MarqueeBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "course-grid":
-              return (
-                <CourseGridBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "cta":
-              return (
-                <CtaBlock key={block.id} id={block.id} config={block.config} />
-              );
-            case "categories":
-              return (
-                <CategoriesBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "projects":
-              return (
-                <ProjectsBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "videos":
-              return (
-                <VideosBlock
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
-            case "sidebar":
-              return (
-                <SidebarBlockServer
-                  key={block.id}
-                  id={block.id}
-                  config={block.config}
-                />
-              );
+            case 'footer':
+              return <FooterBlock key={block.id} id={block.id} config={block.config} />;
+            case 'marquee':
+              return <MarqueeBlock key={block.id} id={block.id} config={block.config} />;
+            case 'course-grid':
+              return <CourseGridBlock key={block.id} id={block.id} config={block.config} />;
+            case 'cta':
+              return <CtaBlock key={block.id} id={block.id} config={block.config} />;
+            case 'categories':
+              return <CategoriesBlock key={block.id} id={block.id} config={block.config} />;
+            case 'projects':
+              return <ProjectsBlock key={block.id} id={block.id} config={block.config} />;
+            case 'videos':
+              return <VideosBlock key={block.id} id={block.id} config={block.config} />;
+            case 'sidebar':
+              return <SidebarBlockServer key={block.id} id={block.id} config={block.config} />;
             default:
               return null;
           }
         } catch (error) {
-          console.error(
-            `Error rendering block ${block.id} (${block.type}):`,
-            error,
-          );
+          console.error(`Error rendering block ${block.id} (${block.type}):`, error);
           return (
             <div
               key={block.id}
-              className="p-4 bg-(--theme-surface-alt) border border-(--theme-border-color) rounded-lg"
+              className="rounded-lg border border-(--theme-border-color) bg-(--theme-surface-alt) p-4"
             >
-              <p className="text-(--theme-foreground)">
-                Error rendering block: {block.type}
-              </p>
+              <p className="text-(--theme-foreground)">Error rendering block: {block.type}</p>
             </div>
           );
         }

@@ -1,5 +1,5 @@
-import { coursePreviewAccentOrbs } from "@/lib/courses/course-cover";
-import { cn } from "@/lib/utils";
+import { coursePreviewAccentOrbs } from '@/lib/courses/course-cover';
+import { cn } from '@/lib/utils';
 
 interface CourseCoverPlaceholderProps {
   courseId: string;
@@ -17,9 +17,7 @@ export function CourseCoverPlaceholder({
   const monogram = heading.trim().charAt(0);
 
   return (
-    <div
-      className={cn("cd-preview-placeholder relative overflow-hidden", className)}
-    >
+    <div className={cn('cd-preview-placeholder relative overflow-hidden', className)}>
       <div
         className="cd-preview-placeholder-orb-left"
         style={{

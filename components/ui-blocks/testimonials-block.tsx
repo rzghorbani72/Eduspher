@@ -1,29 +1,29 @@
-import { cn } from "@/lib/utils";
-import { getCurrentAcademy } from "@/lib/api/server";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { SlotGrid, PlaceholderCard } from "./slot-grid";
-import { RichHtml } from "@/components/rich-html";
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { cn } from '@/lib/utils';
+import { getCurrentAcademy } from '@/lib/api/server';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { SlotGrid, PlaceholderCard } from './slot-grid';
+import { RichHtml } from '@/components/rich-html';
+import { resolveSlots, type SlotConfig } from '@/lib/slot-config';
 
 interface TestimonialsBlockProps {
   id?: string;
   config?: {
     title?: string;
     subtitle?: string;
-    layout?: "grid" | "carousel";
+    layout?: 'grid' | 'carousel';
     showAvatars?: boolean;
     corporate?: boolean;
     style?:
-      | "default"
-      | "dark-quote"
-      | "social-proof"
-      | "creator-stories"
-      | "studio"
-      | "creator"
-      | "flow"
-      | "code"
-      | "creative";
+      | 'default'
+      | 'dark-quote'
+      | 'social-proof'
+      | 'creator-stories'
+      | 'studio'
+      | 'creator'
+      | 'flow'
+      | 'code'
+      | 'creative';
     label?: string;
     /** flow: testimonial cards. */
     items?: {
@@ -40,107 +40,89 @@ interface TestimonialsBlockProps {
 // Module-level English defaults used by sub-style components (kajabi, podia, stan, circle templates)
 const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "Software Engineer",
-    company: "Tech Corp",
+    name: 'Sarah Johnson',
+    role: 'Software Engineer',
+    company: 'Tech Corp',
     content:
-      "This platform transformed my career. The courses are comprehensive and the instructors are world-class.",
-    avatar: "👩‍💻",
-    revenue: "$12K/mo",
+      'This platform transformed my career. The courses are comprehensive and the instructors are world-class.',
+    avatar: '👩‍💻',
+    revenue: '$12K/mo',
     rating: 5,
   },
   {
-    name: "Michael Chen",
-    role: "Product Manager",
-    company: "StartupXYZ",
+    name: 'Michael Chen',
+    role: 'Product Manager',
+    company: 'StartupXYZ',
     content:
       "The best investment I've made in my professional development. Highly recommend to anyone serious about learning.",
-    avatar: "👨‍💼",
-    revenue: "$8K/mo",
+    avatar: '👨‍💼',
+    revenue: '$8K/mo',
     rating: 5,
   },
   {
-    name: "Emily Rodriguez",
-    role: "Data Scientist",
-    company: "Data Insights",
+    name: 'Emily Rodriguez',
+    role: 'Data Scientist',
+    company: 'Data Insights',
     content:
-      "The hands-on projects make all the difference. I landed my dream job thanks to this platform.",
-    avatar: "👩‍🔬",
-    revenue: "$15K/mo",
+      'The hands-on projects make all the difference. I landed my dream job thanks to this platform.',
+    avatar: '👩‍🔬',
+    revenue: '$15K/mo',
     rating: 5,
   },
   {
-    name: "David Kim",
-    role: "UX Designer",
-    company: "Design Studio",
+    name: 'David Kim',
+    role: 'UX Designer',
+    company: 'Design Studio',
     content:
       "The community support and mentorship opportunities are incredible. You're never learning alone here.",
-    avatar: "👨‍🎨",
-    revenue: "$9K/mo",
+    avatar: '👨‍🎨',
+    revenue: '$9K/mo',
     rating: 5,
   },
   {
-    name: "Lisa Anderson",
-    role: "Marketing Director",
-    company: "Brand Agency",
+    name: 'Lisa Anderson',
+    role: 'Marketing Director',
+    company: 'Brand Agency',
     content:
       "Flexible learning schedule fits perfectly with my busy work life. Quality content that's worth every minute.",
-    avatar: "👩‍💼",
-    revenue: "$20K/mo",
+    avatar: '👩‍💼',
+    revenue: '$20K/mo',
     rating: 5,
   },
   {
-    name: "James Wilson",
-    role: "CTO",
-    company: "Enterprise Solutions",
+    name: 'James Wilson',
+    role: 'CTO',
+    company: 'Enterprise Solutions',
     content:
-      "Our entire team uses this platform for continuous learning. The ROI has been exceptional.",
-    avatar: "👨‍💻",
-    revenue: "$50K/mo",
+      'Our entire team uses this platform for continuous learning. The ROI has been exceptional.',
+    avatar: '👨‍💻',
+    revenue: '$50K/mo',
     rating: 5,
   },
 ];
 
-const Stars = ({
-  count,
-  color = "text-(--theme-accent)",
-}: {
-  count: number;
-  color?: string;
-}) => (
-  <div className="flex gap-0.5 mb-3">
+const Stars = ({ count, color = 'text-(--theme-accent)' }: { count: number; color?: string }) => (
+  <div className="mb-3 flex gap-0.5">
     {Array.from({ length: count }).map((_, i) => (
-      <svg
-        key={i}
-        className={cn("h-4 w-4 fill-current", color)}
-        viewBox="0 0 20 20"
-      >
+      <svg key={i} className={cn('h-4 w-4 fill-current', color)} viewBox="0 0 20 20">
         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
       </svg>
     ))}
   </div>
 );
 
-export async function TestimonialsBlock({
-  id,
-  config,
-}: TestimonialsBlockProps) {
-  const blockStyle = config?.style ?? "default";
+export async function TestimonialsBlock({ id, config }: TestimonialsBlockProps) {
+  const blockStyle = config?.style ?? 'default';
 
-  if (blockStyle === "flow" || blockStyle === "code")
+  if (blockStyle === 'flow' || blockStyle === 'code')
     return <FlowTestimonials id={id} config={config} />;
-  if (blockStyle === "creative")
-    return <CreativeTestimonials id={id} config={config} />;
-  if (blockStyle === "dark-quote")
-    return <DarkQuoteTestimonials id={id} config={config} />;
-  if (blockStyle === "social-proof")
-    return <SocialProofTestimonials id={id} config={config} />;
-  if (blockStyle === "creator-stories")
+  if (blockStyle === 'creative') return <CreativeTestimonials id={id} config={config} />;
+  if (blockStyle === 'dark-quote') return <DarkQuoteTestimonials id={id} config={config} />;
+  if (blockStyle === 'social-proof') return <SocialProofTestimonials id={id} config={config} />;
+  if (blockStyle === 'creator-stories')
     return <CreatorStoriesTestimonials id={id} config={config} />;
-  if (blockStyle === "studio")
-    return <StudioTestimonials id={id} config={config} />;
-  if (blockStyle === "creator")
-    return <CreatorTestimonials id={id} config={config} />;
+  if (blockStyle === 'studio') return <StudioTestimonials id={id} config={config} />;
+  if (blockStyle === 'creator') return <CreatorTestimonials id={id} config={config} />;
 
   const currentAcademy = await getCurrentAcademy().catch(() => null);
   const language = getAcademyLanguage(
@@ -151,96 +133,94 @@ export async function TestimonialsBlock({
 
   const localizedTestimonials = [
     {
-      name: tr("blocks.testimonial1Name"),
-      role: tr("blocks.testimonial1Role"),
-      company: tr("blocks.testimonial1Company"),
-      content: tr("blocks.testimonial1Content"),
-      avatar: "👩‍💻",
-      revenue: "$12K/mo",
+      name: tr('blocks.testimonial1Name'),
+      role: tr('blocks.testimonial1Role'),
+      company: tr('blocks.testimonial1Company'),
+      content: tr('blocks.testimonial1Content'),
+      avatar: '👩‍💻',
+      revenue: '$12K/mo',
       rating: 5,
     },
     {
-      name: tr("blocks.testimonial2Name"),
-      role: tr("blocks.testimonial2Role"),
-      company: tr("blocks.testimonial2Company"),
-      content: tr("blocks.testimonial2Content"),
-      avatar: "👨‍💼",
-      revenue: "$8K/mo",
+      name: tr('blocks.testimonial2Name'),
+      role: tr('blocks.testimonial2Role'),
+      company: tr('blocks.testimonial2Company'),
+      content: tr('blocks.testimonial2Content'),
+      avatar: '👨‍💼',
+      revenue: '$8K/mo',
       rating: 5,
     },
     {
-      name: tr("blocks.testimonial3Name"),
-      role: tr("blocks.testimonial3Role"),
-      company: tr("blocks.testimonial3Company"),
-      content: tr("blocks.testimonial3Content"),
-      avatar: "👩‍🔬",
-      revenue: "$15K/mo",
+      name: tr('blocks.testimonial3Name'),
+      role: tr('blocks.testimonial3Role'),
+      company: tr('blocks.testimonial3Company'),
+      content: tr('blocks.testimonial3Content'),
+      avatar: '👩‍🔬',
+      revenue: '$15K/mo',
       rating: 5,
     },
     {
-      name: tr("blocks.testimonial4Name"),
-      role: tr("blocks.testimonial4Role"),
-      company: tr("blocks.testimonial4Company"),
-      content: tr("blocks.testimonial4Content"),
-      avatar: "👨‍🎨",
-      revenue: "$9K/mo",
+      name: tr('blocks.testimonial4Name'),
+      role: tr('blocks.testimonial4Role'),
+      company: tr('blocks.testimonial4Company'),
+      content: tr('blocks.testimonial4Content'),
+      avatar: '👨‍🎨',
+      revenue: '$9K/mo',
       rating: 5,
     },
     {
-      name: tr("blocks.testimonial5Name"),
-      role: tr("blocks.testimonial5Role"),
-      company: tr("blocks.testimonial5Company"),
-      content: tr("blocks.testimonial5Content"),
-      avatar: "👩‍💼",
-      revenue: "$20K/mo",
+      name: tr('blocks.testimonial5Name'),
+      role: tr('blocks.testimonial5Role'),
+      company: tr('blocks.testimonial5Company'),
+      content: tr('blocks.testimonial5Content'),
+      avatar: '👩‍💼',
+      revenue: '$20K/mo',
       rating: 5,
     },
     {
-      name: tr("blocks.testimonial6Name"),
-      role: tr("blocks.testimonial6Role"),
-      company: tr("blocks.testimonial6Company"),
-      content: tr("blocks.testimonial6Content"),
-      avatar: "👨‍💻",
-      revenue: "$50K/mo",
+      name: tr('blocks.testimonial6Name'),
+      role: tr('blocks.testimonial6Role'),
+      company: tr('blocks.testimonial6Company'),
+      content: tr('blocks.testimonial6Content'),
+      avatar: '👨‍💻',
+      revenue: '$50K/mo',
       rating: 5,
     },
   ];
 
-  const title = config?.title || "What Students Say";
-  const subtitle = config?.subtitle || "Hear from our community";
-  const layout = config?.layout || "grid";
+  const title = config?.title || 'What Students Say';
+  const subtitle = config?.subtitle || 'Hear from our community';
+  const layout = config?.layout || 'grid';
   const showAvatars = config?.showAvatars !== false;
   const corporate = config?.corporate === true;
   const items = corporate
-    ? localizedTestimonials
-        .slice(0, 3)
-        .map((item) => ({
-          ...item,
-          role: "VP of Learning",
-          company: "Fortune 500",
-        }))
+    ? localizedTestimonials.slice(0, 3).map((item) => ({
+        ...item,
+        role: 'VP of Learning',
+        company: 'Fortune 500',
+      }))
     : localizedTestimonials;
 
   const Avatar = ({ emoji }: { emoji: string }) =>
     showAvatars ? (
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-2xl bg-(--theme-secondary-subtle)">
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-(--theme-secondary-subtle) text-2xl">
         {emoji}
       </div>
     ) : null;
 
-  if (layout === "carousel") {
+  if (layout === 'carousel') {
     return (
       <section
-        id={id || "testimonials"}
-        className="py-16 sm:py-20 overflow-hidden bg-(--theme-surface-alt) text-(--theme-foreground)"
+        id={id || 'testimonials'}
+        className="overflow-hidden bg-(--theme-surface-alt) py-16 text-(--theme-foreground) sm:py-20"
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center mb-12 text-(--theme-foreground)">
+          <div className="mx-auto mb-12 max-w-2xl text-center text-(--theme-foreground)">
             <h2
               data-scroll-animate="fadeIn"
               data-scroll-delay="0.05"
               className="text-3xl font-black tracking-tight sm:text-4xl"
-              style={{ letterSpacing: "-0.025em" }}
+              style={{ letterSpacing: '-0.025em' }}
             >
               {title}
             </h2>
@@ -255,20 +235,20 @@ export async function TestimonialsBlock({
             )}
           </div>
           <div className="relative overflow-hidden">
-            <div className="flex gap-6 animate-scroll w-max">
+            <div className="animate-scroll flex w-max gap-6">
               {[...items, ...items].map((t, i) => (
                 <div
                   key={i}
-                  className="min-w-80 shrink-0 rounded-2xl border p-6 shadow-sm bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)"
+                  className="min-w-80 shrink-0 rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) p-6 text-(--theme-foreground) shadow-sm"
                 >
                   <Stars count={t.rating} />
-                  <p className="text-sm leading-relaxed mb-4 text-(--theme-foreground)/70">
+                  <p className="mb-4 text-sm leading-relaxed text-(--theme-foreground)/70">
                     &quot;{t.content}&quot;
                   </p>
                   <div className="flex items-center gap-3">
                     <Avatar emoji={t.avatar} />
                     <div>
-                      <p className="font-semibold text-sm">{t.name}</p>
+                      <p className="text-sm font-semibold">{t.name}</p>
                       <p className="text-xs text-(--theme-foreground)/55">
                         {t.role} at {t.company}
                       </p>
@@ -286,17 +266,17 @@ export async function TestimonialsBlock({
   // grid layout
   return (
     <section
-      id={id || "testimonials"}
-      className="py-16 sm:py-20 bg-(--theme-surface-alt) text-(--theme-foreground)"
+      id={id || 'testimonials'}
+      className="bg-(--theme-surface-alt) py-16 text-(--theme-foreground) sm:py-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-12 text-(--theme-foreground)">
+        <div className="mx-auto mb-12 max-w-2xl text-center text-(--theme-foreground)">
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
             data-editable="title"
             className="text-3xl font-black tracking-tight sm:text-4xl"
-            style={{ letterSpacing: "-0.025em" }}
+            style={{ letterSpacing: '-0.025em' }}
           >
             {title}
           </h2>
@@ -315,17 +295,17 @@ export async function TestimonialsBlock({
         <div data-dynamic="true">
           <SlotGrid config={config} minBasisFallback="320px">
             {resolveSlots(items, config?.slots, 3).map((slot, i) =>
-              slot.kind === "live" ? (
+              slot.kind === 'live' ? (
                 <div
                   key={i}
                   data-scroll-animate="fadeInUp"
                   data-scroll-delay={`${0.1 * i}`}
                   className={cn(
-                    "group flex h-full flex-col rounded-2xl border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg bg-(--theme-card-bg) border-(--theme-border-color) text-(--theme-foreground)",
+                    'group flex h-full flex-col rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) p-6 text-(--theme-foreground) shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg',
                   )}
                 >
                   <Stars count={slot.data.rating} />
-                  <p className="text-sm leading-relaxed flex-1 mb-4 text-(--theme-foreground)/70">
+                  <p className="mb-4 flex-1 text-sm leading-relaxed text-(--theme-foreground)/70">
                     &quot;{slot.data.content}&quot;
                   </p>
                   <div className="flex items-center gap-3">
@@ -333,10 +313,8 @@ export async function TestimonialsBlock({
                       <Avatar emoji={slot.data.avatar} />
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-sm">{slot.data.name}</p>
-                      <p className="text-xs text-(--theme-foreground)/55">
-                        {slot.data.role}
-                      </p>
+                      <p className="text-sm font-semibold">{slot.data.name}</p>
+                      <p className="text-xs text-(--theme-foreground)/55">{slot.data.role}</p>
                     </div>
                   </div>
                 </div>
@@ -354,20 +332,20 @@ export async function TestimonialsBlock({
 // ── Dark Quote (Expert Academy / Kajabi + Community / Circle) ─────────────────
 
 function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
-  const title = config?.title || "Why experts choose us";
+  const title = config?.title || 'Why experts choose us';
   const items = testimonials.slice(0, 3);
 
   return (
     <section
-      id={id || "testimonials"}
-      className="py-16 sm:py-20 bg-(--theme-background) text-(--theme-foreground)"
+      id={id || 'testimonials'}
+      className="bg-(--theme-background) py-16 text-(--theme-foreground) sm:py-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-center text-2xl font-bold text-(--theme-foreground) mb-12 sm:text-3xl"
+            className="mb-12 text-center text-2xl font-bold text-(--theme-foreground) sm:text-3xl"
           >
             {title}
           </h2>
@@ -377,15 +355,15 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
         <div
           data-scroll-animate="scaleUp"
           data-scroll-delay="0.1"
-          className="mx-auto max-w-3xl rounded-2xl bg-(--theme-card-bg) border border-(--theme-border-color) p-10 text-center shadow-2xl mb-8"
+          className="mx-auto mb-8 max-w-3xl rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) p-10 text-center shadow-2xl"
         >
-          <p className="text-4xl font-bold text-(--theme-foreground) mb-1">
+          <p className="mb-1 text-4xl font-bold text-(--theme-foreground)">
             {testimonials[4].revenue}
           </p>
-          <p className="text-(--theme-foreground)/55 text-sm mb-6 uppercase tracking-wide">
+          <p className="mb-6 text-sm tracking-wide text-(--theme-foreground)/55 uppercase">
             earned on this platform
           </p>
-          <blockquote className="text-lg leading-relaxed text-(--theme-foreground)/75 italic mb-6">
+          <blockquote className="mb-6 text-lg leading-relaxed text-(--theme-foreground)/75 italic">
             &quot;{testimonials[4].content}&quot;
           </blockquote>
           <div className="flex items-center justify-center gap-3">
@@ -393,9 +371,7 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
               {testimonials[4].avatar}
             </div>
             <div className="text-left">
-              <p className="font-semibold text-(--theme-foreground)">
-                {testimonials[4].name}
-              </p>
+              <p className="font-semibold text-(--theme-foreground)">{testimonials[4].name}</p>
               <p className="text-sm text-(--theme-foreground)/55">
                 {testimonials[4].role}, {testimonials[4].company}
               </p>
@@ -413,7 +389,7 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
               className="rounded-xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-5"
             >
               <Stars count={t.rating} />
-              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-4">
+              <p className="mb-4 text-sm leading-relaxed text-(--theme-foreground)/75">
                 &quot;{t.content}&quot;
               </p>
               <div className="flex items-center gap-3">
@@ -421,12 +397,8 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
                   {t.avatar}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-(--theme-foreground)">
-                    {t.name}
-                  </p>
-                  <p className="text-xs text-(--theme-foreground)/55">
-                    {t.role}
-                  </p>
+                  <p className="text-sm font-semibold text-(--theme-foreground)">{t.name}</p>
+                  <p className="text-xs text-(--theme-foreground)/55">{t.role}</p>
                 </div>
               </div>
             </div>
@@ -440,27 +412,24 @@ function DarkQuoteTestimonials({ id, config }: TestimonialsBlockProps) {
 // ── Social Proof screenshots (Creator / Stan.store-inspired) ──────────────────
 
 function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
-  const title = config?.title || "See What People Are Saying";
+  const title = config?.title || 'See What People Are Saying';
 
   const proofItems = testimonials.slice(0, 4).map((t) => ({
     name: t.name,
     revenue: t.revenue,
-    content: t.content.slice(0, 80) + "…",
+    content: t.content.slice(0, 80) + '…',
     avatar: t.avatar,
     rating: t.rating,
   }));
 
   return (
-    <section
-      id={id || "testimonials"}
-      className="py-14 sm:py-20 bg-(--theme-background)"
-    >
+    <section id={id || 'testimonials'} className="bg-(--theme-background) py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
-            className="text-center text-2xl font-bold text-(--theme-foreground) mb-3 sm:text-3xl"
+            className="mb-3 text-center text-2xl font-bold text-(--theme-foreground) sm:text-3xl"
           >
             {title} <span className="text-(--theme-primary)">👉</span>
           </h2>
@@ -468,7 +437,7 @@ function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
         <p
           data-scroll-animate="fadeIn"
           data-scroll-delay="0.12"
-          className="text-center text-sm text-(--theme-foreground)/55 mb-10"
+          className="mb-10 text-center text-sm text-(--theme-foreground)/55"
         >
           Real screenshots. Real results.
         </p>
@@ -478,23 +447,19 @@ function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate="fadeInUp"
               data-scroll-delay={`${0.08 * i}`}
-              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) shadow-md p-4 hover:shadow-lg transition-shadow"
+              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) p-4 shadow-md transition-shadow hover:shadow-lg"
             >
-              <div className="flex items-center gap-2 mb-3">
+              <div className="mb-3 flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-lg">
                   {p.avatar}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-(--theme-foreground)">
-                    {p.name}
-                  </p>
-                  <p className="text-xs font-bold text-(--theme-primary)">
-                    {p.revenue}
-                  </p>
+                  <p className="text-xs font-semibold text-(--theme-foreground)">{p.name}</p>
+                  <p className="text-xs font-bold text-(--theme-primary)">{p.revenue}</p>
                 </div>
               </div>
               <Stars count={p.rating} />
-              <p className="text-xs text-(--theme-foreground)/70 leading-relaxed">
+              <p className="text-xs leading-relaxed text-(--theme-foreground)/70">
                 &quot;{p.content}&quot;
               </p>
             </div>
@@ -508,20 +473,16 @@ function SocialProofTestimonials({ id, config }: TestimonialsBlockProps) {
 // ── Creator Stories (Studio / Podia-inspired) ─────────────────────────────────
 
 function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
-  const title = config?.title || "Their businesses finally found a home";
+  const title = config?.title || 'Their businesses finally found a home';
   const subtitle =
-    config?.subtitle ||
-    "Creators, coaches, and consultants grow their business here.";
+    config?.subtitle || 'Creators, coaches, and consultants grow their business here.';
   const creators = testimonials.slice(0, 2);
 
   return (
-    <section
-      id={id || "testimonials"}
-      className="py-14 sm:py-20 bg-(--theme-background)"
-    >
+    <section id={id || 'testimonials'} className="bg-(--theme-background) py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {title && (
-          <div className="mx-auto max-w-2xl text-center mb-12">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
             <h2
               data-scroll-animate="fadeIn"
               data-scroll-delay="0.05"
@@ -540,32 +501,26 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
             )}
           </div>
         )}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mb-10">
+        <div className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-2">
           {creators.map((c, i) => (
             <div
               key={i}
-              data-scroll-animate={i === 0 ? "slideLeft" : "slideRight"}
+              data-scroll-animate={i === 0 ? 'slideLeft' : 'slideRight'}
               data-scroll-delay="0.1"
-              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-8 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-8 shadow-sm transition-shadow hover:shadow-md"
             >
-              <div className="flex items-center gap-4 mb-5">
+              <div className="mb-5 flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-3xl">
                   {c.avatar}
                 </div>
                 <div>
-                  <p className="font-bold text-(--theme-foreground)">
-                    {c.name}
-                  </p>
-                  <p className="text-sm text-(--theme-foreground)/60">
-                    {c.role}
-                  </p>
-                  <p className="text-sm font-semibold text-(--theme-primary)">
-                    {c.revenue}/month
-                  </p>
+                  <p className="font-bold text-(--theme-foreground)">{c.name}</p>
+                  <p className="text-sm text-(--theme-foreground)/60">{c.role}</p>
+                  <p className="text-sm font-semibold text-(--theme-primary)">{c.revenue}/month</p>
                 </div>
               </div>
               <Stars count={c.rating} />
-              <p className="text-(--theme-foreground)/70 leading-relaxed">
+              <p className="leading-relaxed text-(--theme-foreground)/70">
                 &quot;{c.content}&quot;
               </p>
             </div>
@@ -581,9 +536,7 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
               data-scroll-delay={`${0.05 * i}`}
               className="rounded-xl border border-(--theme-border-color) bg-(--theme-card-bg) p-3 text-center shadow-sm"
             >
-              <p className="text-lg font-bold text-(--theme-primary)">
-                {t.revenue}
-              </p>
+              <p className="text-lg font-bold text-(--theme-primary)">{t.revenue}</p>
               <p className="text-xs text-(--theme-foreground)/60">{t.name}</p>
             </div>
           ))}
@@ -596,16 +549,13 @@ function CreatorStoriesTestimonials({ id, config }: TestimonialsBlockProps) {
 // ── Studio testimonials (warm amber/teal grid) ────────────────────────────────
 
 function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
-  const title = config?.title || "Loved by creators everywhere";
+  const title = config?.title || 'Loved by creators everywhere';
   const items = testimonials.slice(0, 3);
 
   return (
-    <section
-      id={id || "testimonials"}
-      className="py-16 sm:py-20 bg-(--theme-surface-alt)"
-    >
+    <section id={id || 'testimonials'} className="bg-(--theme-surface-alt) py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-xl text-center mb-12">
+        <div className="mx-auto mb-12 max-w-xl text-center">
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
@@ -620,10 +570,10 @@ function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
               key={i}
               data-scroll-animate="fadeInUp"
               data-scroll-delay={`${0.1 * i}`}
-              className="rounded-2xl bg-(--theme-card-bg) border border-(--theme-border-color) p-6 shadow-sm hover:shadow-md transition-shadow"
+              className="rounded-2xl border border-(--theme-border-color) bg-(--theme-card-bg) p-6 shadow-sm transition-shadow hover:shadow-md"
             >
               <Stars count={t.rating} />
-              <p className="text-sm text-(--theme-foreground)/75 leading-relaxed mb-5">
+              <p className="mb-5 text-sm leading-relaxed text-(--theme-foreground)/75">
                 &quot;{t.content}&quot;
               </p>
               <div className="flex items-center gap-3">
@@ -631,12 +581,8 @@ function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
                   {t.avatar}
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-(--theme-foreground)">
-                    {t.name}
-                  </p>
-                  <p className="text-xs text-(--theme-primary) font-medium">
-                    {t.revenue}/mo
-                  </p>
+                  <p className="text-sm font-semibold text-(--theme-foreground)">{t.name}</p>
+                  <p className="text-xs font-medium text-(--theme-primary)">{t.revenue}/mo</p>
                 </div>
               </div>
             </div>
@@ -650,16 +596,16 @@ function StudioTestimonials({ id, config }: TestimonialsBlockProps) {
 // ── Creator testimonials (violet social-media style) ─────────────────────────
 
 function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
-  const title = config?.title || "Join thousands of creators";
+  const title = config?.title || 'Join thousands of creators';
   const items = testimonials.slice(0, 4);
 
   return (
     <section
-      id={id || "testimonials"}
-      className="py-16 sm:py-20 bg-(--theme-background) overflow-hidden"
+      id={id || 'testimonials'}
+      className="overflow-hidden bg-(--theme-background) py-16 sm:py-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-xl text-center mb-12">
+        <div className="mx-auto mb-12 max-w-xl text-center">
           <h2
             data-scroll-animate="fadeIn"
             data-scroll-delay="0.05"
@@ -673,25 +619,21 @@ function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
           {items.map((t, i) => (
             <div
               key={i}
-              data-scroll-animate={i % 2 === 0 ? "slideLeft" : "slideRight"}
+              data-scroll-animate={i % 2 === 0 ? 'slideLeft' : 'slideRight'}
               data-scroll-delay={`${0.08 * i}`}
               className="rounded-2xl border border-(--theme-border-color) bg-(--theme-surface-alt) p-5 shadow-sm"
             >
-              <div className="flex items-center gap-3 mb-3">
+              <div className="mb-3 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--theme-primary-subtle) text-xl">
                   {t.avatar}
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-(--theme-foreground)">
-                    {t.name}
-                  </p>
-                  <p className="text-xs font-bold text-(--theme-primary)">
-                    {t.revenue}/mo
-                  </p>
+                  <p className="text-sm font-semibold text-(--theme-foreground)">{t.name}</p>
+                  <p className="text-xs font-bold text-(--theme-primary)">{t.revenue}/mo</p>
                 </div>
               </div>
               <Stars count={t.rating} />
-              <p className="text-sm text-(--theme-foreground)/70 leading-relaxed">
+              <p className="text-sm leading-relaxed text-(--theme-foreground)/70">
                 &quot;{t.content}&quot;
               </p>
             </div>
@@ -705,44 +647,40 @@ function CreatorTestimonials({ id, config }: TestimonialsBlockProps) {
 // ── Creative (استودیوی خلاق) — three avatar cards with amber stars ───────────
 
 const CREATIVE_TESTI_TONES = [
-  "bg-(--theme-primary) text-(--theme-on-primary)",
-  "bg-(--theme-accent) text-(--theme-on-accent)",
-  "bg-(--theme-secondary) text-(--theme-on-secondary)",
+  'bg-(--theme-primary) text-(--theme-on-primary)',
+  'bg-(--theme-accent) text-(--theme-on-accent)',
+  'bg-(--theme-secondary) text-(--theme-on-secondary)',
 ];
 
 const CREATIVE_TESTI_ITEMS = [
   {
-    quote:
-      "«منتوما بهترین تصمیم یادگیری‌ام بود. مهارت‌های واقعی بدون بار مالی تحصیلات سنتی.»",
-    name: "رئوف رضایی",
-    role: "تصویرساز",
-    initials: "ر",
+    quote: '«منتوما بهترین تصمیم یادگیری‌ام بود. مهارت‌های واقعی بدون بار مالی تحصیلات سنتی.»',
+    name: 'رئوف رضایی',
+    role: 'تصویرساز',
+    initials: 'ر',
   },
   {
     quote:
-      "«دوست دارم جایی باشد که بتوانم با سایر خلاقان ارتباط برقرار کنم و در سفر یادگیری از هم حمایت کنیم.»",
-    name: "الهام ولیزاده",
-    role: "طراح گرافیک",
-    initials: "ا",
+      '«دوست دارم جایی باشد که بتوانم با سایر خلاقان ارتباط برقرار کنم و در سفر یادگیری از هم حمایت کنیم.»',
+    name: 'الهام ولیزاده',
+    role: 'طراح گرافیک',
+    initials: 'ا',
   },
   {
     quote:
-      "«به ندرت برای چیزی اشتراک می‌گیرم، اما این یکی از اشتراک‌هایی است که نمی‌توانم بدونش تصور کنم.»",
-    name: "کامیار محمدی",
-    role: "طراح UX",
-    initials: "ک",
+      '«به ندرت برای چیزی اشتراک می‌گیرم، اما این یکی از اشتراک‌هایی است که نمی‌توانم بدونش تصور کنم.»',
+    name: 'کامیار محمدی',
+    role: 'طراح UX',
+    initials: 'ک',
   },
 ];
 
 function CreativeTestimonials({ id, config }: TestimonialsBlockProps) {
-  const title = config?.title || "چرا دانشجویان منتوما را دوست دارند";
+  const title = config?.title || 'چرا دانشجویان منتوما را دوست دارند';
   const items = config?.items?.length ? config.items : CREATIVE_TESTI_ITEMS;
 
   return (
-    <section
-      id={id || "testimonials"}
-      className="bg-(--theme-background) py-[80px]"
-    >
+    <section id={id || 'testimonials'} className="bg-(--theme-background) py-[80px]">
       <div className="mx-auto max-w-[1200px] px-[40px]">
         <div className="mb-[40px] text-center text-[22px] font-black text-(--theme-foreground)">
           {title}
@@ -756,13 +694,13 @@ function CreativeTestimonials({ id, config }: TestimonialsBlockProps) {
               <div className="mb-[14px] text-[16px] tracking-[2px] text-(--theme-accent)">
                 ★★★★★
               </div>
-              <div className="mb-[20px] text-[14px] font-semibold leading-[1.8] text-(--theme-foreground)">
+              <div className="mb-[20px] text-[14px] leading-[1.8] font-semibold text-(--theme-foreground)">
                 {item.quote}
               </div>
               <div className="flex flex-row-reverse items-center justify-end gap-[12px] border-t-2 border-(--theme-border-color) pt-[16px]">
                 <div
                   className={cn(
-                    "flex h-[44px] w-[44px] flex-shrink-0 items-center justify-center rounded-full text-[15px] font-black",
+                    'flex h-[44px] w-[44px] flex-shrink-0 items-center justify-center rounded-full text-[15px] font-black',
                     CREATIVE_TESTI_TONES[i % CREATIVE_TESTI_TONES.length],
                   )}
                 >
@@ -772,9 +710,7 @@ function CreativeTestimonials({ id, config }: TestimonialsBlockProps) {
                   <div className="text-[14px] font-extrabold text-(--theme-foreground)">
                     {item.name}
                   </div>
-                  <div className="text-[12px] font-semibold text-(--theme-muted)">
-                    {item.role}
-                  </div>
+                  <div className="text-[12px] font-semibold text-(--theme-muted)">{item.role}</div>
                 </div>
               </div>
             </div>
@@ -788,49 +724,44 @@ function CreativeTestimonials({ id, config }: TestimonialsBlockProps) {
 // ── Flow (منتوما) — three-card grid ────────────────────────────────────────
 
 const FLOW_AVATAR_TONES = [
-  "bg-(--theme-primary) text-(--theme-on-primary)",
-  "bg-(--theme-secondary) text-(--theme-on-secondary)",
-  "bg-(--theme-accent) text-(--theme-on-accent)",
+  'bg-(--theme-primary) text-(--theme-on-primary)',
+  'bg-(--theme-secondary) text-(--theme-on-secondary)',
+  'bg-(--theme-accent) text-(--theme-on-accent)',
 ];
 
 const FLOW_ITEMS = [
   {
     quote:
-      "«دوره‌های منتوما به من کمک کرد اولین نقش UX خودم را در ۴ ماه پیدا کنم. پروژه‌های عملی همه چیز را متفاوت کردند.»",
-    name: "جواد ویلسون",
-    role: "طراح UX در استرایپ",
-    initials: "جو",
+      '«دوره‌های منتوما به من کمک کرد اولین نقش UX خودم را در ۴ ماه پیدا کنم. پروژه‌های عملی همه چیز را متفاوت کردند.»',
+    name: 'جواد ویلسون',
+    role: 'طراح UX در استرایپ',
+    initials: 'جو',
   },
   {
     quote:
-      "«۳ دوره را در یک ماه تمام کردم. مسیرهای ساختارمند تمرکزم را حفظ کردند و مربیان فوق‌العاده پاسخگو بودند.»",
-    name: "الهام مارتینز",
-    role: "طراح محصول",
-    initials: "اِ",
+      '«۳ دوره را در یک ماه تمام کردم. مسیرهای ساختارمند تمرکزم را حفظ کردند و مربیان فوق‌العاده پاسخگو بودند.»',
+    name: 'الهام مارتینز',
+    role: 'طراح محصول',
+    initials: 'اِ',
   },
   {
     quote:
-      "«گواهینامه‌ای که از منتوما گرفتم، رزومه‌ام را از فیلتر کارگزین رد کرد. واقعاً ارزشش را دارد.»",
-    name: "داوود لی",
-    role: "سرپرست طراحی در فیگما",
-    initials: "دا",
+      '«گواهینامه‌ای که از منتوما گرفتم، رزومه‌ام را از فیلتر کارگزین رد کرد. واقعاً ارزشش را دارد.»',
+    name: 'داوود لی',
+    role: 'سرپرست طراحی در فیگما',
+    initials: 'دا',
   },
 ];
 
 function FlowTestimonials({ id, config }: TestimonialsBlockProps) {
-  const label = config?.label || "نظر یادگیرندگان";
-  const title = config?.title || "مورد اعتماد هزاران طراح";
+  const label = config?.label || 'نظر یادگیرندگان';
+  const title = config?.title || 'مورد اعتماد هزاران طراح';
   const items = config?.items?.length ? config.items : FLOW_ITEMS;
 
   return (
-    <section
-      id={id || "testimonials"}
-      className="mx-auto max-w-[1240px] px-[48px] py-[60px]"
-    >
-      <div className="mb-[12px] text-[12px] font-bold text-(--theme-primary)">
-        {label}
-      </div>
-      <div className="text-[clamp(28px,3.5vw,44px)] font-extrabold leading-[1.3] text-(--theme-foreground)">
+    <section id={id || 'testimonials'} className="mx-auto max-w-[1240px] px-[48px] py-[60px]">
+      <div className="mb-[12px] text-[12px] font-bold text-(--theme-primary)">{label}</div>
+      <div className="text-[clamp(28px,3.5vw,44px)] leading-[1.3] font-extrabold text-(--theme-foreground)">
         {title}
       </div>
       <div className="mt-[36px] grid gap-[24px] md:grid-cols-2 lg:grid-cols-3">
@@ -840,31 +771,27 @@ function FlowTestimonials({ id, config }: TestimonialsBlockProps) {
             className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-[28px]"
           >
             <div className="mb-[16px] flex gap-0.5">
-              {"★★★★★".split("").map((s, si) => (
+              {'★★★★★'.split('').map((s, si) => (
                 <span key={si} className="text-[14px] text-(--theme-accent)">
                   {s}
                 </span>
               ))}
             </div>
-            <div className="mb-[20px] text-[14px] font-medium leading-[1.85] text-(--theme-foreground)">
+            <div className="mb-[20px] text-[14px] leading-[1.85] font-medium text-(--theme-foreground)">
               {item.quote}
             </div>
             <div className="flex items-center gap-[12px]">
               <div
                 className={cn(
-                  "flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-full text-[14px] font-bold",
+                  'flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-full text-[14px] font-bold',
                   FLOW_AVATAR_TONES[i % FLOW_AVATAR_TONES.length],
                 )}
               >
                 {item.initials}
               </div>
               <div>
-                <div className="text-[13px] font-bold text-(--theme-foreground)">
-                  {item.name}
-                </div>
-                <div className="text-[12px] text-(--theme-muted)">
-                  {item.role}
-                </div>
+                <div className="text-[13px] font-bold text-(--theme-foreground)">{item.name}</div>
+                <div className="text-[12px] text-(--theme-muted)">{item.role}</div>
               </div>
             </div>
           </div>

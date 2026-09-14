@@ -108,9 +108,9 @@ function oklchToSrgb(L, C, hDeg) {
     x = x <= 0.0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - 0.055;
     return Math.round(Math.min(1, Math.max(0, x)) * 255)
       .toString(16)
-      .padStart(2, "0");
+      .padStart(2, '0');
   };
-  return "#" + f(r) + f(g) + f(bl);
+  return '#' + f(r) + f(g) + f(bl);
 }
 // oklchToSrgb(0.68, 0.14, 168) === "#00b388"  (template-1 mint)
 ```

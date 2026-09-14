@@ -1,29 +1,22 @@
-import type { AcademyContactChannel, AcademyContactLink } from "@/lib/api/server";
+import type { AcademyContactChannel, AcademyContactLink } from '@/lib/api/server';
 
 /** Channels a visitor reads rather than clicks through to a profile. */
-const DIRECT_CHANNELS: ReadonlySet<AcademyContactChannel> = new Set([
-  "phone",
-  "email",
-  "address",
-]);
+const DIRECT_CHANNELS: ReadonlySet<AcademyContactChannel> = new Set(['phone', 'email', 'address']);
 
 /** Profile URL built from a bare handle, per channel. */
-const HANDLE_BASE_URL: Readonly<
-  Partial<Record<AcademyContactChannel, string>>
-> = {
-  instagram: "https://instagram.com/",
-  telegram: "https://t.me/",
-  linkedin: "https://linkedin.com/in/",
-  youtube: "https://youtube.com/@",
-  twitter: "https://x.com/",
-  aparat: "https://aparat.com/",
-  eitaa: "https://eitaa.com/",
+const HANDLE_BASE_URL: Readonly<Partial<Record<AcademyContactChannel, string>>> = {
+  instagram: 'https://instagram.com/',
+  telegram: 'https://t.me/',
+  linkedin: 'https://linkedin.com/in/',
+  youtube: 'https://youtube.com/@',
+  twitter: 'https://x.com/',
+  aparat: 'https://aparat.com/',
+  eitaa: 'https://eitaa.com/',
 };
 
-export const isSocialChannel = (type: AcademyContactChannel): boolean =>
-  !DIRECT_CHANNELS.has(type);
+export const isSocialChannel = (type: AcademyContactChannel): boolean => !DIRECT_CHANNELS.has(type);
 
-const digitsOnly = (value: string): string => value.replace(/[^\d+]/g, "");
+const digitsOnly = (value: string): string => value.replace(/[^\d+]/g, '');
 
 /**
  * The href a channel opens. Managers paste whatever they have — a full URL, an
@@ -39,22 +32,22 @@ export const buildContactHref = (link: AcademyContactLink): string | null => {
   if (!value) return null;
 
   switch (link.type) {
-    case "phone":
+    case 'phone':
       return `tel:${digitsOnly(value)}`;
-    case "email":
+    case 'email':
       return `mailto:${value}`;
-    case "address":
+    case 'address':
       return null;
-    case "whatsapp":
-      return value.startsWith("http")
+    case 'whatsapp':
+      return value.startsWith('http')
         ? value
-        : `https://wa.me/${digitsOnly(value).replace(/^\+/, "")}`;
-    case "website":
-      return value.startsWith("http") ? value : `https://${value}`;
+        : `https://wa.me/${digitsOnly(value).replace(/^\+/, '')}`;
+    case 'website':
+      return value.startsWith('http') ? value : `https://${value}`;
     default: {
-      if (value.startsWith("http")) return value;
+      if (value.startsWith('http')) return value;
       const base = HANDLE_BASE_URL[link.type];
-      return base ? `${base}${value.replace(/^@/, "")}` : null;
+      return base ? `${base}${value.replace(/^@/, '')}` : null;
     }
   }
 };
@@ -62,11 +55,11 @@ export const buildContactHref = (link: AcademyContactLink): string | null => {
 /** What the visitor sees: the handle, never the machine-readable URL. */
 export const formatContactValue = (link: AcademyContactLink): string => {
   const value = link.value.trim();
-  if (!value.startsWith("http")) return value;
+  if (!value.startsWith('http')) return value;
   try {
     const url = new URL(value);
-    const path = url.pathname.replace(/\/$/, "");
-    return path && path !== "/" ? `${url.hostname}${path}` : url.hostname;
+    const path = url.pathname.replace(/\/$/, '');
+    return path && path !== '/' ? `${url.hostname}${path}` : url.hostname;
   } catch {
     return value;
   }

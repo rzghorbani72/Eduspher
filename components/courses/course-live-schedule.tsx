@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { CalendarClock, Radio, Repeat } from "lucide-react";
+import { useMemo } from 'react';
+import { CalendarClock, Radio, Repeat } from 'lucide-react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, toPersianDigits } from "@/lib/utils";
-import type { CurriculumSeasonView } from "@/lib/courses/curriculum";
-import { liveStateAt } from "@/lib/courses/curriculum";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn, toPersianDigits } from '@/lib/utils';
+import type { CurriculumSeasonView } from '@/lib/courses/curriculum';
+import { liveStateAt } from '@/lib/courses/curriculum';
 import {
   formatDateTime,
   formatLiveRepeat,
   formatMinutes,
-} from "@/components/courses/curriculum/format";
-import { EmptyState } from "@/components/ui/empty-state";
-import { useNow } from "@/lib/hooks/use-now";
+} from '@/components/courses/curriculum/format';
+import { EmptyState } from '@/components/ui/empty-state';
+import { useNow } from '@/lib/hooks/use-now';
 
 interface CourseLiveScheduleProps {
   seasons: CurriculumSeasonView[];
@@ -46,8 +46,8 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
   if (sessions.length === 0) {
     return (
       <EmptyState
-        title={t("courses.noLiveSessions")}
-        description={t("courses.noLiveSessionsDescription")}
+        title={t('courses.noLiveSessions')}
+        description={t('courses.noLiveSessionsDescription')}
       />
     );
   }
@@ -56,11 +56,9 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
     <section className="animate-in fade-in slide-in-from-bottom-3 space-y-5 duration-300">
       <div>
         <h2 className="text-xl font-black text-(--theme-foreground)">
-          {t("courses.liveScheduleTitle")}
+          {t('courses.liveScheduleTitle')}
         </h2>
-        <p className="mt-1 text-[13px] text-(--theme-muted)">
-          {t("courses.liveScheduleSubtitle")}
-        </p>
+        <p className="mt-1 text-[13px] text-(--theme-muted)">{t('courses.liveScheduleSubtitle')}</p>
       </div>
 
       <ol className="space-y-3">
@@ -71,20 +69,19 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
             <li
               key={lesson.id}
               className={cn(
-                "cd-review-card flex flex-wrap items-center gap-4 rounded-2xl border p-4",
-                state === "running" &&
-                  "border-[#ef4444] bg-[rgba(239,68,68,0.04)]",
+                'cd-review-card flex flex-wrap items-center gap-4 rounded-2xl border p-4',
+                state === 'running' && 'border-[#ef4444] bg-[rgba(239,68,68,0.04)]',
               )}
             >
               <span
                 className={cn(
-                  "grid h-11 w-11 shrink-0 place-items-center rounded-xl",
-                  state === "running"
-                    ? "bg-[rgba(239,68,68,0.12)] text-[#ef4444]"
-                    : "bg-(--theme-surface) text-(--theme-muted)",
+                  'grid h-11 w-11 shrink-0 place-items-center rounded-xl',
+                  state === 'running'
+                    ? 'bg-[rgba(239,68,68,0.12)] text-[#ef4444]'
+                    : 'bg-(--theme-surface) text-(--theme-muted)',
                 )}
               >
-                {state === "running" ? (
+                {state === 'running' ? (
                   <Radio className="h-5 w-5 animate-pulse" />
                 ) : (
                   <CalendarClock className="h-5 w-5" />
@@ -96,9 +93,9 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
                   <span className="text-sm font-extrabold text-(--theme-foreground)">
                     {lesson.title}
                   </span>
-                  {state === "running" && (
+                  {state === 'running' && (
                     <span className="rounded-full bg-[#ef4444] px-2 py-0.5 text-[11px] font-bold text-white">
-                      {t("courses.badgeLiveNow")}
+                      {t('courses.badgeLiveNow')}
                     </span>
                   )}
                   {live.isRecurring && (
@@ -108,9 +105,7 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
                     </span>
                   )}
                 </div>
-                <p className="mt-0.5 text-xs text-(--theme-muted)">
-                  {seasonTitle}
-                </p>
+                <p className="mt-0.5 text-xs text-(--theme-muted)">{seasonTitle}</p>
               </div>
 
               <div className="text-end">
@@ -123,7 +118,7 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
                     toPersianDigits(live.timezone, language),
                   ]
                     .filter(Boolean)
-                    .join(" · ")}
+                    .join(' · ')}
                 </div>
               </div>
             </li>

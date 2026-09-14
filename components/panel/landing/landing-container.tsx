@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /**
  * The single source of truth for landing page gutters and centering.
@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils";
 const MAX_WIDTH = {
   /** Reading-width column for prose-heavy blocks (FAQ). Still centered in the
       same gutter, so it reads as deliberate rather than misaligned. */
-  narrow: "max-w-[840px]",
-  default: "max-w-[1240px]",
+  narrow: 'max-w-[840px]',
+  default: 'max-w-[1240px]',
 } as const;
 
 type Props = {
@@ -21,15 +21,9 @@ type Props = {
   className?: string;
 };
 
-export function Container({ children, width = "default", className }: Props) {
+export function Container({ children, width = 'default', className }: Props) {
   return (
-    <div
-      className={cn(
-        "mx-auto w-full px-5 sm:px-8 lg:px-10",
-        MAX_WIDTH[width],
-        className
-      )}
-    >
+    <div className={cn('mx-auto w-full px-5 sm:px-8 lg:px-10', MAX_WIDTH[width], className)}>
       {children}
     </div>
   );

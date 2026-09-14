@@ -1,20 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-import { LandingPage } from "@/components/panel/landing/landing-page";
-import { PlatformOrganizationJsonLd } from "@/components/seo/platform-organization-json-ld";
-import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
-import { getAcademiesPublic, getPublicPlans } from "@/lib/api/server";
-import { buildSiteMetadata } from "@/lib/seo/build-metadata";
-import { buildLandingFaqJsonLd } from "@/lib/seo/landing-faq-json-ld";
-import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
-import { serializeJsonLd } from "@/lib/seo/json-ld-script";
+import { LandingPage } from '@/components/panel/landing/landing-page';
+import { PlatformOrganizationJsonLd } from '@/components/seo/platform-organization-json-ld';
+import { getServerAdminPanelUrl } from '@/lib/admin-panel-url.server';
+import { getAcademiesPublic, getPublicPlans } from '@/lib/api/server';
+import { buildSiteMetadata } from '@/lib/seo/build-metadata';
+import { buildLandingFaqJsonLd } from '@/lib/seo/landing-faq-json-ld';
+import { getPlatformPageSeo } from '@/lib/seo/platform-pages';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
+import { serializeJsonLd } from '@/lib/seo/json-ld-script';
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getSeoRequestContext();
-  const pageSeo = getPlatformPageSeo("/");
+  const pageSeo = getPlatformPageSeo('/');
   return buildSiteMetadata({
     title: pageSeo?.title,
     description: pageSeo?.description,
@@ -23,8 +23,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const adminLoginUrl = await getServerAdminPanelUrl("/login");
-  const adminRegisterUrl = await getServerAdminPanelUrl("/register");
+  const adminLoginUrl = await getServerAdminPanelUrl('/login');
+  const adminRegisterUrl = await getServerAdminPanelUrl('/register');
   const academies = await getAcademiesPublic().catch(() => []);
   const plans = await getPublicPlans().catch(() => []);
   const faqJsonLd = buildLandingFaqJsonLd();

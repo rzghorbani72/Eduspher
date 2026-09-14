@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /** Amber notice shown inside the auth card when a step fails. Sent/success feedback goes to the toast instead. */
 export function AuthError({ children }: { children?: React.ReactNode }) {

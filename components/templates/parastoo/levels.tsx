@@ -54,12 +54,15 @@ export function ParastooLevels({ id, config, storeContext }: TemplateSectionProp
             </span>
             <h2
               data-editable="title"
-              className="mt-3 max-w-[24ch] text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]"
+              className="mt-3 max-w-[24ch] text-[clamp(28px,4vw,44px)] leading-[1.2] font-bold tracking-[-0.02em]"
             >
               {text(config, 'title', d.title)}
             </h2>
           </div>
-          <p data-editable="subtitle" className="max-w-[46ch] text-[16px] leading-[1.85] text-current/65">
+          <p
+            data-editable="subtitle"
+            className="max-w-[46ch] text-[16px] leading-[1.85] text-current/65"
+          >
             {text(config, 'subtitle', d.subtitle)}
           </p>
         </div>
@@ -79,7 +82,10 @@ export function ParastooLevels({ id, config, storeContext }: TemplateSectionProp
               <h3 {...editableItem('nodes', index, 'title')} className="mt-4 text-[17px] font-bold">
                 {node.title}
               </h3>
-              <p {...editableItem('nodes', index, 'note')} className="mt-1 text-[13.5px] text-current/60">
+              <p
+                {...editableItem('nodes', index, 'note')}
+                className="mt-1 text-[13.5px] text-current/60"
+              >
                 {node.note}
               </p>
             </li>
@@ -150,7 +156,7 @@ export function ParastooLevels({ id, config, storeContext }: TemplateSectionProp
           <div className="rounded-[34px] border-2 border-(--theme-deep) bg-(--theme-primary) p-8 text-(--theme-on-primary)">
             <span
               data-editable="challengeValue"
-              className="block text-[88px] font-bold leading-none tracking-[-0.06em] tabular-nums"
+              className="block text-[88px] leading-none font-bold tracking-[-0.06em] tabular-nums"
             >
               {text(config, 'challengeValue', d.challenge.value)}
             </span>

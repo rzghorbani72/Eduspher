@@ -1,6 +1,6 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { backendApiBaseUrl, env } from "@/lib/env";
-import { buildInternalBackendHeaders } from "@/lib/backend-internal";
+import { type NextRequest, NextResponse } from 'next/server';
+import { backendApiBaseUrl, env } from '@/lib/env';
+import { buildInternalBackendHeaders } from '@/lib/backend-internal';
 
 /**
  * Saman SEP POSTs the payment result here after the user completes (or cancels) payment.
@@ -26,15 +26,15 @@ type SepResult = {
 };
 
 const readSepResult = async (request: NextRequest): Promise<SepResult> => {
-  const contentType = request.headers.get("content-type") ?? "";
+  const contentType = request.headers.get('content-type') ?? '';
   const read = (get: (key: string) => string | null): SepResult => ({
-    state: get("State"),
-    refNum: get("RefNum"),
-    resNum: get("ResNum"),
-    statusCode: get("Status"),
+    state: get('State'),
+    refNum: get('RefNum'),
+    resNum: get('ResNum'),
+    statusCode: get('Status'),
   });
 
-  if (contentType.includes("application/x-www-form-urlencoded")) {
+  if (contentType.includes('application/x-www-form-urlencoded')) {
     const params = new URLSearchParams(await request.text());
     return read((key) => params.get(key));
   }
@@ -43,27 +43,19 @@ const readSepResult = async (request: NextRequest): Promise<SepResult> => {
     const form = await request.formData();
     return read((key) => (form.get(key) as string | null) ?? null);
   } catch {
-    const json = (await request.json().catch(() => ({}))) as Record<
-      string,
-      string
-    >;
+    const json = (await request.json().catch(() => ({}))) as Record<string, string>;
     return read((key) => json[key] ?? null);
   }
 };
 
 /** Academy origin for a payment, used when we redirect before verifying. */
-const fetchReturnOrigin = async (
-  paymentId: string | null,
-): Promise<string | null> => {
+const fetchReturnOrigin = async (paymentId: string | null): Promise<string | null> => {
   if (!paymentId) return null;
   try {
-    const res = await fetch(
-      `${backendApiBaseUrl}/payments/${paymentId}/return-url`,
-      {
-        headers: buildInternalBackendHeaders(),
-        cache: "no-store",
-      },
-    );
+    const res = await fetch(`${backendApiBaseUrl}/payments/${paymentId}/return-url`, {
+      headers: buildInternalBackendHeaders(),
+      cache: 'no-store',
+    });
     const body = (await res.json()) as {
       data?: { return_url?: string | null };
     };
@@ -73,14 +65,9 @@ const fetchReturnOrigin = async (
   }
 };
 
-const redirectTo = (
-  origin: string,
-  path: string,
-  params: Record<string, string>,
-) => {
+const redirectTo = (origin: string, path: string, params: Record<string, string>) => {
   const url = new URL(`${origin}${path}`);
-  for (const [key, value] of Object.entries(params))
-    url.searchParams.set(key, value);
+  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
   return NextResponse.redirect(url.toString(), { status: 303 });
 };
 
@@ -91,30 +78,27 @@ export async function POST(request: NextRequest) {
   try {
     result = await readSepResult(request);
   } catch {
-    return redirectTo(platformOrigin, "/payment/failure", {
-      reason: "invalid_callback",
+    return redirectTo(platformOrigin, '/payment/failure', {
+      reason: 'invalid_callback',
     });
   }
 
   const { state, refNum, resNum, statusCode } = result;
 
-  if (state !== "OK" || !refNum || !resNum) {
+  if (state !== 'OK' || !refNum || !resNum) {
     const origin = (await fetchReturnOrigin(resNum)) ?? platformOrigin;
-    return redirectTo(origin, "/payment/failure", {
-      reason: state === "CanceledByUser" ? "cancelled" : "payment_failed",
+    return redirectTo(origin, '/payment/failure', {
+      reason: state === 'CanceledByUser' ? 'cancelled' : 'payment_failed',
       ...(statusCode && { status: statusCode }),
     });
   }
 
   try {
-    const verifyRes = await fetch(
-      `${backendApiBaseUrl}/payments/verify/saman`,
-      {
-        method: "POST",
-        headers: buildInternalBackendHeaders(),
-        body: JSON.stringify({ payment_id: resNum, ref_num: refNum }),
-      },
-    );
+    const verifyRes = await fetch(`${backendApiBaseUrl}/payments/verify/saman`, {
+      method: 'POST',
+      headers: buildInternalBackendHeaders(),
+      body: JSON.stringify({ payment_id: resNum, ref_num: refNum }),
+    });
 
     const data = (await verifyRes.json()) as {
       status?: string;
@@ -126,18 +110,18 @@ export async function POST(request: NextRequest) {
     };
     const origin = data.data?.return_url ?? platformOrigin;
 
-    if (data.status === "ok") {
-      return redirectTo(origin, "/payment/success", {
+    if (data.status === 'ok') {
+      return redirectTo(origin, '/payment/success', {
         payment_id: data.data?.payment_id ?? resNum,
         RefNum: refNum,
       });
     }
 
-    return redirectTo(origin, "/payment/failure", {
-      reason: data.data?.reason ?? "verification_failed",
+    return redirectTo(origin, '/payment/failure', {
+      reason: data.data?.reason ?? 'verification_failed',
     });
   } catch {
     const origin = (await fetchReturnOrigin(resNum)) ?? platformOrigin;
-    return redirectTo(origin, "/payment/failure", { reason: "server_error" });
+    return redirectTo(origin, '/payment/failure', { reason: 'server_error' });
   }
 }

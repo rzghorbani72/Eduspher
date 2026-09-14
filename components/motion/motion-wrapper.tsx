@@ -4,7 +4,8 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 interface MotionWrapperProps {
   children: ReactNode;
-  animation?: 'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'scale' | 'rotate';
+  animation?:
+    'fade' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'scale' | 'rotate';
   delay?: number;
   duration?: number;
   className?: string;
@@ -38,7 +39,7 @@ export function MotionWrapper({
             }
           });
         },
-        { threshold: 0.1 }
+        { threshold: 0.1 },
       );
 
       const element = elementRef.current;
@@ -70,4 +71,3 @@ export function MotionWrapper({
     </div>
   );
 }
-

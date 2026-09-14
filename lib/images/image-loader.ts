@@ -1,4 +1,4 @@
-import type { ImageLoaderProps } from "next/image";
+import type { ImageLoaderProps } from 'next/image';
 
 /**
  * Next's built-in optimizer resizes images inside this pod and writes every
@@ -17,22 +17,18 @@ import type { ImageLoaderProps } from "next/image";
  */
 
 /** Backend routes that understand the `w`/`q` derivative parameters. */
-const RESIZABLE_PATHS = ["/images/fetch-image-by-id/", "/images/get-image"];
+const RESIZABLE_PATHS = ['/images/fetch-image-by-id/', '/images/get-image'];
 
 /** Vectors have no pixel size to shrink; asking for one just wastes a round trip. */
 const isVector = (path: string) => /\.svg(\?|$)/i.test(path);
 
-export default function backendImageLoader({
-  src,
-  width,
-  quality,
-}: ImageLoaderProps): string {
+export default function backendImageLoader({ src, width, quality }: ImageLoaderProps): string {
   // Local /public assets and third-party URLs are served untouched — only our
   // own image API can produce a derivative.
   if (isVector(src) || !RESIZABLE_PATHS.some((path) => src.includes(path))) {
     return src;
   }
 
-  const separator = src.includes("?") ? "&" : "?";
+  const separator = src.includes('?') ? '&' : '?';
   return `${src}${separator}w=${width}&q=${quality ?? 75}`;
 }

@@ -40,12 +40,18 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
       <Container className="relative z-[2] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div>
-            <span className={`${styles.chip} inline-flex items-center gap-2.5 px-4 py-1.5 text-[13px] font-bold`}>
-              <span aria-hidden="true" data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" />
+            <span
+              className={`${styles.chip} inline-flex items-center gap-2.5 px-4 py-1.5 text-[13px] font-bold`}
+            >
+              <span
+                aria-hidden="true"
+                data-motion="live"
+                className="size-2 rounded-full bg-(--theme-accent)"
+              />
               <span data-editable="kicker">{text(config, 'kicker', d.kicker)}</span>
             </span>
 
-            <h1 className="mt-7 text-[clamp(38px,6vw,72px)] font-extrabold leading-[1.06] tracking-[-0.035em]">
+            <h1 className="mt-7 text-[clamp(38px,6vw,72px)] leading-[1.06] font-extrabold tracking-[-0.035em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config} className={styles.gradWord}>
                 {text(config, 'titleEm', d.titleEm)}
@@ -53,12 +59,20 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[52ch] text-[17px] leading-[1.9] text-current/70">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[52ch] text-[17px] leading-[1.9] text-current/70"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="primary"
                   size="lg"
@@ -69,7 +83,12 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="ghost-on-deep"
                   size="lg"
@@ -97,10 +116,23 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
+          <RemovableSlot
+            config={config}
+            flagKey="showSideVisual"
+            editMode={editMode}
+            mediaKey="bgImage"
+          >
             <div className="relative">
-              <span className={`${styles.orb} ${styles.orbA}`} aria-hidden="true" data-motion="drift" />
-              <span className={`${styles.orb} ${styles.orbB}`} aria-hidden="true" data-motion="drift" />
+              <span
+                className={`${styles.orb} ${styles.orbA}`}
+                aria-hidden="true"
+                data-motion="drift"
+              />
+              <span
+                className={`${styles.orb} ${styles.orbB}`}
+                aria-hidden="true"
+                data-motion="drift"
+              />
               <HeroSlideshowSlot
                 config={config}
                 mediaKeys={SLIDE_KEYS}
@@ -125,7 +157,7 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
             {stats.map((stat, index) => (
               <div key={stat.label}>
                 <dd>
-                  <span className="block text-[34px] font-extrabold leading-none tracking-[-0.04em]">
+                  <span className="block text-[34px] leading-none font-extrabold tracking-[-0.04em]">
                     <span {...editableItem('stats', index, 'value')}>{stat.value}</span>
                     {stat.unit ? (
                       <small
@@ -137,7 +169,10 @@ export function ElektronHero({ id, config, storeContext }: TemplateSectionProps)
                     ) : null}
                   </span>
                 </dd>
-                <dt {...editableItem('stats', index, 'label')} className="mt-3 text-[14px] font-bold">
+                <dt
+                  {...editableItem('stats', index, 'label')}
+                  className="mt-3 text-[14px] font-bold"
+                >
                   {stat.label}
                 </dt>
                 <p

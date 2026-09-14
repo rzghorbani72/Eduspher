@@ -1,6 +1,6 @@
-import { buildThemeCssVariables, type ThemeConfigInput } from "@/lib/theme-apply";
+import { buildThemeCssVariables, type ThemeConfigInput } from '@/lib/theme-apply';
 
-const CANVAS_SELECTOR = "[data-theme-canvas]";
+const CANVAS_SELECTOR = '[data-theme-canvas]';
 
 /**
  * Repaint the preview's theme in place — the CSS half of "hot reload".
@@ -9,10 +9,7 @@ const CANVAS_SELECTOR = "[data-theme-canvas]";
  * wrapper using this exact function, so pushing them here produces precisely
  * what a reload would have produced, minus the reload.
  */
-export function applyLiveTheme(
-  theme: ThemeConfigInput,
-  direction?: "ltr" | "rtl"
-): void {
+export function applyLiveTheme(theme: ThemeConfigInput, direction?: 'ltr' | 'rtl'): void {
   const canvas = document.querySelector<HTMLElement>(CANVAS_SELECTOR);
   if (!canvas) return;
 

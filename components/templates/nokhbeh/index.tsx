@@ -29,11 +29,28 @@ export const NOKHBEH_COURSE_CARD: CourseCardSpec = {
 
 export const NOKHBEH_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={NOKHBEH_HEADER} spec={{ tone: 'page', height: 76, navStyle: 'plain', markClassName: styles.logoMark, monoTagline: true }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={NOKHBEH_HEADER}
+      spec={{
+        tone: 'page',
+        height: 76,
+        navStyle: 'plain',
+        markClassName: styles.logoMark,
+        monoTagline: true,
+      }}
+    />
   ),
   hero: NokhbehHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={NOKHBEH_DEFAULTS.marquee.items} tone="deep" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={NOKHBEH_DEFAULTS.marquee.items}
+      tone="deep"
+    />
   ),
   features: NokhbehFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -47,12 +64,34 @@ export const NOKHBEH_SECTIONS: TemplateSectionMap = {
     />
   ),
   categories: ({ id, config, storeContext }) => (
-    <TemplateTracks id={id} config={config} storeContext={storeContext} defaults={NOKHBEH_DEFAULTS.categories} tone="surface" columns={4} />
+    <TemplateTracks
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={NOKHBEH_DEFAULTS.categories}
+      tone="surface"
+      columns={4}
+    />
   ),
   showcase: NokhbehQuiz,
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={NOKHBEH_DEFAULTS.teachers} tone="surface" />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={NOKHBEH_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={NOKHBEH_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={NOKHBEH_DEFAULTS.cta}
+      tone="deep"
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={NOKHBEH_DEFAULTS.footer}
+    />
+  ),
 };

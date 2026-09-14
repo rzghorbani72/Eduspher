@@ -12,7 +12,7 @@ export async function checkAuth(): Promise<{ isAuthenticated: boolean }> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('jwt')?.value;
-    
+
     if (!token) {
       return { isAuthenticated: false };
     }
@@ -21,11 +21,16 @@ export async function checkAuth(): Promise<{ isAuthenticated: boolean }> {
       // Validate the JWT token by decoding it
       const payload = decodeJwt(token);
       // Check if token has required fields (profileId or userId) and is not expired
-      const hasProfileId = payload.profileId && (typeof payload.profileId === 'number' || typeof payload.profileId === 'string');
-      const hasUserId = payload.userId && (typeof payload.userId === 'number' || typeof payload.userId === 'string');
+      const hasProfileId =
+        payload.profileId &&
+        (typeof payload.profileId === 'number' || typeof payload.profileId === 'string');
+      const hasUserId =
+        payload.userId &&
+        (typeof payload.userId === 'number' || typeof payload.userId === 'string');
       const hasValidId = hasProfileId || hasUserId;
-      const isExpired = payload.exp && typeof payload.exp === 'number' && payload.exp < Date.now() / 1000;
-      
+      const isExpired =
+        payload.exp && typeof payload.exp === 'number' && payload.exp < Date.now() / 1000;
+
       if (hasValidId && !isExpired) {
         return { isAuthenticated: true };
       }

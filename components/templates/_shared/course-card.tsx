@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout";
-import { sizedImageUrl } from "@/lib/images/sized-image-url";
-import { cn, resolveAssetUrl } from "@/lib/utils";
-import { Initials } from "./primitives";
-import type { TemplateCourse } from "./courses-data";
-import { isSampleRecord } from "./sample-data";
+import { COURSE_CARD_THUMB_CLASS } from '@/components/courses/course-card-layout';
+import { sizedImageUrl } from '@/lib/images/sized-image-url';
+import { cn, resolveAssetUrl } from '@/lib/utils';
+import { Initials } from './primitives';
+import type { TemplateCourse } from './courses-data';
+import { isSampleRecord } from './sample-data';
 
 /**
  * The per-template look of a single course card, kept apart from the section
@@ -17,7 +17,7 @@ export interface CourseCardSpec {
   thumbTones: readonly string[];
   thumbClassName: string;
   /** `rating` closes the card with a score, `action` with a details button. */
-  footer?: "rating" | "action";
+  footer?: 'rating' | 'action';
 }
 
 export function TemplateCourseCard({
@@ -40,38 +40,38 @@ export function TemplateCourseCard({
 
   return (
     <article className="group flex h-full w-full min-w-0 flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
-      <a href={course.href} className="flex flex-1 flex-col cursor-pointer">
+      <a href={course.href} className="flex flex-1 cursor-pointer flex-col">
         <div
           className={cn(thumbClassName, COURSE_CARD_THUMB_CLASS)}
           style={
             coverUrl
               ? {
                   backgroundImage: `url(${coverUrl})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
                 }
               : undefined
           }
         >
           {isSampleRecord(course.id) ? (
-            <span className="absolute top-3 end-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-deep)/85 px-2.5 py-1 text-[11px] font-bold text-(--theme-on-deep)">
+            <span className="absolute end-3 top-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-deep)/85 px-2.5 py-1 text-[11px] font-bold text-(--theme-on-deep)">
               نمونهٔ پیش‌نمایش
             </span>
           ) : null}
           {course.isLive ? (
-            <span className="absolute top-3 start-3 z-[2] inline-flex items-center gap-1.5 rounded-(--theme-border-radius) bg-[#e11d48] px-2.5 py-1 text-[11px] font-bold text-white">
+            <span className="absolute start-3 top-3 z-[2] inline-flex items-center gap-1.5 rounded-(--theme-border-radius) bg-[#e11d48] px-2.5 py-1 text-[11px] font-bold text-white">
               <span data-motion="live" className="size-1.5 rounded-full bg-white" />
               کلاس زنده
             </span>
           ) : course.levelLabel ? (
-            <span className="absolute top-3 start-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-surface)/90 px-2.5 py-1 text-[11px] font-bold text-(--theme-foreground)">
+            <span className="absolute start-3 top-3 z-[2] rounded-(--theme-border-radius) bg-(--theme-surface)/90 px-2.5 py-1 text-[11px] font-bold text-(--theme-foreground)">
               {course.levelLabel}
             </span>
           ) : null}
         </div>
 
         <div className="flex flex-1 flex-col gap-3 p-5">
-          <h3 className="text-[18.5px] font-bold leading-[1.45] group-hover:text-(--theme-primary)">
+          <h3 className="text-[18.5px] leading-[1.45] font-bold group-hover:text-(--theme-primary)">
             {course.title}
           </h3>
 
@@ -93,9 +93,9 @@ export function TemplateCourseCard({
             {footer ?? (
               <div className="flex items-center justify-between gap-3">
                 <span className="text-[17px] font-bold">{course.priceLabel}</span>
-                {spec.footer === "action" ? (
+                {spec.footer === 'action' ? (
                   <span
-                    className={`inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-(--theme-border-radius) border border-transparent bg-(--theme-deep) px-4 py-2.5 text-[14px] font-bold text-(--theme-on-deep) transition-opacity duration-150 group-hover:opacity-90`}
+                    className={`inline-flex items-center justify-center gap-2.5 rounded-(--theme-border-radius) border border-transparent bg-(--theme-deep) px-4 py-2.5 text-[14px] font-bold whitespace-nowrap text-(--theme-on-deep) transition-opacity duration-150 group-hover:opacity-90`}
                   >
                     جزئیات
                   </span>

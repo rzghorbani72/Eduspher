@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   getProgress,
@@ -8,11 +8,11 @@ import {
   saveProgress,
   type LearningProgress,
   type ProgressStatus,
-} from "@/lib/api/learning";
-import { useQueryClient } from "@tanstack/react-query";
+} from '@/lib/api/learning';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useApiQuery } from "@/hooks/use-api-query";
-import { queryKeys } from "@/lib/query/keys";
+import { useApiQuery } from '@/hooks/use-api-query';
+import { queryKeys } from '@/lib/query/keys';
 
 const HEARTBEAT_SECONDS = 15;
 const SEEK_GAP_SECONDS = 2.5;
@@ -29,17 +29,14 @@ export function useLessonProgress(
 ) {
   const useVideoHeartbeat = options?.useVideoHeartbeat ?? false;
   const queryClient = useQueryClient();
-  const progressKey = queryKeys.lessonProgress(enrollmentId ?? "none", lessonId);
+  const progressKey = queryKeys.lessonProgress(enrollmentId ?? 'none', lessonId);
 
   const { data } = useApiQuery({
     queryKey: progressKey,
     enabled: Boolean(enrollmentId),
     queryFn: async (signal) => {
       if (!enrollmentId) return null;
-      const result = await getProgress(
-        { enrollmentId, lessonId, limit: 1 },
-        { signal },
-      );
+      const result = await getProgress({ enrollmentId, lessonId, limit: 1 }, { signal });
       return result.progress[0] ?? null;
     },
   });
@@ -100,12 +97,7 @@ export function useLessonProgress(
   );
 
   const persistVideoHeartbeat = useCallback(
-    async (
-      position: number,
-      activeSeconds: number,
-      segmentStart: number,
-      duration?: number,
-    ) => {
+    async (position: number, activeSeconds: number, segmentStart: number, duration?: number) => {
       if (!enrollmentId) return false;
       await awaitPending();
       setSaving(true);
@@ -122,26 +114,19 @@ export function useLessonProgress(
         });
         lastSavedPosition.current = position;
         lastHeartbeatAt.current = position;
-        queryClient.setQueryData<LearningProgress | null>(
-          progressKey,
-          (current) =>
-            current
-              ? {
-                  ...current,
-                  last_position: position,
-                  watch_time: (current.watch_time ?? 0) + activeSeconds,
-                  covered_seconds:
-                    result.covered_seconds ?? current.covered_seconds,
-                  media_duration:
-                    result.media_duration ?? current.media_duration,
-                  status:
-                    current.status === "COMPLETED"
-                      ? "COMPLETED"
-                      : "IN_PROGRESS",
-                }
-              : current,
+        queryClient.setQueryData<LearningProgress | null>(progressKey, (current) =>
+          current
+            ? {
+                ...current,
+                last_position: position,
+                watch_time: (current.watch_time ?? 0) + activeSeconds,
+                covered_seconds: result.covered_seconds ?? current.covered_seconds,
+                media_duration: result.media_duration ?? current.media_duration,
+                status: current.status === 'COMPLETED' ? 'COMPLETED' : 'IN_PROGRESS',
+              }
+            : current,
         );
-        void queryClient.invalidateQueries({ queryKey: ["course-progress"] });
+        void queryClient.invalidateQueries({ queryKey: ['course-progress'] });
       })();
       pendingSave.current = request;
       try {
@@ -188,7 +173,7 @@ export function useLessonProgress(
       }
 
       lastSavedPosition.current = position;
-      void persistStatus("IN_PROGRESS", position);
+      void persistStatus('IN_PROGRESS', position);
     },
     [persistStatus, persistVideoHeartbeat, useVideoHeartbeat],
   );
@@ -207,11 +192,11 @@ export function useLessonProgress(
         );
         return;
       }
-      void persistStatus("IN_PROGRESS", position);
+      void persistStatus('IN_PROGRESS', position);
     };
-    window.addEventListener("pagehide", flush);
+    window.addEventListener('pagehide', flush);
     return () => {
-      window.removeEventListener("pagehide", flush);
+      window.removeEventListener('pagehide', flush);
       flush();
     };
   }, [persistStatus, persistVideoHeartbeat, useVideoHeartbeat]);
@@ -222,6 +207,6 @@ export function useLessonProgress(
     saving,
     saveFailed,
     heartbeat,
-    complete: () => persistStatus("COMPLETED", currentPosition.current),
+    complete: () => persistStatus('COMPLETED', currentPosition.current),
   };
 }

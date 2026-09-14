@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { AppImage } from "@/components/ui/app-image";
-import { usePathname } from "next/navigation";
-import { Globe } from "lucide-react";
+import { AppImage } from '@/components/ui/app-image';
+import { usePathname } from 'next/navigation';
+import { Globe } from 'lucide-react';
 
-import { useI18n } from "@/lib/i18n/provider";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { useI18n } from '@/lib/i18n/provider';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface AuthShellProps {
   academyName: string;
@@ -21,7 +21,7 @@ function AcademyLogo({
   logoUrl,
   logoGlyph,
   size,
-}: Pick<AuthShellProps, "academyName" | "logoUrl" | "logoGlyph"> & { size: number }) {
+}: Pick<AuthShellProps, 'academyName' | 'logoUrl' | 'logoGlyph'> & { size: number }) {
   return (
     <div className="auth-logo-wrap">
       <div className="auth-logo">
@@ -43,9 +43,9 @@ function AcademyLogo({
 }
 
 const HEADING_KEYS = [
-  { match: "/auth/register", title: "auth.registerTitle" },
-  { match: "/auth/forgot-password", title: "auth.forgotTitle", subtitle: "auth.forgotSubtitle" },
-  { match: "/auth/login", title: "auth.loginTitle", subtitle: "auth.loginSubtitle" },
+  { match: '/auth/register', title: 'auth.registerTitle' },
+  { match: '/auth/forgot-password', title: 'auth.forgotTitle', subtitle: 'auth.forgotSubtitle' },
+  { match: '/auth/login', title: 'auth.loginTitle', subtitle: 'auth.loginSubtitle' },
 ] as const;
 
 export function AuthShell({
@@ -60,8 +60,8 @@ export function AuthShell({
   const { language, setLanguage } = useI18n();
   const { t } = useTranslation();
 
-  const nextLanguage = language === "fa" ? "en" : "fa";
-  const tagline = academyTagline ?? t("auth.academyPanelTagline");
+  const nextLanguage = language === 'fa' ? 'en' : 'fa';
+  const tagline = academyTagline ?? t('auth.academyPanelTagline');
   const heading = HEADING_KEYS.find((entry) => pathname.includes(entry.match));
 
   return (
@@ -72,9 +72,7 @@ export function AuthShell({
             {heading ? (
               <div className="auth-title-wrap">
                 <h1 className="auth-title">{t(heading.title)}</h1>
-                {"subtitle" in heading && (
-                  <p className="auth-subtitle">{t(heading.subtitle)}</p>
-                )}
+                {'subtitle' in heading && <p className="auth-subtitle">{t(heading.subtitle)}</p>}
               </div>
             ) : null}
             <div className="auth-card-body">{children}</div>
@@ -96,7 +94,7 @@ export function AuthShell({
         <div className="auth-ctrl">
           <button type="button" className="auth-pill" onClick={() => setLanguage(nextLanguage)}>
             <Globe size={12} />
-            {nextLanguage === "en" ? "English" : "فارسی"}
+            {nextLanguage === 'en' ? 'English' : 'فارسی'}
           </button>
         </div>
       </div>

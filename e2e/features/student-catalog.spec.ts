@@ -51,9 +51,7 @@ test.describe('Course catalog — search and filter @backend', () => {
     await setAcademyCookie(page.context(), baseURL!);
   });
 
-  test('search query param renders results without crashing', async ({
-    page
-  }) => {
+  test('search query param renders results without crashing', async ({ page }) => {
     await page.goto('/courses?q=test');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
@@ -77,21 +75,17 @@ test.describe('Course catalog — authenticated student @backend', () => {
     await studentLogin(page, baseURL!);
   });
 
-  test('authenticated student sees the catalog after login', async ({
-    page
-  }) => {
+  test('authenticated student sees the catalog after login', async ({ page }) => {
     await page.goto('/courses');
     await expect(page).toHaveURL(/\/courses/);
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
 
-  test('navigating to a course detail renders without errors', async ({
-    page
-  }) => {
+  test('navigating to a course detail renders without errors', async ({ page }) => {
     await page.goto('/courses');
     // If there are course cards/links, follow the first one
     const courseLink = page.locator('a[href*="/courses/"]').first();
-    if (await courseLink.count() > 0) {
+    if ((await courseLink.count()) > 0) {
       await courseLink.click();
       await expect(page.locator('body')).not.toContainText('Internal Server Error');
     }

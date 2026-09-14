@@ -41,9 +41,9 @@ test.describe('edusphere auth flows @backend', () => {
 
     // Fresh national mobile number, so the account cannot already exist.
     const phone = '9' + String(Date.now()).slice(-9);
-    await page.context().addCookies([
-      { name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! },
-    ]);
+    await page
+      .context()
+      .addCookies([{ name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! }]);
 
     // ── Register: one button walks send → verify → continue ──────────────
     await page.goto('/auth/register');
@@ -62,7 +62,10 @@ test.describe('edusphere auth flows @backend', () => {
 
     // ── Login: identifier first, then the method that account really has ──
     await page.goto('/auth/login');
-    await page.getByRole('button', { name: /تلفن|phone/i }).first().click();
+    await page
+      .getByRole('button', { name: /تلفن|phone/i })
+      .first()
+      .click();
     await page.locator('#identifier').fill(phone);
     await page.locator('button[type="submit"]').click();
     await expect(page.locator('#password')).toBeVisible({ timeout: 15_000 });
@@ -72,7 +75,10 @@ test.describe('edusphere auth flows @backend', () => {
 
     // ── Forgot password: validate → code → new password ───────────────────
     await page.goto('/auth/forgot-password');
-    await page.getByRole('button', { name: /^تلفن$|^phone$/i }).first().click();
+    await page
+      .getByRole('button', { name: /^تلفن$|^phone$/i })
+      .first()
+      .click();
     await page.locator('#identifier').fill(phone);
     await page.locator('.auth-submit-btn').first().click(); // validate the account
     await expect(page.getByText(/حساب|account/i).first()).toBeVisible({ timeout: 15_000 });

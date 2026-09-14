@@ -1,4 +1,4 @@
-import type { LessonSummary, SeasonSummary } from "@/lib/api/types";
+import type { LessonSummary, SeasonSummary } from '@/lib/api/types';
 
 export interface FlatLesson {
   lesson: LessonSummary;
@@ -38,10 +38,7 @@ export function neighboursOf(
   };
 }
 
-export function completionPercent(
-  total: number,
-  completed: number,
-): number {
+export function completionPercent(total: number, completed: number): number {
   if (total <= 0) return 0;
   return Math.min(100, Math.round((completed / total) * 100));
 }
@@ -63,8 +60,8 @@ export function watchPercent(
   let total = 0;
   for (const item of lessons) {
     const row = byId.get(item.id);
-    const type = (item.lesson.lesson_type ?? "TEXT").toUpperCase();
-    if (type === "VIDEO" || type === "AUDIO") {
+    const type = (item.lesson.lesson_type ?? 'TEXT').toUpperCase();
+    if (type === 'VIDEO' || type === 'AUDIO') {
       const duration =
         row?.media_duration ||
         item.lesson.duration ||
@@ -75,10 +72,10 @@ export function watchPercent(
       if (duration > 0) {
         total += Math.min(1, covered / duration);
       } else {
-        total += row?.status === "COMPLETED" ? 1 : 0;
+        total += row?.status === 'COMPLETED' ? 1 : 0;
       }
     } else {
-      total += row?.status === "COMPLETED" ? 1 : 0;
+      total += row?.status === 'COMPLETED' ? 1 : 0;
     }
   }
   return Math.min(100, Math.round((total / lessons.length) * 100));

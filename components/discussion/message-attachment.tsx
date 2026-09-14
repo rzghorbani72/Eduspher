@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { FileText } from "lucide-react";
+import { FileText } from 'lucide-react';
 
-import type { DiscussionAttachment } from "@/lib/api/client";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn } from "@/lib/utils";
+import type { DiscussionAttachment } from '@/lib/api/client';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
 
-const isImage = (mime: string | null) => Boolean(mime?.startsWith("image/"));
+const isImage = (mime: string | null) => Boolean(mime?.startsWith('image/'));
 
 /** A file handed over in a chat message: images inline, anything else as a row. */
 export function MessageAttachment({
@@ -26,7 +26,7 @@ export function MessageAttachment({
         target="_blank"
         rel="noreferrer"
         className="mt-2 block overflow-hidden rounded-md"
-        aria-label={t("live.openAttachment")}
+        aria-label={t('live.openAttachment')}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -44,8 +44,8 @@ export function MessageAttachment({
       target="_blank"
       rel="noreferrer"
       className={cn(
-        "mt-2 flex items-center gap-2 rounded-md px-2 py-1.5 text-xs underline-offset-2 hover:underline",
-        mine ? "bg-white/15" : "bg-black/5 dark:bg-white/10",
+        'mt-2 flex items-center gap-2 rounded-md px-2 py-1.5 text-xs underline-offset-2 hover:underline',
+        mine ? 'bg-white/15' : 'bg-black/5 dark:bg-white/10',
       )}
     >
       <FileText className="size-4 shrink-0" aria-hidden="true" />

@@ -1,14 +1,14 @@
-import { getCourses, getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
-import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
-import Link from "@/components/ui/link";
-import { Button } from "@/components/ui/button";
-import { buildAcademyPath } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { SlotGrid, PlaceholderCard, SectionEmptyState } from "./slot-grid";
-import { RichHtml } from "@/components/rich-html";
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
+import { getCourses, getCurrentAcademy, getAcademyBySlug } from '@/lib/api/server';
+import { TemplatedCourseCard } from '@/components/courses/templated-course-card';
+import Link from '@/components/ui/link';
+import { Button } from '@/components/ui/button';
+import { buildAcademyPath } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { SlotGrid, PlaceholderCard, SectionEmptyState } from './slot-grid';
+import { RichHtml } from '@/components/rich-html';
+import { resolveSlots, type SlotConfig } from '@/lib/slot-config';
 
 interface CoursesBlockProps {
   id?: string;
@@ -18,7 +18,7 @@ interface CoursesBlockProps {
     showFilters?: boolean;
     gridColumns?: number;
     limit?: number;
-    layout?: "grid" | "list" | "minimal" | "featured" | "compact";
+    layout?: 'grid' | 'list' | 'minimal' | 'featured' | 'compact';
     showViewAll?: boolean;
     featured?: boolean;
     slots?: SlotConfig[];
@@ -33,21 +33,23 @@ interface CoursesBlockProps {
   };
 }
 
-const sectionStyle = { backgroundColor: 'var(--theme-background)', color: 'var(--theme-foreground)' };
+const sectionStyle = {
+  backgroundColor: 'var(--theme-background)',
+  color: 'var(--theme-foreground)',
+};
 const featuredSectionStyle = {
   background: 'linear-gradient(180deg, var(--theme-surface-alt), var(--theme-background))',
   color: 'var(--theme-foreground)',
 };
 
-const basisFor = (cols: number): string =>
-  cols >= 4 ? "310px" : cols === 2 ? "440px" : "310px";
+const basisFor = (cols: number): string => (cols >= 4 ? '310px' : cols === 2 ? '440px' : '310px');
 
 export async function CoursesBlock({ id, config, storeContext }: CoursesBlockProps) {
   const title = config?.title;
   const subtitle = config?.subtitle;
   const limit = config?.limit || 6;
   const gridColumns = config?.gridColumns || 3;
-  const layout = config?.layout || "grid";
+  const layout = config?.layout || 'grid';
   const showViewAll = config?.showViewAll !== false;
 
   const [coursePayload, currentAcademy] = await Promise.all([
@@ -65,7 +67,10 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   if (!storeForLang && storeContext?.slug) {
     storeForLang = await getAcademyBySlug(storeContext.slug).catch(() => null);
   }
-  const language = getAcademyLanguage(storeForLang?.language || null, storeForLang?.country_code || null);
+  const language = getAcademyLanguage(
+    storeForLang?.language || null,
+    storeForLang?.country_code || null,
+  );
   const translate = (key: string) => t(key, language);
   const tx = (key: string, fallback: string) => config?.text?.[key] ?? fallback;
 
@@ -73,7 +78,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   // empty/hidden slots are handled by resolveSlots so the grid never collapses.
   const resolved = resolveSlots(courses, config?.slots, limit);
   const courseNodes = resolved.map((slot, i) =>
-    slot.kind === "live" ? (
+    slot.kind === 'live' ? (
       <TemplatedCourseCard
         key={i}
         course={slot.data}
@@ -89,44 +94,47 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   const renderHeader = (centered = false) => (
     <div
       className={cn(
-        "mb-14",
+        'mb-14',
         centered
-          ? "mx-auto max-w-2xl text-center"
-          : "flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between",
+          ? 'mx-auto max-w-2xl text-center'
+          : 'flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between',
       )}
     >
-      <div className={centered ? "" : "max-w-2xl"}>
+      <div className={centered ? '' : 'max-w-2xl'}>
         <p
-          className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
+          className="mb-2 text-xs font-bold tracking-[0.18em] uppercase"
           style={{ color: 'var(--theme-primary)' }}
         >
-          {tx("eyebrow", translate("courses.featuredCourses"))}
+          {tx('eyebrow', translate('courses.featuredCourses'))}
         </p>
         <h2
           data-editable="title"
           className="text-3xl font-black tracking-tight sm:text-4xl"
           style={{ color: 'var(--theme-foreground)', letterSpacing: '-0.025em' }}
         >
-          {title || translate("home.featuredCoursesDescription")}
+          {title || translate('home.featuredCoursesDescription')}
         </h2>
         {subtitle && (
-            <RichHtml
-              as="p"
-              html={subtitle}
-              data-editable="subtitle"
-              data-editable-kind="rich"
-              className="mt-3 text-base leading-relaxed"
-              style={{ color: 'var(--theme-muted)' }}
-            />
+          <RichHtml
+            as="p"
+            html={subtitle}
+            data-editable="subtitle"
+            data-editable-kind="rich"
+            className="mt-3 text-base leading-relaxed"
+            style={{ color: 'var(--theme-muted)' }}
+          />
         )}
       </div>
       {!centered && showViewAll && (
         <Link
-          href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}
+          href={buildAcademyPath(
+            storeContext?.isSubdomain ? null : (storeContext?.slug ?? null),
+            '/courses',
+          )}
           className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
           style={{ color: 'var(--theme-primary)' }}
         >
-          {tx("viewAll", translate("home.exploreFullCatalogue"))}
+          {tx('viewAll', translate('home.exploreFullCatalogue'))}
           <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
         </Link>
       )}
@@ -146,8 +154,13 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
             boxShadow: 'var(--theme-shadow)',
           }}
         >
-          <Link href={buildAcademyPath(storeContext?.isSubdomain ? null : (storeContext?.slug ?? null), "/courses")}>
-            {tx("viewAllButton", translate("home.viewAllCourses"))}
+          <Link
+            href={buildAcademyPath(
+              storeContext?.isSubdomain ? null : (storeContext?.slug ?? null),
+              '/courses',
+            )}
+          >
+            {tx('viewAllButton', translate('home.viewAllCourses'))}
           </Link>
         </Button>
       </div>
@@ -157,26 +170,26 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
   // of identical placeholder cards, so a new academy still looks intentional.
   if (courses.length === 0) {
     return (
-      <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
+      <section id={id || 'courses'} className="py-16 sm:py-24" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(true)}
           <SectionEmptyState
-            title={translate("home.noFeaturedCourses")}
-            subtitle={translate("home.checkBackSoon")}
+            title={translate('home.noFeaturedCourses')}
+            subtitle={translate('home.checkBackSoon')}
           />
         </div>
       </section>
     );
   }
 
-  if (layout === "list") {
+  if (layout === 'list') {
     return (
-      <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
+      <section id={id || 'courses'} className="py-16 sm:py-24" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(false)}
           <div data-dynamic="true" className="space-y-5">
             {resolved.map((slot, i) =>
-              slot.kind === "live" ? (
+              slot.kind === 'live' ? (
                 <TemplatedCourseCard
                   key={i}
                   course={slot.data}
@@ -193,9 +206,9 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     );
   }
 
-  if (layout === "minimal" || layout === "compact") {
+  if (layout === 'minimal' || layout === 'compact') {
     return (
-      <section id={id || "courses"} className="py-12 sm:py-16" style={sectionStyle}>
+      <section id={id || 'courses'} className="py-12 sm:py-16" style={sectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(false)}
           <div data-dynamic="true">
@@ -208,9 +221,9 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
     );
   }
 
-  if (layout === "featured") {
+  if (layout === 'featured') {
     return (
-      <section id={id || "courses"} className="py-16 sm:py-24" style={featuredSectionStyle}>
+      <section id={id || 'courses'} className="py-16 sm:py-24" style={featuredSectionStyle}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {renderHeader(true)}
           <div data-dynamic="true">
@@ -226,7 +239,7 @@ export async function CoursesBlock({ id, config, storeContext }: CoursesBlockPro
 
   // Default: grid layout
   return (
-    <section id={id || "courses"} className="py-16 sm:py-24" style={sectionStyle}>
+    <section id={id || 'courses'} className="py-16 sm:py-24" style={sectionStyle}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {renderHeader(true)}
         <div data-dynamic="true">

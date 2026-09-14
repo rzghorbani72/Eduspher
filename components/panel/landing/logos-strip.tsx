@@ -1,7 +1,7 @@
-import type { StoreSummary } from "@/lib/api/types";
+import type { StoreSummary } from '@/lib/api/types';
 
-import { Container } from "./landing-container";
-import { LANDING } from "./landing.messages";
+import { Container } from './landing-container';
+import { LANDING } from './landing.messages';
 
 type Props = {
   academies: StoreSummary[];
@@ -20,9 +20,9 @@ export function LogosStrip({ academies }: Props) {
   const track = [...names, ...names];
 
   return (
-    <section className="border-y border-lp-line bg-lp-surface py-12">
+    <section className="border-lp-line bg-lp-surface border-y py-12">
       <Container>
-        <p className="text-center text-[13px] font-medium tracking-wide text-lp-muted">
+        <p className="text-lp-muted text-center text-[13px] font-medium tracking-wide">
           {LANDING.logos.label}
         </p>
 
@@ -31,7 +31,7 @@ export function LogosStrip({ academies }: Props) {
             {track.map((name, index) => (
               <span
                 key={`${name}-${index}`}
-                className="whitespace-nowrap text-[17px] font-bold text-lp-ink/35"
+                className="text-lp-ink/35 text-[17px] font-bold whitespace-nowrap"
               >
                 {name}
               </span>

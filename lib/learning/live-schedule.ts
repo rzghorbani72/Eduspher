@@ -1,9 +1,9 @@
-import type { LiveSessionSummary } from "@/lib/api/types";
+import type { LiveSessionSummary } from '@/lib/api/types';
 
 /** The join button opens this long before the class starts. */
 export const JOIN_OPENS_MINUTES_BEFORE = 15;
 
-export type LivePhase = "BEFORE" | "LIVE" | "ENDED";
+export type LivePhase = 'BEFORE' | 'LIVE' | 'ENDED';
 
 export interface LiveSchedule {
   phase: LivePhase;
@@ -30,18 +30,13 @@ const parseDate = (value?: string | null): Date | null => {
 export function resolveLiveSchedule(
   session: Pick<
     LiveSessionSummary,
-    | "starts_at"
-    | "ends_at"
-    | "duration_minutes"
-    | "next_occurrence_at"
-    | "playback_url"
+    'starts_at' | 'ends_at' | 'duration_minutes' | 'next_occurrence_at' | 'playback_url'
   >,
   now: Date = new Date(),
 ): LiveSchedule {
-  const startsAt =
-    parseDate(session.next_occurrence_at) ?? parseDate(session.starts_at);
+  const startsAt = parseDate(session.next_occurrence_at) ?? parseDate(session.starts_at);
   if (!startsAt) {
-    return { phase: "BEFORE", startsAt: null, endsAt: null };
+    return { phase: 'BEFORE', startsAt: null, endsAt: null };
   }
 
   const endsAt =
@@ -56,12 +51,12 @@ export function resolveLiveSchedule(
     : Boolean(session.playback_url) && now.getTime() > startsAt.getTime();
 
   if (ended) {
-    return { phase: "ENDED", startsAt, endsAt };
+    return { phase: 'ENDED', startsAt, endsAt };
   }
   if (now.getTime() >= opensAt) {
-    return { phase: "LIVE", startsAt, endsAt };
+    return { phase: 'LIVE', startsAt, endsAt };
   }
-  return { phase: "BEFORE", startsAt, endsAt };
+  return { phase: 'BEFORE', startsAt, endsAt };
 }
 
 /** "سه‌شنبه ۲۲ مهر ۱۴۰۴ · ۱۹:۰۰ تا ۲۰:۳۰" — one line, in the class's timezone. */
@@ -72,36 +67,36 @@ export function formatLiveSchedule(
   language: string,
   rangeSeparator: string,
 ): string {
-  if (!startsAt) return "";
+  if (!startsAt) return '';
   const zone = timezone || undefined;
   const day = new Intl.DateTimeFormat(language, {
-    dateStyle: "full",
+    dateStyle: 'full',
     timeZone: zone,
   }).format(startsAt);
   const time = (date: Date) =>
     new Intl.DateTimeFormat(language, {
-      timeStyle: "short",
-      hourCycle: "h23",
+      timeStyle: 'short',
+      hourCycle: 'h23',
       timeZone: zone,
     }).format(date);
-  const clock = endsAt
-    ? `${time(startsAt)} ${rangeSeparator} ${time(endsAt)}`
-    : time(startsAt);
+  const clock = endsAt ? `${time(startsAt)} ${rangeSeparator} ${time(endsAt)}` : time(startsAt);
   return `${day} · ${clock}`;
 }
 
 /** Two letters for an avatar: "نازنین کریمی" -> "ن.ک". */
 export function initialsOf(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
-  return parts.map((part) => Array.from(part)[0] ?? "").join(".");
+  return parts.map((part) => Array.from(part)[0] ?? '').join('.');
 }
 
 const icsStamp = (date: Date): string =>
-  date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  date
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 
 /** Escapes the characters iCalendar treats as syntax. */
-const icsText = (value: string): string =>
-  value.replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
+const icsText = (value: string): string => value.replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
 
 /**
  * A one-event .ics as a data URL, so "add to calendar" needs no endpoint.
@@ -116,18 +111,18 @@ export function buildCalendarUrl(
   if (!startsAt) return null;
   const end = endsAt ?? new Date(startsAt.getTime() + 60 * MINUTE);
   const lines = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//academy//lesson//EN",
-    "BEGIN:VEVENT",
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//academy//lesson//EN',
+    'BEGIN:VEVENT',
     `UID:${icsStamp(startsAt)}-${Math.random().toString(36).slice(2, 10)}`,
     `DTSTAMP:${icsStamp(new Date())}`,
     `DTSTART:${icsStamp(startsAt)}`,
     `DTEND:${icsStamp(end)}`,
     `SUMMARY:${icsText(title)}`,
     meetingUrl ? `URL:${icsText(meetingUrl)}` : null,
-    "END:VEVENT",
-    "END:VCALENDAR",
+    'END:VEVENT',
+    'END:VCALENDAR',
   ].filter((line): line is string => line !== null);
-  return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join("\r\n"))}`;
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join('\r\n'))}`;
 }

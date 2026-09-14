@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useCallback, useState } from "react";
-import { toast } from "react-toastify";
+import { useCallback, useState } from 'react';
+import { toast } from 'react-toastify';
 
 /** What an action tells the dialog once it settles. */
 export type DialogActionOutcome = {
@@ -17,10 +17,7 @@ export type DialogActionOutcome = {
  * is in flight, the dialog closes as soon as it settles either way, and the
  * outcome is told in a toast — never left behind inside a dialog nobody sees.
  */
-export const useDialogAction = (
-  onClose: () => void,
-  fallbackErrorMessage?: string,
-) => {
+export const useDialogAction = (onClose: () => void, fallbackErrorMessage?: string) => {
   const [pending, setPending] = useState(false);
 
   const run = useCallback(

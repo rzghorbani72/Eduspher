@@ -29,11 +29,28 @@ export const KEYHAN_COURSE_CARD: CourseCardSpec = {
 
 export const KEYHAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={KEYHAN_HEADER} spec={{ tone: 'page', height: 72, navStyle: 'plain', markClassName: styles.logoMark, translucent: true }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={KEYHAN_HEADER}
+      spec={{
+        tone: 'page',
+        height: 72,
+        navStyle: 'plain',
+        markClassName: styles.logoMark,
+        translucent: true,
+      }}
+    />
   ),
   hero: KeyhanHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={KEYHAN_DEFAULTS.marquee.items} tone="brand" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={KEYHAN_DEFAULTS.marquee.items}
+      tone="brand"
+    />
   ),
   features: KeyhanFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -53,6 +70,21 @@ export const KEYHAN_SECTIONS: TemplateSectionMap = {
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={KEYHAN_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={KEYHAN_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={KEYHAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={KEYHAN_DEFAULTS.cta}
+      tone="deep"
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={KEYHAN_DEFAULTS.footer}
+    />
+  ),
 };

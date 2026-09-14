@@ -24,10 +24,7 @@ export function ScrollAnimationProvider({
 
     const initGSAP = async () => {
       try {
-        const [GSAP, ST] = await Promise.all([
-          import('gsap'),
-          import('gsap/ScrollTrigger'),
-        ]);
+        const [GSAP, ST] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
 
         const gsapInstance = GSAP.gsap;
         const ScrollTriggerInstance = ST.ScrollTrigger;
@@ -38,7 +35,9 @@ export function ScrollAnimationProvider({
         ScrollTriggerInstance.getAll().forEach((trigger: { kill: () => void }) => trigger.kill());
 
         const initScrollAnimations = () => {
-          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const prefersReducedMotion = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+          ).matches;
           const animatedElements = document.querySelectorAll('[data-scroll-animate]');
           const viewportHeight = window.innerHeight;
 

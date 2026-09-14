@@ -62,14 +62,17 @@ export function TemplateTracks({
             >
               <span
                 {...editableItem('items', index, 'index')}
-                className="text-[38px] font-bold leading-none tracking-[-0.05em] text-(--theme-primary) tabular-nums"
+                className="text-[38px] leading-none font-bold tracking-[-0.05em] text-(--theme-primary) tabular-nums"
               >
                 {item.index}
               </span>
               <h3 {...editableItem('items', index, 'title')} className="mt-2 text-[22px] font-bold">
                 {item.title}
               </h3>
-              <p {...editableItem('items', index, 'body')} className="text-[15px] leading-[1.85] text-(--theme-muted)">
+              <p
+                {...editableItem('items', index, 'body')}
+                className="text-[15px] leading-[1.85] text-(--theme-muted)"
+              >
                 {item.body}
               </p>
               <a

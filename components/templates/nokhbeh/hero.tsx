@@ -28,7 +28,10 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Backdrop variant="grain" className="opacity-40" />
       <div className={styles.paperGrid} aria-hidden="true" />
 
@@ -36,11 +39,15 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
         <div className="grid items-start gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <span className="inline-flex items-center gap-2.5 text-[13px] font-bold tracking-[0.1em] text-(--theme-primary)">
-              <span aria-hidden="true" data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" />
+              <span
+                aria-hidden="true"
+                data-motion="live"
+                className="size-2 rounded-full bg-(--theme-accent)"
+              />
               <span data-editable="eyebrow">{text(config, 'eyebrow', d.eyebrow)}</span>
             </span>
 
-            <h1 className="mt-5 text-[clamp(34px,5.2vw,62px)] font-bold leading-[1.1] tracking-[-0.03em]">
+            <h1 className="mt-5 text-[clamp(34px,5.2vw,62px)] leading-[1.1] font-bold tracking-[-0.03em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config} className={styles.penMark}>
                 {text(config, 'titleEm', d.titleEm)}
@@ -48,17 +55,35 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[56ch] text-[17.5px] leading-[1.9] text-(--theme-ink-2)">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[56ch] text-[17.5px] leading-[1.9] text-(--theme-ink-2)"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="outline"
                   size="lg"
@@ -87,7 +112,7 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
                     <dd>
                       <b
                         {...editableItem('stats', index, 'value')}
-                        className={`block text-[28px] font-bold leading-none ${styles.mono}`}
+                        className={`block text-[28px] leading-none font-bold ${styles.mono}`}
                       >
                         {stat.value}
                       </b>
@@ -117,12 +142,19 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
                     <h2 data-editable="boardTitle" className="text-[17px] font-bold">
                       {text(config, 'boardTitle', d.boardTitle)}
                     </h2>
-                    <span data-editable="boardCode" className={`text-[13px] text-(--theme-muted) ${styles.mono}`}>
+                    <span
+                      data-editable="boardCode"
+                      className={`text-[13px] text-(--theme-muted) ${styles.mono}`}
+                    >
                       {text(config, 'boardCode', d.boardCode)}
                     </span>
                   </div>
 
-                  <div className={`py-6 text-[16px] ${styles.mono}`} dir="ltr" {...editableList('boardSteps', steps)}>
+                  <div
+                    className={`py-6 text-[16px] ${styles.mono}`}
+                    dir="ltr"
+                    {...editableList('boardSteps', steps)}
+                  >
                     {steps.map((step, index) => (
                       <span
                         key={step.text}
@@ -139,11 +171,17 @@ export function NokhbehHero({ id, config, storeContext }: TemplateSectionProps) 
                       <span data-editable="boardPatternLabel">
                         {text(config, 'boardPatternLabel', d.boardPatternLabel)}
                       </span>{' '}
-                      <b data-editable="boardPattern" className="font-bold text-(--theme-foreground)">
+                      <b
+                        data-editable="boardPattern"
+                        className="font-bold text-(--theme-foreground)"
+                      >
                         {text(config, 'boardPattern', d.boardPattern)}
                       </b>
                     </span>
-                    <span data-editable="boardTime" className={`text-(--theme-muted) ${styles.mono}`}>
+                    <span
+                      data-editable="boardTime"
+                      className={`text-(--theme-muted) ${styles.mono}`}
+                    >
                       {text(config, 'boardTime', d.boardTime)}
                     </span>
                   </div>

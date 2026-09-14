@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState, type ReactNode } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState, type ReactNode } from 'react';
+import { Loader2 } from 'lucide-react';
 
-import Link from "@/components/ui/link";
-import { useStorePath } from "@/components/providers/store-provider";
-import { useApiQuery } from "@/hooks/use-api-query";
-import { queryKeys } from "@/lib/query/keys";
+import Link from '@/components/ui/link';
+import { useStorePath } from '@/components/providers/store-provider';
+import { useApiQuery } from '@/hooks/use-api-query';
+import { queryKeys } from '@/lib/query/keys';
 import {
   LEGAL_CONSENT_REQUIRED_EVENT,
   acceptPlatformLegalDocuments,
@@ -14,14 +14,14 @@ import {
   getLegalAcceptanceStatus,
   type LegalDocumentDiff,
   type LegalPendingDocument,
-} from "@/lib/api/client";
-import { logger } from "@/lib/logging/app-logger";
-import { signOut } from "@/lib/sign-out";
-import { useTranslation } from "@/lib/i18n/hooks";
+} from '@/lib/api/client';
+import { logger } from '@/lib/logging/app-logger';
+import { signOut } from '@/lib/sign-out';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 const DOCUMENT_LINKS: Record<string, string> = {
-  TERMS: "/terms",
-  PRIVACY: "/privacy",
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
 };
 
 /**
@@ -37,12 +37,9 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: pending, refresh: refreshPending } = useApiQuery<
-    LegalPendingDocument[]
-  >({
+  const { data: pending, refresh: refreshPending } = useApiQuery<LegalPendingDocument[]>({
     queryKey: queryKeys.legalConsent(),
-    queryFn: async (signal) =>
-      (await getLegalAcceptanceStatus({ signal }))?.pending ?? [],
+    queryFn: async (signal) => (await getLegalAcceptanceStatus({ signal }))?.pending ?? [],
   });
 
   // Any 403 from the API means a new version landed since this page loaded.
@@ -51,13 +48,12 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
       void refreshPending();
     };
     window.addEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onRequired);
-    return () =>
-      window.removeEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onRequired);
+    return () => window.removeEventListener(LEGAL_CONSENT_REQUIRED_EVENT, onRequired);
   }, [refreshPending]);
 
   // The diff is a nice-to-have: a failure here must never block acceptance.
   const { data: diffs } = useApiQuery<LegalDocumentDiff[]>({
-    queryKey: [...queryKeys.legalConsent(), "diff"],
+    queryKey: [...queryKeys.legalConsent(), 'diff'],
     queryFn: async (signal) => (await getLegalAcceptanceDiff({ signal })) ?? [],
     enabled: Boolean(pending?.length),
   });
@@ -67,22 +63,22 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
     setError(null);
     try {
       await acceptPlatformLegalDocuments(language);
-      logger.ok("Legal", "ConsentAccepted", {
+      logger.ok('Legal', 'ConsentAccepted', {
         document_count: pending?.length ?? 0,
       });
       window.location.reload();
     } catch (err) {
-      logger.error("Legal", "ConsentAcceptFailed", {
+      logger.error('Legal', 'ConsentAcceptFailed', {
         document_count: pending?.length ?? 0,
       });
-      setError(err instanceof Error ? err.message : t("common.error"));
+      setError(err instanceof Error ? err.message : t('common.error'));
       setSubmitting(false);
     }
   }
 
   async function handleDecline() {
     setSigningOut(true);
-    await signOut(buildPath("/auth/login"));
+    await signOut(buildPath('/auth/login'));
   }
 
   if (!pending?.length) {
@@ -98,15 +94,12 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
         aria-labelledby="legal-consent-title"
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       >
-        <div className="w-full max-w-2xl space-y-5 rounded-2xl border border-theme bg-card p-6 shadow-2xl">
+        <div className="border-theme bg-card w-full max-w-2xl space-y-5 rounded-2xl border p-6 shadow-2xl">
           <div className="space-y-1">
-            <h2
-              id="legal-consent-title"
-              className="text-xl font-bold text-(--theme-foreground)"
-            >
-              {t("legal.reacceptTitle")}
+            <h2 id="legal-consent-title" className="text-xl font-bold text-(--theme-foreground)">
+              {t('legal.reacceptTitle')}
             </h2>
-            <p className="text-sm text-muted">{t("legal.reacceptSubtitle")}</p>
+            <p className="text-muted text-sm">{t('legal.reacceptSubtitle')}</p>
           </div>
 
           <ul className="max-h-[45vh] space-y-3 overflow-y-auto text-sm">
@@ -114,17 +107,12 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
               const diff = diffs?.find((entry) => entry.type === doc.type);
               const fullDocHref = DOCUMENT_LINKS[doc.type];
               return (
-                <li
-                  key={doc.type}
-                  className="rounded-lg border border-theme px-3 py-2.5"
-                >
+                <li key={doc.type} className="border-theme rounded-lg border px-3 py-2.5">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <span className="font-medium text-(--theme-foreground)">
-                        {doc.title}
-                      </span>
-                      <span className="ms-2 text-muted">
-                        ({t("legal.version")} {doc.version})
+                      <span className="font-medium text-(--theme-foreground)">{doc.title}</span>
+                      <span className="text-muted ms-2">
+                        ({t('legal.version')} {doc.version})
                       </span>
                     </div>
                     {fullDocHref ? (
@@ -132,7 +120,7 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
                         href={fullDocHref}
                         className="shrink-0 text-xs text-(--theme-primary) underline"
                       >
-                        {t("legal.viewFullDocument")}
+                        {t('legal.viewFullDocument')}
                       </Link>
                     ) : null}
                   </div>
@@ -143,13 +131,11 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
                           key={`${doc.type}-${index}`}
                           className={
                             line.added
-                              ? "text-green-700 dark:text-green-400"
-                              : "text-red-700 line-through dark:text-red-400"
+                              ? 'text-green-700 dark:text-green-400'
+                              : 'text-red-700 line-through dark:text-red-400'
                           }
                         >
-                          <span aria-hidden="true">
-                            {line.added ? "+ " : "− "}
-                          </span>
+                          <span aria-hidden="true">{line.added ? '+ ' : '− '}</span>
                           {line.value}
                         </li>
                       ))}
@@ -171,10 +157,10 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
               type="button"
               disabled={submitting || signingOut}
               onClick={handleDecline}
-              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-theme text-sm font-medium text-muted transition-colors hover:bg-surface disabled:opacity-60"
+              className="border-theme text-muted hover:bg-surface inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border text-sm font-medium transition-colors disabled:opacity-60"
             >
               {signingOut ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t("legal.declineAndSignOut")}
+              {t('legal.declineAndSignOut')}
             </button>
             <button
               type="button"
@@ -183,7 +169,7 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
               className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-(--theme-primary) text-sm font-semibold text-(--theme-on-primary) transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t("legal.acceptAndContinue")}
+              {t('legal.acceptAndContinue')}
             </button>
           </div>
         </div>

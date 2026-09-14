@@ -24,14 +24,14 @@ artisan, code (programming). Shipped presets: `flow`, `code`, `creative`.
 
 **This batch — run once per row, in a fresh chat each time:**
 
-| # | Vertical | Slug |
-|---|---|---|
-| 7 | English language school | `english` |
-| 8 | High-school math & exam prep | `mathprep` |
-| 9 | Strength & fitness coaching | `workout` |
-| 10 | Astronomy & space science | `aerospace` |
-| 11 | Chef / cooking academy | `cooking` |
-| 12 | Kids' fast mental-math academy (abacus / speed calculation) — **modern, playful direction, not the editorial/textbook feel of the other rows** | `kidsmath` |
+| #   | Vertical                                                                                                                                       | Slug        |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 7   | English language school                                                                                                                        | `english`   |
+| 8   | High-school math & exam prep                                                                                                                   | `mathprep`  |
+| 9   | Strength & fitness coaching                                                                                                                    | `workout`   |
+| 10  | Astronomy & space science                                                                                                                      | `aerospace` |
+| 11  | Chef / cooking academy                                                                                                                         | `cooking`   |
+| 12  | Kids' fast mental-math academy (abacus / speed calculation) — **modern, playful direction, not the editorial/textbook feel of the other rows** | `kidsmath`  |
 
 ⚠️ **Backend generation gap — flag, don't block on it.** The AI-generate-a-template
 flow (`Backend/src/ui-template/templates/template-content.ts`, `ACADEMY_FIELDS`) only
@@ -213,6 +213,6 @@ They are reference views, not part of the template's block list.
   `Backend/src/ui-template/templates/template-presets.ts` and
   `edusphere/lib/template-presets.ts`, plus a `DESIGN_SYSTEMS[<id>]` palette entry in
   `AdminPanel/lib/design-systems.ts`. Nothing about the mockup's course/instructor
-  *content* is stored per-academy — an owner who adopts this preset gets your
+  _content_ is stored per-academy — an owner who adopts this preset gets your
   seed copy until they edit it in the customizer; their real `Course` rows never
   populate these cards automatically.

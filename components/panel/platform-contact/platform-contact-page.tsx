@@ -1,10 +1,10 @@
-import { Container } from "../landing/landing-container";
-import { CircledWord } from "../landing/circled-word";
-import { LandingShell } from "../landing/landing-shell";
-import { SectionHeading } from "../landing/section-heading";
-import { ContactChannels } from "./contact-channels";
-import { ContactForm } from "./contact-form";
-import { CONTACT } from "./contact.messages";
+import { Container } from '../landing/landing-container';
+import { CircledWord } from '../landing/circled-word';
+import { LandingShell } from '../landing/landing-shell';
+import { SectionHeading } from '../landing/section-heading';
+import { ContactChannels } from './contact-channels';
+import { ContactForm } from './contact-form';
+import { CONTACT } from './contact.messages';
 
 type Props = {
   adminLoginUrl: string;
@@ -21,7 +21,7 @@ export function PlatformContactPage({
 }: Props) {
   return (
     <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
-      <section className="bg-lp-hero pb-16 pt-36 lg:pb-20 lg:pt-44">
+      <section className="bg-lp-hero pt-36 pb-16 lg:pt-44 lg:pb-20">
         <Container>
           <SectionHeading
             as="h1"

@@ -35,7 +35,7 @@ export function ParastooCategories({ id, config }: TemplateSectionProps) {
             >
               <span
                 {...editableItem('items', index, 'index')}
-                className="text-[68px] font-bold leading-[0.8] tracking-[-0.06em] text-(--theme-primary) tabular-nums"
+                className="text-[68px] leading-[0.8] font-bold tracking-[-0.06em] text-(--theme-primary) tabular-nums"
               >
                 {item.index}
               </span>
@@ -63,7 +63,10 @@ export function ParastooCategories({ id, config }: TemplateSectionProps) {
                 </ul>
               </div>
 
-              <p {...editableItem('items', index, 'body')} className="text-[15.5px] leading-[1.8] text-(--theme-ink-2)">
+              <p
+                {...editableItem('items', index, 'body')}
+                className="text-[15.5px] leading-[1.8] text-(--theme-ink-2)"
+              >
                 {item.body}
               </p>
             </article>

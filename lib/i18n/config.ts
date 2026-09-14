@@ -3,7 +3,22 @@
  * Maps countries to their default languages and determines text direction (RTL/LTR)
  */
 
-export type LanguageCode = 'en' | 'fa' | 'ar' | 'tr' | 'de' | 'fr' | 'es' | 'it' | 'ru' | 'zh' | 'ja' | 'ko' | 'hi' | 'ur' | 'he';
+export type LanguageCode =
+  | 'en'
+  | 'fa'
+  | 'ar'
+  | 'tr'
+  | 'de'
+  | 'fr'
+  | 'es'
+  | 'it'
+  | 'ru'
+  | 'zh'
+  | 'ja'
+  | 'ko'
+  | 'hi'
+  | 'ur'
+  | 'he';
 
 export const DEFAULT_LANGUAGE: LanguageCode = 'fa';
 
@@ -152,7 +167,7 @@ export const COUNTRY_LANGUAGE_MAP: Record<string, CountryLanguageMapping> = {
   EG: { countryCode: 'EG', defaultLanguage: 'ar', supportedLanguages: ['ar', 'en'] }, // Egypt - Arabic
   IL: { countryCode: 'IL', defaultLanguage: 'he', supportedLanguages: ['he', 'en', 'ar'] }, // Israel - Hebrew
   PK: { countryCode: 'PK', defaultLanguage: 'ur', supportedLanguages: ['ur', 'en'] }, // Pakistan - Urdu (RTL)
-  
+
   // LTR Countries
   EE: { countryCode: 'EE', defaultLanguage: 'en', supportedLanguages: ['en'] }, // Estonia - English (EU beachhead)
   US: { countryCode: 'US', defaultLanguage: 'en', supportedLanguages: ['en', 'es'] }, // USA - English
@@ -210,4 +225,3 @@ export function getSupportedLanguagesForCountry(countryCode: string): LanguageCo
   const mapping = COUNTRY_LANGUAGE_MAP[countryCode.toUpperCase()];
   return mapping?.supportedLanguages || [mapping?.defaultLanguage || DEFAULT_LANGUAGE];
 }
-

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { CalendarClock, Clock3, MessageCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { CalendarClock, Clock3, MessageCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useRef } from 'react';
 
-import { ClassRequestForm } from "@/components/courses/class-request-form";
-import { JoinableClasses } from "@/components/live/joinable-classes";
-import type { TutoringGroupRoom } from "@/lib/api/account-types";
-import { weekdayLabelKey } from "@/lib/courses/weekly-rule";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { toPersianDigits } from "@/lib/utils";
+import { ClassRequestForm } from '@/components/courses/class-request-form';
+import { JoinableClasses } from '@/components/live/joinable-classes';
+import type { TutoringGroupRoom } from '@/lib/api/account-types';
+import { weekdayLabelKey } from '@/lib/courses/weekly-rule';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { toPersianDigits } from '@/lib/utils';
 
 interface PrivateScheduleRequestProps {
   room: TutoringGroupRoom;
@@ -18,7 +18,7 @@ interface PrivateScheduleRequestProps {
 }
 
 const minuteLabel = (minute: number) =>
-  `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
+  `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
 
 /**
  * The stage of a paid private class before its first session exists. Instead
@@ -37,7 +37,7 @@ export function PrivateScheduleRequest({
   const joinable = room.joinable_groups ?? [];
 
   return (
-    <section className="rounded-2xl border border-theme bg-card p-6">
+    <section className="border-theme bg-card rounded-2xl border p-6">
       <div className="flex items-start gap-3">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-(--theme-primary)/10 text-(--theme-primary)">
           {pending ? (
@@ -48,31 +48,24 @@ export function PrivateScheduleRequest({
         </span>
         <div className="min-w-0 flex-1 space-y-1">
           <h2 className="text-lg font-bold text-(--theme-foreground)">
-            {pending
-              ? t("live.privateWaitingTitle")
-              : t("live.privateAskTimesTitle")}
+            {pending ? t('live.privateWaitingTitle') : t('live.privateAskTimesTitle')}
           </h2>
-          <p className="text-sm text-muted">
+          <p className="text-muted text-sm">
             {pending
-              ? t("live.privateWaitingHint").replace(
-                  "{teacher}",
-                  room.Tutor?.display_name ?? "",
-                )
-              : t("live.privateAskTimesHint")}
+              ? t('live.privateWaitingHint').replace('{teacher}', room.Tutor?.display_name ?? '')
+              : t('live.privateAskTimesHint')}
           </p>
         </div>
       </div>
 
       {joinable.length ? (
-        <div className="mt-5 border-b border-theme pb-5">
+        <div className="border-theme mt-5 border-b pb-5">
           <JoinableClasses
             engagementId={room.id}
             groups={joinable}
             paidValue={room.paid_value ?? 0}
             courseHref={courseHref}
-            onKeepPrivate={() =>
-              requestRef.current?.scrollIntoView({ behavior: "smooth" })
-            }
+            onKeepPrivate={() => requestRef.current?.scrollIntoView({ behavior: 'smooth' })}
           />
         </div>
       ) : null}
@@ -80,7 +73,7 @@ export function PrivateScheduleRequest({
       <div className="mt-5" ref={requestRef}>
         {joinable.length ? (
           <h3 className="mb-3 text-sm font-black text-(--theme-foreground)">
-            {t("live.privateOrAskTimes")}
+            {t('live.privateOrAskTimes')}
           </h3>
         ) : null}
         {pending ? (
@@ -88,9 +81,9 @@ export function PrivateScheduleRequest({
             {pending.windows.map((w, index) => (
               <li
                 key={index}
-                className="rounded-lg border border-theme bg-surface px-3 py-1.5 text-sm"
+                className="border-theme bg-surface rounded-lg border px-3 py-1.5 text-sm"
               >
-                {t(weekdayLabelKey(w.weekday) ?? "")}{" "}
+                {t(weekdayLabelKey(w.weekday) ?? '')}{' '}
                 {toPersianDigits(
                   `${minuteLabel(w.start_minute)}–${minuteLabel(w.end_minute)}`,
                   language,
@@ -115,7 +108,7 @@ export function PrivateScheduleRequest({
         className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
       >
         <MessageCircle className="size-4" aria-hidden="true" />
-        {t("live.privateMessageTeacher")}
+        {t('live.privateMessageTeacher')}
       </button>
     </section>
   );

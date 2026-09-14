@@ -55,14 +55,13 @@ export type AccessCourseRef = {
  * Note it carries no progress, so the courses page still joins it against
  * `GET /v1/enrollments`.
  */
-export type CourseAccessType =
-  "STAFF_GRANT" | "ONE_TIME" | "BUNDLE" | "SUBSCRIPTION" | "TUTORING";
+export type CourseAccessType = 'STAFF_GRANT' | 'ONE_TIME' | 'BUNDLE' | 'SUBSCRIPTION' | 'TUTORING';
 
 export type CourseAccessRow = {
   course_id: string;
   title: string;
   slug: string | null;
-  access: "OWNED" | "EXPIRING";
+  access: 'OWNED' | 'EXPIRING';
   expires_at: string | null;
   access_type: CourseAccessType;
 };
@@ -105,7 +104,7 @@ export type SubmissionSummary = {
 export type QuizAttemptSummary = {
   id: string;
   quiz_id: string;
-  status: "IN_PROGRESS" | "PENDING_REVIEW" | "GRADED" | string;
+  status: 'IN_PROGRESS' | 'PENDING_REVIEW' | 'GRADED' | string;
   score: number;
   max_score: number;
   passed?: boolean | null;
@@ -125,12 +124,7 @@ export type QuizAttemptSummary = {
 };
 
 export type PaymentStatus =
-  | "PENDING"
-  | "PAID"
-  | "FAILED"
-  | "CANCELLED"
-  | "REFUNDED"
-  | "PARTIALLY_REFUNDED";
+  'PENDING' | 'PAID' | 'FAILED' | 'CANCELLED' | 'REFUNDED' | 'PARTIALLY_REFUNDED';
 
 export type PaymentSummary = {
   id: string;
@@ -256,7 +250,7 @@ export type SessionMaterial = {
   id: string;
   title: string;
   order: number;
-  kind: "DOCUMENT" | "VIDEO";
+  kind: 'DOCUMENT' | 'VIDEO';
   /** Set for videos, so the client can open a secure playback session. */
   video_id: string | null;
   /** Resolved on the server: a video that may not be saved is signed. */
@@ -280,7 +274,7 @@ export type SessionRecording = {
 
 export type MySubmission = {
   id: string;
-  status: "PENDING" | "SUBMITTED" | "GRADED" | "REJECTED";
+  status: 'PENDING' | 'SUBMITTED' | 'GRADED' | 'REJECTED';
   score: number | null;
   graded_at: string | null;
 };
@@ -344,7 +338,7 @@ export type JoinableGroup = {
   ends_on: string | null;
   term_weeks: number;
   session_count: number | null;
-  Slots: Omit<MyTutoringGroupSlot, "Lesson">[];
+  Slots: Omit<MyTutoringGroupSlot, 'Lesson'>[];
   Tutor: { id: string; display_name: string | null } | null;
 };
 

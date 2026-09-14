@@ -13,9 +13,7 @@ test.describe('Student account — unauthenticated guard (no backend)', () => {
   const GUARDED = ['/account', '/account/orders', '/checkout'];
 
   for (const route of GUARDED) {
-    test(`unauthenticated ${route} → redirected to /auth/login`, async ({
-      page
-    }) => {
+    test(`unauthenticated ${route} → redirected to /auth/login`, async ({ page }) => {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       await expect(page).toHaveURL(/\/auth\/login/, { timeout: 10_000 });
     });
@@ -40,9 +38,9 @@ test.describe('Student account — authenticated @backend', () => {
     await page.goto('/account?tab=settings');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
     // Change-password form should be visible
-    await expect(
-      page.locator('body').getByText(/change password|تغییر رمز/i)
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('body').getByText(/change password|تغییر رمز/i)).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('account transactions tab renders without errors', async ({ page }) => {
@@ -63,9 +61,9 @@ test.describe('Student account — authenticated @backend', () => {
   test('account sidebar is visible with user identity', async ({ page }) => {
     await page.goto('/account');
     // The AccountSidebar shows the user's name/email
-    await expect(
-      page.locator('[class*="sidebar"], aside, nav').first()
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[class*="sidebar"], aside, nav').first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test('navigating from catalog to account and back works', async ({ page }) => {
@@ -94,10 +92,7 @@ test.describe('Student login — happy path @backend', () => {
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
 
-  test('wrong password shows an error and stays on login', async ({
-    page,
-    baseURL
-  }) => {
+  test('wrong password shows an error and stays on login', async ({ page, baseURL }) => {
     await setAcademyCookie(page.context(), baseURL!);
     await page.goto('/auth/login');
     await page.locator('#identifier').fill(STUDENT_EMAIL);

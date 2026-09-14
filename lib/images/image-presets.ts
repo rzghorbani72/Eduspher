@@ -8,8 +8,7 @@
  * call sites (CSS backgrounds, e-mail templates) without pulling in React.
  */
 
-export type ImagePresetName =
-  "avatar" | "thumb" | "card" | "cover" | "banner" | "logo";
+export type ImagePresetName = 'avatar' | 'thumb' | 'card' | 'cover' | 'banner' | 'logo';
 
 export interface ImagePreset {
   /** Rendered width per breakpoint — the browser picks the srcset entry from this. */
@@ -22,24 +21,24 @@ export interface ImagePreset {
 
 export const IMAGE_PRESETS: Record<ImagePresetName, ImagePreset> = {
   // Small and round: extra pixels are invisible here, so quality goes down too.
-  avatar: { sizes: "48px", quality: 60, priority: false },
-  thumb: { sizes: "96px", quality: 60, priority: false },
+  avatar: { sizes: '48px', quality: 60, priority: false },
+  thumb: { sizes: '96px', quality: 60, priority: false },
   // Grid cards: full width on phones, then two and three per row.
   card: {
-    sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+    sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
     quality: 75,
     priority: false,
   },
   // A single large image inside a content column.
   cover: {
-    sizes: "(max-width: 1024px) 100vw, 66vw",
+    sizes: '(max-width: 1024px) 100vw, 66vw',
     quality: 75,
     priority: false,
   },
   // Edge-to-edge hero. The one preset that is eager by default.
-  banner: { sizes: "100vw", quality: 75, priority: true },
+  banner: { sizes: '100vw', quality: 75, priority: true },
   // Logos are flat art where compression artefacts show, so quality goes up.
-  logo: { sizes: "160px", quality: 85, priority: false },
+  logo: { sizes: '160px', quality: 85, priority: false },
 };
 
 /**
@@ -49,4 +48,4 @@ export const IMAGE_PRESETS: Record<ImagePresetName, ImagePreset> = {
  * every file at build time.
  */
 export const IMAGE_BLUR_PLACEHOLDER =
-  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNlNGU0ZTciLz48L3N2Zz4=";
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNlNGU0ZTciLz48L3N2Zz4=';

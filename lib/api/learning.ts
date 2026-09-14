@@ -1,12 +1,7 @@
-"use client";
+'use client';
 
-import {
-  getJson,
-  patchJson,
-  postJson,
-  type RequestOptions,
-} from "@/lib/api/client";
-import type { LessonSummary, Pagination } from "@/lib/api/types";
+import { getJson, patchJson, postJson, type RequestOptions } from '@/lib/api/client';
+import type { LessonSummary, Pagination } from '@/lib/api/types';
 
 type Envelope<T> = {
   message: string;
@@ -14,7 +9,7 @@ type Envelope<T> = {
   data: T;
 };
 
-export type ProgressStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+export type ProgressStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
 
 export interface LearningProgress {
   id: string;
@@ -39,7 +34,7 @@ export interface LearningProgress {
   };
 }
 
-export interface LessonDetail extends Omit<LessonSummary, "id"> {
+export interface LessonDetail extends Omit<LessonSummary, 'id'> {
   id: string;
   content?: string | null;
   is_published?: boolean;
@@ -72,7 +67,7 @@ export interface Assignment {
   };
 }
 
-export type SubmissionStatus = "PENDING" | "SUBMITTED" | "GRADED" | "REJECTED";
+export type SubmissionStatus = 'PENDING' | 'SUBMITTED' | 'GRADED' | 'REJECTED';
 
 export interface AssignmentSubmission {
   id: string;
@@ -92,14 +87,8 @@ export interface AssignmentSubmission {
   GradedBy?: { id: string; display_name: string } | null;
 }
 
-export const getLearningLesson = async (
-  lessonId: string,
-  options?: RequestOptions,
-) => {
-  const response = await getJson<Envelope<LessonDetail>>(
-    `/lessons/${lessonId}`,
-    options,
-  );
+export const getLearningLesson = async (lessonId: string, options?: RequestOptions) => {
+  const response = await getJson<Envelope<LessonDetail>>(`/lessons/${lessonId}`, options);
   return response.data;
 };
 
@@ -113,10 +102,10 @@ export const getProgress = async (
   options?: RequestOptions,
 ) => {
   const query = new URLSearchParams();
-  if (params.enrollmentId) query.set("enrollment_id", params.enrollmentId);
-  if (params.courseId) query.set("course_id", params.courseId);
-  if (params.lessonId) query.set("lesson_id", params.lessonId);
-  query.set("limit", String(params.limit ?? 100));
+  if (params.enrollmentId) query.set('enrollment_id', params.enrollmentId);
+  if (params.courseId) query.set('course_id', params.courseId);
+  if (params.lessonId) query.set('lesson_id', params.lessonId);
+  query.set('limit', String(params.limit ?? 100));
   const response = await getJson<
     Envelope<{ progress: LearningProgress[]; pagination: Pagination }>
   >(`/progress?${query.toString()}`, options);
@@ -129,15 +118,12 @@ export const saveProgress = async (payload: {
   status: ProgressStatus;
   watchTime: number;
 }) => {
-  const response = await postJson<Envelope<{ progress: LearningProgress }>>(
-    "/progress",
-    {
-      enrollment_id: payload.enrollmentId,
-      lesson_id: payload.lessonId,
-      status: payload.status,
-      watch_time: Math.max(0, Math.floor(payload.watchTime)),
-    },
-  );
+  const response = await postJson<Envelope<{ progress: LearningProgress }>>('/progress', {
+    enrollment_id: payload.enrollmentId,
+    lesson_id: payload.lessonId,
+    status: payload.status,
+    watch_time: Math.max(0, Math.floor(payload.watchTime)),
+  });
   return response.data.progress;
 };
 
@@ -168,16 +154,15 @@ export const listAssignments = async (
   options?: RequestOptions,
 ) => {
   const query = new URLSearchParams();
-  if (params.lessonId) query.set("lesson_id", params.lessonId);
-  if (params.courseId) query.set("course_id", params.courseId);
-  if (params.tutoringGroupId)
-    query.set("tutoring_group_id", params.tutoringGroupId);
-  if (params.tutoringSessionId)
-    query.set("tutoring_session_id", params.tutoringSessionId);
-  query.set("limit", String(params.limit ?? 100));
-  const response = await getJson<
-    Envelope<{ assignments: Assignment[]; pagination: Pagination }>
-  >(`/assignments?${query.toString()}`, options);
+  if (params.lessonId) query.set('lesson_id', params.lessonId);
+  if (params.courseId) query.set('course_id', params.courseId);
+  if (params.tutoringGroupId) query.set('tutoring_group_id', params.tutoringGroupId);
+  if (params.tutoringSessionId) query.set('tutoring_session_id', params.tutoringSessionId);
+  query.set('limit', String(params.limit ?? 100));
+  const response = await getJson<Envelope<{ assignments: Assignment[]; pagination: Pagination }>>(
+    `/assignments?${query.toString()}`,
+    options,
+  );
   return response.data;
 };
 
@@ -191,10 +176,10 @@ export const listSubmissions = async (
   options?: RequestOptions,
 ) => {
   const query = new URLSearchParams();
-  if (params.assignmentId) query.set("assignment_id", params.assignmentId);
-  if (params.enrollmentId) query.set("enrollment_id", params.enrollmentId);
-  if (params.status) query.set("status", params.status);
-  query.set("limit", String(params.limit ?? 100));
+  if (params.assignmentId) query.set('assignment_id', params.assignmentId);
+  if (params.enrollmentId) query.set('enrollment_id', params.enrollmentId);
+  if (params.status) query.set('status', params.status);
+  query.set('limit', String(params.limit ?? 100));
   const response = await getJson<
     Envelope<{ submissions: AssignmentSubmission[]; pagination: Pagination }>
   >(`/assignments/submissions?${query.toString()}`, options);
@@ -211,25 +196,22 @@ export const submitAssignment = async (payload: {
   content?: string;
   fileUrl?: string;
 }) => {
-  const response = await postJson<Envelope<AssignmentSubmission>>(
-    "/assignments/submit",
-    {
-      assignment_id: payload.assignmentId,
-      ...(payload.content ? { content: payload.content } : {}),
-      ...(payload.fileUrl ? { file_url: payload.fileUrl } : {}),
-    },
-  );
+  const response = await postJson<Envelope<AssignmentSubmission>>('/assignments/submit', {
+    assignment_id: payload.assignmentId,
+    ...(payload.content ? { content: payload.content } : {}),
+    ...(payload.fileUrl ? { file_url: payload.fileUrl } : {}),
+  });
   return response.data;
 };
 
 export type LearningActivityType =
-  | "VIDEO_HEARTBEAT"
-  | "LESSON_COMPLETED"
-  | "QUIZ_SUBMITTED"
-  | "ASSIGNMENT_SUBMITTED"
-  | "LIVE_ATTENDED"
-  | "TUTORING_SESSION"
-  | "ENROLLMENT_ACTIVATED"
+  | 'VIDEO_HEARTBEAT'
+  | 'LESSON_COMPLETED'
+  | 'QUIZ_SUBMITTED'
+  | 'ASSIGNMENT_SUBMITTED'
+  | 'LIVE_ATTENDED'
+  | 'TUTORING_SESSION'
+  | 'ENROLLMENT_ACTIVATED'
   | string;
 
 export interface LearningActivity {
@@ -253,8 +235,7 @@ export interface LearningSummaryEnrollment {
   Course?: { id: string; title: string } | null;
 }
 
-export type TutoringEngagementStatus =
-  "PENDING" | "ACTIVE" | "COMPLETED" | "CANCELLED" | "EXPIRED";
+export type TutoringEngagementStatus = 'PENDING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
 
 export interface TutoringEngagement {
   id: string;
@@ -287,14 +268,11 @@ export const recordVideoHeartbeat = async (payload: {
       media_duration?: number;
       progress_percent?: number;
     }>
-  >("/learning-record/video-heartbeat", {
+  >('/learning-record/video-heartbeat', {
     lesson_id: payload.lessonId,
     enrollment_id: payload.enrollmentId,
     last_position: Math.max(0, Math.floor(payload.lastPosition)),
-    active_seconds: Math.min(
-      120,
-      Math.max(0, Math.floor(payload.activeSeconds)),
-    ),
+    active_seconds: Math.min(120, Math.max(0, Math.floor(payload.activeSeconds))),
     ...(payload.segmentStart !== undefined
       ? { segment_start: Math.max(0, Math.floor(payload.segmentStart)) }
       : {}),
@@ -310,11 +288,11 @@ export const recordVideoHeartbeat = async (payload: {
 
 export const getLearningSummary = async (params?: { courseId?: string }) => {
   const query = new URLSearchParams();
-  if (params?.courseId) query.set("course_id", params.courseId);
-  const suffix = query.toString() ? `?${query.toString()}` : "";
-  const response = await getJson<
-    Envelope<{ enrollments: LearningSummaryEnrollment[] }>
-  >(`/learning-record/summary${suffix}`);
+  if (params?.courseId) query.set('course_id', params.courseId);
+  const suffix = query.toString() ? `?${query.toString()}` : '';
+  const response = await getJson<Envelope<{ enrollments: LearningSummaryEnrollment[] }>>(
+    `/learning-record/summary${suffix}`,
+  );
   return response.data;
 };
 
@@ -325,24 +303,20 @@ export const getLearningTimeline = async (params?: {
   limit?: number;
 }) => {
   const query = new URLSearchParams();
-  if (params?.enrollmentId) query.set("enrollment_id", params.enrollmentId);
-  if (params?.courseId) query.set("course_id", params.courseId);
-  query.set("page", String(params?.page ?? 1));
-  query.set("limit", String(params?.limit ?? 20));
+  if (params?.enrollmentId) query.set('enrollment_id', params.enrollmentId);
+  if (params?.courseId) query.set('course_id', params.courseId);
+  query.set('page', String(params?.page ?? 1));
+  query.set('limit', String(params?.limit ?? 20));
   const response = await getJson<
     Envelope<{ activities: LearningActivity[]; pagination: Pagination }>
   >(`/learning-record/timeline?${query.toString()}`);
   return response.data;
 };
 
-export const listTutoringEngagements = async (params?: {
-  courseId?: string;
-}) => {
+export const listTutoringEngagements = async (params?: { courseId?: string }) => {
   const query = new URLSearchParams();
-  if (params?.courseId) query.set("course_id", params.courseId);
-  const suffix = query.toString() ? `?${query.toString()}` : "";
-  const response = await getJson<Envelope<TutoringEngagement[]>>(
-    `/tutoring/engagements${suffix}`,
-  );
+  if (params?.courseId) query.set('course_id', params.courseId);
+  const suffix = query.toString() ? `?${query.toString()}` : '';
+  const response = await getJson<Envelope<TutoringEngagement[]>>(`/tutoring/engagements${suffix}`);
   return response.data ?? [];
 };

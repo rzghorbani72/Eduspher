@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useState } from 'react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
-import { isPasswordValid, sanitizePasswordInput } from "@/lib/password-utils";
-import { PasswordStrength } from "@/components/ui/password-strength";
-import { AuthError } from "@/components/auth/auth-notice";
-import type { useLogin } from "@/hooks/use-login";
+import { cn } from '@/lib/utils';
+import { isPasswordValid, sanitizePasswordInput } from '@/lib/password-utils';
+import { PasswordStrength } from '@/components/ui/password-strength';
+import { AuthError } from '@/components/auth/auth-notice';
+import type { useLogin } from '@/hooks/use-login';
 
 type Login = ReturnType<typeof useLogin>;
 
@@ -30,27 +30,27 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
         login.submitNewPassword();
       }}
     >
-      <p className="text-sm text-muted-foreground">{t("auth.setNewPasswordDescription")}</p>
+      <p className="text-muted-foreground text-sm">{t('auth.setNewPasswordDescription')}</p>
 
       <div className="space-y-2">
         <div className="relative">
           <input
             id="new-password"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             dir="ltr"
             autoComplete="new-password"
             autoFocus
-            placeholder={t("auth.newPassword")}
+            placeholder={t('auth.newPassword')}
             value={login.newPassword}
             onChange={(e) => login.setNewPassword(sanitizePasswordInput(e.target.value))}
-            className={cn("auth-input with-toggle")}
+            className={cn('auth-input with-toggle')}
           />
           <button
             type="button"
             tabIndex={-1}
             onClick={() => setShowPassword((v) => !v)}
             className="auth-input-toggle"
-            aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+            aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -60,10 +60,10 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
 
         <input
           id="confirm-new-password"
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           dir="ltr"
           autoComplete="new-password"
-          placeholder={t("auth.confirmPassword")}
+          placeholder={t('auth.confirmPassword')}
           value={login.confirmNewPassword}
           onChange={(e) => login.setConfirmNewPassword(sanitizePasswordInput(e.target.value))}
           className="auth-input"
@@ -75,14 +75,10 @@ export function SetNewPasswordStep({ login }: { login: Login }) {
       <button
         type="submit"
         className="auth-submit-btn"
-        disabled={
-          login.pending ||
-          !isPasswordValid(login.newPassword) ||
-          !login.confirmNewPassword
-        }
+        disabled={login.pending || !isPasswordValid(login.newPassword) || !login.confirmNewPassword}
       >
         {login.pending && <Loader2 className="h-4 w-4 animate-spin" />}
-        {login.pending ? t("auth.settingPassword") : t("auth.setPasswordAndContinue")}
+        {login.pending ? t('auth.settingPassword') : t('auth.setPasswordAndContinue')}
       </button>
     </form>
   );

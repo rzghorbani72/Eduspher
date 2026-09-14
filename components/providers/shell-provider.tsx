@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext, useContext, type PropsWithChildren } from "react";
+import { createContext, useContext, type PropsWithChildren } from 'react';
 
 type ShellContextValue = {
   isPanelRoot: boolean;
@@ -40,7 +40,7 @@ export function ShellProvider({
 export function useShell() {
   const context = useContext(ShellContext);
   if (!context) {
-    throw new Error("useShell must be used within a ShellProvider");
+    throw new Error('useShell must be used within a ShellProvider');
   }
   return context;
 }

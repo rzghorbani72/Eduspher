@@ -1,7 +1,7 @@
-import { forwardRef } from "react";
-import type { InputHTMLAttributes, CSSProperties } from "react";
+import { forwardRef } from 'react';
+import type { InputHTMLAttributes, CSSProperties } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>;
 
@@ -12,7 +12,7 @@ const inputBaseStyle: CSSProperties = {
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = "text", value, style, ...props }, ref) => {
+  ({ className, type = 'text', value, style, ...props }, ref) => {
     // Only control the value when one is actually provided. Forcing value=""
     // for uncontrolled inputs (e.g. react-hook-form `{...register()}` fields)
     // pins them empty and makes typing impossible.
@@ -24,15 +24,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         type={type}
         {...(isControlled ? { value: String(value) } : {})}
         className={cn(
-          "flex h-11 w-full rounded-xl border bg-surface px-4 text-sm text-(--theme-foreground) transition-colors placeholder:text-muted placeholder:opacity-70 focus-visible:border-(--theme-primary) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--theme-primary)/20",
-          className
+          'bg-surface placeholder:text-muted flex h-11 w-full rounded-xl border px-4 text-sm text-(--theme-foreground) transition-colors placeholder:opacity-70 focus-visible:border-(--theme-primary) focus-visible:ring-2 focus-visible:ring-(--theme-primary)/20 focus-visible:outline-none',
+          className,
         )}
         style={{ ...inputBaseStyle, ...style }}
         {...props}
       />
     );
-  }
+  },
 );
 
-Input.displayName = "Input";
-
+Input.displayName = 'Input';

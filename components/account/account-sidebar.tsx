@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState, useTransition } from "react";
+import { useState, useTransition } from 'react';
 
-import { AccountNavGroup } from "@/components/account/account-nav-group";
-import { AccountNavItem } from "@/components/account/account-nav-item";
-import { ACCOUNT_NAV_SECTIONS } from "@/components/account/account-nav-sections";
-import { AnimatedHoverIcon } from "@/components/account/animated-hover-icon";
-import { AppImage } from "@/components/ui/app-image";
-import { HouseIcon } from "@animateicons/react/lucide/house-icon";
-import { LogOutIcon } from "@animateicons/react/lucide/log-out-icon";
-import { BadgeCheck } from "lucide-react";
+import { AccountNavGroup } from '@/components/account/account-nav-group';
+import { AccountNavItem } from '@/components/account/account-nav-item';
+import { ACCOUNT_NAV_SECTIONS } from '@/components/account/account-nav-sections';
+import { AnimatedHoverIcon } from '@/components/account/animated-hover-icon';
+import { AppImage } from '@/components/ui/app-image';
+import { HouseIcon } from '@animateicons/react/lucide/house-icon';
+import { LogOutIcon } from '@animateicons/react/lucide/log-out-icon';
+import { BadgeCheck } from 'lucide-react';
 
-import Link from "@/components/ui/link";
-import { useLocaleFormat } from "@/hooks/use-locale-digits";
-import { roleLabel } from "@/lib/account-labels";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { signOut } from "@/lib/sign-out";
+import Link from '@/components/ui/link';
+import { useLocaleFormat } from '@/hooks/use-locale-digits';
+import { roleLabel } from '@/lib/account-labels';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { signOut } from '@/lib/sign-out';
 
 interface AccountSidebarProps {
   displayName: string;
@@ -32,10 +32,10 @@ interface AccountSidebarProps {
 
 const initialsOf = (name: string) =>
   name
-    .split(" ")
+    .split(' ')
     .filter(Boolean)
     .map((word) => word[0])
-    .join("")
+    .join('')
     .slice(0, 2)
     .toUpperCase();
 
@@ -51,7 +51,7 @@ export function AccountSidebar({
 }: AccountSidebarProps) {
   const { t } = useTranslation();
   const format = useLocaleFormat();
-  const homePath = basePath.replace(/\/account$/, "") || "/";
+  const homePath = basePath.replace(/\/account$/, '') || '/';
   const role = roleLabel(rawRole, t);
   const [isPending, startTransition] = useTransition();
   const [homeHovered, setHomeHovered] = useState(false);
@@ -65,7 +65,7 @@ export function AccountSidebar({
 
   return (
     <aside className="flex w-full flex-col gap-4 lg:sticky lg:top-24">
-      <div className="flex items-center gap-3 rounded-xl border border-theme bg-card p-4 text-start lg:flex-col lg:p-5 lg:text-center">
+      <div className="border-theme bg-card flex items-center gap-3 rounded-xl border p-4 text-start lg:flex-col lg:p-5 lg:text-center">
         {avatarUrl ? (
           <AppImage
             src={avatarUrl}
@@ -82,24 +82,17 @@ export function AccountSidebar({
           </div>
         )}
         <div className="flex min-w-0 flex-col gap-1 lg:items-center lg:gap-1.5">
-          <p className="font-semibold text-(--theme-foreground)">
-            {displayName}
-          </p>
+          <p className="font-semibold text-(--theme-foreground)">{displayName}</p>
           {contact ? (
-            <p className="text-xs break-all text-muted" dir="ltr">
+            <p className="text-muted text-xs break-all" dir="ltr">
               {format.digits(contact)}
             </p>
           ) : null}
-          {academyName ? (
-            <p className="hidden text-xs text-muted lg:block">{academyName}</p>
-          ) : null}
+          {academyName ? <p className="text-muted hidden text-xs lg:block">{academyName}</p> : null}
           {role ? (
-            <span className="inline-flex w-fit items-center gap-1 rounded-full lg:mt-1 bg-(--theme-primary)/15 px-2.5 py-1 text-xs font-semibold text-(--theme-primary-ink)">
+            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-(--theme-primary)/15 px-2.5 py-1 text-xs font-semibold text-(--theme-primary-ink) lg:mt-1">
               {isVerified ? (
-                <BadgeCheck
-                  className="size-3.5 shrink-0"
-                  aria-label={t("account.verified")}
-                />
+                <BadgeCheck className="size-3.5 shrink-0" aria-label={t('account.verified')} />
               ) : null}
               {role}
             </span>
@@ -112,9 +105,7 @@ export function AccountSidebar({
           {ACCOUNT_NAV_SECTIONS.flatMap((section) =>
             section.items.map((item) => {
               const href = `${basePath}${item.segment}`;
-              const isActive = currentPath.startsWith(
-                `/account${item.segment}`,
-              );
+              const isActive = currentPath.startsWith(`/account${item.segment}`);
               return (
                 <AccountNavItem
                   key={item.segment}
@@ -145,10 +136,10 @@ export function AccountSidebar({
         href={homePath}
         onMouseEnter={() => setHomeHovered(true)}
         onMouseLeave={() => setHomeHovered(false)}
-        className="hidden items-center gap-2 rounded-lg px-4 py-2.5 text-sm text-muted transition-colors hover:text-foreground lg:flex"
+        className="text-muted hover:text-foreground hidden items-center gap-2 rounded-lg px-4 py-2.5 text-sm transition-colors lg:flex"
       >
         <AnimatedHoverIcon icon={HouseIcon} playing={homeHovered} size={16} />
-        {t("account.backToHome")}
+        {t('account.backToHome')}
       </Link>
 
       <button
@@ -157,14 +148,10 @@ export function AccountSidebar({
         disabled={isPending}
         onMouseEnter={() => setLogoutHovered(true)}
         onMouseLeave={() => setLogoutHovered(false)}
-        className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-60 lg:gap-3"
+        className="text-destructive hover:bg-destructive/10 flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors disabled:opacity-60 lg:gap-3"
       >
-        <AnimatedHoverIcon
-          icon={LogOutIcon}
-          playing={!isPending && logoutHovered}
-          size={16}
-        />
-        {isPending ? t("common.loading") : t("auth.logout")}
+        <AnimatedHoverIcon icon={LogOutIcon} playing={!isPending && logoutHovered} size={16} />
+        {isPending ? t('common.loading') : t('auth.logout')}
       </button>
     </aside>
   );

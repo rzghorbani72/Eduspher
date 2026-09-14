@@ -2,8 +2,7 @@ import { Page, BrowserContext, expect } from '@playwright/test';
 
 // The academy cookie name comes from NEXT_PUBLIC_ACADEMY_ID_COOKIE in env.local.
 // Default falls back to the library default so tests work without the env set.
-const ACADEMY_ID_COOKIE =
-  process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'eduspher_academy_id';
+const ACADEMY_ID_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'eduspher_academy_id';
 
 // The app uses NEXT_PUBLIC_DEFAULT_ACADEMY_ID=1 from env.local, so this cookie
 // is only needed when the env default is not set or we want a specific academy.
@@ -12,13 +11,8 @@ export const ACADEMY_ID = process.env.E2E_ACADEMY_ID ?? '1';
 export const STUDENT_EMAIL = process.env.E2E_STUDENT_EMAIL ?? '';
 export const STUDENT_PASSWORD = process.env.E2E_STUDENT_PASSWORD ?? 'Passw0rd!';
 
-export async function setAcademyCookie(
-  context: BrowserContext,
-  baseURL: string
-): Promise<void> {
-  await context.addCookies([
-    { name: ACADEMY_ID_COOKIE, value: ACADEMY_ID, url: baseURL }
-  ]);
+export async function setAcademyCookie(context: BrowserContext, baseURL: string): Promise<void> {
+  await context.addCookies([{ name: ACADEMY_ID_COOKIE, value: ACADEMY_ID, url: baseURL }]);
 }
 
 /**
@@ -30,7 +24,7 @@ export async function studentLogin(
   page: Page,
   baseURL: string,
   email = STUDENT_EMAIL,
-  password = STUDENT_PASSWORD
+  password = STUDENT_PASSWORD,
 ): Promise<void> {
   await setAcademyCookie(page.context(), baseURL);
   await page.goto('/auth/login');

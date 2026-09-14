@@ -42,8 +42,7 @@ export interface LiveSessionSummary {
   notes?: string | null;
 }
 
-export type LessonType =
-  "VIDEO" | "AUDIO" | "TEXT" | "QUIZ" | "ASSIGNMENT" | "LIVE";
+export type LessonType = 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'LIVE';
 
 export interface LessonQuizSummary {
   id: string;
@@ -98,10 +97,8 @@ export interface SeasonSummary {
   Lesson?: LessonSummary[];
 }
 
-export type CourseDifficulty =
-  "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
-export type CoursePricingType =
-  "FREE" | "ONE_TIME" | "PAYMENT_PLAN" | "SUBSCRIPTION";
+export type CourseDifficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+export type CoursePricingType = 'FREE' | 'ONE_TIME' | 'PAYMENT_PLAN' | 'SUBSCRIPTION';
 
 export interface CourseSummary {
   id: string;
@@ -121,11 +118,11 @@ export interface CourseSummary {
   is_featured: boolean;
   is_certificate: boolean;
   /** LIVE = taught live on a timetable; OFFLINE = recorded lessons. */
-  course_type?: "LIVE" | "OFFLINE" | null;
+  course_type?: 'LIVE' | 'OFFLINE' | null;
   /** Live classes running for this course; a live course is measured in these. */
   classes_count?: number | null;
   /** A live course sells seats, so its price lives on these, not on `price`. */
-  TutoringOffer?: Array<{ kind: "GROUP" | "SOLO"; price: number }> | null;
+  TutoringOffer?: Array<{ kind: 'GROUP' | 'SOLO'; price: number }> | null;
   pricing_type?: CoursePricingType | null;
   /** null = lifetime access; otherwise access expires this many days after purchase. */
   access_duration_days?: number | null;
@@ -215,8 +212,8 @@ export interface StoreSummary {
   language?: string;
   currency?: string;
   currency_symbol?: string;
-  currency_position?: "before" | "after";
-  primary_verification_method?: "phone" | "email";
+  currency_position?: 'before' | 'after';
+  primary_verification_method?: 'phone' | 'email';
   domain?: {
     public_address?: string | null;
     private_address?: string | null;

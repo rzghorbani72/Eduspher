@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { ClassPurchaseSummary } from "@/components/courses/class-purchase-summary";
-import { SlotChips } from "@/components/live/slot-chips";
-import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
-import { usePurchase } from "@/components/purchase/use-purchase";
-import { useSeatHold } from "@/components/purchase/use-seat-hold";
-import type { JoinableGroup, MoveToClassResult } from "@/lib/api/account-types";
-import { postJson } from "@/lib/api/client";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { logger } from "@/lib/logging/app-logger";
-import { errorFields } from "@/lib/logging/error-fields";
-import { formatCurrency, formatNumber, toPersianDigits } from "@/lib/utils";
+import { ClassPurchaseSummary } from '@/components/courses/class-purchase-summary';
+import { SlotChips } from '@/components/live/slot-chips';
+import { CheckoutDialog } from '@/components/purchase/checkout-dialog';
+import { usePurchase } from '@/components/purchase/use-purchase';
+import { useSeatHold } from '@/components/purchase/use-seat-hold';
+import type { JoinableGroup, MoveToClassResult } from '@/lib/api/account-types';
+import { postJson } from '@/lib/api/client';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
+import { formatCurrency, formatNumber, toPersianDigits } from '@/lib/utils';
 
 interface MoveToClassPanelProps {
   engagementId: string;
@@ -37,8 +37,8 @@ export function MoveToClassPanel({
   const [seats, setSeats] = useState(1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [topUp, setTopUp] = useState<MoveToClassResult["top_up"]>(null);
-  const { purchase, gateways, reset } = usePurchase({ loginHref: "#" });
+  const [topUp, setTopUp] = useState<MoveToClassResult['top_up']>(null);
+  const { purchase, gateways, reset } = usePurchase({ loginHref: '#' });
   const hold = useSeatHold({
     groupId: group.id,
     seats: topUp?.seats ?? 0,
@@ -51,10 +51,7 @@ export function MoveToClassPanel({
   const cost = seats * group.seat_price;
   const remaining = paidValue - cost;
   const fmt = (amount: number) =>
-    toPersianDigits(
-      formatCurrency(amount, { divideBy: 1, language }),
-      language,
-    );
+    toPersianDigits(formatCurrency(amount, { divideBy: 1, language }), language);
 
   const move = async (count: number) => {
     setBusy(true);
@@ -64,7 +61,7 @@ export function MoveToClassPanel({
         `/tutoring/engagements/${engagementId}/join-group`,
         { group_id: group.id, seats: count },
       );
-      logger.ok("Tutoring", "JoinedClassFromPrivate", {
+      logger.ok('Tutoring', 'JoinedClassFromPrivate', {
         group_id: group.id,
         seats: res.data.seats,
         credit_granted: res.data.credit_granted,
@@ -72,31 +69,27 @@ export function MoveToClassPanel({
       if (res.data.top_up) setTopUp(res.data.top_up);
       else onMoved();
     } catch (err) {
-      setError(t("live.joinClassFailed"));
-      logger.warn("Tutoring", "JoinClassFailed", errorFields(err));
+      setError(t('live.joinClassFailed'));
+      logger.warn('Tutoring', 'JoinClassFailed', errorFields(err));
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <div className="space-y-4 rounded-2xl border border-(--theme-primary) bg-card p-4">
+    <div className="bg-card space-y-4 rounded-2xl border border-(--theme-primary) p-4">
       <div className="space-y-1">
-        <p className="text-sm font-bold text-(--theme-foreground)">
-          {group.title}
-        </p>
+        <p className="text-sm font-bold text-(--theme-foreground)">{group.title}</p>
         <SlotChips slots={group.Slots} />
       </div>
 
-      <dl className="grid grid-cols-2 gap-2 rounded-xl bg-surface p-3 text-xs sm:grid-cols-4">
+      <dl className="bg-surface grid grid-cols-2 gap-2 rounded-xl p-3 text-xs sm:grid-cols-4">
         <div>
-          <dt className="text-muted">{t("live.paidValue")}</dt>
-          <dd className="font-bold text-(--theme-foreground)">
-            {fmt(paidValue)}
-          </dd>
+          <dt className="text-muted">{t('live.paidValue')}</dt>
+          <dd className="font-bold text-(--theme-foreground)">{fmt(paidValue)}</dd>
         </div>
         <div>
-          <dt className="text-muted">{t("live.seatsToReserve")}</dt>
+          <dt className="text-muted">{t('live.seatsToReserve')}</dt>
           <dd>
             <input
               type="number"
@@ -105,35 +98,27 @@ export function MoveToClassPanel({
               dir="ltr"
               value={seats}
               onChange={(e) =>
-                setSeats(
-                  Math.min(Math.max(Number(e.target.value) || 1, 1), maxSeats),
-                )
+                setSeats(Math.min(Math.max(Number(e.target.value) || 1, 1), maxSeats))
               }
-              className="w-16 rounded-md border border-theme bg-transparent px-2 py-0.5 text-end font-bold"
+              className="border-theme w-16 rounded-md border bg-transparent px-2 py-0.5 text-end font-bold"
             />
           </dd>
         </div>
         <div>
-          <dt className="text-muted">{t("live.classCost")}</dt>
+          <dt className="text-muted">{t('live.classCost')}</dt>
           <dd className="font-bold text-(--theme-foreground)">{fmt(cost)}</dd>
         </div>
         <div>
           <dt className="text-muted">
-            {remaining >= 0 ? t("live.creditRemaining") : t("live.topUpNeeded")}
+            {remaining >= 0 ? t('live.creditRemaining') : t('live.topUpNeeded')}
           </dt>
-          <dd
-            className={
-              remaining >= 0
-                ? "font-bold text-emerald-600"
-                : "font-bold text-red-600"
-            }
-          >
+          <dd className={remaining >= 0 ? 'font-bold text-emerald-600' : 'font-bold text-red-600'}>
             {fmt(Math.abs(remaining))}
           </dd>
         </div>
       </dl>
 
-      <p className="text-[11px] text-muted">{t("live.moveFinalNote")}</p>
+      <p className="text-muted text-[11px]">{t('live.moveFinalNote')}</p>
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
 
       <div className="flex flex-wrap gap-2">
@@ -143,10 +128,7 @@ export function MoveToClassPanel({
           onClick={() => void move(seats)}
           className="rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60"
         >
-          {t("live.moveAndReserve").replace(
-            "{count}",
-            formatNumber(seats, language),
-          )}
+          {t('live.moveAndReserve').replace('{count}', formatNumber(seats, language))}
         </button>
         {seats > 1 ? (
           <button
@@ -155,15 +137,15 @@ export function MoveToClassPanel({
             onClick={() => void move(1)}
             className="rounded-lg border border-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-primary-ink) disabled:opacity-60"
           >
-            {t("live.moveKeepCredit")}
+            {t('live.moveKeepCredit')}
           </button>
         ) : null}
         <button
           type="button"
           onClick={onKeepPrivate}
-          className="px-3 py-2 text-sm font-semibold text-muted underline-offset-4 hover:underline"
+          className="text-muted px-3 py-2 text-sm font-semibold underline-offset-4 hover:underline"
         >
-          {t("live.keepPrivateAndRequest")}
+          {t('live.keepPrivateAndRequest')}
         </button>
       </div>
 
@@ -185,12 +167,12 @@ export function MoveToClassPanel({
           }
           hold={hold}
           onPay={(couponCode, provider, useCredit) =>
-            purchase(
-              { tutoring_group_id: group.id },
-              topUp.seats * topUp.seat_price,
-              group.id,
-              { seats: topUp.seats, provider, couponCode, useCredit },
-            )
+            purchase({ tutoring_group_id: group.id }, topUp.seats * topUp.seat_price, group.id, {
+              seats: topUp.seats,
+              provider,
+              couponCode,
+              useCredit,
+            })
           }
           onClose={() => {
             reset();

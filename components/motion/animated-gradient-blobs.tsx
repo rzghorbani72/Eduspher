@@ -38,7 +38,9 @@ export function AnimatedGradientBlobs({
     if (color.startsWith('var(')) {
       const varName = color.match(/var\(([^)]+)\)/)?.[1]?.trim();
       if (varName) {
-        const computed = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        const computed = getComputedStyle(document.documentElement)
+          .getPropertyValue(varName)
+          .trim();
         if (computed) {
           if (computed.startsWith('#')) return computed;
           if (computed.startsWith('rgb')) {
@@ -59,7 +61,11 @@ export function AnimatedGradientBlobs({
   // resolveColor reads getComputedStyle, so it only works after hydration. On
   // the server we render the raw props (matching SSR), then resolve on the
   // client once hydrated — no setState-in-effect needed.
-  const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const hydrated = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
   const resolvedPrimary = hydrated ? resolveColor(primaryColor, '#3b82f6') : primaryColor;
   const resolvedSecondary = hydrated ? resolveColor(secondaryColor, '#6366f1') : secondaryColor;
   const resolvedAccent = hydrated ? resolveColor(accentColor, '#f59e0b') : accentColor;
@@ -67,17 +73,19 @@ export function AnimatedGradientBlobs({
   // Helper to add opacity to hex color (for Tailwind-like /20, /30, etc.)
   const withOpacity = (color: string, opacity: number) => {
     // Convert opacity percentage to hex (0-255)
-    const opacityHex = Math.round(opacity * 255).toString(16).padStart(2, '0');
+    const opacityHex = Math.round(opacity * 255)
+      .toString(16)
+      .padStart(2, '0');
     // Remove # if present and add opacity
     const cleanColor = color.replace('#', '');
     return `#${cleanColor}${opacityHex}`;
   };
 
   return (
-    <div className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}>
+    <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
       {/* First blob - primary to secondary */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br rounded-full blur-3xl"
+        className="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-gradient-to-br blur-3xl"
         style={{
           background: `linear-gradient(to bottom right, ${withOpacity(resolvedPrimary, 0.2)}, ${withOpacity(resolvedSecondary, 0.3)})`,
         }}
@@ -88,13 +96,13 @@ export function AnimatedGradientBlobs({
         transition={{
           duration: 8,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       />
 
       {/* Second blob - accent to primary */}
       <motion.div
-        className="absolute top-3/4 right-1/4 w-80 h-80 bg-gradient-to-br rounded-full blur-3xl"
+        className="absolute top-3/4 right-1/4 h-80 w-80 rounded-full bg-gradient-to-br blur-3xl"
         style={{
           background: `linear-gradient(to bottom right, ${withOpacity(resolvedAccent, 0.2)}, ${withOpacity(resolvedPrimary, 0.25)})`,
         }}
@@ -105,13 +113,13 @@ export function AnimatedGradientBlobs({
         transition={{
           duration: 10,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       />
 
       {/* Third blob - secondary to accent */}
       <motion.div
-        className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br rounded-full blur-3xl"
+        className="absolute top-1/2 right-1/3 h-64 w-64 rounded-full bg-gradient-to-br blur-3xl"
         style={{
           background: `linear-gradient(to bottom right, ${withOpacity(resolvedSecondary, 0.15)}, ${withOpacity(resolvedAccent, 0.2)})`,
         }}
@@ -122,7 +130,7 @@ export function AnimatedGradientBlobs({
         transition={{
           duration: 12,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: 'easeInOut',
         }}
       />
     </div>

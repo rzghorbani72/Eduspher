@@ -6,7 +6,11 @@
 
 .stage {
   background:
-    radial-gradient(90% 70% at 50% -10%, color-mix(in srgb, var(--theme-primary) 32%, transparent) 0%, transparent 60%),
+    radial-gradient(
+      90% 70% at 50% -10%,
+      color-mix(in srgb, var(--theme-primary) 32%, transparent) 0%,
+      transparent 60%
+    ),
     var(--theme-deep);
   color: var(--theme-on-deep);
 }

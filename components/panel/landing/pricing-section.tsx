@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Check } from "lucide-react";
-import { useState } from "react";
+import { Check } from 'lucide-react';
+import { useState } from 'react';
 
-import type { PublicPlan } from "@/lib/api/server";
-import { cn } from "@/lib/utils";
+import type { PublicPlan } from '@/lib/api/server';
+import { cn } from '@/lib/utils';
 
-import { Container } from "./landing-container";
-import { LANDING } from "./landing.messages";
-import { SectionHeading } from "./section-heading";
+import { Container } from './landing-container';
+import { LANDING } from './landing.messages';
+import { SectionHeading } from './section-heading';
 
-type Cycle = "monthly" | "quarterly";
+type Cycle = 'monthly' | 'quarterly';
 
 type Props = {
   loginUrl: string;
@@ -24,10 +24,10 @@ type Props = {
    */
   plans?: PublicPlan[];
   /** "h1" when the section is the whole page, not a block on the landing page. */
-  as?: "h1" | "h2";
+  as?: 'h1' | 'h2';
 };
 
-const faNumber = (value: number) => value.toLocaleString("fa-IR");
+const faNumber = (value: number) => value.toLocaleString('fa-IR');
 
 const QUARTERLY_STEP = 500_000;
 const QUARTERLY_DISCOUNT_RATE = 0.05;
@@ -44,8 +44,7 @@ function quarterlyFromMonthly(monthly: number): {
     Math.floor(discounted / QUARTERLY_STEP) * QUARTERLY_STEP,
   );
   const amount = Math.max(0, full - charged);
-  const discountPercent =
-    amount > 0 ? Math.round(QUARTERLY_DISCOUNT_RATE * 100) : 0;
+  const discountPercent = amount > 0 ? Math.round(QUARTERLY_DISCOUNT_RATE * 100) : 0;
   return { charged, full, discountPercent };
 }
 
@@ -61,63 +60,41 @@ const FALLBACK_MONTHLY: Record<string, number> = {
   business: 11_000_000,
 };
 
-function resolveMonthlyToman(
-  livePrice: number | undefined,
-  planId: string,
-): number {
+function resolveMonthlyToman(livePrice: number | undefined, planId: string): number {
   if (livePrice != null) return livePrice;
   return FALLBACK_MONTHLY[planId] ?? 0;
 }
 
-function panelPlanLoginUrl(
-  loginUrl: string,
-  planId: string,
-  cycle: Cycle,
-): string {
+function panelPlanLoginUrl(loginUrl: string, planId: string, cycle: Cycle): string {
   const url = new URL(
     loginUrl,
-    typeof window !== "undefined"
-      ? window.location.origin
-      : "https://admin.mentoma.ir",
+    typeof window !== 'undefined' ? window.location.origin : 'https://admin.mentoma.ir',
   );
-  url.searchParams.set("plan", planId);
-  url.searchParams.set("period", cycle);
+  url.searchParams.set('plan', planId);
+  url.searchParams.set('period', cycle);
   return url.toString();
 }
 
 export function PricingSection({ loginUrl, plans = [], as }: Props) {
-  const [cycle, setCycle] = useState<Cycle>("monthly");
+  const [cycle, setCycle] = useState<Cycle>('monthly');
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
   return (
-    <section
-      id="pricing"
-      data-lp-reveal
-      className="scroll-mt-32 bg-lp-surface-2 py-20 lg:py-28"
-    >
+    <section id="pricing" data-lp-reveal className="bg-lp-surface-2 scroll-mt-32 py-20 lg:py-28">
       <Container>
-        <SectionHeading
-          as={as}
-          title={LANDING.pricing.title}
-          subtitle={LANDING.pricing.subtitle}
-        />
+        <SectionHeading as={as} title={LANDING.pricing.title} subtitle={LANDING.pricing.subtitle} />
 
         <div className="mt-8 flex justify-center">
-          <div
-            role="group"
-            className="flex items-center gap-1 rounded-full bg-lp-surface p-1"
-          >
-            {(["monthly", "quarterly"] as const).map((option) => (
+          <div role="group" className="bg-lp-surface flex items-center gap-1 rounded-full p-1">
+            {(['monthly', 'quarterly'] as const).map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setCycle(option)}
                 aria-pressed={cycle === option}
                 className={cn(
-                  "rounded-full px-5 py-1.5 text-[13px] font-bold transition-colors",
-                  cycle === option
-                    ? "bg-lp-blue text-white"
-                    : "text-lp-muted hover:text-lp-ink",
+                  'rounded-full px-5 py-1.5 text-[13px] font-bold transition-colors',
+                  cycle === option ? 'bg-lp-blue text-white' : 'text-lp-muted hover:text-lp-ink',
                 )}
               >
                 {LANDING.pricing[option]}
@@ -129,14 +106,11 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
         <div className="mx-auto mt-12 grid max-w-[880px] items-stretch gap-4 lg:grid-cols-[1fr_1.12fr_1fr]">
           {LANDING.pricing.plans.map((plan) => {
             const live = livePlans.get(plan.id);
-            const monthly = resolveMonthlyToman(
-              live?.price_monthly_toman,
-              plan.id,
-            );
+            const monthly = resolveMonthlyToman(live?.price_monthly_toman, plan.id);
             const q = quarterlyFromMonthly(monthly);
 
             const price =
-              cycle === "quarterly"
+              cycle === 'quarterly'
                 ? monthly > 0
                   ? faNumber(q.charged)
                   : plan.priceQuarterly
@@ -145,78 +119,61 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
                   : plan.priceMonthly;
             const upcoming = live?.upcoming_price ?? null;
             const isFeatured = plan.featured;
-            const showDiscount = cycle === "quarterly" && q.discountPercent > 0;
+            const showDiscount = cycle === 'quarterly' && q.discountPercent > 0;
             const features =
-              live?.features && live.features.length > 0
-                ? live.features
-                : plan.features;
+              live?.features && live.features.length > 0 ? live.features : plan.features;
 
             return (
               <article
                 key={plan.id}
                 className={cn(
-                  "flex h-full flex-col rounded-2xl border bg-lp-surface p-6 transition-colors",
+                  'bg-lp-surface flex h-full flex-col rounded-2xl border p-6 transition-colors',
                   isFeatured
-                    ? "border-lp-line shadow-lp-card lg:-my-5 lg:p-7"
-                    : "border-lp-line/70 hover:border-lp-line",
+                    ? 'border-lp-line shadow-lp-card lg:-my-5 lg:p-7'
+                    : 'border-lp-line/70 hover:border-lp-line',
                 )}
               >
-                <h3 className="text-center text-[15px] font-bold text-lp-ink">
-                  {plan.name}
-                </h3>
-                <p className="mt-1.5 text-center text-[12px] text-lp-muted">
-                  {plan.tagline}
-                </p>
+                <h3 className="text-lp-ink text-center text-[15px] font-bold">{plan.name}</h3>
+                <p className="text-lp-muted mt-1.5 text-center text-[12px]">{plan.tagline}</p>
 
                 <p className="mt-6 text-center">
-                  <span className="text-[30px] font-black leading-none text-lp-ink">
-                    {price}
-                  </span>
-                  <span className="ms-2 text-[12px] text-lp-muted">
-                    {cycle === "quarterly"
-                      ? LANDING.pricing.perQuarter
-                      : LANDING.pricing.perMonth}
+                  <span className="text-lp-ink text-[30px] leading-none font-black">{price}</span>
+                  <span className="text-lp-muted ms-2 text-[12px]">
+                    {cycle === 'quarterly' ? LANDING.pricing.perQuarter : LANDING.pricing.perMonth}
                   </span>
                 </p>
 
                 {showDiscount ? (
                   <p className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[12px]">
-                    <span className="text-lp-muted line-through">
-                      {faNumber(q.full)}
-                    </span>
+                    <span className="text-lp-muted line-through">{faNumber(q.full)}</span>
                     <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 font-semibold text-emerald-700">
                       {LANDING.pricing.discountPercent.replace(
-                        "{percent}",
+                        '{percent}',
                         faNumber(q.discountPercent),
                       )}
                     </span>
                   </p>
                 ) : (
-                  <p className="mt-2 text-center text-[11.5px] text-lp-muted">
-                    {cycle === "quarterly"
+                  <p className="text-lp-muted mt-2 text-center text-[11.5px]">
+                    {cycle === 'quarterly'
                       ? LANDING.pricing.cycleNoteQuarterly
                       : LANDING.pricing.cycleNoteMonthly}
                   </p>
                 )}
 
                 {showDiscount ? (
-                  <p className="mt-1.5 text-center text-[11.5px] text-lp-muted">
+                  <p className="text-lp-muted mt-1.5 text-center text-[11.5px]">
                     {LANDING.pricing.cycleNoteQuarterly}
                   </p>
                 ) : null}
 
                 {upcoming ? (
-                  <p className="mt-2 text-center text-[11px] leading-[1.7] text-lp-muted">
+                  <p className="text-lp-muted mt-2 text-center text-[11px] leading-[1.7]">
                     {LANDING.pricing.upcomingPrice
+                      .replace('{price}', faNumber(upcoming.price_monthly_toman))
                       .replace(
-                        "{price}",
-                        faNumber(upcoming.price_monthly_toman),
-                      )
-                      .replace(
-                        "{date}",
-                        new Date(upcoming.effective_at).toLocaleDateString(
-                          "fa-IR",
-                        ),
+                        '{date}',
+                        new Date(upcoming.effective_at).toLocaleDateString('fa-IR'),
                       )}
                   </p>
                 ) : null}
@@ -225,13 +182,13 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
                   {features.map((feature) => (
                     <li
                       key={feature}
-                      className="flex items-start gap-2 text-[13px] leading-[1.7] text-lp-ink/80"
+                      className="text-lp-ink/80 flex items-start gap-2 text-[13px] leading-[1.7]"
                     >
                       <Check
                         size={14}
                         strokeWidth={3}
                         aria-hidden
-                        className="mt-1 shrink-0 text-lp-blue"
+                        className="text-lp-blue mt-1 shrink-0"
                       />
                       {feature}
                     </li>
@@ -241,10 +198,10 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
                 <a
                   href={panelPlanLoginUrl(loginUrl, plan.id, cycle)}
                   className={cn(
-                    "mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors",
+                    'mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors',
                     isFeatured
-                      ? "bg-lp-blue text-white hover:bg-lp-blue/90"
-                      : "bg-lp-surface-2 text-lp-ink hover:bg-lp-line/40",
+                      ? 'bg-lp-blue hover:bg-lp-blue/90 text-white'
+                      : 'bg-lp-surface-2 text-lp-ink hover:bg-lp-line/40',
                   )}
                 >
                   {plan.cta}

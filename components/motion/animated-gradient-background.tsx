@@ -33,12 +33,14 @@ export function AnimatedGradientBackground({
     // Helper to get computed color value (handles CSS variables)
     const getComputedColor = (color: string): string => {
       if (typeof window === 'undefined') return color;
-      
+
       // If it's a CSS variable, get its computed value
       if (color.startsWith('var(')) {
         const varName = color.match(/var\(([^)]+)\)/)?.[1];
         if (varName) {
-          const computed = getComputedStyle(document.documentElement).getPropertyValue(varName.trim());
+          const computed = getComputedStyle(document.documentElement).getPropertyValue(
+            varName.trim(),
+          );
           return computed.trim() || color;
         }
       }
@@ -48,7 +50,7 @@ export function AnimatedGradientBackground({
     // Helper to convert color to rgba
     const colorToRgba = (color: string, alpha: number): string => {
       const computedColor = getComputedColor(color);
-      
+
       // Handle hex colors
       if (computedColor.startsWith('#')) {
         const hex = computedColor.slice(1);
@@ -57,7 +59,7 @@ export function AnimatedGradientBackground({
         const b = parseInt(hex.slice(4, 6), 16);
         return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
-      
+
       // Handle rgb/rgba
       if (computedColor.startsWith('rgb')) {
         const rgbMatch = computedColor.match(/(\d+),\s*(\d+),\s*(\d+)/);
@@ -65,7 +67,7 @@ export function AnimatedGradientBackground({
           return `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, ${alpha})`;
         }
       }
-      
+
       // Fallback: try to use the color directly with opacity
       return color;
     };
@@ -83,7 +85,7 @@ export function AnimatedGradientBackground({
       // Create dynamic gradient with multiple stops
       const gradient = `
         radial-gradient(
-          ellipse ${100 * scale}% ${120 * scale}% at ${50 + Math.sin(angle * Math.PI / 180) * 20}% ${50 + Math.cos(angle * Math.PI / 180) * 20}%,
+          ellipse ${100 * scale}% ${120 * scale}% at ${50 + Math.sin((angle * Math.PI) / 180) * 20}% ${50 + Math.cos((angle * Math.PI) / 180) * 20}%,
           ${colorToRgba(primaryColor, alpha1)},
           ${colorToRgba(secondaryColor, alpha2)},
           ${colorToRgba(accentColor, alpha3)},
@@ -100,7 +102,7 @@ export function AnimatedGradientBackground({
 
       container.style.background = gradient;
       container.style.backgroundSize = '200% 200%';
-      container.style.backgroundPosition = `${Math.sin(angle * Math.PI / 180) * 30 + 50}% ${Math.cos(angle * Math.PI / 180) * 30 + 50}%`;
+      container.style.backgroundPosition = `${Math.sin((angle * Math.PI) / 180) * 30 + 50}% ${Math.cos((angle * Math.PI) / 180) * 30 + 50}%`;
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -117,9 +119,8 @@ export function AnimatedGradientBackground({
   return (
     <div
       ref={containerRef}
-      className={`fixed inset-0 -z-10 pointer-events-none ${className}`}
+      className={`pointer-events-none fixed inset-0 -z-10 ${className}`}
       style={{ opacity: 1 }}
     />
   );
 }
-

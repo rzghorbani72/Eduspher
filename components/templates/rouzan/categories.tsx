@@ -47,17 +47,21 @@ export function RouzanCategories({ id, config, storeContext }: TemplateSectionPr
             }
           />
 
-          <div className="mt-11 grid items-start gap-5 md:grid-cols-2 lg:grid-cols-3" {...editableList('items', items)}>
+          <div
+            className="mt-11 grid items-start gap-5 md:grid-cols-2 lg:grid-cols-3"
+            {...editableList('items', items)}
+          >
             {items.map((item, index) => (
               <article
                 key={item.title}
-                className={`${styles.path} ${item.featured ? `${styles.pathHi} px-6 pb-7 pt-9 lg:-mt-[18px]` : 'px-6 pb-6 pt-7'}`}
+                className={`${styles.path} ${item.featured ? `${styles.pathHi} px-6 pt-9 pb-7 lg:-mt-[18px]` : 'px-6 pt-7 pb-6'}`}
               >
-                {item.featured && item.tag ? (
-                  <span className={styles.ptag}>{item.tag}</span>
-                ) : null}
+                {item.featured && item.tag ? <span className={styles.ptag}>{item.tag}</span> : null}
 
-                <h3 {...editableItem('items', index, 'title')} className="text-[21px] font-bold leading-[1.3]">
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className="text-[21px] leading-[1.3] font-bold"
+                >
                   {item.title}
                 </h3>
                 <p
@@ -76,7 +80,9 @@ export function RouzanCategories({ id, config, storeContext }: TemplateSectionPr
                       <span className={`${styles.stepNo} text-[12.5px] font-bold`}>{step.no}</span>
                       <span>
                         {step.title}
-                        <span className={`${styles.stepMeta} block text-[12.5px]`}>{step.meta}</span>
+                        <span className={`${styles.stepMeta} block text-[12.5px]`}>
+                          {step.meta}
+                        </span>
                       </span>
                     </li>
                   ))}

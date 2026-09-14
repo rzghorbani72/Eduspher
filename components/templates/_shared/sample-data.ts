@@ -74,10 +74,7 @@ const SAMPLE_COURSES: readonly TemplateCourse[] = [
  * Tops a live list up to `minimum` entries with clearly-marked samples.
  * Real records always come first and are never replaced.
  */
-export function withSampleCourses(
-  live: readonly TemplateCourse[],
-  minimum = 3
-): TemplateCourse[] {
+export function withSampleCourses(live: readonly TemplateCourse[], minimum = 3): TemplateCourse[] {
   if (live.length >= minimum) return [...live];
   const needed = minimum - live.length;
   return [...live, ...SAMPLE_COURSES.slice(0, needed)];

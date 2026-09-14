@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 /** Sections are pinned only on pointer-precise desktop viewports. */
-const DESKTOP = "(min-width: 1024px)";
+const DESKTOP = '(min-width: 1024px)';
 
 /**
  * Owns every scroll-driven animation on the landing page so sections stay
@@ -19,15 +19,15 @@ const DESKTOP = "(min-width: 1024px)";
  */
 export function LandingMotion() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     let ctx: { revert: () => void } | null = null;
     let cancelled = false;
     let removeRefreshListeners: (() => void) | null = null;
 
     const init = async () => {
-      const { gsap } = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      const { gsap } = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
       if (cancelled) return;
 
       gsap.registerPlugin(ScrollTrigger);
@@ -43,12 +43,8 @@ export function LandingMotion() {
         // This trigger reports a CONTINUOUS position (0 → slideCount - 1), not
         // a step, so the panels resize with the scroll instead of jumping at a
         // threshold. The section owns the flex values; here we only measure.
-        const forYou = document.querySelector<HTMLElement>(
-          '[data-lp="for-you"]',
-        );
-        const forYouStage = document.querySelector<HTMLElement>(
-          '[data-lp="for-you-stage"]',
-        );
+        const forYou = document.querySelector<HTMLElement>('[data-lp="for-you"]');
+        const forYouStage = document.querySelector<HTMLElement>('[data-lp="for-you-stage"]');
         const slideCount = Number(forYouStage?.dataset.lpSlideCount ?? 0);
 
         // Mobile has its own horizontal-scroll carousel (for-you-section.tsx
@@ -62,7 +58,7 @@ export function LandingMotion() {
 
           ScrollTrigger.create({
             trigger: forYouStage,
-            start: "center center",
+            start: 'center center',
             end: `+=${slideCount * 70}%`,
             pin: true,
             pinSpacing: true,
@@ -71,11 +67,8 @@ export function LandingMotion() {
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               const eased = (self.progress - HOLD) / (1 - HOLD * 2);
-              const position =
-                Math.min(1, Math.max(0, eased)) * (slideCount - 1);
-              forYou.dispatchEvent(
-                new CustomEvent("lp:for-you", { detail: position }),
-              );
+              const position = Math.min(1, Math.max(0, eased)) * (slideCount - 1);
+              forYou.dispatchEvent(new CustomEvent('lp:for-you', { detail: position }));
             },
           });
         }
@@ -85,9 +78,7 @@ export function LandingMotion() {
         // talk through a DOM event so this file stays the single GSAP owner and
         // the section stays a plain component.
         const steps = document.querySelector<HTMLElement>('[data-lp="steps"]');
-        const stage = document.querySelector<HTMLElement>(
-          '[data-lp="steps-stage"]',
-        );
+        const stage = document.querySelector<HTMLElement>('[data-lp="steps-stage"]');
         const stepCount = Number(steps?.dataset.lpStepCount ?? 0);
 
         if (steps && stage && stepCount > 1 && canPin) {
@@ -95,7 +86,7 @@ export function LandingMotion() {
 
           ScrollTrigger.create({
             trigger: stage,
-            start: "center center",
+            start: 'center center',
             end: `+=${stepCount * 70}%`,
             pin: true,
             pinSpacing: true,
@@ -103,15 +94,10 @@ export function LandingMotion() {
             anticipatePin: 1,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
-              const index = Math.min(
-                stepCount - 1,
-                Math.floor(self.progress * stepCount),
-              );
+              const index = Math.min(stepCount - 1, Math.floor(self.progress * stepCount));
               if (index === current) return;
               current = index;
-              steps.dispatchEvent(
-                new CustomEvent("lp:step", { detail: index }),
-              );
+              steps.dispatchEvent(new CustomEvent('lp:step', { detail: index }));
             },
           });
         }
@@ -123,13 +109,12 @@ export function LandingMotion() {
       const refresh = () => ScrollTrigger.refresh();
       refresh();
       const onLoad = () => refresh();
-      window.addEventListener("load", onLoad);
+      window.addEventListener('load', onLoad);
       void document.fonts?.ready.then(refresh);
 
       const railImages =
-        document
-          .querySelector<HTMLElement>('[data-lp="for-you-stage"]')
-          ?.querySelectorAll("img") ?? [];
+        document.querySelector<HTMLElement>('[data-lp="for-you-stage"]')?.querySelectorAll('img') ??
+        [];
       let pending = 0;
       railImages.forEach((img) => {
         if (img.complete) return;
@@ -138,12 +123,12 @@ export function LandingMotion() {
           pending -= 1;
           if (pending <= 0) refresh();
         };
-        img.addEventListener("load", done, { once: true });
-        img.addEventListener("error", done, { once: true });
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
       });
 
       removeRefreshListeners = () => {
-        window.removeEventListener("load", onLoad);
+        window.removeEventListener('load', onLoad);
       };
     };
 

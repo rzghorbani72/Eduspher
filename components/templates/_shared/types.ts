@@ -37,11 +37,7 @@ export interface TemplateStoreContext {
  */
 export type SectionConfig = Record<string, unknown>;
 
-export function text(
-  config: SectionConfig | undefined,
-  key: string,
-  fallback: string
-): string {
+export function text(config: SectionConfig | undefined, key: string, fallback: string): string {
   const value = config?.[key];
   return typeof value === 'string' && value.trim() ? value : fallback;
 }
@@ -49,25 +45,18 @@ export function text(
 export function list<T>(
   config: SectionConfig | undefined,
   key: string,
-  fallback: readonly T[]
+  fallback: readonly T[],
 ): readonly T[] {
   const value = config?.[key];
   return Array.isArray(value) && value.length > 0 ? (value as T[]) : fallback;
 }
 
-export function flag(
-  config: SectionConfig | undefined,
-  key: string,
-  fallback: boolean
-): boolean {
+export function flag(config: SectionConfig | undefined, key: string, fallback: boolean): boolean {
   const value = config?.[key];
   return typeof value === 'boolean' ? value : fallback;
 }
 
 /** Decoration / sub-block visibility — hidden when config flag is explicitly false. */
-export function featureVisible(
-  config: SectionConfig | undefined,
-  flagKey: string
-): boolean {
+export function featureVisible(config: SectionConfig | undefined, flagKey: string): boolean {
   return config?.[flagKey] !== false;
 }

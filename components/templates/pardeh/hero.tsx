@@ -26,9 +26,13 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
   const a = heroAlign(config);
   const stats = list<HeroStat>(config, 'stats', d.stats);
   // The wash only exists to keep copy readable, so bare footage gets none.
-  const hasCopy = ['showKicker', 'showTitle', 'showSubtitle', 'showHeroCta', 'showHeroCtaSecondary'].some((key) =>
-    featureVisible(config, key)
-  );
+  const hasCopy = [
+    'showKicker',
+    'showTitle',
+    'showSubtitle',
+    'showHeroCta',
+    'showHeroCtaSecondary',
+  ].some((key) => featureVisible(config, key));
 
   return (
     <section id={id || 'hero'} className="relative py-0! text-white">
@@ -36,15 +40,22 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
         config={config}
         overlay={hasCopy ? <HeroVideoOverlay /> : null}
         placeholder={
-          <div className={`${styles.emptySlot} flex h-full w-full items-center justify-center p-10 text-center`}>
+          <div
+            className={`${styles.emptySlot} flex h-full w-full items-center justify-center p-10 text-center`}
+          >
             <span className={styles.grain} aria-hidden="true" />
-            <span data-editable="videoCaption" className="relative z-[1] text-[15px] text-(--theme-muted)">
+            <span
+              data-editable="videoCaption"
+              className="relative z-[1] text-[15px] text-(--theme-muted)"
+            >
               {text(config, 'videoCaption', d.videoCaption)}
             </span>
           </div>
         }
       >
-        <Container className={`flex flex-1 flex-col ${a.items} justify-center py-(--theme-section-padding-y) ${a.text}`}>
+        <Container
+          className={`flex flex-1 flex-col ${a.items} justify-center py-(--theme-section-padding-y) ${a.text}`}
+        >
           <RemovableSlot config={config} flagKey="showKicker" editMode={editMode} ghost>
             <div className="flex items-center gap-3">
               <span
@@ -58,7 +69,13 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
             </div>
           </RemovableSlot>
 
-          <RemovableSlot config={config} flagKey="showTitle" editMode={editMode} ghost className="mt-7">
+          <RemovableSlot
+            config={config}
+            flagKey="showTitle"
+            editMode={editMode}
+            ghost
+            className="mt-7"
+          >
             <h1 className="text-[clamp(40px,6.4vw,80px)] leading-[1.02] tracking-[-0.035em]">
               <span data-editable="title" className="font-extrabold">
                 {text(config, 'title', d.title)}
@@ -72,15 +89,35 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
             </h1>
           </RemovableSlot>
 
-          <RemovableSlot config={config} flagKey="showSubtitle" editMode={editMode} ghost className="mt-7">
-            <p data-editable="subtitle" className="max-w-[52ch] text-[17px] leading-[1.9] text-white/80">
+          <RemovableSlot
+            config={config}
+            flagKey="showSubtitle"
+            editMode={editMode}
+            ghost
+            className="mt-7"
+          >
+            <p
+              data-editable="subtitle"
+              className="max-w-[52ch] text-[17px] leading-[1.9] text-white/80"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
           </RemovableSlot>
 
           <div className={`mt-9 flex flex-wrap items-center ${a.justify} gap-3.5`}>
-            <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} ghost className="inline-flex">
-              <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+            <RemovableSlot
+              config={config}
+              flagKey="showHeroCta"
+              editMode={editMode}
+              ghost
+              className="inline-flex"
+            >
+              <Button
+                tone="primary"
+                size="lg"
+                editableKey="ctaText"
+                href={templateHref(storeContext, 'courses')}
+              >
                 {text(config, 'ctaText', d.ctaText)}
               </Button>
             </RemovableSlot>
@@ -91,7 +128,10 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
               ghost
               className="inline-flex"
             >
-              <span data-editable="ctaSecondary" className="border-b-2 border-white/70 pb-1 text-[15px] font-bold">
+              <span
+                data-editable="ctaSecondary"
+                className="border-b-2 border-white/70 pb-1 text-[15px] font-bold"
+              >
                 {text(config, 'ctaSecondary', d.ctaSecondary)}
               </span>
             </RemovableSlot>
@@ -106,7 +146,7 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
             >
               {stats.map((stat, index) => (
                 <div key={stat.label}>
-                  <dd className="text-[30px] font-extrabold leading-none tracking-[-0.04em]">
+                  <dd className="text-[30px] leading-none font-extrabold tracking-[-0.04em]">
                     <span {...editableItem('stats', index, 'value')}>{stat.value}</span>
                     {stat.unit ? (
                       <small
@@ -117,7 +157,10 @@ export function PardehHero({ id, config, storeContext }: TemplateSectionProps) {
                       </small>
                     ) : null}
                   </dd>
-                  <dt {...editableItem('stats', index, 'label')} className="mt-2 text-[14px] font-bold">
+                  <dt
+                    {...editableItem('stats', index, 'label')}
+                    className="mt-2 text-[14px] font-bold"
+                  >
                     {stat.label}
                   </dt>
                   <p

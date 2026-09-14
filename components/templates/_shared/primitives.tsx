@@ -107,7 +107,9 @@ export function StatRow({
         <div key={stat.label}>
           <dt className="sr-only">{stat.label}</dt>
           <dd>
-            <b className="block text-[28px] font-bold leading-[1.15] tracking-[-0.03em]">{stat.value}</b>
+            <b className="block text-[28px] leading-[1.15] font-bold tracking-[-0.03em]">
+              {stat.value}
+            </b>
             <span className="text-[13px] text-(--theme-muted)">{stat.label}</span>
           </dd>
         </div>

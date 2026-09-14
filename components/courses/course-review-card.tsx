@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck } from 'lucide-react';
 
-import { AppImage } from "@/components/ui/app-image";
-import { ReviewStars } from "@/components/courses/review-stars";
-import type { CourseReview } from "@/lib/api/client";
+import { AppImage } from '@/components/ui/app-image';
+import { ReviewStars } from '@/components/courses/review-stars';
+import type { CourseReview } from '@/lib/api/client';
 
 type CourseReviewCardProps = {
   review: CourseReview;
@@ -12,12 +12,8 @@ type CourseReviewCardProps = {
   verifiedLabel: string;
 };
 
-export function CourseReviewCard({
-  review,
-  dateLabel,
-  verifiedLabel,
-}: CourseReviewCardProps) {
-  const name = review.Profile?.display_name ?? "";
+export function CourseReviewCard({ review, dateLabel, verifiedLabel }: CourseReviewCardProps) {
+  const name = review.Profile?.display_name ?? '';
   const avatar = review.Profile?.Image_Profile_avatar_idToImage?.publicUrl;
 
   return (
@@ -40,9 +36,7 @@ export function CourseReviewCard({
             </span>
           )}
           <div className="min-w-0 leading-tight">
-            <p className="truncate text-sm font-extrabold text-(--theme-foreground)">
-              {name}
-            </p>
+            <p className="truncate text-sm font-extrabold text-(--theme-foreground)">{name}</p>
             <p className="mt-0.5 text-xs text-(--theme-muted)">{dateLabel}</p>
           </div>
         </div>

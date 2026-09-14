@@ -16,16 +16,13 @@ const OUT = path.join(__dirname, '../public/landing');
 
 const PANEL = process.env.PANEL_URL ?? 'http://localhost:4000';
 const WEB = process.env.WEB_URL ?? 'http://localhost:5000';
-const ACADEMY_WEB =
-  process.env.ACADEMY_WEB_URL ?? 'http://demo-showcase.localhost:5000';
+const ACADEMY_WEB = process.env.ACADEMY_WEB_URL ?? 'http://demo-showcase.localhost:5000';
 const PHONE = process.env.DEMO_MANAGER_PHONE ?? '09000000100';
 const PASSWORD = process.env.DEMO_MANAGER_PASSWORD ?? 'Demo1234!';
 
 /** Demo course ids from the local dev DB. Override via env. */
-const COURSE_A =
-  process.env.DEMO_COURSE_A_ID ?? 'cmt4hzhah002y48lbtu9iv7w4';
-const COURSE_B =
-  process.env.DEMO_COURSE_B_ID ?? 'cmt4hzhay003248lbtcpo4c7c';
+const COURSE_A = process.env.DEMO_COURSE_A_ID ?? 'cmt4hzhah002y48lbtu9iv7w4';
+const COURSE_B = process.env.DEMO_COURSE_B_ID ?? 'cmt4hzhay003248lbtcpo4c7c';
 
 /**
  * Matched pairs for the publish section (student URL → file, owner URL → file).
@@ -34,33 +31,27 @@ const COURSE_B =
 const PUBLISH_CAPTURES = [
   {
     student: [`${ACADEMY_WEB}/courses/${COURSE_A}`, 'student-course.png'],
-    owner: [`${PANEL}/courses`, 'owner-courses.png']
+    owner: [`${PANEL}/courses`, 'owner-courses.png'],
   },
   {
-    student: [
-      `${WEB}/preview/blocks?template=parastoo&sample=1`,
-      'template-parastoo.png'
-    ],
-    owner: [`${PANEL}/website/appearance`, 'owner-templates.png']
+    student: [`${WEB}/preview/blocks?template=parastoo&sample=1`, 'template-parastoo.png'],
+    owner: [`${PANEL}/website/appearance`, 'owner-templates.png'],
   },
   {
     student: [`${ACADEMY_WEB}/courses/${COURSE_B}`, 'student-course-alt.png'],
-    owner: [`${PANEL}/courses/${COURSE_A}`, 'owner-course-detail.png']
+    owner: [`${PANEL}/courses/${COURSE_A}`, 'owner-course-detail.png'],
   },
   {
-    student: [
-      `${WEB}/preview/blocks?template=keyhan&sample=1`,
-      'template-keyhan.png'
-    ],
-    owner: [`${PANEL}/analytics`, 'owner-analytics-v2.png']
-  }
+    student: [`${WEB}/preview/blocks?template=keyhan&sample=1`, 'template-keyhan.png'],
+    owner: [`${PANEL}/analytics`, 'owner-analytics-v2.png'],
+  },
 ];
 
 const OTHER_PANEL_SHOTS = [
   ['/users', 'for-you-2.png'],
   ['/courses', 'admin-panel.png'],
   ['/financial/academy', 'owner-financial-v2.png'],
-  ['/dashboard', 'hero-dashboard.png']
+  ['/dashboard', 'hero-dashboard.png'],
 ];
 
 async function hideDevOverlay(page) {
@@ -69,7 +60,7 @@ async function hideDevOverlay(page) {
       nextjs-portal,
       [data-nextjs-toast],
       #webpack-dev-server-client-overlay { display: none !important; }
-    `
+    `,
   });
 }
 
@@ -81,7 +72,7 @@ async function capture(page, url, filename, waitMs = 2500) {
   await page.mouse.move(0, 0);
   await page.screenshot({
     path: path.join(OUT, filename),
-    fullPage: false
+    fullPage: false,
   });
   console.log('saved', filename);
 }
@@ -90,9 +81,7 @@ async function login(page) {
   await page.goto(`${PANEL}/login`, { waitUntil: 'networkidle' });
   await page.locator('input[type="tel"]').fill(PHONE);
   await page.locator('form button:not([type="button"])').last().click();
-  await page
-    .locator('input[type="password"]')
-    .waitFor({ state: 'visible', timeout: 20_000 });
+  await page.locator('input[type="password"]').waitFor({ state: 'visible', timeout: 20_000 });
   await page.locator('input[type="password"]').fill(PASSWORD);
   await page.locator('form button:not([type="button"])').last().click();
   await page.waitForURL(/\/(dashboard|onboarding)/, { timeout: 20_000 });
@@ -101,7 +90,7 @@ async function login(page) {
 const browser = await chromium.launch({ channel: 'chrome' });
 const context = await browser.newContext({
   viewport: { width: 1440, height: 900 },
-  locale: 'fa-IR'
+  locale: 'fa-IR',
 });
 const page = await context.newPage();
 

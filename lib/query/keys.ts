@@ -9,13 +9,13 @@ const key = (...parts: KeyPart[]): readonly KeyPart[] => parts;
 
 export const queryKeys = {
   lessonProgress: (enrollmentId: string, lessonId: string) =>
-    key("lesson-progress", enrollmentId, lessonId),
+    key('lesson-progress', enrollmentId, lessonId),
 
-  notifications: () => key("notifications"),
+  notifications: () => key('notifications'),
 
-  legalConsent: () => key("legal-consent"),
+  legalConsent: () => key('legal-consent'),
 
-  assignments: (lessonId: string) => key("assignments", lessonId),
+  assignments: (lessonId: string) => key('assignments', lessonId),
 
-  liveLesson: (lessonId: string) => key("live-lesson", lessonId),
+  liveLesson: (lessonId: string) => key('live-lesson', lessonId),
 } as const;

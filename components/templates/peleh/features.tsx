@@ -31,7 +31,10 @@ export function PelehFeatures({ id, config }: TemplateSectionProps) {
                 {item.no}
               </span>
               <div className="min-w-0">
-                <h3 {...editableItem('items', index, 'title')} className="text-[20px] font-bold leading-[1.35]">
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className="text-[20px] leading-[1.35] font-bold"
+                >
                   {item.title}
                 </h3>
                 <p

@@ -23,10 +23,15 @@ export function SepidHero({ id, config, storeContext }: TemplateSectionProps) {
   const a = heroAlign(config);
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Backdrop variant="spotlight" motion="wash" />
       <Container className={`relative z-[1] py-(--theme-section-padding-y) ${a.text}`}>
-        <h1 className={`${a.block} max-w-[20ch] text-[clamp(34px,5.6vw,64px)] font-bold leading-[1.1] tracking-[-0.03em]`}>
+        <h1
+          className={`${a.block} max-w-[20ch] text-[clamp(34px,5.6vw,64px)] leading-[1.1] font-bold tracking-[-0.03em]`}
+        >
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
           <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -40,13 +45,33 @@ export function SepidHero({ id, config, storeContext }: TemplateSectionProps) {
         </p>
 
         <div className={`mt-8 flex flex-wrap items-center ${a.justify} gap-3`}>
-          <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="primary" size="md" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCta"
+            editMode={editMode}
+            className="inline-flex"
+          >
+            <Button
+              tone="primary"
+              size="md"
+              editableKey="ctaText"
+              href={templateHref(storeContext, 'courses')}
+            >
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>
-          <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-            <Button tone="outline" size="md" editableKey="ctaSecondary" href={templateHref(storeContext, 'courses')}>
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCtaSecondary"
+            editMode={editMode}
+            className="inline-flex"
+          >
+            <Button
+              tone="outline"
+              size="md"
+              editableKey="ctaSecondary"
+              href={templateHref(storeContext, 'courses')}
+            >
               {text(config, 'ctaSecondary', d.ctaSecondary)}
             </Button>
           </RemovableSlot>
@@ -66,7 +91,10 @@ export function SepidHero({ id, config, storeContext }: TemplateSectionProps) {
             className="min-h-[260px] rounded-(--theme-border-radius) border border-(--theme-border-color)"
           >
             <div className="flex min-h-[260px] items-center justify-center bg-(--theme-surface-alt) p-10">
-              <span data-editable="photoCaption" className="text-[14px] font-medium text-(--theme-muted)">
+              <span
+                data-editable="photoCaption"
+                className="text-[14px] font-medium text-(--theme-muted)"
+              >
                 {text(config, 'photoCaption', d.photoCaption)}
               </span>
             </div>

@@ -1,44 +1,31 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound, redirect } from 'next/navigation';
 
-import { LearningShell } from "@/components/learning/learning-shell";
-import { getCourseById, getCurrentUser, getEnrollments } from "@/lib/api/server";
-import { getSession } from "@/lib/auth/session";
-import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
-import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath } from "@/lib/utils";
+import { LearningShell } from '@/components/learning/learning-shell';
+import { getCourseById, getCurrentUser, getEnrollments } from '@/lib/api/server';
+import { getSession } from '@/lib/auth/session';
+import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
+import { getAcademyContext } from '@/lib/store-context';
+import { buildAcademyPath } from '@/lib/utils';
 
 type PageParams = Promise<{ courseSlug: string; lessonSlug: string }>;
 
-export default async function LearningLessonPage({
-  params,
-}: {
-  params: PageParams;
-}) {
-  const { courseSlug: courseSlugParam, lessonSlug: lessonSlugParam } =
-    await params;
+export default async function LearningLessonPage({ params }: { params: PageParams }) {
+  const { courseSlug: courseSlugParam, lessonSlug: lessonSlugParam } = await params;
   const courseSlug = decodePathSegment(courseSlugParam);
   const lessonSlug = decodePathSegment(lessonSlugParam);
-  const [session, storeContext] = await Promise.all([
-    getSession(),
-    getAcademyContext(),
-  ]);
+  const [session, storeContext] = await Promise.all([getSession(), getAcademyContext()]);
   const storeSlug = storeContext.isSubdomain ? null : storeContext.slug;
 
   if (!session) {
-    const returnPath = buildAcademyPath(
-      storeSlug,
-      learnPath(courseSlug, lessonSlug),
-    );
+    const returnPath = buildAcademyPath(storeSlug, learnPath(courseSlug, lessonSlug));
     redirect(
-      `${buildAcademyPath(storeSlug, "/auth/login")}?redirect=${encodeURIComponent(returnPath)}`,
+      `${buildAcademyPath(storeSlug, '/auth/login')}?redirect=${encodeURIComponent(returnPath)}`,
     );
   }
 
   const course = await getCourseById(courseSlug).catch(() => null);
   const [enrollmentData, user] = await Promise.all([
-    course
-      ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
-      : null,
+    course ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null) : null,
     getCurrentUser().catch(() => null),
   ]);
   // Staff see the academy's enrollments here, so match this viewer's own row —
@@ -47,7 +34,7 @@ export default async function LearningLessonPage({
     (item) =>
       String(item.course_id) === course?.id &&
       String(item.profile_id) === String(session.profileId) &&
-      (item.status === "ACTIVE" || item.status === "COMPLETED"),
+      (item.status === 'ACTIVE' || item.status === 'COMPLETED'),
   );
 
   if (!course || !user) {
@@ -57,10 +44,7 @@ export default async function LearningLessonPage({
   const seasons = course.Season ?? [];
   const selectedLesson = seasons
     .flatMap((season) => season.Lesson ?? [])
-    .find(
-      (lesson) =>
-        lesson.slug === lessonSlug || String(lesson.id) === lessonSlug,
-    );
+    .find((lesson) => lesson.slug === lessonSlug || String(lesson.id) === lessonSlug);
 
   if (!selectedLesson || selectedLesson.is_published === false) {
     notFound();
@@ -84,9 +68,7 @@ export default async function LearningLessonPage({
       currentProfileId={String(user.id)}
       studentName={user.display_name ?? null}
       storeSlug={storeSlug}
-      teacherName={
-        course.Profile?.display_name ?? course.author?.display_name ?? null
-      }
+      teacherName={course.Profile?.display_name ?? course.author?.display_name ?? null}
     />
   );
 }

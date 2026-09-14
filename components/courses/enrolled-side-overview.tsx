@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   ArrowLeft,
@@ -9,15 +9,15 @@ import {
   Layers,
   ListChecks,
   Radio,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { useMemo } from "react";
+} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { useMemo } from 'react';
 
-import Link from "@/components/ui/link";
-import { formatMinutes } from "@/components/courses/curriculum/format";
-import { useTranslation } from "@/lib/i18n/hooks";
-import type { CourseContentStats } from "@/lib/courses/curriculum";
-import { formatPercent, toPersianDigits } from "@/lib/utils";
+import Link from '@/components/ui/link';
+import { formatMinutes } from '@/components/courses/curriculum/format';
+import { useTranslation } from '@/lib/i18n/hooks';
+import type { CourseContentStats } from '@/lib/courses/curriculum';
+import { formatPercent, toPersianDigits } from '@/lib/utils';
 
 interface EnrolledSideOverviewProps {
   progressPercent: number | null;
@@ -40,45 +40,45 @@ function buildFacts(
 ): CourseFact[] {
   const facts: Array<CourseFact | false> = [
     stats.lessonCount > 0 && {
-      key: "lessons",
+      key: 'lessons',
       value: toPersianDigits(stats.lessonCount, language),
-      label: t("courses.lesson"),
+      label: t('courses.lesson'),
       icon: BookOpen,
     },
     stats.seasonCount > 0 && {
-      key: "sections",
+      key: 'sections',
       value: toPersianDigits(stats.seasonCount, language),
-      label: t("courses.sectionsLabel"),
+      label: t('courses.sectionsLabel'),
       icon: Layers,
     },
     stats.totalMinutes > 0 && {
-      key: "duration",
+      key: 'duration',
       value: formatMinutes(stats.totalMinutes, language, t),
-      label: t("courses.statHoursLabel"),
+      label: t('courses.statHoursLabel'),
       icon: Clock,
     },
     stats.liveCount > 0 && {
-      key: "live",
+      key: 'live',
       value: toPersianDigits(stats.liveCount, language),
-      label: t("courses.statLiveLabel"),
+      label: t('courses.statLiveLabel'),
       icon: Radio,
     },
     stats.quizCount > 0 && {
-      key: "quiz",
+      key: 'quiz',
       value: toPersianDigits(stats.quizCount, language),
-      label: t("courses.statQuizLabel"),
+      label: t('courses.statQuizLabel'),
       icon: ListChecks,
     },
     stats.assignmentCount > 0 && {
-      key: "assignment",
+      key: 'assignment',
       value: toPersianDigits(stats.assignmentCount, language),
-      label: t("courses.statAssignmentLabel"),
+      label: t('courses.statAssignmentLabel'),
       icon: ClipboardList,
     },
     isCertificate && {
-      key: "certificate",
-      value: t("courses.certificateIncluded"),
-      label: t("courses.certificate"),
+      key: 'certificate',
+      value: t('courses.certificateIncluded'),
+      label: t('courses.certificate'),
       icon: Award,
     },
   ];
@@ -104,9 +104,7 @@ export function EnrolledSideOverview({
       {progressPercent != null && (
         <div>
           <div className="mb-2 flex items-center justify-between gap-3 text-[13px]">
-            <span className="font-bold text-(--theme-foreground)">
-              {t("courses.yourProgress")}
-            </span>
+            <span className="font-bold text-(--theme-foreground)">{t('courses.yourProgress')}</span>
             <span className="cd-price font-black text-(--theme-primary)">
               {formatPercent(progressPercent, language)}
             </span>
@@ -114,7 +112,7 @@ export function EnrolledSideOverview({
           <div className="flex h-2 w-full overflow-hidden rounded-full bg-(--theme-surface-alt)">
             <div
               role="progressbar"
-              aria-label={t("courses.yourProgress")}
+              aria-label={t('courses.yourProgress')}
               aria-valuenow={progressPercent}
               aria-valuemin={0}
               aria-valuemax={100}
@@ -127,14 +125,12 @@ export function EnrolledSideOverview({
 
       {facts.length > 0 && (
         <div>
-          <h3 className="text-xs font-black text-(--theme-foreground)">
-            {t("courses.includes")}
-          </h3>
+          <h3 className="text-xs font-black text-(--theme-foreground)">{t('courses.includes')}</h3>
           <ul className="mt-2.5 grid grid-cols-2 gap-2.5">
             {facts.map((fact) => (
               <li
                 key={fact.key}
-                className="flex items-center gap-2.5 rounded-xl border border-theme bg-(--theme-primary)/6 px-3 py-3"
+                className="border-theme flex items-center gap-2.5 rounded-xl border bg-(--theme-primary)/6 px-3 py-3"
               >
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-(--theme-primary)/12 text-(--theme-primary)">
                   <fact.icon className="h-4 w-4" />
@@ -143,9 +139,7 @@ export function EnrolledSideOverview({
                   <span className="cd-price block truncate text-sm font-black text-(--theme-foreground)">
                     {fact.value}
                   </span>
-                  <span className="block truncate text-[11px] text-muted">
-                    {fact.label}
-                  </span>
+                  <span className="text-muted block truncate text-[11px]">{fact.label}</span>
                 </span>
               </li>
             ))}
@@ -168,16 +162,14 @@ export function EnrolledSideCta({
 
   return (
     <div className="px-5 pt-5 pb-5">
-      <h2 className="text-lg font-black leading-snug text-(--theme-foreground)">
-        {t("courses.alreadyEnrolled")}
+      <h2 className="text-lg leading-snug font-black text-(--theme-foreground)">
+        {t('courses.alreadyEnrolled')}
       </h2>
       <Link
         href={href}
         className="cd-cta-btn mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-full text-sm font-extrabold text-white transition-all hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       >
-        {hasStarted
-          ? t("courses.continueLearning")
-          : t("courses.startLearning")}
+        {hasStarted ? t('courses.continueLearning') : t('courses.startLearning')}
         <ArrowLeft className="h-4 w-4 shrink-0 rtl:rotate-180" />
       </Link>
     </div>

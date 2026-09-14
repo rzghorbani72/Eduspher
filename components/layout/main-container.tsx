@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation';
 
 interface MainContainerProps {
   /** Server-known, path-independent full-width cases (platform root, sample preview). */
@@ -10,7 +10,7 @@ interface MainContainerProps {
   children: React.ReactNode;
 }
 
-const normalize = (path: string) => path.replace(/\/+$/, "") || "/";
+const normalize = (path: string) => path.replace(/\/+$/, '') || '/';
 
 // The root layout is NOT re-rendered on client-side navigation, so a width
 // decision made from request headers there goes stale and the next page renders
@@ -20,8 +20,8 @@ export function MainContainer({ fullWidth, homePaths, children }: MainContainerP
   const pathname = normalize(usePathname());
   const isFullBleed =
     fullWidth ||
-    pathname.startsWith("/auth") ||
-    pathname.startsWith("/preview") ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/preview') ||
     homePaths.includes(pathname);
 
   if (isFullBleed) return <>{children}</>;

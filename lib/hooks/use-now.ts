@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from 'react';
 
 /**
  * One shared clock for every "is this live right now?" badge on the page.
@@ -37,5 +37,4 @@ const subscribe = (listener: () => void) => {
 const getSnapshot = () => snapshot;
 const getServerSnapshot = () => 0;
 
-export const useNow = (): number =>
-  useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+export const useNow = (): number => useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);

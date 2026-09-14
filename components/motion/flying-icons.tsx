@@ -116,7 +116,7 @@ export function FlyingIcons({
           ...icon,
           x: Math.min(icon.x, container.offsetWidth),
           y: Math.min(icon.y, container.offsetHeight),
-        }))
+        })),
       );
     };
 
@@ -135,7 +135,7 @@ export function FlyingIcons({
   return (
     <div
       ref={containerRef}
-      className={`fixed inset-0 -z-10 pointer-events-none overflow-hidden ${className}`}
+      className={`pointer-events-none fixed inset-0 -z-10 overflow-hidden ${className}`}
     >
       {flyingIcons.map((icon) => (
         <img
@@ -161,4 +161,3 @@ export function FlyingIcons({
     </div>
   );
 }
-

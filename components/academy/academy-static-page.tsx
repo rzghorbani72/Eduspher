@@ -1,8 +1,8 @@
-import { renderMarkdown } from "@/lib/markdown";
-import { t } from "@/lib/i18n/server-translations";
-import { DEFAULT_LANGUAGE, type LanguageCode } from "@/lib/i18n/config";
-import { ContactChannelList } from "@/components/academy/contact-channel-list";
-import type { AcademyContactLink, AcademyStaticPage } from "@/lib/api/server";
+import { renderMarkdown } from '@/lib/markdown';
+import { t } from '@/lib/i18n/server-translations';
+import { DEFAULT_LANGUAGE, type LanguageCode } from '@/lib/i18n/config';
+import { ContactChannelList } from '@/components/academy/contact-channel-list';
+import type { AcademyContactLink, AcademyStaticPage } from '@/lib/api/server';
 
 type AcademyStaticPageViewProps = {
   page: AcademyStaticPage;
@@ -24,9 +24,7 @@ export function AcademyStaticPageView({
 }: AcademyStaticPageViewProps) {
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-        {page.title}
-      </h1>
+      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{page.title}</h1>
 
       {page.body.trim() ? (
         <div
@@ -37,9 +35,7 @@ export function AcademyStaticPageView({
 
       {links.length > 0 ? (
         <section className="mt-10">
-          <h2 className="mb-4 text-lg font-semibold">
-            {t("academySite.waysToReach", language)}
-          </h2>
+          <h2 className="mb-4 text-lg font-semibold">{t('academySite.waysToReach', language)}</h2>
           <ContactChannelList links={links} language={language} />
         </section>
       ) : null}

@@ -35,7 +35,7 @@ export function KeyhanFeatures({ id, config }: TemplateSectionProps) {
 
         <div className="grid gap-5 lg:grid-cols-6" {...editableList('items', items)}>
           {lead ? (
-            <article className="grid gap-8 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-7 md:grid-cols-[1.2fr_0.8fr] md:items-center lg:col-span-6">
+            <article className="grid gap-8 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-7 shadow-(--theme-shadow) md:grid-cols-[1.2fr_0.8fr] md:items-center lg:col-span-6">
               <div>
                 <span
                   {...editableItem('items', 0, 'index')}
@@ -43,7 +43,10 @@ export function KeyhanFeatures({ id, config }: TemplateSectionProps) {
                 >
                   {lead.index}
                 </span>
-                <h3 {...editableItem('items', 0, 'title')} className="mt-3 text-[24px] font-bold leading-[1.3]">
+                <h3
+                  {...editableItem('items', 0, 'title')}
+                  className="mt-3 text-[24px] leading-[1.3] font-bold"
+                >
                   {lead.title}
                 </h3>
                 <p
@@ -59,7 +62,7 @@ export function KeyhanFeatures({ id, config }: TemplateSectionProps) {
                 <span className={styles.blip} />
                 <span
                   data-editable="scopeCaption"
-                  className="absolute bottom-3 end-3 text-[10px] font-bold tracking-[0.14em] text-(--theme-on-deep)/60"
+                  className="absolute end-3 bottom-3 text-[10px] font-bold tracking-[0.14em] text-(--theme-on-deep)/60"
                 >
                   {text(config, 'scopeCaption', d.scopeCaption)}
                 </span>
@@ -70,7 +73,7 @@ export function KeyhanFeatures({ id, config }: TemplateSectionProps) {
           {rest.map((item, index) => (
             <article
               key={item.title}
-              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 lg:col-span-3"
+              className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 shadow-(--theme-shadow) lg:col-span-3"
             >
               <span
                 {...editableItem('items', index + 1, 'index')}
@@ -78,7 +81,10 @@ export function KeyhanFeatures({ id, config }: TemplateSectionProps) {
               >
                 {item.index}
               </span>
-              <h3 {...editableItem('items', index + 1, 'title')} className="mt-3 text-[20px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index + 1, 'title')}
+                className="mt-3 text-[20px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p

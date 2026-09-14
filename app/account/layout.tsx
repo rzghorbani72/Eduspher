@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import type { ReactNode } from "react";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-import { AccountSidebar } from "@/components/account/account-sidebar";
-import { getProfile } from "@/lib/api/account-server";
-import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from "@/lib/api/server";
-import { getSession } from "@/lib/auth/session";
-import { NOINDEX_ROBOTS } from "@/lib/seo/crawl-policy";
-import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath, resolveAssetUrl } from "@/lib/utils";
+import { AccountSidebar } from '@/components/account/account-sidebar';
+import { getProfile } from '@/lib/api/account-server';
+import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { getSession } from '@/lib/auth/session';
+import { NOINDEX_ROBOTS } from '@/lib/seo/crawl-policy';
+import { getAcademyContext } from '@/lib/store-context';
+import { buildAcademyPath, resolveAssetUrl } from '@/lib/utils';
 
 export const metadata: Metadata = {
   robots: NOINDEX_ROBOTS,
@@ -32,7 +32,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // so it is always the bare route ("/account/profile"). Re-adding the slug
   // gives the browser-visible URL, which is what login must return us to.
   const headerStore = await headers();
-  const currentPath = headerStore.get("x-url-pathname") ?? "/account";
+  const currentPath = headerStore.get('x-url-pathname') ?? '/account';
   const returnTo = buildPath(currentPath);
 
   const session = await getSession();
@@ -40,10 +40,9 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // blip / backend 5xx), not because the session was rejected. Repeating the
   // redirect here on that same stale jwt would log a genuinely logged-in
   // visitor out over a hiccup that has nothing to do with their session.
-  const refreshWasUnavailable =
-    headerStore.get("x-auth-refresh-unavailable") === "1";
+  const refreshWasUnavailable = headerStore.get('x-auth-refresh-unavailable') === '1';
   if (!session?.profileId && !refreshWasUnavailable) {
-    redirect(`${buildPath("/auth/login")}?redirect=${encodeURIComponent(returnTo)}`);
+    redirect(`${buildPath('/auth/login')}?redirect=${encodeURIComponent(returnTo)}`);
   }
 
   // A failing /auth/me does NOT mean "signed out" — pending legal consent 403s
@@ -54,8 +53,10 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     session?.profileId ? getProfile(String(session.profileId)) : Promise.resolve(null),
     getCurrentAcademy()
       .catch(() => null)
-      .then((found) =>
-        found ?? (academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null),
+      .then(
+        (found) =>
+          found ??
+          (academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null),
       ),
   ]);
 
@@ -64,16 +65,14 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         <div className="w-full lg:w-64 lg:shrink-0">
           <AccountSidebar
-            displayName={profile?.display_name || user?.display_name || ""}
+            displayName={profile?.display_name || user?.display_name || ''}
             contact={user?.email ?? user?.phone_number}
-            avatarUrl={
-              resolveAssetUrl(profile?.avatar?.url ?? user?.avatar?.url) ?? null
-            }
+            avatarUrl={resolveAssetUrl(profile?.avatar?.url ?? user?.avatar?.url) ?? null}
             roleLabel={profile?.role_label ?? user?.role}
             isVerified={Boolean(user?.email_confirmed || user?.phone_confirmed)}
             academyName={academy?.name ?? academyContext.name}
             currentPath={currentPath}
-            basePath={buildPath("/account")}
+            basePath={buildPath('/account')}
           />
         </div>
         <div className="min-w-0 flex-1 space-y-6">{children}</div>

@@ -30,7 +30,10 @@ export function DastanFeatures({ id, config, storeContext }: TemplateSectionProp
     >
       <Container className="py-(--theme-section-padding-y)">
         <div className="mb-12 grid gap-8 md:grid-cols-2 md:items-end">
-          <h2 data-editable="title" className="text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]">
+          <h2
+            data-editable="title"
+            className="text-[clamp(28px,4vw,44px)] leading-[1.2] font-bold tracking-[-0.02em]"
+          >
             {text(config, 'title', d.title)}
           </h2>
           <p data-editable="subtitle" className="text-[17px] leading-[1.85] text-(--theme-muted)">
@@ -52,7 +55,10 @@ export function DastanFeatures({ id, config, storeContext }: TemplateSectionProp
               >
                 {item.kicker}
               </span>
-              <h3 {...editableItem('items', index, 'title')} className="mt-3.5 text-[23px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index, 'title')}
+                className="mt-3.5 text-[23px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p
@@ -68,19 +74,27 @@ export function DastanFeatures({ id, config, storeContext }: TemplateSectionProp
         <div className="mt-10 grid items-center gap-8 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface-alt) p-8 md:grid-cols-[auto_1fr_auto]">
           <span
             data-editable="highlightValue"
-            className="text-[52px] font-bold leading-none text-(--theme-primary) tabular-nums"
+            className="text-[52px] leading-none font-bold text-(--theme-primary) tabular-nums"
           >
             {text(config, 'highlightValue', d.highlight.value)}
           </span>
           <div>
-            <h3 data-editable="highlightTitle" className="text-[21px] font-bold leading-[1.4]">
+            <h3 data-editable="highlightTitle" className="text-[21px] leading-[1.4] font-bold">
               {text(config, 'highlightTitle', d.highlight.title)}
             </h3>
-            <p data-editable="highlightBody" className="mt-2 text-[15px] leading-[1.8] text-(--theme-muted)">
+            <p
+              data-editable="highlightBody"
+              className="mt-2 text-[15px] leading-[1.8] text-(--theme-muted)"
+            >
               {text(config, 'highlightBody', d.highlight.body)}
             </p>
           </div>
-          <Button tone="outline" size="sm" editableKey="highlightCta" href={templateHref(storeContext, 'register')}>
+          <Button
+            tone="outline"
+            size="sm"
+            editableKey="highlightCta"
+            href={templateHref(storeContext, 'register')}
+          >
             {text(config, 'highlightCta', d.highlight.ctaText)}
           </Button>
         </div>

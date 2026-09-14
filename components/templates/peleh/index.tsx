@@ -38,7 +38,12 @@ export const PELEH_SECTIONS: TemplateSectionMap = {
   ),
   hero: PelehHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={PELEH_DEFAULTS.marquee.items} tone="brand" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={PELEH_DEFAULTS.marquee.items}
+      tone="brand"
+    />
   ),
   features: PelehFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -56,12 +61,30 @@ export const PELEH_SECTIONS: TemplateSectionMap = {
     <TemplateDataTable id={id} config={config} defaults={PELEH_DEFAULTS.showcase} tone="surface" />
   ),
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={PELEH_DEFAULTS.teachers} tone="page" avatarShape="round" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={PELEH_DEFAULTS.teachers}
+      tone="page"
+      avatarShape="round"
+    />
   ),
   cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={PELEH_DEFAULTS.cta} tone="brand" boxed />
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PELEH_DEFAULTS.cta}
+      tone="brand"
+      boxed
+    />
   ),
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={PELEH_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PELEH_DEFAULTS.footer}
+    />
   ),
 };

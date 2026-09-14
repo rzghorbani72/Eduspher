@@ -62,11 +62,7 @@ export type LogAction<C extends LogCatalog, E extends LogDomain<C>> = Extract<
 >;
 
 export type ContextField = 'request_id' | 'academy_id' | 'user_id' | 'role';
-export type ErrorField =
-  | 'error_name'
-  | 'error_message'
-  | 'error_code'
-  | 'error_stack';
+export type ErrorField = 'error_name' | 'error_message' | 'error_code' | 'error_stack';
 
 /** Declared catalog fields plus the always-allowed context and error keys. */
 export type LogDetails<
@@ -75,9 +71,7 @@ export type LogDetails<
   A extends LogAction<C, E>,
 > = Partial<
   Record<
-    | (C[E]['actions'][A] extends LogEventDef
-        ? C[E]['actions'][A]['fields'][number]
-        : never)
+    | (C[E]['actions'][A] extends LogEventDef ? C[E]['actions'][A]['fields'][number] : never)
     | ContextField
     | ErrorField,
     LogPrimitive
@@ -102,8 +96,32 @@ export function listLogCatalog(catalog: LogCatalog): LogCatalogEntry[] {
 
 /** PascalCase enforced by the compiler: snake_case or camelCase → never. */
 type UpperAlpha =
-  | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
-  | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z';
+  | 'A'
+  | 'B'
+  | 'C'
+  | 'D'
+  | 'E'
+  | 'F'
+  | 'G'
+  | 'H'
+  | 'I'
+  | 'J'
+  | 'K'
+  | 'L'
+  | 'M'
+  | 'N'
+  | 'O'
+  | 'P'
+  | 'Q'
+  | 'R'
+  | 'S'
+  | 'T'
+  | 'U'
+  | 'V'
+  | 'W'
+  | 'X'
+  | 'Y'
+  | 'Z';
 
 export type PascalCase<S extends string> = S extends `${UpperAlpha}${string}`
   ? S extends `${string}_${string}`
@@ -139,21 +157,13 @@ function envVar(name: string): string | undefined {
   return typeof process !== 'undefined' ? process.env?.[name] : undefined;
 }
 
-export function createLogger<C extends LogCatalog>(
-  config: LoggerConfig<C>,
-): Logger<C> {
+export function createLogger<C extends LogCatalog>(config: LoggerConfig<C>): Logger<C> {
   const env = config.env ?? envVar('NODE_ENV') ?? 'development';
-  const release =
-    config.release ?? envVar('RELEASE') ?? envVar('NEXT_PUBLIC_RELEASE') ?? 'dev';
+  const release = config.release ?? envVar('RELEASE') ?? envVar('NEXT_PUBLIC_RELEASE') ?? 'dev';
   const sink = config.sink ?? consoleSink;
   const getContext = config.getContext ?? (() => ({}));
 
-  const emit = (
-    event: string,
-    action: string,
-    level: LogLevel,
-    fields: LogFields,
-  ): void => {
+  const emit = (event: string, action: string, level: LogLevel, fields: LogFields): void => {
     const extra: LogFields = { ...getContext(), ...flattenFields(fields) };
     if (level !== 'error') delete extra.error_stack;
     // Envelope keys come first (readable in a console) and can never be

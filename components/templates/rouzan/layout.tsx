@@ -53,7 +53,7 @@ export function SectionHead({
         {eyebrow ? <LeadLabel editableKey={eyebrowKey}>{eyebrow}</LeadLabel> : null}
         <h2
           data-editable={titleKey}
-          className="mt-2 text-[clamp(28px,3.1vw,40px)] font-bold leading-[1.14]"
+          className="mt-2 text-[clamp(28px,3.1vw,40px)] leading-[1.14] font-bold"
         >
           {title}
         </h2>

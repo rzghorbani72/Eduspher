@@ -41,7 +41,10 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Backdrop variant="grain" />
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-16 lg:grid-cols-[1.1fr_0.9fr]">
@@ -53,23 +56,41 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
               {text(config, 'eyebrow', d.eyebrow)}
             </span>
 
-            <h1 className="mt-6 text-[clamp(34px,5.2vw,60px)] font-bold leading-[1.14] tracking-[-0.025em]">
+            <h1 className="mt-6 text-[clamp(34px,5.2vw,60px)] leading-[1.14] font-bold tracking-[-0.025em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-(--theme-ink-2)">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-(--theme-ink-2)"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="outline"
                   size="lg"
@@ -94,7 +115,7 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
                     <dd>
                       <b
                         {...editableItem('stats', index, 'value')}
-                        className="block text-[26px] font-bold leading-none tracking-[-0.03em]"
+                        className="block text-[26px] leading-none font-bold tracking-[-0.03em]"
                       >
                         {stat.value}
                       </b>
@@ -111,8 +132,17 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
-            <HeroVisualSlot config={config} mode="fill" className={`${styles.chart} overflow-hidden`}>
+          <RemovableSlot
+            config={config}
+            flagKey="showSideVisual"
+            editMode={editMode}
+            mediaKey="bgImage"
+          >
+            <HeroVisualSlot
+              config={config}
+              mode="fill"
+              className={`${styles.chart} overflow-hidden`}
+            >
               <div className={styles.chart}>
                 <span className={styles.chartDisc} aria-hidden="true" data-motion="drift" />
 
@@ -164,7 +194,10 @@ export function BikaranHero({ id, config, storeContext }: TemplateSectionProps) 
                   <b data-editable="chartTagTitle" className="block text-[14px] font-bold">
                     {text(config, 'chartTagTitle', d.chartTagTitle)}
                   </b>
-                  <span data-editable="chartTagNote" className="mt-1 block text-[12.5px] text-(--theme-muted)">
+                  <span
+                    data-editable="chartTagNote"
+                    className="mt-1 block text-[12.5px] text-(--theme-muted)"
+                  >
                     {text(config, 'chartTagNote', d.chartTagNote)}
                   </span>
                 </div>

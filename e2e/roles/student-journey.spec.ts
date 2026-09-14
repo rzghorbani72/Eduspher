@@ -19,9 +19,9 @@ test.describe('edusphere student journey @backend', () => {
     const academyId = process.env.E2E_ACADEMY_ID;
     test.skip(!email || !password || !academyId, 'student creds + academy id required');
 
-    await page.context().addCookies([
-      { name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL },
-    ]);
+    await page
+      .context()
+      .addCookies([{ name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL }]);
     await page.goto('/auth/login');
     await page.locator('#identifier').fill(email!);
     await page.locator('button[type="submit"]').click();

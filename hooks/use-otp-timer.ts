@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from 'react';
 
-import { useLocaleDigits } from "@/hooks/use-locale-digits";
+import { useLocaleDigits } from '@/hooks/use-locale-digits';
 
 const DURATION = 120;
 
@@ -31,8 +31,8 @@ export function useOtpTimer() {
 
   useEffect(() => () => clear(), []);
 
-  const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
-  const ss = String(seconds % 60).padStart(2, "0");
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const ss = String(seconds % 60).padStart(2, '0');
 
   return {
     formatted: localeDigits(`${mm}:${ss}`),

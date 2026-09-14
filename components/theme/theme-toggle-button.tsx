@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useSyncExternalStore } from "react";
-import { Moon, Sun } from "lucide-react";
+import { useCallback, useEffect, useSyncExternalStore } from 'react';
+import { Moon, Sun } from 'lucide-react';
 
-import { useThemeConfig } from "./theme-provider";
-import { applyThemeCssVariables } from "@/lib/theme-apply";
+import { useThemeConfig } from './theme-provider';
+import { applyThemeCssVariables } from '@/lib/theme-apply';
 import {
   readThemeModeOverride,
   writeThemeModeOverride,
   THEME_MODE_EVENT,
   type ThemeMode,
-} from "@/lib/theme-mode";
+} from '@/lib/theme-mode';
 
 const subscribe = (onChange: () => void) => {
   window.addEventListener(THEME_MODE_EVENT, onChange);
-  window.addEventListener("storage", onChange);
+  window.addEventListener('storage', onChange);
   return () => {
     window.removeEventListener(THEME_MODE_EVENT, onChange);
-    window.removeEventListener("storage", onChange);
+    window.removeEventListener('storage', onChange);
   };
 };
 
@@ -26,20 +26,19 @@ const subscribe = (onChange: () => void) => {
 // treats a null dark_mode as light by default.
 export function useThemeToggle() {
   const { theme } = useThemeConfig();
-  const allowToggle =
-    !!theme && (theme.dark_mode === null || theme.dark_mode === undefined);
+  const allowToggle = !!theme && (theme.dark_mode === null || theme.dark_mode === undefined);
   const mode = useSyncExternalStore<ThemeMode>(
     subscribe,
-    () => readThemeModeOverride() ?? "light",
-    () => "light",
+    () => readThemeModeOverride() ?? 'light',
+    () => 'light',
   );
 
   const apply = useCallback(
     (next: ThemeMode) => {
       if (!theme) return;
-      const isDark = next === "dark";
+      const isDark = next === 'dark';
       applyThemeCssVariables({ ...theme, dark_mode: isDark }, { prefersDark: isDark });
-      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.classList.toggle('dark', isDark);
     },
     [theme],
   );
@@ -49,14 +48,14 @@ export function useThemeToggle() {
   }, [allowToggle, mode, apply]);
 
   const toggle = useCallback(() => {
-    writeThemeModeOverride(mode === "dark" ? "light" : "dark");
+    writeThemeModeOverride(mode === 'dark' ? 'light' : 'dark');
   }, [mode]);
 
   return { allowToggle, mode, toggle };
 }
 
 // Inline icon button — hosted inside the site header to match the design.
-export function ThemeToggle({ className = "" }: { className?: string }) {
+export function ThemeToggle({ className = '' }: { className?: string }) {
   const { allowToggle, mode, toggle } = useThemeToggle();
   if (!allowToggle) return null;
 
@@ -68,7 +67,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       className={className}
     >
-      {mode === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      {mode === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </button>
   );
 }

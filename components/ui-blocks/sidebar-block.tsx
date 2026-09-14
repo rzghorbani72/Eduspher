@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { buildAcademyPath } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import Link from "@/components/ui/link";
-import { ChevronDown, ChevronRight, Filter, X } from "lucide-react";
+import { useState } from 'react';
+import { buildAcademyPath } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import Link from '@/components/ui/link';
+import { ChevronDown, ChevronRight, Filter, X } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -15,7 +15,7 @@ interface Category {
 interface SidebarBlockProps {
   id?: string;
   config?: {
-    position?: "left" | "right";
+    position?: 'left' | 'right';
     showCategories?: boolean;
     showFilters?: boolean;
   };
@@ -23,25 +23,25 @@ interface SidebarBlockProps {
 }
 
 export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps) {
-  const position = config?.position || "left";
+  const position = config?.position || 'left';
   const showCategories = config?.showCategories !== false;
   const showFilters = config?.showFilters !== false;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory] = useState<string | null>(null);
 
   const filterOptions = [
-    { label: "Price", options: ["Free", "Paid", "All"] },
-    { label: "Level", options: ["Beginner", "Intermediate", "Advanced"] },
-    { label: "Duration", options: ["< 1 hour", "1-5 hours", "> 5 hours"] },
+    { label: 'Price', options: ['Free', 'Paid', 'All'] },
+    { label: 'Level', options: ['Beginner', 'Intermediate', 'Advanced'] },
+    { label: 'Duration', options: ['< 1 hour', '1-5 hours', '> 5 hours'] },
   ];
 
   return (
     <>
       {/* Mobile toggle button */}
-      <div className="lg:hidden fixed bottom-4 right-4 z-40">
+      <div className="fixed right-4 bottom-4 z-40 lg:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-primary)] text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-110"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--theme-primary)] text-[var(--theme-on-primary)] shadow-[var(--theme-primary)]/30 shadow-lg transition-all hover:scale-110"
         >
           {isOpen ? <X className="h-6 w-6" /> : <Filter className="h-6 w-6" />}
         </button>
@@ -57,24 +57,26 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
 
       {/* Sidebar */}
       <aside
-        id={id || "sidebar"}
-        style={{ backgroundColor: 'var(--theme-surface)', borderColor: 'var(--theme-border-color)', color: 'var(--theme-foreground)' }}
+        id={id || 'sidebar'}
+        style={{
+          backgroundColor: 'var(--theme-surface)',
+          borderColor: 'var(--theme-border-color)',
+          color: 'var(--theme-foreground)',
+        }}
         className={cn(
-          "fixed top-0 z-40 h-full w-80 transform border-r transition-transform duration-300 lg:relative lg:z-auto lg:transform-none",
-          position === "left" ? "left-0" : "right-0",
-          isOpen ? "translate-x-0" : position === "left" ? "-translate-x-full" : "translate-x-full",
-          "lg:translate-x-0"
+          'fixed top-0 z-40 h-full w-80 transform border-r transition-transform duration-300 lg:relative lg:z-auto lg:transform-none',
+          position === 'left' ? 'left-0' : 'right-0',
+          isOpen ? 'translate-x-0' : position === 'left' ? '-translate-x-full' : 'translate-x-full',
+          'lg:translate-x-0',
         )}
       >
         <div className="flex h-full flex-col overflow-y-auto p-6">
           {/* Close button for mobile */}
           <div className="mb-6 flex items-center justify-between lg:hidden">
-            <h2 className="text-lg font-semibold">
-              Filters & Categories
-            </h2>
+            <h2 className="text-lg font-semibold">Filters & Categories</h2>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-2 opacity-60 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]"
+              className="rounded-lg p-2 opacity-60 hover:bg-[var(--theme-surface-alt)] hover:opacity-100"
             >
               <X className="h-5 w-5" />
             </button>
@@ -83,7 +85,7 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
           {/* Categories Section */}
           {showCategories && (
             <div className="mb-8">
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-60">
+              <h3 className="mb-4 text-sm font-semibold tracking-wide uppercase opacity-60">
                 Categories
               </h3>
               <nav className="space-y-2">
@@ -93,10 +95,10 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
                     href={buildAcademyPath(null, `/courses?category=${category.slug}`)}
                     onClick={() => setIsOpen(false)}
                     className={cn(
-                      "flex items-center justify-between rounded-lg px-4 py-2.5 text-sm transition-colors",
+                      'flex items-center justify-between rounded-lg px-4 py-2.5 text-sm transition-colors',
                       selectedCategory === category.slug
-                        ? "bg-[var(--theme-primary)]/10 text-[var(--theme-primary)] font-medium"
-                        : "opacity-60 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]"
+                        ? 'bg-[var(--theme-primary)]/10 font-medium text-[var(--theme-primary)]'
+                        : 'opacity-60 hover:bg-[var(--theme-surface-alt)] hover:opacity-100',
                     )}
                   >
                     <span>{category.name}</span>
@@ -110,13 +112,13 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
           {/* Filters Section */}
           {showFilters && (
             <div>
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide opacity-60">
+              <h3 className="mb-4 text-sm font-semibold tracking-wide uppercase opacity-60">
                 Filters
               </h3>
               <div className="space-y-6">
                 {filterOptions.map((filter, index) => (
                   <div key={index}>
-                    <button className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm font-medium opacity-80 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]">
+                    <button className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm font-medium opacity-80 hover:bg-[var(--theme-surface-alt)] hover:opacity-100">
                       <span>{filter.label}</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
@@ -124,7 +126,7 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
                       {filter.options.map((option) => (
                         <label
                           key={option}
-                          className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm opacity-65 hover:opacity-100 hover:bg-[var(--theme-surface-alt)]"
+                          className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm opacity-65 hover:bg-[var(--theme-surface-alt)] hover:opacity-100"
                         >
                           <input
                             type="checkbox"
@@ -142,8 +144,11 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
 
           {/* Apply Filters Button */}
           {showFilters && (
-            <div className="mt-8 pt-6 border-t" style={{ borderColor: 'var(--theme-border-color)' }}>
-              <button className="w-full rounded-lg bg-[var(--theme-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:bg-[var(--theme-primary)]/90">
+            <div
+              className="mt-8 border-t pt-6"
+              style={{ borderColor: 'var(--theme-border-color)' }}
+            >
+              <button className="w-full rounded-lg bg-[var(--theme-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--theme-on-primary)] shadow-[var(--theme-primary)]/30 shadow-lg transition-all hover:bg-[var(--theme-primary)]/90">
                 Apply Filters
               </button>
             </div>
@@ -153,4 +158,3 @@ export function SidebarBlock({ id, config, categories = [] }: SidebarBlockProps)
     </>
   );
 }
-

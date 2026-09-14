@@ -1,7 +1,7 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { SiteFooter } from "./site-footer";
-import { SiteHeader } from "./site-header";
+import { SiteFooter } from './site-footer';
+import { SiteHeader } from './site-header';
 
 type Props = {
   loginUrl: string;
@@ -15,7 +15,7 @@ export function LandingShell({ loginUrl, registerUrl, children }: Props) {
     <div
       dir="rtl"
       data-theme="light"
-      className="lp-root min-h-screen bg-lp-surface font-[Vazirmatn,system-ui,sans-serif] text-lp-ink antialiased"
+      className="lp-root bg-lp-surface text-lp-ink min-h-screen font-[Vazirmatn,system-ui,sans-serif] antialiased"
     >
       {/* Restores the saved theme before first paint so a returning dark-mode
           visitor never sees a white flash. Runs ahead of hydration, which is

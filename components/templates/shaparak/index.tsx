@@ -38,7 +38,12 @@ export const SHAPARAK_SECTIONS: TemplateSectionMap = {
   ),
   hero: ShaparakHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={SHAPARAK_DEFAULTS.marquee.items} tone="accent" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={SHAPARAK_DEFAULTS.marquee.items}
+      tone="accent"
+    />
   ),
   features: ShaparakFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -53,15 +58,38 @@ export const SHAPARAK_SECTIONS: TemplateSectionMap = {
   ),
   categories: ShaparakCategories,
   showcase: ({ id, config }) => (
-    <TemplateDataTable id={id} config={config} defaults={SHAPARAK_DEFAULTS.showcase} tone="surface" />
+    <TemplateDataTable
+      id={id}
+      config={config}
+      defaults={SHAPARAK_DEFAULTS.showcase}
+      tone="surface"
+    />
   ),
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={SHAPARAK_DEFAULTS.teachers} tone="page" avatarShape="round" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={SHAPARAK_DEFAULTS.teachers}
+      tone="page"
+      avatarShape="round"
+    />
   ),
   cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={SHAPARAK_DEFAULTS.cta} tone="brand" boxed />
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={SHAPARAK_DEFAULTS.cta}
+      tone="brand"
+      boxed
+    />
   ),
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={SHAPARAK_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={SHAPARAK_DEFAULTS.footer}
+    />
   ),
 };

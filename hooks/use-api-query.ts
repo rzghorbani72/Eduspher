@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useQuery, type QueryKey } from "@tanstack/react-query";
+import { useQuery, type QueryKey } from '@tanstack/react-query';
 
 interface ApiQueryOptions<T> {
   queryKey: QueryKey;
@@ -14,11 +14,7 @@ interface ApiQueryOptions<T> {
   refetchInterval?: number;
 }
 
-export function useApiQuery<T>({
-  queryKey,
-  queryFn,
-  ...options
-}: ApiQueryOptions<T>) {
+export function useApiQuery<T>({ queryKey, queryFn, ...options }: ApiQueryOptions<T>) {
   const query = useQuery<T>({
     queryKey,
     queryFn: ({ signal }) => queryFn(signal),
@@ -28,7 +24,7 @@ export function useApiQuery<T>({
   return {
     data: query.data,
     error: query.error,
-    isLoading: query.isPending && query.fetchStatus !== "idle",
+    isLoading: query.isPending && query.fetchStatus !== 'idle',
     isFetching: query.isFetching,
     refresh: query.refetch,
   };

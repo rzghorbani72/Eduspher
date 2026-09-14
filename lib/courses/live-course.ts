@@ -1,10 +1,9 @@
-import type { CourseSummary } from "@/lib/api/types";
+import type { CourseSummary } from '@/lib/api/types';
 
-type PricedCourse = Pick<CourseSummary, "course_type" | "TutoringOffer">;
+type PricedCourse = Pick<CourseSummary, 'course_type' | 'TutoringOffer'>;
 
 /** A live course is taught on a timetable; a recorded one is watched anytime. */
-export const isLiveCourse = (course: PricedCourse): boolean =>
-  course.course_type === "LIVE";
+export const isLiveCourse = (course: PricedCourse): boolean => course.course_type === 'LIVE';
 
 /**
  * What a live course actually costs to join: the cheapest seat in a group
@@ -12,7 +11,7 @@ export const isLiveCourse = (course: PricedCourse): boolean =>
  */
 export const seatPriceOf = (course: PricedCourse): number | null => {
   const prices = (course.TutoringOffer ?? [])
-    .filter((offer) => offer.kind === "GROUP")
+    .filter((offer) => offer.kind === 'GROUP')
     .map((offer) => offer.price)
     .filter((price) => price > 0);
   return prices.length ? Math.min(...prices) : null;
@@ -24,16 +23,16 @@ export const seatPriceOfGroup = (group: {
   Offer: { price: number } | null;
 }): number => group.seat_price ?? group.Offer?.price ?? 0;
 
-export type ClassSize = "PRIVATE" | "SMALL" | "PUBLIC";
+export type ClassSize = 'PRIVATE' | 'SMALL' | 'PUBLIC';
 
 /** Private 1:1, a small group, or a big open class — priced and sold differently. */
 export const classSizeOf = (capacity: number): ClassSize =>
-  capacity === 1 ? "PRIVATE" : capacity <= 15 ? "SMALL" : "PUBLIC";
+  capacity === 1 ? 'PRIVATE' : capacity <= 15 ? 'SMALL' : 'PUBLIC';
 
 export const CLASS_SIZE_LABEL: Record<ClassSize, string> = {
-  PRIVATE: "courses.classSizePrivate",
-  SMALL: "courses.classSizeSmall",
-  PUBLIC: "courses.classSizePublic",
+  PRIVATE: 'courses.classSizePrivate',
+  SMALL: 'courses.classSizeSmall',
+  PUBLIC: 'courses.classSizePublic',
 };
 
 export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
@@ -43,8 +42,7 @@ export const sessionsOfGroup = (group: {
   session_count: number | null;
   term_weeks: number;
   Slots: unknown[];
-}): number =>
-  group.session_count ?? group.term_weeks * Math.max(group.Slots.length, 1);
+}): number => group.session_count ?? group.term_weeks * Math.max(group.Slots.length, 1);
 
 /** Private → small → public, so the price ladder reads top to bottom. */
 export const sortBySize = <T extends { capacity: number }>(groups: T[]): T[] =>

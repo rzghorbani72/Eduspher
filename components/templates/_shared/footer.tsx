@@ -34,9 +34,7 @@ interface TemplateFooterProps {
  * Only pages this academy actually has. A footer is where dead links hide
  * longest, so the list is built from the same closed route map the buttons use.
  */
-function defaultColumns(
-  storeContext: TemplateStoreContext | undefined
-): readonly FooterColumn[] {
+function defaultColumns(storeContext: TemplateStoreContext | undefined): readonly FooterColumn[] {
   return [
     {
       title: 'آموزش',
@@ -70,7 +68,11 @@ export async function TemplateSiteFooter({
 }: TemplateFooterProps) {
   const academy = await getCurrentAcademy().catch(() => null);
   const academyName = academy?.name ?? 'آکادمی';
-  const columns = list<FooterColumn>(config, 'columns', defaults.columns ?? defaultColumns(storeContext));
+  const columns = list<FooterColumn>(
+    config,
+    'columns',
+    defaults.columns ?? defaultColumns(storeContext),
+  );
   const contact = list<FooterContact>(config, 'contact', defaults.contact ?? []);
   const socials = list<{ label: string; href: string }>(config, 'socials', defaults.socials ?? []);
   const year = new Date().toLocaleDateString('fa-IR-u-ca-persian', { year: 'numeric' });
@@ -84,7 +86,10 @@ export async function TemplateSiteFooter({
         >
           <div>
             <p className="text-[19px] font-bold">{academyName}</p>
-            <p data-editable="about" className="mt-4 max-w-[36ch] text-[14px] leading-[1.85] text-current/62">
+            <p
+              data-editable="about"
+              className="mt-4 max-w-[36ch] text-[14px] leading-[1.85] text-current/62"
+            >
               {text(config, 'about', defaults.about)}
             </p>
             {socials.length > 0 ? (
@@ -137,11 +142,18 @@ export async function TemplateSiteFooter({
               >
                 {text(config, 'contactTitle', defaults.contactTitle ?? 'تماس')}
               </h2>
-              <ul className="grid gap-2.5 text-[14px] text-current/72" {...editableList('contact', contact)}>
+              <ul
+                className="grid gap-2.5 text-[14px] text-current/72"
+                {...editableList('contact', contact)}
+              >
                 {contact.map((item, index) => (
                   <li key={item.label}>
                     {item.href ? (
-                      <a href={item.href} {...editableItem('contact', index, 'label')} className="hover:text-current">
+                      <a
+                        href={item.href}
+                        {...editableItem('contact', index, 'label')}
+                        className="hover:text-current"
+                      >
                         {item.label}
                       </a>
                     ) : (
@@ -156,7 +168,8 @@ export async function TemplateSiteFooter({
 
         <div className="flex flex-wrap items-end justify-between gap-4 border-t border-current/14 py-6 text-[13px] text-current/55">
           <span>
-            © {year} {academyName}. <span data-editable="legal">{text(config, 'legal', defaults.legal)}</span>
+            © {year} {academyName}.{' '}
+            <span data-editable="legal">{text(config, 'legal', defaults.legal)}</span>
           </span>
           <PoweredBy />
           {academy?.slug ? <PlatformTrustBadge slug={academy.slug} academyId={academy.id} /> : null}

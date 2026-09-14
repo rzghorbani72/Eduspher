@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
-import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
-import { CourseDetailTabs } from "@/components/courses/course-detail-tabs";
-import { CourseHero } from "@/components/courses/course-hero";
-import { CoursePreviewPlayer } from "@/components/courses/course-preview-player";
+import { TemplatedCourseCard } from '@/components/courses/templated-course-card';
+import { COURSE_CARD_GRID_CLASS } from '@/components/courses/course-card-layout';
+import { CourseDetailTabs } from '@/components/courses/course-detail-tabs';
+import { CourseHero } from '@/components/courses/course-hero';
+import { CoursePreviewPlayer } from '@/components/courses/course-preview-player';
 import {
   PreviewPlayerProvider,
   type PreviewMedia,
-} from "@/components/courses/preview-player-context";
-import { PurchasePanel } from "@/components/courses/purchase-panel";
-import { LiveCoursePanel } from "@/components/courses/live-course-panel";
-import { ClassRequestSection } from "@/components/courses/class-request-section";
-import { TutoringGroupsSection } from "@/components/courses/tutoring-groups-section";
+} from '@/components/courses/preview-player-context';
+import { PurchasePanel } from '@/components/courses/purchase-panel';
+import { LiveCoursePanel } from '@/components/courses/live-course-panel';
+import { ClassRequestSection } from '@/components/courses/class-request-section';
+import { TutoringGroupsSection } from '@/components/courses/tutoring-groups-section';
 import {
   getCourses,
   getCurrentUser,
@@ -24,58 +24,44 @@ import {
   getCourseOfferingsPublic,
   getCoursePaymentPlans,
   getPublicLesson,
-} from "@/lib/api/server";
-import { getCourseAccess } from "@/lib/api/account-server";
-import { getAcademyContext } from "@/lib/store-context";
-import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
-import { buildAcademyPath, resolveAssetUrl, truncate } from "@/lib/utils";
-import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
-import { markdownToPlainText } from "@/lib/markdown";
-import { getAcademyShareImageUrl } from "@/lib/seo/share-image";
-import { t } from "@/lib/i18n/server-translations";
-import { buildContentStats, buildCurriculum } from "@/lib/courses/curriculum";
-import { isLiveCourse } from "@/lib/courses/live-course";
-import { buildPurchaseOptions } from "@/lib/courses/purchase-options";
-import {
-  formatAccessTerm,
-  formatMinutes,
-} from "@/components/courses/curriculum/format";
-import {
-  buildCourseJsonLd,
-  buildBreadcrumbJsonLd,
-} from "@/lib/seo/course-json-ld";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
-import { serializeJsonLd } from "@/lib/seo/json-ld-script";
+} from '@/lib/api/server';
+import { getCourseAccess } from '@/lib/api/account-server';
+import { getAcademyContext } from '@/lib/store-context';
+import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
+import { buildAcademyPath, resolveAssetUrl, truncate } from '@/lib/utils';
+import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
+import { markdownToPlainText } from '@/lib/markdown';
+import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
+import { t } from '@/lib/i18n/server-translations';
+import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
+import { isLiveCourse } from '@/lib/courses/live-course';
+import { buildPurchaseOptions } from '@/lib/courses/purchase-options';
+import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
+import { buildCourseJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo/course-json-ld';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
+import { serializeJsonLd } from '@/lib/seo/json-ld-script';
 
 type PageParams = Promise<{ slug: string }>;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: PageParams;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
   const { slug } = await params;
   const [course, ctx] = await Promise.all([
     getPublicCourseDetail(decodePathSegment(slug)),
     getSeoRequestContext(),
   ]);
-  if (!course) return { title: "404" };
+  if (!course) return { title: '404' };
 
   // The author's own search metadata wins; the course copy is the fallback.
   const title = course.meta_title?.trim() || course.title;
   const description = truncate(
     course.meta_description?.trim() ||
-      markdownToPlainText(
-        course.short_description || course.description || course.title,
-      ),
+      markdownToPlainText(course.short_description || course.description || course.title),
     160,
   );
   const keywords = course.keywords ?? [];
 
   // Course cover first; the academy's share image only when the course has none.
-  const shareImage =
-    resolveAssetUrl(course.Image?.publicUrl) ??
-    (await getAcademyShareImageUrl());
+  const shareImage = resolveAssetUrl(course.Image?.publicUrl) ?? (await getAcademyShareImageUrl());
 
   return {
     title,
@@ -83,14 +69,14 @@ export async function generateMetadata({
     ...(keywords.length > 0 ? { keywords } : {}),
     alternates: { canonical: ctx.canonicalUrl },
     openGraph: {
-      type: "article",
+      type: 'article',
       title,
       description,
       url: ctx.canonicalUrl,
       ...(shareImage ? { images: [shareImage] } : {}),
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title,
       description,
       ...(shareImage ? { images: [shareImage] } : {}),
@@ -98,11 +84,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CourseDetailPage({
-  params,
-}: {
-  params: PageParams;
-}) {
+export default async function CourseDetailPage({ params }: { params: PageParams }) {
   const { slug } = await params;
   const courseKey = decodePathSegment(slug);
   const storeContext = await getAcademyContext();
@@ -112,17 +94,14 @@ export default async function CourseDetailPage({
   const course = await getPublicCourseDetail(courseKey);
   if (!course) return notFound();
 
-  const [user, tutoringGroups, courseOfferings, paymentPlans, seoCtx, topics] =
-    await Promise.all([
-      getCurrentUser().catch(() => null),
-      getTutoringGroupsPublic(course.id).catch(() => []),
-      getCourseOfferingsPublic(course.id).catch(() => []),
-      getCoursePaymentPlans(course.id),
-      getSeoRequestContext(),
-      isLiveCourse(course)
-        ? getCourseTopicsPublic(course.id).catch(() => [])
-        : [],
-    ]);
+  const [user, tutoringGroups, courseOfferings, paymentPlans, seoCtx, topics] = await Promise.all([
+    getCurrentUser().catch(() => null),
+    getTutoringGroupsPublic(course.id).catch(() => []),
+    getCourseOfferingsPublic(course.id).catch(() => []),
+    getCoursePaymentPlans(course.id),
+    getSeoRequestContext(),
+    isLiveCourse(course) ? getCourseTopicsPublic(course.id).catch(() => []) : [],
+  ]);
 
   const { academy, language, currencyConfig } = await resolveAcademyForRequest(
     user,
@@ -131,11 +110,7 @@ export default async function CourseDetailPage({
   const translate = (key: string) => t(key, language);
 
   const seasons = buildCurriculum(course);
-  const stats = buildContentStats(
-    seasons,
-    course.lessons_count,
-    course.duration,
-  );
+  const stats = buildContentStats(seasons, course.lessons_count, course.duration);
   const options = buildPurchaseOptions(course, courseOfferings, paymentPlans);
 
   // Holding the course replaces the whole buy box with a "keep going" link.
@@ -143,27 +118,20 @@ export default async function CourseDetailPage({
   // a student group they belong to — so the canonical access list decides,
   // not the enrollment rows.
   const [enrollment, courseAccess] = await Promise.all([
-    user
-      ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
-      : null,
+    user ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null) : null,
     user ? getCourseAccess() : [],
   ]);
   // Staff get the whole academy's enrollments from this endpoint, so the row
   // must belong to the viewer before it counts as "I own this course".
   const myEnrollment = user
-    ? enrollment?.enrollments?.find(
-        (item) => String(item.profile_id) === String(user.id),
-      )
+    ? enrollment?.enrollments?.find((item) => String(item.profile_id) === String(user.id))
     : undefined;
   const isEnrolled = Boolean(
     user &&
     (courseAccess.some((row) => row.course_id === course.id) ||
-      (myEnrollment &&
-        (myEnrollment.status === "ACTIVE" ||
-          myEnrollment.status === "COMPLETED"))),
+      (myEnrollment && (myEnrollment.status === 'ACTIVE' || myEnrollment.status === 'COMPLETED'))),
   );
-  const access =
-    courseAccess.find((row) => row.course_id === course.id) ?? null;
+  const access = courseAccess.find((row) => row.course_id === course.id) ?? null;
   // A tutoring student goes straight into the classroom, which lives next to
   // the recorded learn page; the page itself resolves group seat vs 1:1.
   const tutoringHref = buildPath(`${learnPath(course.slug)}/live`);
@@ -211,7 +179,7 @@ export default async function CourseDetailPage({
   const relatedCourses = await getCourses({
     published: true,
     limit: 4,
-    order_by: "NEWEST",
+    order_by: 'NEWEST',
     category_id: course.Category?.id,
   }).catch(() => null);
 
@@ -219,16 +187,16 @@ export default async function CourseDetailPage({
     course,
     stats,
     canonicalUrl: seoCtx.canonicalUrl,
-    academyName: academy?.name ?? "",
-    currency: currencyConfig?.currency ?? "IRR",
+    academyName: academy?.name ?? '',
+    currency: currencyConfig?.currency ?? 'IRR',
     imageUrl: course.Image?.publicUrl ? coverUrl : null,
     lowPrice: options.length ? Math.min(...options.map((o) => o.price)) : null,
   });
   const origin = new URL(seoCtx.canonicalUrl).origin;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     {
-      name: translate("pages.courseCatalogue"),
-      url: `${origin}${buildPath("/courses")}`,
+      name: translate('pages.courseCatalogue'),
+      url: `${origin}${buildPath('/courses')}`,
     },
     { name: course.title, url: seoCtx.canonicalUrl },
   ]);
@@ -248,20 +216,13 @@ export default async function CourseDetailPage({
         course={course}
         stats={stats}
         language={language}
-        coursesHref={buildPath("/courses")}
-        accessLabel={formatAccessTerm(
-          course.access_duration_days,
-          language,
-          translate,
-        )}
+        coursesHref={buildPath('/courses')}
+        accessLabel={formatAccessTerm(course.access_duration_days, language, translate)}
         durationLabel={formatMinutes(stats.totalMinutes, language, translate)}
         avatarUrl={avatarUrl}
       />
 
-      <PreviewPlayerProvider
-        media={previewMedia}
-        defaultLessonId={defaultPreviewId}
-      >
+      <PreviewPlayerProvider media={previewMedia} defaultLessonId={defaultPreviewId}>
         <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_340px]">
           <div className="min-w-0">
             <CoursePreviewPlayer
@@ -299,8 +260,8 @@ export default async function CourseDetailPage({
                     loginHref={loginHref}
                   />
                 ) : (
-                  <p className="rounded-2xl border border-dashed border-theme p-6 text-center text-sm text-muted">
-                    {translate("courses.liveNoClassesYet")}
+                  <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
+                    {translate('courses.liveNoClassesYet')}
                   </p>
                 )}
                 {!isEnrolled ? (
@@ -330,7 +291,7 @@ export default async function CourseDetailPage({
                 loginHref={loginHref}
                 continueHref={isEnrolled ? learnPathHref : null}
                 learnHref={learnPathHref}
-                liveClassesHref={buildPath("/account/classes")}
+                liveClassesHref={buildPath('/account/classes')}
                 tutoringHref={tutoringHref}
                 access={access}
                 stats={stats}
@@ -345,7 +306,7 @@ export default async function CourseDetailPage({
       {relatedCourses?.courses?.filter((c) => c.id !== course.id).length ? (
         <section className="mt-16 space-y-4">
           <h2 className="text-2xl font-bold tracking-tight text-(--theme-foreground)">
-            {translate("courses.youMightAlsoLike")}
+            {translate('courses.youMightAlsoLike')}
           </h2>
           <div className={COURSE_CARD_GRID_CLASS}>
             {relatedCourses.courses
@@ -355,9 +316,7 @@ export default async function CourseDetailPage({
                   key={item.id}
                   course={item}
                   index={index}
-                  storeSlug={
-                    storeContext.isSubdomain ? null : storeContext.slug
-                  }
+                  storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
                 />
               ))}
           </div>

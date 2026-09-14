@@ -1,9 +1,9 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { jwtVerify, decodeJwt, type JWTPayload } from "jose";
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { jwtVerify, decodeJwt, type JWTPayload } from 'jose';
 
-import { env } from "./lib/env";
-import { maybeEnamadTxtResponse } from "./lib/seo/enamad-txt-response";
+import { env } from './lib/env';
+import { maybeEnamadTxtResponse } from './lib/seo/enamad-txt-response';
 
 let jwtSecretWarningLogged = false;
 
@@ -12,7 +12,7 @@ function getAdminFrameAncestors(): string {
   const candidates = [
     process.env.NEXT_PUBLIC_ADMIN_PANEL_URL,
     process.env.ADMIN_PANEL_URL,
-    "http://localhost:4000",
+    'http://localhost:4000',
   ];
 
   for (const candidate of candidates) {
@@ -24,46 +24,43 @@ function getAdminFrameAncestors(): string {
     }
   }
 
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     for (const origin of [
-      "http://localhost:4000",
-      "http://127.0.0.1:4000",
-      "http://0.0.0.0:4000",
+      'http://localhost:4000',
+      'http://127.0.0.1:4000',
+      'http://0.0.0.0:4000',
     ]) {
       origins.add(origin);
     }
   }
 
-  return Array.from(origins).join(" ");
+  return Array.from(origins).join(' ');
 }
 
-function shouldApplyPreviewEmbed(
-  request: NextRequest,
-  isAcademyHome: boolean,
-): boolean {
+function shouldApplyPreviewEmbed(request: NextRequest, isAcademyHome: boolean): boolean {
   const { pathname, searchParams } = request.nextUrl;
-  if (searchParams.has("preview") || searchParams.get("embed") === "1") {
+  if (searchParams.has('preview') || searchParams.get('embed') === '1') {
     return true;
   }
-  return pathname === "/" || isAcademyHome;
+  return pathname === '/' || isAcademyHome;
 }
 
 function applyPreviewEmbedRequest(
   request: NextRequest,
   requestHeaders: Headers,
 ): { preview: string | null; embed: boolean } {
-  const preview = request.nextUrl.searchParams.get("preview");
-  const embed = request.nextUrl.searchParams.get("embed") === "1";
-  const sample = request.nextUrl.searchParams.get("sample") === "1";
+  const preview = request.nextUrl.searchParams.get('preview');
+  const embed = request.nextUrl.searchParams.get('embed') === '1';
+  const sample = request.nextUrl.searchParams.get('sample') === '1';
 
   if (preview) {
-    requestHeaders.set("x-preview-token", preview);
+    requestHeaders.set('x-preview-token', preview);
   }
   if (embed) {
-    requestHeaders.set("x-embed-mode", "1");
+    requestHeaders.set('x-embed-mode', '1');
   }
   if (sample) {
-    requestHeaders.set("x-preview-sample", "1");
+    requestHeaders.set('x-preview-sample', '1');
   }
 
   return { preview, embed };
@@ -75,53 +72,46 @@ function applyPreviewEmbedResponse(
   embed: boolean,
 ): void {
   if (preview) {
-    response.cookies.set("preview_token", preview, {
+    response.cookies.set('preview_token', preview, {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: 'lax',
       maxAge: 60 * 15,
-      path: "/",
+      path: '/',
     });
   }
   if (embed) {
-    response.cookies.set("embed_mode", "1", {
+    response.cookies.set('embed_mode', '1', {
       httpOnly: true,
-      sameSite: "lax",
+      sameSite: 'lax',
       maxAge: 60 * 60,
-      path: "/",
+      path: '/',
     });
   }
 
   const frameAncestors = embed ? getAdminFrameAncestors() : "'self'";
-  response.headers.set(
-    "Content-Security-Policy",
-    `frame-ancestors ${frameAncestors}`,
-  );
+  response.headers.set('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
 }
 
 /**
  * Verify JWT token signature and decode payload
  * Uses jose library for secure JWT verification in Edge runtime
  */
-async function verifyJWT(
-  token: string,
-): Promise<{ valid: boolean; payload: JWTPayload | null }> {
+async function verifyJWT(token: string): Promise<{ valid: boolean; payload: JWTPayload | null }> {
   try {
     const secret = process.env.JWT_SECRET;
 
     // In development or if no secret, fall back to decode-only with expiry check
     if (!secret) {
-      if (process.env.NODE_ENV === "development" && !jwtSecretWarningLogged) {
+      if (process.env.NODE_ENV === 'development' && !jwtSecretWarningLogged) {
         jwtSecretWarningLogged = true;
         console.warn(
-          "⚠️ JWT_SECRET not set in edusphere — JWT signature verification disabled. Copy JWT_SECRET from Backend/.env into edusphere/.env.local",
+          '⚠️ JWT_SECRET not set in edusphere — JWT signature verification disabled. Copy JWT_SECRET from Backend/.env into edusphere/.env.local',
         );
       }
       const payload = decodeJwt(token);
       // At minimum, check expiration
       const isExpired =
-        payload.exp &&
-        typeof payload.exp === "number" &&
-        payload.exp < Date.now() / 1000;
+        payload.exp && typeof payload.exp === 'number' && payload.exp < Date.now() / 1000;
       if (isExpired) {
         return { valid: false, payload: null };
       }
@@ -131,7 +121,7 @@ async function verifyJWT(
     // Verify the token signature using the secret
     const secretKey = new TextEncoder().encode(secret);
     const { payload } = await jwtVerify(token, secretKey, {
-      algorithms: ["HS256"],
+      algorithms: ['HS256'],
     });
 
     return { valid: true, payload };
@@ -141,20 +131,16 @@ async function verifyJWT(
   }
 }
 
-const BACKEND_ORIGIN =
-  process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? "http://localhost:3000";
-const BACKEND_API_PATH = process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? "/api";
-const DEFAULT_ACADEMY_SLUG =
-  process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_SLUG ?? null;
+const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? 'http://localhost:3000';
+const BACKEND_API_PATH = process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? '/api';
+const DEFAULT_ACADEMY_SLUG = process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_SLUG ?? null;
 const ACADEMY_ID_COOKIE =
-  process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? "skillforge_selected_academy_id";
-const ACADEMY_SLUG_COOKIE =
-  process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? "eduspher_academy_slug";
-const ACADEMY_NAME_COOKIE =
-  process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? "eduspher_academy_name";
-const ACADEMY_HEADER_ID = "x-academy-id";
-const ACADEMY_HEADER_SLUG = "x-academy-slug";
-const ACADEMY_NOT_FOUND_PATH = "/academy-not-found";
+  process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'skillforge_selected_academy_id';
+const ACADEMY_SLUG_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? 'eduspher_academy_slug';
+const ACADEMY_NAME_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'eduspher_academy_name';
+const ACADEMY_HEADER_ID = 'x-academy-id';
+const ACADEMY_HEADER_SLUG = 'x-academy-slug';
+const ACADEMY_NOT_FOUND_PATH = '/academy-not-found';
 
 type PublicStore = {
   id: number;
@@ -181,100 +167,100 @@ const shouldBypass = (req: NextRequest) => {
   const { pathname } = req.nextUrl;
   // sitemap.xml must run through proxy so academy hosts get tenant headers
   // for a correct per-academy sitemap.
-  if (pathname === "/sitemap.xml" || pathname.startsWith("/sitemap")) {
+  if (pathname === '/sitemap.xml' || pathname.startsWith('/sitemap')) {
     return false;
   }
   return (
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/") ||
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
     isBackendProxyPath(pathname) ||
-    pathname.startsWith("/images/") ||
-    pathname.startsWith("/fonts/") ||
-    pathname.startsWith("/favicon") ||
-    pathname.startsWith("/robots.txt") ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/fonts/') ||
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/robots.txt') ||
     STATIC_FILE.test(pathname)
   );
 };
 
 const RESERVED_PATH_SEGMENTS = new Set([
-  "",
-  "api",
-  "auth",
-  "images",
-  "static",
-  "_next",
-  "favicon.ico",
-  "robots.txt",
-  "sitemap.xml",
-  "academy-not-found",
+  '',
+  'api',
+  'auth',
+  'images',
+  'static',
+  '_next',
+  'favicon.ico',
+  'robots.txt',
+  'sitemap.xml',
+  'academy-not-found',
   // Academy-scoped routes
-  "account",
-  "blog",
-  "bundles",
-  "checkout",
-  "courses",
-  "learn",
-  "payment",
-  "preview",
-  "roadmap",
+  'account',
+  'blog',
+  'bundles',
+  'checkout',
+  'courses',
+  'learn',
+  'payment',
+  'preview',
+  'roadmap',
   // Platform-only routes — must not be shadowed by an academy slug
-  "about",
-  "academies",
-  "career",
-  "contact",
-  "pricing",
-  "privacy",
-  "refund",
-  "terms",
+  'about',
+  'academies',
+  'career',
+  'contact',
+  'pricing',
+  'privacy',
+  'refund',
+  'terms',
 ]);
 
 // Paths that belong to the platform itself, not any academy.
 // Middleware sets x-panel-root: 1 for these so the layout renders platform chrome.
 const PLATFORM_PATHS = new Set([
-  "/",
-  "",
-  "/about",
-  "/academies",
-  "/blog",
-  "/career",
-  "/contact",
-  "/courses",
-  "/pricing",
-  "/privacy",
-  "/refund",
-  "/terms",
+  '/',
+  '',
+  '/about',
+  '/academies',
+  '/blog',
+  '/career',
+  '/contact',
+  '/courses',
+  '/pricing',
+  '/privacy',
+  '/refund',
+  '/terms',
 ]);
 
 // Define protected routes that require authentication
-const protectedRoutes = ["/account", "/learn"];
+const protectedRoutes = ['/account', '/learn'];
 
 // Define public routes that don't require authentication
 const publicRoutes = [
-  "/",
-  "/courses",
-  "/blog",
-  "/about",
-  "/auth/login",
-  "/auth/register",
-  "/auth/forgot-password",
+  '/',
+  '/courses',
+  '/blog',
+  '/about',
+  '/auth/login',
+  '/auth/register',
+  '/auth/forgot-password',
 ];
 
 const extractHost = (hostHeader?: string | null) => {
   if (!hostHeader) return null;
-  return hostHeader.split(":")[0];
+  return hostHeader.split(':')[0];
 };
 
 const extractCandidateSlug = (host?: string | null) => {
   if (!host) return null;
-  if (host === "localhost" || host === "127.0.0.1") {
+  if (host === 'localhost' || host === '127.0.0.1') {
     return null;
   }
-  const parts = host.split(".");
+  const parts = host.split('.');
   if (parts.length <= 1) {
     return host;
   }
   const [firstPart] = parts;
-  if (firstPart === "www") {
+  if (firstPart === 'www') {
     return parts[1] ?? null;
   }
   return firstPart;
@@ -282,42 +268,40 @@ const extractCandidateSlug = (host?: string | null) => {
 
 const BASE_DOMAIN = (() => {
   try {
-    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost")
-      .hostname;
+    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost').hostname;
   } catch {
-    return "localhost";
+    return 'localhost';
   }
 })();
 
 // Infrastructure hosts that are never an academy — they must keep serving the
 // platform instead of being resolved as a tenant slug.
 const RESERVED_SUBDOMAINS = new Set([
-  "www",
-  "admin",
-  "panel",
-  "api",
-  "app",
-  "auth",
-  "cdn",
-  "static",
-  "assets",
-  "media",
-  "files",
-  "mail",
-  "smtp",
-  "blog",
-  "docs",
-  "status",
-  "support",
-  "dev",
-  "staging",
-  "test",
+  'www',
+  'admin',
+  'panel',
+  'api',
+  'app',
+  'auth',
+  'cdn',
+  'static',
+  'assets',
+  'media',
+  'files',
+  'mail',
+  'smtp',
+  'blog',
+  'docs',
+  'status',
+  'support',
+  'dev',
+  'staging',
+  'test',
 ]);
 
 const extractSubdomainSlug = (hostname: string | null): string | null => {
   if (!hostname) return null;
-  if (hostname === BASE_DOMAIN || hostname === `www.${BASE_DOMAIN}`)
-    return null;
+  if (hostname === BASE_DOMAIN || hostname === `www.${BASE_DOMAIN}`) return null;
   if (hostname.endsWith(`.${BASE_DOMAIN}`)) {
     const sub = hostname.slice(0, hostname.length - BASE_DOMAIN.length - 1);
     if (sub && !RESERVED_SUBDOMAINS.has(sub.toLowerCase())) return sub;
@@ -331,7 +315,7 @@ const matchStore = (
 ) => {
   const targetSlug = options.slug?.toLowerCase();
   const host = options.host?.toLowerCase();
-  const hostWithoutSubdomain = host?.replace(/^www\./, "");
+  const hostWithoutSubdomain = host?.replace(/^www\./, '');
   const targetId = options.id ? String(options.id) : null;
 
   return stores.find((store) => {
@@ -351,11 +335,7 @@ const matchStore = (
     ) {
       return true;
     }
-    if (
-      hostWithoutSubdomain &&
-      publicAddress &&
-      hostWithoutSubdomain === publicAddress
-    ) {
+    if (hostWithoutSubdomain && publicAddress && hostWithoutSubdomain === publicAddress) {
       return true;
     }
     return false;
@@ -364,16 +344,13 @@ const matchStore = (
 
 const fetchStores = async () => {
   try {
-    const response = await fetch(
-      `${BACKEND_ORIGIN}${BACKEND_API_PATH}/academies/public`,
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
+    const response = await fetch(`${BACKEND_ORIGIN}${BACKEND_API_PATH}/academies/public`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
-    );
+      cache: 'no-store',
+    });
     if (!response.ok) return null;
     const payload = (await response.json()) as { data?: PublicStore[] };
     return payload.data ?? null;
@@ -389,66 +366,56 @@ const fetchStores = async () => {
  * returning user was bounced to login after 5 hours.
  */
 type RefreshOutcome =
-  | { status: "refreshed"; jwt: string; setCookies: string[] }
-  | { status: "invalid" }
-  | { status: "unavailable" };
+  | { status: 'refreshed'; jwt: string; setCookies: string[] }
+  | { status: 'invalid' }
+  | { status: 'unavailable' };
 
-const readSetCookieValue = (
-  setCookies: string[],
-  name: string,
-): string | null => {
+const readSetCookieValue = (setCookies: string[], name: string): string | null => {
   const entry = setCookies.find((cookie) => cookie.startsWith(`${name}=`));
   if (!entry) return null;
-  const value = entry.slice(name.length + 1).split(";")[0];
+  const value = entry.slice(name.length + 1).split(';')[0];
   return value.length > 0 ? value : null;
 };
 
 /** Rewrites one cookie in the request header so this render sees the new token. */
 const withCookie = (header: string | null, name: string, value: string) => {
-  const others = (header ?? "")
-    .split(";")
+  const others = (header ?? '')
+    .split(';')
     .map((part) => part.trim())
     .filter((part) => part.length > 0 && !part.startsWith(`${name}=`));
-  return [...others, `${name}=${value}`].join("; ");
+  return [...others, `${name}=${value}`].join('; ');
 };
 
-const refreshSession = async (
-  request: NextRequest,
-): Promise<RefreshOutcome> => {
-  if (!request.cookies.get("refresh_token")?.value) {
-    return { status: "invalid" };
+const refreshSession = async (request: NextRequest): Promise<RefreshOutcome> => {
+  if (!request.cookies.get('refresh_token')?.value) {
+    return { status: 'invalid' };
   }
 
   try {
-    const csrfToken = request.cookies.get("csrf-token")?.value;
-    const response = await fetch(
-      `${BACKEND_ORIGIN}${BACKEND_API_PATH}/auth/refresh`,
-      {
-        method: "POST",
-        cache: "no-store",
-        headers: {
-          "Content-Type": "application/json",
-          cookie: request.headers.get("cookie") ?? "",
-          ...(csrfToken ? { "X-CSRF-Token": csrfToken } : {}),
-        },
+    const csrfToken = request.cookies.get('csrf-token')?.value;
+    const response = await fetch(`${BACKEND_ORIGIN}${BACKEND_API_PATH}/auth/refresh`, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        cookie: request.headers.get('cookie') ?? '',
+        ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
       },
-    );
+    });
 
     if (response.ok) {
       const setCookies = response.headers.getSetCookie();
-      const jwt = readSetCookieValue(setCookies, "jwt");
-      return jwt
-        ? { status: "refreshed", jwt, setCookies }
-        : { status: "invalid" };
+      const jwt = readSetCookieValue(setCookies, 'jwt');
+      return jwt ? { status: 'refreshed', jwt, setCookies } : { status: 'invalid' };
     }
 
     // Only an explicit rejection means the refresh token is dead. A 5xx or a
     // network blip must not log the visitor out.
     return response.status === 401 || response.status === 403
-      ? { status: "invalid" }
-      : { status: "unavailable" };
+      ? { status: 'invalid' }
+      : { status: 'unavailable' };
   } catch {
-    return { status: "unavailable" };
+    return { status: 'unavailable' };
   }
 };
 
@@ -463,42 +430,33 @@ export async function proxy(request: NextRequest) {
   const requestUrl = request.nextUrl;
   const existingId = request.cookies.get(ACADEMY_ID_COOKIE)?.value ?? null;
   const existingSlug = request.cookies.get(ACADEMY_SLUG_COOKIE)?.value ?? null;
-  const existingNameCookie =
-    request.cookies.get(ACADEMY_NAME_COOKIE)?.value ?? null;
-  const decodedExistingName = existingNameCookie
-    ? decodeURIComponent(existingNameCookie)
-    : null;
-  const pathnameSegments = requestUrl.pathname.split("/").filter(Boolean);
+  const existingNameCookie = request.cookies.get(ACADEMY_NAME_COOKIE)?.value ?? null;
+  const decodedExistingName = existingNameCookie ? decodeURIComponent(existingNameCookie) : null;
+  const pathnameSegments = requestUrl.pathname.split('/').filter(Boolean);
   const firstSegment = pathnameSegments[0] ?? null;
-  const searchParamSlug = requestUrl.searchParams.get("academy");
-  const hostHeader = extractHost(request.headers.get("host"));
+  const searchParamSlug = requestUrl.searchParams.get('academy');
+  const hostHeader = extractHost(request.headers.get('host'));
   const subdomainSlug = extractSubdomainSlug(hostHeader);
   const isSubdomainRequest = Boolean(subdomainSlug);
   // On subdomain requests the first path segment is never an academy slug.
   const slugFromPath =
-    !isSubdomainRequest &&
-    firstSegment &&
-    !RESERVED_PATH_SEGMENTS.has(firstSegment)
+    !isSubdomainRequest && firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment)
       ? firstSegment
       : null;
-  const isAcademyHomePath =
-    Boolean(slugFromPath) && pathnameSegments.length === 1;
+  const isAcademyHomePath = Boolean(slugFromPath) && pathnameSegments.length === 1;
   const candidateSlug =
     searchParamSlug ??
     slugFromPath ??
     subdomainSlug ??
     extractCandidateSlug(hostHeader) ??
     DEFAULT_ACADEMY_SLUG;
-  const numericSlugId =
-    slugFromPath && /^\d+$/.test(slugFromPath) ? slugFromPath : null;
+  const numericSlugId = slugFromPath && /^\d+$/.test(slugFromPath) ? slugFromPath : null;
 
   const stores = await fetchStores();
   const pathAcademySlug = searchParamSlug ?? slugFromPath;
   const hasPathAcademy = Boolean(pathAcademySlug);
   const isPanelRoot =
-    !isSubdomainRequest &&
-    !hasPathAcademy &&
-    PLATFORM_PATHS.has(requestUrl.pathname);
+    !isSubdomainRequest && !hasPathAcademy && PLATFORM_PATHS.has(requestUrl.pathname);
   let matchedStore: PublicStore | null = null;
 
   if (stores) {
@@ -527,13 +485,7 @@ export async function proxy(request: NextRequest) {
           id: numericSlugId ?? undefined,
         }) ?? null;
     }
-    if (
-      !matchedStore &&
-      !isSubdomainRequest &&
-      !hasPathAcademy &&
-      !isPanelRoot &&
-      existingId
-    ) {
+    if (!matchedStore && !isSubdomainRequest && !hasPathAcademy && !isPanelRoot && existingId) {
       matchedStore = matchStore(stores, { id: existingId }) ?? null;
     }
   }
@@ -547,29 +499,25 @@ export async function proxy(request: NextRequest) {
       // here would tell search engines the academy is permanently gone.
       return new NextResponse(null, {
         status: 503,
-        headers: { "Retry-After": "30" },
+        headers: { 'Retry-After': '30' },
       });
     }
     const notFoundUrl = requestUrl.clone();
     notFoundUrl.pathname = ACADEMY_NOT_FOUND_PATH;
-    notFoundUrl.search = "";
+    notFoundUrl.search = '';
     const notFoundResponse = NextResponse.rewrite(notFoundUrl);
     // Drop any academy left in cookies from an earlier host, so the 404 never
     // renders another academy's brand on this hostname.
-    for (const name of [
-      ACADEMY_ID_COOKIE,
-      ACADEMY_SLUG_COOKIE,
-      ACADEMY_NAME_COOKIE,
-    ]) {
-      notFoundResponse.cookies.set(name, "", { path: "/", maxAge: 0 });
+    for (const name of [ACADEMY_ID_COOKIE, ACADEMY_SLUG_COOKIE, ACADEMY_NAME_COOKIE]) {
+      notFoundResponse.cookies.set(name, '', { path: '/', maxAge: 0 });
     }
     return notFoundResponse;
   }
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-public-pathname", requestUrl.pathname);
+  requestHeaders.set('x-public-pathname', requestUrl.pathname);
   if (requestUrl.search) {
-    requestHeaders.set("x-public-search", requestUrl.search);
+    requestHeaders.set('x-public-search', requestUrl.search);
   }
   const applyPreviewEmbed = shouldApplyPreviewEmbed(request, isAcademyHomePath);
   const previewEmbed = applyPreviewEmbed
@@ -579,24 +527,22 @@ export async function proxy(request: NextRequest) {
   // sees the effective pathname, not the original "/" that would incorrectly
   // trigger isPanelRoot for subdomain academy requests.
   if (isPanelRoot) {
-    requestHeaders.set("x-panel-root", "1");
+    requestHeaders.set('x-panel-root', '1');
   } else if (isSubdomainRequest) {
-    requestHeaders.set("x-academy-subdomain", "1");
-    if (requestUrl.pathname === "/" || requestUrl.pathname === "") {
-      requestHeaders.set("x-academy-home", "1");
+    requestHeaders.set('x-academy-subdomain', '1');
+    if (requestUrl.pathname === '/' || requestUrl.pathname === '') {
+      requestHeaders.set('x-academy-home', '1');
     }
   } else if (slugFromPath) {
-    requestHeaders.set("x-academy-from-path", "1");
-    requestHeaders.set("x-academy-path-slug", slugFromPath);
+    requestHeaders.set('x-academy-from-path', '1');
+    requestHeaders.set('x-academy-path-slug', slugFromPath);
     if (isAcademyHomePath) {
-      requestHeaders.set("x-academy-home", "1");
+      requestHeaders.set('x-academy-home', '1');
     }
   }
   const cookiesToSet: Array<{ name: string; value: string }> = [];
   const addCookie = (name: string, value: string) => {
-    const existing = cookiesToSet.find(
-      (cookie) => cookie.name === name && cookie.value === value,
-    );
+    const existing = cookiesToSet.find((cookie) => cookie.name === name && cookie.value === value);
     if (!existing) {
       cookiesToSet.push({ name, value });
     }
@@ -608,7 +554,7 @@ export async function proxy(request: NextRequest) {
       addCookie(ACADEMY_SLUG_COOKIE, store.slug);
       requestHeaders.set(ACADEMY_HEADER_SLUG, store.slug);
     }
-    addCookie(ACADEMY_NAME_COOKIE, encodeURIComponent(store.name ?? ""));
+    addCookie(ACADEMY_NAME_COOKIE, encodeURIComponent(store.name ?? ''));
     requestHeaders.set(ACADEMY_HEADER_ID, String(store.id));
   };
 
@@ -639,39 +585,30 @@ export async function proxy(request: NextRequest) {
   if (!cookiesToSet.some((cookie) => cookie.name === ACADEMY_NAME_COOKIE)) {
     const headerStoreId = requestHeaders.get(ACADEMY_HEADER_ID);
     const nameFromList =
-      headerStoreId && stores
-        ? matchStore(stores ?? [], { id: headerStoreId })?.name
-        : null;
-    const matchedName =
-      matchedStore?.name ?? nameFromList ?? decodedExistingName ?? env.siteName;
-    addCookie(
-      ACADEMY_NAME_COOKIE,
-      encodeURIComponent(matchedName ?? env.siteName),
-    );
+      headerStoreId && stores ? matchStore(stores ?? [], { id: headerStoreId })?.name : null;
+    const matchedName = matchedStore?.name ?? nameFromList ?? decodedExistingName ?? env.siteName;
+    addCookie(ACADEMY_NAME_COOKIE, encodeURIComponent(matchedName ?? env.siteName));
   }
 
   // Determine the actual path (without store slug) for authentication checks
   let actualPathname = requestUrl.pathname;
   if (slugFromPath) {
     const cleanedPathSegments = pathnameSegments.slice(1);
-    actualPathname =
-      `/${cleanedPathSegments.join("/")}`.replace(/\/+$/, "") || "/";
+    actualPathname = `/${cleanedPathSegments.join('/')}`.replace(/\/+$/, '') || '/';
   }
 
   // Check authentication for protected routes
   const isProtectedRoute = protectedRoutes.some(
-    (route) =>
-      actualPathname === route || actualPathname.startsWith(`${route}/`),
+    (route) => actualPathname === route || actualPathname.startsWith(`${route}/`),
   );
   const isPublicRoute = publicRoutes.some(
-    (route) =>
-      actualPathname === route || actualPathname.startsWith(`${route}/`),
+    (route) => actualPathname === route || actualPathname.startsWith(`${route}/`),
   );
-  const isAuthRoute = actualPathname.startsWith("/auth/");
+  const isAuthRoute = actualPathname.startsWith('/auth/');
 
   // Get and validate the token from cookies
   // Verify JWT signature AND check required fields
-  const token = request.cookies.get("jwt")?.value;
+  const token = request.cookies.get('jwt')?.value;
   let isAuthenticated = false;
 
   if (token) {
@@ -681,12 +618,10 @@ export async function proxy(request: NextRequest) {
       // Check if token has required fields (profileId or userId)
       const hasProfileId =
         payload.profileId &&
-        (typeof payload.profileId === "number" ||
-          typeof payload.profileId === "string");
+        (typeof payload.profileId === 'number' || typeof payload.profileId === 'string');
       const hasUserId =
         payload.userId &&
-        (typeof payload.userId === "number" ||
-          typeof payload.userId === "string");
+        (typeof payload.userId === 'number' || typeof payload.userId === 'string');
       const hasValidId = hasProfileId || hasUserId;
 
       // Token is valid only if verified AND has required fields
@@ -707,17 +642,14 @@ export async function proxy(request: NextRequest) {
 
   if (!isAuthenticated) {
     const refreshed = await refreshSession(request);
-    if (refreshed.status === "refreshed") {
+    if (refreshed.status === 'refreshed') {
       isAuthenticated = true;
       refreshedSetCookies = refreshed.setCookies;
       // Server components read the request cookies, so this render must already
       // see the new token instead of the stale one.
-      requestHeaders.set(
-        "cookie",
-        withCookie(request.headers.get("cookie"), "jwt", refreshed.jwt),
-      );
-    } else if (refreshed.status === "invalid") {
-      dropRefreshCookie = Boolean(request.cookies.get("refresh_token")?.value);
+      requestHeaders.set('cookie', withCookie(request.headers.get('cookie'), 'jwt', refreshed.jwt));
+    } else if (refreshed.status === 'invalid') {
+      dropRefreshCookie = Boolean(request.cookies.get('refresh_token')?.value);
     } else {
       refreshUnavailable = true;
     }
@@ -726,10 +658,10 @@ export async function proxy(request: NextRequest) {
   // Auth cookies are decided once and copied onto whichever response we return.
   const applyAuthCookies = (target: NextResponse) => {
     for (const cookie of refreshedSetCookies) {
-      target.headers.append("set-cookie", cookie);
+      target.headers.append('set-cookie', cookie);
     }
     if (dropRefreshCookie) {
-      target.cookies.set("refresh_token", "", { path: "/", maxAge: 0 });
+      target.cookies.set('refresh_token', '', { path: '/', maxAge: 0 });
     }
   };
 
@@ -737,19 +669,15 @@ export async function proxy(request: NextRequest) {
   if (
     isAuthRoute &&
     isAuthenticated &&
-    (actualPathname === "/auth/login" || actualPathname === "/auth/register")
+    (actualPathname === '/auth/login' || actualPathname === '/auth/register')
   ) {
-    const redirectPath = slugFromPath ? `/${slugFromPath}` : "/";
+    const redirectPath = slugFromPath ? `/${slugFromPath}` : '/';
     const redirectUrl = new URL(redirectPath, requestUrl.origin);
-    redirectUrl.searchParams.delete("redirect");
+    redirectUrl.searchParams.delete('redirect');
     const redirectResponse = NextResponse.redirect(redirectUrl);
     applyAuthCookies(redirectResponse);
     if (applyPreviewEmbed) {
-      applyPreviewEmbedResponse(
-        redirectResponse,
-        previewEmbed.preview,
-        previewEmbed.embed,
-      );
+      applyPreviewEmbedResponse(redirectResponse, previewEmbed.preview, previewEmbed.embed);
     }
     return redirectResponse;
   }
@@ -759,22 +687,13 @@ export async function proxy(request: NextRequest) {
   // backend blip must not log out a visitor who may still hold a valid session.
   if (!isAuthenticated && isProtectedRoute && !isPublicRoute && !refreshUnavailable) {
     // Build login URL with store slug if present - use absolute URL
-    const loginPath = slugFromPath
-      ? `/${slugFromPath}/auth/login`
-      : "/auth/login";
+    const loginPath = slugFromPath ? `/${slugFromPath}/auth/login` : '/auth/login';
     const loginUrl = new URL(loginPath, requestUrl.origin);
-    loginUrl.searchParams.set(
-      "redirect",
-      requestUrl.pathname + requestUrl.search,
-    );
+    loginUrl.searchParams.set('redirect', requestUrl.pathname + requestUrl.search);
     const loginRedirect = NextResponse.redirect(loginUrl);
     applyAuthCookies(loginRedirect);
     if (applyPreviewEmbed) {
-      applyPreviewEmbedResponse(
-        loginRedirect,
-        previewEmbed.preview,
-        previewEmbed.embed,
-      );
+      applyPreviewEmbedResponse(loginRedirect, previewEmbed.preview, previewEmbed.embed);
     }
     return loginRedirect;
   }
@@ -783,7 +702,7 @@ export async function proxy(request: NextRequest) {
   if (
     isSubdomainRequest &&
     matchedStore &&
-    (requestUrl.pathname === "/" || requestUrl.pathname === "")
+    (requestUrl.pathname === '/' || requestUrl.pathname === '')
   ) {
     // Subdomain academy home: rewrite "/" → "/{slug}" so app/[slug]/page.tsx serves it.
     internalUrl = requestUrl.clone();
@@ -791,27 +710,21 @@ export async function proxy(request: NextRequest) {
   } else if (slugFromPath && !isAcademyHomePath) {
     // Path-based routing: strip the academy slug prefix so the shared route handles it.
     const cleanedPathSegments = pathnameSegments.slice(1);
-    const cleanedPathname = `/${cleanedPathSegments.join("/")}`.replace(
-      /\/+$/,
-      "",
-    );
-    const normalizedPath = cleanedPathname === "" ? "/" : cleanedPathname;
+    const cleanedPathname = `/${cleanedPathSegments.join('/')}`.replace(/\/+$/, '');
+    const normalizedPath = cleanedPathname === '' ? '/' : cleanedPathname;
     internalUrl = requestUrl.clone();
     internalUrl.pathname = normalizedPath;
   }
 
   // Set x-url-pathname to the EFFECTIVE path after rewrite so the layout's
   // isPanelRoot check sees "/siah" (not "/") for subdomain home requests.
-  requestHeaders.set(
-    "x-url-pathname",
-    internalUrl?.pathname ?? requestUrl.pathname,
-  );
+  requestHeaders.set('x-url-pathname', internalUrl?.pathname ?? requestUrl.pathname);
 
   // Lets a downstream server component know it must not repeat the login
   // redirect on a stale/expired jwt — the refresh attempt above was
   // inconclusive, not a proven-dead session.
   if (refreshUnavailable) {
-    requestHeaders.set("x-auth-refresh-unavailable", "1");
+    requestHeaders.set('x-auth-refresh-unavailable', '1');
   }
 
   const response = internalUrl
@@ -828,21 +741,17 @@ export async function proxy(request: NextRequest) {
 
   cookiesToSet.forEach(({ name, value }) => {
     response.cookies.set(name, value, {
-      path: "/",
-      sameSite: "lax",
+      path: '/',
+      sameSite: 'lax',
       httpOnly: false, // Store cookies are not httpOnly so they can be read by client
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24 * 365, // 1 year
     });
   });
 
   if (isPanelRoot) {
-    for (const name of [
-      ACADEMY_ID_COOKIE,
-      ACADEMY_SLUG_COOKIE,
-      ACADEMY_NAME_COOKIE,
-    ]) {
-      response.cookies.set(name, "", { path: "/", maxAge: 0 });
+    for (const name of [ACADEMY_ID_COOKIE, ACADEMY_SLUG_COOKIE, ACADEMY_NAME_COOKIE]) {
+      response.cookies.set(name, '', { path: '/', maxAge: 0 });
     }
   }
 
@@ -850,14 +759,13 @@ export async function proxy(request: NextRequest) {
 
   // Ensure jwt cookie from request is preserved if it exists.
   // Skipped after a refresh — the backend's own Set-Cookie is authoritative.
-  const jwtCookie =
-    refreshedSetCookies.length > 0 ? null : request.cookies.get("jwt");
+  const jwtCookie = refreshedSetCookies.length > 0 ? null : request.cookies.get('jwt');
   if (jwtCookie) {
-    response.cookies.set("jwt", jwtCookie.value, {
-      path: "/",
-      sameSite: "lax",
+    response.cookies.set('jwt', jwtCookie.value, {
+      path: '/',
+      sameSite: 'lax',
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 60 * 60 * 24, // 24 hours
     });
   }
@@ -865,7 +773,7 @@ export async function proxy(request: NextRequest) {
   if (searchParamSlug) {
     const cleanedUrl = new URL(requestUrl.pathname, requestUrl.origin);
     cleanedUrl.search = requestUrl.search;
-    cleanedUrl.searchParams.delete("academy");
+    cleanedUrl.searchParams.delete('academy');
     const academyRedirect = NextResponse.redirect(cleanedUrl);
     // The redirect is a NEW response, so the academy cookies written above are
     // not on it. Without this the visitor lands on the clean URL with no
@@ -875,32 +783,22 @@ export async function proxy(request: NextRequest) {
       academyRedirect.cookies.set(cookie);
     }
     if (applyPreviewEmbed) {
-      applyPreviewEmbedResponse(
-        academyRedirect,
-        previewEmbed.preview,
-        previewEmbed.embed,
-      );
+      applyPreviewEmbedResponse(academyRedirect, previewEmbed.preview, previewEmbed.embed);
     }
     return academyRedirect;
   }
 
   // Add pathname to headers for layout to detect home page
   const actualPath = internalUrl ? internalUrl.pathname : requestUrl.pathname;
-  response.headers.set("x-pathname", actualPath);
+  response.headers.set('x-pathname', actualPath);
 
   if (applyPreviewEmbed) {
-    applyPreviewEmbedResponse(
-      response,
-      previewEmbed.preview,
-      previewEmbed.embed,
-    );
+    applyPreviewEmbedResponse(response, previewEmbed.preview, previewEmbed.embed);
   }
 
   return response;
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|api/health).*)",
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|robots.txt|api/health).*)'],
 };

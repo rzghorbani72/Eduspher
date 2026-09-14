@@ -30,13 +30,16 @@ export function ParastooFeatures({ id, config }: TemplateSectionProps) {
           >
             <span
               aria-hidden="true"
-              className={`absolute -bottom-10 -start-10 size-44 rounded-[60px] bg-(--theme-primary-subtle)`}
+              className={`absolute -start-10 -bottom-10 size-44 rounded-[60px] bg-(--theme-primary-subtle)`}
             />
             <div className="relative z-[2] max-w-[74%]">
               <h3 data-editable="leadTitle" className="text-[25px] font-bold">
                 {text(config, 'leadTitle', d.lead.title)}
               </h3>
-              <p data-editable="leadBody" className="mt-3 text-[15.5px] leading-[1.8] text-(--theme-muted)">
+              <p
+                data-editable="leadBody"
+                className="mt-3 text-[15.5px] leading-[1.8] text-(--theme-muted)"
+              >
                 {text(config, 'leadBody', d.lead.body)}
               </p>
               <ul className="mt-5 flex flex-wrap gap-2.5" {...editableList('leadChips', leadChips)}>
@@ -58,7 +61,7 @@ export function ParastooFeatures({ id, config }: TemplateSectionProps) {
           >
             <span
               data-editable="statValue"
-              className="block text-[76px] font-bold leading-none tracking-[-0.06em] tabular-nums"
+              className="block text-[76px] leading-none font-bold tracking-[-0.06em] tabular-nums"
             >
               {text(config, 'statValue', d.stat.value)}
             </span>
@@ -88,7 +91,10 @@ export function ParastooFeatures({ id, config }: TemplateSectionProps) {
               <h3 data-editable="wideTitle" className="text-[24px] font-bold">
                 {text(config, 'wideTitle', d.wide.title)}
               </h3>
-              <p data-editable="wideBody" className="mt-3 text-[15.5px] leading-[1.8] text-(--theme-muted)">
+              <p
+                data-editable="wideBody"
+                className="mt-3 text-[15.5px] leading-[1.8] text-(--theme-muted)"
+              >
                 {text(config, 'wideBody', d.wide.body)}
               </p>
             </div>

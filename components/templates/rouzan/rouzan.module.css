@@ -234,7 +234,9 @@
   border: 1px solid var(--theme-border-color);
   border-radius: 16px;
   background: var(--theme-card-bg);
-  transition: border-color 0.18s, transform 0.18s;
+  transition:
+    border-color 0.18s,
+    transform 0.18s;
 }
 .cardHover:hover {
   border-color: var(--theme-foreground);
@@ -274,7 +276,6 @@
 .tD {
   background: var(--theme-surface-alt);
 }
-
 
 /* ── paths ─────────────────────────────────────────────────────────────── */
 

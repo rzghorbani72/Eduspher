@@ -1,9 +1,9 @@
 // Slot model — mirror of Backend/src/ui-template/slot-config.ts.
 // Keeps fixed-count grids from collapsing on sparse data and applies the
 // owner's section-wide, layout-safe sizing overrides.
-import type { CSSProperties } from "react";
+import type { CSSProperties } from 'react';
 
-export type SlotVisibility = "live" | "placeholder" | "hidden";
+export type SlotVisibility = 'live' | 'placeholder' | 'hidden';
 
 export interface SlotConfig {
   visibility: SlotVisibility;
@@ -24,9 +24,7 @@ export const SLOT_STYLE_BOUNDS: Record<keyof SlotStyle, { min: number; max: numb
   gap: { min: 0, max: 48 },
 };
 
-export type ResolvedSlot<T> =
-  | { kind: "live"; data: T }
-  | { kind: "placeholder"; text: string };
+export type ResolvedSlot<T> = { kind: 'live'; data: T } | { kind: 'placeholder'; text: string };
 
 // Builds the final render list for a grid. Live slots consume real data in
 // order; when data runs out the slot is dropped, so a storefront never shows
@@ -41,15 +39,15 @@ export function resolveSlots<T>(
   let dataIdx = 0;
 
   for (let i = 0; i < expectedCount; i++) {
-    const visibility = slots?.[i]?.visibility ?? "live";
-    if (visibility === "hidden") continue;
+    const visibility = slots?.[i]?.visibility ?? 'live';
+    if (visibility === 'hidden') continue;
     const placeholderText = slots?.[i]?.placeholderText;
-    if (visibility === "placeholder") {
-      if (placeholderText) out.push({ kind: "placeholder", text: placeholderText });
+    if (visibility === 'placeholder') {
+      if (placeholderText) out.push({ kind: 'placeholder', text: placeholderText });
       continue;
     }
     if (dataIdx < liveItems.length) {
-      out.push({ kind: "live", data: liveItems[dataIdx++] });
+      out.push({ kind: 'live', data: liveItems[dataIdx++] });
     }
   }
 
@@ -68,12 +66,11 @@ export function buildSlotStyleVars(
   fallbackBasis: string,
 ): CSSProperties {
   const vars: Record<string, string> = {
-    "--slot-basis":
-      typeof style?.minWidth === "number" ? clampVar(style.minWidth, "minWidth") : fallbackBasis,
-    "--slot-gap":
-      typeof style?.gap === "number" ? clampVar(style.gap, "gap") : "1.5rem",
+    '--slot-basis':
+      typeof style?.minWidth === 'number' ? clampVar(style.minWidth, 'minWidth') : fallbackBasis,
+    '--slot-gap': typeof style?.gap === 'number' ? clampVar(style.gap, 'gap') : '1.5rem',
   };
-  if (typeof style?.height === "number") vars["--slot-h"] = clampVar(style.height, "height");
-  if (typeof style?.padding === "number") vars["--slot-pad"] = clampVar(style.padding, "padding");
+  if (typeof style?.height === 'number') vars['--slot-h'] = clampVar(style.height, 'height');
+  if (typeof style?.padding === 'number') vars['--slot-pad'] = clampVar(style.padding, 'padding');
   return vars as CSSProperties;
 }

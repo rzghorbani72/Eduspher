@@ -28,11 +28,22 @@ export const BIKARAN_COURSE_CARD: CourseCardSpec = {
 
 export const BIKARAN_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={BIKARAN_HEADER} spec={{ tone: 'page', height: 74, navStyle: 'underline', markClassName: styles.logoMark }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={BIKARAN_HEADER}
+      spec={{ tone: 'page', height: 74, navStyle: 'underline', markClassName: styles.logoMark }}
+    />
   ),
   hero: BikaranHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={BIKARAN_DEFAULTS.marquee.items} tone="deep" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={BIKARAN_DEFAULTS.marquee.items}
+      tone="deep"
+    />
   ),
   features: BikaranFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -46,11 +57,31 @@ export const BIKARAN_SECTIONS: TemplateSectionMap = {
     />
   ),
   showcase: ({ id, config }) => (
-    <TemplateDataTable id={id} config={config} defaults={BIKARAN_DEFAULTS.calendar} tone="surface" />
+    <TemplateDataTable
+      id={id}
+      config={config}
+      defaults={BIKARAN_DEFAULTS.calendar}
+      tone="surface"
+    />
   ),
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={BIKARAN_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={BIKARAN_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={BIKARAN_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={BIKARAN_DEFAULTS.cta}
+      tone="deep"
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={BIKARAN_DEFAULTS.footer}
+    />
+  ),
 };

@@ -32,7 +32,10 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Backdrop variant="aurora" motion="wash" className="opacity-55" />
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
@@ -41,15 +44,22 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
               <b data-editable="entryWord" className="text-[19px] font-bold" dir="ltr">
                 {text(config, 'entryWord', d.entryWord)}
               </b>
-              <span data-editable="entryPhonetic" className="mt-1 block text-[13.5px] text-(--theme-muted)" dir="ltr">
+              <span
+                data-editable="entryPhonetic"
+                className="mt-1 block text-[13.5px] text-(--theme-muted)"
+                dir="ltr"
+              >
                 {text(config, 'entryPhonetic', d.entryPhonetic)}
               </span>
-              <span data-editable="entryGloss" className="mt-1 block text-[13.5px] text-(--theme-muted)">
+              <span
+                data-editable="entryGloss"
+                className="mt-1 block text-[13.5px] text-(--theme-muted)"
+              >
                 {text(config, 'entryGloss', d.entryGloss)}
               </span>
             </div>
 
-            <h1 className="mt-7 text-[clamp(34px,5.2vw,60px)] font-bold leading-[1.14] tracking-[-0.03em]">
+            <h1 className="mt-7 text-[clamp(34px,5.2vw,60px)] leading-[1.14] font-bold tracking-[-0.03em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config} className={styles.highlight}>
                 {text(config, 'titleEm', d.titleEm)}
@@ -57,17 +67,35 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.9] text-(--theme-ink-2)">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.9] text-(--theme-ink-2)"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'register')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="outline"
                   size="lg"
@@ -91,7 +119,12 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
             className="relative grid gap-5"
             mediaKey="bgImage"
           >
-            <RemovableSlot config={config} flagKey="showStamp" editMode={editMode} className="inline-flex">
+            <RemovableSlot
+              config={config}
+              flagKey="showStamp"
+              editMode={editMode}
+              className="inline-flex"
+            >
               <span className={styles.stamp} data-editable="stamp">
                 {text(config, 'stamp', d.stamp)}
               </span>
@@ -133,7 +166,10 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
                       >
                         {row.who}
                       </span>
-                      <span {...editableItem('transcript', index, 'line')} className="text-(--theme-ink-2)">
+                      <span
+                        {...editableItem('transcript', index, 'line')}
+                        className="text-(--theme-ink-2)"
+                      >
                         {row.line}
                       </span>
                     </p>
@@ -157,7 +193,7 @@ export function ZabanehHero({ id, config, storeContext }: TemplateSectionProps) 
                 <dd>
                   <b
                     {...editableItem('stats', index, 'value')}
-                    className="block text-[30px] font-bold leading-none tracking-[-0.04em] tabular-nums"
+                    className="block text-[30px] leading-none font-bold tracking-[-0.04em] tabular-nums"
                   >
                     {stat.value}
                   </b>

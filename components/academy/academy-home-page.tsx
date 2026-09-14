@@ -1,6 +1,5 @@
- 
-import Link from "@/components/ui/link";
-import { BookOpen } from "lucide-react";
+import Link from '@/components/ui/link';
+import { BookOpen } from 'lucide-react';
 
 import {
   getBlogArticles,
@@ -8,50 +7,44 @@ import {
   getCourses,
   getCurrentAcademy,
   getAcademyBySlug,
-} from "@/lib/api/server";
-import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
-import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
+} from '@/lib/api/server';
+import { TemplatedCourseCard } from '@/components/courses/templated-course-card';
+import { COURSE_CARD_GRID_CLASS } from '@/components/courses/course-card-layout';
 import {
   resolveAssetUrl,
   truncate,
   buildAcademyPath,
   formatNumber,
   toPersianDigits,
-} from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/ui/empty-state";
-import { getAcademyContext } from "@/lib/store-context";
-import { getStoreThemeAndTemplate } from "@/lib/theme-config";
-import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { AcademyHomeAnimations } from "./academy-home-animations";
-import { AppImage } from "@/components/ui/app-image";
+} from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { EmptyState } from '@/components/ui/empty-state';
+import { getAcademyContext } from '@/lib/store-context';
+import { getStoreThemeAndTemplate } from '@/lib/theme-config';
+import { BlocksRenderer } from '@/components/ui-blocks/blocks-renderer';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { AcademyHomeAnimations } from './academy-home-animations';
+import { AppImage } from '@/components/ui/app-image';
 
 export async function AcademyHomePage() {
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
 
-  const [
-    categories,
-    articles,
-    coursePayload,
-    themeAndTemplate,
-    currentAcademy,
-    publicAcademy,
-  ] = await Promise.all([
-    getCategories().catch(() => []),
-    getBlogArticles(storeContext.slug).catch(() => []),
-    getCourses({ limit: 6, published: true, is_featured: true } as Parameters<
-      typeof getCourses
-    >[0]).catch(() => null),
-    getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
-    getCurrentAcademy().catch(() => null),
-    storeContext.slug
-      ? getAcademyBySlug(storeContext.slug).catch(() => null)
-      : Promise.resolve(null),
-  ]);
+  const [categories, articles, coursePayload, themeAndTemplate, currentAcademy, publicAcademy] =
+    await Promise.all([
+      getCategories().catch(() => []),
+      getBlogArticles(storeContext.slug).catch(() => []),
+      getCourses({ limit: 6, published: true, is_featured: true } as Parameters<
+        typeof getCourses
+      >[0]).catch(() => null),
+      getStoreThemeAndTemplate().catch(() => ({ theme: null, template: null })),
+      getCurrentAcademy().catch(() => null),
+      storeContext.slug
+        ? getAcademyBySlug(storeContext.slug).catch(() => null)
+        : Promise.resolve(null),
+    ]);
 
   const hasCatalogAccess = coursePayload !== null;
   const featuredCourses = coursePayload?.courses ?? [];
@@ -71,8 +64,7 @@ export async function AcademyHomePage() {
   };
 
   let storeForLang = currentAcademy;
-  if (!storeForLang && primaryAcademy)
-    storeForLang = primaryAcademy as typeof currentAcademy;
+  if (!storeForLang && primaryAcademy) storeForLang = primaryAcademy as typeof currentAcademy;
   const language = getAcademyLanguage(
     storeForLang?.language || null,
     storeForLang?.country_code || null,
@@ -80,8 +72,7 @@ export async function AcademyHomePage() {
   const translate = (key: string) => t(key, language);
 
   const hasUITemplate =
-    themeAndTemplate.template?.blocks &&
-    themeAndTemplate.template.blocks.length > 0;
+    themeAndTemplate.template?.blocks && themeAndTemplate.template.blocks.length > 0;
 
   if (hasUITemplate && themeAndTemplate.template) {
     // Prefer live academy stats over template-configured placeholder stats
@@ -108,7 +99,7 @@ export async function AcademyHomePage() {
   // Static full-width marketing layout
   // ─────────────────────────────────────────────────────────────────────────────
   return (
-    <div className="w-full" style={{ overflowX: "hidden" }}>
+    <div className="w-full" style={{ overflowX: 'hidden' }}>
       <AcademyHomeAnimations />
 
       {/* ══════════════════════════════════════════════════════════════
@@ -120,11 +111,11 @@ export async function AcademyHomePage() {
           className="absolute inset-0 -z-10"
           style={{
             background: [
-              "radial-gradient(ellipse 90% 65% at 50% -5%, color-mix(in srgb, var(--theme-primary) 28%, transparent), transparent)",
-              "radial-gradient(ellipse 55% 45% at 95% 115%, color-mix(in srgb, var(--theme-secondary) 18%, transparent), transparent)",
-              "radial-gradient(ellipse 50% 40% at 5% 105%, color-mix(in srgb, var(--theme-accent) 12%, transparent), transparent)",
-              "var(--theme-background)",
-            ].join(", "),
+              'radial-gradient(ellipse 90% 65% at 50% -5%, color-mix(in srgb, var(--theme-primary) 28%, transparent), transparent)',
+              'radial-gradient(ellipse 55% 45% at 95% 115%, color-mix(in srgb, var(--theme-secondary) 18%, transparent), transparent)',
+              'radial-gradient(ellipse 50% 40% at 5% 105%, color-mix(in srgb, var(--theme-accent) 12%, transparent), transparent)',
+              'var(--theme-background)',
+            ].join(', '),
           }}
         />
 
@@ -133,24 +124,24 @@ export async function AcademyHomePage() {
           className="absolute inset-0 -z-10 opacity-[0.035]"
           style={{
             backgroundImage: [
-              "radial-gradient(circle, var(--theme-foreground) 1px, transparent 1px)",
-            ].join(", "),
-            backgroundSize: "40px 40px",
+              'radial-gradient(circle, var(--theme-foreground) 1px, transparent 1px)',
+            ].join(', '),
+            backgroundSize: '40px 40px',
           }}
         />
 
         {/* Floating blobs */}
         <div
-          className="pointer-events-none absolute -right-40 top-0 h-[600px] w-[600px] rounded-full opacity-[0.18] blur-3xl"
-          style={{ background: "var(--theme-primary)" }}
+          className="pointer-events-none absolute top-0 -right-40 h-[600px] w-[600px] rounded-full opacity-[0.18] blur-3xl"
+          style={{ background: 'var(--theme-primary)' }}
         />
         <div
-          className="pointer-events-none absolute -left-40 bottom-0 h-[500px] w-[500px] rounded-full opacity-[0.13] blur-3xl"
-          style={{ background: "var(--theme-secondary)" }}
+          className="pointer-events-none absolute bottom-0 -left-40 h-[500px] w-[500px] rounded-full opacity-[0.13] blur-3xl"
+          style={{ background: 'var(--theme-secondary)' }}
         />
         <div
           className="pointer-events-none absolute right-1/4 bottom-10 h-[300px] w-[300px] rounded-full opacity-[0.10] blur-2xl"
-          style={{ background: "var(--theme-accent)" }}
+          style={{ background: 'var(--theme-accent)' }}
         />
 
         {/* Content */}
@@ -162,9 +153,9 @@ export async function AcademyHomePage() {
             >
               <span
                 className="flex h-2 w-2 rounded-full"
-                style={{ backgroundColor: "var(--theme-primary)" }}
+                style={{ backgroundColor: 'var(--theme-primary)' }}
               />
-              {translate("home.newBadge")}
+              {translate('home.newBadge')}
             </Badge>
           </div>
 
@@ -173,20 +164,20 @@ export async function AcademyHomePage() {
             className="mb-7 text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl"
             style={{
               opacity: 0,
-              color: "var(--theme-foreground)",
-              lineHeight: "1.05",
-              letterSpacing: "-0.03em",
+              color: 'var(--theme-foreground)',
+              lineHeight: '1.05',
+              letterSpacing: '-0.03em',
             }}
           >
-            {translate("home.heroTitle").replace("{store}", storeDisplayName)}
+            {translate('home.heroTitle').replace('{store}', storeDisplayName)}
           </h1>
 
           <p
             id="hero-description"
             className="mx-auto mb-11 max-w-2xl text-lg leading-relaxed sm:text-xl"
-            style={{ opacity: 0, color: "var(--theme-muted)" }}
+            style={{ opacity: 0, color: 'var(--theme-muted)' }}
           >
-            {translate("home.heroDescription")}
+            {translate('home.heroDescription')}
           </p>
 
           <div
@@ -195,31 +186,29 @@ export async function AcademyHomePage() {
             style={{ opacity: 0 }}
           >
             <Link
-              href={buildPath("/courses")}
+              href={buildPath('/courses')}
               className="group inline-flex h-14 items-center justify-center rounded-full px-9 text-base font-bold shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-[0_16px_48px_color-mix(in_srgb,var(--theme-primary)_50%,transparent)]"
               style={{
-                backgroundColor: "var(--theme-primary)",
-                color: "var(--theme-on-primary)",
-                boxShadow:
-                  "0 8px 32px color-mix(in srgb, var(--theme-primary) 38%, transparent)",
+                backgroundColor: 'var(--theme-primary)',
+                color: 'var(--theme-on-primary)',
+                boxShadow: '0 8px 32px color-mix(in srgb, var(--theme-primary) 38%, transparent)',
               }}
             >
-              {translate("home.browseCourses")}
+              {translate('home.browseCourses')}
               <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1.5">
                 →
               </span>
             </Link>
             <Link
-              href={buildPath("/auth/login")}
+              href={buildPath('/auth/login')}
               className="inline-flex h-14 items-center justify-center rounded-full border-2 px-9 text-base font-bold backdrop-blur-md transition-all duration-300 hover:scale-105"
               style={{
-                borderColor: "var(--theme-border-strong)",
-                color: "var(--theme-foreground)",
-                backgroundColor:
-                  "color-mix(in srgb, var(--theme-background) 65%, transparent)",
+                borderColor: 'var(--theme-border-strong)',
+                color: 'var(--theme-foreground)',
+                backgroundColor: 'color-mix(in srgb, var(--theme-background) 65%, transparent)',
               }}
             >
-              {translate("home.startForFree")}
+              {translate('home.startForFree')}
             </Link>
           </div>
         </div>
@@ -231,21 +220,20 @@ export async function AcademyHomePage() {
           style={{ opacity: 0 }}
         >
           <span
-            className="text-[10px] font-semibold uppercase tracking-[0.2em]"
-            style={{ color: "var(--theme-foreground)" }}
+            className="text-[10px] font-semibold tracking-[0.2em] uppercase"
+            style={{ color: 'var(--theme-foreground)' }}
           >
             scroll
           </span>
           <div
             className="relative h-10 w-px overflow-hidden rounded-full"
             style={{
-              backgroundColor:
-                "color-mix(in srgb, var(--theme-foreground) 15%, transparent)",
+              backgroundColor: 'color-mix(in srgb, var(--theme-foreground) 15%, transparent)',
             }}
           >
             <div
               className="absolute inset-x-0 top-0 h-5 animate-bounce rounded-full"
-              style={{ backgroundColor: "var(--theme-primary)" }}
+              style={{ backgroundColor: 'var(--theme-primary)' }}
             />
           </div>
         </div>
@@ -259,39 +247,30 @@ export async function AcademyHomePage() {
         className="w-full py-12"
         style={{
           opacity: 0,
-          backgroundColor:
-            "color-mix(in srgb, var(--theme-primary) 7%, var(--theme-background))",
-          borderTop:
-            "1px solid color-mix(in srgb, var(--theme-primary) 18%, transparent)",
-          borderBottom:
-            "1px solid color-mix(in srgb, var(--theme-primary) 18%, transparent)",
+          backgroundColor: 'color-mix(in srgb, var(--theme-primary) 7%, var(--theme-background))',
+          borderTop: '1px solid color-mix(in srgb, var(--theme-primary) 18%, transparent)',
+          borderBottom: '1px solid color-mix(in srgb, var(--theme-primary) 18%, transparent)',
         }}
       >
         <div className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-y-8 px-4 sm:grid-cols-4 sm:px-6 lg:px-8">
           {[
             {
-              label: translate("home.learners"),
-              value: stats.students
-                ? formatNumber(stats.students, language)
-                : "—",
+              label: translate('home.learners'),
+              value: stats.students ? formatNumber(stats.students, language) : '—',
             },
             {
-              label: translate("home.mentors"),
-              value: stats.mentors
-                ? formatNumber(stats.mentors, language)
-                : "—",
+              label: translate('home.mentors'),
+              value: stats.mentors ? formatNumber(stats.mentors, language) : '—',
             },
             {
-              label: translate("home.courses"),
-              value: stats.courses
-                ? formatNumber(stats.courses, language)
-                : "—",
+              label: translate('home.courses'),
+              value: stats.courses ? formatNumber(stats.courses, language) : '—',
             },
             {
-              label: translate("home.avgRating"),
+              label: translate('home.avgRating'),
               value: stats.rating
                 ? toPersianDigits(`${stats.rating.toFixed(1)} / 5`, language)
-                : "—",
+                : '—',
             },
           ].map((stat) => (
             <div
@@ -302,15 +281,15 @@ export async function AcademyHomePage() {
               <p
                 className="text-4xl font-black tabular-nums sm:text-5xl"
                 style={{
-                  color: "var(--theme-primary)",
-                  letterSpacing: "-0.02em",
+                  color: 'var(--theme-primary)',
+                  letterSpacing: '-0.02em',
                 }}
               >
                 {stat.value}
               </p>
               <p
-                className="text-xs font-semibold uppercase tracking-widest opacity-55"
-                style={{ color: "var(--theme-foreground)" }}
+                className="text-xs font-semibold tracking-widest uppercase opacity-55"
+                style={{ color: 'var(--theme-foreground)' }}
               >
                 {stat.label}
               </p>
@@ -322,10 +301,7 @@ export async function AcademyHomePage() {
       {/* ══════════════════════════════════════════════════════════════
           FEATURED COURSES
       ══════════════════════════════════════════════════════════════ */}
-      <section
-        className="py-28"
-        style={{ backgroundColor: "var(--theme-background)" }}
-      >
+      <section className="py-28" style={{ backgroundColor: 'var(--theme-background)' }}>
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Section header */}
           <div
@@ -334,30 +310,30 @@ export async function AcademyHomePage() {
           >
             <div>
               <p
-                className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
-                style={{ color: "var(--theme-primary)" }}
+                className="mb-2 text-xs font-bold tracking-[0.18em] uppercase"
+                style={{ color: 'var(--theme-primary)' }}
               >
-                {translate("courses.featuredCourses")}
+                {translate('courses.featuredCourses')}
               </p>
               <h2
                 className="text-3xl font-black tracking-tight sm:text-4xl"
                 style={{
-                  color: "var(--theme-foreground)",
-                  letterSpacing: "-0.025em",
+                  color: 'var(--theme-foreground)',
+                  letterSpacing: '-0.025em',
                 }}
               >
                 {hasCatalogAccess
-                  ? translate("home.featuredCoursesDescription")
-                  : translate("home.loginToUnlock")}
+                  ? translate('home.featuredCoursesDescription')
+                  : translate('home.loginToUnlock')}
               </h2>
             </div>
             {hasCatalogAccess ? (
               <Link
-                href={buildPath("/courses")}
+                href={buildPath('/courses')}
                 className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
-                style={{ color: "var(--theme-primary)" }}
+                style={{ color: 'var(--theme-primary)' }}
               >
-                {translate("home.exploreFullCatalogue")}
+                {translate('home.exploreFullCatalogue')}
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
                   →
                 </span>
@@ -367,18 +343,13 @@ export async function AcademyHomePage() {
 
           {/* Courses grid */}
           {featuredCourses.length ? (
-            <div
-              data-gsap="stagger"
-              className={COURSE_CARD_GRID_CLASS}
-            >
+            <div data-gsap="stagger" className={COURSE_CARD_GRID_CLASS}>
               {featuredCourses.map((course, index) => (
                 <TemplatedCourseCard
                   key={course.id}
                   course={course}
                   index={index}
-                  storeSlug={
-                    storeContext.isSubdomain ? null : storeContext.slug
-                  }
+                  storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
                 />
               ))}
             </div>
@@ -387,47 +358,47 @@ export async function AcademyHomePage() {
               icon={<BookOpen size={28} />}
               title={
                 hasCatalogAccess
-                  ? translate("home.noFeaturedCourses")
-                  : translate("home.signInToExplore")
+                  ? translate('home.noFeaturedCourses')
+                  : translate('home.signInToExplore')
               }
               description={
                 hasCatalogAccess
-                  ? translate("home.checkBackSoon")
-                  : translate("home.createAccountToView")
+                  ? translate('home.checkBackSoon')
+                  : translate('home.createAccountToView')
               }
               action={
                 hasCatalogAccess ? (
                   <Link
-                    href={buildPath("/courses")}
+                    href={buildPath('/courses')}
                     className="inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-bold transition-all duration-200 hover:scale-105"
                     style={{
-                      backgroundColor: "var(--theme-primary)",
-                      color: "var(--theme-on-primary)",
+                      backgroundColor: 'var(--theme-primary)',
+                      color: 'var(--theme-on-primary)',
                     }}
                   >
-                    {translate("home.browseCourses")}
+                    {translate('home.browseCourses')}
                   </Link>
                 ) : (
                   <div className="flex flex-wrap items-center justify-center gap-3">
                     <Link
-                      href={buildPath("/auth/login")}
+                      href={buildPath('/auth/login')}
                       className="inline-flex h-12 items-center justify-center rounded-full px-7 text-sm font-bold"
                       style={{
-                        backgroundColor: "var(--theme-primary)",
-                        color: "var(--theme-on-primary)",
+                        backgroundColor: 'var(--theme-primary)',
+                        color: 'var(--theme-on-primary)',
                       }}
                     >
-                      {translate("auth.login")}
+                      {translate('auth.login')}
                     </Link>
                     <Link
-                      href={buildPath("/auth/register")}
+                      href={buildPath('/auth/register')}
                       className="inline-flex h-12 items-center justify-center rounded-full border-2 px-7 text-sm font-bold"
                       style={{
-                        borderColor: "var(--theme-border-strong)",
-                        color: "var(--theme-foreground)",
+                        borderColor: 'var(--theme-border-strong)',
+                        color: 'var(--theme-foreground)',
                       }}
                     >
-                      {translate("auth.register")}
+                      {translate('auth.register')}
                     </Link>
                   </div>
                 )
@@ -443,78 +414,69 @@ export async function AcademyHomePage() {
       <section
         className="w-full py-24"
         style={{
-          backgroundColor:
-            "color-mix(in srgb, var(--theme-primary) 5%, var(--theme-background))",
-          borderTop:
-            "1px solid color-mix(in srgb, var(--theme-foreground) 6%, transparent)",
-          borderBottom:
-            "1px solid color-mix(in srgb, var(--theme-foreground) 6%, transparent)",
+          backgroundColor: 'color-mix(in srgb, var(--theme-primary) 5%, var(--theme-background))',
+          borderTop: '1px solid color-mix(in srgb, var(--theme-foreground) 6%, transparent)',
+          borderBottom: '1px solid color-mix(in srgb, var(--theme-foreground) 6%, transparent)',
         }}
       >
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div data-gsap="fade-up" className="mb-14 text-center">
             <p
-              className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
-              style={{ color: "var(--theme-primary)" }}
+              className="mb-2 text-xs font-bold tracking-[0.18em] uppercase"
+              style={{ color: 'var(--theme-primary)' }}
             >
-              {translate("home.personalisedLearningPaths")}
+              {translate('home.personalisedLearningPaths')}
             </p>
             <h2
               className="text-3xl font-black tracking-tight sm:text-4xl"
               style={{
-                color: "var(--theme-foreground)",
-                letterSpacing: "-0.025em",
+                color: 'var(--theme-foreground)',
+                letterSpacing: '-0.025em',
               }}
             >
-              {translate("home.adaptiveRecommendations")}
+              {translate('home.adaptiveRecommendations')}
             </h2>
           </div>
-          <div
-            data-gsap="stagger"
-            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
-          >
+          <div data-gsap="stagger" className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                icon: "🎯",
-                title: translate("home.guidedProjects"),
-                body: translate("home.guidedProjectsDescription"),
+                icon: '🎯',
+                title: translate('home.guidedProjects'),
+                body: translate('home.guidedProjectsDescription'),
               },
               {
-                icon: "👥",
-                title: translate("home.mentorCheckIns"),
-                body: translate("home.mentorCheckInsDescription"),
+                icon: '👥',
+                title: translate('home.mentorCheckIns'),
+                body: translate('home.mentorCheckInsDescription'),
               },
               {
-                icon: "📈",
-                title: translate("home.personalisedLearningPaths"),
-                body: translate("home.adaptiveRecommendations"),
+                icon: '📈',
+                title: translate('home.personalisedLearningPaths'),
+                body: translate('home.adaptiveRecommendations'),
               },
             ].map((item) => (
               <div
                 key={item.title}
                 className="group relative overflow-hidden rounded-3xl border p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
                 style={{
-                  backgroundColor: "var(--theme-card-bg)",
-                  borderColor: "var(--theme-border-color)",
+                  backgroundColor: 'var(--theme-card-bg)',
+                  borderColor: 'var(--theme-border-color)',
                 }}
               >
                 <div
                   className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   style={{
                     background:
-                      "linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 6%, transparent), transparent)",
+                      'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 6%, transparent), transparent)',
                   }}
                 />
                 <span className="mb-5 block text-4xl">{item.icon}</span>
-                <h3
-                  className="mb-3 text-xl font-bold"
-                  style={{ color: "var(--theme-foreground)" }}
-                >
+                <h3 className="mb-3 text-xl font-bold" style={{ color: 'var(--theme-foreground)' }}>
                   {item.title}
                 </h3>
                 <p
                   className="text-sm leading-relaxed opacity-60"
-                  style={{ color: "var(--theme-foreground)" }}
+                  style={{ color: 'var(--theme-foreground)' }}
                 >
                   {item.body}
                 </p>
@@ -528,10 +490,7 @@ export async function AcademyHomePage() {
           CATEGORIES
       ══════════════════════════════════════════════════════════════ */}
       {categories.length ? (
-        <section
-          className="py-28"
-          style={{ backgroundColor: "var(--theme-background)" }}
-        >
+        <section className="py-28" style={{ backgroundColor: 'var(--theme-background)' }}>
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <div
               data-gsap="fade-up"
@@ -539,46 +498,43 @@ export async function AcademyHomePage() {
             >
               <div>
                 <p
-                  className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
-                  style={{ color: "var(--theme-primary)" }}
+                  className="mb-2 text-xs font-bold tracking-[0.18em] uppercase"
+                  style={{ color: 'var(--theme-primary)' }}
                 >
-                  {translate("home.topCategories")}
+                  {translate('home.topCategories')}
                 </p>
                 <h2
                   className="text-3xl font-black tracking-tight sm:text-4xl"
                   style={{
-                    color: "var(--theme-foreground)",
-                    letterSpacing: "-0.025em",
+                    color: 'var(--theme-foreground)',
+                    letterSpacing: '-0.025em',
                   }}
                 >
-                  {translate("home.browseByInterest")}
+                  {translate('home.browseByInterest')}
                 </h2>
               </div>
               <Link
-                href={buildPath("/courses?view=categories")}
+                href={buildPath('/courses?view=categories')}
                 className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
-                style={{ color: "var(--theme-primary)" }}
+                style={{ color: 'var(--theme-primary)' }}
               >
-                {translate("home.browseByInterest")}
+                {translate('home.browseByInterest')}
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
                   →
                 </span>
               </Link>
             </div>
 
-            <div
-              data-gsap="stagger"
-              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-            >
+            <div data-gsap="stagger" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {categories.slice(0, 6).map((category) => (
                 <Link
                   key={category.id}
                   href={buildPath(`/courses?category=${category.id}`)}
                   className="group relative overflow-hidden rounded-3xl border p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl"
                   style={{
-                    backgroundColor: "var(--theme-card-bg)",
-                    borderColor: "var(--theme-border-color)",
-                    color: "var(--theme-foreground)",
+                    backgroundColor: 'var(--theme-card-bg)',
+                    borderColor: 'var(--theme-border-color)',
+                    color: 'var(--theme-foreground)',
                   }}
                 >
                   {/* Hover shine */}
@@ -586,17 +542,15 @@ export async function AcademyHomePage() {
                     className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     style={{
                       background:
-                        "linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 9%, transparent), transparent)",
+                        'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 9%, transparent), transparent)',
                     }}
                   />
                   <div className="relative z-10 flex items-center justify-between gap-4">
                     <div className="min-w-0">
-                      <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.15em] opacity-45">
-                        {translate("home.categoryLabel")}
+                      <p className="mb-1 text-[10px] font-bold tracking-[0.15em] uppercase opacity-45">
+                        {translate('home.categoryLabel')}
                       </p>
-                      <p className="truncate text-lg font-bold">
-                        {category.name}
-                      </p>
+                      <p className="truncate text-lg font-bold">{category.name}</p>
                       {category.description ? (
                         <p className="mt-1 text-sm leading-5 opacity-50">
                           {truncate(category.description, 72)}
@@ -604,11 +558,11 @@ export async function AcademyHomePage() {
                       ) : null}
                     </div>
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-base transition-all duration-300 group-hover:scale-110 group-hover:translate-x-1"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-base transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110"
                       style={{
                         backgroundColor:
-                          "color-mix(in srgb, var(--theme-primary) 14%, var(--theme-background))",
-                        color: "var(--theme-primary)",
+                          'color-mix(in srgb, var(--theme-primary) 14%, var(--theme-background))',
+                        color: 'var(--theme-primary)',
                       }}
                     >
                       →
@@ -629,7 +583,7 @@ export async function AcademyHomePage() {
           className="py-28"
           style={{
             backgroundColor:
-              "color-mix(in srgb, var(--theme-foreground) 3%, var(--theme-background))",
+              'color-mix(in srgb, var(--theme-foreground) 3%, var(--theme-background))',
           }}
         >
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -639,27 +593,27 @@ export async function AcademyHomePage() {
             >
               <div>
                 <p
-                  className="mb-2 text-xs font-bold uppercase tracking-[0.18em]"
-                  style={{ color: "var(--theme-primary)" }}
+                  className="mb-2 text-xs font-bold tracking-[0.18em] uppercase"
+                  style={{ color: 'var(--theme-primary)' }}
                 >
-                  {translate("home.fromTheJournal")}
+                  {translate('home.fromTheJournal')}
                 </p>
                 <h2
                   className="text-3xl font-black tracking-tight sm:text-4xl"
                   style={{
-                    color: "var(--theme-foreground)",
-                    letterSpacing: "-0.025em",
+                    color: 'var(--theme-foreground)',
+                    letterSpacing: '-0.025em',
                   }}
                 >
-                  {translate("home.readAllInsights")}
+                  {translate('home.readAllInsights')}
                 </h2>
               </div>
               <Link
-                href={buildPath("/blog")}
+                href={buildPath('/blog')}
                 className="group inline-flex shrink-0 items-center gap-1 text-sm font-bold transition-all duration-200"
-                style={{ color: "var(--theme-primary)" }}
+                style={{ color: 'var(--theme-primary)' }}
               >
-                {translate("home.readAllInsights")}
+                {translate('home.readAllInsights')}
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
                   →
                 </span>
@@ -668,22 +622,19 @@ export async function AcademyHomePage() {
 
             <div data-gsap="stagger" className="grid gap-8 md:grid-cols-3">
               {articles.slice(0, 3).map((article) => {
-                const imageUrl =
-                  resolveAssetUrl(article.featured_image?.publicUrl) ??
-                  "/globe.svg";
-                const description =
-                  article.excerpt ?? article.description ?? "";
+                const imageUrl = resolveAssetUrl(article.featured_image?.publicUrl) ?? '/globe.svg';
+                const description = article.excerpt ?? article.description ?? '';
                 const publishedDate = article.published_at
                   ? new Date(article.published_at).toLocaleDateString()
-                  : "";
+                  : '';
 
                 return (
                   <article
                     key={article.id}
                     className="group flex flex-col overflow-hidden rounded-3xl border shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
                     style={{
-                      backgroundColor: "var(--theme-card-bg)",
-                      borderColor: "var(--theme-border-color)",
+                      backgroundColor: 'var(--theme-card-bg)',
+                      borderColor: 'var(--theme-border-color)',
                     }}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden">
@@ -701,7 +652,7 @@ export async function AcademyHomePage() {
                             className="rounded-full px-3 py-1 text-[11px] font-bold text-white backdrop-blur-sm"
                             style={{
                               backgroundColor:
-                                "color-mix(in srgb, var(--theme-primary) 85%, transparent)",
+                                'color-mix(in srgb, var(--theme-primary) 85%, transparent)',
                             }}
                           >
                             {publishedDate}
@@ -711,23 +662,23 @@ export async function AcademyHomePage() {
                     </div>
                     <div className="flex flex-1 flex-col gap-3 p-7">
                       <h3
-                        className="text-lg font-bold leading-snug transition-colors duration-200 group-hover:text-[var(--theme-primary)]"
-                        style={{ color: "var(--theme-foreground)" }}
+                        className="text-lg leading-snug font-bold transition-colors duration-200 group-hover:text-[var(--theme-primary)]"
+                        style={{ color: 'var(--theme-foreground)' }}
                       >
                         {article.title}
                       </h3>
                       <p
                         className="flex-1 text-sm leading-relaxed opacity-55"
-                        style={{ color: "var(--theme-foreground)" }}
+                        style={{ color: 'var(--theme-foreground)' }}
                       >
                         {truncate(description, 120)}
                       </p>
                       <Link
                         href={buildPath(`/blog/${article.slug}`)}
                         className="group/link inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200"
-                        style={{ color: "var(--theme-primary)" }}
+                        style={{ color: 'var(--theme-primary)' }}
                       >
-                        {translate("home.readArticle")}
+                        {translate('home.readArticle')}
                         <span className="transition-transform duration-200 group-hover/link:translate-x-1">
                           →
                         </span>
@@ -753,17 +704,17 @@ export async function AcademyHomePage() {
             color-mix(in srgb, var(--theme-primary) 60%, var(--theme-secondary)) 40%,
             var(--theme-secondary) 70%,
             color-mix(in srgb, var(--theme-secondary) 70%, var(--theme-accent)) 100%)`,
-          color: "var(--theme-on-primary)",
+          color: 'var(--theme-on-primary)',
         }}
       >
         {/* Decorative blobs inside CTA */}
         <div
-          className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full opacity-25 blur-3xl"
-          style={{ backgroundColor: "var(--theme-accent)" }}
+          className="pointer-events-none absolute -top-20 -right-20 h-80 w-80 rounded-full opacity-25 blur-3xl"
+          style={{ backgroundColor: 'var(--theme-accent)' }}
         />
         <div
           className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full opacity-20 blur-3xl"
-          style={{ backgroundColor: "var(--theme-on-primary)" }}
+          style={{ backgroundColor: 'var(--theme-on-primary)' }}
         />
 
         <div className="relative z-10 mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -771,36 +722,36 @@ export async function AcademyHomePage() {
             variant="soft"
             className="mb-8 inline-flex bg-white/15 text-[var(--theme-on-primary)]"
           >
-            {translate("home.readyToBegin")}
+            {translate('home.readyToBegin')}
           </Badge>
 
           <h2
             className="mb-5 text-4xl font-black tracking-tight sm:text-5xl"
-            style={{ letterSpacing: "-0.03em" }}
+            style={{ letterSpacing: '-0.03em' }}
           >
-            {translate("home.createLearningAccount")}
+            {translate('home.createLearningAccount')}
           </h2>
           <p className="mb-12 text-lg leading-relaxed opacity-85">
-            {translate("home.createLearningAccountDescription")}
+            {translate('home.createLearningAccountDescription')}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-5">
             <Link
-              href={buildPath("/auth/login")}
+              href={buildPath('/auth/login')}
               className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-black shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
               style={{
-                backgroundColor: "var(--theme-on-primary)",
-                color: "var(--theme-primary)",
+                backgroundColor: 'var(--theme-on-primary)',
+                color: 'var(--theme-primary)',
               }}
             >
-              {translate("home.joinStore").replace("{store}", storeDisplayName)}
+              {translate('home.joinStore').replace('{store}', storeDisplayName)}
             </Link>
             {!storeContext.slug ? (
               <Link
                 href="/pricing"
                 className="inline-flex items-center gap-1 text-sm font-bold opacity-90 transition-all duration-200 hover:translate-x-1 hover:opacity-100"
               >
-                {translate("home.viewPricing")} →
+                {translate('home.viewPricing')} →
               </Link>
             ) : null}
           </div>

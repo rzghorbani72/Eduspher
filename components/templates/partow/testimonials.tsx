@@ -54,7 +54,10 @@ export function PartowTestimonials({ id, config }: TemplateSectionProps) {
                     {item.initials}
                   </span>
                   <span>
-                    <b {...editableItem('items', index, 'name')} className="block text-[14px] font-medium">
+                    <b
+                      {...editableItem('items', index, 'name')}
+                      className="block text-[14px] font-medium"
+                    >
                       {item.name}
                     </b>
                     <span

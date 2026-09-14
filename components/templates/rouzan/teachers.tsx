@@ -57,10 +57,14 @@ export function RouzanTeachers({ id, config, storeContext }: TemplateSectionProp
           >
             {items.map((item, index) => (
               <article key={item.name} className={styles.mentor}>
-                <div className={`${styles.mono} ${MONO_TONE[item.tone]}`} role="img" aria-label={item.name}>
+                <div
+                  className={`${styles.mono} ${MONO_TONE[item.tone]}`}
+                  role="img"
+                  aria-label={item.name}
+                >
                   {item.initials}
                 </div>
-                <div className="px-5 pb-5.5 pt-4.5">
+                <div className="px-5 pt-4.5 pb-5.5">
                   <h3 {...editableItem('items', index, 'name')} className="text-[17.5px] font-bold">
                     {item.name}
                   </h3>

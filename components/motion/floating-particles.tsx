@@ -119,9 +119,8 @@ export function FloatingParticles({
   return (
     <div
       ref={containerRef}
-      className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}
+      className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       style={{ zIndex: 0 }}
     />
   );
 }
-

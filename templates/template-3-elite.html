@@ -1,11 +1,5 @@
 <!doctype html>
-<html
-  data-src-ver="585060b6"
-  lang="fa"
-  dir="rtl"
-  data-theme="dark"
-  data-om-id="585060b6:0"
->
+<html data-src-ver="585060b6" lang="fa" dir="rtl" data-theme="dark" data-om-id="585060b6:0">
   <head data-om-id="585060b6:1">
     <style data-omelette-injected>
       html,
@@ -15,54 +9,36 @@
     </style>
     <script data-omelette-injected>
       (() => {
-        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var j = ['https://claude.ai', 'https://preview.claude.ai'];
         var x = true;
         var S = 30000;
         var f = 3000;
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
           const H = window.Babel;
-          const G = "om-src-id";
-          if (
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[G])
-          ) {
+          const G = 'om-src-id';
+          if (H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[G])) {
             H.registerPlugin(G, ({ types: Y }) => ({
               visitor: {
                 JSXOpeningElement(U, Q) {
                   const J = U.node;
-                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  if (J.name && J.name.type === 'JSXMemberExpression') return;
                   for (let V = 0; V < J.attributes.length; V++) {
                     const L = J.attributes[V];
-                    if (
-                      L.type === "JSXAttribute" &&
-                      L.name &&
-                      L.name.name === "data-om-id"
-                    )
-                      return;
+                    if (L.type === 'JSXAttribute' && L.name && L.name.name === 'data-om-id') return;
                   }
-                  const W =
-                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const W = (Q.file && Q.file.opts && Q.file.opts.filename) || '?';
                   const Z = J.loc && J.loc.start;
                   const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
                   J.attributes.push(
-                    Y.jsxAttribute(
-                      Y.jsxIdentifier("data-om-id"),
-                      Y.stringLiteral(z),
-                    ),
+                    Y.jsxAttribute(Y.jsxIdentifier('data-om-id'), Y.stringLiteral(z)),
                   );
                 },
               },
             }));
           }
-          const k = "om-text-extract";
+          const k = 'om-text-extract';
           let A = false;
-          if (
-            x &&
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[k])
-          ) {
+          if (x && H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[k])) {
             const Y = window.React;
             if (Y && Y.useSyncExternalStore && Y.createElement) {
               A = true;
@@ -87,8 +63,8 @@
               window.__OmT = function z(V) {
                 Y.useSyncExternalStore(W, Z, Z);
                 return Y.createElement(
-                  "span",
-                  { "data-om-text": V.i, className: "__om-t" },
+                  'span',
+                  { 'data-om-text': V.i, className: '__om-t' },
                   V.i in U ? U[V.i] : V.children,
                 );
               };
@@ -109,20 +85,17 @@
                   alt: 1,
                   title: 1,
                   label: 1,
-                  "aria-label": 1,
-                  "aria-description": 1,
-                  "aria-placeholder": 1,
+                  'aria-label': 1,
+                  'aria-description': 1,
+                  'aria-placeholder': 1,
                 };
                 const _ = ($, C) =>
                   z.logicalExpression(
-                    "??",
+                    '??',
                     z.memberExpression(
                       z.logicalExpression(
-                        "||",
-                        z.memberExpression(
-                          z.identifier("window"),
-                          z.identifier("__omTextO"),
-                        ),
+                        '||',
+                        z.memberExpression(z.identifier('window'), z.identifier('__omTextO')),
                         z.objectExpression([]),
                       ),
                       z.stringLiteral($),
@@ -130,28 +103,22 @@
                     ),
                     C,
                   );
-                const E = ($) =>
-                  ($.file && $.file.opts && $.file.opts.filename) || "?";
-                const B = ($) => ($.file && $.file.code) || "";
+                const E = ($) => ($.file && $.file.opts && $.file.opts.filename) || '?';
+                const B = ($) => ($.file && $.file.code) || '';
                 const b = ($, C) => {
                   const X = (F) =>
                     F &&
                     F.start != null &&
                     F.end != null &&
-                    (F.type === "StringLiteral" ||
-                      (F.type === "TemplateLiteral" &&
-                        F.expressions.length === 0))
+                    (F.type === 'StringLiteral' ||
+                      (F.type === 'TemplateLiteral' && F.expressions.length === 0))
                       ? [F.start, F.end]
                       : null;
                   const N = X(C);
                   if (N) return N;
-                  if (C && C.type === "Identifier") {
+                  if (C && C.type === 'Identifier') {
                     const F = $.scope.getBinding(C.name);
-                    if (
-                      F &&
-                      F.constant &&
-                      F.path.node.type === "VariableDeclarator"
-                    ) {
+                    if (F && F.constant && F.path.node.type === 'VariableDeclarator') {
                       return X(F.path.node.init);
                     }
                   }
@@ -164,22 +131,17 @@
                     F = true;
                     return z.jsxElement(
                       z.jsxOpeningElement(
-                        z.jsxIdentifier("__OmT"),
-                        [
-                          z.jsxAttribute(
-                            z.jsxIdentifier("i"),
-                            z.stringLiteral(K),
-                          ),
-                        ],
+                        z.jsxIdentifier('__OmT'),
+                        [z.jsxAttribute(z.jsxIdentifier('i'), z.stringLiteral(K))],
                         false,
                       ),
-                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      z.jsxClosingElement(z.jsxIdentifier('__OmT')),
                       [q],
                       false,
                     );
                   };
                   const D = N.children.map((K) => {
-                    if (K.type === "JSXText") {
+                    if (K.type === 'JSXText') {
                       if (K.start == null || K.end == null) return K;
                       const q = X.slice(K.start, K.end);
                       const R = q.length - q.trimStart().length;
@@ -187,7 +149,7 @@
                       if (R + m >= q.length) return K;
                       return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
                     }
-                    if (K.type === "JSXExpressionContainer") {
+                    if (K.type === 'JSXExpressionContainer') {
                       const q = b($, K.expression);
                       if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
                     }
@@ -203,23 +165,19 @@
                       const F = {};
                       for (let w = 0; w < X.attributes.length; w++) {
                         const D = X.attributes[w];
-                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        if (D.type !== 'JSXAttribute' || !D.name) continue;
                         const K = D.name.name;
                         if (!L[K]) continue;
-                        if (!D.value || D.value.type !== "StringLiteral")
-                          continue;
-                        if (D.value.start == null || D.value.end == null)
-                          continue;
+                        if (!D.value || D.value.type !== 'StringLiteral') continue;
+                        if (D.value.start == null || D.value.end == null) continue;
                         const q = `txt:${N}:${D.value.start}:${D.value.end}`;
                         F[K] = q;
-                        D.value = z.jsxExpressionContainer(
-                          _(q, z.stringLiteral(D.value.value)),
-                        );
+                        D.value = z.jsxExpressionContainer(_(q, z.stringLiteral(D.value.value)));
                       }
                       if (Object.keys(F).length) {
                         X.attributes.push(
                           z.jsxAttribute(
-                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.jsxIdentifier('data-om-text-attrs'),
                             z.stringLiteral(JSON.stringify(F)),
                           ),
                         );
@@ -228,8 +186,8 @@
                     JSXElement($, C) {
                       const X = $.node.openingElement;
                       const N = X && X.name && X.name.name;
-                      if (N === "__OmT") return;
-                      if (typeof N === "string" && V[N]) return;
+                      if (N === '__OmT') return;
+                      if (typeof N === 'string' && V[N]) return;
                       M($, E(C), B(C));
                     },
                     JSXFragment($, C) {
@@ -240,27 +198,17 @@
               });
             }
           }
-          const u = A
-            ? ["transform-react-jsx-source", G, k]
-            : ["transform-react-jsx-source", G];
+          const u = A ? ['transform-react-jsx-source', G, k] : ['transform-react-jsx-source', G];
           document
-            .querySelectorAll(
-              'script[type="text/babel"],script[type="text/jsx"]',
-            )
+            .querySelectorAll('script[type="text/babel"],script[type="text/jsx"]')
             .forEach((Y, U) => {
-              const Q = Y.getAttribute("data-plugins") || "";
+              const Q = Y.getAttribute('data-plugins') || '';
               const J = u.filter((W) => Q.indexOf(W) < 0);
               if (J.length) {
-                Y.setAttribute(
-                  "data-plugins",
-                  Q ? `${Q},${J.join(",")}` : J.join(","),
-                );
+                Y.setAttribute('data-plugins', Q ? `${Q},${J.join(',')}` : J.join(','));
               }
-              if (!Y.hasAttribute("data-filename")) {
-                Y.setAttribute(
-                  "data-filename",
-                  Y.getAttribute("src") || `inline-${U}`,
-                );
+              if (!Y.hasAttribute('data-filename')) {
+                Y.setAttribute('data-filename', Y.getAttribute('src') || `inline-${U}`);
               }
             });
         });
@@ -268,71 +216,69 @@
         if (y && y !== window) {
           const H = (Q, J) => {
             try {
-              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, '*');
             } catch {}
           };
-          ["log", "warn", "error"].forEach((Q) => {
+          ['log', 'warn', 'error'].forEach((Q) => {
             const J = console[Q];
             console[Q] = (...W) => {
               const Z = W.map((z) => {
                 try {
-                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                  return typeof z === 'object' ? JSON.stringify(z) : String(z);
                 } catch {
                   try {
                     return String(z);
                   } catch {
-                    return "[unstringifiable]";
+                    return '[unstringifiable]';
                   }
                 }
-              }).join(" ");
+              }).join(' ');
               H(Q, Z);
               J.apply(console, W);
             };
           });
           window.addEventListener(
-            "error",
+            'error',
             (Q) => {
               const J = Q.target;
               if (J && J !== window && J.tagName) {
-                const W = J.src || J.href || "";
-                H("resource_error", `${J.tagName} failed to load: ${W}`);
+                const W = J.src || J.href || '';
+                H('resource_error', `${J.tagName} failed to load: ${W}`);
               } else {
                 H(
-                  "error",
-                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                  'error',
+                  `${Q.message || 'Unknown error'} at ${Q.filename || '?'}:${Q.lineno || 0}:${Q.colno || 0}`,
                 );
               }
             },
             true,
           );
-          window.addEventListener("unhandledrejection", (Q) => {
+          window.addEventListener('unhandledrejection', (Q) => {
             const J = Q.reason;
-            const W =
-              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
-            H("error", `Unhandled rejection: ${W}`);
+            const W = J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H('error', `Unhandled rejection: ${W}`);
           });
           const G = () => {
             try {
               y.postMessage(
                 {
-                  type: "omelette:height",
+                  type: 'omelette:height',
                   height: document.documentElement.scrollHeight,
                 },
-                "*",
+                '*',
               );
             } catch {}
           };
-          if (document.readyState === "complete") G();
-          else window.addEventListener("load", G);
-          if (window.ResizeObserver)
-            new ResizeObserver(G).observe(document.documentElement);
+          if (document.readyState === 'complete') G();
+          else window.addEventListener('load', G);
+          if (window.ResizeObserver) new ResizeObserver(G).observe(document.documentElement);
           const k = {};
           let A = 0;
           window.claude = {
             complete(Q) {
               return new Promise((J, W) => {
                 if (!j.length) {
-                  W(new Error("claude.complete: no parent origin"));
+                  W(new Error('claude.complete: no parent origin'));
                   return;
                 }
                 const Z = `c${++A}`;
@@ -342,7 +288,7 @@
                     W(new Error(`claude.complete: no data for ${S / 1000}s`));
                   }, S);
                 const V = z();
-                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                k[Z] = { resolve: J, reject: W, text: '', t: V, arm: z };
                 try {
                   for (const L of j) {
                     y.postMessage({ __om_api: true, id: Z, body: Q }, L);
@@ -376,7 +322,7 @@
                       {
                         __om_file: true,
                         id: z,
-                        op: "write",
+                        op: 'write',
                         path: Q,
                         content: J,
                       },
@@ -397,27 +343,22 @@
               return JSON.stringify(String(Q));
             }
           };
-          window.addEventListener("message", (Q) => {
+          window.addEventListener('message', (Q) => {
             if (j.indexOf(Q.origin) < 0) return;
             if (Q.source !== y) return;
             const J = Q.data;
             if (!J) return;
-            if (J.type === "omelette-preview-refresh") {
+            if (J.type === 'omelette-preview-refresh') {
               if (
-                typeof J.token !== "string" ||
-                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
-                  J.token,
-                )
+                typeof J.token !== 'string' ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token)
               )
                 return;
-              const z = Math.max(
-                1,
-                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
-              );
+              const z = Math.max(1, Math.floor((J.expiresAt || 0) - Date.now() / 1000));
               document.cookie =
-                "__Host-omelette-preview=" +
+                '__Host-omelette-preview=' +
                 J.token +
-                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                '; Path=/; Secure; SameSite=None; Partitioned; Max-Age=' +
                 z;
               return;
             }
@@ -427,7 +368,7 @@
               clearTimeout(z.t);
               delete u[J.id];
               if (J.ok) z.resolve();
-              else z.reject(new Error(J.error || "write failed"));
+              else z.reject(new Error(J.error || 'write failed'));
               return;
             }
             if (J.__om_api_r) {
@@ -456,14 +397,11 @@
             if (!J.__om_eval) return;
             const W = J;
             const Z = (z) => {
-              Q.source.postMessage(
-                { ...z, __om_eval_r: 1, id: W.id },
-                Q.origin,
-              );
+              Q.source.postMessage({ ...z, __om_eval_r: 1, id: W.id }, Q.origin);
             };
             try {
               const z = (0, eval)(W.code);
-              if (z && typeof z.then === "function") {
+              if (z && typeof z.then === 'function') {
                 z.then(
                   (V) => Z({ ok: 1, v: U(V) }),
                   (V) => Z({ ok: 0, e: String(V) }),
@@ -482,60 +420,49 @@
     <meta charset="UTF-8" data-om-id="585060b6:2" />
     <style>
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 300;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 400;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 500;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 600;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 700;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 800;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 900;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
     </style>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-      data-om-id="585060b6:3"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-om-id="585060b6:3" />
     <title>منتوما — نخبگان</title>
 
     <style>
@@ -563,7 +490,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         background: var(--black);
         color: var(--cream);
         line-height: 1.8;
@@ -572,7 +499,7 @@
       h1,
       h2,
       h3 {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
       }
 
       nav {
@@ -586,15 +513,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: linear-gradient(
-          to bottom,
-          rgba(10, 10, 10, 0.95),
-          transparent
-        );
+        background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), transparent);
         backdrop-filter: blur(2px);
       }
       .nav-logo {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 26px;
         font-weight: 600;
         color: var(--cream);
@@ -635,7 +558,7 @@
         color: var(--cream);
       }
       .btn-gold {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 12px;
         font-weight: 700;
         color: var(--black);
@@ -660,27 +583,14 @@
       .hero-bg {
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          160deg,
-          #0a0a0a 0%,
-          #1a1510 40%,
-          #0d0b07 100%
-        );
+        background: linear-gradient(160deg, #0a0a0a 0%, #1a1510 40%, #0d0b07 100%);
       }
       .hero-bg-pattern {
         position: absolute;
         inset: 0;
         background-image:
-          radial-gradient(
-            circle at 30% 30%,
-            oklch(72% 0.14 78 / 0.08) 0%,
-            transparent 60%
-          ),
-          radial-gradient(
-            circle at 80% 80%,
-            oklch(72% 0.14 78 / 0.05) 0%,
-            transparent 50%
-          );
+          radial-gradient(circle at 30% 30%, oklch(72% 0.14 78 / 0.08) 0%, transparent 60%),
+          radial-gradient(circle at 80% 80%, oklch(72% 0.14 78 / 0.05) 0%, transparent 50%);
       }
       .hero-portrait-grid {
         position: absolute;
@@ -717,7 +627,7 @@
         text-align: right;
       }
       .pl-name {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 20px;
         font-weight: 600;
         color: var(--cream);
@@ -745,7 +655,7 @@
         justify-content: flex-end;
       }
       .hero-eyebrow::after {
-        content: "";
+        content: '';
         display: block;
         width: 40px;
         height: 1px;
@@ -776,7 +686,7 @@
         gap: 24px;
       }
       .btn-hero-gold {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 13px;
         font-weight: 700;
         color: var(--black);
@@ -791,7 +701,7 @@
         transform: translateY(-1px);
       }
       .btn-ghost-cream {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 13px;
         font-weight: 500;
         color: var(--cream);
@@ -853,7 +763,7 @@
       }
       .section-eyebrow::before,
       .section-eyebrow::after {
-        content: "";
+        content: '';
         display: block;
         width: 40px;
         height: 1px;
@@ -914,7 +824,7 @@
         font-weight: 700;
       }
       .inst-name {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 26px;
         font-weight: 600;
         color: var(--cream);
@@ -958,7 +868,7 @@
         justify-content: flex-end;
       }
       .fc-label::after {
-        content: "";
+        content: '';
         display: block;
         width: 40px;
         height: 1px;
@@ -1018,11 +928,7 @@
       }
       .fc-thumb {
         height: 280px;
-        background: linear-gradient(
-          145deg,
-          oklch(18% 0.04 78),
-          oklch(12% 0.04 78)
-        );
+        background: linear-gradient(145deg, oklch(18% 0.04 78), oklch(12% 0.04 78));
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1059,7 +965,7 @@
         padding: 28px;
       }
       .fc-course-name {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 22px;
         font-weight: 600;
         color: var(--cream);
@@ -1108,7 +1014,7 @@
         font-size: 22px;
         font-weight: 300;
         color: var(--gold);
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
       }
       .fc-stat-label {
         font-size: 10px;
@@ -1128,7 +1034,7 @@
         text-align: center;
       }
       .fc-fb-val {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 28px;
         font-weight: 600;
         line-height: 1;
@@ -1155,7 +1061,7 @@
         );
       }
       .quote-mark {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 180px;
         line-height: 0.8;
         color: oklch(22% 0.04 78);
@@ -1164,7 +1070,7 @@
         position: relative;
       }
       .quote-text {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: clamp(26px, 3.5vw, 44px);
         font-weight: 500;
         font-style: italic;
@@ -1187,7 +1093,7 @@
       }
       .quote-source::before,
       .quote-source::after {
-        content: "";
+        content: '';
         display: block;
         width: 40px;
         height: 1px;
@@ -1238,13 +1144,13 @@
         font-weight: 700;
       }
       .plan-tier::before {
-        content: "";
+        content: '';
         flex: 1;
         height: 1px;
         background: var(--border);
       }
       .plan-price {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 56px;
         font-weight: 600;
         color: var(--cream);
@@ -1283,7 +1189,7 @@
         flex-shrink: 0;
       }
       .btn-plan-gold {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 12px;
         font-weight: 700;
         width: 100%;
@@ -1342,7 +1248,7 @@
         margin-bottom: 20px;
       }
       .testi-card .tq {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 18px;
         font-style: italic;
         line-height: 1.7;
@@ -1439,7 +1345,7 @@
         margin-bottom: 60px;
       }
       .footer-brand-name {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         font-size: 28px;
         font-weight: 600;
         color: var(--cream);
@@ -1497,7 +1403,7 @@
 
     <style>
       /* Elite: dark is default, light mode overrides */
-      [data-theme="light"] {
+      [data-theme='light'] {
         --black: #f5f0e8;
         --black2: #ede9df;
         --black3: #e0d9ce;
@@ -1510,192 +1416,183 @@
         --border: oklch(80% 0.03 70);
         --border-light: oklch(72% 0.03 70);
       }
-      [data-theme="light"] body {
+      [data-theme='light'] body {
         background: #f5f0e8;
         color: #1a1208;
       }
-      [data-theme="light"] nav {
-        background: linear-gradient(
-          to bottom,
-          rgba(245, 240, 232, 0.98),
-          transparent
-        );
+      [data-theme='light'] nav {
+        background: linear-gradient(to bottom, rgba(245, 240, 232, 0.98), transparent);
       }
-      [data-theme="light"] .nav-logo {
+      [data-theme='light'] .nav-logo {
         color: #1a1208;
       }
-      [data-theme="light"] .nav-links a {
+      [data-theme='light'] .nav-links a {
         color: oklch(40% 0.02 60);
       }
-      [data-theme="light"] .nav-links a:hover {
+      [data-theme='light'] .nav-links a:hover {
         color: #1a1208;
       }
-      [data-theme="light"] .nav-login {
+      [data-theme='light'] .nav-login {
         color: oklch(40% 0.02 60);
       }
-      [data-theme="light"] .hero {
+      [data-theme='light'] .hero {
         background: #f5f0e8;
       }
-      [data-theme="light"] .hero-bg {
-        background: linear-gradient(
-          160deg,
-          #f5f0e8 0%,
-          #ede4d0 40%,
-          #f0e8d8 100%
-        );
+      [data-theme='light'] .hero-bg {
+        background: linear-gradient(160deg, #f5f0e8 0%, #ede4d0 40%, #f0e8d8 100%);
       }
-      [data-theme="light"] .hero h1 {
+      [data-theme='light'] .hero h1 {
         color: #1a1208;
       }
-      [data-theme="light"] .hero p {
+      [data-theme='light'] .hero p {
         color: oklch(40% 0.02 60);
       }
-      [data-theme="light"] .btn-ghost-cream {
+      [data-theme='light'] .btn-ghost-cream {
         color: #1a1208;
         border-color: oklch(65% 0.03 70);
       }
-      [data-theme="light"] .instructors-section {
+      [data-theme='light'] .instructors-section {
         background: #ede9df;
       }
-      [data-theme="light"] .inst-header h2 {
+      [data-theme='light'] .inst-header h2 {
         color: #1a1208;
       }
-      [data-theme="light"] .ic1,
-      [data-theme="light"] .ic2,
-      [data-theme="light"] .ic3,
-      [data-theme="light"] .ic4 {
+      [data-theme='light'] .ic1,
+      [data-theme='light'] .ic2,
+      [data-theme='light'] .ic3,
+      [data-theme='light'] .ic4 {
         filter: brightness(1.05) contrast(1.05);
       }
-      [data-theme="light"] .inst-name {
+      [data-theme='light'] .inst-name {
         color: #1a1208;
       }
-      [data-theme="light"] .inst-detail {
+      [data-theme='light'] .inst-detail {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .featured-course {
+      [data-theme='light'] .featured-course {
         background: #f5f0e8;
       }
-      [data-theme="light"] .fc-title {
+      [data-theme='light'] .fc-title {
         color: #1a1208;
       }
-      [data-theme="light"] .fc-description {
+      [data-theme='light'] .fc-description {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .fc-item-text {
+      [data-theme='light'] .fc-item-text {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .fc-item-text strong {
+      [data-theme='light'] .fc-item-text strong {
         color: #1a1208;
       }
-      [data-theme="light"] .fc-card {
+      [data-theme='light'] .fc-card {
         background: #ede9df;
         border-color: oklch(78% 0.03 70);
       }
-      [data-theme="light"] .fc-course-name {
+      [data-theme='light'] .fc-course-name {
         color: #1a1208;
       }
-      [data-theme="light"] .fc-instructor-name {
+      [data-theme='light'] .fc-instructor-name {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .fc-instructor-name strong {
+      [data-theme='light'] .fc-instructor-name strong {
         color: #1a1208;
       }
-      [data-theme="light"] .fc-stat {
+      [data-theme='light'] .fc-stat {
         background: #ede9df;
       }
-      [data-theme="light"] .fc-stat-label {
+      [data-theme='light'] .fc-stat-label {
         color: oklch(45% 0.02 60);
       }
-      [data-theme="light"] .quote-section {
+      [data-theme='light'] .quote-section {
         background: #f5f0e8;
       }
-      [data-theme="light"] .quote-text {
+      [data-theme='light'] .quote-text {
         color: #1a1208;
       }
-      [data-theme="light"] .plans-section {
+      [data-theme='light'] .plans-section {
         background: #ede9df;
       }
-      [data-theme="light"] .plans-header h2 {
+      [data-theme='light'] .plans-header h2 {
         color: #1a1208;
       }
-      [data-theme="light"] .plans-header p {
+      [data-theme='light'] .plans-header p {
         color: oklch(40% 0.02 60);
       }
-      [data-theme="light"] .plan-cell {
+      [data-theme='light'] .plan-cell {
         background: #ede9df;
       }
-      [data-theme="light"] .plan-cell.featured {
+      [data-theme='light'] .plan-cell.featured {
         background: oklch(88% 0.06 78);
       }
-      [data-theme="light"] .plan-price {
+      [data-theme='light'] .plan-price {
         color: #1a1208;
       }
-      [data-theme="light"] .plan-period {
+      [data-theme='light'] .plan-period {
         color: oklch(45% 0.02 60);
       }
-      [data-theme="light"] .plan-features li {
+      [data-theme='light'] .plan-features li {
         color: oklch(35% 0.02 60);
       }
-      [data-theme="light"] .btn-plan-gold {
+      [data-theme='light'] .btn-plan-gold {
         color: oklch(35% 0.02 60);
         border-color: oklch(70% 0.03 70);
       }
-      [data-theme="light"] .btn-plan-gold:hover {
+      [data-theme='light'] .btn-plan-gold:hover {
         border-color: var(--gold);
         color: var(--gold);
       }
-      [data-theme="light"] .testi-section {
+      [data-theme='light'] .testi-section {
         background: #f5f0e8;
       }
-      [data-theme="light"] .testi-header h2 {
+      [data-theme='light'] .testi-header h2 {
         color: #1a1208;
       }
-      [data-theme="light"] .testi-header p {
+      [data-theme='light'] .testi-header p {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .testi-grid {
+      [data-theme='light'] .testi-grid {
         background: oklch(78% 0.03 70);
       }
-      [data-theme="light"] .testi-card {
+      [data-theme='light'] .testi-card {
         background: #ede9df;
       }
-      [data-theme="light"] .testi-card .tq {
+      [data-theme='light'] .testi-card .tq {
         color: #1a1208;
       }
-      [data-theme="light"] .ta-name {
+      [data-theme='light'] .ta-name {
         color: #1a1208;
       }
-      [data-theme="light"] .ta-role {
+      [data-theme='light'] .ta-role {
         color: oklch(45% 0.02 60);
       }
-      [data-theme="light"] .cta-section {
+      [data-theme='light'] .cta-section {
         background: #f5f0e8;
       }
-      [data-theme="light"] .cta-inner h2 {
+      [data-theme='light'] .cta-inner h2 {
         color: #1a1208;
       }
-      [data-theme="light"] .cta-inner p {
+      [data-theme='light'] .cta-inner p {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .btn-ghost-cream {
+      [data-theme='light'] .btn-ghost-cream {
         color: #1a1208;
       }
-      [data-theme="light"] footer {
+      [data-theme='light'] footer {
         background: #ede9df;
       }
-      [data-theme="light"] .footer-brand-name {
+      [data-theme='light'] .footer-brand-name {
         color: #1a1208;
       }
-      [data-theme="light"] .footer-brand-desc {
+      [data-theme='light'] .footer-brand-desc {
         color: oklch(40% 0.02 60);
       }
-      [data-theme="light"] .footer-col a {
+      [data-theme='light'] .footer-col a {
         color: oklch(38% 0.02 60);
       }
-      [data-theme="light"] .footer-col a:hover {
+      [data-theme='light'] .footer-col a:hover {
         color: var(--gold);
       }
-      [data-theme="light"] .footer-base {
+      [data-theme='light'] .footer-base {
         border-color: oklch(72% 0.03 70);
         color: oklch(45% 0.02 60);
       }
@@ -1771,9 +1668,7 @@
           <div class="portrait-overlay-bottom" data-om-id="585060b6:31"></div>
           <div class="portrait-label" data-om-id="585060b6:32">
             <div class="pl-name" data-om-id="585060b6:33">یوکی تاناکا</div>
-            <div class="pl-role" data-om-id="585060b6:34">
-              سرمایه‌گذار خطرپذیر
-            </div>
+            <div class="pl-role" data-om-id="585060b6:34">سرمایه‌گذار خطرپذیر</div>
           </div>
         </div>
         <div class="portrait-cell" data-om-id="585060b6:35">
@@ -1787,9 +1682,7 @@
           <div class="portrait-overlay-bottom" data-om-id="585060b6:38"></div>
           <div class="portrait-label" data-om-id="585060b6:39">
             <div class="pl-name" data-om-id="585060b6:40">سوفیا ریس</div>
-            <div class="pl-role" data-om-id="585060b6:41">
-              نویسنده و استراتژیست
-            </div>
+            <div class="pl-role" data-om-id="585060b6:41">نویسنده و استراتژیست</div>
           </div>
         </div>
         <div class="portrait-cell" data-om-id="585060b6:42">
@@ -1809,26 +1702,17 @@
       </div>
 
       <div class="hero-content" data-om-id="585060b6:49">
-        <div class="hero-eyebrow" data-om-id="585060b6:50">
-          از بهترین‌های جهان یاد بگیر
-        </div>
+        <div class="hero-eyebrow" data-om-id="585060b6:50">از بهترین‌های جهان یاد بگیر</div>
         <h1 data-om-id="585060b6:51">
-          بهترین نسخه<br data-om-id="585060b6:52" /><em data-om-id="585060b6:53"
-            >خودت</em
-          >
+          بهترین نسخه<br data-om-id="585060b6:52" /><em data-om-id="585060b6:53">خودت</em>
           باش.
         </h1>
         <p data-om-id="585060b6:54">
-          دسترسی نامحدود به هزاران کلاس توسط برترین ذهن‌های دنیا. یک عضویت. هر
-          رشته‌ای.
+          دسترسی نامحدود به هزاران کلاس توسط برترین ذهن‌های دنیا. یک عضویت. هر رشته‌ای.
         </p>
         <div class="hero-cta" data-om-id="585060b6:55">
-          <button class="btn-hero-gold" data-om-id="585060b6:56">
-            دسترسی نامحدود
-          </button>
-          <button class="btn-ghost-cream" data-om-id="585060b6:57">
-            مشاهده کلاس‌ها
-          </button>
+          <button class="btn-hero-gold" data-om-id="585060b6:56">دسترسی نامحدود</button>
+          <button class="btn-ghost-cream" data-om-id="585060b6:57">مشاهده کلاس‌ها</button>
         </div>
       </div>
       <div class="hero-scroll" data-om-id="585060b6:58">
@@ -1841,8 +1725,7 @@
       <div class="inst-header" data-om-id="585060b6:62">
         <div class="section-eyebrow" data-om-id="585060b6:63">مدرسان جهانی</div>
         <h2 data-om-id="585060b6:64">
-          از کسانی یاد بگیر که هنرشان را<br data-om-id="585060b6:65" /><em
-            data-om-id="585060b6:66"
+          از کسانی یاد بگیر که هنرشان را<br data-om-id="585060b6:65" /><em data-om-id="585060b6:66"
             >به کمال</em
           >
           رسانده‌اند
@@ -1860,12 +1743,8 @@
           <div class="inst-info" data-om-id="585060b6:71">
             <div class="inst-specialty" data-om-id="585060b6:72">رهبری</div>
             <div class="inst-name" data-om-id="585060b6:73">ارجون مهتا</div>
-            <div class="inst-detail" data-om-id="585060b6:74">
-              مدیر سابق طراحی گوگل
-            </div>
-            <div class="inst-cta" data-om-id="585060b6:75">
-              ← مشاهده کلاس‌ها
-            </div>
+            <div class="inst-detail" data-om-id="585060b6:74">مدیر سابق طراحی گوگل</div>
+            <div class="inst-cta" data-om-id="585060b6:75">← مشاهده کلاس‌ها</div>
           </div>
         </div>
         <div class="inst-card" data-om-id="585060b6:76">
@@ -1879,12 +1758,8 @@
           <div class="inst-info" data-om-id="585060b6:79">
             <div class="inst-specialty" data-om-id="585060b6:80">کارآفرینی</div>
             <div class="inst-name" data-om-id="585060b6:81">یوکی تاناکا</div>
-            <div class="inst-detail" data-om-id="585060b6:82">
-              بنیان‌گذار ۳ استارتاپ یونیکورن
-            </div>
-            <div class="inst-cta" data-om-id="585060b6:83">
-              ← مشاهده کلاس‌ها
-            </div>
+            <div class="inst-detail" data-om-id="585060b6:82">بنیان‌گذار ۳ استارتاپ یونیکورن</div>
+            <div class="inst-cta" data-om-id="585060b6:83">← مشاهده کلاس‌ها</div>
           </div>
         </div>
         <div class="inst-card" data-om-id="585060b6:84">
@@ -1896,16 +1771,10 @@
           />
           <div class="inst-gradient" data-om-id="585060b6:86"></div>
           <div class="inst-info" data-om-id="585060b6:87">
-            <div class="inst-specialty" data-om-id="585060b6:88">
-              نوشتن و استراتژی
-            </div>
+            <div class="inst-specialty" data-om-id="585060b6:88">نوشتن و استراتژی</div>
             <div class="inst-name" data-om-id="585060b6:89">سوفیا ریس</div>
-            <div class="inst-detail" data-om-id="585060b6:90">
-              نویسنده پرفروش نیویورک تایمز
-            </div>
-            <div class="inst-cta" data-om-id="585060b6:91">
-              ← مشاهده کلاس‌ها
-            </div>
+            <div class="inst-detail" data-om-id="585060b6:90">نویسنده پرفروش نیویورک تایمز</div>
+            <div class="inst-cta" data-om-id="585060b6:91">← مشاهده کلاس‌ها</div>
           </div>
         </div>
         <div class="inst-card" data-om-id="585060b6:92">
@@ -1917,16 +1786,10 @@
           />
           <div class="inst-gradient" data-om-id="585060b6:94"></div>
           <div class="inst-info" data-om-id="585060b6:95">
-            <div class="inst-specialty" data-om-id="585060b6:96">
-              سینما و داستان‌گویی
-            </div>
+            <div class="inst-specialty" data-om-id="585060b6:96">سینما و داستان‌گویی</div>
             <div class="inst-name" data-om-id="585060b6:97">لیام فاستر</div>
-            <div class="inst-detail" data-om-id="585060b6:98">
-              نامزد جایزه اسکار
-            </div>
-            <div class="inst-cta" data-om-id="585060b6:99">
-              ← مشاهده کلاس‌ها
-            </div>
+            <div class="inst-detail" data-om-id="585060b6:98">نامزد جایزه اسکار</div>
+            <div class="inst-cta" data-om-id="585060b6:99">← مشاهده کلاس‌ها</div>
           </div>
         </div>
       </div>
@@ -1936,42 +1799,37 @@
       <div data-om-id="585060b6:101">
         <div class="fc-label" data-om-id="585060b6:102">کلاس ویژه</div>
         <h2 class="fc-title" data-om-id="585060b6:103">
-          تفکر طراحانه و<br data-om-id="585060b6:104" /><em
-            data-om-id="585060b6:105"
+          تفکر طراحانه و<br data-om-id="585060b6:104" /><em data-om-id="585060b6:105"
             >رهبری خلاقانه</em
           >
         </h2>
         <p class="fc-description" data-om-id="585060b6:106">
-          در ۲۸ درس، ارجون مهتا اصولی را آشکار می‌کند که محصولات جهانی گوگل،
-          ایربی‌ان‌بی و استرایپ را شکل داده — و نشان می‌دهد چگونه آن‌ها را در
-          کار خود به کار بری.
+          در ۲۸ درس، ارجون مهتا اصولی را آشکار می‌کند که محصولات جهانی گوگل، ایربی‌ان‌بی و استرایپ
+          را شکل داده — و نشان می‌دهد چگونه آن‌ها را در کار خود به کار بری.
         </p>
         <div class="fc-includes" data-om-id="585060b6:107">
           <div class="fc-item" data-om-id="585060b6:108">
             <div class="fc-dash" data-om-id="585060b6:109"></div>
             <div class="fc-item-text" data-om-id="585060b6:110">
-              <strong data-om-id="585060b6:111">۲۸ درس ویدیویی</strong> در ۶
-              فصل، هر کدام زیر ۱۵ دقیقه
+              <strong data-om-id="585060b6:111">۲۸ درس ویدیویی</strong> در ۶ فصل، هر کدام زیر ۱۵
+              دقیقه
             </div>
           </div>
           <div class="fc-item" data-om-id="585060b6:112">
             <div class="fc-dash" data-om-id="585060b6:113"></div>
             <div class="fc-item-text" data-om-id="585060b6:114">
-              <strong data-om-id="585060b6:115">تمرین‌های عملی</strong> و یک
-              چالش طراحی شخصی برای تکمیل
+              <strong data-om-id="585060b6:115">تمرین‌های عملی</strong> و یک چالش طراحی شخصی برای
+              تکمیل
             </div>
           </div>
           <div class="fc-item" data-om-id="585060b6:116">
             <div class="fc-dash" data-om-id="585060b6:117"></div>
             <div class="fc-item-text" data-om-id="585060b6:118">
-              <strong data-om-id="585060b6:119">گواهینامه تأییدشده</strong> برای
-              تکمیل دوره
+              <strong data-om-id="585060b6:119">گواهینامه تأییدشده</strong> برای تکمیل دوره
             </div>
           </div>
         </div>
-        <button class="btn-hero-gold" data-om-id="585060b6:120">
-          ← پیش‌نمایش این کلاس
-        </button>
+        <button class="btn-hero-gold" data-om-id="585060b6:120">← پیش‌نمایش این کلاس</button>
       </div>
       <div class="fc-visual" data-om-id="585060b6:121">
         <div class="fc-card" data-om-id="585060b6:122">
@@ -2001,20 +1859,12 @@
             >
               <div class="fc-play" data-om-id="585060b6:126">▶</div>
             </div>
-            <span class="fc-duration" data-om-id="585060b6:127"
-              >پیش‌نمایش · ۳:۴۲</span
-            >
+            <span class="fc-duration" data-om-id="585060b6:127">پیش‌نمایش · ۳:۴۲</span>
           </div>
           <div class="fc-meta" data-om-id="585060b6:128">
-            <div class="fc-course-name" data-om-id="585060b6:129">
-              تفکر طراحانه و رهبری خلاقانه
-            </div>
+            <div class="fc-course-name" data-om-id="585060b6:129">تفکر طراحانه و رهبری خلاقانه</div>
             <div class="fc-instructor-row" data-om-id="585060b6:130">
-              <div
-                class="fc-av"
-                style="overflow: hidden; padding: 0"
-                data-om-id="585060b6:131"
-              >
+              <div class="fc-av" style="overflow: hidden; padding: 0" data-om-id="585060b6:131">
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&q=80"
                   alt=""
@@ -2033,9 +1883,7 @@
               </div>
               <div class="fc-stat" data-om-id="585060b6:139">
                 <div class="fc-stat-val" data-om-id="585060b6:140">۴.۹</div>
-                <div class="fc-stat-label" data-om-id="585060b6:141">
-                  امتیاز
-                </div>
+                <div class="fc-stat-label" data-om-id="585060b6:141">امتیاز</div>
               </div>
               <div class="fc-stat" data-om-id="585060b6:142">
                 <div class="fc-stat-val" data-om-id="585060b6:143">۶h</div>
@@ -2046,9 +1894,7 @@
         </div>
         <div class="fc-float-badge" data-om-id="585060b6:145">
           <div class="fc-fb-val" data-om-id="585060b6:146">۴.۹</div>
-          <div class="fc-fb-label" data-om-id="585060b6:147">
-            میانگین امتیاز
-          </div>
+          <div class="fc-fb-label" data-om-id="585060b6:147">میانگین امتیاز</div>
         </div>
       </div>
     </div>
@@ -2057,10 +1903,8 @@
       <div class="quote-bg" data-om-id="585060b6:149"></div>
       <div class="quote-mark" data-om-id="585060b6:150">«</div>
       <div class="quote-text" data-om-id="585060b6:151">
-        فاصله بین جایی که هستی و جایی که می‌خواهی باشی<br
-          data-om-id="585060b6:152"
-        />با <em data-om-id="585060b6:153">دانشی</em> پر می‌شود که هنوز کشف
-        نکرده‌ای.
+        فاصله بین جایی که هستی و جایی که می‌خواهی باشی<br data-om-id="585060b6:152" />با
+        <em data-om-id="585060b6:153">دانشی</em> پر می‌شود که هنوز کشف نکرده‌ای.
       </div>
       <div class="quote-source" data-om-id="585060b6:154">فلسفه منتوما</div>
     </div>
@@ -2068,9 +1912,7 @@
     <div class="plans-section" data-om-id="585060b6:155">
       <div class="plans-header" data-om-id="585060b6:156">
         <div class="section-eyebrow" data-om-id="585060b6:157">عضویت</div>
-        <h2 data-om-id="585060b6:158">
-          یک عضویت.<br data-om-id="585060b6:159" />همه کلاس‌ها.
-        </h2>
+        <h2 data-om-id="585060b6:158">یک عضویت.<br data-om-id="585060b6:159" />همه کلاس‌ها.</h2>
         <p data-om-id="585060b6:160">
           دسترسی نامحدود به کتابخانه کامل — یک نرخ ثابت، هر زمان لغو کن.
         </p>
@@ -2081,9 +1923,7 @@
           <div class="plan-price" data-om-id="585060b6:164">
             <span data-om-id="585060b6:165">$</span>۱۵
           </div>
-          <div class="plan-period" data-om-id="585060b6:166">
-            ماهانه، پرداخت سالانه
-          </div>
+          <div class="plan-period" data-om-id="585060b6:166">ماهانه، پرداخت سالانه</div>
           <ul class="plan-features" data-om-id="585060b6:167">
             <li data-om-id="585060b6:168">
               <div class="pf-line" data-om-id="585060b6:169"></div>
@@ -2102,18 +1942,14 @@
               دسترسی به جامعه
             </li>
           </ul>
-          <button class="btn-plan-gold" data-om-id="585060b6:176">
-            شروع کن
-          </button>
+          <button class="btn-plan-gold" data-om-id="585060b6:176">شروع کن</button>
         </div>
         <div class="plan-cell featured" data-om-id="585060b6:177">
           <div class="plan-tier" data-om-id="585060b6:178">حرفه‌ای</div>
           <div class="plan-price" data-om-id="585060b6:179">
             <span data-om-id="585060b6:180">$</span>۲۹
           </div>
-          <div class="plan-period" data-om-id="585060b6:181">
-            ماهانه، پرداخت سالانه
-          </div>
+          <div class="plan-period" data-om-id="585060b6:181">ماهانه، پرداخت سالانه</div>
           <ul class="plan-features" data-om-id="585060b6:182">
             <li data-om-id="585060b6:183">
               <div class="pf-line" data-om-id="585060b6:184"></div>
@@ -2136,18 +1972,14 @@
               دسترسی زودهنگام
             </li>
           </ul>
-          <button class="btn-plan-gold" data-om-id="585060b6:193">
-            آزمایش رایگان
-          </button>
+          <button class="btn-plan-gold" data-om-id="585060b6:193">آزمایش رایگان</button>
         </div>
         <div class="plan-cell" data-om-id="585060b6:194">
           <div class="plan-tier" data-om-id="585060b6:195">تیمی</div>
           <div class="plan-price" data-om-id="585060b6:196">
             <span data-om-id="585060b6:197">$</span>۴۹
           </div>
-          <div class="plan-period" data-om-id="585060b6:198">
-            به ازای هر نفر / ماه
-          </div>
+          <div class="plan-period" data-om-id="585060b6:198">به ازای هر نفر / ماه</div>
           <ul class="plan-features" data-om-id="585060b6:199">
             <li data-om-id="585060b6:200">
               <div class="pf-line" data-om-id="585060b6:201"></div>
@@ -2166,9 +1998,7 @@
               مدیر اختصاصی
             </li>
           </ul>
-          <button class="btn-plan-gold" data-om-id="585060b6:208">
-            تماس با فروش
-          </button>
+          <button class="btn-plan-gold" data-om-id="585060b6:208">تماس با فروش</button>
         </div>
       </div>
     </div>
@@ -2177,16 +2007,15 @@
       <div class="testi-header" data-om-id="585060b6:210">
         <h2 data-om-id="585060b6:211">سخن اعضای ما</h2>
         <p data-om-id="585060b6:212">
-          بیش از ۲۰۰٬۰۰۰ عضو حرفه، حرفه‌شان، و تفکرشان را با آموزش‌های جهانی
-          منتوما متحول کرده‌اند.
+          بیش از ۲۰۰٬۰۰۰ عضو حرفه، حرفه‌شان، و تفکرشان را با آموزش‌های جهانی منتوما متحول کرده‌اند.
         </p>
       </div>
       <div class="testi-grid" data-om-id="585060b6:213">
         <div class="testi-card" data-om-id="585060b6:214">
           <div class="testi-stars" data-om-id="585060b6:215">★ ★ ★ ★ ★</div>
           <div class="tq" data-om-id="585060b6:216">
-            «منتوما مثل یک پلتفرم دوره آنلاین معمولی نیست. مثل این است که
-            روبه‌روی باهوش‌ترین آدم اتاق نشسته‌ای و به تفکرش گوش می‌دهی.»
+            «منتوما مثل یک پلتفرم دوره آنلاین معمولی نیست. مثل این است که روبه‌روی باهوش‌ترین آدم
+            اتاق نشسته‌ای و به تفکرش گوش می‌دهی.»
           </div>
           <div class="ta" data-om-id="585060b6:217">
             <div class="ta-av" data-om-id="585060b6:218">نو</div>
@@ -2199,32 +2028,28 @@
         <div class="testi-card" data-om-id="585060b6:222">
           <div class="testi-stars" data-om-id="585060b6:223">★ ★ ★ ★ ★</div>
           <div class="tq" data-om-id="585060b6:224">
-            «در پلتفرم‌های آموزشی زیادی سرمایه‌گذاری کرده‌ام. هیچ‌کدام با عمق و
-            کیفیت مدرسان منتوما قابل مقایسه نیستند.»
+            «در پلتفرم‌های آموزشی زیادی سرمایه‌گذاری کرده‌ام. هیچ‌کدام با عمق و کیفیت مدرسان منتوما
+            قابل مقایسه نیستند.»
           </div>
           <div class="ta" data-om-id="585060b6:225">
             <div class="ta-av" data-om-id="585060b6:226">کن</div>
             <div data-om-id="585060b6:227">
               <div class="ta-name" data-om-id="585060b6:228">کنجی اوتا</div>
-              <div class="ta-role" data-om-id="585060b6:229">
-                بنیان‌گذار استارتاپ
-              </div>
+              <div class="ta-role" data-om-id="585060b6:229">بنیان‌گذار استارتاپ</div>
             </div>
           </div>
         </div>
         <div class="testi-card" data-om-id="585060b6:230">
           <div class="testi-stars" data-om-id="585060b6:231">★ ★ ★ ★ ★</div>
           <div class="tq" data-om-id="585060b6:232">
-            «سینماتوگرافی هر کلاس خیره‌کننده است. بلافاصله نشان می‌دهد که از کسی
-            یاد می‌گیری که در بالاترین سطح حرفه‌اش است.»
+            «سینماتوگرافی هر کلاس خیره‌کننده است. بلافاصله نشان می‌دهد که از کسی یاد می‌گیری که در
+            بالاترین سطح حرفه‌اش است.»
           </div>
           <div class="ta" data-om-id="585060b6:233">
             <div class="ta-av" data-om-id="585060b6:234">اما</div>
             <div data-om-id="585060b6:235">
               <div class="ta-name" data-om-id="585060b6:236">آمارا ویلیامز</div>
-              <div class="ta-role" data-om-id="585060b6:237">
-                استراتژیست برند
-              </div>
+              <div class="ta-role" data-om-id="585060b6:237">استراتژیست برند</div>
             </div>
           </div>
         </div>
@@ -2234,24 +2059,17 @@
     <div class="cta-section" data-om-id="585060b6:238">
       <div class="cta-bg" data-om-id="585060b6:239"></div>
       <div class="cta-inner" data-om-id="585060b6:240">
-        <div class="section-eyebrow" data-om-id="585060b6:241">
-          سفرت از همین‌جا شروع می‌شود
-        </div>
+        <div class="section-eyebrow" data-om-id="585060b6:241">سفرت از همین‌جا شروع می‌شود</div>
         <h2 data-om-id="585060b6:242">
           از بهترین‌ها یاد بگیر.<br data-om-id="585060b6:243" />بهترین نسخه
           <em data-om-id="585060b6:244">خودت</em> باش.
         </h2>
         <p data-om-id="585060b6:245">
-          به بیش از ۲۰۰٬۰۰۰ عضو در سراسر جهان بپیوند با یک عضویت، همه کلاس‌ها،
-          برای همیشه.
+          به بیش از ۲۰۰٬۰۰۰ عضو در سراسر جهان بپیوند با یک عضویت، همه کلاس‌ها، برای همیشه.
         </p>
         <div class="cta-actions" data-om-id="585060b6:246">
-          <button class="btn-hero-gold" data-om-id="585060b6:247">
-            ← دسترسی نامحدود
-          </button>
-          <button class="btn-ghost-cream" data-om-id="585060b6:248">
-            مشاهده همه کلاس‌ها
-          </button>
+          <button class="btn-hero-gold" data-om-id="585060b6:247">← دسترسی نامحدود</button>
+          <button class="btn-ghost-cream" data-om-id="585060b6:248">مشاهده همه کلاس‌ها</button>
         </div>
       </div>
     </div>
@@ -2296,19 +2114,18 @@
 
     <script>
       (function () {
-        var saved = localStorage.getItem("Mentoma-theme-t3") || "dark";
-        document.documentElement.setAttribute("data-theme", saved);
-        var btn = document.getElementById("themeBtn3");
-        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+        var saved = localStorage.getItem('Mentoma-theme-t3') || 'dark';
+        document.documentElement.setAttribute('data-theme', saved);
+        var btn = document.getElementById('themeBtn3');
+        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
       })();
       function toggleT3() {
         var html = document.documentElement;
-        var isDark = html.getAttribute("data-theme") === "dark";
-        var next = isDark ? "light" : "dark";
-        html.setAttribute("data-theme", next);
-        document.getElementById("themeBtn3").textContent =
-          next === "dark" ? "☀️" : "🌙";
-        localStorage.setItem("Mentoma-theme-t3", next);
+        var isDark = html.getAttribute('data-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('themeBtn3').textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('Mentoma-theme-t3', next);
       }
     </script>
   </body>
@@ -2586,13 +2403,7 @@
           [25130, 25131]
         ],
         "parentId": "585060b6:4",
-        "childIds": [
-          "585060b6:18",
-          "585060b6:19",
-          "585060b6:20",
-          "585060b6:49",
-          "585060b6:58"
-        ]
+        "childIds": ["585060b6:18", "585060b6:19", "585060b6:20", "585060b6:49", "585060b6:58"]
       },
       {
         "id": "585060b6:18",
@@ -3677,13 +3488,7 @@
           [28573, 28576]
         ],
         "parentId": "585060b6:100",
-        "childIds": [
-          "585060b6:102",
-          "585060b6:103",
-          "585060b6:106",
-          "585060b6:107",
-          "585060b6:120"
-        ]
+        "childIds": ["585060b6:102", "585060b6:103", "585060b6:106", "585060b6:107", "585060b6:120"]
       },
       {
         "id": "585060b6:102",
@@ -4283,12 +4088,7 @@
           [30477, 30478]
         ],
         "parentId": "585060b6:4",
-        "childIds": [
-          "585060b6:149",
-          "585060b6:150",
-          "585060b6:151",
-          "585060b6:154"
-        ]
+        "childIds": ["585060b6:149", "585060b6:150", "585060b6:151", "585060b6:154"]
       },
       {
         "id": "585060b6:149",
@@ -4482,13 +4282,7 @@
           [31424, 31429]
         ],
         "parentId": "585060b6:161",
-        "childIds": [
-          "585060b6:163",
-          "585060b6:164",
-          "585060b6:166",
-          "585060b6:167",
-          "585060b6:176"
-        ]
+        "childIds": ["585060b6:163", "585060b6:164", "585060b6:166", "585060b6:167", "585060b6:176"]
       },
       {
         "id": "585060b6:163",
@@ -4554,12 +4348,7 @@
           [31353, 31360]
         ],
         "parentId": "585060b6:162",
-        "childIds": [
-          "585060b6:168",
-          "585060b6:170",
-          "585060b6:172",
-          "585060b6:174"
-        ]
+        "childIds": ["585060b6:168", "585060b6:170", "585060b6:172", "585060b6:174"]
       },
       {
         "id": "585060b6:168",
@@ -4686,13 +4475,7 @@
           [32163, 32168]
         ],
         "parentId": "585060b6:161",
-        "childIds": [
-          "585060b6:178",
-          "585060b6:179",
-          "585060b6:181",
-          "585060b6:182",
-          "585060b6:193"
-        ]
+        "childIds": ["585060b6:178", "585060b6:179", "585060b6:181", "585060b6:182", "585060b6:193"]
       },
       {
         "id": "585060b6:178",
@@ -4759,13 +4542,7 @@
           [32080, 32087]
         ],
         "parentId": "585060b6:177",
-        "childIds": [
-          "585060b6:183",
-          "585060b6:185",
-          "585060b6:187",
-          "585060b6:189",
-          "585060b6:191"
-        ]
+        "childIds": ["585060b6:183", "585060b6:185", "585060b6:187", "585060b6:189", "585060b6:191"]
       },
       {
         "id": "585060b6:183",
@@ -4916,13 +4693,7 @@
           [32780, 32785]
         ],
         "parentId": "585060b6:161",
-        "childIds": [
-          "585060b6:195",
-          "585060b6:196",
-          "585060b6:198",
-          "585060b6:199",
-          "585060b6:208"
-        ]
+        "childIds": ["585060b6:195", "585060b6:196", "585060b6:198", "585060b6:199", "585060b6:208"]
       },
       {
         "id": "585060b6:195",
@@ -4988,12 +4759,7 @@
           [32700, 32707]
         ],
         "parentId": "585060b6:194",
-        "childIds": [
-          "585060b6:200",
-          "585060b6:202",
-          "585060b6:204",
-          "585060b6:206"
-        ]
+        "childIds": ["585060b6:200", "585060b6:202", "585060b6:204", "585060b6:206"]
       },
       {
         "id": "585060b6:200",
@@ -5523,12 +5289,7 @@
           [35319, 35322]
         ],
         "parentId": "585060b6:238",
-        "childIds": [
-          "585060b6:241",
-          "585060b6:242",
-          "585060b6:245",
-          "585060b6:246"
-        ]
+        "childIds": ["585060b6:241", "585060b6:242", "585060b6:245", "585060b6:246"]
       },
       {
         "id": "585060b6:241",
@@ -5665,12 +5426,7 @@
           [36164, 36167]
         ],
         "parentId": "585060b6:249",
-        "childIds": [
-          "585060b6:251",
-          "585060b6:255",
-          "585060b6:261",
-          "585060b6:267"
-        ]
+        "childIds": ["585060b6:251", "585060b6:255", "585060b6:261", "585060b6:267"]
       },
       {
         "id": "585060b6:251",
@@ -5734,13 +5490,7 @@
         "closeEnd": 35807,
         "textRuns": [],
         "parentId": "585060b6:250",
-        "childIds": [
-          "585060b6:256",
-          "585060b6:257",
-          "585060b6:258",
-          "585060b6:259",
-          "585060b6:260"
-        ]
+        "childIds": ["585060b6:256", "585060b6:257", "585060b6:258", "585060b6:259", "585060b6:260"]
       },
       {
         "id": "585060b6:256",
@@ -5812,13 +5562,7 @@
         "closeEnd": 35978,
         "textRuns": [],
         "parentId": "585060b6:250",
-        "childIds": [
-          "585060b6:262",
-          "585060b6:263",
-          "585060b6:264",
-          "585060b6:265",
-          "585060b6:266"
-        ]
+        "childIds": ["585060b6:262", "585060b6:263", "585060b6:264", "585060b6:265", "585060b6:266"]
       },
       {
         "id": "585060b6:262",
@@ -5890,13 +5634,7 @@
         "closeEnd": 36164,
         "textRuns": [],
         "parentId": "585060b6:250",
-        "childIds": [
-          "585060b6:268",
-          "585060b6:269",
-          "585060b6:270",
-          "585060b6:271",
-          "585060b6:272"
-        ]
+        "childIds": ["585060b6:268", "585060b6:269", "585060b6:270", "585060b6:271", "585060b6:272"]
       },
       {
         "id": "585060b6:268",

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
-import Link from "@/components/ui/link";
+import { useCallback, useEffect, useState } from 'react';
+import Link from '@/components/ui/link';
 
-import { getLesson, getLessonLiveSession } from "@/lib/api/client";
-import type { LessonSummary, LiveSessionSummary } from "@/lib/api/types";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { resolveAssetUrl } from "@/lib/utils";
+import { getLesson, getLessonLiveSession } from '@/lib/api/client';
+import type { LessonSummary, LiveSessionSummary } from '@/lib/api/types';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { resolveAssetUrl } from '@/lib/utils';
 
 type Props = {
   lesson: LessonSummary;
@@ -24,9 +24,9 @@ function formatRange(
   const start = new Date(startsAt);
   const end = endsAt ? new Date(endsAt) : null;
   const opts: Intl.DateTimeFormatOptions = {
-    dateStyle: "medium",
-    timeStyle: "short",
-    hourCycle: "h23",
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    hourCycle: 'h23',
     timeZone: timezone || undefined,
   };
   try {
@@ -42,20 +42,13 @@ function formatRange(
 
 const panelStyle = {
   background:
-    "linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 22%, #000), color-mix(in srgb, var(--theme-secondary) 12%, #000))",
-  color: "var(--theme-on-primary)",
+    'linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 22%, #000), color-mix(in srgb, var(--theme-secondary) 12%, #000))',
+  color: 'var(--theme-on-primary)',
 };
 
-export const LessonLivePanel = ({
-  lesson,
-  isLoggedIn,
-  loginHref,
-  enrollHref,
-}: Props) => {
+export const LessonLivePanel = ({ lesson, isLoggedIn, loginHref, enrollHref }: Props) => {
   const { t, language } = useTranslation();
-  const [live, setLive] = useState<LiveSessionSummary | null>(
-    lesson.LiveSession ?? null,
-  );
+  const [live, setLive] = useState<LiveSessionSummary | null>(lesson.LiveSession ?? null);
   const [joinError, setJoinError] = useState<string | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingJoin, setLoadingJoin] = useState(false);
@@ -72,8 +65,7 @@ export const LessonLivePanel = ({
       try {
         const detail = await getLesson(lesson.id);
         if (cancelled || !detail) return;
-        const ls = (detail as { LiveSession?: LiveSessionSummary | null })
-          .LiveSession;
+        const ls = (detail as { LiveSession?: LiveSessionSummary | null }).LiveSession;
         if (ls) setLive(ls);
       } catch {
         /* keep embedded snapshot */
@@ -95,14 +87,12 @@ export const LessonLivePanel = ({
       const row = await getLessonLiveSession(lesson.id);
       const url = resolveAssetUrl(row?.join_url) ?? row?.meeting_url?.trim();
       if (url) {
-        window.open(url, "_blank", "noopener,noreferrer");
+        window.open(url, '_blank', 'noopener,noreferrer');
         return;
       }
-      setJoinError(t("courses.liveNoLinkYet"));
+      setJoinError(t('courses.liveNoLinkYet'));
     } catch (e) {
-      setJoinError(
-        e instanceof Error ? e.message : t("courses.liveEnrollToJoin"),
-      );
+      setJoinError(e instanceof Error ? e.message : t('courses.liveEnrollToJoin'));
     } finally {
       setLoadingJoin(false);
     }
@@ -115,19 +105,14 @@ export const LessonLivePanel = ({
         style={panelStyle}
       >
         <span className="text-sm font-medium opacity-70">
-          {loadingDetail ? t("common.loading") : t("courses.liveNoLinkYet")}
+          {loadingDetail ? t('common.loading') : t('courses.liveNoLinkYet')}
         </span>
       </div>
     );
   }
 
-  const locale = language || "en";
-  const range = formatRange(
-    live.starts_at,
-    live.ends_at,
-    live.timezone,
-    locale,
-  );
+  const locale = language || 'en';
+  const range = formatRange(live.starts_at, live.ends_at, live.timezone, locale);
 
   return (
     <div className="flex w-full flex-col gap-4 p-6" style={panelStyle}>
@@ -136,17 +121,16 @@ export const LessonLivePanel = ({
         <div
           className="mb-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
           style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--theme-on-primary) 15%, transparent)",
+            backgroundColor: 'color-mix(in srgb, var(--theme-on-primary) 15%, transparent)',
           }}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          {t("courses.liveSession")}
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+          {t('courses.liveSession')}
         </div>
         <h3 className="text-lg font-semibold">{lesson.title}</h3>
         <p className="mt-1.5 text-sm opacity-70">{range}</p>
         <p className="mt-0.5 text-xs opacity-50">
-          {t("courses.liveSessionTimezone")}: {live.timezone}
+          {t('courses.liveSessionTimezone')}: {live.timezone}
         </p>
         {live.provider_label ? (
           <p className="mt-0.5 text-xs opacity-40">{live.provider_label}</p>
@@ -159,11 +143,11 @@ export const LessonLivePanel = ({
             href={loginHref}
             className="inline-flex h-10 items-center justify-center rounded-full px-5 text-sm font-semibold shadow-lg transition-all hover:scale-105 hover:opacity-90"
             style={{
-              backgroundColor: "var(--theme-on-primary)",
-              color: "var(--theme-primary)",
+              backgroundColor: 'var(--theme-on-primary)',
+              color: 'var(--theme-primary)',
             }}
           >
-            {t("courses.liveLoginToJoin")}
+            {t('courses.liveLoginToJoin')}
           </Link>
         ) : (
           <button
@@ -172,26 +156,23 @@ export const LessonLivePanel = ({
             disabled={loadingJoin}
             className="inline-flex h-10 items-center justify-center rounded-full px-5 text-sm font-semibold shadow-lg transition-all hover:scale-105 hover:opacity-90 disabled:opacity-50"
             style={{
-              backgroundColor: "var(--theme-on-primary)",
-              color: "var(--theme-primary)",
+              backgroundColor: 'var(--theme-on-primary)',
+              color: 'var(--theme-primary)',
             }}
           >
-            {loadingJoin
-              ? t("common.loading")
-              : t("courses.liveJoinLiveLesson")}
+            {loadingJoin ? t('common.loading') : t('courses.liveJoinLiveLesson')}
           </button>
         )}
         <Link
           href={enrollHref}
           className="inline-flex h-10 items-center justify-center rounded-full border px-5 text-sm font-semibold transition-all hover:scale-105"
           style={{
-            borderColor:
-              "color-mix(in srgb, var(--theme-on-primary) 30%, transparent)",
-            color: "var(--theme-on-primary)",
+            borderColor: 'color-mix(in srgb, var(--theme-on-primary) 30%, transparent)',
+            color: 'var(--theme-on-primary)',
             opacity: 0.85,
           }}
         >
-          {t("courses.enrollNow")}
+          {t('courses.enrollNow')}
         </Link>
       </div>
 
@@ -199,8 +180,7 @@ export const LessonLivePanel = ({
         <p
           className="rounded-lg px-3 py-2 text-xs"
           style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--theme-on-primary) 10%, transparent)",
+            backgroundColor: 'color-mix(in srgb, var(--theme-on-primary) 10%, transparent)',
           }}
         >
           {joinError}
@@ -212,9 +192,9 @@ export const LessonLivePanel = ({
           href={live.playback_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-medium underline transition-opacity hover:opacity-100 opacity-70"
+          className="text-sm font-medium underline opacity-70 transition-opacity hover:opacity-100"
         >
-          {t("courses.livePlayback")} →
+          {t('courses.livePlayback')} →
         </a>
       ) : null}
     </div>

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 
-import type { ComponentProps } from "react";
+import type { ComponentProps } from 'react';
 
-import type { CreativeBackground } from "./creative-background";
+import type { CreativeBackground } from './creative-background';
 
 /**
  * Decorative only, and the heaviest client dependency in the tree (framer-motion
@@ -13,12 +13,10 @@ import type { CreativeBackground } from "./creative-background";
  * — do not pay for it.
  */
 const LazyCreativeBackground = dynamic(
-  () => import("./creative-background").then((m) => m.CreativeBackground),
+  () => import('./creative-background').then((m) => m.CreativeBackground),
   { ssr: false },
 );
 
-export function CreativeBackgroundLazy(
-  props: ComponentProps<typeof CreativeBackground>,
-) {
+export function CreativeBackgroundLazy(props: ComponentProps<typeof CreativeBackground>) {
   return <LazyCreativeBackground {...props} />;
 }

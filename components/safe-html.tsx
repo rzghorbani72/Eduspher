@@ -17,7 +17,11 @@ const subscribeNoop = () => () => {};
 export function SafeHtml({ html, className }: { html: string; className?: string }) {
   // Render nothing during SSR (DOMPurify is a no-op on the server); only after
   // hydration do we inject the sanitized HTML — no setState-in-effect needed.
-  const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const hydrated = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
   const clean = hydrated ? sanitizeRichText(html || '') : '';
 
   return <div className={className} dangerouslySetInnerHTML={{ __html: clean }} />;

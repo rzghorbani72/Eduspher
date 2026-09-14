@@ -1,32 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Mail, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PhoneInput } from "@/components/ui/phone-input";
-import {
-  sendEmailOtp,
-  sendPhoneOtp,
-  verifyEmailOtp,
-  verifyPhoneOtp,
-} from "@/lib/api/client";
-import { OtpType } from "@/lib/constants";
-import { OtpBoxInput } from "@/components/ui/otp-box-input";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn } from "@/lib/utils";
-import {
-  getDefaultCountry,
-  getCountryByCode,
-  type CountryCode,
-} from "@/lib/country-codes";
-import { getFullPhoneNumber, cleanPhoneNumber } from "@/lib/phone-utils";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Mail, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { sendEmailOtp, sendPhoneOtp, verifyEmailOtp, verifyPhoneOtp } from '@/lib/api/client';
+import { OtpType } from '@/lib/constants';
+import { OtpBoxInput } from '@/components/ui/otp-box-input';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
+import { getDefaultCountry, getCountryByCode, type CountryCode } from '@/lib/country-codes';
+import { getFullPhoneNumber, cleanPhoneNumber } from '@/lib/phone-utils';
 
 interface AddContactFormProps {
-  method: "email" | "phone";
-  primaryMethod: "email" | "phone";
+  method: 'email' | 'phone';
+  primaryMethod: 'email' | 'phone';
   defaultCountryCode?: string;
   onSuccess?: () => void;
 }
@@ -44,38 +35,28 @@ const isValidPhone = (phone: string): boolean => {
 
 type Translate = (key: string) => string;
 
-const getEmailValidationError = (
-  email: string,
-  t: Translate,
-): string | null => {
-  if (!email) return t("auth.emailRequired");
-  if (!isValidEmail(email)) return t("account.invalidEmail");
+const getEmailValidationError = (email: string, t: Translate): string | null => {
+  if (!email) return t('auth.emailRequired');
+  if (!isValidEmail(email)) return t('account.invalidEmail');
   return null;
 };
 
-const getPhoneValidationError = (
-  phone: string,
-  t: Translate,
-): string | null => {
-  if (!phone) return t("auth.phoneRequired");
-  if (!isValidPhone(phone)) return t("account.invalidPhone");
+const getPhoneValidationError = (phone: string, t: Translate): string | null => {
+  if (!phone) return t('auth.phoneRequired');
+  if (!isValidPhone(phone)) return t('account.invalidPhone');
   return null;
 };
 
-export const AddContactForm = ({
-  method,
-  defaultCountryCode,
-  onSuccess,
-}: AddContactFormProps) => {
+export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddContactFormProps) => {
   const router = useRouter();
   const { t } = useTranslation();
-  const [step, setStep] = useState<"input" | "otp" | "success">("input");
+  const [step, setStep] = useState<'input' | 'otp' | 'success'>('input');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   // Email state
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
 
   // Phone state
@@ -86,13 +67,12 @@ export const AddContactForm = ({
     }
     return getDefaultCountry();
   };
-  const [selectedCountry, setSelectedCountry] =
-    useState<CountryCode>(getInitialCountry());
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
   // OTP state
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
   const [, setOtpSent] = useState(false);
 
   const handleSendOtp = async () => {
@@ -103,10 +83,10 @@ export const AddContactForm = ({
     setPhoneError(null);
 
     try {
-      if (method === "email") {
+      if (method === 'email') {
         if (!email.trim()) {
-          setError(t("auth.emailRequired"));
-          setEmailError(t("auth.emailRequired"));
+          setError(t('auth.emailRequired'));
+          setEmailError(t('auth.emailRequired'));
           return;
         }
         const emailError = getEmailValidationError(email, t);
@@ -116,13 +96,13 @@ export const AddContactForm = ({
           return;
         }
         await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION);
-        setMessage(t("auth.otpSentToEmail"));
+        setMessage(t('auth.otpSentToEmail'));
         setOtpSent(true);
-        setStep("otp");
+        setStep('otp');
       } else {
         if (!phoneNumber.trim()) {
-          setError(t("auth.phoneRequired"));
-          setPhoneError(t("auth.phoneRequired"));
+          setError(t('auth.phoneRequired'));
+          setPhoneError(t('auth.phoneRequired'));
           return;
         }
         const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
@@ -134,13 +114,12 @@ export const AddContactForm = ({
           return;
         }
         await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
-        setMessage(t("auth.otpSentToPhone"));
+        setMessage(t('auth.otpSentToPhone'));
         setOtpSent(true);
-        setStep("otp");
+        setStep('otp');
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : t("account.sendOtpFailed");
+      const errorMessage = err instanceof Error ? err.message : t('account.sendOtpFailed');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -149,7 +128,7 @@ export const AddContactForm = ({
 
   const handleVerifyOtp = async () => {
     if (!otp.trim()) {
-      setError(t("auth.enterOtpFirst"));
+      setError(t('auth.enterOtpFirst'));
       return;
     }
 
@@ -158,72 +137,61 @@ export const AddContactForm = ({
     setMessage(null);
 
     try {
-      if (method === "email") {
-        const result = await verifyEmailOtp(
-          email,
-          otp,
-          OtpType.REGISTER_EMAIL_VERIFICATION,
-        );
+      if (method === 'email') {
+        const result = await verifyEmailOtp(email, otp, OtpType.REGISTER_EMAIL_VERIFICATION);
         if (result.success !== false) {
-          setStep("success");
-          setMessage(t("account.emailAdded"));
+          setStep('success');
+          setMessage(t('account.emailAdded'));
           onSuccess?.();
           setTimeout(() => {
             router.refresh();
           }, 1500);
         } else {
-          setError(t("auth.invalidOtp"));
+          setError(t('auth.invalidOtp'));
         }
       } else {
         const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
         const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-        const result = await verifyPhoneOtp(
-          fullPhone,
-          otp,
-          OtpType.REGISTER_PHONE_VERIFICATION,
-        );
+        const result = await verifyPhoneOtp(fullPhone, otp, OtpType.REGISTER_PHONE_VERIFICATION);
         if (result.success !== false) {
-          setStep("success");
-          setMessage(t("account.phoneAdded"));
+          setStep('success');
+          setMessage(t('account.phoneAdded'));
           onSuccess?.();
           setTimeout(() => {
             router.refresh();
           }, 1500);
         } else {
-          setError(t("auth.invalidOtp"));
+          setError(t('auth.invalidOtp'));
         }
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : t("auth.invalidOtp");
+      const errorMessage = err instanceof Error ? err.message : t('auth.invalidOtp');
       setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (step === "success") {
+  if (step === 'success') {
     return (
       <div className="space-y-4 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
           <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-foreground">
-            {method === "email"
-              ? t("account.emailAdded")
-              : t("account.phoneAdded")}
+          <h3 className="text-foreground text-lg font-semibold">
+            {method === 'email' ? t('account.emailAdded') : t('account.phoneAdded')}
           </h3>
         </div>
       </div>
     );
   }
 
-  if (step === "otp") {
+  if (step === 'otp') {
     return (
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="otp">{t("auth.otpVerification")}</Label>
+          <Label htmlFor="otp">{t('auth.otpVerification')}</Label>
           <OtpBoxInput
             value={otp}
             onChange={setOtp}
@@ -241,7 +209,7 @@ export const AddContactForm = ({
         )}
 
         {message && !error && (
-          <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 whitespace-pre-wrap dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+          <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm whitespace-pre-wrap text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
             {message}
           </div>
         )}
@@ -251,14 +219,14 @@ export const AddContactForm = ({
             type="button"
             variant="outline"
             onClick={() => {
-              setStep("input");
-              setOtp("");
+              setStep('input');
+              setOtp('');
               setError(null);
               setMessage(null);
             }}
             className="flex-1"
           >
-            {t("common.back")}
+            {t('common.back')}
           </Button>
           <Button
             type="button"
@@ -267,7 +235,7 @@ export const AddContactForm = ({
             className="flex-1"
             loading={isLoading}
           >
-            {isLoading ? t("auth.verifying") : t("auth.verifyOtp")}
+            {isLoading ? t('auth.verifying') : t('auth.verifyOtp')}
           </Button>
         </div>
       </div>
@@ -276,17 +244,17 @@ export const AddContactForm = ({
 
   return (
     <div className="space-y-4">
-      {method === "email" ? (
+      {method === 'email' ? (
         <div className="space-y-2">
-          <Label htmlFor="email">{t("account.email")}</Label>
+          <Label htmlFor="email">{t('account.email')}</Label>
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
-              <Mail className="size-5 text-muted" aria-hidden="true" />
+              <Mail className="text-muted size-5" aria-hidden="true" />
             </div>
             <Input
               id="email"
               type="email"
-              placeholder={t("account.emailPlaceholder")}
+              placeholder={t('account.emailPlaceholder')}
               value={email}
               onChange={(e) => {
                 const value = e.target.value;
@@ -298,22 +266,15 @@ export const AddContactForm = ({
                 const error = getEmailValidationError(e.target.value, t);
                 setEmailError(error);
               }}
-              className={cn(
-                "ps-10",
-                emailError && "border-amber-500 focus:border-amber-500",
-              )}
+              className={cn('ps-10', emailError && 'border-amber-500 focus:border-amber-500')}
               autoComplete="email"
             />
           </div>
-          {emailError && (
-            <p className="text-sm text-amber-600 dark:text-amber-400">
-              {emailError}
-            </p>
-          )}
+          {emailError && <p className="text-sm text-amber-600 dark:text-amber-400">{emailError}</p>}
         </div>
       ) : (
         <div className="space-y-2">
-          <Label htmlFor="phone">{t("account.phoneNumber")}</Label>
+          <Label htmlFor="phone">{t('account.phoneNumber')}</Label>
           <PhoneInput
             id="phone"
             value={phoneNumber}
@@ -321,9 +282,7 @@ export const AddContactForm = ({
               setPhoneNumber(value);
               const cleaned = cleanPhoneNumber(value, selectedCountry);
               const fullPhone = getFullPhoneNumber(cleaned, selectedCountry);
-              const error = fullPhone
-                ? getPhoneValidationError(fullPhone, t)
-                : null;
+              const error = fullPhone ? getPhoneValidationError(fullPhone, t) : null;
               setPhoneError(error);
             }}
             onCountryChange={(country) => {
@@ -331,24 +290,16 @@ export const AddContactForm = ({
               if (phoneNumber) {
                 const cleaned = cleanPhoneNumber(phoneNumber, country);
                 const fullPhone = getFullPhoneNumber(cleaned, country);
-                const error = fullPhone
-                  ? getPhoneValidationError(fullPhone, t)
-                  : null;
+                const error = fullPhone ? getPhoneValidationError(fullPhone, t) : null;
                 setPhoneError(error);
               }
             }}
             defaultCountry={selectedCountry}
-            placeholder={t("account.phonePlaceholder")}
+            placeholder={t('account.phonePlaceholder')}
             autoComplete="tel"
-            className={
-              phoneError ? "border-amber-500 focus:border-amber-500" : ""
-            }
+            className={phoneError ? 'border-amber-500 focus:border-amber-500' : ''}
           />
-          {phoneError && (
-            <p className="text-sm text-amber-600 dark:text-amber-400">
-              {phoneError}
-            </p>
-          )}
+          {phoneError && <p className="text-sm text-amber-600 dark:text-amber-400">{phoneError}</p>}
         </div>
       )}
 
@@ -371,7 +322,7 @@ export const AddContactForm = ({
         className="w-full"
         loading={isLoading}
       >
-        {isLoading ? t("auth.sending") : t("auth.sendOtp")}
+        {isLoading ? t('auth.sending') : t('auth.sendOtp')}
       </Button>
     </div>
   );

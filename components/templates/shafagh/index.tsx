@@ -39,7 +39,12 @@ export const SHAFAGH_SECTIONS: TemplateSectionMap = {
   ),
   hero: ShafaghHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={SHAFAGH_DEFAULTS.marquee.items} tone="brand" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={SHAFAGH_DEFAULTS.marquee.items}
+      tone="brand"
+    />
   ),
   features: ShafaghFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -54,11 +59,38 @@ export const SHAFAGH_SECTIONS: TemplateSectionMap = {
   ),
   categories: ShafaghCategories,
   showcase: ({ id, config }) => (
-    <TemplateDataTable id={id} config={config} defaults={SHAFAGH_DEFAULTS.showcase} tone="surface" />
+    <TemplateDataTable
+      id={id}
+      config={config}
+      defaults={SHAFAGH_DEFAULTS.showcase}
+      tone="surface"
+    />
   ),
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={SHAFAGH_DEFAULTS.teachers} tone="page" avatarShape="round" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={SHAFAGH_DEFAULTS.teachers}
+      tone="page"
+      avatarShape="round"
+    />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={SHAFAGH_DEFAULTS.cta} tone="deep" boxed />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={SHAFAGH_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={SHAFAGH_DEFAULTS.cta}
+      tone="deep"
+      boxed
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={SHAFAGH_DEFAULTS.footer}
+    />
+  ),
 };

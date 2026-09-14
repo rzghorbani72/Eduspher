@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { Container } from "./landing-container";
-import { LANDING } from "./landing.messages";
-import { LandingShot } from "./landing-shot";
-import { ProductFrame } from "./product-frame";
-import { SectionHeading } from "./section-heading";
+import { Container } from './landing-container';
+import { LANDING } from './landing.messages';
+import { LandingShot } from './landing-shot';
+import { ProductFrame } from './product-frame';
+import { SectionHeading } from './section-heading';
 
 const STEPS = LANDING.steps.items;
 
@@ -25,15 +25,14 @@ export function StepsSection() {
 
     const onStep = (event: Event) => {
       const index = (event as CustomEvent<number>).detail;
-      if (typeof index === "number") setActive(index);
+      if (typeof index === 'number') setActive(index);
     };
 
-    node.addEventListener("lp:step", onStep);
-    return () => node.removeEventListener("lp:step", onStep);
+    node.addEventListener('lp:step', onStep);
+    return () => node.removeEventListener('lp:step', onStep);
   }, []);
 
-  const go = (index: number) =>
-    setActive((index + STEPS.length) % STEPS.length);
+  const go = (index: number) => setActive((index + STEPS.length) % STEPS.length);
 
   return (
     <section
@@ -42,14 +41,14 @@ export function StepsSection() {
       data-lp="steps"
       data-lp-step-count={STEPS.length}
       data-lp-reveal
-      className="scroll-mt-32 bg-lp-surface py-20 lg:py-28"
+      className="bg-lp-surface scroll-mt-32 py-20 lg:py-28"
     >
       <Container>
         <SectionHeading title={LANDING.steps.title} />
 
         <div
           data-lp="steps-stage"
-          className="mt-14 rounded-[28px] border border-lp-line bg-lp-surface-2 p-5 sm:p-8"
+          className="border-lp-line bg-lp-surface-2 mt-14 rounded-[28px] border p-5 sm:p-8"
         >
           {/* Horizontal track. All slides are laid out side by side and the
               track slides; in RTL the flex row runs right-to-left, so advancing
@@ -62,11 +61,7 @@ export function StepsSection() {
               style={{ transform: `translateX(${active * 100}%)` }}
             >
               {STEPS.map((item, index) => (
-                <div
-                  key={item.number}
-                  className="w-full shrink-0"
-                  aria-hidden={index !== active}
-                >
+                <div key={item.number} className="w-full shrink-0" aria-hidden={index !== active}>
                   {/* Capped to a share of the viewport so the whole stage —
                       image, badge, copy and dots — still fits on screen while
                       it is pinned. An uncapped 1100x560 image overflows a short
@@ -90,13 +85,13 @@ export function StepsSection() {
                   {/* z-10 so the number badge sits over the image edge rather
                       than being covered by it. */}
                   <div className="relative z-10 -mt-6 flex flex-col items-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-lp-surface-2 bg-lp-mint text-base font-black text-lp-ink">
+                    <span className="border-lp-surface-2 bg-lp-mint text-lp-ink flex h-12 w-12 items-center justify-center rounded-full border-4 text-base font-black">
                       {item.number}
                     </span>
-                    <h3 className="mt-5 text-center text-lg font-bold text-lp-ink lg:text-xl">
+                    <h3 className="text-lp-ink mt-5 text-center text-lg font-bold lg:text-xl">
                       {item.title}
                     </h3>
-                    <p className="mt-2 max-w-[520px] text-center text-[15px] leading-[1.9] text-lp-muted">
+                    <p className="text-lp-muted mt-2 max-w-[520px] text-center text-[15px] leading-[1.9]">
                       {item.body}
                     </p>
                   </div>
@@ -115,10 +110,10 @@ export function StepsSection() {
                   aria-label={`${LANDING.steps.stepLabel} ${item.number}`}
                   aria-current={active === index}
                   className={cn(
-                    "h-9 w-9 rounded-full text-[13px] font-bold transition-colors",
+                    'h-9 w-9 rounded-full text-[13px] font-bold transition-colors',
                     active === index
-                      ? "bg-lp-mint text-lp-ink"
-                      : "border border-lp-line bg-white text-lp-muted hover:text-lp-ink",
+                      ? 'bg-lp-mint text-lp-ink'
+                      : 'border-lp-line text-lp-muted hover:text-lp-ink border bg-white',
                   )}
                 >
                   {item.number}

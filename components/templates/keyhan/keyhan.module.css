@@ -8,7 +8,11 @@
 
 .void {
   background:
-    radial-gradient(120% 80% at 80% -10%, color-mix(in srgb, var(--theme-primary) 26%, transparent) 0%, transparent 60%),
+    radial-gradient(
+      120% 80% at 80% -10%,
+      color-mix(in srgb, var(--theme-primary) 26%, transparent) 0%,
+      transparent 60%
+    ),
     var(--theme-deep);
   color: var(--theme-on-deep);
 }
@@ -23,11 +27,17 @@
     radial-gradient(1.2px 1.2px at 20% 30%, var(--theme-on-deep) 50%, transparent 51%),
     radial-gradient(1px 1px at 70% 15%, var(--theme-on-deep) 50%, transparent 51%),
     radial-gradient(1.6px 1.6px at 45% 70%, var(--theme-on-deep) 50%, transparent 51%);
-  background-size: 220px 180px, 160px 140px, 300px 260px;
+  background-size:
+    220px 180px,
+    160px 140px,
+    300px 260px;
 }
 .dense {
   opacity: 0.8;
-  background-size: 120px 100px, 90px 80px, 170px 150px;
+  background-size:
+    120px 100px,
+    90px 80px,
+    170px 150px;
 }
 
 /* Plotter grid — the paper an observatory chart is drawn on. */
@@ -36,8 +46,16 @@
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(to left, color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px, transparent 1px);
+    linear-gradient(
+      to left,
+      color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--theme-on-deep) 7%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 76px 76px;
 }
 .lightgrid {
@@ -61,26 +79,44 @@
   border: 1px solid color-mix(in srgb, var(--theme-on-deep) 16%, transparent);
   border-radius: 50%;
 }
-.ring2 { inset: 12%; }
-.ring3 { inset: 24%; border-color: color-mix(in srgb, var(--theme-primary) 55%, transparent); }
-.ring4 { inset: 36%; border-style: dashed; }
+.ring2 {
+  inset: 12%;
+}
+.ring3 {
+  inset: 24%;
+  border-color: color-mix(in srgb, var(--theme-primary) 55%, transparent);
+}
+.ring4 {
+  inset: 36%;
+  border-style: dashed;
+}
 
 .sweep {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: conic-gradient(from 0deg, color-mix(in srgb, var(--theme-primary) 34%, transparent), transparent 28%);
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--theme-primary) 34%, transparent),
+    transparent 28%
+  );
   animation: sweep 12s linear infinite;
 }
 @keyframes sweep {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .planet {
   position: absolute;
   inset: 42%;
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 30%, var(--theme-primary), color-mix(in srgb, var(--theme-primary) 30%, var(--theme-deep)));
+  background: radial-gradient(
+    circle at 32% 30%,
+    var(--theme-primary),
+    color-mix(in srgb, var(--theme-primary) 30%, var(--theme-deep))
+  );
   box-shadow: 0 0 42px color-mix(in srgb, var(--theme-primary) 45%, transparent);
 }
 .moon {
@@ -117,8 +153,16 @@
   position: absolute;
   background: color-mix(in srgb, var(--theme-primary) 32%, transparent);
 }
-.scope::before { inset-inline: 0; top: 50%; height: 1px; }
-.scope::after { inset-block: 0; inset-inline-start: 50%; width: 1px; }
+.scope::before {
+  inset-inline: 0;
+  top: 50%;
+  height: 1px;
+}
+.scope::after {
+  inset-block: 0;
+  inset-inline-start: 50%;
+  width: 1px;
+}
 
 .scopeRing {
   position: absolute;
@@ -126,7 +170,9 @@
   border: 1px solid color-mix(in srgb, var(--theme-primary) 30%, transparent);
   border-radius: 50%;
 }
-.scopeRingInner { inset: 34%; }
+.scopeRingInner {
+  inset: 34%;
+}
 
 .blip {
   position: absolute;
@@ -154,16 +200,44 @@
   background-image:
     radial-gradient(1px 1px at 30% 40%, var(--theme-on-deep) 50%, transparent 51%),
     radial-gradient(1.4px 1.4px at 72% 22%, var(--theme-on-deep) 50%, transparent 51%);
-  background-size: 90px 70px, 130px 110px;
+  background-size:
+    90px 70px,
+    130px 110px;
   opacity: 0.6;
 }
-.t1 { background-image: linear-gradient(140deg, color-mix(in srgb, var(--theme-primary) 70%, var(--theme-deep)), var(--theme-deep)); }
-.t2 { background-image: linear-gradient(200deg, color-mix(in srgb, var(--theme-accent) 55%, var(--theme-deep)), var(--theme-deep)); }
-.t3 { background-image: linear-gradient(80deg, var(--theme-deep), color-mix(in srgb, var(--theme-primary) 60%, var(--theme-deep))); }
-.t4 { background-image: linear-gradient(300deg, color-mix(in srgb, var(--theme-secondary) 55%, var(--theme-deep)), var(--theme-deep)); }
+.t1 {
+  background-image: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--theme-primary) 70%, var(--theme-deep)),
+    var(--theme-deep)
+  );
+}
+.t2 {
+  background-image: linear-gradient(
+    200deg,
+    color-mix(in srgb, var(--theme-accent) 55%, var(--theme-deep)),
+    var(--theme-deep)
+  );
+}
+.t3 {
+  background-image: linear-gradient(
+    80deg,
+    var(--theme-deep),
+    color-mix(in srgb, var(--theme-primary) 60%, var(--theme-deep))
+  );
+}
+.t4 {
+  background-image: linear-gradient(
+    300deg,
+    color-mix(in srgb, var(--theme-secondary) 55%, var(--theme-deep)),
+    var(--theme-deep)
+  );
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .sweep { animation: none; }
+  .sweep {
+    animation: none;
+  }
 }
 
 /* Header logo mark: a planet disc inside a tilted orbit ring. */
@@ -173,7 +247,12 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 30%, var(--theme-accent), var(--theme-primary) 55%, var(--theme-deep) 100%);
+  background: radial-gradient(
+    circle at 32% 30%,
+    var(--theme-accent),
+    var(--theme-primary) 55%,
+    var(--theme-deep) 100%
+  );
 }
 .logoMark::after {
   content: '';

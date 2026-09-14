@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Download } from "lucide-react";
+import { Download } from 'lucide-react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { SecureVideoPlayer } from "@/components/media/secure-video-player";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { SecureVideoPlayer } from '@/components/media/secure-video-player';
 
 interface VideoLessonProps {
   title: string;
@@ -31,13 +31,9 @@ export function VideoLesson({
 
   if (!videoId) {
     return (
-      <div className="flex aspect-video w-full flex-col justify-center gap-2 rounded-[10px] border border-dashed border-theme bg-surface px-8 text-center">
-        <p className="text-base font-extrabold">
-          {t("learning.videoUnavailable")}
-        </p>
-        <p className="text-[13px] text-muted">
-          {t("learning.videoUnavailableDescription")}
-        </p>
+      <div className="border-theme bg-surface flex aspect-video w-full flex-col justify-center gap-2 rounded-[10px] border border-dashed px-8 text-center">
+        <p className="text-base font-extrabold">{t('learning.videoUnavailable')}</p>
+        <p className="text-muted text-[13px]">{t('learning.videoUnavailableDescription')}</p>
       </div>
     );
   }
@@ -57,7 +53,7 @@ export function VideoLesson({
           className="inline-flex items-center gap-1.5 text-sm font-medium text-(--theme-primary-ink) underline-offset-4 hover:underline"
         >
           <Download className="size-4" aria-hidden="true" />
-          {t("learning.downloadVideo")}
+          {t('learning.downloadVideo')}
         </a>
       ) : null}
     </div>

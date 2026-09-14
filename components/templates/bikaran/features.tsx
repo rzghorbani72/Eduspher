@@ -40,7 +40,10 @@ export function BikaranFeatures({ id, config }: TemplateSectionProps) {
               >
                 {item.index}
               </span>
-              <h3 {...editableItem('items', index, 'title')} className="mt-3 text-[22px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index, 'title')}
+                className="mt-3 text-[22px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p

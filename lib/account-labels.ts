@@ -1,4 +1,4 @@
-import { formatNumber } from "@/lib/utils";
+import { formatNumber } from '@/lib/utils';
 
 type Translate = (key: string) => string;
 
@@ -9,30 +9,30 @@ type Translate = (key: string) => string;
  * than to an empty badge.
  */
 const ROLE_KEY: Record<string, string> = {
-  STUDENT: "account.roleStudent",
-  TEACHER: "account.roleTeacher",
-  MANAGER: "account.roleManager",
-  ACADEMY_MANAGER: "account.roleManager",
-  OWNER: "account.roleOwner",
-  ADMIN: "account.roleAdmin",
-  PLATFORM_OWNER: "account.roleAdmin",
-  SUPPORT: "account.roleStaff",
-  STAFF: "account.roleStaff",
+  STUDENT: 'account.roleStudent',
+  TEACHER: 'account.roleTeacher',
+  MANAGER: 'account.roleManager',
+  ACADEMY_MANAGER: 'account.roleManager',
+  OWNER: 'account.roleOwner',
+  ADMIN: 'account.roleAdmin',
+  PLATFORM_OWNER: 'account.roleAdmin',
+  SUPPORT: 'account.roleStaff',
+  STAFF: 'account.roleStaff',
 };
 
 const GATEWAY_KEY: Record<string, string> = {
-  BITPAY: "account.gatewayBitpay",
-  PAYPING: "account.gatewayPayping",
-  ZARINPAL: "account.gatewayZarinpal",
-  SAMAN: "account.gatewaySaman",
-  SEP: "account.gatewaySaman",
-  SAMAN_SEP: "account.gatewaySaman",
-  MELLAT_BP: "account.gatewayMellat",
-  MELLAT: "account.gatewayMellat",
-  WALLET: "account.gatewayWallet",
-  MANUAL: "account.gatewayManual",
-  FREE: "account.gatewayFree",
-  SIMULATOR: "account.gatewaySimulator",
+  BITPAY: 'account.gatewayBitpay',
+  PAYPING: 'account.gatewayPayping',
+  ZARINPAL: 'account.gatewayZarinpal',
+  SAMAN: 'account.gatewaySaman',
+  SEP: 'account.gatewaySaman',
+  SAMAN_SEP: 'account.gatewaySaman',
+  MELLAT_BP: 'account.gatewayMellat',
+  MELLAT: 'account.gatewayMellat',
+  WALLET: 'account.gatewayWallet',
+  MANUAL: 'account.gatewayManual',
+  FREE: 'account.gatewayFree',
+  SIMULATOR: 'account.gatewaySimulator',
 };
 
 const labelFrom = (
@@ -48,10 +48,8 @@ const labelFrom = (
 export const roleLabel = (role: string | null | undefined, t: Translate) =>
   labelFrom(ROLE_KEY, role, t);
 
-export const gatewayLabel = (
-  gateway: string | null | undefined,
-  t: Translate,
-) => labelFrom(GATEWAY_KEY, gateway, t) ?? "—";
+export const gatewayLabel = (gateway: string | null | undefined, t: Translate) =>
+  labelFrom(GATEWAY_KEY, gateway, t) ?? '—';
 
 /**
  * "8 / 10" flips to "10 / 8" inside an RTL line, so a score is always rendered
@@ -63,9 +61,6 @@ export const scoreLabel = (
   t: Translate,
   language: string,
 ): string =>
-  t("account.scoreOutOf")
-    .replace("{score}", score == null ? "—" : formatNumber(score, language))
-    .replace(
-      "{max}",
-      maxScore == null ? "—" : formatNumber(maxScore, language),
-    );
+  t('account.scoreOutOf')
+    .replace('{score}', score == null ? '—' : formatNumber(score, language))
+    .replace('{max}', maxScore == null ? '—' : formatNumber(maxScore, language));

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { processCheckout } from "@/app/actions/checkout";
-import { validateVoucher } from "@/app/actions/voucher";
-import type { CourseSummary } from "@/lib/api/types";
-import { useStorePath } from "@/components/providers/store-provider";
-import { CheckCircle, Loader2, AlertCircle, X } from "lucide-react";
-import { formatCurrencyWithAcademy } from "@/lib/utils";
-import { coursePath } from "@/lib/content-paths";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { processCheckout } from '@/app/actions/checkout';
+import { validateVoucher } from '@/app/actions/voucher';
+import type { CourseSummary } from '@/lib/api/types';
+import { useStorePath } from '@/components/providers/store-provider';
+import { CheckCircle, Loader2, AlertCircle, X } from 'lucide-react';
+import { formatCurrencyWithAcademy } from '@/lib/utils';
+import { coursePath } from '@/lib/content-paths';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface CheckoutFormProps {
   course: CourseSummary;
@@ -41,10 +41,12 @@ interface CheckoutFormProps {
     profileId: string;
     academyId: string | null;
   };
-  onDiscountChange?: (discount: {
-    discount_amount: number;
-    final_amount: number;
-  } | null) => void;
+  onDiscountChange?: (
+    discount: {
+      discount_amount: number;
+      final_amount: number;
+    } | null,
+  ) => void;
 }
 
 export function CheckoutForm({ course, user, session, onDiscountChange }: CheckoutFormProps) {
@@ -54,7 +56,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [voucherCode, setVoucherCode] = useState("");
+  const [voucherCode, setVoucherCode] = useState('');
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [validatingVoucher, setValidatingVoucher] = useState(false);
   const [discount, setDiscount] = useState<{
@@ -65,12 +67,12 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
 
   const handleApplyVoucher = async () => {
     if (!voucherCode.trim()) {
-      setVoucherError(t("checkout.pleaseEnterVoucher"));
+      setVoucherError(t('checkout.pleaseEnterVoucher'));
       return;
     }
 
     if (course.is_free) {
-      setVoucherError(t("checkout.voucherNotForFreeCourses"));
+      setVoucherError(t('checkout.voucherNotForFreeCourses'));
       return;
     }
 
@@ -87,8 +89,9 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
       if (result.success && result.discount_amount !== undefined) {
         const discountData = {
           discount_amount: result.discount_amount,
-          final_amount: result.final_amount ?? Math.round(course.price * 100) - result.discount_amount,
-          discount_code_id: result.discount_code_id ?? "",
+          final_amount:
+            result.final_amount ?? Math.round(course.price * 100) - result.discount_amount,
+          discount_code_id: result.discount_code_id ?? '',
         };
         setDiscount(discountData);
         setVoucherError(null);
@@ -99,14 +102,15 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           });
         }
       } else {
-        setVoucherError(result.error || t("checkout.invalidVoucher"));
+        setVoucherError(result.error || t('checkout.invalidVoucher'));
         setDiscount(null);
         if (onDiscountChange) {
           onDiscountChange(null);
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t("checkout.voucherValidationFailed");
+      const errorMessage =
+        err instanceof Error ? err.message : t('checkout.voucherValidationFailed');
       setVoucherError(errorMessage);
       setDiscount(null);
     } finally {
@@ -115,7 +119,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
   };
 
   const handleRemoveVoucher = () => {
-    setVoucherCode("");
+    setVoucherCode('');
     setDiscount(null);
     setVoucherError(null);
     if (onDiscountChange) {
@@ -142,7 +146,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
             window.location.href = result.bankRedirectUrl;
             return;
           }
-          
+
           // For free courses or direct enrollment
           setSuccess(true);
           setTimeout(() => {
@@ -150,18 +154,16 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
             router.refresh();
           }, 1500);
         } else {
-          setError(result.error || t("checkout.checkoutFailed"));
+          setError(result.error || t('checkout.checkoutFailed'));
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : t("common.error");
+        const errorMessage = err instanceof Error ? err.message : t('common.error');
         setError(errorMessage);
       }
     });
   };
 
-  const finalPrice = discount
-    ? discount.final_amount / 100
-    : course.price;
+  const finalPrice = discount ? discount.final_amount / 100 : course.price;
 
   if (success) {
     return (
@@ -170,10 +172,10 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
           <div>
             <h4 className="font-semibold text-green-900 dark:text-green-100">
-              {t("checkout.enrollmentSuccessful")}
+              {t('checkout.enrollmentSuccessful')}
             </h4>
             <p className="mt-1 text-sm text-green-700 dark:text-green-300">
-              {t("checkout.redirectingToCourse")}
+              {t('checkout.redirectingToCourse')}
             </p>
           </div>
         </div>
@@ -193,22 +195,20 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
       )}
 
       <div className="space-y-3">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4  ">
-          <div className="text-xs font-medium text-muted opacity-70">
-            {t("checkout.enrollingAs")}
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <div className="text-muted text-xs font-medium opacity-70">
+            {t('checkout.enrollingAs')}
           </div>
-          <div className="mt-1 text-sm font-semibold text-foreground">
+          <div className="text-foreground mt-1 text-sm font-semibold">
             {user.display_name || user.currentProfile?.displayName || user.name}
           </div>
-          <div className="mt-1 text-xs text-muted">
-            {user.email || user.phone_number}
-          </div>
+          <div className="text-muted mt-1 text-xs">{user.email || user.phone_number}</div>
         </div>
 
         {!course.is_free && (
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              {t("checkout.voucherCode")}
+            <label className="text-foreground text-sm font-medium">
+              {t('checkout.voucherCode')}
             </label>
             {discount ? (
               <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/70">
@@ -217,13 +217,19 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
                     {voucherCode.toUpperCase()}
                   </div>
                   <div className="text-xs text-green-700 dark:text-green-300">
-                    {t("checkout.discountApplied")}: {formatCurrencyWithAcademy(discount.discount_amount / 100, user.currentAcademy || null, undefined, language)}
+                    {t('checkout.discountApplied')}:{' '}
+                    {formatCurrencyWithAcademy(
+                      discount.discount_amount / 100,
+                      user.currentAcademy || null,
+                      undefined,
+                      language,
+                    )}
                   </div>
                 </div>
                 <button
                   onClick={handleRemoveVoucher}
                   className="rounded-full p-1 text-green-700 hover:bg-green-100 dark:text-green-300 dark:hover:bg-green-900"
-                  aria-label={t("checkout.removeVoucher")}
+                  aria-label={t('checkout.removeVoucher')}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -232,14 +238,14 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
               <div className="flex gap-2">
                 <Input
                   type="text"
-                  placeholder={t("checkout.enterVoucherCode")}
+                  placeholder={t('checkout.enterVoucherCode')}
                   value={voucherCode}
                   onChange={(e) => {
                     setVoucherCode(e.target.value.toUpperCase());
                     setVoucherError(null);
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === 'Enter') {
                       handleApplyVoucher();
                     }
                   }}
@@ -251,7 +257,7 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
                   loading={validatingVoucher}
                   size="md"
                 >
-                  {t("checkout.apply")}
+                  {t('checkout.apply')}
                 </Button>
               </div>
             )}
@@ -271,23 +277,17 @@ export function CheckoutForm({ course, user, session, onDiscountChange }: Checko
           {pending ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              {t("checkout.processing")}
+              {t('checkout.processing')}
             </>
           ) : course.is_free ? (
-            t("checkout.completeEnrollment")
+            t('checkout.completeEnrollment')
           ) : (
-            `${t("checkout.completePurchase")} - ${formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}`
+            `${t('checkout.completePurchase')} - ${formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}`
           )}
         </Button>
 
-        <p className="text-xs text-center text-muted opacity-70">
-          {t("checkout.termsAgreement")}
-        </p>
+        <p className="text-muted text-center text-xs opacity-70">{t('checkout.termsAgreement')}</p>
       </div>
     </div>
   );
 }
-
-
-
-

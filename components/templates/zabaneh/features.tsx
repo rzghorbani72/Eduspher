@@ -32,7 +32,10 @@ export function ZabanehFeatures({ id, config }: TemplateSectionProps) {
               >
                 {item.index}
               </b>
-              <h3 {...editableItem('items', index, 'title')} className="mt-3 text-[23px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index, 'title')}
+                className="mt-3 text-[23px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p

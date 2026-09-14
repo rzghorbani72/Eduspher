@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   checkAcademySlug,
@@ -10,27 +10,18 @@ import {
   sendPhoneOtp,
   verifyPhoneOtp,
   createPanelHandoff,
-} from "@/lib/api/client";
-import { OtpType } from "@/lib/constants";
-import {
-  cleanPhoneNumber,
-  getFullPhoneNumber,
-  isValidPhoneNumber,
-} from "@/lib/phone-utils";
-import {
-  getCountryByCode,
-  getDefaultCountry,
-  type CountryCode,
-} from "@/lib/country-codes";
-import { academySiteUrl, getAdminPanelUrl } from "@/lib/admin-panel-url";
-import { isValidSlug, type SlugStatus } from "@/lib/slug";
-import { LANDING } from "../landing.messages";
+} from '@/lib/api/client';
+import { OtpType } from '@/lib/constants';
+import { cleanPhoneNumber, getFullPhoneNumber, isValidPhoneNumber } from '@/lib/phone-utils';
+import { getCountryByCode, getDefaultCountry, type CountryCode } from '@/lib/country-codes';
+import { academySiteUrl, getAdminPanelUrl } from '@/lib/admin-panel-url';
+import { isValidSlug, type SlugStatus } from '@/lib/slug';
+import { LANDING } from '../landing.messages';
 
 const M = LANDING.quickSignup;
 const SLUG_DEBOUNCE_MS = 400;
 const RESEND_SECONDS = 90;
-const IR_COUNTRY: CountryCode =
-  getCountryByCode("IR") ?? getDefaultCountry();
+const IR_COUNTRY: CountryCode = getCountryByCode('IR') ?? getDefaultCountry();
 
 type LegalVersions = { terms: string | null; privacy: string | null };
 
@@ -38,15 +29,15 @@ async function loadLegalVersions(): Promise<LegalVersions> {
   try {
     const docs = await getLegalDocuments();
     return {
-      terms: docs.find((d) => d.type === "TERMS")?.version ?? null,
-      privacy: docs.find((d) => d.type === "PRIVACY")?.version ?? null,
+      terms: docs.find((d) => d.type === 'TERMS')?.version ?? null,
+      privacy: docs.find((d) => d.type === 'PRIVACY')?.version ?? null,
     };
   } catch {
     return { terms: null, privacy: null };
   }
 }
 
-export type QuickSignupStep = "identity" | "phone" | "otp" | "redirecting" | "done";
+export type QuickSignupStep = 'identity' | 'phone' | 'otp' | 'redirecting' | 'done';
 
 export type QuickSignupResult = {
   siteUrl: string;
@@ -63,13 +54,13 @@ export type QuickSignupResult = {
  * never burns a code only to be told the phone was unusable all along.
  */
 export function useQuickSignup(onFinished?: () => void) {
-  const [step, setStep] = useState<QuickSignupStep>("identity");
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [slugStatus, setSlugStatus] = useState<SlugStatus>("idle");
-  const [phone, setPhone] = useState("");
+  const [step, setStep] = useState<QuickSignupStep>('identity');
+  const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
+  const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
+  const [phone, setPhone] = useState('');
   const country = IR_COUNTRY;
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
   const [accepted, setAccepted] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -108,21 +99,21 @@ export function useQuickSignup(onFinished?: () => void) {
   // a stale reply must never paint "taken" over a name the user has moved on from.
   useEffect(() => {
     if (!slug) {
-      setSlugStatus("idle");
+      setSlugStatus('idle');
       return;
     }
     if (!isValidSlug(slug)) {
-      setSlugStatus("invalid");
+      setSlugStatus('invalid');
       return;
     }
-    setSlugStatus("checking");
+    setSlugStatus('checking');
     let active = true;
     const timer = setTimeout(async () => {
       try {
         const { available } = await checkAcademySlug(slug);
-        if (active) setSlugStatus(available ? "available" : "taken");
+        if (active) setSlugStatus(available ? 'available' : 'taken');
       } catch {
-        if (active) setSlugStatus("idle");
+        if (active) setSlugStatus('idle');
       }
     }, SLUG_DEBOUNCE_MS);
     return () => {
@@ -131,58 +122,49 @@ export function useQuickSignup(onFinished?: () => void) {
     };
   }, [slug]);
 
-  const nationalPhone = phone ? cleanPhoneNumber(phone, country) : "";
-  const fullPhone = nationalPhone
-    ? getFullPhoneNumber(nationalPhone, country)
-    : "";
+  const nationalPhone = phone ? cleanPhoneNumber(phone, country) : '';
+  const fullPhone = nationalPhone ? getFullPhoneNumber(nationalPhone, country) : '';
   const phoneValid = isValidPhoneNumber(nationalPhone, country);
   const canSubmitPhone = phoneValid && accepted;
 
   useEffect(() => {
-    if (step !== "phone") return;
+    if (step !== 'phone') return;
     setError(null);
   }, [phone, accepted, step]);
 
-  const guard = useCallback(
-    async (message: string | null, action: () => Promise<void>) => {
-      if (message) {
-        setError(message);
-        return;
-      }
-      setError(null);
-      setPending(true);
-      try {
-        await action();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : M.genericError);
-      } finally {
-        setPending(false);
-      }
-    },
-    [],
-  );
+  const guard = useCallback(async (message: string | null, action: () => Promise<void>) => {
+    if (message) {
+      setError(message);
+      return;
+    }
+    setError(null);
+    setPending(true);
+    try {
+      await action();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : M.genericError);
+    } finally {
+      setPending(false);
+    }
+  }, []);
 
   const submitIdentity = useCallback(() => {
     const problem = !name.trim()
       ? M.nameRequired
       : !slug
         ? M.slugRequired
-        : slugStatus === "invalid"
+        : slugStatus === 'invalid'
           ? M.slugInvalid
-          : slugStatus === "taken"
+          : slugStatus === 'taken'
             ? M.slugTaken
             : null;
     return guard(problem, async () => {
-      setStep("phone");
+      setStep('phone');
     });
   }, [guard, name, slug, slugStatus]);
 
   const submitPhone = useCallback(() => {
-    const problem = !phoneValid
-      ? M.phoneInvalid
-      : !accepted
-        ? M.legalRequired
-        : null;
+    const problem = !phoneValid ? M.phoneInvalid : !accepted ? M.legalRequired : null;
     return guard(problem, async () => {
       const { terms, privacy } = await ensureLegalVersions();
       if (!terms || !privacy) {
@@ -190,15 +172,9 @@ export function useQuickSignup(onFinished?: () => void) {
       }
       await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
       setResendIn(RESEND_SECONDS);
-      setStep("otp");
+      setStep('otp');
     });
-  }, [
-    accepted,
-    ensureLegalVersions,
-    fullPhone,
-    guard,
-    phoneValid,
-  ]);
+  }, [accepted, ensureLegalVersions, fullPhone, guard, phoneValid]);
 
   const resendOtp = useCallback(() => {
     if (resendIn > 0) return Promise.resolve();
@@ -217,11 +193,7 @@ export function useQuickSignup(onFinished?: () => void) {
         if (!terms || !privacy) {
           throw new Error(M.legalUnavailable);
         }
-        await verifyPhoneOtp(
-          fullPhone,
-          value,
-          OtpType.REGISTER_PHONE_VERIFICATION,
-        );
+        await verifyPhoneOtp(fullPhone, value, OtpType.REGISTER_PHONE_VERIFICATION);
         // New phone → register; existing phone → login. Either way a MANAGER
         // session is open so quick-start can create (another) academy.
         await quickSignup({
@@ -236,22 +208,22 @@ export function useQuickSignup(onFinished?: () => void) {
         });
         const createdSlug = started.data?.slug ?? slug;
         try {
-          setStep("redirecting");
+          setStep('redirecting');
           const handed = await createPanelHandoff();
           const code = handed.code;
-          if (!code) throw new Error("missing handoff code");
-          const handoff = new URL(getAdminPanelUrl("/auth/handoff"));
-          handoff.searchParams.set("code", code);
-          handoff.searchParams.set("next", "/dashboard?setup=1");
+          if (!code) throw new Error('missing handoff code');
+          const handoff = new URL(getAdminPanelUrl('/auth/handoff'));
+          handoff.searchParams.set('code', code);
+          handoff.searchParams.set('next', '/dashboard?setup=1');
           window.location.assign(handoff.toString());
           return;
         } catch {
           setResult({
             siteUrl: academySiteUrl(createdSlug),
-            panelUrl: getAdminPanelUrl("/login"),
+            panelUrl: getAdminPanelUrl('/login'),
             siteReady: started.site_ready !== false,
           });
-          setStep("done");
+          setStep('done');
           onFinished?.();
         }
       });
@@ -261,13 +233,13 @@ export function useQuickSignup(onFinished?: () => void) {
 
   const editPhone = useCallback(() => {
     setError(null);
-    setOtp("");
-    setStep("phone");
+    setOtp('');
+    setStep('phone');
   }, []);
 
   const back = useCallback(() => {
     setError(null);
-    setStep((current) => (current === "otp" ? "phone" : "identity"));
+    setStep((current) => (current === 'otp' ? 'phone' : 'identity'));
   }, []);
 
   return {

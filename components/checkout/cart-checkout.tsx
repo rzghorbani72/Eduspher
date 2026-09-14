@@ -1,23 +1,18 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Loader2, AlertCircle, X, Trash2 } from "lucide-react";
-import { formatCurrencyWithAcademy } from "@/lib/utils";
-import { useStorePath } from "@/components/providers/store-provider";
-import {
-  getCartItems,
-  removeCourseFromCart,
-  syncCart,
-  type CartItem,
-} from "@/app/actions/cart";
-import { validateVoucher } from "@/app/actions/voucher";
-import { processCheckout } from "@/app/actions/checkout";
-import { useTransition } from "react";
-import { useLocaleFormat } from "@/hooks/use-locale-digits";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Loader2, AlertCircle, X, Trash2 } from 'lucide-react';
+import { formatCurrencyWithAcademy } from '@/lib/utils';
+import { useStorePath } from '@/components/providers/store-provider';
+import { getCartItems, removeCourseFromCart, syncCart, type CartItem } from '@/app/actions/cart';
+import { validateVoucher } from '@/app/actions/voucher';
+import { processCheckout } from '@/app/actions/checkout';
+import { useTransition } from 'react';
+import { useLocaleFormat } from '@/hooks/use-locale-digits';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface CartCheckoutProps {
   user: {
@@ -57,7 +52,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [voucherCode, setVoucherCode] = useState("");
+  const [voucherCode, setVoucherCode] = useState('');
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [validatingVoucher, setValidatingVoucher] = useState(false);
   const [discount, setDiscount] = useState<{
@@ -88,10 +83,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
     fetchCart();
 
     // Listen for cart updates
-    window.addEventListener("cartUpdated", fetchCart);
+    window.addEventListener('cartUpdated', fetchCart);
 
     return () => {
-      window.removeEventListener("cartUpdated", fetchCart);
+      window.removeEventListener('cartUpdated', fetchCart);
       if (syncTimeout) {
         clearTimeout(syncTimeout);
       }
@@ -136,19 +131,16 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
       if (result.success && result.discount_amount !== undefined) {
         setDiscount({
           discount_amount: result.discount_amount,
-          final_amount:
-            result.final_amount ?? totalAmount - result.discount_amount,
+          final_amount: result.final_amount ?? totalAmount - result.discount_amount,
         });
         setVoucherError(null);
       } else {
-        setVoucherError(result.error || t("checkout.invalidVoucher"));
+        setVoucherError(result.error || t('checkout.invalidVoucher'));
         setDiscount(null);
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error
-          ? err.message
-          : t("checkout.voucherValidationFailed");
+        err instanceof Error ? err.message : t('checkout.voucherValidationFailed');
       setVoucherError(errorMessage);
       setDiscount(null);
     } finally {
@@ -158,7 +150,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
 
   const handleCheckout = () => {
     if (!cart || cart.length === 0) {
-      setError(t("cart.empty"));
+      setError(t('cart.empty'));
       return;
     }
 
@@ -182,14 +174,13 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             window.location.href = result.bankRedirectUrl;
             return;
           }
-          router.push(buildPath("/account"));
+          router.push(buildPath('/account'));
           router.refresh();
         } else {
-          setError(result.error || t("checkout.checkoutFailed"));
+          setError(result.error || t('checkout.checkoutFailed'));
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : t("common.error");
+        const errorMessage = err instanceof Error ? err.message : t('common.error');
         setError(errorMessage);
       }
     });
@@ -198,21 +189,21 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="text-primary h-6 w-6 animate-spin" />
       </div>
     );
   }
 
   if (!cart || cart.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-muted ">{t("cart.empty")}</p>
+      <div className="py-12 text-center">
+        <p className="text-muted">{t('cart.empty')}</p>
         <Button
-          onClick={() => router.push(buildPath("/courses"))}
+          onClick={() => router.push(buildPath('/courses'))}
           className="mt-4"
           variant="outline"
         >
-          {t("cart.browseCourses")}
+          {t('cart.browseCourses')}
         </Button>
       </div>
     );
@@ -228,28 +219,23 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-foreground">
-          {t("cart.items")} ({format.number(cart.length)})
+        <h2 className="text-foreground text-xl font-semibold">
+          {t('cart.items')} ({format.number(cart.length)})
         </h2>
         <div className="space-y-3">
           {cart.map((item: CartItem, index: number) => {
             const uniqueKey = `course_${item.course_id}_${index}_${item.added_at || Date.now()}`;
-            const itemTitle = item.course_title || "Course";
+            const itemTitle = item.course_title || 'Course';
             const itemPrice = item.course_price || 0;
 
             return (
-              <div
-                key={uniqueKey}
-                className="flex gap-4 rounded-lg border border-theme bg-card"
-              >
+              <div key={uniqueKey} className="border-theme bg-card flex gap-4 rounded-lg border">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground">{itemTitle}</h3>
-                    <span className="text-xs text-muted opacity-70">
-                      ({t("courses.title")})
-                    </span>
+                    <h3 className="text-foreground font-medium">{itemTitle}</h3>
+                    <span className="text-muted text-xs opacity-70">({t('courses.title')})</span>
                   </div>
-                  <p className="mt-1 text-sm text-muted ">
+                  <p className="text-muted mt-1 text-sm">
                     {formatCurrencyWithAcademy(
                       itemPrice,
                       user.currentAcademy || null,
@@ -262,7 +248,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                   onClick={(e) => handleRemoveItem(item, e)}
                   type="button"
                   className="text-red-600 hover:text-red-700 dark:text-red-400"
-                  aria-label={t("cart.remove")}
+                  aria-label={t('cart.remove')}
                 >
                   <Trash2 className="h-5 w-5" />
                 </button>
@@ -272,10 +258,8 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         </div>
       </div>
 
-      <div className="space-y-3 rounded-lg border border-theme bg-card">
-        <label className="text-sm font-medium text-foreground">
-          {t("checkout.voucherCode")}
-        </label>
+      <div className="border-theme bg-card space-y-3 rounded-lg border">
+        <label className="text-foreground text-sm font-medium">{t('checkout.voucherCode')}</label>
         {discount ? (
           <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-900 dark:bg-green-950/70">
             <div className="flex-1">
@@ -283,7 +267,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
                 {voucherCode.toUpperCase()}
               </div>
               <div className="text-xs text-green-700 dark:text-green-300">
-                {t("checkout.discount")}:{" "}
+                {t('checkout.discount')}:{' '}
                 {formatCurrencyWithAcademy(
                   discountAmount,
                   user.currentAcademy || null,
@@ -294,7 +278,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             </div>
             <button
               onClick={() => {
-                setVoucherCode("");
+                setVoucherCode('');
                 setDiscount(null);
                 setVoucherError(null);
               }}
@@ -307,14 +291,14 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
           <div className="flex gap-2">
             <Input
               type="text"
-              placeholder={t("checkout.enterVoucherCode")}
+              placeholder={t('checkout.enterVoucherCode')}
               value={voucherCode}
               onChange={(e) => {
                 setVoucherCode(e.target.value.toUpperCase());
                 setVoucherError(null);
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === 'Enter') {
                   handleApplyVoucher();
                 }
               }}
@@ -325,21 +309,17 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
               disabled={validatingVoucher || !voucherCode.trim()}
               loading={validatingVoucher}
             >
-              {t("checkout.apply")}
+              {t('checkout.apply')}
             </Button>
           </div>
         )}
-        {voucherError && (
-          <p className="text-xs text-red-600 dark:text-red-400">
-            {voucherError}
-          </p>
-        )}
+        {voucherError && <p className="text-xs text-red-600 dark:text-red-400">{voucherError}</p>}
       </div>
 
-      <div className="space-y-3 rounded-lg border border-theme bg-card">
+      <div className="border-theme bg-card space-y-3 rounded-lg border">
         <div className="flex justify-between text-sm">
-          <span className="text-muted ">{t("checkout.subtotal")}</span>
-          <span className="font-medium text-foreground">
+          <span className="text-muted">{t('checkout.subtotal')}</span>
+          <span className="text-foreground font-medium">
             {formatCurrencyWithAcademy(
               totalAmount / 100,
               user.currentAcademy || null,
@@ -350,7 +330,7 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         </div>
         {discount && discountAmount > 0 && (
           <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
-            <span>{t("checkout.discount")}</span>
+            <span>{t('checkout.discount')}</span>
             <span className="font-medium">
               -
               {formatCurrencyWithAcademy(
@@ -362,12 +342,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
             </span>
           </div>
         )}
-        <div className="border-t border-slate-200 pt-3 ">
+        <div className="border-t border-slate-200 pt-3">
           <div className="flex justify-between">
-            <span className="font-semibold text-foreground">
-              {t("checkout.total")}
-            </span>
-            <span className="text-xl font-bold text-foreground">
+            <span className="text-foreground font-semibold">{t('checkout.total')}</span>
+            <span className="text-foreground text-xl font-bold">
               {formatCurrencyWithAcademy(
                 finalPrice,
                 user.currentAcademy || null,
@@ -398,10 +376,10 @@ export function CartCheckout({ user, session }: CartCheckoutProps) {
         {pending ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
-            {t("checkout.processing")}
+            {t('checkout.processing')}
           </>
         ) : (
-          `${t("checkout.completePurchase")} - ${formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}`
+          `${t('checkout.completePurchase')} - ${formatCurrencyWithAcademy(finalPrice, user.currentAcademy || null, undefined, language)}`
         )}
       </Button>
     </div>

@@ -1,4 +1,3 @@
-
 export interface ErrorFields {
   error_name: string;
   error_message: string;

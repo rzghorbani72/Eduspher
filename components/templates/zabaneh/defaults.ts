@@ -16,9 +16,17 @@ export const ZABANEH_DEFAULTS = {
     photoCaption: 'جای عکس کلاس مکالمه (اختیاری)',
     transcriptLabel: 'متن پیاده‌شدهٔ جلسه ۰۹ — کلاس B1-3',
     transcript: [
-      { who: 'مدرس', teacher: true, line: '«Tell me about a decision you regret.» — سه دقیقه، بدون یادداشت.' },
+      {
+        who: 'مدرس',
+        teacher: true,
+        line: '«Tell me about a decision you regret.» — سه دقیقه، بدون یادداشت.',
+      },
       { who: 'ن.ک', teacher: false, line: 'I regret quitting my first job so early.' },
-      { who: 'مدرس', teacher: true, line: 'خوب بود. فقط regret + ing را در سه جملهٔ دیگر تمرین کن.' },
+      {
+        who: 'مدرس',
+        teacher: true,
+        line: 'خوب بود. فقط regret + ing را در سه جملهٔ دیگر تمرین کن.',
+      },
     ],
     stats: [
       { value: '۶', label: 'حداکثر زبان‌آموز در هر کلاس' },
@@ -80,12 +88,42 @@ export const ZABANEH_DEFAULTS = {
       'سطح‌بندی بر پایهٔ چارچوب CEFR است. میانگین زمان عبور از هر پله برای زبان‌آموزی که هفته‌ای دو جلسه می‌آید، در هر کارت نوشته شده.',
     durationLabel: 'میانگین',
     steps: [
-      { code: 'A1', title: 'شروع', body: 'معرفی خود، خرید، عدد و ساعت.', duration: '۳ ماه', fill: 16 },
+      {
+        code: 'A1',
+        title: 'شروع',
+        body: 'معرفی خود، خرید، عدد و ساعت.',
+        duration: '۳ ماه',
+        fill: 16,
+      },
       { code: 'A2', title: 'بقا', body: 'سفر، رستوران، گذشتهٔ ساده.', duration: '۳ ماه', fill: 32 },
-      { code: 'B1', title: 'نیمهٔ راه', body: 'بیان نظر و تجربه با کمی مکث.', duration: '۴ ماه', fill: 50 },
-      { code: 'B2', title: 'مستقل', body: 'بحث، جلسهٔ کاری، فیلم بدون زیرنویس.', duration: '۵ ماه', fill: 68 },
-      { code: 'C1', title: 'پیشرفته', body: 'ارائه، مذاکره، آزمون‌های بین‌المللی.', duration: '۶ ماه', fill: 86 },
-      { code: 'C2', title: 'تسلط', body: 'کارگاه‌های تخصصی و تربیت مدرس.', duration: '۶ ماه', fill: 100 },
+      {
+        code: 'B1',
+        title: 'نیمهٔ راه',
+        body: 'بیان نظر و تجربه با کمی مکث.',
+        duration: '۴ ماه',
+        fill: 50,
+      },
+      {
+        code: 'B2',
+        title: 'مستقل',
+        body: 'بحث، جلسهٔ کاری، فیلم بدون زیرنویس.',
+        duration: '۵ ماه',
+        fill: 68,
+      },
+      {
+        code: 'C1',
+        title: 'پیشرفته',
+        body: 'ارائه، مذاکره، آزمون‌های بین‌المللی.',
+        duration: '۶ ماه',
+        fill: 86,
+      },
+      {
+        code: 'C2',
+        title: 'تسلط',
+        body: 'کارگاه‌های تخصصی و تربیت مدرس.',
+        duration: '۶ ماه',
+        fill: 100,
+      },
     ],
     footNote:
       'نمی‌دانید کجای این نردبان ایستاده‌اید؟ آزمون تعیین سطح ۲۰ دقیقه طول می‌کشد و نتیجه‌اش همان جلسه اعلام می‌شود.',

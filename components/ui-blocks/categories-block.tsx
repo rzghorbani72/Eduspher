@@ -3,10 +3,10 @@ interface CategoryPill {
   label: string;
 }
 
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
-import { getCurrentAcademy } from "@/lib/api/server";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
+import { resolveSlots, type SlotConfig } from '@/lib/slot-config';
+import { getCurrentAcademy } from '@/lib/api/server';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
 
 interface CategoriesBlockProps {
   id?: string;
@@ -19,50 +19,60 @@ interface CategoriesBlockProps {
 }
 
 const DEFAULT_CATEGORIES: CategoryPill[] = [
-  { icon: "🎨", label: "تصویرسازی" },
-  { icon: "🖥", label: "طراحی گرافیک" },
-  { icon: "✏️", label: "نقاشی" },
-  { icon: "📸", label: "عکاسی" },
-  { icon: "🎬", label: "فیلم و ویدیو" },
-  { icon: "🎵", label: "موسیقی" },
-  { icon: "💼", label: "فریلنسری" },
-  { icon: "📱", label: "UI/UX" },
-  { icon: "✍️", label: "نوشتن" },
-  { icon: "🤖", label: "هوش مصنوعی" },
+  { icon: '🎨', label: 'تصویرسازی' },
+  { icon: '🖥', label: 'طراحی گرافیک' },
+  { icon: '✏️', label: 'نقاشی' },
+  { icon: '📸', label: 'عکاسی' },
+  { icon: '🎬', label: 'فیلم و ویدیو' },
+  { icon: '🎵', label: 'موسیقی' },
+  { icon: '💼', label: 'فریلنسری' },
+  { icon: '📱', label: 'UI/UX' },
+  { icon: '✍️', label: 'نوشتن' },
+  { icon: '🤖', label: 'هوش مصنوعی' },
 ];
 
 export async function CategoriesBlock({ id, config }: CategoriesBlockProps) {
   const currentAcademy = await getCurrentAcademy().catch(() => null);
-  const language = getAcademyLanguage(currentAcademy?.language || null, currentAcademy?.country_code || null);
+  const language = getAcademyLanguage(
+    currentAcademy?.language || null,
+    currentAcademy?.country_code || null,
+  );
   const tr = (key: string) => t(key, language);
 
-  const label = config?.text?.label ?? config?.label ?? tr("blocks.categoriesLabel");
+  const label = config?.text?.label ?? config?.label ?? tr('blocks.categoriesLabel');
   const categories = config?.categories?.length ? config.categories : DEFAULT_CATEGORIES;
 
   return (
-    <section id={id || "categories"} className="border-b-2 border-(--theme-border-color) bg-(--theme-surface)">
-      <div className="px-[40px] pt-[16px] text-[12px] font-extrabold text-(--theme-muted)">{label}</div>
-      <div className="overflow-x-auto pb-[20px] pt-[12px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <section
+      id={id || 'categories'}
+      className="border-b-2 border-(--theme-border-color) bg-(--theme-surface)"
+    >
+      <div className="px-[40px] pt-[16px] text-[12px] font-extrabold text-(--theme-muted)">
+        {label}
+      </div>
+      <div className="overflow-x-auto pt-[12px] pb-[20px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex w-max gap-[12px] px-[40px]">
           {resolveSlots(categories, config?.slots, categories.length).map((slot, i) =>
-            slot.kind !== "live" ? (
+            slot.kind !== 'live' ? (
               <div
                 key={i}
                 className="flex min-w-[100px] flex-col items-center justify-center gap-[8px] rounded-[16px] border-2 border-dashed border-(--theme-border-strong) bg-(--theme-surface-alt) px-[20px] py-[16px] text-[12px] font-medium text-(--theme-muted)"
               >
-                {slot.text ?? "—"}
+                {slot.text ?? '—'}
               </div>
             ) : (
               <div
                 key={i}
                 className={
                   i === 0
-                    ? "flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-primary) bg-(--theme-primary-subtle) px-[20px] py-[16px] transition-all"
-                    : "flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-border-color) bg-(--theme-surface) px-[20px] py-[16px] transition-all hover:-translate-y-0.5 hover:border-(--theme-primary)"
+                    ? 'flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-primary) bg-(--theme-primary-subtle) px-[20px] py-[16px] transition-all'
+                    : 'flex min-w-[100px] cursor-pointer flex-col items-center gap-[8px] rounded-[16px] border-2 border-(--theme-border-color) bg-(--theme-surface) px-[20px] py-[16px] transition-all hover:-translate-y-0.5 hover:border-(--theme-primary)'
                 }
               >
                 <div className="text-[28px]">{slot.data.icon}</div>
-                <div className="whitespace-nowrap text-[12px] font-extrabold text-(--theme-foreground)">{slot.data.label}</div>
+                <div className="text-[12px] font-extrabold whitespace-nowrap text-(--theme-foreground)">
+                  {slot.data.label}
+                </div>
               </div>
             ),
           )}

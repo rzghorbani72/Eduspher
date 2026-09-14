@@ -1,33 +1,25 @@
-import { BookOpenCheck } from "lucide-react";
+import { BookOpenCheck } from 'lucide-react';
 
-import { AccountPageHeader } from "@/components/account/account-page-header";
-import { DataPanel } from "@/components/shared/data-list/data-panel";
-import { EmptyState } from "@/components/ui/empty-state";
-import Link from "@/components/ui/link";
-import {
-  getLearningSummary,
-  getLearningTimeline,
-} from "@/lib/api/account-server";
-import { getAcademyBySlug } from "@/lib/api/server";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { getAcademyContext } from "@/lib/store-context";
-import { learnPath } from "@/lib/content-paths";
-import {
-  buildAcademyPath,
-  formatDate,
-  formatNumber,
-  formatPercent,
-} from "@/lib/utils";
+import { AccountPageHeader } from '@/components/account/account-page-header';
+import { DataPanel } from '@/components/shared/data-list/data-panel';
+import { EmptyState } from '@/components/ui/empty-state';
+import Link from '@/components/ui/link';
+import { getLearningSummary, getLearningTimeline } from '@/lib/api/account-server';
+import { getAcademyBySlug } from '@/lib/api/server';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { getAcademyContext } from '@/lib/store-context';
+import { learnPath } from '@/lib/content-paths';
+import { buildAcademyPath, formatDate, formatNumber, formatPercent } from '@/lib/utils';
 
 /** Activity types come from the backend enum; unknown ones fall back to the raw value. */
 const ACTIVITY_LABEL_KEY: Record<string, string> = {
-  VIDEO_HEARTBEAT: "account.videoSessions",
-  LESSON_COMPLETED: "learning.completed",
-  QUIZ_SUBMITTED: "learning.submitQuiz",
-  ASSIGNMENT_SUBMITTED: "learning.submitted",
-  LIVE_ATTENDED: "learning.liveClass",
-  ENROLLMENT_ACTIVATED: "courses.enrolled",
+  VIDEO_HEARTBEAT: 'account.videoSessions',
+  LESSON_COMPLETED: 'learning.completed',
+  QUIZ_SUBMITTED: 'learning.submitQuiz',
+  ASSIGNMENT_SUBMITTED: 'learning.submitted',
+  LIVE_ATTENDED: 'learning.liveClass',
+  ENROLLMENT_ACTIVATED: 'courses.enrolled',
 };
 
 export default async function AccountProgressPage() {
@@ -37,65 +29,53 @@ export default async function AccountProgressPage() {
   const [summary, timeline, academy] = await Promise.all([
     getLearningSummary(),
     getLearningTimeline(),
-    academyContext.slug
-      ? getAcademyBySlug(academyContext.slug).catch(() => null)
-      : null,
+    academyContext.slug ? getAcademyBySlug(academyContext.slug).catch(() => null) : null,
   ]);
 
-  const language = getAcademyLanguage(
-    academy?.language ?? null,
-    academy?.country_code ?? null,
-  );
+  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
   const translate = (key: string) => t(key, language);
   const rows = summary?.enrollments ?? [];
 
   return (
     <div className="space-y-6">
       <AccountPageHeader
-        title={translate("account.myProgress")}
-        description={translate("account.progressDescription")}
+        title={translate('account.myProgress')}
+        description={translate('account.progressDescription')}
         icon={BookOpenCheck}
       />
 
       {rows.length === 0 ? (
         <EmptyState
           icon={<BookOpenCheck className="size-7" aria-hidden="true" />}
-          title={translate("account.noProgressYet")}
+          title={translate('account.noProgressYet')}
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {rows.map((row) => {
-            const percent = Math.min(
-              100,
-              Math.max(0, Math.round(row.progress_percent)),
-            );
+            const percent = Math.min(100, Math.max(0, Math.round(row.progress_percent)));
             return (
               <Link
                 key={row.id}
-                href={buildAcademyPath(
-                  slugForPaths,
-                  learnPath(row.Course?.slug || row.course_id),
-                )}
-                className="rounded-2xl border border-theme bg-card p-5 transition hover:border-(--theme-primary)/40"
+                href={buildAcademyPath(slugForPaths, learnPath(row.Course?.slug || row.course_id))}
+                className="border-theme bg-card rounded-2xl border p-5 transition hover:border-(--theme-primary)/40"
               >
                 <p className="font-semibold text-(--theme-foreground)">
-                  {row.Course?.title ?? translate("account.unknown")}
+                  {row.Course?.title ?? translate('account.unknown')}
                 </p>
-                <div className="mt-4 h-2 overflow-hidden rounded-full bg-surface">
+                <div className="bg-surface mt-4 h-2 overflow-hidden rounded-full">
                   <div
                     className="h-full rounded-full bg-(--theme-primary)"
                     style={{ width: `${percent}%` }}
                   />
                 </div>
-                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
+                <div className="text-muted mt-2 flex flex-wrap items-center justify-between gap-2 text-sm">
                   <span>
-                    {formatPercent(percent, language)}{" "}
-                    {translate("account.complete")}
+                    {formatPercent(percent, language)} {translate('account.complete')}
                   </span>
                   {row.video_heartbeats > 0 ? (
                     <span>
-                      {translate("account.videoSessionsCount").replace(
-                        "{count}",
+                      {translate('account.videoSessionsCount').replace(
+                        '{count}',
                         formatNumber(row.video_heartbeats, language),
                       )}
                     </span>
@@ -107,15 +87,15 @@ export default async function AccountProgressPage() {
         </div>
       )}
 
-      <DataPanel title={translate("account.recentActivity")}>
+      <DataPanel title={translate('account.recentActivity')}>
         {timeline.length === 0 ? (
-          <EmptyState compact title={translate("account.noActivity")} />
+          <EmptyState compact title={translate('account.noActivity')} />
         ) : (
           <ol className="space-y-2">
             {timeline.map((activity) => (
               <li
                 key={activity.id}
-                className="flex flex-wrap items-center justify-between gap-2 border-b border-theme pb-2 text-sm last:border-0 last:pb-0"
+                className="border-theme flex flex-wrap items-center justify-between gap-2 border-b pb-2 text-sm last:border-0 last:pb-0"
               >
                 <span className="text-(--theme-foreground)">
                   {ACTIVITY_LABEL_KEY[activity.activity_type]

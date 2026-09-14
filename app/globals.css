@@ -3,21 +3,21 @@
    site. Stacks live in Backend theme-css.util.ts / edusphere theme-apply.ts.
    Must precede @import "tailwindcss" so PostCSS doesn't emit rules before it. */
 /* Self-hosted (no external CDN): font files live in public/fonts. */
-@import "./styles/gfonts.css";
-@import "./styles/template-motion.css";
-@import "./styles/template-ambient.css";
+@import './styles/gfonts.css';
+@import './styles/template-motion.css';
+@import './styles/template-ambient.css';
 
 @font-face {
-  font-family: "Vazirmatn";
-  src: url("/fonts/vazirmatn.woff2") format("woff2-variations");
+  font-family: 'Vazirmatn';
+  src: url('/fonts/vazirmatn.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
-@import "tailwindcss";
+@import 'tailwindcss';
 
 .account-nav-child-active::after {
-  content: "";
+  content: '';
   position: absolute;
   inset-inline-start: calc(-0.625rem - 1px);
   inset-inline-end: auto;
@@ -29,7 +29,7 @@
   border-radius: 2px;
 }
 
-[dir="rtl"] .account-nav-child-active::after {
+[dir='rtl'] .account-nav-child-active::after {
   left: auto;
   right: calc(-0.625rem - 1px);
 }
@@ -104,8 +104,7 @@
   --radius-lp-lg: 34px;
 
   --shadow-lp-mint: 0 12px 31px -12px rgba(48, 255, 180, 0.6);
-  --shadow-lp-nav:
-    0 1px 1px 0 rgba(20, 22, 55, 0.04), 0 1px 2px 0 rgba(20, 22, 55, 0.06);
+  --shadow-lp-nav: 0 1px 1px 0 rgba(20, 22, 55, 0.04), 0 1px 2px 0 rgba(20, 22, 55, 0.06);
   --shadow-lp-card: 0 14px 40px -12px rgba(40, 40, 90, 0.18);
   --shadow-lp-hero: 0 40px 90px -28px rgba(45, 42, 110, 0.32);
 }
@@ -155,7 +154,7 @@ html::-webkit-scrollbar {
   /* Stops the compositor animating a strip nobody is looking at. */
   animation-play-state: paused;
 }
-.lp-marquee-strip[data-visible="true"] {
+.lp-marquee-strip[data-visible='true'] {
   animation-play-state: running;
 }
 
@@ -383,63 +382,27 @@ html::-webkit-scrollbar {
   --theme-foreground: #0f172a;
 
   /* Semantic surface/card/border vars — auto-derived from theme at render time */
-  --theme-surface: color-mix(
-    in srgb,
-    var(--theme-background) 97%,
-    var(--theme-foreground)
-  );
+  --theme-surface: color-mix(in srgb, var(--theme-background) 97%, var(--theme-foreground));
   --theme-surface-alt: color-mix(
     in srgb,
     var(--theme-primary) 4%,
     color-mix(in srgb, var(--theme-background) 94%, var(--theme-foreground))
   );
-  --theme-card-bg: color-mix(
-    in srgb,
-    var(--theme-primary) 7%,
-    var(--theme-background)
-  );
-  --theme-border-color: color-mix(
-    in srgb,
-    var(--theme-foreground) 10%,
-    transparent
-  );
-  --theme-border-strong: color-mix(
-    in srgb,
-    var(--theme-foreground) 18%,
-    transparent
-  );
-  --theme-muted: color-mix(
-    in srgb,
-    var(--theme-foreground) 55%,
-    var(--theme-background)
-  );
+  --theme-card-bg: color-mix(in srgb, var(--theme-primary) 7%, var(--theme-background));
+  --theme-border-color: color-mix(in srgb, var(--theme-foreground) 10%, transparent);
+  --theme-border-strong: color-mix(in srgb, var(--theme-foreground) 18%, transparent);
+  --theme-muted: color-mix(in srgb, var(--theme-foreground) 55%, var(--theme-background));
 
   /* Accent-surface vars — use these for icon containers, badges, and colored UI spots */
-  --theme-primary-subtle: color-mix(
-    in srgb,
-    var(--theme-primary) 15%,
-    var(--theme-background)
-  );
-  --theme-secondary-subtle: color-mix(
-    in srgb,
-    var(--theme-secondary) 12%,
-    var(--theme-background)
-  );
-  --theme-accent-subtle: color-mix(
-    in srgb,
-    var(--theme-accent) 15%,
-    var(--theme-background)
-  );
+  --theme-primary-subtle: color-mix(in srgb, var(--theme-primary) 15%, var(--theme-background));
+  --theme-secondary-subtle: color-mix(in srgb, var(--theme-secondary) 12%, var(--theme-background));
+  --theme-accent-subtle: color-mix(in srgb, var(--theme-accent) 15%, var(--theme-background));
 
   /* Readable primary for TEXT on a light/neutral surface. An academy may pick a
      pale brand color, and pale-on-white fails contrast, so the ink variant is
      pulled toward the foreground. In a dark theme the foreground is light, so
      the same mix brightens instead — it stays readable either way. */
-  --theme-primary-ink: color-mix(
-    in srgb,
-    var(--theme-primary) 62%,
-    var(--theme-foreground)
-  );
+  --theme-primary-ink: color-mix(in srgb, var(--theme-primary) 62%, var(--theme-foreground));
 
   /* On-color text vars — guaranteed contrast against solid primary/secondary/accent backgrounds */
   --theme-on-primary: #ffffff;
@@ -550,11 +513,11 @@ body {
   color: var(--theme-foreground, #0f172a);
   font-family: var(
     --theme-font-family,
-    "Vazirmatn",
+    'Vazirmatn',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
     sans-serif
   );
@@ -595,20 +558,18 @@ a[class*="bg-slate-900"]:not([class*="theme-on-primary"]) {
   color: white !important;
 }
 
-button a:not([class*="theme-on-primary"]):hover,
-[role="button"] a:not([class*="theme-on-primary"]):hover,
-a[class*="text-white"]:not([class*="theme-on-primary"]):hover,
-a[class*="rounded-full"][class*="bg-"]:not(.lp-root a):not(
-    .ui-blocks-root a
-  ):not([class*="bg-card"]):not([class*="bg-surface"]):not(
-    [class*="bg-transparent"]
-  ):not([class*="theme-on-primary"]):hover,
-a[class*="bg-\[var\(--theme-primary\)\]"]:not(
-    [class*="theme-on-primary"]
+button a:not([class*='theme-on-primary']):hover,
+[role='button'] a:not([class*='theme-on-primary']):hover,
+a[class*='text-white']:not([class*='theme-on-primary']):hover,
+a[class*='rounded-full'][class*='bg-']:not(.lp-root a):not(.ui-blocks-root a):not(
+    [class*='bg-card']
+  ):not([class*='bg-surface']):not([class*='bg-transparent']):not(
+    [class*='theme-on-primary']
   ):hover,
-a[class*="bg-sky-600"]:not([class*="theme-on-primary"]):hover,
-a[class*="bg-sky-500"]:not([class*="theme-on-primary"]):hover,
-a[class*="bg-slate-900"]:not([class*="theme-on-primary"]):hover {
+a[class*='bg-\[var\(--theme-primary\)\]']:not([class*='theme-on-primary']):hover,
+a[class*='bg-sky-600']:not([class*='theme-on-primary']):hover,
+a[class*='bg-sky-500']:not([class*='theme-on-primary']):hover,
+a[class*='bg-slate-900']:not([class*='theme-on-primary']):hover {
   color: white !important;
 }
 
@@ -689,8 +650,7 @@ input,
 select,
 textarea {
   transition-property:
-    background-color, border-color, color, fill, stroke, opacity, box-shadow,
-    transform;
+    background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
 }
@@ -724,11 +684,7 @@ textarea {
 /* Light gradient backgrounds using theme colors */
 .bg-gradient-theme-primary {
   position: relative;
-  background: linear-gradient(
-    135deg,
-    var(--theme-primary),
-    var(--theme-secondary)
-  );
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
 }
 
 .bg-gradient-theme-primary > * {
@@ -737,14 +693,10 @@ textarea {
 }
 
 .bg-gradient-theme-primary::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 255, 255, 0.5)
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.5));
   border-radius: inherit;
   pointer-events: none;
   z-index: 0;
@@ -752,20 +704,12 @@ textarea {
 
 @media (prefers-color-scheme: dark) {
   .bg-gradient-theme-primary::before {
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.15),
-      rgba(255, 255, 255, 0.1)
-    );
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
   }
 }
 
 .dark .bg-gradient-theme-primary::before {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 0.1)
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
 }
 
 .bg-theme-secondary {
@@ -810,8 +754,7 @@ select:focus {
 
 /* Ensure buttons respect theme */
 button {
-  transition-property:
-    background-color, border-color, color, opacity, transform;
+  transition-property: background-color, border-color, color, opacity, transform;
 }
 
 /* Links dark-mode color defaults — in @layer base so utility classes (text-on-primary, etc.) can override them */
@@ -951,39 +894,39 @@ button {
 /* Apply theme border radius to Card component instances */
 /* This ensures all cards respect the theme border_radius_style setting */
 /* Targeting common card patterns with border and background */
-.group.relative.overflow-hidden.border[class*="bg-white"],
-.group.relative.overflow-hidden.border[class*="bg-slate"],
-.border.bg-white.dark\:bg-slate-950[class*="shadow"],
-.border.bg-white.dark\:bg-black[class*="shadow"] {
+.group.relative.overflow-hidden.border[class*='bg-white'],
+.group.relative.overflow-hidden.border[class*='bg-slate'],
+.border.bg-white.dark\:bg-slate-950[class*='shadow'],
+.border.bg-white.dark\:bg-black[class*='shadow'] {
   border-radius: var(--theme-border-radius, 16px);
 }
 
 /* Apply theme border radius to all select elements */
-select:not([class*="rounded-"]),
-select[class*="rounded-lg"],
-select[class*="rounded-md"],
-select[class*="rounded-sm"] {
+select:not([class*='rounded-']),
+select[class*='rounded-lg'],
+select[class*='rounded-md'],
+select[class*='rounded-sm'] {
   border-radius: var(--theme-border-radius, 16px) !important;
 }
 
 /* Element animation styles */
-[data-animation-style="subtle"] {
+[data-animation-style='subtle'] {
   transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-[data-animation-style="moderate"] {
+[data-animation-style='moderate'] {
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-[data-animation-style="moderate"]:hover {
+[data-animation-style='moderate']:hover {
   transform: translateY(-2px);
 }
 
-[data-animation-style="dynamic"] {
+[data-animation-style='dynamic'] {
   transition: all 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-[data-animation-style="dynamic"]:hover {
+[data-animation-style='dynamic']:hover {
   transform: translateY(-4px) scale(1.02);
 }
 
@@ -1060,11 +1003,7 @@ select[class*="rounded-sm"] {
 
 /* Gradient text effect */
 .text-gradient-theme {
-  background: linear-gradient(
-    135deg,
-    var(--theme-primary),
-    var(--theme-secondary)
-  );
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1081,12 +1020,7 @@ select[class*="rounded-sm"] {
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   background-size: 1000px 100%;
   animation: shimmer 3s infinite;
 }
@@ -1184,7 +1118,7 @@ select[class*="rounded-sm"] {
 
 .sparkle::before,
 .sparkle::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 4px;
   height: 4px;
@@ -1223,7 +1157,7 @@ select[class*="rounded-sm"] {
 }
 
 .ripple::after {
-  content: "";
+  content: '';
   position: absolute;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
@@ -1258,11 +1192,7 @@ select[class*="rounded-sm"] {
   --brand-ink: #ffffff;
   --brand-soft: rgba(109, 94, 252, 0.1);
   --grad: linear-gradient(135deg, #7c6cff 0%, #4f8cff 100%);
-  --grad-soft: linear-gradient(
-    135deg,
-    rgba(124, 108, 255, 0.16),
-    rgba(79, 140, 255, 0.1)
-  );
+  --grad-soft: linear-gradient(135deg, rgba(124, 108, 255, 0.16), rgba(79, 140, 255, 0.1));
   --sh-sm: 0 1px 2px rgba(20, 22, 55, 0.06), 0 1px 1px rgba(20, 22, 55, 0.04);
   --sh: 0 14px 40px -12px rgba(40, 40, 90, 0.18);
   --sh-lg: 0 40px 90px -28px rgba(45, 42, 110, 0.32);
@@ -1287,11 +1217,7 @@ select[class*="rounded-sm"] {
   --brand-ink: #ffffff;
   --brand-soft: rgba(133, 118, 255, 0.14);
   --grad: linear-gradient(135deg, #8676ff 0%, #5e97ff 100%);
-  --grad-soft: linear-gradient(
-    135deg,
-    rgba(134, 118, 255, 0.18),
-    rgba(94, 151, 255, 0.12)
-  );
+  --grad-soft: linear-gradient(135deg, rgba(134, 118, 255, 0.18), rgba(94, 151, 255, 0.12));
   --sh-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --sh: 0 18px 50px -12px rgba(0, 0, 0, 0.6);
   --sh-lg: 0 50px 100px -28px rgba(0, 0, 0, 0.75);
@@ -1322,13 +1248,8 @@ select[class*="rounded-sm"] {
   --cc-ink-3: #888caa;
   --cc-brand: var(--theme-primary);
   --cc-brand-soft: color-mix(in srgb, var(--theme-primary) 10%, transparent);
-  --cc-grad: linear-gradient(
-    135deg,
-    var(--theme-primary),
-    var(--theme-secondary)
-  );
-  --cc-sh-sm:
-    0 1px 2px rgba(20, 22, 55, 0.06), 0 1px 1px rgba(20, 22, 55, 0.04);
+  --cc-grad: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+  --cc-sh-sm: 0 1px 2px rgba(20, 22, 55, 0.06), 0 1px 1px rgba(20, 22, 55, 0.04);
   --cc-sh: 0 14px 40px -12px rgba(40, 40, 90, 0.18);
 }
 /* Dark follows the app's authoritative .dark class only — never the OS
@@ -1561,7 +1482,7 @@ select[class*="rounded-sm"] {
 /* Dark landing: re-point the same `--color-lp-*` variables the Tailwind
    utilities already reference, so the whole page flips without a single
    `dark:` variant. Scoped to .lp-root so academy pages are unaffected. */
-.lp-root[data-theme="dark"] {
+.lp-root[data-theme='dark'] {
   --color-lp-ink: #f2f4f8;
   --color-lp-ink-2: #b6bad4;
   --color-lp-ink-3: #f2f4f8;
@@ -1586,10 +1507,10 @@ select[class*="rounded-sm"] {
 .lp-root .lp-icon-dark {
   display: none;
 }
-.lp-root[data-theme="dark"] .lp-icon-dark {
+.lp-root[data-theme='dark'] .lp-icon-dark {
   display: block;
 }
-.lp-root[data-theme="dark"] .lp-icon-light {
+.lp-root[data-theme='dark'] .lp-icon-light {
   display: none;
 }
 
@@ -1598,15 +1519,15 @@ select[class*="rounded-sm"] {
 .brand-wordmark {
   background-color: #000;
 }
-.lp-root[data-theme="dark"] .brand-wordmark,
+.lp-root[data-theme='dark'] .brand-wordmark,
 .landing-page.theme-dark .brand-wordmark {
   background-color: #fff;
 }
 
-.lp-root[data-theme="dark"] .bg-white,
-.lp-root[data-theme="dark"] .bg-white\/66,
-.lp-root[data-theme="dark"] .bg-white\/60,
-.lp-root[data-theme="dark"] .bg-white\/80 {
+.lp-root[data-theme='dark'] .bg-white,
+.lp-root[data-theme='dark'] .bg-white\/66,
+.lp-root[data-theme='dark'] .bg-white\/60,
+.lp-root[data-theme='dark'] .bg-white\/80 {
   background-color: #151a2b;
 }
 
@@ -1614,7 +1535,7 @@ select[class*="rounded-sm"] {
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
-.lp-header[data-hidden="true"] {
+.lp-header[data-hidden='true'] {
   transform: translateY(-120%);
 }
 
@@ -1628,7 +1549,7 @@ select[class*="rounded-sm"] {
     opacity 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
     transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.lp-reveal[data-shown="true"] {
+.lp-reveal[data-shown='true'] {
   opacity: 1;
   transform: none;
 }
@@ -1641,16 +1562,28 @@ select[class*="rounded-sm"] {
     opacity 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
     transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.lp-reveal[data-lp-stagger][data-shown="true"] > * {
+.lp-reveal[data-lp-stagger][data-shown='true'] > * {
   opacity: 1;
   transform: none;
 }
-.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(1) { transition-delay: 20ms; }
-.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(2) { transition-delay: 50ms; }
-.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(3) { transition-delay: 80ms; }
-.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(4) { transition-delay: 110ms; }
-.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(5) { transition-delay: 140ms; }
-.lp-reveal[data-lp-stagger][data-shown="true"] > *:nth-child(6) { transition-delay: 170ms; }
+.lp-reveal[data-lp-stagger][data-shown='true'] > *:nth-child(1) {
+  transition-delay: 20ms;
+}
+.lp-reveal[data-lp-stagger][data-shown='true'] > *:nth-child(2) {
+  transition-delay: 50ms;
+}
+.lp-reveal[data-lp-stagger][data-shown='true'] > *:nth-child(3) {
+  transition-delay: 80ms;
+}
+.lp-reveal[data-lp-stagger][data-shown='true'] > *:nth-child(4) {
+  transition-delay: 110ms;
+}
+.lp-reveal[data-lp-stagger][data-shown='true'] > *:nth-child(5) {
+  transition-delay: 140ms;
+}
+.lp-reveal[data-lp-stagger][data-shown='true'] > *:nth-child(6) {
+  transition-delay: 170ms;
+}
 
 /* Nested stagger: section reveals as a whole, then its inner grid/list
    children pick up the same 30ms cadence as the panel. */
@@ -1661,16 +1594,28 @@ select[class*="rounded-sm"] {
     opacity 0.32s cubic-bezier(0.2, 0.7, 0.2, 1),
     transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > * {
+.lp-reveal[data-shown='true'] [data-lp-stagger] > * {
   opacity: 1;
   transform: none;
 }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(1) { transition-delay: 20ms; }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(2) { transition-delay: 50ms; }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(3) { transition-delay: 80ms; }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(4) { transition-delay: 110ms; }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(5) { transition-delay: 140ms; }
-.lp-reveal[data-shown="true"] [data-lp-stagger] > *:nth-child(6) { transition-delay: 170ms; }
+.lp-reveal[data-shown='true'] [data-lp-stagger] > *:nth-child(1) {
+  transition-delay: 20ms;
+}
+.lp-reveal[data-shown='true'] [data-lp-stagger] > *:nth-child(2) {
+  transition-delay: 50ms;
+}
+.lp-reveal[data-shown='true'] [data-lp-stagger] > *:nth-child(3) {
+  transition-delay: 80ms;
+}
+.lp-reveal[data-shown='true'] [data-lp-stagger] > *:nth-child(4) {
+  transition-delay: 110ms;
+}
+.lp-reveal[data-shown='true'] [data-lp-stagger] > *:nth-child(5) {
+  transition-delay: 140ms;
+}
+.lp-reveal[data-shown='true'] [data-lp-stagger] > *:nth-child(6) {
+  transition-delay: 170ms;
+}
 
 /* ── Screenshot frame ──────────────────────────────────────────────────────
    The panel's own surface (AdminPanel `.stat-card`): frosted white over a
@@ -1761,7 +1706,7 @@ select[class*="rounded-sm"] {
   .lp-header {
     transition: none;
   }
-  .lp-header[data-hidden="true"] {
+  .lp-header[data-hidden='true'] {
     transform: none;
   }
   .lp-reveal,
@@ -1829,8 +1774,7 @@ select[class*="rounded-sm"] {
   }
 }
 .ui-blocks-root > section:not(:first-child) {
-  animation: ui-block-enter var(--theme-motion-duration)
-    cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: ui-block-enter var(--theme-motion-duration) cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(var(--theme-motion-stagger) * 1);
 }
 .ui-blocks-root > section:nth-child(3) {
@@ -1887,7 +1831,7 @@ select[class*="rounded-sm"] {
 }
 /* Auth is a fixed light design (matches the reference render); ignore dark theme */
 .dark .auth-page,
-[data-theme="dark"] .auth-page {
+[data-theme='dark'] .auth-page {
   --auth-card-bg: #ffffff;
   --auth-card-ink: #181c20;
   --auth-card-muted: #616579;
@@ -2028,14 +1972,10 @@ select[class*="rounded-sm"] {
 }
 /* Soft light bloom so a flat brand color still reads as depth */
 .auth-brand::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    70% 55% at 50% 12%,
-    rgba(255, 255, 255, 0.28),
-    transparent 70%
-  );
+  background: radial-gradient(70% 55% at 50% 12%, rgba(255, 255, 255, 0.28), transparent 70%);
   pointer-events: none;
 }
 .auth-brand > * {
@@ -2081,8 +2021,7 @@ select[class*="rounded-sm"] {
     var(--auth-accent),
     color-mix(in srgb, var(--auth-accent) 45%, var(--theme-secondary, #22c1a4))
   );
-  box-shadow: 0 10px 24px -8px
-    color-mix(in srgb, var(--auth-accent) 70%, transparent);
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--auth-accent) 70%, transparent);
   overflow: hidden;
 }
 .auth-logo img {
@@ -2215,8 +2154,7 @@ select[class*="rounded-sm"] {
   font-weight: 600;
   background: var(--auth-accent);
   color: var(--auth-on-accent);
-  box-shadow: 0 14px 30px -14px
-    color-mix(in srgb, var(--auth-accent) 85%, transparent);
+  box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--auth-accent) 85%, transparent);
   transition:
     filter 0.15s ease,
     box-shadow 0.15s ease;
@@ -2249,7 +2187,7 @@ select[class*="rounded-sm"] {
 /* Browsers force direction:ltr on tel/email/number inputs, which would flush
    their text to the left edge. Align to the page direction instead, so digits
    keep their safe LTR order while the text sits where the design expects. */
-[dir="rtl"] .auth-input {
+[dir='rtl'] .auth-input {
   text-align: right;
 }
 .auth-input::placeholder {
@@ -2387,7 +2325,7 @@ select[class*="rounded-sm"] {
   box-shadow: 0 0 0 3px var(--auth-accent-tint);
 }
 /* Country dropdown sits on the same white surface as the inputs */
-.auth-phone [class*="absolute"][class*="z-50"] {
+.auth-phone [class*='absolute'][class*='z-50'] {
   background: var(--auth-card-bg);
   border-color: var(--auth-card-line);
   border-radius: 16px;
@@ -2563,11 +2501,7 @@ select[class*="rounded-sm"] {
 
 /* 404 page — academy theme tokens; layout mirrors landing CTAs */
 .not-found-glow {
-  background: color-mix(
-    in srgb,
-    var(--theme-primary) 18%,
-    var(--theme-background)
-  );
+  background: color-mix(in srgb, var(--theme-primary) 18%, var(--theme-background));
   filter: blur(10px);
 }
 .not-found-number {
@@ -2585,8 +2519,7 @@ select[class*="rounded-sm"] {
 }
 .not-found-btn-primary {
   background: var(--theme-primary);
-  box-shadow: 0 12px 28px -10px
-    color-mix(in srgb, var(--theme-primary) 55%, transparent);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--theme-primary) 55%, transparent);
   color: var(--theme-on-primary, #ffffff);
 }
 .not-found-btn-secondary {
@@ -2628,11 +2561,7 @@ select[class*="rounded-sm"] {
   width: 40vw;
   height: 40vw;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(124, 108, 255, 0.4),
-    transparent 62%
-  );
+  background: radial-gradient(circle, rgba(124, 108, 255, 0.4), transparent 62%);
   filter: blur(20px);
   pointer-events: none;
 }
@@ -2643,11 +2572,7 @@ select[class*="rounded-sm"] {
   width: 34vw;
   height: 34vw;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(79, 140, 255, 0.34),
-    transparent 62%
-  );
+  background: radial-gradient(circle, rgba(79, 140, 255, 0.34), transparent 62%);
   filter: blur(20px);
   pointer-events: none;
 }
@@ -2777,14 +2702,13 @@ select[class*="rounded-sm"] {
   color: #fff;
 }
 .cd-enroll-btn {
-  box-shadow: 0 14px 30px -10px
-    color-mix(in srgb, var(--theme-primary) 70%, transparent);
+  box-shadow: 0 14px 30px -10px color-mix(in srgb, var(--theme-primary) 70%, transparent);
 }
 
 /* Prices & numeric stats — force a Persian-friendly font with tabular figures */
 .cd-price {
-  font-family: "Vazirmatn", sans-serif;
-  font-feature-settings: "tnum";
+  font-family: 'Vazirmatn', sans-serif;
+  font-feature-settings: 'tnum';
   font-variant-numeric: tabular-nums;
 }
 
@@ -2817,13 +2741,8 @@ select[class*="rounded-sm"] {
   color: #16a34a;
 }
 .cd-cta-btn {
-  background: linear-gradient(
-    to left,
-    var(--theme-secondary),
-    var(--theme-primary)
-  );
-  box-shadow: 0 14px 30px -10px
-    color-mix(in srgb, var(--theme-primary) 70%, transparent);
+  background: linear-gradient(to left, var(--theme-secondary), var(--theme-primary));
+  box-shadow: 0 14px 30px -10px color-mix(in srgb, var(--theme-primary) 70%, transparent);
 }
 .cd-cta-btn:hover {
   opacity: 0.95;

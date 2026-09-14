@@ -110,7 +110,9 @@
   border: 1px solid var(--theme-border-color);
   background: var(--theme-surface);
   border-radius: var(--theme-border-radius);
-  transition: border-color 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
 }
 .card:hover {
   border-color: var(--theme-primary);
@@ -124,7 +126,9 @@
 /* Specialisation rows: a left rail that lights up on hover. */
 .track {
   border-inline-start: 2px solid var(--theme-border-color);
-  transition: border-color 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 }
 .track:hover {
   border-inline-start-color: var(--theme-primary);
@@ -132,10 +136,18 @@
 }
 
 /* Empty course thumbnails: flat cold tones. */
-.tA { background: var(--theme-deep); }
-.tB { background: color-mix(in srgb, var(--theme-primary) 26%, var(--theme-deep)); }
-.tC { background: color-mix(in srgb, var(--theme-accent) 24%, var(--theme-deep)); }
-.tD { background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt)); }
+.tA {
+  background: var(--theme-deep);
+}
+.tB {
+  background: color-mix(in srgb, var(--theme-primary) 26%, var(--theme-deep));
+}
+.tC {
+  background: color-mix(in srgb, var(--theme-accent) 24%, var(--theme-deep));
+}
+.tD {
+  background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt));
+}
 
 /* Empty-state play mark for the demo frame — see rouzan for the rationale. */
 .playMark {

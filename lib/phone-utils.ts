@@ -64,12 +64,9 @@ export const getPhoneRule = (countryCode: CountryCode): PhoneRule =>
  * enough to be a whole number. A half-typed number is "incomplete", never
  * "invalid", so no error is shown while the user is still typing.
  */
-export type PhoneCheck = "empty" | "incomplete" | "invalid" | "valid";
+export type PhoneCheck = 'empty' | 'incomplete' | 'invalid' | 'valid';
 
-export const checkPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): PhoneCheck => {
+export const checkPhoneNumber = (phoneNumber: string, countryCode: CountryCode): PhoneCheck => {
   const digits = toEnglishDigits(phoneNumber).replace(/\D/g, '');
   if (!digits) return 'empty';
 
@@ -80,10 +77,7 @@ export const checkPhoneNumber = (
   return 'valid';
 };
 
-export const cleanPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): string => {
+export const cleanPhoneNumber = (phoneNumber: string, countryCode: CountryCode): string => {
   if (!phoneNumber) return '';
 
   let cleaned = toEnglishDigits(phoneNumber).replace(/[^\d+]/g, '');
@@ -102,41 +96,10 @@ export const cleanPhoneNumber = (
   return cleaned;
 };
 
-export const isValidPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): boolean => checkPhoneNumber(phoneNumber, countryCode) === 'valid';
+export const isValidPhoneNumber = (phoneNumber: string, countryCode: CountryCode): boolean =>
+  checkPhoneNumber(phoneNumber, countryCode) === 'valid';
 
-export const getFullPhoneNumber = (
-  phoneNumber: string,
-  countryCode: CountryCode
-): string => {
+export const getFullPhoneNumber = (phoneNumber: string, countryCode: CountryCode): string => {
   if (!phoneNumber) return '';
   return `${countryCode.dialCode}${phoneNumber}`;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

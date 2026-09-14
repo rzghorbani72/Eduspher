@@ -78,7 +78,9 @@
 .area {
   border: 1px solid var(--theme-border-color);
   background: var(--theme-surface);
-  transition: border-color 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 }
 .area:hover {
   border-color: var(--theme-accent);
@@ -86,10 +88,18 @@
 }
 
 /* Empty course thumbnails: flat academic tints. */
-.tA { background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt)); }
-.tB { background: color-mix(in srgb, var(--theme-accent) 12%, var(--theme-surface-alt)); }
-.tC { background: var(--theme-surface-alt); }
-.tD { background: color-mix(in srgb, var(--theme-secondary) 10%, var(--theme-surface-alt)); }
+.tA {
+  background: color-mix(in srgb, var(--theme-primary) 14%, var(--theme-surface-alt));
+}
+.tB {
+  background: color-mix(in srgb, var(--theme-accent) 12%, var(--theme-surface-alt));
+}
+.tC {
+  background: var(--theme-surface-alt);
+}
+.tD {
+  background: color-mix(in srgb, var(--theme-secondary) 10%, var(--theme-surface-alt));
+}
 
 /*
  * Card/row titles inside a linked block. The wrapper is an <a>, so the global

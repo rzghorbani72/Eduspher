@@ -23,7 +23,10 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
   const percent = typeof config?.cyclePercent === 'number' ? config.cyclePercent : d.cyclePercent;
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-deep) text-(--theme-on-deep)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-deep) text-(--theme-on-deep)"
+    >
       <Backdrop variant="aurora" tone="deep" motion="drift" />
       <Backdrop variant="grid" tone="deep" />
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
@@ -36,23 +39,41 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
               {text(config, 'kicker', d.kicker)}
             </span>
 
-            <h1 className="mt-6 text-[clamp(36px,5.6vw,64px)] font-bold leading-[1.08] tracking-[-0.035em]">
+            <h1 className="mt-6 text-[clamp(36px,5.6vw,64px)] leading-[1.08] font-bold tracking-[-0.035em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/70">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/70"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="ghost-on-deep"
                   size="lg"
@@ -77,7 +98,7 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
                     <dd>
                       <b
                         {...editableItem('stats', index, 'value')}
-                        className="block text-[30px] font-bold leading-none tracking-[-0.04em] tabular-nums"
+                        className="block text-[30px] leading-none font-bold tracking-[-0.04em] tabular-nums"
                       >
                         {stat.value}
                       </b>
@@ -106,10 +127,12 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
               mode="fill"
               className={`${styles.slab} min-h-[260px] overflow-hidden rounded-(--theme-border-radius)`}
             >
-              <div className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}>
+              <div
+                className={`${styles.slabInner} flex h-full min-h-[260px] flex-col justify-end p-7`}
+              >
                 <b
                   data-editable="recordValue"
-                  className="text-[60px] font-bold leading-none tracking-[-0.05em] tabular-nums"
+                  className="text-[60px] leading-none font-bold tracking-[-0.05em] tabular-nums"
                 >
                   {text(config, 'recordValue', d.recordValue)}
                 </b>
@@ -125,7 +148,11 @@ export function TavanHero({ id, config, storeContext }: TemplateSectionProps) {
                 <span className="font-bold tabular-nums">{formatPercent(percent, 'fa')}</span>
               </div>
               <div className={styles.track}>
-                <span className={styles.trackFill} data-motion="wash" style={{ width: `${percent}%` }} />
+                <span
+                  className={styles.trackFill}
+                  data-motion="wash"
+                  style={{ width: `${percent}%` }}
+                />
               </div>
             </div>
           </RemovableSlot>

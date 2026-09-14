@@ -26,9 +26,9 @@ export function AnimatedGradient({
 
     const animate = () => {
       angle += speed * 0.5;
-      
+
       let gradient = '';
-      
+
       switch (direction) {
         case 'horizontal':
           gradient = `linear-gradient(90deg, ${colors[0]}, ${colors[1]}, ${colors[2] || colors[0]}, ${colors[0]})`;
@@ -37,7 +37,7 @@ export function AnimatedGradient({
           gradient = `linear-gradient(180deg, ${colors[0]}, ${colors[1]}, ${colors[2] || colors[0]}, ${colors[0]})`;
           break;
         case 'radial':
-          gradient = `radial-gradient(circle at ${50 + Math.sin(angle * Math.PI / 180) * 20}% ${50 + Math.cos(angle * Math.PI / 180) * 20}%, ${colors[0]}, ${colors[1]}, ${colors[2] || colors[0]})`;
+          gradient = `radial-gradient(circle at ${50 + Math.sin((angle * Math.PI) / 180) * 20}% ${50 + Math.cos((angle * Math.PI) / 180) * 20}%, ${colors[0]}, ${colors[1]}, ${colors[2] || colors[0]})`;
           break;
         case 'diagonal':
         default:
@@ -47,7 +47,7 @@ export function AnimatedGradient({
 
       container.style.background = gradient;
       container.style.backgroundSize = '200% 200%';
-      container.style.backgroundPosition = `${Math.sin(angle * Math.PI / 180) * 50 + 50}% ${Math.cos(angle * Math.PI / 180) * 50 + 50}%`;
+      container.style.backgroundPosition = `${Math.sin((angle * Math.PI) / 180) * 50 + 50}% ${Math.cos((angle * Math.PI) / 180) * 50 + 50}%`;
 
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -69,4 +69,3 @@ export function AnimatedGradient({
     />
   );
 }
-

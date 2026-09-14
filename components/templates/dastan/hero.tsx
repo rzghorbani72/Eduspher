@@ -28,7 +28,10 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
   const stats = list<HeroStat>(config, 'stats', d.stats);
 
   return (
-    <section id={id || 'hero'} className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)">
+    <section
+      id={id || 'hero'}
+      className="relative overflow-hidden bg-(--theme-background) text-(--theme-foreground)"
+    >
       <Backdrop variant="grain" />
       <Container className="relative z-[1] py-(--theme-section-padding-y)">
         <div className="grid items-start gap-16 lg:grid-cols-[1.15fr_0.85fr]">
@@ -38,7 +41,7 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
               <span aria-hidden="true" className="h-px flex-1 bg-(--theme-border-color)" />
             </p>
 
-            <h1 className="text-[clamp(34px,5.2vw,64px)] font-bold leading-[1.15] tracking-[-0.02em]">
+            <h1 className="text-[clamp(34px,5.2vw,64px)] leading-[1.15] font-bold tracking-[-0.02em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent
                 config={config}
@@ -49,7 +52,10 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[52ch] text-[18px] leading-[1.85] text-(--theme-muted)">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[52ch] text-[18px] leading-[1.85] text-(--theme-muted)"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
@@ -60,7 +66,11 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
                 editMode={editMode}
                 className="inline-flex"
               >
-                <Button tone="primary" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+                <Button
+                  tone="primary"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
@@ -70,7 +80,11 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
                 editMode={editMode}
                 className="inline-flex"
               >
-                <Button tone="outline" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+                <Button
+                  tone="outline"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
@@ -84,16 +98,22 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
             >
               <dl className="contents" {...editableList('stats', stats)}>
                 {stats.map((stat, index) => (
-                  <div key={stat.label} className="border-e border-(--theme-border-color) pe-9 last:border-0 last:pe-0">
+                  <div
+                    key={stat.label}
+                    className="border-e border-(--theme-border-color) pe-9 last:border-0 last:pe-0"
+                  >
                     <dt className="sr-only">{stat.label}</dt>
                     <dd>
                       <b
                         {...editableItem('stats', index, 'value')}
-                        className="block text-[27px] font-bold leading-[1.2] tabular-nums"
+                        className="block text-[27px] leading-[1.2] font-bold tabular-nums"
                       >
                         {stat.value}
                       </b>
-                      <span {...editableItem('stats', index, 'label')} className="text-[13px] text-(--theme-muted)">
+                      <span
+                        {...editableItem('stats', index, 'label')}
+                        className="text-[13px] text-(--theme-muted)"
+                      >
                         {stat.label}
                       </span>
                     </dd>
@@ -103,7 +123,12 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
             </RemovableSlot>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
+          <RemovableSlot
+            config={config}
+            flagKey="showSideVisual"
+            editMode={editMode}
+            mediaKey="bgImage"
+          >
             <div className="relative">
               <HeroVisualSlot
                 config={config}
@@ -130,7 +155,7 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
                         >
                           <i
                             {...editableItem('boardItems', index, 'index')}
-                            className="w-6 flex-none not-italic text-[13px] font-bold text-(--theme-accent)"
+                            className="w-6 flex-none text-[13px] font-bold text-(--theme-accent) not-italic"
                           >
                             {item.index}
                           </i>
@@ -153,7 +178,10 @@ export function DastanHero({ id, config, storeContext }: TemplateSectionProps) {
 
               <RemovableSlot config={config} flagKey="showStamp" editMode={editMode}>
                 <div className={styles.stamp} data-motion="drift">
-                  <b data-editable="stampValue" className="block text-[22px] font-bold leading-[1.1]">
+                  <b
+                    data-editable="stampValue"
+                    className="block text-[22px] leading-[1.1] font-bold"
+                  >
                     {text(config, 'stampValue', d.stampValue)}
                   </b>
                   <span data-editable="stampLabel" className="text-[11px] tracking-[0.1em]">

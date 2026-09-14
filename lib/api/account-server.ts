@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import { serverFetch, serverFetchRaw } from "@/lib/api/server";
+import { serverFetch, serverFetchRaw } from '@/lib/api/server';
 import type {
   AccountProfile,
   MyTutoringGroupRow,
@@ -15,7 +15,7 @@ import type {
   QuizAttemptSummary,
   StudentCertificate,
   SubmissionSummary,
-} from "@/lib/api/account-types";
+} from '@/lib/api/account-types';
 
 /**
  * Every fetcher here degrades to null/[] instead of throwing, matching the
@@ -38,48 +38,39 @@ export const getProfile = (profileId: string) =>
 
 export const getCourseAccess = () =>
   safe<CourseAccessRow[]>(async () => {
-    const result = await serverFetch<CourseAccessRow[]>(
-      "/enrollments/my-access",
-    );
+    const result = await serverFetch<CourseAccessRow[]>('/enrollments/my-access');
     return result.data ?? [];
   }, []);
 
 export const getAssignments = () =>
   safe<AssignmentSummary[]>(async () => {
-    const result = await serverFetch<{ assignments: AssignmentSummary[] }>(
-      "/assignments",
-    );
+    const result = await serverFetch<{ assignments: AssignmentSummary[] }>('/assignments');
     return result.data?.assignments ?? [];
   }, []);
 
 export const getAssignment = (assignmentId: string) =>
   safe<AssignmentSummary | null>(async () => {
-    const result = await serverFetch<AssignmentSummary>(
-      `/assignments/${assignmentId}`,
-    );
+    const result = await serverFetch<AssignmentSummary>(`/assignments/${assignmentId}`);
     return result.data ?? null;
   }, null);
 
 export const getSubmissions = () =>
   safe<SubmissionSummary[]>(async () => {
     const result = await serverFetch<{ submissions: SubmissionSummary[] }>(
-      "/assignments/submissions",
+      '/assignments/submissions',
     );
     return result.data?.submissions ?? [];
   }, []);
 
 export const getMyCertificates = () =>
   safe<StudentCertificate[]>(async () => {
-    const result =
-      await serverFetch<StudentCertificate[]>("/certificates/mine");
+    const result = await serverFetch<StudentCertificate[]>('/certificates/mine');
     return result.data ?? [];
   }, []);
 
 export const getQuizAttempt = (attemptId: string) =>
   safe<QuizAttemptSummary | null>(async () => {
-    const result = await serverFetch<QuizAttemptSummary>(
-      `/quiz-attempts/${attemptId}`,
-    );
+    const result = await serverFetch<QuizAttemptSummary>(`/quiz-attempts/${attemptId}`);
     return result.data ?? null;
   }, null);
 
@@ -97,9 +88,7 @@ export type LearningSummary = {
 
 export const getLearningSummary = () =>
   safe<LearningSummary | null>(async () => {
-    const result = await serverFetch<LearningSummary>(
-      "/learning-record/summary",
-    );
+    const result = await serverFetch<LearningSummary>('/learning-record/summary');
     return result.data ?? null;
   }, null);
 
@@ -113,7 +102,7 @@ export type TimelineActivity = {
 export const getLearningTimeline = (limit = 30) =>
   safe<TimelineActivity[]>(async () => {
     const result = await serverFetch<{ activities: TimelineActivity[] }>(
-      "/learning-record/timeline",
+      '/learning-record/timeline',
       { query: { limit, page: 1 } },
     );
     return result.data?.activities ?? [];
@@ -140,27 +129,21 @@ export type TutoringEngagementRow = {
 
 export const getTutoringEngagements = () =>
   safe<TutoringEngagementRow[]>(async () => {
-    const result = await serverFetch<TutoringEngagementRow[]>(
-      "/tutoring/engagements",
-    );
+    const result = await serverFetch<TutoringEngagementRow[]>('/tutoring/engagements');
     return result.data ?? [];
   }, []);
 
 /** Group classes the signed-in student holds a seat in. */
 export const getMyTutoringGroups = () =>
   safe<MyTutoringGroupRow[]>(async () => {
-    const result = await serverFetch<MyTutoringGroupRow[]>(
-      "/tutoring/groups/mine",
-    );
+    const result = await serverFetch<MyTutoringGroupRow[]>('/tutoring/groups/mine');
     return result.data ?? [];
   }, []);
 
 /** The class page. Returns null when the caller is not in this class. */
 export const getTutoringGroupRoom = (groupId: string) =>
   safe<TutoringGroupRoom | null>(async () => {
-    const result = await serverFetch<TutoringGroupRoom>(
-      `/tutoring/groups/${groupId}/room`,
-    );
+    const result = await serverFetch<TutoringGroupRoom>(`/tutoring/groups/${groupId}/room`);
     return result.data ?? null;
   }, null);
 
@@ -187,9 +170,7 @@ export const getMyLiveRoomForCourse = async (
   const group = groups.find((row) => row.group.course_id === courseId)?.group;
   if (group) return getTutoringGroupRoom(group.id);
   const solo = engagements.find(
-    (row) =>
-      row.course_id === courseId &&
-      (row.status === "ACTIVE" || row.status === "PENDING"),
+    (row) => row.course_id === courseId && (row.status === 'ACTIVE' || row.status === 'PENDING'),
   );
   return solo ? getTutoringEngagementRoom(solo.id) : null;
 };
@@ -200,7 +181,7 @@ export const getPayments = (params?: { page?: number; limit?: number }) =>
       const result = await serverFetch<{
         payments: PaymentSummary[];
         pagination: PageMeta;
-      }>("/payments", { query: { limit: 50, ...params } });
+      }>('/payments', { query: { limit: 50, ...params } });
       return {
         payments: result.data?.payments ?? [],
         pagination: result.data?.pagination ?? null,
@@ -222,15 +203,12 @@ export const getPaymentReceipt = (paymentId: string) =>
     null,
   );
 
-export const getAcademyPlansPublicByKind = (kind: "SUBSCRIPTION" | "PACKAGE") =>
+export const getAcademyPlansPublicByKind = (kind: 'SUBSCRIPTION' | 'PACKAGE') =>
   safe<AcademyPlanPublic[]>(async () => {
-    const result = await serverFetch<AcademyPlanPublic[]>(
-      "/academy-plans/public",
-      {
-        includeAuth: false,
-        query: { kind },
-      },
-    );
+    const result = await serverFetch<AcademyPlanPublic[]>('/academy-plans/public', {
+      includeAuth: false,
+      query: { kind },
+    });
     return result.data ?? [];
   }, []);
 
@@ -251,9 +229,7 @@ export type StudentSubscriptionRow = {
 
 export const getMySubscriptions = () =>
   safe<StudentSubscriptionRow[]>(async () => {
-    const result = await serverFetch<StudentSubscriptionRow[]>(
-      "/academy-plans/my-subscriptions",
-    );
+    const result = await serverFetch<StudentSubscriptionRow[]>('/academy-plans/my-subscriptions');
     return result.data ?? [];
   }, []);
 
@@ -263,7 +239,7 @@ export const getNotifications = (params?: { page?: number; limit?: number }) =>
       const result = await serverFetch<{
         notifications: NotificationItem[];
         pagination: PageMeta;
-      }>("/notifications", { query: { limit: 30, ...params } });
+      }>('/notifications', { query: { limit: 30, ...params } });
       return {
         notifications: result.data?.notifications ?? [],
         pagination: result.data?.pagination ?? null,

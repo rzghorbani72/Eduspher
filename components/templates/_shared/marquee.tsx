@@ -56,7 +56,7 @@ export function TemplateMarquee({
         {track.map((item, index) => (
           <span
             key={`${item}-${index}`}
-            className="flex items-center gap-3 whitespace-nowrap text-[15px] font-medium"
+            className="flex items-center gap-3 text-[15px] font-medium whitespace-nowrap"
           >
             <span className={SEPARATOR[separator]} />
             <span {...editableItem('items', index % items.length)}>{item}</span>

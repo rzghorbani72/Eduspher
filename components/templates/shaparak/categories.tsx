@@ -36,10 +36,16 @@ export function ShaparakCategories({ id, config, storeContext }: TemplateSection
               href={templateHref(storeContext, 'courses')}
               className={`${styles.sticker} flex flex-col p-7`}
             >
-              <span {...editableItem('items', index, 'age')} className={`${styles.ageBadge} self-start text-[14px]`}>
+              <span
+                {...editableItem('items', index, 'age')}
+                className={`${styles.ageBadge} self-start text-[14px]`}
+              >
                 {item.age} سال
               </span>
-              <h3 {...editableItem('items', index, 'title')} className={`${styles.cardTitle} mt-5 text-[21px] font-bold leading-[1.3]`}>
+              <h3
+                {...editableItem('items', index, 'title')}
+                className={`${styles.cardTitle} mt-5 text-[21px] leading-[1.3] font-bold`}
+              >
                 {item.title}
               </h3>
               <p

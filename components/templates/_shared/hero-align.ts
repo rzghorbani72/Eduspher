@@ -32,7 +32,6 @@ const ALIGN_CLASSES: Record<
 
 export function heroAlign(config: SectionConfig | undefined) {
   const value = config?.textAlign;
-  const align: HeroAlign =
-    value === 'start' || value === 'end' ? value : 'center';
+  const align: HeroAlign = value === 'start' || value === 'end' ? value : 'center';
   return ALIGN_CLASSES[align];
 }

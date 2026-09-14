@@ -1,8 +1,8 @@
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from '@/lib/utils';
 
 export type PublicActiveDiscount = {
   code: string;
-  coupon_type: "PERCENT" | "FIXED" | "FREE_TRIAL" | "FULL_DISCOUNT";
+  coupon_type: 'PERCENT' | 'FIXED' | 'FREE_TRIAL' | 'FULL_DISCOUNT';
   discount_value: number;
   free_trial_days: number | null;
   end_date: string;
@@ -20,15 +20,15 @@ export function formatActiveDiscountOffer(
   labels: DiscountLabelParams,
   options?: { currencyCode?: string; language?: string },
 ): string {
-  const currencyCode = options?.currencyCode ?? "IRR";
+  const currencyCode = options?.currencyCode ?? 'IRR';
   const language = options?.language;
 
   switch (discount.coupon_type) {
-    case "FULL_DISCOUNT":
+    case 'FULL_DISCOUNT':
       return labels.fullOff();
-    case "FREE_TRIAL":
+    case 'FREE_TRIAL':
       return labels.freeTrial(discount.free_trial_days ?? 0);
-    case "FIXED":
+    case 'FIXED':
       return labels.fixedOff(
         formatCurrency(discount.discount_value, {
           currency: currencyCode,
@@ -48,7 +48,7 @@ export function formatActiveDiscountSummary(
   },
   options?: { currencyCode?: string; language?: string },
 ): string {
-  if (discounts.length === 0) return "";
+  if (discounts.length === 0) return '';
 
   if (discounts.length === 1) {
     const discount = discounts[0];
@@ -61,7 +61,7 @@ export function formatActiveDiscountSummary(
       const offer = formatActiveDiscountOffer(discount, labels, options);
       return `${discount.code} (${offer})`;
     })
-    .join(" · ");
+    .join(' · ');
 
   return labels.bannerMultiple(codes);
 }

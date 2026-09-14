@@ -32,29 +32,54 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
         <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <div className="mb-6 flex items-center gap-2.5">
-              <span data-motion="live" className="size-2 rounded-full bg-(--theme-accent)" aria-hidden="true" />
-              <span data-editable="kicker" className="text-[13px] font-medium tracking-[0.08em] text-current/70">
+              <span
+                data-motion="live"
+                className="size-2 rounded-full bg-(--theme-accent)"
+                aria-hidden="true"
+              />
+              <span
+                data-editable="kicker"
+                className="text-[13px] font-medium tracking-[0.08em] text-current/70"
+              >
                 {text(config, 'kicker', d.kicker)}
               </span>
             </div>
 
-            <h1 className="text-[clamp(34px,5.4vw,62px)] font-bold leading-[1.12] tracking-[-0.03em]">
+            <h1 className="text-[clamp(34px,5.4vw,62px)] leading-[1.12] font-bold tracking-[-0.03em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/72">
+            <p
+              data-editable="subtitle"
+              className="mt-6 max-w-[56ch] text-[17px] leading-[1.9] text-current/72"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="ghost-on-deep"
                   size="lg"
@@ -78,7 +103,12 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
             </p>
           </div>
 
-          <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
+          <RemovableSlot
+            config={config}
+            flagKey="showSideVisual"
+            editMode={editMode}
+            mediaKey="bgImage"
+          >
             <HeroVisualSlot
               config={config}
               mode="fill"
@@ -114,7 +144,7 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
                   {stat.label}
                 </dt>
                 <dd>
-                  <span className="mt-2 block text-[34px] font-bold leading-none tracking-[-0.04em]">
+                  <span className="mt-2 block text-[34px] leading-none font-bold tracking-[-0.04em]">
                     <span {...editableItem('stats', index, 'value')}>{stat.value}</span>
                     {stat.unit ? (
                       <small
@@ -125,7 +155,10 @@ export function KeyhanHero({ id, config, storeContext }: TemplateSectionProps) {
                       </small>
                     ) : null}
                   </span>
-                  <span {...editableItem('stats', index, 'note')} className="mt-2 block text-[12.5px] text-current/55">
+                  <span
+                    {...editableItem('stats', index, 'note')}
+                    className="mt-2 block text-[12.5px] text-current/55"
+                  >
                     {stat.note}
                   </span>
                 </dd>

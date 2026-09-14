@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Link from "@/components/ui/link";
-import { useLogin } from "@/hooks/use-login";
-import { LoginIdentifyStep } from "@/components/auth/login-identify-step";
-import { LoginPasswordStep } from "@/components/auth/login-password-step";
-import { LoginOtpStep } from "@/components/auth/login-otp-step";
-import { SetNewPasswordStep } from "@/components/auth/set-new-password-step";
-import { useTranslation } from "@/lib/i18n/hooks";
+import Link from '@/components/ui/link';
+import { useLogin } from '@/hooks/use-login';
+import { LoginIdentifyStep } from '@/components/auth/login-identify-step';
+import { LoginPasswordStep } from '@/components/auth/login-password-step';
+import { LoginOtpStep } from '@/components/auth/login-otp-step';
+import { SetNewPasswordStep } from '@/components/auth/set-new-password-step';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 /* Kept for when Google sign-in is turned on — see the hidden button below.
 function GoogleIcon({ className }: { className?: string }) {
@@ -30,15 +30,15 @@ export const LoginForm = () => {
   const login = useLogin();
   const { t } = useTranslation();
 
-  if (login.step === "otpLogin" || login.step === "otpGate") {
+  if (login.step === 'otpLogin' || login.step === 'otpGate') {
     return <LoginOtpStep login={login} />;
   }
 
-  if (login.step === "password") {
+  if (login.step === 'password') {
     return <LoginPasswordStep login={login} />;
   }
 
-  if (login.step === "passwordReset") {
+  if (login.step === 'passwordReset') {
     return <SetNewPasswordStep login={login} />;
   }
 
@@ -65,13 +65,13 @@ export const LoginForm = () => {
       </div>
       */}
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        {t("auth.dontHaveAccountYet")}{" "}
+      <p className="text-muted-foreground mt-6 text-center text-sm">
+        {t('auth.dontHaveAccountYet')}{' '}
         <Link
-          href={login.buildPath("/auth/register")}
+          href={login.buildPath('/auth/register')}
           className="font-semibold text-[color:var(--auth-accent)] hover:underline"
         >
-          {t("auth.signUp")}
+          {t('auth.signUp')}
         </Link>
       </p>
     </div>

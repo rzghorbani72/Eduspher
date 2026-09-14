@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -8,12 +8,9 @@ import {
   useEffect,
   useMemo,
   useState,
-} from "react";
+} from 'react';
 
-import {
-  type BrowserLogContext,
-  setLogContext,
-} from "@/lib/logging/browser-context";
+import { type BrowserLogContext, setLogContext } from '@/lib/logging/browser-context';
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -48,7 +45,7 @@ export const AuthProvider = ({
       isAuthenticated,
       setAuthenticated,
     }),
-    [isAuthenticated, setAuthenticated]
+    [isAuthenticated, setAuthenticated],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -57,8 +54,7 @@ export const AuthProvider = ({
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuthContext must be used within an AuthProvider");
+    throw new Error('useAuthContext must be used within an AuthProvider');
   }
   return context;
 };
-

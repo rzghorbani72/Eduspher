@@ -1,8 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import { cache } from "react";
+import { cache } from 'react';
 
-import { serverFetch } from "./server";
+import { serverFetch } from './server';
 
 export type TrustBadge = {
   academy_name: string;
@@ -25,23 +25,21 @@ export type TrustBadge = {
  * — the footer simply omits the block. revalidate 0 so title-verify and the
  * seal widget appear as soon as the manager saves them.
  */
-export const getTrustBadge = cache(
-  async (slug: string): Promise<TrustBadge | null> => {
-    if (!slug) return null;
-    try {
-      const result = await serverFetch<TrustBadge | null>(
-        `/compliance/public/trust-badge?slug=${encodeURIComponent(slug)}`,
-        { includeAuth: false, revalidate: 0 },
-      );
-      if (result.data && typeof result.data === "object") {
-        return result.data;
-      }
-      if (result && "academy_name" in result) {
-        return result as unknown as TrustBadge;
-      }
-      return null;
-    } catch {
-      return null;
+export const getTrustBadge = cache(async (slug: string): Promise<TrustBadge | null> => {
+  if (!slug) return null;
+  try {
+    const result = await serverFetch<TrustBadge | null>(
+      `/compliance/public/trust-badge?slug=${encodeURIComponent(slug)}`,
+      { includeAuth: false, revalidate: 0 },
+    );
+    if (result.data && typeof result.data === 'object') {
+      return result.data;
     }
-  },
-);
+    if (result && 'academy_name' in result) {
+      return result as unknown as TrustBadge;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+});

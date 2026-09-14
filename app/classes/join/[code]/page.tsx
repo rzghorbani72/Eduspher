@@ -1,11 +1,11 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
-import { TutoringGroupsSection } from "@/components/courses/tutoring-groups-section";
-import { getCurrentUser, getTutoringGroupByCode } from "@/lib/api/server";
-import { resolveAcademyForRequest } from "@/lib/courses/academy-context";
-import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath } from "@/lib/utils";
-import { t } from "@/lib/i18n/server-translations";
+import { TutoringGroupsSection } from '@/components/courses/tutoring-groups-section';
+import { getCurrentUser, getTutoringGroupByCode } from '@/lib/api/server';
+import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
+import { getAcademyContext } from '@/lib/store-context';
+import { buildAcademyPath } from '@/lib/utils';
+import { t } from '@/lib/i18n/server-translations';
 
 /**
  * A private class opened by its share code. This is how a student gathers their
@@ -25,20 +25,14 @@ export default async function JoinClassByCodePage({
 
   if (!group) return notFound();
 
-  const { language, currencyConfig } = await resolveAcademyForRequest(
-    user,
-    academyContext.slug,
-  );
+  const { language, currencyConfig } = await resolveAcademyForRequest(user, academyContext.slug);
   const buildPath = (path: string) =>
-    buildAcademyPath(
-      academyContext.isSubdomain ? null : academyContext.slug,
-      path,
-    );
+    buildAcademyPath(academyContext.isSubdomain ? null : academyContext.slug, path);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
       <h1 className="mb-6 text-2xl font-bold text-(--theme-foreground)">
-        {t("courses.groupInviteTitle", language)}
+        {t('courses.groupInviteTitle', language)}
       </h1>
       <TutoringGroupsSection
         groups={[group]}

@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-import { RegisterForm } from "@/components/auth/register-form";
-import { getAcademyContext } from "@/lib/store-context";
-import { getAcademyBySlug } from "@/lib/api/server";
+import { RegisterForm } from '@/components/auth/register-form';
+import { getAcademyContext } from '@/lib/store-context';
+import { getAcademyBySlug } from '@/lib/api/server';
 
 export const metadata: Metadata = {
-  title: "Create account",
-  description: "Join EduSpher and start your personalised learning journey.",
+  title: 'Create account',
+  description: 'Join EduSpher and start your personalised learning journey.',
 };
 
 export default async function RegisterPage() {
@@ -17,7 +17,7 @@ export default async function RegisterPage() {
   return (
     <RegisterForm
       defaultCountryCode={defaultCountryCode}
-      primaryVerificationMethod={store?.primary_verification_method || "phone"}
+      primaryVerificationMethod={store?.primary_verification_method || 'phone'}
     />
   );
 }

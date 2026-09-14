@@ -11,15 +11,13 @@ const EnrollmentClosedContext = createContext(false);
 
 export function EnrollmentStatusProvider({
   closed,
-  children
+  children,
 }: {
   closed: boolean;
   children: ReactNode;
 }) {
   return (
-    <EnrollmentClosedContext.Provider value={closed}>
-      {children}
-    </EnrollmentClosedContext.Provider>
+    <EnrollmentClosedContext.Provider value={closed}>{children}</EnrollmentClosedContext.Provider>
   );
 }
 

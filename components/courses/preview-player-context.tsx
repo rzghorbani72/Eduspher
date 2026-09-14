@@ -1,12 +1,6 @@
-"use client";
+'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 export interface PreviewMedia {
   lessonId: string;
@@ -60,11 +54,7 @@ export function PreviewPlayerProvider({
     };
   }, [media, selectedId, autoPlay, select]);
 
-  return (
-    <PreviewPlayerContext.Provider value={value}>
-      {children}
-    </PreviewPlayerContext.Provider>
-  );
+  return <PreviewPlayerContext.Provider value={value}>{children}</PreviewPlayerContext.Provider>;
 }
 
 /** Null outside the provider, so a curriculum rendered elsewhere still works. */

@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 const TYPE_WIDTH = 69;
 const TYPE_HEIGHT = 28;
@@ -12,14 +12,9 @@ type Props = {
   priority?: boolean;
 };
 
-export function BrandLockup({
-  className,
-  markSize = 38,
-  typeClassName,
-  priority = false,
-}: Props) {
+export function BrandLockup({ className, markSize = 38, typeClassName, priority = false }: Props) {
   return (
-    <span className={cn("inline-flex items-center gap-4", className)}>
+    <span className={cn('inline-flex items-center gap-4', className)}>
       <Image
         src="/logo-mark.svg"
         alt=""
@@ -31,12 +26,12 @@ export function BrandLockup({
       />
       <span
         aria-hidden
-        className={cn("brand-wordmark inline-block shrink-0", typeClassName)}
+        className={cn('brand-wordmark inline-block shrink-0', typeClassName)}
         style={{
           width: TYPE_WIDTH,
           height: TYPE_HEIGHT,
-          WebkitMask: "url(/logo-type.png) center / contain no-repeat",
-          mask: "url(/logo-type.png) center / contain no-repeat",
+          WebkitMask: 'url(/logo-type.png) center / contain no-repeat',
+          mask: 'url(/logo-type.png) center / contain no-repeat',
         }}
       />
     </span>

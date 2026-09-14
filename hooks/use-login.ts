@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
-import { toast } from "react-toastify";
+import { useSearchParams } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { toast } from 'react-toastify';
 
 import {
   identifyAccount,
@@ -14,30 +14,22 @@ import {
   sendEmailOtp,
   sendPhoneOtp,
   type AccountIdentity,
-} from "@/lib/api/client";
-import { useOtpTimer } from "@/hooks/use-otp-timer";
-import { useOtpNotifier } from "@/hooks/use-otp-notifier";
-import { isPasswordValid } from "@/lib/password-utils";
-import { nextStepFor } from "@/lib/auth-identify";
-import {
-  isValidEmail,
-  isValidPhoneInput,
-} from "@/lib/auth/identifier-validation";
-import { safeRedirectPath } from "@/lib/auth/redirect-target";
-import { useAuthContext } from "@/components/providers/auth-provider";
-import { useStorePath } from "@/components/providers/store-provider";
-import { getDefaultCountry } from "@/lib/country-codes";
-import {
-  getFullPhoneNumber,
-  cleanPhoneNumber,
-  toEnglishDigits,
-} from "@/lib/phone-utils";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { OtpType } from "@/lib/constants";
+} from '@/lib/api/client';
+import { useOtpTimer } from '@/hooks/use-otp-timer';
+import { useOtpNotifier } from '@/hooks/use-otp-notifier';
+import { isPasswordValid } from '@/lib/password-utils';
+import { nextStepFor } from '@/lib/auth-identify';
+import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
+import { safeRedirectPath } from '@/lib/auth/redirect-target';
+import { useAuthContext } from '@/components/providers/auth-provider';
+import { useStorePath } from '@/components/providers/store-provider';
+import { getDefaultCountry } from '@/lib/country-codes';
+import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from '@/lib/phone-utils';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { OtpType } from '@/lib/constants';
 
-export type LoginChannel = "email" | "phone";
-export type LoginStep =
-  "identify" | "password" | "otpLogin" | "otpGate" | "passwordReset";
+export type LoginChannel = 'email' | 'phone';
+export type LoginStep = 'identify' | 'password' | 'otpLogin' | 'otpGate' | 'passwordReset';
 
 /**
  * Identifier-first sign-in for an academy site: look the account up first, then
@@ -51,22 +43,22 @@ export function useLogin() {
   const { t } = useTranslation();
 
   const [pending, startTransition] = useTransition();
-  const [step, setStep] = useState<LoginStep>("identify");
+  const [step, setStep] = useState<LoginStep>('identify');
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
   const [notRegistered, setNotRegistered] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [channel, setChannel] = useState<LoginChannel>("email");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [channel, setChannel] = useState<LoginChannel>('email');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
   const country = getDefaultCountry();
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   // Shown only after repeated failures — the API demands a token from then on.
   const [captchaRequired, setCaptchaRequired] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaToken, setCaptchaToken] = useState('');
 
-  const [otp, setOtp] = useState("");
+  const [otp, setOtp] = useState('');
   const [otpGate, setOtpGate] = useState<{
     tempToken: string;
     maskedPhone: string;
@@ -79,23 +71,21 @@ export function useLogin() {
 
   // Admin created this account with a one-time password — the user must pick
   // their own before a real session is granted.
-  const [resetTempToken, setResetTempToken] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [resetTempToken, setResetTempToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const identifier =
-    channel === "phone"
+    channel === 'phone'
       ? phoneNumber
         ? getFullPhoneNumber(cleanPhoneNumber(phoneNumber, country), country)
-        : ""
+        : ''
       : email.trim();
 
   // The identifier is only judged once it is complete, so the button turns on
   // exactly when a whole phone number (or email) has been typed.
   const identifierValid =
-    channel === "phone"
-      ? isValidPhoneInput(phoneNumber, country)
-      : isValidEmail(email);
+    channel === 'phone' ? isValidPhoneInput(phoneNumber, country) : isValidEmail(email);
 
   function clearFeedback() {
     setError(null);
@@ -103,24 +93,24 @@ export function useLogin() {
 
   async function finishLogin() {
     setAuthenticated(true);
-    const { loadAndMergeCart } = await import("@/app/actions/cart");
+    const { loadAndMergeCart } = await import('@/app/actions/cart');
     loadAndMergeCart().catch(() => {});
-    toast.success(t("auth.loginSuccess"), { toastId: "login-success" });
+    toast.success(t('auth.loginSuccess'), { toastId: 'login-success' });
     // Hard navigation: the account layout re-checks auth server-side on every
     // navigation, and a client-side router.push can race the cookie write and
     // bounce back to the first login step. A full reload always sees the
     // committed cookie (same fix as AdminPanel's use-delayed-redirect.ts).
-    window.location.href = safeRedirectPath(searchParams.get("redirect"), buildPath("/"));
+    window.location.href = safeRedirectPath(searchParams.get('redirect'), buildPath('/'));
   }
 
   function failed(err: unknown) {
     if (isCaptchaRequiredError(err)) setCaptchaRequired(true);
-    setCaptchaToken("");
-    setError(err instanceof Error ? err.message : t("auth.unableToLogin"));
+    setCaptchaToken('');
+    setError(err instanceof Error ? err.message : t('auth.unableToLogin'));
   }
 
   function showSentCode(sentKey: string) {
-    notifyOtpSent(t(sentKey), "login-otp");
+    notifyOtpSent(t(sentKey), 'login-otp');
   }
 
   function sendLoginOtp() {
@@ -128,17 +118,15 @@ export function useLogin() {
     clearFeedback();
     startTransition(async () => {
       try {
-        if (channel === "phone") {
+        if (channel === 'phone') {
           await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE);
         } else {
           await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL);
         }
-        setOtp("");
-        setStep("otpLogin");
+        setOtp('');
+        setStep('otpLogin');
         otpLoginTimer.start();
-        showSentCode(
-          channel === "phone" ? "auth.otpSentToPhone" : "auth.otpSentToEmail",
-        );
+        showSentCode(channel === 'phone' ? 'auth.otpSentToPhone' : 'auth.otpSentToEmail');
       } catch (err) {
         failed(err);
       }
@@ -147,43 +135,38 @@ export function useLogin() {
 
   function submitIdentify() {
     if (!identifier) {
-      setError(
-        channel === "phone" ? t("auth.phoneRequired") : t("auth.emailRequired"),
-      );
+      setError(channel === 'phone' ? t('auth.phoneRequired') : t('auth.emailRequired'));
       return;
     }
     clearFeedback();
     setNotRegistered(false);
     startTransition(async () => {
       try {
-        const result = await identifyAccount(
-          identifier,
-          captchaToken || undefined,
-        );
+        const result = await identifyAccount(identifier, captchaToken || undefined);
         setCaptchaRequired(result.captcha_required);
-        setCaptchaToken("");
+        setCaptchaToken('');
         const next = nextStepFor(result);
         // "member_elsewhere" cannot happen on an academy site (the lookup is
         // already scoped to this academy), but it means "no account here" all
         // the same, so it must never fall through to a password box.
-        if (next === "register" || next === "member_elsewhere") {
+        if (next === 'register' || next === 'member_elsewhere') {
           setNotRegistered(true);
           return;
         }
-        if (next === "panel_blocked") {
-          setError(t("auth.noSignInMethodAvailable"));
+        if (next === 'panel_blocked') {
+          setError(t('auth.noSignInMethodAvailable'));
           return;
         }
         setIdentity(result);
-        if (next === "otp") {
+        if (next === 'otp') {
           sendLoginOtp();
           return;
         }
-        if (next === "blocked") {
-          setError(t("auth.noSignInMethodAvailable"));
+        if (next === 'blocked') {
+          setError(t('auth.noSignInMethodAvailable'));
           return;
         }
-        setStep("password");
+        setStep('password');
       } catch (err) {
         failed(err);
       }
@@ -192,7 +175,7 @@ export function useLogin() {
 
   function submitPassword() {
     if (password.length < 6) {
-      setError(t("auth.passwordMinLength"));
+      setError(t('auth.passwordMinLength'));
       return;
     }
     clearFeedback();
@@ -206,7 +189,7 @@ export function useLogin() {
           temp_token?: string;
           phone?: string;
           full_phone?: string;
-        }>("/auth/public/login", {
+        }>('/auth/public/login', {
           identifier,
           password,
           academy_id: academyId,
@@ -215,18 +198,18 @@ export function useLogin() {
 
         if (result?.phone_verification_required) {
           setOtpGate({
-            tempToken: result.temp_token ?? "",
-            maskedPhone: result.phone ?? "",
-            phone: result.full_phone || result.phone || "",
+            tempToken: result.temp_token ?? '',
+            maskedPhone: result.phone ?? '',
+            phone: result.full_phone || result.phone || '',
           });
-          setOtp("");
-          setStep("otpGate");
+          setOtp('');
+          setStep('otpGate');
           otpGateTimer.start();
           return;
         }
         if (result?.password_reset_required) {
-          setResetTempToken(result.temp_token ?? "");
-          setStep("passwordReset");
+          setResetTempToken(result.temp_token ?? '');
+          setStep('passwordReset');
           return;
         }
         await finishLogin();
@@ -241,20 +224,20 @@ export function useLogin() {
     clearFeedback();
     startTransition(async () => {
       try {
-        if (step === "otpGate") {
+        if (step === 'otpGate') {
           const result = await postJson<{
             password_reset_required?: boolean;
             temp_token?: string;
-          }>("/auth/confirm-phone", {
-            temp_token: otpGate?.tempToken ?? "",
+          }>('/auth/confirm-phone', {
+            temp_token: otpGate?.tempToken ?? '',
             otp,
           });
           if (result?.password_reset_required) {
-            setResetTempToken(result.temp_token ?? "");
-            setStep("passwordReset");
+            setResetTempToken(result.temp_token ?? '');
+            setStep('passwordReset');
             return;
           }
-        } else if (channel === "phone") {
+        } else if (channel === 'phone') {
           await loginByPhoneOtp(identifier, otp);
         } else {
           await loginByEmailOtp(identifier, otp);
@@ -269,17 +252,17 @@ export function useLogin() {
 
   function submitNewPassword() {
     if (!isPasswordValid(newPassword)) {
-      setError(t("auth.passwordTooWeak"));
+      setError(t('auth.passwordTooWeak'));
       return;
     }
     if (newPassword !== confirmNewPassword) {
-      setError(t("auth.passwordsDoNotMatch"));
+      setError(t('auth.passwordsDoNotMatch'));
       return;
     }
     clearFeedback();
     startTransition(async () => {
       try {
-        await postJson("/auth/set-new-password", {
+        await postJson('/auth/set-new-password', {
           temp_token: resetTempToken,
           new_password: newPassword,
         });
@@ -292,7 +275,7 @@ export function useLogin() {
   }
 
   async function resendOtp() {
-    if (step === "otpLogin") {
+    if (step === 'otpLogin') {
       sendLoginOtp();
       otpLoginTimer.start();
       return;
@@ -303,7 +286,7 @@ export function useLogin() {
     try {
       await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION);
       otpGateTimer.start();
-      showSentCode("auth.resendOtp");
+      showSentCode('auth.resendOtp');
     } catch (err) {
       failed(err);
     } finally {
@@ -312,10 +295,10 @@ export function useLogin() {
   }
 
   function changeIdentifier() {
-    setStep("identify");
+    setStep('identify');
     setIdentity(null);
-    setPassword("");
-    setOtp("");
+    setPassword('');
+    setOtp('');
     setOtpGate(null);
     clearFeedback();
   }
@@ -330,7 +313,7 @@ export function useLogin() {
     t,
     buildPath,
     // Kept so a detour through signup still ends on the page the visitor wanted.
-    redirectParam: searchParams.get("redirect"),
+    redirectParam: searchParams.get('redirect'),
     step,
     pending,
     error,
@@ -351,9 +334,9 @@ export function useLogin() {
     setPassword: (v: string) => setPassword(toEnglishDigits(v)),
     otp,
     setOtp: (v: string) => setOtp(toEnglishDigits(v)),
-    otpTarget: step === "otpGate" ? (otpGate?.maskedPhone ?? "") : identifier,
+    otpTarget: step === 'otpGate' ? (otpGate?.maskedPhone ?? '') : identifier,
     otpResending,
-    otpTimer: step === "otpGate" ? otpGateTimer : otpLoginTimer,
+    otpTimer: step === 'otpGate' ? otpGateTimer : otpLoginTimer,
     submitIdentify,
     submitPassword,
     submitOtp,
@@ -364,8 +347,7 @@ export function useLogin() {
     newPassword,
     setNewPassword: (v: string) => setNewPassword(toEnglishDigits(v)),
     confirmNewPassword,
-    setConfirmNewPassword: (v: string) =>
-      setConfirmNewPassword(toEnglishDigits(v)),
+    setConfirmNewPassword: (v: string) => setConfirmNewPassword(toEnglishDigits(v)),
     submitNewPassword,
   };
 }

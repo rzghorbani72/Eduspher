@@ -15,21 +15,19 @@ const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
  */
 export function MarketingAnalytics() {
   const pathname = usePathname();
-  const consent = useSyncExternalStore(
-    onConsentChange,
-    getMarketingConsent,
-    () => null
-  );
+  const consent = useSyncExternalStore(onConsentChange, getMarketingConsent, () => null);
 
-  const isPrivateRoute =
-    pathname?.startsWith('/account') || pathname?.startsWith('/learn');
+  const isPrivateRoute = pathname?.startsWith('/account') || pathname?.startsWith('/learn');
   if (isPrivateRoute || consent !== 'accepted' || (!GA_ID && !CLARITY_ID)) return null;
 
   return (
     <>
       {GA_ID && (
         <>
-          <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
+          />
           <Script id="ga4-init" strategy="afterInteractive">
             {`window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}

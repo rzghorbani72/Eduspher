@@ -31,10 +31,7 @@ export function PartowFeatures({ id, config }: TemplateSectionProps) {
 
           <div className="mt-14 grid gap-16 lg:gap-24" {...editableList('items', items)}>
             {items.map((item, index) => (
-              <div
-                key={item.title}
-                className="grid items-center gap-8 lg:grid-cols-2 lg:gap-18"
-              >
+              <div key={item.title} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-18">
                 {/* Even rows put the plate first on wide screens; on narrow ones
                     the text always leads, so the order never reads as random. */}
                 <div className={index % 2 === 1 ? 'lg:order-2' : undefined}>
@@ -49,7 +46,7 @@ export function PartowFeatures({ id, config }: TemplateSectionProps) {
                   </p>
                   <h3
                     {...editableItem('items', index, 'title')}
-                    className="mt-2 max-w-[22ch] text-[clamp(21px,2.4vw,28px)] font-bold leading-[1.35]"
+                    className="mt-2 max-w-[22ch] text-[clamp(21px,2.4vw,28px)] leading-[1.35] font-bold"
                   >
                     {item.title}
                   </h3>

@@ -1,10 +1,10 @@
-import { getCategories } from "@/lib/api/server";
-import { SidebarBlock } from "./sidebar-block";
+import { getCategories } from '@/lib/api/server';
+import { SidebarBlock } from './sidebar-block';
 
 interface SidebarBlockServerProps {
   id?: string;
   config?: {
-    position?: "left" | "right";
+    position?: 'left' | 'right';
     showCategories?: boolean;
     showFilters?: boolean;
   };

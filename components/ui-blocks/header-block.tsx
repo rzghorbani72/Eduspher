@@ -1,52 +1,45 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Search, CircleUser, Menu, X } from "lucide-react";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Search, CircleUser, Menu, X } from 'lucide-react';
 
-import Link from "@/components/ui/link";
-import { Button } from "@/components/ui/button";
-import { SiteHeaderShell } from "@/components/layout/site-header-shell";
-import { cn } from "@/lib/utils";
-import {
-  useAcademyContext,
-  useStorePath,
-} from "@/components/providers/store-provider";
-import { useAuthContext } from "@/components/providers/auth-provider";
-import { useTranslation } from "@/lib/i18n/hooks";
+import Link from '@/components/ui/link';
+import { Button } from '@/components/ui/button';
+import { SiteHeaderShell } from '@/components/layout/site-header-shell';
+import { cn } from '@/lib/utils';
+import { useAcademyContext, useStorePath } from '@/components/providers/store-provider';
+import { useAuthContext } from '@/components/providers/auth-provider';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface HeaderBlockProps {
   id?: string;
   config?: {
     showLogo?: boolean;
     showNavigation?: boolean;
-    navigationStyle?: "horizontal" | "vertical";
+    navigationStyle?: 'horizontal' | 'vertical';
     sticky?: boolean;
     transparent?: boolean;
     compact?: boolean;
     minimal?: boolean;
-    style?: "default" | "code" | "creative";
+    style?: 'default' | 'code' | 'creative';
   };
   /** Editor preview: force the logged-out auth button (see BlocksRenderer). */
   previewMode?: boolean;
 }
 
-export function HeaderBlock({
-  id,
-  config,
-  previewMode = false,
-}: HeaderBlockProps) {
+export function HeaderBlock({ id, config, previewMode = false }: HeaderBlockProps) {
   const sticky = config?.sticky !== false;
   const transparent = config?.transparent === true;
   const compact = config?.compact === true;
   const minimal = config?.minimal === true;
-  const style = config?.style ?? "default";
+  const style = config?.style ?? 'default';
 
-  if (style === "code") {
+  if (style === 'code') {
     return <CodeHeader id={id} sticky={sticky} previewMode={previewMode} />;
   }
 
-  if (style === "creative") {
+  if (style === 'creative') {
     return <CreativeHeader id={id} sticky={sticky} previewMode={previewMode} />;
   }
 
@@ -54,24 +47,20 @@ export function HeaderBlock({
   // landmark itself, and nesting two would announce the header twice.
   return (
     <div
-      id={id || "header"}
-      className={cn(
-        sticky && "sticky top-0 z-50",
-        transparent && "absolute left-0 right-0 top-0",
-      )}
+      id={id || 'header'}
+      className={cn(sticky && 'sticky top-0 z-50', transparent && 'absolute top-0 right-0 left-0')}
     >
       <div
         className={cn(
-          "w-full border-b transition-all backdrop-blur-md",
-          compact && "py-2",
-          (transparent || minimal) && "border-none bg-transparent",
+          'w-full border-b backdrop-blur-md transition-all',
+          compact && 'py-2',
+          (transparent || minimal) && 'border-none bg-transparent',
         )}
         style={
           !transparent && !minimal
             ? {
-                backgroundColor:
-                  "color-mix(in srgb, var(--theme-background) 88%, transparent)",
-                borderColor: "var(--theme-border-color)",
+                backgroundColor: 'color-mix(in srgb, var(--theme-background) 88%, transparent)',
+                borderColor: 'var(--theme-border-color)',
               }
             : undefined
         }
@@ -99,32 +88,32 @@ function CreativeHeader({
   const isAuthenticated = previewMode ? false : signedIn;
   const buildPath = useStorePath();
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { href: "/courses", label: t("navigation.courses") },
-    { href: "/about", label: t("navigation.aboutUs") },
-    { href: "/pricing", label: t("footer.pricing") },
+    { href: '/courses', label: t('navigation.courses') },
+    { href: '/about', label: t('navigation.aboutUs') },
+    { href: '/pricing', label: t('footer.pricing') },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : "";
+    const params = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : '';
     router.push(buildPath(`/courses${params}`));
   };
 
   return (
     <header
-      id={id || "header"}
+      id={id || 'header'}
       className={cn(
-        "z-50 w-full border-b border-(--theme-border-color) bg-(--theme-surface)/95 backdrop-blur-md transition-all",
-        sticky && "sticky top-0",
+        'z-50 w-full border-b border-(--theme-border-color) bg-(--theme-surface)/95 backdrop-blur-md transition-all',
+        sticky && 'sticky top-0',
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-5 px-4 sm:px-6">
         <Link
-          href={buildPath("/")}
+          href={buildPath('/')}
           className="shrink-0 text-xl font-black text-(--theme-foreground)"
         >
           {academyName}
@@ -139,7 +128,7 @@ function CreativeHeader({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("courses.searchPlaceholder")}
+            placeholder={t('courses.searchPlaceholder')}
             className="w-full bg-transparent! text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
           />
         </form>
@@ -159,25 +148,25 @@ function CreativeHeader({
         <div className="flex shrink-0 items-center gap-2.5">
           {isAuthenticated ? (
             <Link
-              href={buildPath("/account")}
+              href={buildPath('/account')}
               className="hidden h-9 items-center gap-2 rounded-full border border-(--theme-border-strong) px-3 text-sm font-medium text-(--theme-foreground) md:inline-flex"
             >
               <CircleUser className="h-5 w-5 text-(--theme-primary)" />
-              {t("account.myCourses")}
+              {t('account.myCourses')}
             </Link>
           ) : (
             <>
               <Link
-                href={buildPath("/auth/login")}
+                href={buildPath('/auth/login')}
                 className="hidden rounded-full border border-(--theme-border-strong) px-4 py-2 text-sm font-bold text-(--theme-foreground) transition-colors hover:bg-(--theme-surface-alt) md:inline-block"
               >
-                {t("auth.login")}
+                {t('auth.login')}
               </Link>
               <Link
-                href={buildPath("/auth/register")}
+                href={buildPath('/auth/register')}
                 className="rounded-(--theme-border-radius) bg-(--theme-primary) px-4 py-2 text-sm font-extrabold text-(--theme-on-primary) transition-opacity hover:opacity-90"
               >
-                {t("auth.startFree")}
+                {t('auth.startFree')}
               </Link>
             </>
           )}
@@ -187,11 +176,7 @@ function CreativeHeader({
             className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--theme-border-strong) text-(--theme-foreground) lg:hidden"
             aria-label="Toggle navigation"
           >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
@@ -233,41 +218,36 @@ function CodeHeader({
   const isAuthenticated = previewMode ? false : signedIn;
   const buildPath = useStorePath();
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { href: "/courses", label: t("navigation.courses") },
-    { href: "/paths", label: t("navigation.roadmap") },
-    { href: "/pricing", label: t("footer.pricing") },
-    { href: "/about", label: t("navigation.aboutUs") },
+    { href: '/courses', label: t('navigation.courses') },
+    { href: '/paths', label: t('navigation.roadmap') },
+    { href: '/pricing', label: t('footer.pricing') },
+    { href: '/about', label: t('navigation.aboutUs') },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : "";
+    const params = query.trim() ? `?q=${encodeURIComponent(query.trim())}` : '';
     router.push(buildPath(`/courses${params}`));
   };
 
   return (
     <header
-      id={id || "header"}
+      id={id || 'header'}
       className={cn(
-        "z-50 w-full border-b border-(--theme-border-color) bg-(--theme-background)/95 backdrop-blur-md transition-all",
-        sticky && "sticky top-0",
+        'z-50 w-full border-b border-(--theme-border-color) bg-(--theme-background)/95 backdrop-blur-md transition-all',
+        sticky && 'sticky top-0',
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-5 px-4 sm:px-6">
-        <Link
-          href={buildPath("/")}
-          className="flex shrink-0 items-center gap-2.5"
-        >
+        <Link href={buildPath('/')} className="flex shrink-0 items-center gap-2.5">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-(--theme-primary) font-mono text-sm font-black tracking-tighter text-(--theme-on-primary)">
-            {"</>"}
+            {'</>'}
           </div>
-          <span className="text-lg font-bold text-(--theme-foreground)">
-            {academyName}
-          </span>
+          <span className="text-lg font-bold text-(--theme-foreground)">{academyName}</span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">
@@ -291,7 +271,7 @@ function CodeHeader({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("courses.searchPlaceholder")}
+            placeholder={t('courses.searchPlaceholder')}
             className="w-full bg-transparent! text-sm text-(--theme-foreground) outline-none placeholder:text-(--theme-foreground)/35"
           />
         </form>
@@ -299,28 +279,26 @@ function CodeHeader({
         <div className="mr-auto flex shrink-0 items-center gap-2.5">
           {isAuthenticated ? (
             <Link
-              href={buildPath("/account")}
+              href={buildPath('/account')}
               className="hidden h-9 items-center gap-2 rounded-full border border-(--theme-border-strong) px-3 text-sm font-medium text-(--theme-foreground) md:inline-flex"
             >
               <CircleUser className="h-5 w-5 text-(--theme-primary)" />
-              {t("account.myCourses")}
+              {t('account.myCourses')}
             </Link>
           ) : (
             <>
               <Link
-                href={buildPath("/auth/login")}
+                href={buildPath('/auth/login')}
                 className="hidden rounded-lg px-3.5 py-2 text-sm font-semibold text-(--theme-foreground)/65 transition-colors hover:bg-(--theme-surface-alt) hover:text-(--theme-foreground) md:inline-block"
               >
-                {t("auth.login")}
+                {t('auth.login')}
               </Link>
               <Button
                 asChild
                 size="sm"
                 className="rounded-(--theme-border-radius) bg-(--theme-primary) font-bold text-(--theme-on-primary) hover:opacity-90"
               >
-                <Link href={buildPath("/auth/register")}>
-                  {t("auth.startFree")}
-                </Link>
+                <Link href={buildPath('/auth/register')}>{t('auth.startFree')}</Link>
               </Button>
             </>
           )}
@@ -332,11 +310,7 @@ function CodeHeader({
           className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-(--theme-border-strong) text-(--theme-foreground) lg:hidden"
           aria-label="Toggle navigation"
         >
-          {mobileOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 

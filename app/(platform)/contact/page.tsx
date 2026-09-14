@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
-import { PlatformContactPage } from "@/components/panel/platform-contact/platform-contact-page";
-import { AcademyStaticPageView } from "@/components/academy/academy-static-page";
-import { getServerAdminPanelUrl } from "@/lib/admin-panel-url.server";
-import { getAcademySiteContent } from "@/lib/api/server";
-import { getAcademyContext } from "@/lib/store-context";
-import { t } from "@/lib/i18n/server-translations";
-import { buildSiteMetadata } from "@/lib/seo/build-metadata";
-import { getPlatformPageSeo } from "@/lib/seo/platform-pages";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
+import { PlatformContactPage } from '@/components/panel/platform-contact/platform-contact-page';
+import { AcademyStaticPageView } from '@/components/academy/academy-static-page';
+import { getServerAdminPanelUrl } from '@/lib/admin-panel-url.server';
+import { getAcademySiteContent } from '@/lib/api/server';
+import { getAcademyContext } from '@/lib/store-context';
+import { t } from '@/lib/i18n/server-translations';
+import { buildSiteMetadata } from '@/lib/seo/build-metadata';
+import { getPlatformPageSeo } from '@/lib/seo/platform-pages';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 /**
  * The academy's own contact page. Unlike `/about` it still renders when the
@@ -25,15 +25,15 @@ const loadAcademyContact = async () => {
   const content = await getAcademySiteContent(store.slug);
   if (!content) return null;
 
-  const page = content.pages.find((entry) => entry.slug === "contact") ?? null;
+  const page = content.pages.find((entry) => entry.slug === 'contact') ?? null;
   if (!page && content.links.length === 0) return null;
 
   return {
     content,
     page: page ?? {
-      slug: "contact" as const,
-      title: t("academySite.contactFallbackTitle"),
-      body: "",
+      slug: 'contact' as const,
+      title: t('academySite.contactFallbackTitle'),
+      body: '',
       is_published: true,
       updated_at: null,
     },
@@ -46,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
     return { title: `${academy.page.title} | ${academy.content.academy_name}` };
   }
   const ctx = await getSeoRequestContext();
-  const pageSeo = getPlatformPageSeo("/contact");
+  const pageSeo = getPlatformPageSeo('/contact');
   return buildSiteMetadata({
     title: pageSeo?.title,
     description: pageSeo?.description,
@@ -60,18 +60,13 @@ export default async function ContactPage() {
 
   if (store.slug) {
     if (!academy) notFound();
-    return (
-      <AcademyStaticPageView
-        page={academy.page}
-        links={academy.content.links}
-      />
-    );
+    return <AcademyStaticPageView page={academy.page} links={academy.content.links} />;
   }
 
   const [adminLoginUrl, adminRegisterUrl, panelSupportUrl] = await Promise.all([
-    getServerAdminPanelUrl("/login"),
-    getServerAdminPanelUrl("/register"),
-    getServerAdminPanelUrl("/support"),
+    getServerAdminPanelUrl('/login'),
+    getServerAdminPanelUrl('/register'),
+    getServerAdminPanelUrl('/support'),
   ]);
   return (
     <PlatformContactPage

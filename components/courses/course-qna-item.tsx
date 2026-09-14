@@ -1,17 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { BadgeCheck, Clock3 } from "lucide-react";
+import { useState } from 'react';
+import { BadgeCheck, Clock3 } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn } from "@/lib/utils";
-import {
-  answerCourseQnA,
-  approveCourseQnA,
-  type CourseQnA,
-} from "@/lib/api/client";
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
+import { answerCourseQnA, approveCourseQnA, type CourseQnA } from '@/lib/api/client';
 
 type CourseQnAItemProps = {
   item: CourseQnA;
@@ -20,18 +16,13 @@ type CourseQnAItemProps = {
   onChanged: () => void | Promise<void>;
 };
 
-export function CourseQnAItem({
-  item,
-  canModerate,
-  dateLabel,
-  onChanged,
-}: CourseQnAItemProps) {
+export function CourseQnAItem({ item, canModerate, dateLabel, onChanged }: CourseQnAItemProps) {
   const { t } = useTranslation();
-  const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] = useState('');
   const [isAnswering, setIsAnswering] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const name = item.profile?.display_name ?? t("courseQnA.student");
+  const name = item.profile?.display_name ?? t('courseQnA.student');
 
   const run = async (work: () => Promise<void>) => {
     try {
@@ -40,7 +31,7 @@ export function CourseQnAItem({
       await work();
       await onChanged();
     } catch {
-      setError(t("courseQnA.submitFailed"));
+      setError(t('courseQnA.submitFailed'));
     } finally {
       setBusy(false);
     }
@@ -48,10 +39,7 @@ export function CourseQnAItem({
 
   return (
     <article
-      className={cn(
-        "cd-review-card rounded-2xl border p-5",
-        !item.is_approved && "border-dashed",
-      )}
+      className={cn('cd-review-card rounded-2xl border p-5', !item.is_approved && 'border-dashed')}
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
@@ -61,12 +49,12 @@ export function CourseQnAItem({
         {item.is_approved ? (
           <span className="cd-rating-pill inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold">
             <BadgeCheck className="h-3.5 w-3.5" />
-            {t("courseQnA.published")}
+            {t('courseQnA.published')}
           </span>
         ) : (
           <span className="inline-flex items-center gap-1 rounded-full bg-[color-mix(in_srgb,var(--theme-primary)_12%,transparent)] px-2.5 py-1 text-xs font-bold text-(--theme-primary)">
             <Clock3 className="h-3.5 w-3.5" />
-            {item.mine ? t("courseQnA.pendingYours") : t("courseQnA.pending")}
+            {item.mine ? t('courseQnA.pendingYours') : t('courseQnA.pending')}
           </span>
         )}
       </div>
@@ -76,7 +64,7 @@ export function CourseQnAItem({
       {item.answer && (
         <div className="mt-4 border-s-2 border-(--theme-primary) ps-4">
           <p className="text-xs font-bold text-(--theme-primary)">
-            {item.answerer?.display_name ?? t("courseQnA.instructor")}
+            {item.answerer?.display_name ?? t('courseQnA.instructor')}
           </p>
           <p className="mt-1 text-sm leading-relaxed text-(--theme-muted)">{item.answer}</p>
         </div>
@@ -89,10 +77,14 @@ export function CourseQnAItem({
               type="button"
               size="sm"
               disabled={busy}
-              onClick={() => run(async () => { await approveCourseQnA(item.course_id, item.id, true); })}
+              onClick={() =>
+                run(async () => {
+                  await approveCourseQnA(item.course_id, item.id, true);
+                })
+              }
               className="cd-cta-btn h-9 px-4 text-xs font-extrabold text-white hover:scale-100"
             >
-              {t("courseQnA.publish")}
+              {t('courseQnA.publish')}
             </Button>
           )}
           {item.is_approved && (
@@ -101,10 +93,14 @@ export function CourseQnAItem({
               size="sm"
               variant="outline"
               disabled={busy}
-              onClick={() => run(async () => { await approveCourseQnA(item.course_id, item.id, false); })}
+              onClick={() =>
+                run(async () => {
+                  await approveCourseQnA(item.course_id, item.id, false);
+                })
+              }
               className="h-9 px-4 text-xs hover:scale-100"
             >
-              {t("courseQnA.unpublish")}
+              {t('courseQnA.unpublish')}
             </Button>
           )}
           {!item.answer && !isAnswering && (
@@ -116,7 +112,7 @@ export function CourseQnAItem({
               onClick={() => setIsAnswering(true)}
               className="h-9 px-4 text-xs hover:scale-100"
             >
-              {t("courseQnA.answer")}
+              {t('courseQnA.answer')}
             </Button>
           )}
         </div>
@@ -127,7 +123,7 @@ export function CourseQnAItem({
           <Textarea
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            placeholder={t("courseQnA.answerPlaceholder")}
+            placeholder={t('courseQnA.answerPlaceholder')}
             rows={3}
             maxLength={2000}
             className="cd-review-field min-h-[5.5rem] rounded-xl border px-4 py-3 text-sm shadow-sm placeholder:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--theme-primary)"
@@ -141,12 +137,12 @@ export function CourseQnAItem({
                 run(async () => {
                   await answerCourseQnA(item.course_id, item.id, answer.trim());
                   setIsAnswering(false);
-                  setAnswer("");
+                  setAnswer('');
                 })
               }
               className="cd-cta-btn h-9 px-4 text-xs font-extrabold text-white hover:scale-100"
             >
-              {t("courseQnA.submitAnswer")}
+              {t('courseQnA.submitAnswer')}
             </Button>
             <Button
               type="button"
@@ -155,11 +151,11 @@ export function CourseQnAItem({
               disabled={busy}
               onClick={() => {
                 setIsAnswering(false);
-                setAnswer("");
+                setAnswer('');
               }}
               className="h-9 px-4 text-xs hover:scale-100"
             >
-              {t("common.cancel")}
+              {t('common.cancel')}
             </Button>
           </div>
         </div>

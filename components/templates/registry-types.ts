@@ -50,4 +50,6 @@ export type TemplateSectionType =
   | 'cta'
   | 'footer';
 
-export type TemplateSectionMap = Partial<Record<TemplateSectionType, ComponentType<TemplateSectionProps>>>;
+export type TemplateSectionMap = Partial<
+  Record<TemplateSectionType, ComponentType<TemplateSectionProps>>
+>;

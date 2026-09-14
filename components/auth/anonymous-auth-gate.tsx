@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState, type ReactNode } from "react";
-import { resetAnonymousAuthClient } from "@/lib/drop-login-session";
+import { useEffect, useState, type ReactNode } from 'react';
+import { resetAnonymousAuthClient } from '@/lib/drop-login-session';
 
 /** Wait until leftover session cookies and person/staff data are gone. */
 export function AnonymousAuthGate({ children }: { children: ReactNode }) {

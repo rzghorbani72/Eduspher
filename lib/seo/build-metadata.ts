@@ -1,20 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-import { env } from "@/lib/env";
-import { getAcademyBySlug } from "@/lib/api/server";
-import { getAcademyContext } from "@/lib/store-context";
-import { resolveAssetUrl } from "@/lib/utils";
-import { MENTOMA_ASSETS, mentomaSiteName } from "./brand";
-import { seoDomains } from "./domains";
-import { getTrustBadge } from "@/lib/api/trust-badge";
-import { ENAMAD_CODE } from "./enamad";
-import { getPlatformPageSeo } from "./platform-pages";
-import { NOINDEX_ROBOTS } from "./crawl-policy";
-import {
-  getSeoRequestContext,
-  shouldNoIndexPath,
-  type SeoRequestContext,
-} from "./request-context";
+import { env } from '@/lib/env';
+import { getAcademyBySlug } from '@/lib/api/server';
+import { getAcademyContext } from '@/lib/store-context';
+import { resolveAssetUrl } from '@/lib/utils';
+import { MENTOMA_ASSETS, mentomaSiteName } from './brand';
+import { seoDomains } from './domains';
+import { getTrustBadge } from '@/lib/api/trust-badge';
+import { ENAMAD_CODE } from './enamad';
+import { getPlatformPageSeo } from './platform-pages';
+import { NOINDEX_ROBOTS } from './crawl-policy';
+import { getSeoRequestContext, shouldNoIndexPath, type SeoRequestContext } from './request-context';
 
 type BuildMetadataOptions = {
   title?: string;
@@ -30,8 +26,7 @@ type AcademyBranding = {
   ogImageUrl: string | null;
 };
 
-const trimmed = (value: string | null | undefined): string | null =>
-  value?.trim() || null;
+const trimmed = (value: string | null | undefined): string | null => value?.trim() || null;
 
 /**
  * The academy's own brand and manager-authored SEO text, so search results and
@@ -41,9 +36,7 @@ const trimmed = (value: string | null | undefined): string | null =>
  *
  * `getAcademyBySlug` is request-cached, so asking for all of it costs one fetch.
  */
-async function resolveAcademyBranding(
-  ctx: SeoRequestContext,
-): Promise<AcademyBranding> {
+async function resolveAcademyBranding(ctx: SeoRequestContext): Promise<AcademyBranding> {
   const none: AcademyBranding = {
     name: null,
     iconUrl: null,
@@ -65,8 +58,7 @@ async function resolveAcademyBranding(
       metaTitle: trimmed(academy.meta_title),
       // The manager's own academy description is a far better fallback than our
       // platform copy, which describes us and not them.
-      metaDescription:
-        trimmed(academy.meta_description) ?? trimmed(academy.description),
+      metaDescription: trimmed(academy.meta_description) ?? trimmed(academy.description),
       ogImageUrl: ogUrl ? resolveAssetUrl(ogUrl) : null,
     };
   } catch {
@@ -74,23 +66,19 @@ async function resolveAcademyBranding(
   }
 }
 
-const PLATFORM_ICONS: NonNullable<Metadata["icons"]> = {
+const PLATFORM_ICONS: NonNullable<Metadata['icons']> = {
   icon: [
-    { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
-    { url: MENTOMA_ASSETS.icon48, sizes: "48x48", type: "image/png" },
-    { url: MENTOMA_ASSETS.icon192, sizes: "192x192", type: "image/png" },
-    { url: MENTOMA_ASSETS.icon512, sizes: "512x512", type: "image/png" },
-    { url: MENTOMA_ASSETS.markSvg, type: "image/svg+xml" },
+    { url: '/favicon.ico', sizes: '48x48', type: 'image/x-icon' },
+    { url: MENTOMA_ASSETS.icon48, sizes: '48x48', type: 'image/png' },
+    { url: MENTOMA_ASSETS.icon192, sizes: '192x192', type: 'image/png' },
+    { url: MENTOMA_ASSETS.icon512, sizes: '512x512', type: 'image/png' },
+    { url: MENTOMA_ASSETS.markSvg, type: 'image/svg+xml' },
   ],
   shortcut: MENTOMA_ASSETS.icon48,
-  apple: [
-    { url: MENTOMA_ASSETS.appleTouch, sizes: "180x180", type: "image/png" },
-  ],
+  apple: [{ url: MENTOMA_ASSETS.appleTouch, sizes: '180x180', type: 'image/png' }],
 };
 
-export async function buildSiteMetadata(
-  options: BuildMetadataOptions = {},
-): Promise<Metadata> {
+export async function buildSiteMetadata(options: BuildMetadataOptions = {}): Promise<Metadata> {
   const ctx = options.ctx ?? (await getSeoRequestContext());
   const platformPage = ctx.isPlatform ? getPlatformPageSeo(ctx.pathname) : null;
 
@@ -104,17 +92,12 @@ export async function buildSiteMetadata(
 
   // Platform SERP site-name must be منتوما — never a Latin-only fallback.
   const brandName =
-    academyName ??
-    (ctx.isPlatform ? mentomaSiteName(ctx.region) : seoDomains.siteName);
-  const baseTitle =
-    options.title ?? platformPage?.title ?? metaTitle ?? brandName;
+    academyName ?? (ctx.isPlatform ? mentomaSiteName(ctx.region) : seoDomains.siteName);
+  const baseTitle = options.title ?? platformPage?.title ?? metaTitle ?? brandName;
   const academyBadge =
-    !ctx.isPlatform && ctx.academySlug
-      ? await getTrustBadge(ctx.academySlug)
-      : null;
-  const isPlatformHome =
-    ctx.isPlatform && ctx.region === "ir" && ctx.pathname === "/";
-  const isAcademyHome = !ctx.isPlatform && ctx.pathname === "/";
+    !ctx.isPlatform && ctx.academySlug ? await getTrustBadge(ctx.academySlug) : null;
+  const isPlatformHome = ctx.isPlatform && ctx.region === 'ir' && ctx.pathname === '/';
+  const isAcademyHome = !ctx.isPlatform && ctx.pathname === '/';
   const enamadCode = isPlatformHome
     ? ENAMAD_CODE
     : isAcademyHome
@@ -130,14 +113,10 @@ export async function buildSiteMetadata(
     seoDomains.siteDescription;
 
   const noIndex = shouldNoIndexPath(ctx.pathname);
-  const openGraphLocale = ctx.region === "ir" ? "fa_IR" : "en_US";
-  const alternateLocale = ctx.region === "ir" ? "en_US" : "fa_IR";
-  const titleIsFullyBranded = Boolean(
-    ctx.isPlatform && (options.title || platformPage),
-  );
-  const platformOgImage = ctx.isPlatform
-    ? `${env.appUrl}/landing/hero-wide.webp`
-    : null;
+  const openGraphLocale = ctx.region === 'ir' ? 'fa_IR' : 'en_US';
+  const alternateLocale = ctx.region === 'ir' ? 'en_US' : 'fa_IR';
+  const titleIsFullyBranded = Boolean(ctx.isPlatform && (options.title || platformPage));
+  const platformOgImage = ctx.isPlatform ? `${env.appUrl}/landing/hero-wide.webp` : null;
   const shareImage = ogImageUrl ?? platformOgImage;
   const keywords = platformPage?.keywords;
 
@@ -158,21 +137,21 @@ export async function buildSiteMetadata(
             title: brandName,
             capable: true,
           },
-          manifest: "/site.webmanifest",
+          manifest: '/site.webmanifest',
         }
       : {}),
     alternates: {
       canonical: ctx.canonicalUrl,
       languages: {
-        "fa-IR": ctx.alternateUrls.faIR,
+        'fa-IR': ctx.alternateUrls.faIR,
         en: ctx.alternateUrls.en,
-        "x-default": ctx.alternateUrls.xDefault,
+        'x-default': ctx.alternateUrls.xDefault,
       },
     },
     openGraph: {
       title,
       description,
-      type: "website",
+      type: 'website',
       url: ctx.canonicalUrl,
       siteName: brandName,
       locale: openGraphLocale,
@@ -180,7 +159,7 @@ export async function buildSiteMetadata(
       ...(shareImage ? { images: [{ url: shareImage }] } : {}),
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title,
       description,
       ...(shareImage ? { images: [shareImage] } : {}),
@@ -191,8 +170,6 @@ export async function buildSiteMetadata(
         ? PLATFORM_ICONS
         : undefined,
     ...(enamadCode ? { other: { enamad: enamadCode } } : {}),
-    robots: noIndex
-      ? NOINDEX_ROBOTS
-      : { index: true, follow: true },
+    robots: noIndex ? NOINDEX_ROBOTS : { index: true, follow: true },
   };
 }

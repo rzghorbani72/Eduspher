@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   createContext,
@@ -8,13 +8,10 @@ import {
   useContext,
   useMemo,
   useState,
-} from "react";
-import { usePathname } from "next/navigation";
+} from 'react';
+import { usePathname } from 'next/navigation';
 
-import {
-  buildAcademyPathFromSlug,
-  slugFromPathname,
-} from "@/lib/academy-path";
+import { buildAcademyPathFromSlug, slugFromPathname } from '@/lib/academy-path';
 
 type StoreState = {
   id: string | null;
@@ -59,7 +56,7 @@ export const StoreProvider = ({ initialValue, children }: StoreProviderProps) =>
 export const useAcademyContext = () => {
   const context = useContext(TenantAcademyContext);
   if (!context) {
-    throw new Error("useAcademyContext must be used within a StoreProvider");
+    throw new Error('useAcademyContext must be used within a StoreProvider');
   }
   return context;
 };

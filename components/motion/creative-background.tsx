@@ -23,11 +23,19 @@ interface CreativeBackgroundProps {
   className?: string;
 }
 
-export function CreativeBackground({ theme, storeIcons = [], className = '' }: CreativeBackgroundProps) {
+export function CreativeBackground({
+  theme,
+  storeIcons = [],
+  className = '',
+}: CreativeBackgroundProps) {
   // Hooks must run unconditionally; the `!theme` early return lives below them.
   // `mounted` is false during SSR/first render and true after hydration, which
   // keeps CSS-variable resolution and system-pref matching off the server.
-  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
   const [isDark, setIsDark] = useState(() => theme?.dark_mode === true);
 
   // Watch for dark mode changes after mount
@@ -35,7 +43,9 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
     if (!mounted || !theme) return;
 
     const updateDarkMode = () => {
-      const newIsDark = theme.dark_mode === true || (theme.dark_mode === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const newIsDark =
+        theme.dark_mode === true ||
+        (theme.dark_mode === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
       setIsDark(newIsDark);
     };
 
@@ -45,7 +55,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
     if (theme.dark_mode === null) {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       mediaQuery.addEventListener('change', updateDarkMode);
-      
+
       return () => {
         mediaQuery.removeEventListener('change', updateDarkMode);
       };
@@ -55,11 +65,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
   // Get colors - use light/dark variants based on current mode
   // Use consistent logic for server and initial client render
   const primaryColorRaw = isDark
-    ? (theme?.primary_color_dark || theme?.primary_color || '#60a5fa')
-    : (theme?.primary_color_light || theme?.primary_color || '#3b82f6');
+    ? theme?.primary_color_dark || theme?.primary_color || '#60a5fa'
+    : theme?.primary_color_light || theme?.primary_color || '#3b82f6';
   const secondaryColorRaw = isDark
-    ? (theme?.secondary_color_dark || theme?.secondary_color || '#818cf8')
-    : (theme?.secondary_color_light || theme?.secondary_color || '#6366f1');
+    ? theme?.secondary_color_dark || theme?.secondary_color || '#818cf8'
+    : theme?.secondary_color_light || theme?.secondary_color || '#6366f1';
   const accentColorRaw = theme?.accent_color || '#f59e0b';
 
   // Resolve colors on client side (handle CSS variables) - only after mount
@@ -73,12 +83,14 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
       // After mount, resolve CSS variables
       const varName = color.match(/var\(([^)]+)\)/)?.[1]?.trim();
       if (varName) {
-        const computed = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        const computed = getComputedStyle(document.documentElement)
+          .getPropertyValue(varName)
+          .trim();
         return computed || fallback;
       }
       return fallback;
     }
-    
+
     // Convert rgb to hex if needed
     if (color.startsWith('rgb')) {
       const rgbMatch = color.match(/(\d+),\s*(\d+),\s*(\d+)/);
@@ -89,7 +101,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
         return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
       }
     }
-    
+
     // Return color as-is (should be hex format)
     return color || fallback;
   };
@@ -129,7 +141,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
   const withOpacity = (color: string, opacity: number) => {
     // Ensure we have a valid hex color
     let hexColor = color;
-    
+
     // If it's not a hex, try to convert it
     if (!color.startsWith('#')) {
       // If it's rgb, convert to hex
@@ -147,20 +159,20 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
         hexColor = `#${color.replace('#', '')}`;
       }
     }
-    
+
     // Remove # if present
     const cleanColor = hexColor.replace('#', '');
-    
+
     // Ensure it's 6 characters
     if (cleanColor.length !== 6) {
       return `rgba(59, 130, 246, ${opacity})`; // fallback blue
     }
-    
+
     // Convert to rgba for better browser support
     const r = parseInt(cleanColor.slice(0, 2), 16);
     const g = parseInt(cleanColor.slice(2, 4), 16);
     const b = parseInt(cleanColor.slice(4, 6), 16);
-    
+
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
 
@@ -174,7 +186,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
         <>
           <motion.div
             key={`blob-1-${primaryColor}-${secondaryColor}`}
-            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
+            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
             }}
@@ -190,12 +202,12 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 20 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
             key={`blob-2-${accentColor}-${primaryColor}`}
-            className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
+            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
             }}
@@ -211,12 +223,12 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 25 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
             key={`blob-3-${secondaryColor}-${accentColor}`}
-            className="absolute bottom-0 left-1/2 w-[450px] h-[450px] rounded-full blur-[120px]"
+            className="absolute bottom-0 left-1/2 h-[450px] w-[450px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.75)}, ${withOpacity(accentColor, 0.8)})`,
             }}
@@ -227,7 +239,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 30 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
         </>
@@ -238,7 +250,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
+            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.7)}, ${withOpacity(secondaryColor, 0.75)})`,
             }}
@@ -249,11 +261,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 25 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
+            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.7)}, ${withOpacity(accentColor, 0.75)})`,
             }}
@@ -264,11 +276,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 30 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-1/2 w-[450px] h-[450px] rounded-full blur-[120px]"
+            className="absolute bottom-0 left-1/2 h-[450px] w-[450px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
             }}
@@ -279,11 +291,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 35 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full blur-[120px]"
+            className="absolute top-1/2 left-0 h-[400px] w-[400px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
             }}
@@ -294,7 +306,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 28 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
         </>
@@ -319,14 +331,24 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
                   left: `${startX}%`,
                 }}
                 animate={{
-                  x: ['0vw', `${(i % 2 === 0 ? 1 : -1) * (60 + i * 15)}vw`, `${(i % 2 === 0 ? -1 : 1) * (40 + i * 10)}vw`, '0vw'],
-                  y: ['0vh', `${(i % 3 === 0 ? 1 : -1) * (50 + i * 12)}vh`, `${(i % 3 === 0 ? -1 : 1) * (30 + i * 8)}vh`, '0vh'],
+                  x: [
+                    '0vw',
+                    `${(i % 2 === 0 ? 1 : -1) * (60 + i * 15)}vw`,
+                    `${(i % 2 === 0 ? -1 : 1) * (40 + i * 10)}vw`,
+                    '0vw',
+                  ],
+                  y: [
+                    '0vh',
+                    `${(i % 3 === 0 ? 1 : -1) * (50 + i * 12)}vh`,
+                    `${(i % 3 === 0 ? -1 : 1) * (30 + i * 8)}vh`,
+                    '0vh',
+                  ],
                   scale: [1, 1.3, 0.8, 1],
                 }}
                 transition={{
                   duration: (15 + i * 3) * baseDuration,
                   repeat: Infinity,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                   delay: i * 0.8,
                 }}
               />
@@ -340,7 +362,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
+            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
             }}
@@ -351,11 +373,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 22 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px]"
+            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
             }}
@@ -366,11 +388,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 28 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute bottom-0 left-0 w-[450px] h-[450px] rounded-full blur-[120px]"
+            className="absolute bottom-0 left-0 h-[450px] w-[450px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.75)}, ${withOpacity(primaryColor, 0.8)})`,
             }}
@@ -381,11 +403,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 26 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full blur-[120px]"
+            className="absolute right-0 bottom-0 h-[400px] w-[400px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.75)}, ${withOpacity(secondaryColor, 0.8)})`,
             }}
@@ -396,7 +418,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 24 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
         </>
@@ -421,13 +443,23 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
                   left: `${10 + col * 25}%`,
                 }}
                 animate={{
-                  x: ['0vw', `${(i % 2 === 0 ? 1 : -1) * (40 + i * 5)}vw`, `${(i % 2 === 0 ? -1 : 1) * (20 + i * 3)}vw`, '0vw'],
-                  y: ['0vh', `${(i % 3 === 0 ? 1 : -1) * (35 + i * 4)}vh`, `${(i % 3 === 0 ? -1 : 1) * (25 + i * 3)}vh`, '0vh'],
+                  x: [
+                    '0vw',
+                    `${(i % 2 === 0 ? 1 : -1) * (40 + i * 5)}vw`,
+                    `${(i % 2 === 0 ? -1 : 1) * (20 + i * 3)}vw`,
+                    '0vw',
+                  ],
+                  y: [
+                    '0vh',
+                    `${(i % 3 === 0 ? 1 : -1) * (35 + i * 4)}vh`,
+                    `${(i % 3 === 0 ? -1 : 1) * (25 + i * 3)}vh`,
+                    '0vh',
+                  ],
                 }}
                 transition={{
                   duration: (18 + i * 2) * baseDuration,
                   repeat: Infinity,
-                  ease: "easeInOut",
+                  ease: 'easeInOut',
                   delay: i * 0.5,
                 }}
               />
@@ -441,7 +473,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
       return (
         <>
           <motion.div
-            className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full blur-[120px]"
+            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
             }}
@@ -453,11 +485,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 20 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute bottom-0 right-0 w-80 h-80 rounded-full blur-3xl"
+            className="absolute right-0 bottom-0 h-80 w-80 rounded-full blur-3xl"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
             }}
@@ -469,11 +501,11 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 25 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
           <motion.div
-            className="absolute top-1/2 left-1/2 w-[400px] h-[400px] rounded-full blur-[120px]"
+            className="absolute top-1/2 left-1/2 h-[400px] w-[400px] rounded-full blur-[120px]"
             style={{
               background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.75)}, ${withOpacity(primaryColor, 0.8)})`,
             }}
@@ -485,7 +517,7 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
             transition={{
               duration: 30 * baseDuration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut',
             }}
           />
         </>
@@ -496,12 +528,16 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
   };
 
   return (
-    <div className={`fixed inset-0 -z-10 overflow-hidden pointer-events-none ${className}`}>
+    <div className={`pointer-events-none fixed inset-0 -z-10 overflow-hidden ${className}`}>
       {/* Motion-based animations for blobs, waves, particles, mesh, grid, gradient */}
-      {(animationType === 'blobs' || animationType === 'waves' || animationType === 'particles' || 
-        animationType === 'mesh' || animationType === 'grid' || animationType === 'gradient' || !animationType) && 
-        renderMotionBlobs()
-      }
+      {(animationType === 'blobs' ||
+        animationType === 'waves' ||
+        animationType === 'particles' ||
+        animationType === 'mesh' ||
+        animationType === 'grid' ||
+        animationType === 'gradient' ||
+        !animationType) &&
+        renderMotionBlobs()}
 
       {/* Flying icons from store - always rendered if icons are available */}
       {resolvedIcons.length > 0 && (
@@ -515,4 +551,3 @@ export function CreativeBackground({ theme, storeIcons = [], className = '' }: C
     </div>
   );
 }
-

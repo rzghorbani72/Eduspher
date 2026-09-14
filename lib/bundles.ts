@@ -1,4 +1,4 @@
-import type { PublicBundleOffer } from "@/lib/api/server";
+import type { PublicBundleOffer } from '@/lib/api/server';
 
 type AcademyPlanPackage = {
   id: string;
@@ -34,7 +34,7 @@ export const bundleFromPlan = (plan: AcademyPlanPackage): StudentBundle => ({
 
 export const bundleFromOffer = (offer: PublicBundleOffer): StudentBundle => ({
   key: `offer-${offer.id}`,
-  name: offer.title ?? "",
+  name: offer.title ?? '',
   description: offer.description,
   price: offer.price,
   courses: offer.Courses.map((entry) => entry.Course),
@@ -46,6 +46,4 @@ export const toStudentBundles = (
   plans: AcademyPlanPackage[],
   offers: PublicBundleOffer[],
 ): StudentBundle[] =>
-  [...plans.map(bundleFromPlan), ...offers.map(bundleFromOffer)].sort(
-    (a, b) => a.price - b.price,
-  );
+  [...plans.map(bundleFromPlan), ...offers.map(bundleFromOffer)].sort((a, b) => a.price - b.price);

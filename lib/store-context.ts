@@ -1,8 +1,8 @@
-import "server-only";
+import 'server-only';
 
-import { cookies, headers as nextHeaders } from "next/headers";
+import { cookies, headers as nextHeaders } from 'next/headers';
 
-import { env } from "@/lib/env";
+import { env } from '@/lib/env';
 
 export type ResolvedAcademy = {
   id: string | null;
@@ -24,7 +24,7 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
   const cookieStore = await cookies();
   const headerStore = await nextHeaders();
 
-  if (headerStore.get("x-panel-root") === "1") {
+  if (headerStore.get('x-panel-root') === '1') {
     return {
       id: null,
       slug: null,
@@ -34,20 +34,14 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
   }
 
   const headerAcademyId =
-    headerStore?.get?.("x-academy-id") ?? headerStore?.get?.("X-Academy-ID") ?? null;
+    headerStore?.get?.('x-academy-id') ?? headerStore?.get?.('X-Academy-ID') ?? null;
   const headerAcademySlug =
-    headerStore?.get?.("x-academy-slug") ?? headerStore?.get?.("X-Academy-Slug") ?? null;
+    headerStore?.get?.('x-academy-slug') ?? headerStore?.get?.('X-Academy-Slug') ?? null;
   const cookieAcademyId = cookieStore.get(env.academyIdCookie)?.value;
   const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
-  const cookieAcademyName = decodeCookieValue(
-    cookieStore.get(env.academyNameCookie)?.value
-  );
+  const cookieAcademyName = decodeCookieValue(cookieStore.get(env.academyNameCookie)?.value);
 
-  const resolvedSlug =
-    headerAcademySlug ??
-    cookieAcademySlug ??
-    env.defaultAcademySlug ??
-    null;
+  const resolvedSlug = headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
 
   const resolvedId =
     headerAcademyId ??
@@ -57,15 +51,13 @@ export const getAcademyContext = async (): Promise<ResolvedAcademy> => {
   // Admin previewing a public template: it belongs to no academy, so show a
   // neutral sample brand instead of leaking the previewing academy's name.
   // Slug/id are kept so the preview still renders real catalog and theme data.
-  const isSamplePreview = headerStore.get("x-preview-sample") === "1";
-  const resolvedName = isSamplePreview
-    ? "نمونه"
-    : cookieAcademyName ?? env.siteName;
+  const isSamplePreview = headerStore.get('x-preview-sample') === '1';
+  const resolvedName = isSamplePreview ? 'نمونه' : (cookieAcademyName ?? env.siteName);
 
   return {
     id: resolvedId ?? null,
     slug: resolvedSlug,
     name: resolvedName,
-    isSubdomain: headerStore.get("x-academy-subdomain") === "1",
+    isSubdomain: headerStore.get('x-academy-subdomain') === '1',
   };
 };

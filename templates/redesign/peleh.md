@@ -49,7 +49,7 @@ PALETTE:  primary #dc2626 · secondary #0f172a · accent #f59e0b · background #
 ### 0. What this template is for
 
 A **single teacher's personal site**, not a school's. The visitor is deciding whether to
-trust *this person*. That means the intro video, the teacher's own voice in the copy,
+trust _this person_. That means the intro video, the teacher's own voice in the copy,
 proof of results, and one clear next step. It does **not** mean a faculty grid, a campus
 photo, or an "about our institution" band.
 
@@ -94,8 +94,8 @@ photo, or an "about our institution" band.
 **Motion**
 
 - Opt-in and decoration-only. Nothing a person reads may move.
-- Two budgets: *ambient* (18–30s loops, a few px or a few percent of opacity — felt, not
-  seen) and *signal* (2–3s, reserved for liveness and scarcity: a class running now, a
+- Two budgets: _ambient_ (18–30s loops, a few px or a few percent of opacity — felt, not
+  seen) and _signal_ (2–3s, reserved for liveness and scarcity: a class running now, a
   nearly-full seat count).
 - Everything must still read correctly with motion fully disabled.
 

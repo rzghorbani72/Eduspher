@@ -8,5 +8,5 @@
  * parsed object is identical, but the HTML parser never sees a closing tag.
  */
 export function serializeJsonLd(data: unknown): string {
-  return JSON.stringify(data).replace(/</g, "\\u003c");
+  return JSON.stringify(data).replace(/</g, '\\u003c');
 }

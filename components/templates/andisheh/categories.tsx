@@ -44,7 +44,7 @@ export function AndishehCategories({ id, config, storeContext }: TemplateSection
               </span>
               <h3
                 {...editableItem('items', index, 'title')}
-                className="flex-none text-[21px] font-bold leading-[1.3] md:w-[26%]"
+                className="flex-none text-[21px] leading-[1.3] font-bold md:w-[26%]"
               >
                 {item.title}
               </h3>

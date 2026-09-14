@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
 
 import {
   classifyApiError,
@@ -8,13 +8,9 @@ import {
   parseApiError,
   parseThrownApiError,
   type ParsedApiError,
-} from "@/lib/api/api-error";
-import { env } from "@/lib/env";
-import {
-  t as translate,
-  DEFAULT_LANGUAGE,
-  type LanguageCode,
-} from "@/lib/i18n";
+} from '@/lib/api/api-error';
+import { env } from '@/lib/env';
+import { t as translate, DEFAULT_LANGUAGE, type LanguageCode } from '@/lib/i18n';
 
 type NotifyOptions = {
   /** Prefer this when the caller already knows the academy login URL. */
@@ -24,10 +20,10 @@ type NotifyOptions = {
 };
 
 export function readLanguage(): LanguageCode {
-  if (typeof document === "undefined") return DEFAULT_LANGUAGE;
+  if (typeof document === 'undefined') return DEFAULT_LANGUAGE;
   const match = document.cookie.match(/(?:^|; )preferred_language=([^;]*)/);
-  const raw = match ? decodeURIComponent(match[1]).toLowerCase() : "";
-  if (raw === "fa" || raw === "en" || raw === "ar" || raw === "tr") return raw;
+  const raw = match ? decodeURIComponent(match[1]).toLowerCase() : '';
+  if (raw === 'fa' || raw === 'en' || raw === 'ar' || raw === 'tr') return raw;
   return DEFAULT_LANGUAGE;
 }
 
@@ -36,38 +32,34 @@ function t(key: string): string {
 }
 
 function readAcademySlug(): string | null {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
   const name = env.academySlugCookie;
   const match = document.cookie.match(
-    new RegExp(
-      `(?:^|; )${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}=([^;]*)`,
-    ),
+    new RegExp(`(?:^|; )${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}=([^;]*)`),
   );
-  const value = match ? decodeURIComponent(match[1]).trim() : "";
+  const value = match ? decodeURIComponent(match[1]).trim() : '';
   return value || null;
 }
 
 /** Path-mode academies need `/{slug}/auth/login`; subdomain hosts use bare `/auth/login`. */
 export function resolveStorefrontLoginHref(redirectTo?: string): string {
-  if (typeof window === "undefined") return "/auth/login";
+  if (typeof window === 'undefined') return '/auth/login';
   const host = window.location.hostname.toLowerCase();
-  const labels = host.split(".");
+  const labels = host.split('.');
   const isLikelySubdomain =
-    labels.length >= 3 || (labels.length === 2 && labels[1] === "localhost");
-  const reserved = new Set(["www", "api", "dashboard", "panel", "app"]);
-  const onAcademySubdomain =
-    isLikelySubdomain && !reserved.has(labels[0] ?? "");
+    labels.length >= 3 || (labels.length === 2 && labels[1] === 'localhost');
+  const reserved = new Set(['www', 'api', 'dashboard', 'panel', 'app']);
+  const onAcademySubdomain = isLikelySubdomain && !reserved.has(labels[0] ?? '');
 
   const path = onAcademySubdomain
-    ? "/auth/login"
+    ? '/auth/login'
     : (() => {
         const slug = readAcademySlug();
-        return slug ? `/${slug}/auth/login` : "/auth/login";
+        return slug ? `/${slug}/auth/login` : '/auth/login';
       })();
 
-  const target =
-    redirectTo ?? `${window.location.pathname}${window.location.search}`;
-  if (!target || target.includes("/auth/login")) return path;
+  const target = redirectTo ?? `${window.location.pathname}${window.location.search}`;
+  if (!target || target.includes('/auth/login')) return path;
   return `${path}?redirect=${encodeURIComponent(target)}`;
 }
 
@@ -90,12 +82,12 @@ function toastLoginRequired(loginHref: string, message: string): void {
             window.location.assign(loginHref);
           }}
         >
-          {t("auth.goToLogin")}
+          {t('auth.goToLogin')}
         </button>
       </div>
     ),
     {
-      toastId: "api-login-required",
+      toastId: 'api-login-required',
       autoClose: 8000,
       closeOnClick: false,
     },
@@ -115,18 +107,18 @@ export function notifyApiError(
 
   if (
     input &&
-    typeof input === "object" &&
-    "status" in input &&
-    typeof (input as { status: unknown }).status === "number" &&
-    "code" in input
+    typeof input === 'object' &&
+    'status' in input &&
+    typeof (input as { status: unknown }).status === 'number' &&
+    'code' in input
   ) {
     error = input as ParsedApiError;
   } else if (
     input &&
-    typeof input === "object" &&
-    "status" in input &&
-    typeof (input as { status: unknown }).status === "number" &&
-    "body" in input
+    typeof input === 'object' &&
+    'status' in input &&
+    typeof (input as { status: unknown }).status === 'number' &&
+    'body' in input
   ) {
     const row = input as { status: number; body?: unknown };
     error = parseApiError(row.status, row.body);
@@ -135,8 +127,8 @@ export function notifyApiError(
   }
 
   if (!error) {
-    toast.error(t("errors.generic"), { toastId: "api-generic" });
-    return "generic";
+    toast.error(t('errors.generic'), { toastId: 'api-generic' });
+    return 'generic';
   }
 
   const kind = classifyApiError(error);
@@ -144,13 +136,13 @@ export function notifyApiError(
 
   const message = displayMessage(error);
 
-  if (kind === "login_required") {
+  if (kind === 'login_required') {
     const href = options.loginHref ?? resolveStorefrontLoginHref();
-    toastLoginRequired(href, message || t("errors.loginRequired"));
+    toastLoginRequired(href, message || t('errors.loginRequired'));
     return kind;
   }
 
-  if (kind === "legal_consent") {
+  if (kind === 'legal_consent') {
     return kind;
   }
 
@@ -163,9 +155,9 @@ export function notifyApiError(
 /** Toast + navigate after a short beat so the snackbar is readable. */
 export function notifyLoginRequiredAndRedirect(loginHref?: string): void {
   const href = loginHref ?? resolveStorefrontLoginHref();
-  toastLoginRequired(href, t("errors.loginRequired"));
+  toastLoginRequired(href, t('errors.loginRequired'));
   window.setTimeout(() => {
-    if (!window.location.pathname.includes("/auth/login")) {
+    if (!window.location.pathname.includes('/auth/login')) {
       window.location.assign(href);
     }
   }, 1600);

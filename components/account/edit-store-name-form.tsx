@@ -1,23 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { School, Edit2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { updateStore } from "@/lib/api/client";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { School, Edit2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { updateStore } from '@/lib/api/client';
+import { cn } from '@/lib/utils';
 
 interface EditStoreNameFormProps {
   currentStoreName: string;
   onSuccess?: () => void;
 }
 
-export const EditStoreNameForm = ({ 
-  currentStoreName,
-  onSuccess 
-}: EditStoreNameFormProps) => {
+export const EditStoreNameForm = ({ currentStoreName, onSuccess }: EditStoreNameFormProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,14 +24,14 @@ export const EditStoreNameForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!storeName.trim()) {
-      setError("Store name is required");
+      setError('Store name is required');
       return;
     }
 
     if (storeName.trim().length < 1 || storeName.trim().length > 80) {
-      setError("Store name must be between 1 and 80 characters");
+      setError('Store name must be between 1 and 80 characters');
       return;
     }
 
@@ -49,14 +46,14 @@ export const EditStoreNameForm = ({
 
     try {
       await updateStore({ name: storeName.trim() });
-      setMessage("Store name updated successfully");
+      setMessage('Store name updated successfully');
       setIsEditing(false);
       onSuccess?.();
       setTimeout(() => {
         router.refresh();
       }, 1500);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to update store name";
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update store name';
       setError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -69,11 +66,13 @@ export const EditStoreNameForm = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
-              <School className="h-5 w-5 text-muted dark:text-muted opacity-60" />
+              <School className="text-muted dark:text-muted h-5 w-5 opacity-60" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900 dark:text-white">Store Name</p>
-              <p className="text-sm text-muted opacity-70 dark:text-muted opacity-60">{currentStoreName}</p>
+              <p className="text-muted dark:text-muted text-sm opacity-60 opacity-70">
+                {currentStoreName}
+              </p>
             </div>
           </div>
           <Button
@@ -83,7 +82,7 @@ export const EditStoreNameForm = ({
             onClick={() => setIsEditing(true)}
             className="h-8"
           >
-            <Edit2 className="h-4 w-4 mr-1" />
+            <Edit2 className="mr-1 h-4 w-4" />
             Edit
           </Button>
         </div>
@@ -97,7 +96,7 @@ export const EditStoreNameForm = ({
         <Label htmlFor="store_name">Store Name</Label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <School className="h-5 w-5 text-muted opacity-60" />
+            <School className="text-muted h-5 w-5 opacity-60" />
           </div>
           <Input
             id="store_name"
@@ -107,16 +106,14 @@ export const EditStoreNameForm = ({
               setStoreName(e.target.value);
               setError(null);
             }}
-            className={cn("pl-10", error && "border-amber-500 focus:border-amber-500")}
+            className={cn('pl-10', error && 'border-amber-500 focus:border-amber-500')}
             placeholder="Enter store name"
             maxLength={80}
             autoFocus
           />
         </div>
-        {error && (
-          <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>
-        )}
-        <p className="text-xs text-muted opacity-70 dark:text-muted opacity-60">
+        {error && <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>}
+        <p className="text-muted dark:text-muted text-xs opacity-60 opacity-70">
           Store name must be unique across all stores
         </p>
       </div>
@@ -148,7 +145,7 @@ export const EditStoreNameForm = ({
           className="flex-1"
           loading={isLoading}
         >
-          {isLoading ? "Saving..." : "Save"}
+          {isLoading ? 'Saving...' : 'Save'}
         </Button>
       </div>
     </form>

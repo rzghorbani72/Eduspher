@@ -6,6 +6,6 @@
 export const COURSE_CARD_MIN_WIDTH_PX = 310;
 
 export const COURSE_CARD_GRID_CLASS =
-  "grid gap-6 grid-cols-[repeat(auto-fill,minmax(min(100%,310px),1fr))]";
+  'grid gap-6 grid-cols-[repeat(auto-fill,minmax(min(100%,310px),1fr))]';
 
-export const COURSE_CARD_THUMB_CLASS = "relative aspect-[4/3] h-auto overflow-hidden";
+export const COURSE_CARD_THUMB_CLASS = 'relative aspect-[4/3] h-auto overflow-hidden';

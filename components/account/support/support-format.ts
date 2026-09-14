@@ -1,5 +1,5 @@
-import type { TicketMessageView, TicketStatus } from "@/lib/api/client";
-import { getClientBackendApiBaseUrl } from "@/lib/env";
+import type { TicketMessageView, TicketStatus } from '@/lib/api/client';
+import { getClientBackendApiBaseUrl } from '@/lib/env';
 
 type Translate = (key: string) => string;
 
@@ -18,30 +18,34 @@ export function formatSystemEvent(message: TicketMessageView, t: Translate): str
   const meta = message.system_meta ?? {};
   const fill = (key: string) =>
     t(key)
-      .replace("{from}", meta.from_name ?? "—")
-      .replace("{to}", meta.to_name ?? "—")
-      .replace("{by}", meta.by_name ?? "—");
+      .replace('{from}', meta.from_name ?? '—')
+      .replace('{to}', meta.to_name ?? '—')
+      .replace('{by}', meta.by_name ?? '—');
 
-  if (message.system_event_type === "reassigned") {
-    return meta.from_name ? fill("support.responsibleChanged") : fill("support.responsibleAssigned");
+  if (message.system_event_type === 'reassigned') {
+    return meta.from_name
+      ? fill('support.responsibleChanged')
+      : fill('support.responsibleAssigned');
   }
-  return t("support.callRequested");
+  return t('support.callRequested');
 }
 
-export function statusBadgeVariant(status: TicketStatus): "default" | "soft" | "success" | "warning" {
-  if (status === "RESOLVED" || status === "CLOSED") return "success";
-  if (status === "WAITING_ON_USER") return "warning";
-  if (status === "OPEN" || status === "REOPENED") return "default";
-  return "soft";
+export function statusBadgeVariant(
+  status: TicketStatus,
+): 'default' | 'soft' | 'success' | 'warning' {
+  if (status === 'RESOLVED' || status === 'CLOSED') return 'success';
+  if (status === 'WAITING_ON_USER') return 'warning';
+  if (status === 'OPEN' || status === 'REOPENED') return 'default';
+  return 'soft';
 }
 
 /** StatusPill tone for ticket list / thread chrome. */
 export function ticketStatusTone(
   status: TicketStatus,
-): "success" | "warning" | "danger" | "info" | "neutral" {
-  if (status === "RESOLVED" || status === "CLOSED") return "success";
-  if (status === "WAITING_ON_USER") return "warning";
-  if (status === "OPEN" || status === "REOPENED") return "info";
-  if (status === "IN_PROGRESS") return "neutral";
-  return "neutral";
+): 'success' | 'warning' | 'danger' | 'info' | 'neutral' {
+  if (status === 'RESOLVED' || status === 'CLOSED') return 'success';
+  if (status === 'WAITING_ON_USER') return 'warning';
+  if (status === 'OPEN' || status === 'REOPENED') return 'info';
+  if (status === 'IN_PROGRESS') return 'neutral';
+  return 'neutral';
 }

@@ -36,7 +36,13 @@ const TONE_CLASS = {
  * Teacher grid. Presets ship no photos by design — the initials tile is the
  * intended default state, so a new academy's page never shows a broken image.
  */
-export function TemplateTeachers({ id, config, defaults, tone = 'page', avatarShape = 'tile' }: TemplateTeachersProps) {
+export function TemplateTeachers({
+  id,
+  config,
+  defaults,
+  tone = 'page',
+  avatarShape = 'tile',
+}: TemplateTeachersProps) {
   const items = list<TemplateTeacher>(config, 'items', defaults.items);
   const onDeep = tone === 'deep';
 
@@ -54,7 +60,9 @@ export function TemplateTeachers({ id, config, defaults, tone = 'page', avatarSh
             <article
               key={teacher.name}
               className={`rounded-(--theme-border-radius) border p-6 ${
-                onDeep ? 'border-current/16 bg-current/5' : 'border-(--theme-border-color) bg-(--theme-surface)'
+                onDeep
+                  ? 'border-current/16 bg-current/5'
+                  : 'border-(--theme-border-color) bg-(--theme-surface)'
               }`}
             >
               <span
@@ -85,7 +93,9 @@ export function TemplateTeachers({ id, config, defaults, tone = 'page', avatarSh
               {teacher.stats && teacher.stats.length > 0 ? (
                 <ul
                   className={`mt-5 flex flex-wrap gap-x-4 gap-y-2 border-t pt-4 text-[12.5px] ${
-                    onDeep ? 'border-current/16 text-current/60' : 'border-(--theme-border-color) text-(--theme-muted)'
+                    onDeep
+                      ? 'border-current/16 text-current/60'
+                      : 'border-(--theme-border-color) text-(--theme-muted)'
                   }`}
                 >
                   {teacher.stats.map((stat, statIndex) => (

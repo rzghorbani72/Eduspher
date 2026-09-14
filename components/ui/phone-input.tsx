@@ -1,21 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect, useMemo } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { ChevronDown } from 'lucide-react';
 import {
   COUNTRY_CODES,
   getCountryByCode,
   getDefaultCountry,
   type CountryCode,
-} from "@/lib/country-codes";
-import {
-  toEnglishDigits,
-  getPhoneRule,
-  checkPhoneNumber,
-} from "@/lib/phone-utils";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { useLocaleDigits } from "@/hooks/use-locale-digits";
-import { cn } from "@/lib/utils";
+} from '@/lib/country-codes';
+import { toEnglishDigits, getPhoneRule, checkPhoneNumber } from '@/lib/phone-utils';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { useLocaleDigits } from '@/hooks/use-locale-digits';
+import { cn } from '@/lib/utils';
 
 interface PhoneInputProps {
   value?: string;
@@ -32,23 +28,20 @@ interface PhoneInputProps {
 }
 
 export const PhoneInput = ({
-  value = "",
+  value = '',
   onChange,
   onCountryChange,
   defaultCountry,
   className,
   inputClassName,
   id,
-  autoComplete = "tel",
-  placeholder = "0912 *** ** **",
+  autoComplete = 'tel',
+  placeholder = '0912 *** ** **',
   disabled = false,
   lockCountryCode,
 }: PhoneInputProps) => {
   const lockedCountry = useMemo(
-    () =>
-      lockCountryCode
-        ? (getCountryByCode(lockCountryCode) ?? getDefaultCountry())
-        : null,
+    () => (lockCountryCode ? (getCountryByCode(lockCountryCode) ?? getDefaultCountry()) : null),
     [lockCountryCode],
   );
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
@@ -71,17 +64,14 @@ export const PhoneInput = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -95,21 +85,20 @@ export const PhoneInput = ({
   const maxLength = getPhoneRule(activeCountry).max;
   // The format is judged only after the length is complete, so a half-typed
   // number never shows an error.
-  const showFormatError =
-    checkPhoneNumber(value, activeCountry) === "invalid";
+  const showFormatError = checkPhoneNumber(value, activeCountry) === 'invalid';
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // A national number carries no leading zero here (09121... is typed out of
     // habit), so dropping it keeps the digit budget for the real number.
     const inputValue = toEnglishDigits(e.target.value)
-      .replace(/\D/g, "")
-      .replace(/^0+/, "")
+      .replace(/\D/g, '')
+      .replace(/^0+/, '')
       .slice(0, maxLength);
     onChange?.(inputValue);
   };
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       <div className="relative flex">
         <div className="relative">
           <button
@@ -117,28 +106,21 @@ export const PhoneInput = ({
             onClick={() => !disabled && !lockedCountry && setIsOpen(!isOpen)}
             disabled={disabled || !!lockedCountry}
             className={cn(
-              "flex h-11 items-center gap-2 rounded-l-theme border border-r-0 border-slate-200 bg-card",
-              (disabled || lockedCountry) && "opacity-50 cursor-not-allowed",
-              isOpen && "ring-2 ring-sky-500",
+              'rounded-l-theme bg-card flex h-11 items-center gap-2 border border-r-0 border-slate-200',
+              (disabled || lockedCountry) && 'cursor-not-allowed opacity-50',
+              isOpen && 'ring-2 ring-sky-500',
             )}
           >
             <span className="text-base">{activeCountry.flag}</span>
-            <span className="text-xs tabular-nums">
-              {localeDigits(activeCountry.dialCode)}
-            </span>
+            <span className="text-xs tabular-nums">{localeDigits(activeCountry.dialCode)}</span>
             {!lockedCountry && (
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  isOpen && "rotate-180",
-                )}
-              />
+              <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
             )}
           </button>
           {isOpen && !lockedCountry && (
             <div
               ref={dropdownRef}
-              className="absolute left-0 top-full z-50 mt-1 max-h-60 w-64 overflow-auto rounded-theme border border-theme bg-card"
+              className="rounded-theme border-theme bg-card absolute top-full left-0 z-50 mt-1 max-h-60 w-64 overflow-auto border"
             >
               {COUNTRY_CODES.map((country) => (
                 <button
@@ -146,14 +128,13 @@ export const PhoneInput = ({
                   type="button"
                   onClick={() => handleCountrySelect(country)}
                   className={cn(
-                    "flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100  dark:hover:bg-slate-800",
-                    activeCountry.code === country.code &&
-                      "bg-sky-50 dark:bg-sky-950",
+                    'flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800',
+                    activeCountry.code === country.code && 'bg-sky-50 dark:bg-sky-950',
                   )}
                 >
                   <span className="text-base">{country.flag}</span>
                   <span className="flex-1">{country.name}</span>
-                  <span className="text-xs tabular-nums text-muted opacity-70">
+                  <span className="text-muted text-xs tabular-nums opacity-70">
                     {localeDigits(country.dialCode)}
                   </span>
                 </button>
@@ -173,17 +154,15 @@ export const PhoneInput = ({
             disabled={disabled}
             inputMode="numeric"
             className={cn(
-              "flex h-11 w-full rounded-r-theme border border-theme bg-card px-3",
-              disabled && "opacity-50 cursor-not-allowed",
-              showFormatError && "border-destructive",
+              'rounded-r-theme border-theme bg-card flex h-11 w-full border px-3',
+              disabled && 'cursor-not-allowed opacity-50',
+              showFormatError && 'border-destructive',
               inputClassName,
             )}
           />
         </div>
       </div>
-      {showFormatError && (
-        <p className="mt-1 text-xs text-destructive">{t("auth.invalidPhone")}</p>
-      )}
+      {showFormatError && <p className="text-destructive mt-1 text-xs">{t('auth.invalidPhone')}</p>}
     </div>
   );
 };

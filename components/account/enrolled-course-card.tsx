@@ -1,13 +1,13 @@
-import Link from "@/components/ui/link";
-import { COURSE_CARD_THUMB_CLASS } from "@/components/courses/course-card-layout";
-import { TemplateCourseCard } from "@/components/templates/_shared/course-card";
-import type { TemplateCourse } from "@/components/templates/_shared/courses-data";
-import { resolveTemplateCourseCard } from "@/components/templates/registry";
-import { getActiveTemplateKey } from "@/lib/active-template";
-import type { LanguageCode } from "@/lib/i18n/config";
-import { t } from "@/lib/i18n/server-translations";
-import { learnPath } from "@/lib/content-paths";
-import { buildAcademyPath, cn, formatPercent } from "@/lib/utils";
+import Link from '@/components/ui/link';
+import { COURSE_CARD_THUMB_CLASS } from '@/components/courses/course-card-layout';
+import { TemplateCourseCard } from '@/components/templates/_shared/course-card';
+import type { TemplateCourse } from '@/components/templates/_shared/courses-data';
+import { resolveTemplateCourseCard } from '@/components/templates/registry';
+import { getActiveTemplateKey } from '@/lib/active-template';
+import type { LanguageCode } from '@/lib/i18n/config';
+import { t } from '@/lib/i18n/server-translations';
+import { learnPath } from '@/lib/content-paths';
+import { buildAcademyPath, cn, formatPercent } from '@/lib/utils';
 
 interface EnrolledCourse {
   id: string | number;
@@ -53,19 +53,18 @@ export async function EnrolledCourseCard({
   const translate = (key: string) => t(key, language);
   const href = buildAcademyPath(storeSlug, learnPath(course.slug));
   const progress = Math.min(Math.round(enrollment.progress_percent), 100);
-  const isCompleted = enrollment.status === "COMPLETED";
-  const teacherName =
-    course.author?.display_name ?? course.Profile?.display_name ?? null;
+  const isCompleted = enrollment.status === 'COMPLETED';
+  const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
 
   const templateCourse: TemplateCourse = {
     id: String(course.id),
     title: course.title,
     href,
-    priceLabel: "",
+    priceLabel: '',
     isFree: course.is_free,
     isLive: false,
     teacherName,
-    teacherInitials: teacherName?.trim().charAt(0) ?? "—",
+    teacherInitials: teacherName?.trim().charAt(0) ?? '—',
     levelLabel: course.Category?.name ?? null,
     lessonsLabel: null,
     durationLabel: null,
@@ -78,9 +77,7 @@ export async function EnrolledCourseCard({
       <div className="space-y-1.5">
         <div className="flex items-center justify-between text-[13px] text-(--theme-muted)">
           <span>
-            {isCompleted
-              ? translate("account.statusCompleted")
-              : translate("account.progress")}
+            {isCompleted ? translate('account.statusCompleted') : translate('account.progress')}
           </span>
           <span className="font-bold text-(--theme-foreground)">
             {formatPercent(progress, language)}
@@ -97,7 +94,7 @@ export async function EnrolledCourseCard({
         href={href}
         className="inline-flex h-10 w-full items-center justify-center rounded-(--theme-border-radius) bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90"
       >
-        {translate("account.continueLearning")} →
+        {translate('account.continueLearning')} →
       </Link>
     </div>
   );
@@ -107,43 +104,21 @@ export async function EnrolledCourseCard({
     return <FallbackCard course={templateCourse} footer={footer} />;
   }
 
-  return (
-    <TemplateCourseCard
-      course={templateCourse}
-      spec={spec}
-      index={index}
-      footer={footer}
-    />
-  );
+  return <TemplateCourseCard course={templateCourse} spec={spec} index={index} footer={footer} />;
 }
 
 /** Academies on no template keep a plain card in the same shape. */
-function FallbackCard({
-  course,
-  footer,
-}: {
-  course: TemplateCourse;
-  footer: React.ReactNode;
-}) {
+function FallbackCard({ course, footer }: { course: TemplateCourse; footer: React.ReactNode }) {
   return (
-    <article className="flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-theme bg-card ">
+    <article className="border-theme bg-card flex h-full w-full min-w-0 flex-col overflow-hidden rounded-2xl border">
       <div
-        className={cn(
- COURSE_CARD_THUMB_CLASS,
- "bg-(--theme-primary)/15 bg-cover bg-center",
-        )}
-        style={
-          course.coverUrl ? { backgroundImage: `url(${course.coverUrl})` } : undefined
-        }
+        className={cn(COURSE_CARD_THUMB_CLASS, 'bg-(--theme-primary)/15 bg-cover bg-center')}
+        style={course.coverUrl ? { backgroundImage: `url(${course.coverUrl})` } : undefined}
       />
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <p className="font-bold leading-snug text-(--theme-foreground)">
-          {course.title}
-        </p>
-        {course.teacherName ? (
-          <p className="text-sm text-muted">{course.teacherName}</p>
-        ) : null}
-        <div className="mt-auto border-t border-theme pt-3.5">{footer}</div>
+        <p className="leading-snug font-bold text-(--theme-foreground)">{course.title}</p>
+        {course.teacherName ? <p className="text-muted text-sm">{course.teacherName}</p> : null}
+        <div className="border-theme mt-auto border-t pt-3.5">{footer}</div>
       </div>
     </article>
   );

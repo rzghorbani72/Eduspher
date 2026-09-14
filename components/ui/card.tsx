@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const Card = ({ className, style, ...props }: CardProps) => (
   <div
     className={cn(
-      "group relative overflow-hidden rounded-theme border h-[560px] shadow-theme transition-all duration-300 hover:shadow-xl",
-      className
+      'group rounded-theme shadow-theme relative h-[560px] overflow-hidden border transition-all duration-300 hover:shadow-xl',
+      className,
     )}
     style={{
       borderRadius: 'var(--theme-border-radius, 16px)',
@@ -21,19 +21,19 @@ export const Card = ({ className, style, ...props }: CardProps) => (
 );
 
 export const CardContent = ({ className, ...props }: CardProps) => (
-  <div className={cn("space-y-3 p-5", className)} {...props} />
+  <div className={cn('space-y-3 p-5', className)} {...props} />
 );
 
 export const CardMedia = ({
   className,
-  alt = "",
+  alt = '',
   ...props
 }: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <div className="relative aspect-3/2 overflow-hidden">
     <img
       className={cn(
-        "h-full w-full object-cover transition-transform duration-500 group-hover:scale-110",
-        className
+        'h-full w-full object-cover transition-transform duration-500 group-hover:scale-110',
+        className,
       )}
       alt={alt}
       {...props}
@@ -41,4 +41,3 @@ export const CardMedia = ({
     <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
   </div>
 );
-

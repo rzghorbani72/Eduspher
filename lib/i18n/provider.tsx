@@ -1,13 +1,19 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import type { LanguageCode, TextDirection, LanguageConfig } from "./config";
-import { DEFAULT_LANGUAGE, LANGUAGES, getLanguageConfig, getDefaultLanguageForCountry, isRTL } from "./config";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { LanguageCode, TextDirection, LanguageConfig } from './config';
+import {
+  DEFAULT_LANGUAGE,
+  LANGUAGES,
+  getLanguageConfig,
+  getDefaultLanguageForCountry,
+  isRTL,
+} from './config';
 
-const PREFERRED_LANGUAGE_KEY = "preferred_language";
+const PREFERRED_LANGUAGE_KEY = 'preferred_language';
 
 function readSavedLanguage(): LanguageCode | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === 'undefined') return null;
   const saved = localStorage.getItem(PREFERRED_LANGUAGE_KEY);
   return saved && saved in LANGUAGES ? (saved as LanguageCode) : null;
 }
@@ -30,18 +36,14 @@ interface I18nProviderProps {
 
 function resolveLanguage(
   initialLanguage?: LanguageCode,
-  countryCode?: string | null
+  countryCode?: string | null,
 ): LanguageCode {
   if (initialLanguage) return initialLanguage;
   if (countryCode) return getDefaultLanguageForCountry(countryCode);
   return DEFAULT_LANGUAGE;
 }
 
-export function I18nProvider({
-  children,
-  initialLanguage,
-  countryCode,
-}: I18nProviderProps) {
+export function I18nProvider({ children, initialLanguage, countryCode }: I18nProviderProps) {
   const resolved = resolveLanguage(initialLanguage, countryCode);
   const [language, setLanguageState] = useState<LanguageCode>(resolved);
 
@@ -58,7 +60,7 @@ export function I18nProvider({
   const rtl = isRTL(language);
 
   const setLanguage = (next: LanguageCode) => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       localStorage.setItem(PREFERRED_LANGUAGE_KEY, next);
     }
     setLanguageState(next);
@@ -82,8 +84,7 @@ export function I18nProvider({
 export function useI18n() {
   const context = useContext(I18nContext);
   if (context === undefined) {
-    throw new Error("useI18n must be used within an I18nProvider");
+    throw new Error('useI18n must be used within an I18nProvider');
   }
   return context;
 }
-

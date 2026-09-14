@@ -33,9 +33,7 @@ test.describe('edusphere security headers (smoke)', () => {
     // JSON-LD only renders on API-backed routes (home / academy / blog).
     test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
     await page.goto('/');
-    const blocks = await page
-      .locator('script[type="application/ld+json"]')
-      .allTextContents();
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
 
     for (const raw of blocks) {
       expect(raw, 'no literal closing tag inside JSON-LD').not.toContain('</script');

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Trash2 } from "lucide-react";
+import { Trash2 } from 'lucide-react';
 
-import { Select } from "@/components/ui/select";
-import { TimePicker } from "@/components/ui/time-picker";
-import { sortWeekdays, weekdayLabelKey } from "@/lib/courses/weekly-rule";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { formatNumber } from "@/lib/utils";
+import { Select } from '@/components/ui/select';
+import { TimePicker } from '@/components/ui/time-picker';
+import { sortWeekdays, weekdayLabelKey } from '@/lib/courses/weekly-rule';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { formatNumber } from '@/lib/utils';
 
 export type RequestWindow = { weekday: number; from: string; duration: number };
 
@@ -35,11 +35,11 @@ export function ClassRequestWindowRow({
         value={w.weekday}
         onChange={(e) => onChange({ weekday: Number(e.target.value) })}
         className="w-36"
-        aria-label={t("courses.requestClassDay")}
+        aria-label={t('courses.requestClassDay')}
       >
         {WEEK.map((day) => (
           <option key={day} value={day}>
-            {t(weekdayLabelKey(day) ?? "")}
+            {t(weekdayLabelKey(day) ?? '')}
           </option>
         ))}
       </Select>
@@ -47,20 +47,17 @@ export function ClassRequestWindowRow({
         value={w.from}
         onChange={(value) => onChange({ from: value })}
         className="w-28"
-        aria-label={t("courses.requestClassStart")}
+        aria-label={t('courses.requestClassStart')}
       />
       <Select
         value={w.duration}
         onChange={(e) => onChange({ duration: Number(e.target.value) })}
         className="w-32"
-        aria-label={t("courses.requestClassDuration")}
+        aria-label={t('courses.requestClassDuration')}
       >
         {DURATIONS.map((minutes) => (
           <option key={minutes} value={minutes}>
-            {t("courses.requestClassMinutes").replace(
-              "{count}",
-              formatNumber(minutes, language),
-            )}
+            {t('courses.requestClassMinutes').replace('{count}', formatNumber(minutes, language))}
           </option>
         ))}
       </Select>
@@ -69,7 +66,7 @@ export function ClassRequestWindowRow({
           type="button"
           onClick={onRemove}
           className="text-muted hover:text-(--theme-foreground)"
-          aria-label={t("common.delete")}
+          aria-label={t('common.delete')}
         >
           <Trash2 className="size-4" aria-hidden="true" />
         </button>

@@ -1,11 +1,5 @@
 <!doctype html>
-<html
-  data-src-ver="a3b61511"
-  lang="fa"
-  dir="rtl"
-  data-theme="light"
-  data-om-id="a3b61511:0"
->
+<html data-src-ver="a3b61511" lang="fa" dir="rtl" data-theme="light" data-om-id="a3b61511:0">
   <head data-om-id="a3b61511:1">
     <style data-omelette-injected>
       html,
@@ -15,54 +9,36 @@
     </style>
     <script data-omelette-injected>
       (() => {
-        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var j = ['https://claude.ai', 'https://preview.claude.ai'];
         var x = true;
         var S = 30000;
         var f = 3000;
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
           const H = window.Babel;
-          const G = "om-src-id";
-          if (
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[G])
-          ) {
+          const G = 'om-src-id';
+          if (H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[G])) {
             H.registerPlugin(G, ({ types: Y }) => ({
               visitor: {
                 JSXOpeningElement(U, Q) {
                   const J = U.node;
-                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  if (J.name && J.name.type === 'JSXMemberExpression') return;
                   for (let V = 0; V < J.attributes.length; V++) {
                     const L = J.attributes[V];
-                    if (
-                      L.type === "JSXAttribute" &&
-                      L.name &&
-                      L.name.name === "data-om-id"
-                    )
-                      return;
+                    if (L.type === 'JSXAttribute' && L.name && L.name.name === 'data-om-id') return;
                   }
-                  const W =
-                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const W = (Q.file && Q.file.opts && Q.file.opts.filename) || '?';
                   const Z = J.loc && J.loc.start;
                   const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
                   J.attributes.push(
-                    Y.jsxAttribute(
-                      Y.jsxIdentifier("data-om-id"),
-                      Y.stringLiteral(z),
-                    ),
+                    Y.jsxAttribute(Y.jsxIdentifier('data-om-id'), Y.stringLiteral(z)),
                   );
                 },
               },
             }));
           }
-          const k = "om-text-extract";
+          const k = 'om-text-extract';
           let A = false;
-          if (
-            x &&
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[k])
-          ) {
+          if (x && H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[k])) {
             const Y = window.React;
             if (Y && Y.useSyncExternalStore && Y.createElement) {
               A = true;
@@ -87,8 +63,8 @@
               window.__OmT = function z(V) {
                 Y.useSyncExternalStore(W, Z, Z);
                 return Y.createElement(
-                  "span",
-                  { "data-om-text": V.i, className: "__om-t" },
+                  'span',
+                  { 'data-om-text': V.i, className: '__om-t' },
                   V.i in U ? U[V.i] : V.children,
                 );
               };
@@ -109,20 +85,17 @@
                   alt: 1,
                   title: 1,
                   label: 1,
-                  "aria-label": 1,
-                  "aria-description": 1,
-                  "aria-placeholder": 1,
+                  'aria-label': 1,
+                  'aria-description': 1,
+                  'aria-placeholder': 1,
                 };
                 const _ = ($, C) =>
                   z.logicalExpression(
-                    "??",
+                    '??',
                     z.memberExpression(
                       z.logicalExpression(
-                        "||",
-                        z.memberExpression(
-                          z.identifier("window"),
-                          z.identifier("__omTextO"),
-                        ),
+                        '||',
+                        z.memberExpression(z.identifier('window'), z.identifier('__omTextO')),
                         z.objectExpression([]),
                       ),
                       z.stringLiteral($),
@@ -130,28 +103,22 @@
                     ),
                     C,
                   );
-                const E = ($) =>
-                  ($.file && $.file.opts && $.file.opts.filename) || "?";
-                const B = ($) => ($.file && $.file.code) || "";
+                const E = ($) => ($.file && $.file.opts && $.file.opts.filename) || '?';
+                const B = ($) => ($.file && $.file.code) || '';
                 const b = ($, C) => {
                   const X = (F) =>
                     F &&
                     F.start != null &&
                     F.end != null &&
-                    (F.type === "StringLiteral" ||
-                      (F.type === "TemplateLiteral" &&
-                        F.expressions.length === 0))
+                    (F.type === 'StringLiteral' ||
+                      (F.type === 'TemplateLiteral' && F.expressions.length === 0))
                       ? [F.start, F.end]
                       : null;
                   const N = X(C);
                   if (N) return N;
-                  if (C && C.type === "Identifier") {
+                  if (C && C.type === 'Identifier') {
                     const F = $.scope.getBinding(C.name);
-                    if (
-                      F &&
-                      F.constant &&
-                      F.path.node.type === "VariableDeclarator"
-                    ) {
+                    if (F && F.constant && F.path.node.type === 'VariableDeclarator') {
                       return X(F.path.node.init);
                     }
                   }
@@ -164,22 +131,17 @@
                     F = true;
                     return z.jsxElement(
                       z.jsxOpeningElement(
-                        z.jsxIdentifier("__OmT"),
-                        [
-                          z.jsxAttribute(
-                            z.jsxIdentifier("i"),
-                            z.stringLiteral(K),
-                          ),
-                        ],
+                        z.jsxIdentifier('__OmT'),
+                        [z.jsxAttribute(z.jsxIdentifier('i'), z.stringLiteral(K))],
                         false,
                       ),
-                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      z.jsxClosingElement(z.jsxIdentifier('__OmT')),
                       [q],
                       false,
                     );
                   };
                   const D = N.children.map((K) => {
-                    if (K.type === "JSXText") {
+                    if (K.type === 'JSXText') {
                       if (K.start == null || K.end == null) return K;
                       const q = X.slice(K.start, K.end);
                       const R = q.length - q.trimStart().length;
@@ -187,7 +149,7 @@
                       if (R + m >= q.length) return K;
                       return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
                     }
-                    if (K.type === "JSXExpressionContainer") {
+                    if (K.type === 'JSXExpressionContainer') {
                       const q = b($, K.expression);
                       if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
                     }
@@ -203,23 +165,19 @@
                       const F = {};
                       for (let w = 0; w < X.attributes.length; w++) {
                         const D = X.attributes[w];
-                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        if (D.type !== 'JSXAttribute' || !D.name) continue;
                         const K = D.name.name;
                         if (!L[K]) continue;
-                        if (!D.value || D.value.type !== "StringLiteral")
-                          continue;
-                        if (D.value.start == null || D.value.end == null)
-                          continue;
+                        if (!D.value || D.value.type !== 'StringLiteral') continue;
+                        if (D.value.start == null || D.value.end == null) continue;
                         const q = `txt:${N}:${D.value.start}:${D.value.end}`;
                         F[K] = q;
-                        D.value = z.jsxExpressionContainer(
-                          _(q, z.stringLiteral(D.value.value)),
-                        );
+                        D.value = z.jsxExpressionContainer(_(q, z.stringLiteral(D.value.value)));
                       }
                       if (Object.keys(F).length) {
                         X.attributes.push(
                           z.jsxAttribute(
-                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.jsxIdentifier('data-om-text-attrs'),
                             z.stringLiteral(JSON.stringify(F)),
                           ),
                         );
@@ -228,8 +186,8 @@
                     JSXElement($, C) {
                       const X = $.node.openingElement;
                       const N = X && X.name && X.name.name;
-                      if (N === "__OmT") return;
-                      if (typeof N === "string" && V[N]) return;
+                      if (N === '__OmT') return;
+                      if (typeof N === 'string' && V[N]) return;
                       M($, E(C), B(C));
                     },
                     JSXFragment($, C) {
@@ -240,27 +198,17 @@
               });
             }
           }
-          const u = A
-            ? ["transform-react-jsx-source", G, k]
-            : ["transform-react-jsx-source", G];
+          const u = A ? ['transform-react-jsx-source', G, k] : ['transform-react-jsx-source', G];
           document
-            .querySelectorAll(
-              'script[type="text/babel"],script[type="text/jsx"]',
-            )
+            .querySelectorAll('script[type="text/babel"],script[type="text/jsx"]')
             .forEach((Y, U) => {
-              const Q = Y.getAttribute("data-plugins") || "";
+              const Q = Y.getAttribute('data-plugins') || '';
               const J = u.filter((W) => Q.indexOf(W) < 0);
               if (J.length) {
-                Y.setAttribute(
-                  "data-plugins",
-                  Q ? `${Q},${J.join(",")}` : J.join(","),
-                );
+                Y.setAttribute('data-plugins', Q ? `${Q},${J.join(',')}` : J.join(','));
               }
-              if (!Y.hasAttribute("data-filename")) {
-                Y.setAttribute(
-                  "data-filename",
-                  Y.getAttribute("src") || `inline-${U}`,
-                );
+              if (!Y.hasAttribute('data-filename')) {
+                Y.setAttribute('data-filename', Y.getAttribute('src') || `inline-${U}`);
               }
             });
         });
@@ -268,71 +216,69 @@
         if (y && y !== window) {
           const H = (Q, J) => {
             try {
-              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, '*');
             } catch {}
           };
-          ["log", "warn", "error"].forEach((Q) => {
+          ['log', 'warn', 'error'].forEach((Q) => {
             const J = console[Q];
             console[Q] = (...W) => {
               const Z = W.map((z) => {
                 try {
-                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                  return typeof z === 'object' ? JSON.stringify(z) : String(z);
                 } catch {
                   try {
                     return String(z);
                   } catch {
-                    return "[unstringifiable]";
+                    return '[unstringifiable]';
                   }
                 }
-              }).join(" ");
+              }).join(' ');
               H(Q, Z);
               J.apply(console, W);
             };
           });
           window.addEventListener(
-            "error",
+            'error',
             (Q) => {
               const J = Q.target;
               if (J && J !== window && J.tagName) {
-                const W = J.src || J.href || "";
-                H("resource_error", `${J.tagName} failed to load: ${W}`);
+                const W = J.src || J.href || '';
+                H('resource_error', `${J.tagName} failed to load: ${W}`);
               } else {
                 H(
-                  "error",
-                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                  'error',
+                  `${Q.message || 'Unknown error'} at ${Q.filename || '?'}:${Q.lineno || 0}:${Q.colno || 0}`,
                 );
               }
             },
             true,
           );
-          window.addEventListener("unhandledrejection", (Q) => {
+          window.addEventListener('unhandledrejection', (Q) => {
             const J = Q.reason;
-            const W =
-              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
-            H("error", `Unhandled rejection: ${W}`);
+            const W = J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H('error', `Unhandled rejection: ${W}`);
           });
           const G = () => {
             try {
               y.postMessage(
                 {
-                  type: "omelette:height",
+                  type: 'omelette:height',
                   height: document.documentElement.scrollHeight,
                 },
-                "*",
+                '*',
               );
             } catch {}
           };
-          if (document.readyState === "complete") G();
-          else window.addEventListener("load", G);
-          if (window.ResizeObserver)
-            new ResizeObserver(G).observe(document.documentElement);
+          if (document.readyState === 'complete') G();
+          else window.addEventListener('load', G);
+          if (window.ResizeObserver) new ResizeObserver(G).observe(document.documentElement);
           const k = {};
           let A = 0;
           window.claude = {
             complete(Q) {
               return new Promise((J, W) => {
                 if (!j.length) {
-                  W(new Error("claude.complete: no parent origin"));
+                  W(new Error('claude.complete: no parent origin'));
                   return;
                 }
                 const Z = `c${++A}`;
@@ -342,7 +288,7 @@
                     W(new Error(`claude.complete: no data for ${S / 1000}s`));
                   }, S);
                 const V = z();
-                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                k[Z] = { resolve: J, reject: W, text: '', t: V, arm: z };
                 try {
                   for (const L of j) {
                     y.postMessage({ __om_api: true, id: Z, body: Q }, L);
@@ -376,7 +322,7 @@
                       {
                         __om_file: true,
                         id: z,
-                        op: "write",
+                        op: 'write',
                         path: Q,
                         content: J,
                       },
@@ -397,27 +343,22 @@
               return JSON.stringify(String(Q));
             }
           };
-          window.addEventListener("message", (Q) => {
+          window.addEventListener('message', (Q) => {
             if (j.indexOf(Q.origin) < 0) return;
             if (Q.source !== y) return;
             const J = Q.data;
             if (!J) return;
-            if (J.type === "omelette-preview-refresh") {
+            if (J.type === 'omelette-preview-refresh') {
               if (
-                typeof J.token !== "string" ||
-                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
-                  J.token,
-                )
+                typeof J.token !== 'string' ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token)
               )
                 return;
-              const z = Math.max(
-                1,
-                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
-              );
+              const z = Math.max(1, Math.floor((J.expiresAt || 0) - Date.now() / 1000));
               document.cookie =
-                "__Host-omelette-preview=" +
+                '__Host-omelette-preview=' +
                 J.token +
-                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                '; Path=/; Secure; SameSite=None; Partitioned; Max-Age=' +
                 z;
               return;
             }
@@ -427,7 +368,7 @@
               clearTimeout(z.t);
               delete u[J.id];
               if (J.ok) z.resolve();
-              else z.reject(new Error(J.error || "write failed"));
+              else z.reject(new Error(J.error || 'write failed'));
               return;
             }
             if (J.__om_api_r) {
@@ -456,14 +397,11 @@
             if (!J.__om_eval) return;
             const W = J;
             const Z = (z) => {
-              Q.source.postMessage(
-                { ...z, __om_eval_r: 1, id: W.id },
-                Q.origin,
-              );
+              Q.source.postMessage({ ...z, __om_eval_r: 1, id: W.id }, Q.origin);
             };
             try {
               const z = (0, eval)(W.code);
-              if (z && typeof z.then === "function") {
+              if (z && typeof z.then === 'function') {
                 z.then(
                   (V) => Z({ ok: 1, v: U(V) }),
                   (V) => Z({ ok: 0, e: String(V) }),
@@ -482,60 +420,49 @@
     <meta charset="UTF-8" data-om-id="a3b61511:2" />
     <style>
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 300;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 400;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 500;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-500.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 600;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 700;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 800;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 900;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
     </style>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-      data-om-id="a3b61511:3"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" data-om-id="a3b61511:3" />
     <title>منتوما — استودیوی خلاق</title>
 
     <style>
@@ -562,7 +489,7 @@
         scroll-behavior: smooth;
       }
       body {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         background: var(--warm);
         color: var(--dark);
         line-height: 1.7;
@@ -1003,11 +930,7 @@
       .project-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          to top,
-          rgba(0, 35, 51, 0.85) 0%,
-          transparent 50%
-        );
+        background: linear-gradient(to top, rgba(0, 35, 51, 0.85) 0%, transparent 50%);
         opacity: 0;
         transition: opacity 0.25s;
       }
@@ -1328,39 +1251,19 @@
       }
 
       .ct1 {
-        background: linear-gradient(
-          135deg,
-          oklch(65% 0.22 280),
-          oklch(55% 0.25 305)
-        );
+        background: linear-gradient(135deg, oklch(65% 0.22 280), oklch(55% 0.25 305));
       }
       .ct2 {
-        background: linear-gradient(
-          135deg,
-          oklch(62% 0.22 158),
-          oklch(52% 0.22 190)
-        );
+        background: linear-gradient(135deg, oklch(62% 0.22 158), oklch(52% 0.22 190));
       }
       .ct3 {
-        background: linear-gradient(
-          135deg,
-          oklch(70% 0.18 52),
-          oklch(65% 0.2 30)
-        );
+        background: linear-gradient(135deg, oklch(70% 0.18 52), oklch(65% 0.2 30));
       }
       .ct4 {
-        background: linear-gradient(
-          135deg,
-          oklch(62% 0.22 20),
-          oklch(55% 0.24 350)
-        );
+        background: linear-gradient(135deg, oklch(62% 0.22 20), oklch(55% 0.24 350));
       }
       .ct5 {
-        background: linear-gradient(
-          135deg,
-          oklch(68% 0.18 230),
-          oklch(60% 0.2 255)
-        );
+        background: linear-gradient(135deg, oklch(68% 0.18 230), oklch(60% 0.2 255));
       }
       .tag-ill {
         background: oklch(95% 0.06 280);
@@ -1447,7 +1350,7 @@
     </style>
 
     <style>
-      [data-theme="dark"] {
+      [data-theme='dark'] {
         --green: oklch(62% 0.22 158);
         --green-dark: oklch(50% 0.22 158);
         --green-light: oklch(18% 0.08 158);
@@ -1459,106 +1362,106 @@
         --warm: #0f172a;
         --white: #161d2e;
       }
-      [data-theme="dark"] body {
+      [data-theme='dark'] body {
         background: #0f172a;
         color: #f1f5f9;
       }
-      [data-theme="dark"] nav {
+      [data-theme='dark'] nav {
         background: #161d2e;
         border-color: #1e293b;
       }
-      [data-theme="dark"] .nav-logo {
+      [data-theme='dark'] .nav-logo {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .nav-search {
+      [data-theme='dark'] .nav-search {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .nav-search input {
+      [data-theme='dark'] .nav-search input {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .nav-links a {
+      [data-theme='dark'] .nav-links a {
         color: #94a3b8;
       }
-      [data-theme="dark"] .nav-links a:hover {
+      [data-theme='dark'] .nav-links a:hover {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .btn-outline-nav {
+      [data-theme='dark'] .btn-outline-nav {
         border-color: #475569;
         color: #cbd5e1;
       }
-      [data-theme="dark"] .btn-outline-nav:hover {
+      [data-theme='dark'] .btn-outline-nav:hover {
         background: #1e293b;
         color: #fff;
       }
-      [data-theme="dark"] .hero {
+      [data-theme='dark'] .hero {
         background: #0a0f1e;
       }
-      [data-theme="dark"] .cat-block {
+      [data-theme='dark'] .cat-block {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .cat-block:hover {
+      [data-theme='dark'] .cat-block:hover {
         border-color: var(--green);
       }
-      [data-theme="dark"] .cat-name {
+      [data-theme='dark'] .cat-name {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .class-card {
+      [data-theme='dark'] .class-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .class-title {
+      [data-theme='dark'] .class-title {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .meta-chip {
+      [data-theme='dark'] .meta-chip {
         color: #94a3b8;
         background: #0f172a;
       }
-      [data-theme="dark"] .community-section {
+      [data-theme='dark'] .community-section {
         background: #161d2e;
       }
-      [data-theme="dark"] .community-header h2 {
+      [data-theme='dark'] .community-header h2 {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .community-header p {
+      [data-theme='dark'] .community-header p {
         color: #94a3b8;
       }
-      [data-theme="dark"] .section-title {
+      [data-theme='dark'] .section-title {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .pillar-card {
+      [data-theme='dark'] .pillar-card {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .pillar-card h3 {
+      [data-theme='dark'] .pillar-card h3 {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .pillar-card p {
+      [data-theme='dark'] .pillar-card p {
         color: #94a3b8;
       }
-      [data-theme="dark"] .tc {
+      [data-theme='dark'] .tc {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .tc-quote {
+      [data-theme='dark'] .tc-quote {
         color: #cbd5e1;
       }
-      [data-theme="dark"] .tc-name {
+      [data-theme='dark'] .tc-name {
         color: #f1f5f9;
       }
-      [data-theme="dark"] .cat-pill {
+      [data-theme='dark'] .cat-pill {
         background: #1e293b;
         border-color: #334155;
       }
-      [data-theme="dark"] .cat-pill-label {
+      [data-theme='dark'] .cat-pill-label {
         color: #cbd5e1;
       }
-      [data-theme="dark"] .cats-section {
+      [data-theme='dark'] .cats-section {
         background: #161d2e;
         border-color: #1e293b;
       }
-      [data-theme="dark"] .courses-section {
+      [data-theme='dark'] .courses-section {
         background: #0f172a;
       }
 
@@ -1587,16 +1490,8 @@
         >منتور<span data-om-id="a3b61511:7">یار</span></a
       >
       <div class="nav-search" data-om-id="a3b61511:8">
-        <span
-          style="font-size: 16px; color: var(--muted)"
-          data-om-id="a3b61511:9"
-          >🔍</span
-        >
-        <input
-          type="text"
-          placeholder="جستجوی کلاس‌ها..."
-          data-om-id="a3b61511:10"
-        />
+        <span style="font-size: 16px; color: var(--muted)" data-om-id="a3b61511:9">🔍</span>
+        <input type="text" placeholder="جستجوی کلاس‌ها..." data-om-id="a3b61511:10" />
       </div>
       <div class="nav-links" data-om-id="a3b61511:11">
         <a href="#" data-om-id="a3b61511:12">کشف کن</a>
@@ -1606,9 +1501,7 @@
       </div>
       <div class="nav-actions" data-om-id="a3b61511:16">
         <button class="btn-outline-nav" data-om-id="a3b61511:17">ورود</button>
-        <button class="btn-fill-nav" data-om-id="a3b61511:18">
-          آزمایش رایگان
-        </button>
+        <button class="btn-fill-nav" data-om-id="a3b61511:18">آزمایش رایگان</button>
         <button
           class="theme-toggle-btn"
           id="themeBtn4"
@@ -1623,24 +1516,12 @@
     <div class="hero" data-om-id="a3b61511:20">
       <div
         class="hero-dot"
-        style="
-          width: 120px;
-          height: 120px;
-          background: oklch(62% 0.22 158);
-          top: -20px;
-          right: 55%;
-        "
+        style="width: 120px; height: 120px; background: oklch(62% 0.22 158); top: -20px; right: 55%"
         data-om-id="a3b61511:21"
       ></div>
       <div
         class="hero-dot"
-        style="
-          width: 80px;
-          height: 80px;
-          background: oklch(65% 0.18 52);
-          top: 30%;
-          left: 5%;
-        "
+        style="width: 80px; height: 80px; background: oklch(65% 0.18 52); top: 30%; left: 5%"
         data-om-id="a3b61511:22"
       ></div>
       <div
@@ -1656,24 +1537,17 @@
       ></div>
       <div class="hero-inner" data-om-id="a3b61511:24">
         <div data-om-id="a3b61511:25">
-          <div class="hero-eyebrow" data-om-id="a3b61511:26">
-            🎨 جامعه یادگیری خلاق
-          </div>
+          <div class="hero-eyebrow" data-om-id="a3b61511:26">🎨 جامعه یادگیری خلاق</div>
           <h1 data-om-id="a3b61511:27">
             کلاس‌های خلاقانه از بهترین
             <span class="accent" data-om-id="a3b61511:28">متخصصان</span> صنعت
           </h1>
           <p data-om-id="a3b61511:29">
-            هزاران کلاس در تصویرسازی، طراحی، عکاسی، فیلم، فریلنسری و بیشتر. به
-            جامعه خلاقان بپیوند.
+            هزاران کلاس در تصویرسازی، طراحی، عکاسی، فیلم، فریلنسری و بیشتر. به جامعه خلاقان بپیوند.
           </p>
           <div class="hero-cta" data-om-id="a3b61511:30">
-            <button class="btn-green-hero" data-om-id="a3b61511:31">
-              آزمایش رایگان شروع کن
-            </button>
-            <button class="btn-outline-hero" data-om-id="a3b61511:32">
-              کشف کلاس‌ها
-            </button>
+            <button class="btn-green-hero" data-om-id="a3b61511:31">آزمایش رایگان شروع کن</button>
+            <button class="btn-outline-hero" data-om-id="a3b61511:32">کشف کلاس‌ها</button>
           </div>
           <div class="hero-stats" data-om-id="a3b61511:33">
             <div class="hs-item" data-om-id="a3b61511:34">
@@ -1715,12 +1589,7 @@
               />
             </div>
             <div
-              style="
-                font-size: 13px;
-                font-weight: 800;
-                color: #fff;
-                margin-bottom: 4px;
-              "
+              style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px"
               data-om-id="a3b61511:50"
             >
               پروکریت برای مبتدیان
@@ -1750,12 +1619,7 @@
               />
             </div>
             <div
-              style="
-                font-size: 13px;
-                font-weight: 800;
-                color: #fff;
-                margin-bottom: 4px;
-              "
+              style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px"
               data-om-id="a3b61511:55"
             >
               موشن دیزاین پایه
@@ -1784,12 +1648,7 @@
               />
             </div>
             <div
-              style="
-                font-size: 13px;
-                font-weight: 800;
-                color: #fff;
-                margin-bottom: 4px;
-              "
+              style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px"
               data-om-id="a3b61511:60"
             >
               طراحی هویت برند
@@ -1819,12 +1678,7 @@
               />
             </div>
             <div
-              style="
-                font-size: 13px;
-                font-weight: 800;
-                color: #fff;
-                margin-bottom: 4px;
-              "
+              style="font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 4px"
               data-om-id="a3b61511:65"
             >
               آبرنگ — منظره
@@ -1841,9 +1695,7 @@
     </div>
 
     <div class="cats-section" data-om-id="a3b61511:67">
-      <div class="cats-label" data-om-id="a3b61511:68">
-        جستجو بر اساس دسته‌بندی
-      </div>
+      <div class="cats-label" data-om-id="a3b61511:68">جستجو بر اساس دسته‌بندی</div>
       <div class="cats-track-wrap" data-om-id="a3b61511:69">
         <div class="cats-track" data-om-id="a3b61511:70">
           <div class="cat-pill active" data-om-id="a3b61511:71">
@@ -1852,9 +1704,7 @@
           </div>
           <div class="cat-pill" data-om-id="a3b61511:74">
             <div class="cat-pill-icon" data-om-id="a3b61511:75">🖥</div>
-            <div class="cat-pill-label" data-om-id="a3b61511:76">
-              طراحی گرافیک
-            </div>
+            <div class="cat-pill-label" data-om-id="a3b61511:76">طراحی گرافیک</div>
           </div>
           <div class="cat-pill" data-om-id="a3b61511:77">
             <div class="cat-pill-icon" data-om-id="a3b61511:78">✏️</div>
@@ -1866,9 +1716,7 @@
           </div>
           <div class="cat-pill" data-om-id="a3b61511:83">
             <div class="cat-pill-icon" data-om-id="a3b61511:84">🎬</div>
-            <div class="cat-pill-label" data-om-id="a3b61511:85">
-              فیلم و ویدیو
-            </div>
+            <div class="cat-pill-label" data-om-id="a3b61511:85">فیلم و ویدیو</div>
           </div>
           <div class="cat-pill" data-om-id="a3b61511:86">
             <div class="cat-pill-icon" data-om-id="a3b61511:87">🎵</div>
@@ -1888,9 +1736,7 @@
           </div>
           <div class="cat-pill" data-om-id="a3b61511:98">
             <div class="cat-pill-icon" data-om-id="a3b61511:99">🤖</div>
-            <div class="cat-pill-label" data-om-id="a3b61511:100">
-              هوش مصنوعی
-            </div>
+            <div class="cat-pill-label" data-om-id="a3b61511:100">هوش مصنوعی</div>
           </div>
         </div>
       </div>
@@ -1898,12 +1744,8 @@
 
     <div class="courses-section" data-om-id="a3b61511:101">
       <div class="section-header" data-om-id="a3b61511:102">
-        <div class="section-title" data-om-id="a3b61511:103">
-          کلاس‌های ویژه تصویرسازی
-        </div>
-        <a href="#" class="view-all-link" data-om-id="a3b61511:104"
-          >← مشاهده همه</a
-        >
+        <div class="section-title" data-om-id="a3b61511:103">کلاس‌های ویژه تصویرسازی</div>
+        <a href="#" class="view-all-link" data-om-id="a3b61511:104">← مشاهده همه</a>
       </div>
       <div class="courses-grid" data-om-id="a3b61511:105">
         <div class="class-card" data-om-id="a3b61511:106">
@@ -1912,20 +1754,14 @@
               src="https://images.unsplash.com/photo-1618788372246-79faff0c3742?w=600&q=80"
               alt=""
               data-om-id="a3b61511:108"
-            /><span class="class-tag tag-ill" data-om-id="a3b61511:109"
-              >تصویرسازی</span
-            >
+            /><span class="class-tag tag-ill" data-om-id="a3b61511:109">تصویرسازی</span>
             <div class="play-overlay" data-om-id="a3b61511:110">
               <div class="play-btn-round" data-om-id="a3b61511:111">▶</div>
             </div>
           </div>
           <div class="class-body" data-om-id="a3b61511:112">
-            <div class="class-title" data-om-id="a3b61511:113">
-              پروکریت: خلاقیت خودت را شروع کن
-            </div>
-            <div class="class-instructor" data-om-id="a3b61511:114">
-              لیسا باردوت
-            </div>
+            <div class="class-title" data-om-id="a3b61511:113">پروکریت: خلاقیت خودت را شروع کن</div>
+            <div class="class-instructor" data-om-id="a3b61511:114">لیسا باردوت</div>
             <div class="class-meta" data-om-id="a3b61511:115">
               <span class="meta-chip" data-om-id="a3b61511:116">۴۸ درس</span
               ><span class="r-score" data-om-id="a3b61511:117">۴.۹</span
@@ -1940,20 +1776,14 @@
               src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80"
               alt=""
               data-om-id="a3b61511:122"
-            /><span class="class-tag tag-des" data-om-id="a3b61511:123"
-              >طراحی</span
-            >
+            /><span class="class-tag tag-des" data-om-id="a3b61511:123">طراحی</span>
             <div class="play-overlay" data-om-id="a3b61511:124">
               <div class="play-btn-round" data-om-id="a3b61511:125">▶</div>
             </div>
           </div>
           <div class="class-body" data-om-id="a3b61511:126">
-            <div class="class-title" data-om-id="a3b61511:127">
-              UI/UX: از وایرفریم تا پیکسل
-            </div>
-            <div class="class-instructor" data-om-id="a3b61511:128">
-              دانیل اسکات
-            </div>
+            <div class="class-title" data-om-id="a3b61511:127">UI/UX: از وایرفریم تا پیکسل</div>
+            <div class="class-instructor" data-om-id="a3b61511:128">دانیل اسکات</div>
             <div class="class-meta" data-om-id="a3b61511:129">
               <span class="meta-chip" data-om-id="a3b61511:130">۶۲ درس</span
               ><span class="r-score" data-om-id="a3b61511:131">۴.۸</span
@@ -1968,20 +1798,14 @@
               src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&q=80"
               alt=""
               data-om-id="a3b61511:136"
-            /><span class="class-tag tag-photo" data-om-id="a3b61511:137"
-              >عکاسی</span
-            >
+            /><span class="class-tag tag-photo" data-om-id="a3b61511:137">عکاسی</span>
             <div class="play-overlay" data-om-id="a3b61511:138">
               <div class="play-btn-round" data-om-id="a3b61511:139">▶</div>
             </div>
           </div>
           <div class="class-body" data-om-id="a3b61511:140">
-            <div class="class-title" data-om-id="a3b61511:141">
-              عکاسی پرتره با نور طبیعی
-            </div>
-            <div class="class-instructor" data-om-id="a3b61511:142">
-              جوردی واندپوت
-            </div>
+            <div class="class-title" data-om-id="a3b61511:141">عکاسی پرتره با نور طبیعی</div>
+            <div class="class-instructor" data-om-id="a3b61511:142">جوردی واندپوت</div>
             <div class="class-meta" data-om-id="a3b61511:143">
               <span class="meta-chip" data-om-id="a3b61511:144">۳۴ درس</span
               ><span class="r-score" data-om-id="a3b61511:145">۴.۷</span
@@ -1996,9 +1820,7 @@
               src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600&q=80"
               alt=""
               data-om-id="a3b61511:150"
-            /><span class="class-tag tag-anim" data-om-id="a3b61511:151"
-              >انیمیشن</span
-            >
+            /><span class="class-tag tag-anim" data-om-id="a3b61511:151">انیمیشن</span>
             <div class="play-overlay" data-om-id="a3b61511:152">
               <div class="play-btn-round" data-om-id="a3b61511:153">▶</div>
             </div>
@@ -2007,9 +1829,7 @@
             <div class="class-title" data-om-id="a3b61511:155">
               موشن گرافیک: بوت‌کمپ After Effects
             </div>
-            <div class="class-instructor" data-om-id="a3b61511:156">
-              ایمونی لاروسا
-            </div>
+            <div class="class-instructor" data-om-id="a3b61511:156">ایمونی لاروسا</div>
             <div class="class-meta" data-om-id="a3b61511:157">
               <span class="meta-chip" data-om-id="a3b61511:158">۵۵ درس</span
               ><span class="r-score" data-om-id="a3b61511:159">۴.۹</span
@@ -2026,8 +1846,7 @@
         <div class="community-header" data-om-id="a3b61511:164">
           <h2 data-om-id="a3b61511:165">پروژه‌های دانشجویان</h2>
           <p data-om-id="a3b61511:166">
-            ببین جامعه منتوما چه می‌سازد. الهام بگیر و کار خودت را به اشتراک
-            بذار.
+            ببین جامعه منتوما چه می‌سازد. الهام بگیر و کار خودت را به اشتراک بذار.
           </p>
         </div>
         <div class="projects-grid" data-om-id="a3b61511:167">
@@ -2039,12 +1858,8 @@
             />
             <div class="project-overlay" data-om-id="a3b61511:170"></div>
             <div class="project-info" data-om-id="a3b61511:171">
-              <div class="proj-title" data-om-id="a3b61511:172">
-                مجموعه طراحی شخصیت
-              </div>
-              <div class="proj-author" data-om-id="a3b61511:173">
-                توسط میرا کوالسکی
-              </div>
+              <div class="proj-title" data-om-id="a3b61511:172">مجموعه طراحی شخصیت</div>
+              <div class="proj-author" data-om-id="a3b61511:173">توسط میرا کوالسکی</div>
             </div>
             <div class="proj-likes" data-om-id="a3b61511:174">❤️ ۲۸۴</div>
           </div>
@@ -2056,12 +1871,8 @@
             />
             <div class="project-overlay" data-om-id="a3b61511:177"></div>
             <div class="project-info" data-om-id="a3b61511:178">
-              <div class="proj-title" data-om-id="a3b61511:179">
-                سری ساعت طلایی
-              </div>
-              <div class="proj-author" data-om-id="a3b61511:180">
-                توسط تاو چن
-              </div>
+              <div class="proj-title" data-om-id="a3b61511:179">سری ساعت طلایی</div>
+              <div class="proj-author" data-om-id="a3b61511:180">توسط تاو چن</div>
             </div>
             <div class="proj-likes" data-om-id="a3b61511:181">❤️ ۱۴۲</div>
           </div>
@@ -2073,12 +1884,8 @@
             />
             <div class="project-overlay" data-om-id="a3b61511:184"></div>
             <div class="project-info" data-om-id="a3b61511:185">
-              <div class="proj-title" data-om-id="a3b61511:186">
-                ریدیزاین اپ مالی
-              </div>
-              <div class="proj-author" data-om-id="a3b61511:187">
-                توسط آمارا سینگ
-              </div>
+              <div class="proj-title" data-om-id="a3b61511:186">ریدیزاین اپ مالی</div>
+              <div class="proj-author" data-om-id="a3b61511:187">توسط آمارا سینگ</div>
             </div>
             <div class="proj-likes" data-om-id="a3b61511:188">❤️ ۹۸</div>
           </div>
@@ -2090,12 +1897,8 @@
             />
             <div class="project-overlay" data-om-id="a3b61511:191"></div>
             <div class="project-info" data-om-id="a3b61511:192">
-              <div class="proj-title" data-om-id="a3b61511:193">
-                کیت بازطراحی برند
-              </div>
-              <div class="proj-author" data-om-id="a3b61511:194">
-                توسط لئو دومون
-              </div>
+              <div class="proj-title" data-om-id="a3b61511:193">کیت بازطراحی برند</div>
+              <div class="proj-author" data-om-id="a3b61511:194">توسط لئو دومون</div>
             </div>
             <div class="proj-likes" data-om-id="a3b61511:195">❤️ ۲۱۱</div>
           </div>
@@ -2107,12 +1910,8 @@
             />
             <div class="project-overlay" data-om-id="a3b61511:198"></div>
             <div class="project-info" data-om-id="a3b61511:199">
-              <div class="proj-title" data-om-id="a3b61511:200">
-                ریل لوپ ۱۴۰۵
-              </div>
-              <div class="proj-author" data-om-id="a3b61511:201">
-                توسط زوی پارک
-              </div>
+              <div class="proj-title" data-om-id="a3b61511:200">ریل لوپ ۱۴۰۵</div>
+              <div class="proj-author" data-om-id="a3b61511:201">توسط زوی پارک</div>
             </div>
             <div class="proj-likes" data-om-id="a3b61511:202">❤️ ۱۷۶</div>
           </div>
@@ -2122,9 +1921,7 @@
 
     <div class="pillars-section" data-om-id="a3b61511:203">
       <div class="section-header" data-om-id="a3b61511:204">
-        <div class="section-title" data-om-id="a3b61511:205">
-          همه چیز برای رشد خلاقانه
-        </div>
+        <div class="section-title" data-om-id="a3b61511:205">همه چیز برای رشد خلاقانه</div>
       </div>
       <div class="pillars-grid" data-om-id="a3b61511:206">
         <div class="pillar-card" data-om-id="a3b61511:207">
@@ -2137,8 +1934,7 @@
           </div>
           <h3 data-om-id="a3b61511:209">انگیزه بگیر</h3>
           <p data-om-id="a3b61511:210">
-            موضوعات پرطرفدار را کشف کن، از مدرسان جواب بگیر، و قبیله خلاقانه
-            خودت را پیدا کن.
+            موضوعات پرطرفدار را کشف کن، از مدرسان جواب بگیر، و قبیله خلاقانه خودت را پیدا کن.
           </p>
         </div>
         <div class="pillar-card" data-om-id="a3b61511:211">
@@ -2151,8 +1947,7 @@
           </div>
           <h3 data-om-id="a3b61511:213">ارتباط بساز</h3>
           <p data-om-id="a3b61511:214">
-            همتایان و مدرسان را دنبال کن، دیدگاه‌ها را تبادل کن، و از سفر
-            یادگیری همدیگر حمایت کن.
+            همتایان و مدرسان را دنبال کن، دیدگاه‌ها را تبادل کن، و از سفر یادگیری همدیگر حمایت کن.
           </p>
         </div>
         <div class="pillar-card" data-om-id="a3b61511:215">
@@ -2165,8 +1960,8 @@
           </div>
           <h3 data-om-id="a3b61511:217">بساز و رشد کن</h3>
           <p data-om-id="a3b61511:218">
-            ایده‌های جدید برای پروژه کشف کن، کارت را به اشتراک بذار، و بازخورد
-            واقعی از متخصصان بگیر.
+            ایده‌های جدید برای پروژه کشف کن، کارت را به اشتراک بذار، و بازخورد واقعی از متخصصان
+            بگیر.
           </p>
         </div>
       </div>
@@ -2177,8 +1972,7 @@
         <div class="teachers-header" data-om-id="a3b61511:221">
           <h2 data-om-id="a3b61511:222">از متخصصان خلاق یاد بگیر</h2>
           <p data-om-id="a3b61511:223">
-            رهبران صنعت که مشتاقانه ابزارها، تکنیک‌ها و تجربیاتشان را با شما به
-            اشتراک می‌گذارند.
+            رهبران صنعت که مشتاقانه ابزارها، تکنیک‌ها و تجربیاتشان را با شما به اشتراک می‌گذارند.
           </p>
         </div>
         <div class="teachers-grid" data-om-id="a3b61511:224">
@@ -2190,9 +1984,7 @@
                 data-om-id="a3b61511:227"
               />
             </div>
-            <div class="teacher-name" data-om-id="a3b61511:228">
-              لیسا باردوت
-            </div>
+            <div class="teacher-name" data-om-id="a3b61511:228">لیسا باردوت</div>
             <div class="teacher-field" data-om-id="a3b61511:229">تصویرساز</div>
             <div class="teacher-stats" data-om-id="a3b61511:230">
               <div class="ts-item" data-om-id="a3b61511:231">
@@ -2213,12 +2005,8 @@
                 data-om-id="a3b61511:239"
               />
             </div>
-            <div class="teacher-name" data-om-id="a3b61511:240">
-              دانیل اسکات
-            </div>
-            <div class="teacher-field" data-om-id="a3b61511:241">
-              طراح دیجیتال
-            </div>
+            <div class="teacher-name" data-om-id="a3b61511:240">دانیل اسکات</div>
+            <div class="teacher-field" data-om-id="a3b61511:241">طراح دیجیتال</div>
             <div class="teacher-stats" data-om-id="a3b61511:242">
               <div class="ts-item" data-om-id="a3b61511:243">
                 <div class="ts-val" data-om-id="a3b61511:244">۴.۸★</div>
@@ -2238,12 +2026,8 @@
                 data-om-id="a3b61511:251"
               />
             </div>
-            <div class="teacher-name" data-om-id="a3b61511:252">
-              آرون درپلین
-            </div>
-            <div class="teacher-field" data-om-id="a3b61511:253">
-              طراح گرافیک
-            </div>
+            <div class="teacher-name" data-om-id="a3b61511:252">آرون درپلین</div>
+            <div class="teacher-field" data-om-id="a3b61511:253">طراح گرافیک</div>
             <div class="teacher-stats" data-om-id="a3b61511:254">
               <div class="ts-item" data-om-id="a3b61511:255">
                 <div class="ts-val" data-om-id="a3b61511:256">۴.۹★</div>
@@ -2263,12 +2047,8 @@
                 data-om-id="a3b61511:263"
               />
             </div>
-            <div class="teacher-name" data-om-id="a3b61511:264">
-              ایمونی لاروسا
-            </div>
-            <div class="teacher-field" data-om-id="a3b61511:265">
-              هنرمند موشن
-            </div>
+            <div class="teacher-name" data-om-id="a3b61511:264">ایمونی لاروسا</div>
+            <div class="teacher-field" data-om-id="a3b61511:265">هنرمند موشن</div>
             <div class="teacher-stats" data-om-id="a3b61511:266">
               <div class="ts-item" data-om-id="a3b61511:267">
                 <div class="ts-val" data-om-id="a3b61511:268">۴.۸★</div>
@@ -2294,8 +2074,7 @@
         <div class="tc" data-om-id="a3b61511:277">
           <div class="tc-stars" data-om-id="a3b61511:278">★★★★★</div>
           <div class="tc-quote" data-om-id="a3b61511:279">
-            «منتوما بهترین تصمیم یادگیری‌ام بود. مهارت‌های واقعی بدون بار مالی
-            تحصیلات سنتی.»
+            «منتوما بهترین تصمیم یادگیری‌ام بود. مهارت‌های واقعی بدون بار مالی تحصیلات سنتی.»
           </div>
           <div class="tc-author" data-om-id="a3b61511:280">
             <div class="tc-av" data-om-id="a3b61511:281">
@@ -2314,8 +2093,8 @@
         <div class="tc" data-om-id="a3b61511:286">
           <div class="tc-stars" data-om-id="a3b61511:287">★★★★★</div>
           <div class="tc-quote" data-om-id="a3b61511:288">
-            «دوست دارم جایی باشد که بتوانم با سایر خلاقان ارتباط برقرار کنم و در
-            سفر یادگیری از هم حمایت کنیم.»
+            «دوست دارم جایی باشد که بتوانم با سایر خلاقان ارتباط برقرار کنم و در سفر یادگیری از هم
+            حمایت کنیم.»
           </div>
           <div class="tc-author" data-om-id="a3b61511:289">
             <div class="tc-av" data-om-id="a3b61511:290">
@@ -2334,8 +2113,8 @@
         <div class="tc" data-om-id="a3b61511:295">
           <div class="tc-stars" data-om-id="a3b61511:296">★★★★★</div>
           <div class="tc-quote" data-om-id="a3b61511:297">
-            «به ندرت برای چیزی اشتراک می‌گیرم، اما این یکی از اشتراک‌هایی است که
-            نمی‌توانم بدونش تصور کنم.»
+            «به ندرت برای چیزی اشتراک می‌گیرم، اما این یکی از اشتراک‌هایی است که نمی‌توانم بدونش
+            تصور کنم.»
           </div>
           <div class="tc-author" data-om-id="a3b61511:298">
             <div class="tc-av" data-om-id="a3b61511:299">
@@ -2356,12 +2135,8 @@
 
     <div class="cta-strip" data-om-id="a3b61511:304">
       <h2 data-om-id="a3b61511:305">همین امروز شروع به ساختن کن.</h2>
-      <p data-om-id="a3b61511:306">
-        دسترسی نامحدود به ۳۰٬۰۰۰+ کلاس. ۷ روز رایگان، هر زمان لغو کن.
-      </p>
-      <button class="btn-navy" data-om-id="a3b61511:307">
-        ← آزمایش رایگان
-      </button>
+      <p data-om-id="a3b61511:306">دسترسی نامحدود به ۳۰٬۰۰۰+ کلاس. ۷ روز رایگان، هر زمان لغو کن.</p>
+      <button class="btn-navy" data-om-id="a3b61511:307">← آزمایش رایگان</button>
     </div>
 
     <footer data-om-id="a3b61511:308">
@@ -2372,8 +2147,8 @@
               منتور<span data-om-id="a3b61511:313">یار</span>
             </div>
             <p data-om-id="a3b61511:314">
-              جامعه یادگیری خلاق که هر کسی می‌تواند کلاس بگیرد، کار به اشتراک
-              بذارد، و با هم رشد کند.
+              جامعه یادگیری خلاق که هر کسی می‌تواند کلاس بگیرد، کار به اشتراک بذارد، و با هم رشد
+              کند.
             </p>
           </div>
           <div class="footer-col" data-om-id="a3b61511:315">
@@ -2407,31 +2182,28 @@
     </footer>
 
     <script>
-      document.querySelectorAll(".cat-pill").forEach((c) => {
-        c.addEventListener("click", () => {
-          document
-            .querySelectorAll(".cat-pill")
-            .forEach((x) => x.classList.remove("active"));
-          c.classList.add("active");
+      document.querySelectorAll('.cat-pill').forEach((c) => {
+        c.addEventListener('click', () => {
+          document.querySelectorAll('.cat-pill').forEach((x) => x.classList.remove('active'));
+          c.classList.add('active');
         });
       });
     </script>
 
     <script>
       (function () {
-        var saved = localStorage.getItem("Mentoma-theme-t4") || "light";
-        document.documentElement.setAttribute("data-theme", saved);
-        var btn = document.getElementById("themeBtn4");
-        if (btn) btn.textContent = saved === "dark" ? "☀️" : "🌙";
+        var saved = localStorage.getItem('Mentoma-theme-t4') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        var btn = document.getElementById('themeBtn4');
+        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
       })();
       function toggleT4() {
         var html = document.documentElement;
-        var isDark = html.getAttribute("data-theme") === "dark";
-        var next = isDark ? "light" : "dark";
-        html.setAttribute("data-theme", next);
-        document.getElementById("themeBtn4").textContent =
-          next === "dark" ? "☀️" : "🌙";
-        localStorage.setItem("Mentoma-theme-t4", next);
+        var isDark = html.getAttribute('data-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('themeBtn4').textContent = next === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('Mentoma-theme-t4', next);
       }
     </script>
   </body>
@@ -2827,13 +2599,7 @@
           [21022, 21027]
         ],
         "parentId": "a3b61511:24",
-        "childIds": [
-          "a3b61511:26",
-          "a3b61511:27",
-          "a3b61511:29",
-          "a3b61511:30",
-          "a3b61511:33"
-        ]
+        "childIds": ["a3b61511:26", "a3b61511:27", "a3b61511:29", "a3b61511:30", "a3b61511:33"]
       },
       {
         "id": "a3b61511:26",
@@ -3865,12 +3631,7 @@
           [27368, 27371]
         ],
         "parentId": "a3b61511:101",
-        "childIds": [
-          "a3b61511:106",
-          "a3b61511:120",
-          "a3b61511:134",
-          "a3b61511:148"
-        ]
+        "childIds": ["a3b61511:106", "a3b61511:120", "a3b61511:134", "a3b61511:148"]
       },
       {
         "id": "a3b61511:106",
@@ -3993,12 +3754,7 @@
         "closeEnd": 25391,
         "textRuns": [],
         "parentId": "a3b61511:112",
-        "childIds": [
-          "a3b61511:116",
-          "a3b61511:117",
-          "a3b61511:118",
-          "a3b61511:119"
-        ]
+        "childIds": ["a3b61511:116", "a3b61511:117", "a3b61511:118", "a3b61511:119"]
       },
       {
         "id": "a3b61511:116",
@@ -4169,12 +3925,7 @@
         "closeEnd": 26037,
         "textRuns": [],
         "parentId": "a3b61511:126",
-        "childIds": [
-          "a3b61511:130",
-          "a3b61511:131",
-          "a3b61511:132",
-          "a3b61511:133"
-        ]
+        "childIds": ["a3b61511:130", "a3b61511:131", "a3b61511:132", "a3b61511:133"]
       },
       {
         "id": "a3b61511:130",
@@ -4345,12 +4096,7 @@
         "closeEnd": 26685,
         "textRuns": [],
         "parentId": "a3b61511:140",
-        "childIds": [
-          "a3b61511:144",
-          "a3b61511:145",
-          "a3b61511:146",
-          "a3b61511:147"
-        ]
+        "childIds": ["a3b61511:144", "a3b61511:145", "a3b61511:146", "a3b61511:147"]
       },
       {
         "id": "a3b61511:144",
@@ -4521,12 +4267,7 @@
         "closeEnd": 27351,
         "textRuns": [],
         "parentId": "a3b61511:154",
-        "childIds": [
-          "a3b61511:158",
-          "a3b61511:159",
-          "a3b61511:160",
-          "a3b61511:161"
-        ]
+        "childIds": ["a3b61511:158", "a3b61511:159", "a3b61511:160", "a3b61511:161"]
       },
       {
         "id": "a3b61511:158",
@@ -4664,13 +4405,7 @@
           [29497, 29502]
         ],
         "parentId": "a3b61511:163",
-        "childIds": [
-          "a3b61511:168",
-          "a3b61511:175",
-          "a3b61511:182",
-          "a3b61511:189",
-          "a3b61511:196"
-        ]
+        "childIds": ["a3b61511:168", "a3b61511:175", "a3b61511:182", "a3b61511:189", "a3b61511:196"]
       },
       {
         "id": "a3b61511:168",
@@ -4682,12 +4417,7 @@
         "closeEnd": 28097,
         "textRuns": [],
         "parentId": "a3b61511:167",
-        "childIds": [
-          "a3b61511:169",
-          "a3b61511:170",
-          "a3b61511:171",
-          "a3b61511:174"
-        ]
+        "childIds": ["a3b61511:169", "a3b61511:170", "a3b61511:171", "a3b61511:174"]
       },
       {
         "id": "a3b61511:169",
@@ -4770,12 +4500,7 @@
         "closeEnd": 28443,
         "textRuns": [],
         "parentId": "a3b61511:167",
-        "childIds": [
-          "a3b61511:176",
-          "a3b61511:177",
-          "a3b61511:178",
-          "a3b61511:181"
-        ]
+        "childIds": ["a3b61511:176", "a3b61511:177", "a3b61511:178", "a3b61511:181"]
       },
       {
         "id": "a3b61511:176",
@@ -4858,12 +4583,7 @@
         "closeEnd": 28796,
         "textRuns": [],
         "parentId": "a3b61511:167",
-        "childIds": [
-          "a3b61511:183",
-          "a3b61511:184",
-          "a3b61511:185",
-          "a3b61511:188"
-        ]
+        "childIds": ["a3b61511:183", "a3b61511:184", "a3b61511:185", "a3b61511:188"]
       },
       {
         "id": "a3b61511:183",
@@ -4946,12 +4666,7 @@
         "closeEnd": 29151,
         "textRuns": [],
         "parentId": "a3b61511:167",
-        "childIds": [
-          "a3b61511:190",
-          "a3b61511:191",
-          "a3b61511:192",
-          "a3b61511:195"
-        ]
+        "childIds": ["a3b61511:190", "a3b61511:191", "a3b61511:192", "a3b61511:195"]
       },
       {
         "id": "a3b61511:190",
@@ -5034,12 +4749,7 @@
         "closeEnd": 29497,
         "textRuns": [],
         "parentId": "a3b61511:167",
-        "childIds": [
-          "a3b61511:197",
-          "a3b61511:198",
-          "a3b61511:199",
-          "a3b61511:202"
-        ]
+        "childIds": ["a3b61511:197", "a3b61511:198", "a3b61511:199", "a3b61511:202"]
       },
       {
         "id": "a3b61511:197",
@@ -5403,12 +5113,7 @@
           [33115, 33120]
         ],
         "parentId": "a3b61511:220",
-        "childIds": [
-          "a3b61511:225",
-          "a3b61511:237",
-          "a3b61511:249",
-          "a3b61511:261"
-        ]
+        "childIds": ["a3b61511:225", "a3b61511:237", "a3b61511:249", "a3b61511:261"]
       },
       {
         "id": "a3b61511:225",
@@ -5420,12 +5125,7 @@
         "closeEnd": 31527,
         "textRuns": [],
         "parentId": "a3b61511:224",
-        "childIds": [
-          "a3b61511:226",
-          "a3b61511:228",
-          "a3b61511:229",
-          "a3b61511:230"
-        ]
+        "childIds": ["a3b61511:226", "a3b61511:228", "a3b61511:229", "a3b61511:230"]
       },
       {
         "id": "a3b61511:226",
@@ -5568,12 +5268,7 @@
         "closeEnd": 32055,
         "textRuns": [],
         "parentId": "a3b61511:224",
-        "childIds": [
-          "a3b61511:238",
-          "a3b61511:240",
-          "a3b61511:241",
-          "a3b61511:242"
-        ]
+        "childIds": ["a3b61511:238", "a3b61511:240", "a3b61511:241", "a3b61511:242"]
       },
       {
         "id": "a3b61511:238",
@@ -5716,12 +5411,7 @@
         "closeEnd": 32581,
         "textRuns": [],
         "parentId": "a3b61511:224",
-        "childIds": [
-          "a3b61511:250",
-          "a3b61511:252",
-          "a3b61511:253",
-          "a3b61511:254"
-        ]
+        "childIds": ["a3b61511:250", "a3b61511:252", "a3b61511:253", "a3b61511:254"]
       },
       {
         "id": "a3b61511:250",
@@ -5864,12 +5554,7 @@
         "closeEnd": 33115,
         "textRuns": [],
         "parentId": "a3b61511:224",
-        "childIds": [
-          "a3b61511:262",
-          "a3b61511:264",
-          "a3b61511:265",
-          "a3b61511:266"
-        ]
+        "childIds": ["a3b61511:262", "a3b61511:264", "a3b61511:265", "a3b61511:266"]
       },
       {
         "id": "a3b61511:262",
@@ -6480,12 +6165,7 @@
           [36059, 36064]
         ],
         "parentId": "a3b61511:309",
-        "childIds": [
-          "a3b61511:311",
-          "a3b61511:315",
-          "a3b61511:321",
-          "a3b61511:326"
-        ]
+        "childIds": ["a3b61511:311", "a3b61511:315", "a3b61511:321", "a3b61511:326"]
       },
       {
         "id": "a3b61511:311",
@@ -6545,13 +6225,7 @@
         "closeEnd": 35723,
         "textRuns": [],
         "parentId": "a3b61511:310",
-        "childIds": [
-          "a3b61511:316",
-          "a3b61511:317",
-          "a3b61511:318",
-          "a3b61511:319",
-          "a3b61511:320"
-        ]
+        "childIds": ["a3b61511:316", "a3b61511:317", "a3b61511:318", "a3b61511:319", "a3b61511:320"]
       },
       {
         "id": "a3b61511:316",
@@ -6623,12 +6297,7 @@
         "closeEnd": 35886,
         "textRuns": [],
         "parentId": "a3b61511:310",
-        "childIds": [
-          "a3b61511:322",
-          "a3b61511:323",
-          "a3b61511:324",
-          "a3b61511:325"
-        ]
+        "childIds": ["a3b61511:322", "a3b61511:323", "a3b61511:324", "a3b61511:325"]
       },
       {
         "id": "a3b61511:322",
@@ -6688,13 +6357,7 @@
         "closeEnd": 36059,
         "textRuns": [],
         "parentId": "a3b61511:310",
-        "childIds": [
-          "a3b61511:327",
-          "a3b61511:328",
-          "a3b61511:329",
-          "a3b61511:330",
-          "a3b61511:331"
-        ]
+        "childIds": ["a3b61511:327", "a3b61511:328", "a3b61511:329", "a3b61511:330", "a3b61511:331"]
       },
       {
         "id": "a3b61511:327",

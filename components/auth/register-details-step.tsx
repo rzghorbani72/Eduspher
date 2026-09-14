@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { CheckCircle2, Loader2 } from "lucide-react";
-import type { UseFormRegisterReturn } from "react-hook-form";
+import { CheckCircle2, Loader2 } from 'lucide-react';
+import type { UseFormRegisterReturn } from 'react-hook-form';
 
-import { AuthField } from "@/components/auth/auth-field";
-import { PasswordStrength } from "@/components/ui/password-strength";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { sanitizePasswordInput } from "@/lib/password-utils";
+import { AuthField } from '@/components/auth/auth-field';
+import { PasswordStrength } from '@/components/ui/password-strength';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { sanitizePasswordInput } from '@/lib/password-utils';
 
 export type RegisterFieldErrors = Partial<
-  Record<"name" | "display_name" | "password" | "confirmed_password", string>
+  Record<'name' | 'display_name' | 'password' | 'confirmed_password', string>
 >;
 
 interface RegisterDetailsStepProps {
@@ -35,9 +35,7 @@ interface RegisterDetailsStepProps {
 }
 
 /** Passwords are English-only: Persian digits convert, Persian letters drop. */
-const withAsciiPassword = (
-  field: UseFormRegisterReturn,
-): UseFormRegisterReturn => ({
+const withAsciiPassword = (field: UseFormRegisterReturn): UseFormRegisterReturn => ({
   ...field,
   onChange: (event: { target: HTMLInputElement }) => {
     event.target.value = sanitizePasswordInput(event.target.value);
@@ -78,7 +76,7 @@ export function RegisterDetailsStep({
       </div>
 
       <AuthField
-        label={t("account.fullName")}
+        label={t('account.fullName')}
         autoComplete="name"
         disabled={loading}
         error={errors.name}
@@ -86,7 +84,7 @@ export function RegisterDetailsStep({
       />
 
       <AuthField
-        label={t("account.displayName")}
+        label={t('account.displayName')}
         disabled={loading}
         error={errors.display_name}
         {...fields.display_name}
@@ -94,7 +92,7 @@ export function RegisterDetailsStep({
 
       <div className="space-y-1.5">
         <AuthField
-          label={t("auth.password")}
+          label={t('auth.password')}
           type="password"
           dir="ltr"
           autoComplete="new-password"
@@ -106,7 +104,7 @@ export function RegisterDetailsStep({
       </div>
 
       <AuthField
-        label={t("auth.confirmPassword")}
+        label={t('auth.confirmPassword')}
         type="password"
         dir="ltr"
         autoComplete="new-password"
@@ -124,15 +122,15 @@ export function RegisterDetailsStep({
           className="auth-checkbox"
         />
         <span>
-          {t("legal.acceptPrefix")}{" "}
+          {t('legal.acceptPrefix')}{' '}
           <a href={termsHref} target="_blank" rel="noreferrer">
-            {t("auth.termsOfService")}
-          </a>{" "}
-          {t("legal.and")}{" "}
+            {t('auth.termsOfService')}
+          </a>{' '}
+          {t('legal.and')}{' '}
           <a href={privacyHref} target="_blank" rel="noreferrer">
-            {t("legal.privacyPolicy")}
-          </a>{" "}
-          {t("legal.acceptSuffix")}
+            {t('legal.privacyPolicy')}
+          </a>{' '}
+          {t('legal.acceptSuffix')}
         </span>
       </label>
 
@@ -140,16 +138,11 @@ export function RegisterDetailsStep({
 
       <button type="submit" className="auth-submit-btn" disabled={loading}>
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {loading ? t("auth.registering") : t("auth.register")}
+        {loading ? t('auth.registering') : t('auth.register')}
       </button>
 
-      <button
-        type="button"
-        onClick={onBack}
-        className="auth-secondary-btn"
-        disabled={loading}
-      >
-        {t("auth.backToVerification")}
+      <button type="button" onClick={onBack} className="auth-secondary-btn" disabled={loading}>
+        {t('auth.backToVerification')}
       </button>
     </form>
   );

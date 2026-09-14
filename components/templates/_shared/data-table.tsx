@@ -44,7 +44,12 @@ const STATUS_CLASS: Record<CapacityTone, string> = {
  * roster or observing schedule. It scrolls inside its own container so the page
  * body never scrolls sideways on a phone.
  */
-export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: TemplateDataTableProps) {
+export function TemplateDataTable({
+  id,
+  config,
+  defaults,
+  tone = 'surface',
+}: TemplateDataTableProps) {
   const columns = list<string>(config, 'columns', defaults.columns);
   const rows = list<DataRow>(config, 'rows', defaults.rows);
 
@@ -90,13 +95,16 @@ export function TemplateDataTable({ id, config, defaults, tone = 'surface' }: Te
                         <span
                           data-motion={cell.status === 'few' ? 'signal' : undefined}
                           {...editableItem('rows', rowIndex, 'cells', index, 'text')}
-                          className={`inline-block whitespace-nowrap rounded-(--theme-border-radius) px-2.5 py-1 text-[12px] font-bold ${STATUS_CLASS[cell.status]}`}
+                          className={`inline-block rounded-(--theme-border-radius) px-2.5 py-1 text-[12px] font-bold whitespace-nowrap ${STATUS_CLASS[cell.status]}`}
                         >
                           {cell.text}
                         </span>
                       ) : (
                         <>
-                          <span {...editableItem('rows', rowIndex, 'cells', index, 'text')} className="block">
+                          <span
+                            {...editableItem('rows', rowIndex, 'cells', index, 'text')}
+                            className="block"
+                          >
                             {cell.text}
                           </span>
                           {cell.note ? (

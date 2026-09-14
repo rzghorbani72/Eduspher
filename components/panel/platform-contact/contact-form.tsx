@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Check, ChevronLeft } from "lucide-react";
+import { useState } from 'react';
+import { Check, ChevronLeft } from 'lucide-react';
 
-import { postPublicJson } from "@/lib/api/client";
-import { CONTROL_CLASS, Field } from "./contact-field";
-import { CONTACT } from "./contact.messages";
+import { postPublicJson } from '@/lib/api/client';
+import { CONTROL_CLASS, Field } from './contact-field';
+import { CONTACT } from './contact.messages';
 
 type FormState = {
   name: string;
@@ -17,12 +17,12 @@ type FormState = {
 };
 
 const EMPTY: FormState = {
-  name: "",
-  email: "",
-  phone: "",
-  category: "TECHNICAL",
-  subject: "",
-  body: "",
+  name: '',
+  email: '',
+  phone: '',
+  category: 'TECHNICAL',
+  subject: '',
+  body: '',
 };
 
 export function ContactForm() {
@@ -41,7 +41,7 @@ export function ContactForm() {
     setSending(true);
     setError(null);
     try {
-      await postPublicJson("/support/contact-messages", {
+      await postPublicJson('/support/contact-messages', {
         name: form.name,
         email: form.email,
         phone: form.phone || undefined,
@@ -59,14 +59,12 @@ export function ContactForm() {
 
   if (sent) {
     return (
-      <div className="flex flex-col items-center justify-center gap-5 rounded-3xl border border-lp-line bg-white p-10 text-center">
-        <span className="grid h-16 w-16 place-items-center rounded-full bg-lp-mint">
+      <div className="border-lp-line flex flex-col items-center justify-center gap-5 rounded-3xl border bg-white p-10 text-center">
+        <span className="bg-lp-mint grid h-16 w-16 place-items-center rounded-full">
           <Check size={28} aria-hidden="true" className="text-lp-ink" />
         </span>
-        <h2 className="text-xl font-extrabold text-lp-ink">
-          {CONTACT.form.successTitle}
-        </h2>
-        <p className="max-w-[340px] text-[15px] leading-[1.9] text-lp-muted">
+        <h2 className="text-lp-ink text-xl font-extrabold">{CONTACT.form.successTitle}</h2>
+        <p className="text-lp-muted max-w-[340px] text-[15px] leading-[1.9]">
           {CONTACT.form.successBody}
         </p>
         <button
@@ -75,7 +73,7 @@ export function ContactForm() {
             setSent(false);
             setForm(EMPTY);
           }}
-          className="h-11 rounded-full border border-lp-line-2 px-6 text-sm font-semibold text-lp-ink-2 transition-colors hover:text-lp-ink"
+          className="border-lp-line-2 text-lp-ink-2 hover:text-lp-ink h-11 rounded-full border px-6 text-sm font-semibold transition-colors"
         >
           {CONTACT.form.successAgain}
         </button>
@@ -84,16 +82,9 @@ export function ContactForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-3xl border border-lp-line bg-white p-6 sm:p-8"
-    >
-      <h2 className="text-xl font-extrabold text-lp-ink">
-        {CONTACT.form.title}
-      </h2>
-      <p className="mt-2 text-[14px] leading-[1.9] text-lp-muted">
-        {CONTACT.form.subtitle}
-      </p>
+    <form onSubmit={handleSubmit} className="border-lp-line rounded-3xl border bg-white p-6 sm:p-8">
+      <h2 className="text-lp-ink text-xl font-extrabold">{CONTACT.form.title}</h2>
+      <p className="text-lp-muted mt-2 text-[14px] leading-[1.9]">{CONTACT.form.subtitle}</p>
 
       <div className="mt-7 grid gap-5 sm:grid-cols-2">
         <Field id="contact-name" label={CONTACT.form.name}>
@@ -101,7 +92,7 @@ export function ContactForm() {
             id="contact-name"
             required
             value={form.name}
-            onChange={(e) => set("name")(e.target.value)}
+            onChange={(e) => set('name')(e.target.value)}
             placeholder={CONTACT.form.namePlaceholder}
             className={CONTROL_CLASS}
           />
@@ -113,7 +104,7 @@ export function ContactForm() {
             type="email"
             dir="ltr"
             value={form.email}
-            onChange={(e) => set("email")(e.target.value)}
+            onChange={(e) => set('email')(e.target.value)}
             placeholder={CONTACT.form.emailPlaceholder}
             className={`${CONTROL_CLASS} text-start`}
           />
@@ -122,7 +113,7 @@ export function ContactForm() {
           <input
             id="contact-phone"
             value={form.phone}
-            onChange={(e) => set("phone")(e.target.value)}
+            onChange={(e) => set('phone')(e.target.value)}
             placeholder={CONTACT.form.phonePlaceholder}
             className={CONTROL_CLASS}
           />
@@ -131,7 +122,7 @@ export function ContactForm() {
           <select
             id="contact-category"
             value={form.category}
-            onChange={(e) => set("category")(e.target.value)}
+            onChange={(e) => set('category')(e.target.value)}
             className={CONTROL_CLASS}
           >
             {CONTACT.categories.map((option) => (
@@ -150,7 +141,7 @@ export function ContactForm() {
             required
             minLength={3}
             value={form.subject}
-            onChange={(e) => set("subject")(e.target.value)}
+            onChange={(e) => set('subject')(e.target.value)}
             placeholder={CONTACT.form.subjectPlaceholder}
             className={CONTROL_CLASS}
           />
@@ -161,7 +152,7 @@ export function ContactForm() {
             required
             minLength={10}
             value={form.body}
-            onChange={(e) => set("body")(e.target.value)}
+            onChange={(e) => set('body')(e.target.value)}
             placeholder={CONTACT.form.bodyPlaceholder}
             className={`${CONTROL_CLASS} h-auto min-h-[150px] resize-y py-3 leading-[1.9]`}
           />
@@ -177,7 +168,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={sending}
-        className="group mt-7 flex h-14 w-full items-center justify-center gap-2 rounded-lp bg-lp-mint text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-60"
+        className="group rounded-lp bg-lp-mint text-lp-ink shadow-lp-mint mt-7 flex h-14 w-full items-center justify-center gap-2 text-[16px] font-bold transition-transform hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-60"
       >
         <ChevronLeft
           size={17}

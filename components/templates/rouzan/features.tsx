@@ -28,7 +28,7 @@ export function RouzanFeatures({ id, config, storeContext }: TemplateSectionProp
         <Wrap>
           <h2
             data-editable="title"
-            className="max-w-[22ch] text-[clamp(30px,3.4vw,46px)] font-bold leading-[1.14]"
+            className="max-w-[22ch] text-[clamp(30px,3.4vw,46px)] leading-[1.14] font-bold"
           >
             {text(config, 'title', d.title)}
           </h2>
@@ -42,7 +42,7 @@ export function RouzanFeatures({ id, config, storeContext }: TemplateSectionProp
           <div className="mt-13 grid gap-5 lg:grid-cols-[1.35fr_1fr]">
             <article className={`${styles.card} flex flex-col gap-4 p-8`}>
               <LeadLabel editableKey="leadNo">{text(config, 'leadNo', d.lead.no)}</LeadLabel>
-              <h3 data-editable="leadTitle" className="text-[26px] font-bold leading-[1.25]">
+              <h3 data-editable="leadTitle" className="text-[26px] leading-[1.25] font-bold">
                 {text(config, 'leadTitle', d.lead.title)}
               </h3>
               <p
@@ -54,7 +54,9 @@ export function RouzanFeatures({ id, config, storeContext }: TemplateSectionProp
 
               <div className={`${styles.review} mt-auto p-4`} aria-hidden="true">
                 <div className="flex items-baseline gap-3 py-[7px] text-[13.5px]">
-                  <span className={`${styles.tok} min-w-14 text-(--theme-muted)`}>{d.lead.file}</span>
+                  <span className={`${styles.tok} min-w-14 text-(--theme-muted)`}>
+                    {d.lead.file}
+                  </span>
                   <b className="font-medium">{d.lead.fileNote}</b>
                 </div>
                 {d.lead.lines.map((line) => (
@@ -81,7 +83,7 @@ export function RouzanFeatures({ id, config, storeContext }: TemplateSectionProp
                   </p>
                   <h3
                     {...editableItem('items', index, 'title')}
-                    className="mt-1 text-[19.5px] font-bold leading-[1.5]"
+                    className="mt-1 text-[19.5px] leading-[1.5] font-bold"
                   >
                     {item.title}
                   </h3>

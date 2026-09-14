@@ -1,11 +1,11 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 /** Above this count a card grid becomes unreadable, so the list turns into a table. */
 export const CARD_VIEW_MAX_ITEMS = 4;
 
-type ColumnAlign = "start" | "center" | "end";
+type ColumnAlign = 'start' | 'center' | 'end';
 
 export interface DataColumn<T> {
   id: string;
@@ -30,9 +30,9 @@ interface DataListProps<T> {
 }
 
 const ALIGN_CLASS: Record<ColumnAlign, string> = {
-  start: "text-start",
-  center: "text-center",
-  end: "text-end",
+  start: 'text-start',
+  center: 'text-center',
+  end: 'text-end',
 };
 
 /**
@@ -59,7 +59,7 @@ export function DataList<T>({
 
   if (renderCard && showCards) {
     return (
-      <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3", cardGridClassName)}>
+      <div className={cn('grid gap-4 sm:grid-cols-2 xl:grid-cols-3', cardGridClassName)}>
         {items.map((item) => (
           <div key={rowKey(item)}>{renderCard(item)}</div>
         ))}
@@ -77,8 +77,8 @@ export function DataList<T>({
                 key={column.id}
                 scope="col"
                 className={cn(
-                  "px-4 py-3 text-xs font-medium text-muted",
-                  ALIGN_CLASS[column.align ?? "start"],
+                  'text-muted px-4 py-3 text-xs font-medium',
+                  ALIGN_CLASS[column.align ?? 'start'],
                   column.className,
                 )}
               >
@@ -89,13 +89,13 @@ export function DataList<T>({
         </thead>
         <tbody>
           {items.map((item) => (
-            <tr key={rowKey(item)} className="border-t border-theme hover:bg-surface/60">
+            <tr key={rowKey(item)} className="border-theme hover:bg-surface/60 border-t">
               {columns.map((column) => (
                 <td
                   key={column.id}
                   className={cn(
-                    "px-4 py-3 align-middle",
-                    ALIGN_CLASS[column.align ?? "start"],
+                    'px-4 py-3 align-middle',
+                    ALIGN_CLASS[column.align ?? 'start'],
                     column.className,
                   )}
                 >

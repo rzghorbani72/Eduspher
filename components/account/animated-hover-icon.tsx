@@ -1,12 +1,7 @@
-"use client";
+'use client';
 
-import type { IconHandle } from "@animateicons/react";
-import {
-  useEffect,
-  useRef,
-  type ForwardRefExoticComponent,
-  type RefAttributes,
-} from "react";
+import type { IconHandle } from '@animateicons/react';
+import { useEffect, useRef, type ForwardRefExoticComponent, type RefAttributes } from 'react';
 
 export type AnimateIconProps = {
   size?: number;

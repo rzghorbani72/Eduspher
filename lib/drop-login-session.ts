@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { logout } from "@/lib/api/client";
-import { env } from "@/lib/env";
-import { wipeNonPlatformClient } from "@/lib/wipe-non-platform-storage";
+import { logout } from '@/lib/api/client';
+import { env } from '@/lib/env';
+import { wipeNonPlatformClient } from '@/lib/wipe-non-platform-storage';
 
 function tenantCookieNames(): readonly string[] {
   return [env.academyIdCookie, env.academySlugCookie, env.academyNameCookie];
@@ -15,7 +15,7 @@ function tenantCookieNames(): readonly string[] {
 export async function resetAnonymousAuthClient(): Promise<void> {
   wipeNonPlatformClient(tenantCookieNames());
   await logout().catch(() => undefined);
-  const { logout: clearAppCookies } = await import("@/app/actions/auth");
+  const { logout: clearAppCookies } = await import('@/app/actions/auth');
   await clearAppCookies().catch(() => undefined);
   wipeNonPlatformClient(tenantCookieNames());
 }

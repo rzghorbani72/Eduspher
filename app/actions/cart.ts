@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /**
  * Hybrid Cart Implementation
@@ -17,7 +17,7 @@ import {
   loadCartFromServer,
   mergeCarts,
   type CartItem,
-} from "@/lib/cart-hybrid";
+} from '@/lib/cart-hybrid';
 
 // Re-export types
 export type { CartItem };
@@ -33,48 +33,48 @@ export function addCourseToCart(item: {
   course_price: number;
   course_cover?: string;
 }): boolean {
-  const cartItem: Omit<CartItem, "added_at"> = {
+  const cartItem: Omit<CartItem, 'added_at'> = {
     course_id: item.course_id,
     course_title: item.course_title,
     course_price: item.course_price,
     course_cover: item.course_cover,
   };
   const success = addToLocalCart(cartItem);
-  
+
   // Background sync if authenticated (non-blocking)
   if (success) {
     syncCartToServer().catch(() => {
       // Silently fail - cart is still in localStorage
     });
   }
-  
+
   return success;
 }
 
 export function removeCourseFromCart(course_id: string): boolean {
   const success = removeFromLocalCart(course_id);
-  
+
   // Sync immediately after removal (don't wait for background)
   if (success) {
     syncCartToServer().catch((error) => {
       // Log error but don't block UI - cart is still in localStorage
-      console.error("Failed to sync cart after removal:", error);
+      console.error('Failed to sync cart after removal:', error);
     });
   }
-  
+
   return success;
 }
 
 export function clearUserCart(): boolean {
   const success = clearLocalCart();
-  
+
   // Background sync if authenticated (non-blocking)
   if (success) {
     syncCartToServer().catch(() => {
       // Silently fail
     });
   }
-  
+
   return success;
 }
 
@@ -100,7 +100,7 @@ export async function loadAndMergeCart(): Promise<CartItem[]> {
   try {
     const localCart = getLocalCart();
     const serverCart = await loadCartFromServer();
-    
+
     if (serverCart.length === 0) {
       // No server cart, sync local to server
       if (localCart.length > 0) {
@@ -108,24 +108,23 @@ export async function loadAndMergeCart(): Promise<CartItem[]> {
       }
       return localCart;
     }
-    
+
     // Merge carts (server takes precedence, add unique local items)
     const merged = mergeCarts(localCart, serverCart);
-    
+
     // Update localStorage with merged cart
-    if (typeof window !== "undefined") {
-      localStorage.setItem("edusphere_cart", JSON.stringify(merged));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('edusphere_cart', JSON.stringify(merged));
       markCartSynced();
-      window.dispatchEvent(new CustomEvent("cartUpdated"));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
     }
-    
+
     // Sync merged cart back to server
     await syncCartToServer();
-    
+
     return merged;
   } catch {
     // If server sync fails, return local cart
     return getLocalCart();
   }
 }
-

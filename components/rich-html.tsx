@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  useSyncExternalStore,
-  type HTMLAttributes,
-} from 'react';
+import { useSyncExternalStore, type HTMLAttributes } from 'react';
 import { sanitizeRichText } from '@/lib/sanitize';
 
 const subscribeNoop = () => () => {};
@@ -15,7 +12,11 @@ type RichHtmlProps = {
 
 /** Sanitized rich HTML from templates — blocks stored XSS in subtitles. */
 export function RichHtml({ html, as = 'div', className, ...rest }: RichHtmlProps) {
-  const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const hydrated = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
   const clean = hydrated ? sanitizeRichText(html || '') : '';
   const props = {
     className,

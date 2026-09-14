@@ -1,15 +1,15 @@
-import "server-only";
+import 'server-only';
 
-import { headers } from "next/headers";
+import { headers } from 'next/headers';
 
-import { getAcademyContext } from "@/lib/store-context";
+import { getAcademyContext } from '@/lib/store-context';
 import {
   buildAbsoluteUrl,
   buildCrossMarketUrl,
   getRegionFromHostname,
   type MarketRegion,
-} from "./domains";
-import { NOINDEX_PATH_PREFIXES } from "./crawl-policy";
+} from './domains';
+import { NOINDEX_PATH_PREFIXES } from './crawl-policy';
 
 export type SeoRequestContext = {
   host: string;
@@ -29,7 +29,7 @@ export type SeoRequestContext = {
 
 export function shouldNoIndexPath(pathname: string): boolean {
   return NOINDEX_PATH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
 }
 
@@ -38,30 +38,27 @@ export async function getSeoRequestContext(): Promise<SeoRequestContext> {
   const storeContext = await getAcademyContext();
 
   const host =
-    headerStore.get("host")?.split(":")[0] ??
-    headerStore.get("x-forwarded-host")?.split(":")[0] ??
-    "localhost";
+    headerStore.get('host')?.split(':')[0] ??
+    headerStore.get('x-forwarded-host')?.split(':')[0] ??
+    'localhost';
 
-  const pathname =
-    headerStore.get("x-public-pathname") ??
-    headerStore.get("x-url-pathname") ??
-    "/";
-  const search = headerStore.get("x-public-search") ?? "";
+  const pathname = headerStore.get('x-public-pathname') ?? headerStore.get('x-url-pathname') ?? '/';
+  const search = headerStore.get('x-public-search') ?? '';
 
-  const isPlatform = headerStore.get("x-panel-root") === "1";
-  const isSubdomain = headerStore.get("x-academy-subdomain") === "1";
+  const isPlatform = headerStore.get('x-panel-root') === '1';
+  const isSubdomain = headerStore.get('x-academy-subdomain') === '1';
   const academySlug =
-    headerStore.get("x-academy-slug") ??
-    headerStore.get("x-academy-path-slug") ??
+    headerStore.get('x-academy-slug') ??
+    headerStore.get('x-academy-path-slug') ??
     storeContext.slug;
 
   const region = getRegionFromHostname(host);
   // Canonicals must ignore query strings — tracking params would split ranking.
   const canonicalUrl = buildAbsoluteUrl(host, pathname);
   const alternateUrls = {
-    faIR: buildCrossMarketUrl(host, pathname, "ir"),
-    en: buildCrossMarketUrl(host, pathname, "com"),
-    xDefault: buildCrossMarketUrl(host, pathname, "ir"),
+    faIR: buildCrossMarketUrl(host, pathname, 'ir'),
+    en: buildCrossMarketUrl(host, pathname, 'com'),
+    xDefault: buildCrossMarketUrl(host, pathname, 'ir'),
   };
 
   return {

@@ -74,7 +74,10 @@ const TEMPLATE_SECTIONS: Record<TemplateKey, TemplateSectionMap> = {
   pardeh: PARDEH_SECTIONS,
 };
 
-export function resolveTemplateSection(style: unknown, type: string): ComponentType<TemplateSectionProps> | null {
+export function resolveTemplateSection(
+  style: unknown,
+  type: string,
+): ComponentType<TemplateSectionProps> | null {
   if (!isTemplateKey(style)) return null;
   const sections = TEMPLATE_SECTIONS[style];
   return sections[type as TemplateSectionType] ?? null;

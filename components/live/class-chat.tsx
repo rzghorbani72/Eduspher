@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { DiscussionThread } from "@/components/discussion/discussion-thread";
-import { PillButton } from "@/components/live/pill-button";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { DiscussionThread } from '@/components/discussion/discussion-thread';
+import { PillButton } from '@/components/live/pill-button';
+import { useTranslation } from '@/lib/i18n/hooks';
 
-type ChatScope = "session" | "group" | "private";
+type ChatScope = 'session' | 'group' | 'private';
 
 interface ClassChatProps {
   sessionId: string | null;
@@ -28,61 +28,58 @@ export function ClassChat({
   currentProfileId,
 }: ClassChatProps) {
   const { t } = useTranslation();
-  const [scope, setScope] = useState<ChatScope>(
-    sessionId ? "session" : "private",
-  );
-  const active: ChatScope =
-    scope === "session" && !sessionId ? "private" : scope;
+  const [scope, setScope] = useState<ChatScope>(sessionId ? 'session' : 'private');
+  const active: ChatScope = scope === 'session' && !sessionId ? 'private' : scope;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-1">
         {sessionId ? (
           <PillButton
-            active={active === "session"}
-            onClick={() => setScope("session")}
-            label={t("live.chatSession")}
+            active={active === 'session'}
+            onClick={() => setScope('session')}
+            label={t('live.chatSession')}
           />
         ) : null}
         {groupThreadParent ? (
           <PillButton
-            active={active === "group"}
-            onClick={() => setScope("group")}
-            label={t("live.chatGroup")}
+            active={active === 'group'}
+            onClick={() => setScope('group')}
+            label={t('live.chatGroup')}
           />
         ) : null}
         {privateThreadParent ? (
           <PillButton
-            active={active === "private"}
-            onClick={() => setScope("private")}
-            label={t("live.chatPrivate")}
+            active={active === 'private'}
+            onClick={() => setScope('private')}
+            label={t('live.chatPrivate')}
           />
         ) : null}
       </div>
 
-      {active === "session" && sessionId ? (
+      {active === 'session' && sessionId ? (
         <DiscussionThread
           key={`session-${sessionId}`}
           sessionId={sessionId}
           currentProfileId={currentProfileId}
-          title={t("live.chatSession")}
-          placeholder={t("live.chatSessionPlaceholder")}
+          title={t('live.chatSession')}
+          placeholder={t('live.chatSessionPlaceholder')}
         />
-      ) : active === "group" && groupThreadParent ? (
+      ) : active === 'group' && groupThreadParent ? (
         <DiscussionThread
           key="group"
           groupId={groupThreadParent}
           currentProfileId={currentProfileId}
-          title={t("live.chatGroup")}
-          placeholder={t("live.chatGroupPlaceholder")}
+          title={t('live.chatGroup')}
+          placeholder={t('live.chatGroupPlaceholder')}
         />
       ) : (
         <DiscussionThread
           key="private"
           engagementId={privateThreadParent ?? undefined}
           currentProfileId={currentProfileId}
-          title={t("live.chatPrivate")}
-          placeholder={t("live.chatPrivatePlaceholder")}
+          title={t('live.chatPrivate')}
+          placeholder={t('live.chatPrivatePlaceholder')}
         />
       )}
     </div>

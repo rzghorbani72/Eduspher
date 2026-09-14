@@ -1,16 +1,13 @@
-"use client";
+'use client';
 
-import { FileText, Image as ImageIcon, StickyNote, Video } from "lucide-react";
+import { FileText, Image as ImageIcon, StickyNote, Video } from 'lucide-react';
 
-import { VideoLesson } from "@/components/learning/video-lesson";
-import { EmptyState } from "@/components/ui/empty-state";
-import type {
-  MyTutoringGroupSession,
-  SessionMaterial,
-} from "@/lib/api/account-types";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { sessionName } from "@/lib/live/session-state";
-import { formatDate } from "@/lib/utils";
+import { VideoLesson } from '@/components/learning/video-lesson';
+import { EmptyState } from '@/components/ui/empty-state';
+import type { MyTutoringGroupSession, SessionMaterial } from '@/lib/api/account-types';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { sessionName } from '@/lib/live/session-state';
+import { formatDate } from '@/lib/utils';
 
 interface SessionAfterClassProps {
   session: MyTutoringGroupSession | null;
@@ -23,8 +20,7 @@ const hasContent = (session: MyTutoringGroupSession) =>
   Boolean(session.notes || session.recording?.url || session.Materials?.length);
 
 const isImage = (material: SessionMaterial) =>
-  material.kind === "DOCUMENT" &&
-  /\.(png|jpe?g|webp|gif)$/i.test(material.url ?? "");
+  material.kind === 'DOCUMENT' && /\.(png|jpe?g|webp|gif)$/i.test(material.url ?? '');
 
 /**
  * What one meeting left behind: the teacher's notes, the recording to watch
@@ -38,27 +34,21 @@ export function SessionAfterClass({
   onSelect,
 }: SessionAfterClassProps) {
   const { t } = useTranslation();
-  const others = sessions.filter(
-    (row) => row.id !== session?.id && hasContent(row),
-  );
+  const others = sessions.filter((row) => row.id !== session?.id && hasContent(row));
 
   if (!session || !hasContent(session)) {
     return (
       <div className="space-y-4">
-        <EmptyState compact title={t("live.noAfterClassForSession")} />
-        <OtherSessions
-          sessions={others}
-          fallbackTitle={fallbackTitle}
-          onSelect={onSelect}
-        />
+        <EmptyState compact title={t('live.noAfterClassForSession')} />
+        <OtherSessions sessions={others} fallbackTitle={fallbackTitle} onSelect={onSelect} />
       </div>
     );
   }
 
   const materials = session.Materials ?? [];
-  const videos = materials.filter((m) => m.kind === "VIDEO" && m.video_id);
+  const videos = materials.filter((m) => m.kind === 'VIDEO' && m.video_id);
   const images = materials.filter(isImage);
-  const files = materials.filter((m) => m.kind === "DOCUMENT" && !isImage(m));
+  const files = materials.filter((m) => m.kind === 'DOCUMENT' && !isImage(m));
   const title = sessionName(session, fallbackTitle);
 
   return (
@@ -66,10 +56,10 @@ export function SessionAfterClass({
       {session.notes ? (
         <section className="space-y-1">
           <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <StickyNote className="size-4 text-muted" aria-hidden="true" />
-            {t("live.sessionNotes")}
+            <StickyNote className="text-muted size-4" aria-hidden="true" />
+            {t('live.sessionNotes')}
           </h3>
-          <p className="whitespace-pre-wrap rounded-xl border border-theme bg-surface p-4 text-sm">
+          <p className="border-theme bg-surface rounded-xl border p-4 text-sm whitespace-pre-wrap">
             {session.notes}
           </p>
         </section>
@@ -78,15 +68,13 @@ export function SessionAfterClass({
       {session.recording?.video_id ? (
         <section className="space-y-1">
           <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <Video className="size-4 text-muted" aria-hidden="true" />
-            {t("live.recording")}
+            <Video className="text-muted size-4" aria-hidden="true" />
+            {t('live.recording')}
           </h3>
           <VideoLesson
             title={title}
             videoId={session.recording.video_id}
-            downloadUrl={
-              session.recording.can_download ? session.recording.url : null
-            }
+            downloadUrl={session.recording.can_download ? session.recording.url : null}
             canDownload={session.recording.can_download}
             initialPosition={0}
             onHeartbeat={() => undefined}
@@ -96,10 +84,10 @@ export function SessionAfterClass({
 
       {videos.map((video) => (
         <section key={video.id} className="space-y-1">
-          <p className="text-xs text-muted">{t("live.helperVideo")}</p>
+          <p className="text-muted text-xs">{t('live.helperVideo')}</p>
           <VideoLesson
             title={video.title}
-            videoId={video.video_id ?? ""}
+            videoId={video.video_id ?? ''}
             downloadUrl={video.can_download ? video.url : null}
             canDownload={video.can_download}
             initialPosition={0}
@@ -113,14 +101,14 @@ export function SessionAfterClass({
           {images.map((image) => (
             <li key={image.id}>
               <a
-                href={image.url ?? "#"}
+                href={image.url ?? '#'}
                 target="_blank"
                 rel="noreferrer"
-                className="block overflow-hidden rounded-lg border border-line"
+                className="border-line block overflow-hidden rounded-lg border"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={image.url ?? ""}
+                  src={image.url ?? ''}
                   alt={image.title}
                   className="aspect-video w-full object-cover"
                 />
@@ -132,7 +120,7 @@ export function SessionAfterClass({
 
       {files.length ? (
         <ul className="space-y-1">
-          <li className="text-xs text-muted">{t("live.materials")}</li>
+          <li className="text-muted text-xs">{t('live.materials')}</li>
           {files.map((material) =>
             material.url ? (
               <li key={material.id}>
@@ -140,12 +128,9 @@ export function SessionAfterClass({
                   href={material.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm hover:bg-surface"
+                  className="border-line hover:bg-surface flex items-center gap-2 rounded-lg border px-3 py-2 text-sm"
                 >
-                  <FileText
-                    className="size-4 shrink-0 text-muted"
-                    aria-hidden="true"
-                  />
+                  <FileText className="text-muted size-4 shrink-0" aria-hidden="true" />
                   <span className="min-w-0 truncate">{material.title}</span>
                 </a>
               </li>
@@ -154,11 +139,7 @@ export function SessionAfterClass({
         </ul>
       ) : null}
 
-      <OtherSessions
-        sessions={others}
-        fallbackTitle={fallbackTitle}
-        onSelect={onSelect}
-      />
+      <OtherSessions sessions={others} fallbackTitle={fallbackTitle} onSelect={onSelect} />
     </div>
   );
 }
@@ -167,27 +148,26 @@ function OtherSessions({
   sessions,
   fallbackTitle,
   onSelect,
-}: Omit<SessionAfterClassProps, "session">) {
+}: Omit<SessionAfterClassProps, 'session'>) {
   const { t, language } = useTranslation();
   if (!sessions.length) return null;
   return (
     <div className="space-y-1 border-t border-(--theme-hairline) pt-4">
-      <p className="text-xs text-muted">{t("live.otherSessionsWithContent")}</p>
+      <p className="text-muted text-xs">{t('live.otherSessionsWithContent')}</p>
       <ul className="flex flex-wrap gap-2">
         {sessions.map((row) => (
           <li key={row.id}>
             <button
               type="button"
               onClick={() => onSelect(row.id)}
-              className="flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-xs font-medium hover:text-(--theme-primary)"
+              className="bg-surface flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium hover:text-(--theme-primary)"
             >
               {row.recording?.url ? (
                 <Video className="size-3.5" aria-hidden="true" />
               ) : (
                 <ImageIcon className="size-3.5" aria-hidden="true" />
               )}
-              {sessionName(row, fallbackTitle)} ·{" "}
-              {formatDate(row.starts_at, language)}
+              {sessionName(row, fallbackTitle)} · {formatDate(row.starts_at, language)}
             </button>
           </li>
         ))}

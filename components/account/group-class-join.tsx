@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { formatDate } from "@/lib/utils";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { formatDate } from '@/lib/utils';
 
 type Props = {
   startsAt: string;
@@ -44,7 +44,7 @@ export const GroupClassJoin = ({ startsAt, meetingUrl, language }: Props) => {
       <div>
         <p className="font-medium">{formatDate(startsAt, language, true)}</p>
         {!started ? (
-          <p className="text-sm text-muted" dir="ltr">
+          <p className="text-muted text-sm" dir="ltr">
             {days}d {hours}h {minutes}m
           </p>
         ) : null}
@@ -56,12 +56,10 @@ export const GroupClassJoin = ({ startsAt, meetingUrl, language }: Props) => {
           rel="noopener noreferrer"
           className="rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-semibold text-(--theme-on-primary)"
         >
-          {t("account.groupJoinNow")}
+          {t('account.groupJoinNow')}
         </a>
       ) : (
-        <span className="text-sm text-muted">
-          {t("account.groupLinkOpensSoon")}
-        </span>
+        <span className="text-muted text-sm">{t('account.groupLinkOpensSoon')}</span>
       )}
     </div>
   );

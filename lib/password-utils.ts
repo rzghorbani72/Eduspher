@@ -1,4 +1,4 @@
-import { toEnglishDigits } from "@/lib/phone-utils";
+import { toEnglishDigits } from '@/lib/phone-utils';
 
 /** Printable ASCII (English letters, digits, symbols). */
 const NON_ASCII_PRINTABLE = /[^\x20-\x7E]/g;
@@ -9,7 +9,7 @@ const NON_ASCII_PRINTABLE = /[^\x20-\x7E]/g;
  * Mirrors AdminPanel's rule, so one password behaves the same in both apps.
  */
 export function sanitizePasswordInput(value: string): string {
-  return toEnglishDigits(value).replace(NON_ASCII_PRINTABLE, "");
+  return toEnglishDigits(value).replace(NON_ASCII_PRINTABLE, '');
 }
 
 export const MIN_PASSWORD_LENGTH = 6;

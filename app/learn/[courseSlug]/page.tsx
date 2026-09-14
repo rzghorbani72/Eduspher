@@ -1,34 +1,27 @@
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
 
-import { EmptyState } from "@/components/ui/empty-state";
-import { getCourseById, getEnrollments } from "@/lib/api/server";
-import { getSession } from "@/lib/auth/session";
-import { coursePath, decodePathSegment, learnPath } from "@/lib/content-paths";
-import { isLiveCourse } from "@/lib/courses/live-course";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { getAcademyContext } from "@/lib/store-context";
-import { buildAcademyPath } from "@/lib/utils";
+import { EmptyState } from '@/components/ui/empty-state';
+import { getCourseById, getEnrollments } from '@/lib/api/server';
+import { getSession } from '@/lib/auth/session';
+import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
+import { isLiveCourse } from '@/lib/courses/live-course';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { getAcademyContext } from '@/lib/store-context';
+import { buildAcademyPath } from '@/lib/utils';
 
 type PageParams = Promise<{ courseSlug: string }>;
 
-export default async function LearningCoursePage({
-  params,
-}: {
-  params: PageParams;
-}) {
+export default async function LearningCoursePage({ params }: { params: PageParams }) {
   const { courseSlug: courseSlugParam } = await params;
   const courseSlug = decodePathSegment(courseSlugParam);
-  const [session, storeContext] = await Promise.all([
-    getSession(),
-    getAcademyContext(),
-  ]);
+  const [session, storeContext] = await Promise.all([getSession(), getAcademyContext()]);
   const storeSlug = storeContext.isSubdomain ? null : storeContext.slug;
 
   if (!session) {
     const returnPath = buildAcademyPath(storeSlug, learnPath(courseSlug));
     redirect(
-      `${buildAcademyPath(storeSlug, "/auth/login")}?redirect=${encodeURIComponent(returnPath)}`,
+      `${buildAcademyPath(storeSlug, '/auth/login')}?redirect=${encodeURIComponent(returnPath)}`,
     );
   }
 
@@ -42,7 +35,7 @@ export default async function LearningCoursePage({
     (item) =>
       String(item.course_id) === course?.id &&
       String(item.profile_id) === String(session.profileId) &&
-      (item.status === "ACTIVE" || item.status === "COMPLETED"),
+      (item.status === 'ACTIVE' || item.status === 'COMPLETED'),
   );
 
   if (!course) {
@@ -77,8 +70,8 @@ export default async function LearningCoursePage({
   const language = getAcademyLanguage(null, null);
   return (
     <EmptyState
-      title={t("learning.noLessons", language)}
-      description={t("learning.noLessonsDescription", language)}
+      title={t('learning.noLessons', language)}
+      description={t('learning.noLessonsDescription', language)}
     />
   );
 }

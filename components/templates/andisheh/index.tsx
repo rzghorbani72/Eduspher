@@ -61,12 +61,29 @@ export const ANDISHEH_SECTIONS: TemplateSectionMap = {
     <TemplateDataTable id={id} config={config} defaults={ANDISHEH_DEFAULTS.showcase} tone="page" />
   ),
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={ANDISHEH_DEFAULTS.teachers} tone="surface" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={ANDISHEH_DEFAULTS.teachers}
+      tone="surface"
+    />
   ),
   cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={ANDISHEH_DEFAULTS.cta} tone="deep" boxed />
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ANDISHEH_DEFAULTS.cta}
+      tone="deep"
+      boxed
+    />
   ),
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ANDISHEH_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ANDISHEH_DEFAULTS.footer}
+    />
   ),
 };

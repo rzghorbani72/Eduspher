@@ -40,13 +40,22 @@ export function ElektronFeatures({ id, config }: TemplateSectionProps) {
             >
               <span className={styles.mesh} aria-hidden="true" />
               <div className="relative z-[1]">
-                <span {...editableItem('items', 0, 'index')} className="text-[12px] font-bold text-(--theme-accent)">
+                <span
+                  {...editableItem('items', 0, 'index')}
+                  className="text-[12px] font-bold text-(--theme-accent)"
+                >
                   {lead.index}
                 </span>
-                <h3 {...editableItem('items', 0, 'title')} className="mt-3 text-[23px] font-bold leading-[1.3]">
+                <h3
+                  {...editableItem('items', 0, 'title')}
+                  className="mt-3 text-[23px] leading-[1.3] font-bold"
+                >
                   {lead.title}
                 </h3>
-                <p {...editableItem('items', 0, 'body')} className="mt-3 text-[15px] leading-[1.85] text-current/68">
+                <p
+                  {...editableItem('items', 0, 'body')}
+                  className="mt-3 text-[15px] leading-[1.85] text-current/68"
+                >
                   {lead.body}
                 </p>
               </div>
@@ -72,7 +81,10 @@ export function ElektronFeatures({ id, config }: TemplateSectionProps) {
               >
                 {item.index}
               </span>
-              <h3 {...editableItem('items', index + 1, 'title')} className="mt-3 text-[19px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index + 1, 'title')}
+                className="mt-3 text-[19px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p

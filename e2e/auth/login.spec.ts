@@ -68,9 +68,9 @@ test.describe('edusphere student login — happy path @backend', () => {
     const academyId = process.env.E2E_ACADEMY_ID;
     test.skip(!academyId, 'E2E_ACADEMY_ID required');
 
-    await page.context().addCookies([
-      { name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! },
-    ]);
+    await page
+      .context()
+      .addCookies([{ name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! }]);
 
     await page.goto('/auth/login');
     await page.locator('#identifier').fill('nobody-e2e@example.com');

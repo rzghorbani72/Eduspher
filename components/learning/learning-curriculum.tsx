@@ -8,15 +8,15 @@ import {
   Play,
   PlayCircle,
   Radio,
-} from "lucide-react";
+} from 'lucide-react';
 
-import Link from "@/components/ui/link";
-import { MetaDot } from "@/components/learning/meta-dot";
-import type { LessonSummary, LessonType, SeasonSummary } from "@/lib/api/types";
-import { formatSeconds } from "@/components/courses/curriculum/format";
-import { flattenLessons } from "@/lib/learning/lesson-list";
-import { learnPath } from "@/lib/content-paths";
-import { cn, buildAcademyPath, toPersianDigits } from "@/lib/utils";
+import Link from '@/components/ui/link';
+import { MetaDot } from '@/components/learning/meta-dot';
+import type { LessonSummary, LessonType, SeasonSummary } from '@/lib/api/types';
+import { formatSeconds } from '@/components/courses/curriculum/format';
+import { flattenLessons } from '@/lib/learning/lesson-list';
+import { learnPath } from '@/lib/content-paths';
+import { cn, buildAcademyPath, toPersianDigits } from '@/lib/utils';
 
 const TYPE_ICON: Record<LessonType, typeof PlayCircle> = {
   VIDEO: PlayCircle,
@@ -28,12 +28,12 @@ const TYPE_ICON: Record<LessonType, typeof PlayCircle> = {
 };
 
 const TYPE_KEY: Record<LessonType, string> = {
-  VIDEO: "learning.typeVideo",
-  AUDIO: "learning.typeAudio",
-  TEXT: "learning.typeText",
-  QUIZ: "learning.typeQuiz",
-  ASSIGNMENT: "learning.typeAssignment",
-  LIVE: "learning.typeLive",
+  VIDEO: 'learning.typeVideo',
+  AUDIO: 'learning.typeAudio',
+  TEXT: 'learning.typeText',
+  QUIZ: 'learning.typeQuiz',
+  ASSIGNMENT: 'learning.typeAssignment',
+  LIVE: 'learning.typeLive',
 };
 
 const DAY = 86_400_000;
@@ -69,29 +69,22 @@ export function LearningCurriculum({
 }: LearningCurriculumProps) {
   // Same source of truth as prev/next, so the numbers a student sees and the
   // order they move through never disagree.
-  const numbers = new Map(
-    flattenLessons(seasons).map((item) => [item.id, item.index]),
-  );
+  const numbers = new Map(flattenLessons(seasons).map((item) => [item.id, item.index]));
 
   return (
     <nav aria-label={lessonLabel}>
       {seasons.map((season) => {
         const lessons = season.Lesson ?? [];
-        const seconds = lessons.reduce(
-          (total, lesson) => total + (lesson.duration ?? 0),
-          0,
-        );
+        const seconds = lessons.reduce((total, lesson) => total + (lesson.duration ?? 0), 0);
         return (
           <section key={String(season.id)}>
-            <div className="flex items-center justify-between gap-3 border-b border-theme bg-surface px-[22px] py-3">
+            <div className="border-theme bg-surface flex items-center justify-between gap-3 border-b px-[22px] py-3">
               <h3 className="text-xs font-extrabold">{season.title}</h3>
               {/* Separate spans, not one interpolated string: a "·" sitting
                   between Persian digits and Persian words is a neutral
                   character and gets reordered by the bidi algorithm. */}
-              <span className="flex shrink-0 items-center text-[11px] text-muted">
-                <span>
-                  {`${toPersianDigits(lessons.length, language)} ${t("courses.lesson")}`}
-                </span>
+              <span className="text-muted flex shrink-0 items-center text-[11px]">
+                <span>{`${toPersianDigits(lessons.length, language)} ${t('courses.lesson')}`}</span>
                 {seconds > 0 ? (
                   <>
                     <MetaDot />
@@ -107,9 +100,8 @@ export function LearningCurriculum({
                 const selected = lessonId === selectedLessonId;
                 const completed = completedLessonIds.has(lessonId);
                 const unlockDays = daysUntilUnlock(lesson);
-                const locked =
-                  lesson.is_published === false || unlockDays !== null;
-                const type = lesson.lesson_type ?? "TEXT";
+                const locked = lesson.is_published === false || unlockDays !== null;
+                const type = lesson.lesson_type ?? 'TEXT';
                 const Icon = TYPE_ICON[type] ?? FileText;
                 const duration = formatSeconds(lesson.duration, language, t);
 
@@ -117,14 +109,14 @@ export function LearningCurriculum({
                   <>
                     <span
                       className={cn(
-                        "grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-extrabold",
+                        'grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-extrabold',
                         completed
-                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400'
                           : selected
-                            ? "bg-(--theme-primary) text-white"
+                            ? 'bg-(--theme-primary) text-white'
                             : locked
-                              ? "bg-surface-alt text-muted/70"
-                              : "bg-surface-alt text-muted",
+                              ? 'bg-surface-alt text-muted/70'
+                              : 'bg-surface-alt text-muted',
                       )}
                       aria-hidden="true"
                     >
@@ -143,26 +135,26 @@ export function LearningCurriculum({
                       <span className="flex items-start gap-2">
                         <span
                           className={cn(
-                            "flex-1 text-[13px] leading-[1.65]",
+                            'flex-1 text-[13px] leading-[1.65]',
                             selected
-                              ? "font-extrabold text-foreground"
+                              ? 'text-foreground font-extrabold'
                               : locked
-                                ? "font-semibold text-muted/70"
+                                ? 'text-muted/70 font-semibold'
                                 : completed
-                                  ? "font-semibold text-muted"
-                                  : "font-semibold text-foreground",
+                                  ? 'text-muted font-semibold'
+                                  : 'text-foreground font-semibold',
                           )}
                         >
                           {lesson.title}
                         </span>
                         {lesson.is_free ? (
                           <span className="shrink-0 rounded-full bg-(--theme-primary)/15 px-2 py-0.5 text-[10px] font-extrabold text-(--theme-primary-ink)">
-                            {t("courses.free")}
+                            {t('courses.free')}
                           </span>
                         ) : null}
                       </span>
 
-                      <span className="mt-1 flex items-center gap-1.5 text-[11px] text-muted">
+                      <span className="text-muted mt-1 flex items-center gap-1.5 text-[11px]">
                         <Icon className="size-3 shrink-0" aria-hidden="true" />
                         <span>{t(TYPE_KEY[type])}</span>
                         {duration ? (
@@ -176,8 +168,8 @@ export function LearningCurriculum({
                       {unlockDays !== null ? (
                         <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-(--theme-primary)/15 px-2 py-1 text-[11px] font-semibold text-(--theme-primary-ink)">
                           <LockKeyhole className="size-3" aria-hidden="true" />
-                          {t("learning.unlocksInDays").replace(
-                            "{days}",
+                          {t('learning.unlocksInDays').replace(
+                            '{days}',
                             toPersianDigits(unlockDays, language),
                           )}
                         </span>
@@ -187,25 +179,23 @@ export function LearningCurriculum({
                 );
 
                 const rowClass = cn(
-                  "flex gap-3 border-b border-theme py-[13px] pe-[22px] transition-colors",
+                  'flex gap-3 border-b border-theme py-[13px] pe-[22px] transition-colors',
                   selected
-                    ? "border-s-[3px] border-s-(--theme-primary) bg-(--theme-primary)/10 ps-[19px]"
-                    : cn("ps-[22px]", locked ? "" : "hover:bg-surface"),
+                    ? 'border-s-[3px] border-s-(--theme-primary) bg-(--theme-primary)/10 ps-[19px]'
+                    : cn('ps-[22px]', locked ? '' : 'hover:bg-surface'),
                 );
 
                 return (
                   <li key={lessonId}>
                     {locked ? (
-                      <span className={cn(rowClass, "cursor-not-allowed")}>
-                        {body}
-                      </span>
+                      <span className={cn(rowClass, 'cursor-not-allowed')}>{body}</span>
                     ) : (
                       <Link
                         href={buildAcademyPath(
                           storeSlug,
                           learnPath(courseSlug, lesson.slug ?? lesson.id),
                         )}
-                        aria-current={selected ? "page" : undefined}
+                        aria-current={selected ? 'page' : undefined}
                         className={rowClass}
                       >
                         {body}

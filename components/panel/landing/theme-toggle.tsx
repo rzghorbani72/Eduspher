@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun } from 'lucide-react';
 
-import { LANDING } from "./landing.messages";
+import { LANDING } from './landing.messages';
 
-export const THEME_STORAGE_KEY = "landing-theme";
+export const THEME_STORAGE_KEY = 'landing-theme';
 
 /**
  * Flips the landing between light and dark.
@@ -20,10 +20,10 @@ export const THEME_STORAGE_KEY = "landing-theme";
  */
 export function ThemeToggle() {
   const toggle = () => {
-    const root = document.querySelector<HTMLElement>(".lp-root");
+    const root = document.querySelector<HTMLElement>('.lp-root');
     if (!root) return;
 
-    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next);
@@ -37,7 +37,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={LANDING.nav.themeToggle}
-      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-lp-line text-lp-ink-2 transition-colors hover:text-lp-ink"
+      className="border-lp-line text-lp-ink-2 hover:text-lp-ink grid h-10 w-10 shrink-0 place-items-center rounded-full border transition-colors"
     >
       <Sun size={17} aria-hidden="true" className="lp-icon-light" />
       <Moon size={17} aria-hidden="true" className="lp-icon-dark" />

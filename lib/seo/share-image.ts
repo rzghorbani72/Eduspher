@@ -1,6 +1,6 @@
-import { getAcademyBySlug } from "@/lib/api/server";
-import { getAcademyContext } from "@/lib/store-context";
-import { resolveAssetUrl } from "@/lib/utils";
+import { getAcademyBySlug } from '@/lib/api/server';
+import { getAcademyContext } from '@/lib/store-context';
+import { resolveAssetUrl } from '@/lib/utils';
 
 /**
  * The picture a shared link shows when the page itself has none. The manager's

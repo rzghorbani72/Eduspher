@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Check } from "lucide-react";
+import { useState } from 'react';
+import { Check } from 'lucide-react';
 
-import { Badge } from "@/components/ui/badge";
-import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
-import { usePurchase } from "@/components/purchase/use-purchase";
-import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
-import { useLocaleFormat } from "@/hooks/use-locale-digits";
-import { useTranslation } from "@/lib/i18n/hooks";
-import type { StudentBundle } from "@/lib/bundles";
+import { Badge } from '@/components/ui/badge';
+import { useEnrollmentClosed } from '@/components/academy/enrollment-status-provider';
+import { usePurchase } from '@/components/purchase/use-purchase';
+import { CheckoutDialog } from '@/components/purchase/checkout-dialog';
+import { useLocaleFormat } from '@/hooks/use-locale-digits';
+import { useTranslation } from '@/lib/i18n/hooks';
+import type { StudentBundle } from '@/lib/bundles';
 
 interface BundleCardProps {
   bundle: StudentBundle;
@@ -37,44 +37,34 @@ export function BundleCard({
 
   const busy = pendingKey === bundle.key;
   const discountPercent =
-    listPrice > bundle.price
-      ? Math.round(((listPrice - bundle.price) / listPrice) * 100)
-      : 0;
+    listPrice > bundle.price ? Math.round(((listPrice - bundle.price) / listPrice) * 100) : 0;
 
   return (
     <div
       className={`relative flex flex-col rounded-2xl border p-6 shadow-sm transition-all hover:shadow-lg ${
         isFeatured
-          ? "border-(--theme-primary) bg-(--theme-primary)/5 ring-2 ring-(--theme-primary)/20"
-          : "border-theme bg-card"
+          ? 'border-(--theme-primary) bg-(--theme-primary)/5 ring-2 ring-(--theme-primary)/20'
+          : 'border-theme bg-card'
       }`}
     >
       {isFeatured && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="rounded-full bg-(--theme-primary) px-4 py-1 text-xs font-bold text-(--theme-on-primary)">
-            {t("bundles.mostPopular")}
+            {t('bundles.mostPopular')}
           </span>
         </div>
       )}
 
-      <h2 className="text-xl font-bold text-(--theme-foreground)">
-        {bundle.name}
-      </h2>
-      {bundle.description && (
-        <p className="mt-1 text-sm text-muted">{bundle.description}</p>
-      )}
+      <h2 className="text-xl font-bold text-(--theme-foreground)">{bundle.name}</h2>
+      {bundle.description && <p className="text-muted mt-1 text-sm">{bundle.description}</p>}
 
-      <p className="mt-4 text-sm text-muted">
-        {t("bundles.includes")} {format.number(bundle.courses.length)}{" "}
-        {t("bundles.course")}
+      <p className="text-muted mt-4 text-sm">
+        {t('bundles.includes')} {format.number(bundle.courses.length)} {t('bundles.course')}
       </p>
 
-      <ul className="mb-6 mt-3 space-y-2.5 text-sm">
+      <ul className="mt-3 mb-6 space-y-2.5 text-sm">
         {bundle.courses.map((course) => (
-          <li
-            key={course.id}
-            className="flex items-center gap-2 text-(--theme-foreground)"
-          >
+          <li key={course.id} className="flex items-center gap-2 text-(--theme-foreground)">
             <Check size={14} className="shrink-0 text-(--theme-primary)" />
             <span>{course.title}</span>
           </li>
@@ -82,16 +72,12 @@ export function BundleCard({
       </ul>
 
       <div className="mt-auto space-y-3">
-        {discountPercent > 0 && (
-          <p className="text-sm text-muted line-through">{listPriceLabel}</p>
-        )}
+        {discountPercent > 0 && <p className="text-muted text-sm line-through">{listPriceLabel}</p>}
         <div>
-          <p className="text-2xl font-bold text-(--theme-foreground)">
-            {priceLabel}
-          </p>
+          <p className="text-2xl font-bold text-(--theme-foreground)">{priceLabel}</p>
           {discountPercent > 0 && (
             <Badge variant="success" className="mt-1">
-              {t("bundles.save")} {format.percent(discountPercent)}
+              {t('bundles.save')} {format.percent(discountPercent)}
             </Badge>
           )}
         </div>
@@ -100,20 +86,18 @@ export function BundleCard({
           type="button"
           disabled={busy || enrollmentClosed}
           onClick={() => setConfirming(true)}
-          title={
-            enrollmentClosed ? t("academyStatus.enrollmentClosed") : undefined
-          }
+          title={enrollmentClosed ? t('academyStatus.enrollmentClosed') : undefined}
           className={`inline-flex h-11 w-full items-center justify-center rounded-full text-sm font-semibold transition-all disabled:opacity-60 ${
             isFeatured
-              ? "bg-(--theme-primary) text-(--theme-on-primary) hover:opacity-90"
-              : "border border-theme bg-card text-(--theme-foreground) hover:bg-surface"
+              ? 'bg-(--theme-primary) text-(--theme-on-primary) hover:opacity-90'
+              : 'border-theme bg-card hover:bg-surface border text-(--theme-foreground)'
           }`}
         >
           {enrollmentClosed
-            ? t("academyStatus.enrollmentClosedShort")
+            ? t('academyStatus.enrollmentClosedShort')
             : busy
-              ? t("common.loading")
-              : t("bundles.buyBundle")}
+              ? t('common.loading')
+              : t('bundles.buyBundle')}
         </button>
 
         {error && <p className="text-center text-xs text-red-600">{error}</p>}

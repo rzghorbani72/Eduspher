@@ -1,8 +1,8 @@
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck } from 'lucide-react';
 
-import { getTrustBadge } from "@/lib/api/trust-badge";
-import { ReportAbuseDialog } from "./report-abuse-dialog";
-import { EnamadSeal } from "./enamad-seal";
+import { getTrustBadge } from '@/lib/api/trust-badge';
+import { ReportAbuseDialog } from './report-abuse-dialog';
+import { EnamadSeal } from './enamad-seal';
 
 /**
  * Identity disclosure for a public academy site.
@@ -41,9 +41,7 @@ export async function PlatformTrustBadge({
         <span>
           بهره‌بردار: <strong>{operator}</strong>
         </span>
-        {badge.national_id_masked ? (
-          <span>شناسه: {badge.national_id_masked}</span>
-        ) : null}
+        {badge.national_id_masked ? <span>شناسه: {badge.national_id_masked}</span> : null}
       </div>
 
       {badge.contact_address || badge.contact_phone ? (
@@ -64,14 +62,12 @@ export async function PlatformTrustBadge({
       ) : null}
 
       {!badge.identity_verified ? (
-        <div className="mt-1 opacity-80">
-          هویت بهره‌بردار این آکادمی در حال بررسی است.
-        </div>
+        <div className="mt-1 opacity-80">هویت بهره‌بردار این آکادمی در حال بررسی است.</div>
       ) : null}
 
       <div className="mt-1">
         <ReportAbuseDialog academyId={academyId} />
-        {" · "}
+        {' · '}
         <a className="underline" href="mailto:info@mentoma.ir">
           info@mentoma.ir
         </a>

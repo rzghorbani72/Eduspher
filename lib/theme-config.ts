@@ -1,16 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import { cache } from "react";
+import { cache } from 'react';
 
-import { getAcademyContext } from "./store-context";
-import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from "./api/server";
-import { getPreviewToken } from "./preview-token";
-import { TEMPLATE_PRESETS } from "./template-presets";
+import { getAcademyContext } from './store-context';
+import { getStoreThemeConfig, getStoreUITemplate, getCurrentUITemplate } from './api/server';
+import { getPreviewToken } from './preview-token';
+import { TEMPLATE_PRESETS } from './template-presets';
 import {
   buildThemeCssVariables,
   DEFAULT_PLATFORM_THEME,
   themeCssVariablesToBlock,
-} from "./theme-apply";
+} from './theme-apply';
 
 export interface ThemeConfig {
   primary_color?: string;
@@ -118,7 +118,8 @@ export const getStoreThemeAndTemplate = cache(async () => {
           const publicTemplateResult = await Promise.allSettled([
             getStoreUITemplate(storeContext.slug),
           ]);
-          templateData = publicTemplateResult[0].status === 'fulfilled' ? publicTemplateResult[0].value : null;
+          templateData =
+            publicTemplateResult[0].status === 'fulfilled' ? publicTemplateResult[0].value : null;
         }
       }
     } else {
@@ -154,38 +155,81 @@ export const getStoreThemeAndTemplate = cache(async () => {
       theme: themeData
         ? {
             // Use configs first (from API response), then fallback to themeData root, then defaults
-            primary_color: configs.primary_color || td?.primary_color || "#3b82f6",
-            primary_color_light: configs.primary_color_light || td?.primary_color_light || configs.primary_color || td?.primary_color || "#3b82f6",
-            primary_color_dark: configs.primary_color_dark || td?.primary_color_dark || configs.primary_color || td?.primary_color || "#60a5fa",
-            secondary_color: configs.secondary_color || td?.secondary_color || "#6366f1",
-            secondary_color_light: configs.secondary_color_light || td?.secondary_color_light || configs.secondary_color || td?.secondary_color || "#6366f1",
-            secondary_color_dark: configs.secondary_color_dark || td?.secondary_color_dark || configs.secondary_color || td?.secondary_color || "#818cf8",
-            accent_color: configs.accent_color || td?.accent_color || "#f59e0b",
-            background_color: configs.background_color || td?.background_color || "#f8fafc",
-            background_color_light: configs.background_color_light || td?.background_color_light || configs.background_color || td?.background_color || "#f8fafc",
-            background_color_dark: configs.background_color_dark || td?.background_color_dark || configs.background_color || td?.background_color || "#0f172a",
+            primary_color: configs.primary_color || td?.primary_color || '#3b82f6',
+            primary_color_light:
+              configs.primary_color_light ||
+              td?.primary_color_light ||
+              configs.primary_color ||
+              td?.primary_color ||
+              '#3b82f6',
+            primary_color_dark:
+              configs.primary_color_dark ||
+              td?.primary_color_dark ||
+              configs.primary_color ||
+              td?.primary_color ||
+              '#60a5fa',
+            secondary_color: configs.secondary_color || td?.secondary_color || '#6366f1',
+            secondary_color_light:
+              configs.secondary_color_light ||
+              td?.secondary_color_light ||
+              configs.secondary_color ||
+              td?.secondary_color ||
+              '#6366f1',
+            secondary_color_dark:
+              configs.secondary_color_dark ||
+              td?.secondary_color_dark ||
+              configs.secondary_color ||
+              td?.secondary_color ||
+              '#818cf8',
+            accent_color: configs.accent_color || td?.accent_color || '#f59e0b',
+            background_color: configs.background_color || td?.background_color || '#f8fafc',
+            background_color_light:
+              configs.background_color_light ||
+              td?.background_color_light ||
+              configs.background_color ||
+              td?.background_color ||
+              '#f8fafc',
+            background_color_dark:
+              configs.background_color_dark ||
+              td?.background_color_dark ||
+              configs.background_color ||
+              td?.background_color ||
+              '#0f172a',
             // Handle dark_mode: can be boolean, string "true"/"false", or null
-            dark_mode: configs.dark_mode !== undefined
-              ? (configs.dark_mode === null || (typeof configs.dark_mode === 'string' && configs.dark_mode === 'null')
+            dark_mode:
+              configs.dark_mode !== undefined
+                ? configs.dark_mode === null ||
+                  (typeof configs.dark_mode === 'string' && configs.dark_mode === 'null')
                   ? null
-                  : configs.dark_mode === true || (typeof configs.dark_mode === 'string' && (configs.dark_mode === 'true' || configs.dark_mode === '1')))
-              : (td?.dark_mode !== undefined
-                  ? (td?.dark_mode === null || (typeof td?.dark_mode === 'string' && td?.dark_mode === 'null')
-                      ? null
-                      : td?.dark_mode === true || (typeof td?.dark_mode === 'string' && (td?.dark_mode === 'true' || td?.dark_mode === '1')))
-                  : false),
+                  : configs.dark_mode === true ||
+                    (typeof configs.dark_mode === 'string' &&
+                      (configs.dark_mode === 'true' || configs.dark_mode === '1'))
+                : td?.dark_mode !== undefined
+                  ? td?.dark_mode === null ||
+                    (typeof td?.dark_mode === 'string' && td?.dark_mode === 'null')
+                    ? null
+                    : td?.dark_mode === true ||
+                      (typeof td?.dark_mode === 'string' &&
+                        (td?.dark_mode === 'true' || td?.dark_mode === '1'))
+                  : false,
             // Animation and style settings from configs
-            background_animation_type: configs.background_animation_type || td?.background_animation_type || 'none',
-            background_animation_speed: configs.background_animation_speed || td?.background_animation_speed || 'medium',
-            background_svg_pattern: configs.background_svg_pattern || td?.background_svg_pattern || '',
-            element_animation_style: configs.element_animation_style || td?.element_animation_style || 'subtle',
-            border_radius_style: configs.border_radius_style || td?.border_radius_style || 'rounded',
+            background_animation_type:
+              configs.background_animation_type || td?.background_animation_type || 'none',
+            background_animation_speed:
+              configs.background_animation_speed || td?.background_animation_speed || 'medium',
+            background_svg_pattern:
+              configs.background_svg_pattern || td?.background_svg_pattern || '',
+            element_animation_style:
+              configs.element_animation_style || td?.element_animation_style || 'subtle',
+            border_radius_style:
+              configs.border_radius_style || td?.border_radius_style || 'rounded',
             shadow_style: configs.shadow_style || td?.shadow_style || 'medium',
             font_family: configs.font_family || td?.font_family || 'vazirmatn',
             section_spacing: configs.section_spacing || td?.section_spacing || 'comfortable',
             container_width: configs.container_width || td?.container_width || 'standard',
             heading_scale: configs.heading_scale || td?.heading_scale || 'standard',
-            text_direction: (configs.text_direction || td?.text_direction) as 'ltr' | 'rtl' | undefined,
+            text_direction: (configs.text_direction || td?.text_direction) as
+              'ltr' | 'rtl' | undefined,
             css_variables: (themeData as { css_variables?: Record<string, string> }).css_variables,
             css_block: (themeData as { css_block?: string }).css_block,
           }
@@ -203,7 +247,7 @@ export const getStoreThemeAndTemplate = cache(async () => {
                 }
                 return [];
               }
-              
+
               // Filter out empty blocks and validate they have required fields
               const validBlocks = templateData.blocks
                 .filter((b) => {
@@ -213,27 +257,30 @@ export const getStoreThemeAndTemplate = cache(async () => {
                 })
                 .map((b) => ({
                   id: b.id || `block-${b.order || 0}`,
-                  type: b.type || "",
+                  type: b.type || '',
                   order: b.order || 0,
                   isVisible: b.isVisible !== false,
                   config: b.config || {},
                 }))
                 .filter((b) => b.type) // Only keep blocks that have a type
                 .sort((a, b) => (a.order || 0) - (b.order || 0));
-              
+
               // If no valid blocks but we have a template_preset, use preset blocks as fallback
               if (validBlocks.length === 0 && templateData.template_preset) {
                 if (TEMPLATE_PRESETS[templateData.template_preset]) {
                   return TEMPLATE_PRESETS[templateData.template_preset].blocks;
                 }
               }
-              
+
               return validBlocks;
             })(),
             template_preset: templateData.template_preset,
             academy_stats:
-              (templateData as { academy_stats?: { courseCount: number; studentCount: number } | null })
-                .academy_stats ?? null,
+              (
+                templateData as {
+                  academy_stats?: { courseCount: number; studentCount: number } | null;
+                }
+              ).academy_stats ?? null,
           }
         : null,
     };
@@ -254,4 +301,3 @@ export function generateThemeCSSVariables(theme: ThemeConfig | null): string {
   });
   return themeCssVariablesToBlock(vars);
 }
-

@@ -1,7 +1,7 @@
-import { forwardRef } from "react";
-import type { LabelHTMLAttributes } from "react";
+import { forwardRef } from 'react';
+import type { LabelHTMLAttributes } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type LabelProps = LabelHTMLAttributes<HTMLLabelElement>;
 
@@ -10,13 +10,12 @@ export const Label = forwardRef<HTMLLabelElement, LabelProps>(({ className, ...p
     <label
       ref={ref}
       className={cn(
-        "text-sm font-medium leading-none text-(--theme-foreground) peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        className
+        'text-sm leading-none font-medium text-(--theme-foreground) peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+        className,
       )}
       {...props}
     />
   );
 });
 
-Label.displayName = "Label";
-
+Label.displayName = 'Label';

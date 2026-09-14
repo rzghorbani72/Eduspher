@@ -25,7 +25,7 @@ export function PartowCta({ id, config, storeContext }: TemplateSectionProps) {
         <Wrap className="text-center">
           <h2
             data-editable="title"
-            className="mx-auto max-w-[22ch] text-[clamp(28px,4vw,52px)] font-bold leading-[1.15]"
+            className="mx-auto max-w-[22ch] text-[clamp(28px,4vw,52px)] leading-[1.15] font-bold"
           >
             {text(config, 'title', d.title)}
           </h2>

@@ -32,7 +32,10 @@ export function DaneshvarCategories({ id, config, storeContext }: TemplateSectio
               href={templateHref(storeContext, 'courses')}
               className={`${styles.area} flex flex-col p-7`}
             >
-              <h3 {...editableItem('items', index, 'title')} className={`${styles.cardTitle} text-[20px] font-bold leading-[1.35]`}>
+              <h3
+                {...editableItem('items', index, 'title')}
+                className={`${styles.cardTitle} text-[20px] leading-[1.35] font-bold`}
+              >
                 {item.title}
               </h3>
               <p

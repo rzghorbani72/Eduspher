@@ -30,16 +30,16 @@ export function ScrollAnimations({ children, className = '' }: ScrollAnimationsP
       const ST = await import('gsap/ScrollTrigger');
       const gsapInstance = GSAP.gsap;
       const ScrollTriggerInstance = ST.ScrollTrigger;
-      
+
       gsapInstance.registerPlugin(ScrollTriggerInstance);
 
       const elements = containerRef.current?.querySelectorAll('[data-scroll-animate]');
       if (!elements) return;
-      
+
       elements.forEach((element) => {
         const animationType = element.getAttribute('data-scroll-animate') || 'fadeIn';
         const delay = parseFloat(element.getAttribute('data-scroll-delay') || '0');
-        
+
         // Set initial state based on animation type
         switch (animationType) {
           case 'fadeIn':
@@ -82,7 +82,7 @@ export function ScrollAnimations({ children, className = '' }: ScrollAnimationsP
     };
 
     const cleanup = initGSAP();
-    
+
     return () => {
       if (cleanup) {
         cleanup.then((cleanupFn) => cleanupFn && cleanupFn());
@@ -104,7 +104,7 @@ export function ScrollAnimations({ children, className = '' }: ScrollAnimationsP
 export function withScrollAnimation(
   Component: React.ComponentType<Record<string, unknown>>,
   animationType: 'fadeIn' | 'slideLeft' | 'slideRight' | 'scaleUp' = 'fadeIn',
-  delay: number = 0
+  delay: number = 0,
 ) {
   return function ScrollAnimatedComponent(props: Record<string, unknown>) {
     return (
@@ -114,4 +114,3 @@ export function withScrollAnimation(
     );
   };
 }
-

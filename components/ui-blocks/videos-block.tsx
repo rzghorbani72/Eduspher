@@ -1,10 +1,10 @@
-import { PlaceholderCard } from "./slot-grid";
-import { resolveSlots, type SlotConfig } from "@/lib/slot-config";
-import { getCurrentAcademy } from "@/lib/api/server";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { resolveAssetUrl } from "@/lib/utils";
-import { LazySecureVideo } from "@/components/media/lazy-secure-video";
+import { PlaceholderCard } from './slot-grid';
+import { resolveSlots, type SlotConfig } from '@/lib/slot-config';
+import { getCurrentAcademy } from '@/lib/api/server';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { resolveAssetUrl } from '@/lib/utils';
+import { LazySecureVideo } from '@/components/media/lazy-secure-video';
 
 export interface VideoItemConfig {
   /** Video row id in the academy's media library. */
@@ -45,26 +45,19 @@ export async function VideosBlock({ id, config }: VideosBlockProps) {
   const videos = (config?.videos ?? []).filter((video) => !!video.videoId);
   if (videos.length === 0) return null;
 
-  const title =
-    config?.text?.title ?? config?.title ?? tr("blocks.videosTitle");
-  const subtitle =
-    config?.text?.subtitle ?? config?.subtitle ?? tr("blocks.videosSubtitle");
+  const title = config?.text?.title ?? config?.title ?? tr('blocks.videosTitle');
+  const subtitle = config?.text?.subtitle ?? config?.subtitle ?? tr('blocks.videosSubtitle');
 
   return (
-    <section id={id || "videos"} className="bg-(--theme-background) py-[80px]">
+    <section id={id || 'videos'} className="bg-(--theme-background) py-[80px]">
       <div className="mx-auto max-w-[1200px] px-[40px]">
         <div className="mb-[56px] text-center">
-          <h2 className="mb-[12px] text-[36px] font-black text-(--theme-foreground)">
-            {title}
-          </h2>
-          <p className="mx-auto max-w-[480px] text-[15px] text-(--theme-muted)">
-            {subtitle}
-          </p>
+          <h2 className="mb-[12px] text-[36px] font-black text-(--theme-foreground)">{title}</h2>
+          <p className="mx-auto max-w-[480px] text-[15px] text-(--theme-muted)">{subtitle}</p>
         </div>
         <div className="grid grid-cols-1 gap-[24px] md:grid-cols-2 lg:grid-cols-3">
           {resolveSlots(videos, config?.slots, videos.length).map((slot, i) => {
-            if (slot.kind !== "live")
-              return <PlaceholderCard key={i} text={slot.text} />;
+            if (slot.kind !== 'live') return <PlaceholderCard key={i} text={slot.text} />;
             const video = slot.data;
             if (!video.videoId) return null;
             return (
@@ -74,7 +67,7 @@ export async function VideosBlock({ id, config }: VideosBlockProps) {
               >
                 <LazySecureVideo
                   videoId={video.videoId}
-                  title={video.title ?? tr("blocks.videosTitle")}
+                  title={video.title ?? tr('blocks.videosTitle')}
                   poster={resolveAssetUrl(video.poster)}
                   className="aspect-video w-full bg-(--theme-surface-alt)"
                 />

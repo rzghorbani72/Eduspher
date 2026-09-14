@@ -23,8 +23,12 @@
   background: var(--theme-surface);
   box-shadow: 0 20px 40px -28px color-mix(in srgb, var(--theme-foreground) 55%, transparent);
 }
-.cardA { transform: rotate(-1.5deg); }
-.cardB { transform: rotate(1.5deg); }
+.cardA {
+  transform: rotate(-1.5deg);
+}
+.cardB {
+  transform: rotate(1.5deg);
+}
 
 /* Photo slot — the optional 16:9 image an academy may upload. */
 .photoSlot {
@@ -66,7 +70,20 @@
   height: auto;
   overflow: hidden;
 }
-.t1 { background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-deep)); }
-.t2 { background-image: linear-gradient(200deg, var(--theme-deep), var(--theme-primary) 55%, var(--theme-accent)); }
-.t3 { background-image: linear-gradient(120deg, var(--theme-secondary), var(--theme-primary)); }
-.t4 { background-image: linear-gradient(160deg, var(--theme-accent), var(--theme-primary) 90%); }
+.t1 {
+  background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-deep));
+}
+.t2 {
+  background-image: linear-gradient(
+    200deg,
+    var(--theme-deep),
+    var(--theme-primary) 55%,
+    var(--theme-accent)
+  );
+}
+.t3 {
+  background-image: linear-gradient(120deg, var(--theme-secondary), var(--theme-primary));
+}
+.t4 {
+  background-image: linear-gradient(160deg, var(--theme-accent), var(--theme-primary) 90%);
+}

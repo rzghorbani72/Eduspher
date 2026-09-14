@@ -41,10 +41,7 @@ export function getPanelPostMessageTarget(): string {
 }
 
 /** Send a message to the AdminPanel parent; no-op if origin is not configured. */
-export function postMessageToPanel(
-  data: object,
-  transfer?: Transferable[],
-): void {
+export function postMessageToPanel(data: object, transfer?: Transferable[]): void {
   const target = getPanelPostMessageTarget();
   if (!target) return;
   if (transfer?.length) {

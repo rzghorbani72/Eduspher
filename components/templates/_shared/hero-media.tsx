@@ -2,15 +2,10 @@ import type { CSSProperties, ReactNode } from 'react';
 import { resolveAssetUrl } from '@/lib/utils';
 import { HeroVideoSlot, resolveHeroVideoUrl } from './hero-video-slot';
 import type { SectionConfig } from './types';
-import { AppImage } from "@/components/ui/app-image";
+import { AppImage } from '@/components/ui/app-image';
 
-export function resolveHeroMediaUrl(
-  config?: SectionConfig,
-  mediaKey = 'bgImage',
-): string | null {
-  const raw =
-    config?.[mediaKey] ??
-    (mediaKey === 'bgImage' ? config?.backgroundImage : undefined);
+export function resolveHeroMediaUrl(config?: SectionConfig, mediaKey = 'bgImage'): string | null {
+  const raw = config?.[mediaKey] ?? (mediaKey === 'bgImage' ? config?.backgroundImage : undefined);
   if (typeof raw !== 'string' || !raw.trim()) return null;
   return resolveAssetUrl(raw);
 }
@@ -44,9 +39,7 @@ export function HeroVisualSlot({
   // whole slot over; `background` keeps the decorative children on top and
   // plays the video behind them, exactly where the photo would have been.
   if (videoUrl && mode === 'fill') {
-    return (
-      <HeroVideoSlot config={config} className={className} poster={url} />
-    );
+    return <HeroVideoSlot config={config} className={className} poster={url} />;
   }
   if (videoUrl) {
     return (
@@ -59,10 +52,7 @@ export function HeroVisualSlot({
 
   if (mode === 'fill' && url) {
     return (
-      <div
-        className={`relative overflow-hidden ${className ?? ''}`}
-        data-media-editable={mediaKey}
-      >
+      <div className={`relative overflow-hidden ${className ?? ''}`} data-media-editable={mediaKey}>
         <AppImage
           src={url}
           alt={alt}
@@ -84,11 +74,7 @@ export function HeroVisualSlot({
     : undefined;
 
   return (
-    <div
-      className={`relative ${className ?? ''}`}
-      data-media-editable={mediaKey}
-      style={bgStyle}
-    >
+    <div className={`relative ${className ?? ''}`} data-media-editable={mediaKey} style={bgStyle}>
       {children}
     </div>
   );

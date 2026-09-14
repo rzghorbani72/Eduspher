@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-import { useLocaleDigits } from "@/hooks/use-locale-digits";
-import { toEnglishDigits } from "@/lib/phone-utils";
-import { cn } from "@/lib/utils";
+import { useLocaleDigits } from '@/hooks/use-locale-digits';
+import { toEnglishDigits } from '@/lib/phone-utils';
+import { cn } from '@/lib/utils';
 
 interface OtpBoxInputProps {
   length?: number;
@@ -34,7 +34,7 @@ export function OtpBoxInput({
   const localeDigits = useLocaleDigits();
   const firedRef = useRef<string | null>(null);
 
-  const digits = Array.from({ length }, (_, i) => value[i] ?? "");
+  const digits = Array.from({ length }, (_, i) => value[i] ?? '');
 
   useEffect(() => {
     if (value.length < length || disabled) {
@@ -47,47 +47,44 @@ export function OtpBoxInput({
   }, [value, length, disabled, onComplete]);
 
   function handleChange(index: number, raw: string) {
-    const digit = toEnglishDigits(raw).replace(/\D/g, "").slice(-1);
+    const digit = toEnglishDigits(raw).replace(/\D/g, '').slice(-1);
     const next = [...digits];
     next[index] = digit;
-    onChange(next.join(""));
+    onChange(next.join(''));
     if (digit && index < length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   }
 
-  function handleKeyDown(
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) {
-    if (e.key === "Backspace") {
+  function handleKeyDown(index: number, e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Backspace') {
       if (digits[index]) {
         const next = [...digits];
-        next[index] = "";
-        onChange(next.join(""));
+        next[index] = '';
+        onChange(next.join(''));
       } else if (index > 0) {
         inputRefs.current[index - 1]?.focus();
       }
-    } else if (e.key === "ArrowLeft" && index > 0) {
+    } else if (e.key === 'ArrowLeft' && index > 0) {
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === "ArrowRight" && index < length - 1) {
+    } else if (e.key === 'ArrowRight' && index < length - 1) {
       inputRefs.current[index + 1]?.focus();
     }
   }
 
   function handlePaste(e: React.ClipboardEvent) {
     e.preventDefault();
-    const text = toEnglishDigits(e.clipboardData.getData("text"))
-      .replace(/\D/g, "")
+    const text = toEnglishDigits(e.clipboardData.getData('text'))
+      .replace(/\D/g, '')
       .slice(0, length);
-    const next = Array.from({ length }, (_, i) => text[i] ?? "");
-    onChange(next.join(""));
+    const next = Array.from({ length }, (_, i) => text[i] ?? '');
+    onChange(next.join(''));
     const focusIdx = Math.min(text.length, length - 1);
     inputRefs.current[focusIdx]?.focus();
   }
 
   return (
-    <div className={cn("flex justify-center gap-2.5", className)} dir="ltr">
+    <div className={cn('flex justify-center gap-2.5', className)} dir="ltr">
       {digits.map((digit, i) => (
         <input
           key={i}
@@ -106,10 +103,10 @@ export function OtpBoxInput({
           onFocus={(e) => e.currentTarget.select()}
           onPaste={handlePaste}
           className={cn(
-            "h-14 w-14 rounded-2xl border bg-card text-center text-xl font-semibold tabular-nums",
-            "outline-none transition-colors",
-            "focus:border-(--theme-primary) focus:ring-2 focus:ring-(--theme-primary)/20",
-            "disabled:cursor-not-allowed disabled:opacity-50",
+            'bg-card h-14 w-14 rounded-2xl border text-center text-xl font-semibold tabular-nums',
+            'transition-colors outline-none',
+            'focus:border-(--theme-primary) focus:ring-2 focus:ring-(--theme-primary)/20',
+            'disabled:cursor-not-allowed disabled:opacity-50',
           )}
         />
       ))}

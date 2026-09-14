@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode } from 'react';
 
-import { QuickSignupDialog } from "./quick-signup-dialog";
+import { QuickSignupDialog } from './quick-signup-dialog';
 
 type Props = {
   /** Kept as a real href so the link stays crawlable and works without JS. */

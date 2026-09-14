@@ -26,8 +26,8 @@ export const options = {
   thresholds: {
     'http_req_duration{endpoint:static}': ['p(95)<500'],
     'http_req_duration{endpoint:dynamic}': ['p(95)<1500'],
-    'http_req_failed': ['rate<0.1'],
-    'checks': ['rate>0.85'],
+    http_req_failed: ['rate<0.1'],
+    checks: ['rate>0.85'],
   },
 };
 

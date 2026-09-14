@@ -20,7 +20,7 @@ export function GdprConsentBanner() {
   const needsConsent = useSyncExternalStore(
     () => () => {},
     cookieConsentNeeded,
-    () => false
+    () => false,
   );
   const visible = needsConsent && !dismissed;
 
@@ -43,24 +43,24 @@ export function GdprConsentBanner() {
       role="dialog"
       dir={direction}
       aria-label={t('cookieConsent.message')}
-      className="fixed inset-x-0 bottom-0 z-50 flex flex-col items-stretch gap-3 border-t border-border bg-background px-4 py-3 shadow-lg sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6"
+      className="border-border bg-background fixed inset-x-0 bottom-0 z-50 flex flex-col items-stretch gap-3 border-t px-4 py-3 shadow-lg sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6"
     >
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         {t('cookieConsent.message')}{' '}
-        <Link href="/privacy" className="underline hover:text-foreground">
+        <Link href="/privacy" className="hover:text-foreground underline">
           {t('cookieConsent.learnMore')}
         </Link>
       </p>
       <div className="flex shrink-0 justify-end gap-2">
         <button
           onClick={decline}
-          className="rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
+          className="border-border hover:bg-muted rounded-md border px-3 py-1.5 text-sm"
         >
           {t('cookieConsent.decline')}
         </button>
         <button
           onClick={accept}
-          className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:opacity-90"
+          className="bg-primary text-primary-foreground rounded-md px-3 py-1.5 text-sm hover:opacity-90"
         >
           {t('cookieConsent.accept')}
         </button>

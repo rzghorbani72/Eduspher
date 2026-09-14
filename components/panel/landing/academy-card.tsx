@@ -1,10 +1,10 @@
-import { AppImage } from "@/components/ui/app-image";
+import { AppImage } from '@/components/ui/app-image';
 
-import type { StoreSummary } from "@/lib/api/types";
-import { env } from "@/lib/env";
-import { buildAcademySubdomainUrl, resolveAssetUrl } from "@/lib/utils";
+import type { StoreSummary } from '@/lib/api/types';
+import { env } from '@/lib/env';
+import { buildAcademySubdomainUrl, resolveAssetUrl } from '@/lib/utils';
 
-import { LANDING } from "./landing.messages";
+import { LANDING } from './landing.messages';
 
 export type AcademyCard = {
   key: string;
@@ -25,11 +25,11 @@ export function toAcademyCard(academy: StoreSummary): AcademyCard {
   return {
     key: String(academy.id),
     name: academy.name,
-    handle: `@${academy.slug ?? ""}`,
+    handle: `@${academy.slug ?? ''}`,
     description: academy.description ?? null,
     desktop,
     mobile,
-    href: buildAcademySubdomainUrl(academy.slug ?? "", env.appUrl),
+    href: buildAcademySubdomainUrl(academy.slug ?? '', env.appUrl),
     featured: Boolean(desktop && mobile),
   };
 }
@@ -54,7 +54,7 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
       aria-label={`${LANDING.creators.visit} ${card.name}`}
       className="group relative block h-[340px] w-[340px]"
     >
-      <span className="absolute bottom-0 start-0 block size-[272px] overflow-hidden rounded-[28px] bg-lp-surface-2 shadow-lp-card">
+      <span className="bg-lp-surface-2 shadow-lp-card absolute start-0 bottom-0 block size-[272px] overflow-hidden rounded-[28px]">
         {card.desktop ? (
           <AppImage
             src={card.desktop}
@@ -65,21 +65,19 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <span className="block size-full bg-linear-to-br from-lp-mint/25 to-lp-blue/15" />
+          <span className="from-lp-mint/25 to-lp-blue/15 block size-full bg-linear-to-br" />
         )}
 
         <span className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-5 pt-16 text-start">
-          <span className="block text-[17px] font-bold leading-tight text-white">
-            {card.name}
-          </span>
+          <span className="block text-[17px] leading-tight font-bold text-white">{card.name}</span>
           <span className="mt-0.5 block text-[12px] text-white/70" dir="ltr">
             {card.handle}
           </span>
         </span>
       </span>
 
-      <span className="absolute -top-1 end-0 block h-[328px] w-[148px] rounded-[30px] bg-[#1c1d22] p-[6px] shadow-lp-card">
-        <span className="relative block h-full w-full overflow-hidden rounded-[24px] bg-lp-surface-2">
+      <span className="shadow-lp-card absolute end-0 -top-1 block h-[328px] w-[148px] rounded-[30px] bg-[#1c1d22] p-[6px]">
+        <span className="bg-lp-surface-2 relative block h-full w-full overflow-hidden rounded-[24px]">
           {card.mobile ? (
             <AppImage
               src={card.mobile}
@@ -90,7 +88,7 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
               className="object-cover object-top"
             />
           ) : (
-            <span className="block h-full w-full bg-linear-to-b from-lp-blue/20 to-lp-mint/20" />
+            <span className="from-lp-blue/20 to-lp-mint/20 block h-full w-full bg-linear-to-b" />
           )}
         </span>
         <span

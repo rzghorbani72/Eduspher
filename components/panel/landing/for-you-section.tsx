@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useCallback, useRef, type UIEvent } from "react";
+import { useCallback, useRef, type UIEvent } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { CircledWord } from "./circled-word";
-import { Container } from "./landing-container";
-import { LANDING } from "./landing.messages";
-import { LandingShot } from "./landing-shot";
-import { SectionHeading } from "./section-heading";
-import { useSlidePosition } from "./use-slide-position";
+import { CircledWord } from './circled-word';
+import { Container } from './landing-container';
+import { LANDING } from './landing.messages';
+import { LandingShot } from './landing-shot';
+import { SectionHeading } from './section-heading';
+import { useSlidePosition } from './use-slide-position';
 
 const SLIDES = LANDING.forYou.slides;
 
@@ -20,7 +20,7 @@ const flexGrowAt = (index: number, position: number) =>
 export function ForYouSection() {
   const { nodeRef, position, active, goTo, setPosition } = useSlidePosition(
     SLIDES.length,
-    "lp:for-you",
+    'lp:for-you',
   );
 
   const slide = SLIDES[active];
@@ -45,16 +45,14 @@ export function ForYouSection() {
 
         let closest = 0;
         let closestDistance = Infinity;
-        rail
-          .querySelectorAll<HTMLElement>("[data-slide-index]")
-          .forEach((el) => {
-            const rect = el.getBoundingClientRect();
-            const distance = Math.abs(rect.left + rect.width / 2 - center);
-            if (distance < closestDistance) {
-              closestDistance = distance;
-              closest = Number(el.dataset.slideIndex);
-            }
-          });
+        rail.querySelectorAll<HTMLElement>('[data-slide-index]').forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const distance = Math.abs(rect.left + rect.width / 2 - center);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closest = Number(el.dataset.slideIndex);
+          }
+        });
 
         setPosition(closest);
       });
@@ -65,13 +63,11 @@ export function ForYouSection() {
   const goToSlide = useCallback(
     (index: number) => {
       goTo(index);
-      document
-        .querySelector<HTMLElement>(`[data-slide-index="${index}"]`)
-        ?.scrollIntoView({
-          behavior: "smooth",
-          inline: "center",
-          block: "nearest",
-        });
+      document.querySelector<HTMLElement>(`[data-slide-index="${index}"]`)?.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
     },
     [goTo],
   );
@@ -82,7 +78,7 @@ export function ForYouSection() {
       ref={nodeRef}
       data-lp="for-you"
       data-lp-reveal
-      className="scroll-mt-32 bg-lp-surface py-20 lg:py-28"
+      className="bg-lp-surface scroll-mt-32 py-20 lg:py-28"
     >
       <Container>
         <SectionHeading
@@ -97,14 +93,10 @@ export function ForYouSection() {
         {/* Images and copy are pinned as one block: the copy changes with the
             open panel, so it has to stay on screen while the panels hand off.
             The rail is capped well under the viewport to leave room for it. */}
-        <div
-          data-lp="for-you-stage"
-          data-lp-slide-count={SLIDES.length}
-          className="mt-12"
-        >
+        <div data-lp="for-you-stage" data-lp-slide-count={SLIDES.length} className="mt-12">
           <div
             onScroll={handleRailScroll}
-            className="flex h-[340px] snap-x snap-mandatory items-stretch gap-3 overflow-x-auto overscroll-x-contain scroll-smooth sm:h-[440px] lg:h-[56vh] lg:max-h-[540px] lg:min-h-[380px] lg:snap-none lg:overflow-visible lg:gap-4"
+            className="flex h-[340px] snap-x snap-mandatory items-stretch gap-3 overflow-x-auto overscroll-x-contain scroll-smooth sm:h-[440px] lg:h-[56vh] lg:max-h-[540px] lg:min-h-[380px] lg:snap-none lg:gap-4 lg:overflow-visible"
           >
             {SLIDES.map((item, index) => (
               <button
@@ -114,7 +106,7 @@ export function ForYouSection() {
                 onClick={() => goToSlide(index)}
                 aria-current={index === active}
                 style={{ flexGrow: flexGrowAt(index, position) }}
-                className="relative w-[78%] shrink-0 basis-auto snap-center overflow-hidden rounded-2xl border border-lp-line sm:w-[60%] lg:min-w-0 lg:w-auto lg:flex-1 lg:shrink lg:basis-0 lg:snap-align-none"
+                className="border-lp-line relative w-[78%] shrink-0 basis-auto snap-center overflow-hidden rounded-2xl border sm:w-[60%] lg:w-auto lg:min-w-0 lg:flex-1 lg:shrink lg:basis-0 lg:snap-align-none"
               >
                 <LandingShot
                   src={item.src}
@@ -133,9 +125,9 @@ export function ForYouSection() {
               silently replacing itself. */}
           <div
             key={slide.src}
-            className="mx-auto mt-8 w-fit max-w-[720px] animate-in text-start fade-in [animation-duration:500ms]"
+            className="animate-in fade-in mx-auto mt-8 w-fit max-w-[720px] text-start [animation-duration:500ms]"
           >
-            <h3 className="text-balance text-[17px] font-extrabold leading-[1.9] text-lp-ink lg:text-[19px]">
+            <h3 className="text-lp-ink text-[17px] leading-[1.9] font-extrabold text-balance lg:text-[19px]">
               {slide.headline}
             </h3>
 
@@ -145,7 +137,7 @@ export function ForYouSection() {
               {slide.points.map((point) => (
                 <li
                   key={point}
-                  className="border-s-2 border-lp-mint ps-4 text-[14px] leading-[1.9] text-lp-muted lg:text-[15px]"
+                  className="border-lp-mint text-lp-muted border-s-2 ps-4 text-[14px] leading-[1.9] lg:text-[15px]"
                 >
                   {point}
                 </li>
@@ -162,8 +154,8 @@ export function ForYouSection() {
                 aria-label={item.headline}
                 aria-current={index === active}
                 className={cn(
-                  "h-2 rounded-full transition-all",
-                  index === active ? "w-8 bg-lp-mint" : "w-2 bg-lp-line",
+                  'h-2 rounded-full transition-all',
+                  index === active ? 'bg-lp-mint w-8' : 'bg-lp-line w-2',
                 )}
               />
             ))}

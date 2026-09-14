@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const CLICK_MS = 550;
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -28,7 +28,7 @@ export function useSlidePosition(count: number, eventName: string) {
 
     const onPosition = (event: Event) => {
       const next = (event as CustomEvent<number>).detail;
-      if (typeof next !== "number") return;
+      if (typeof next !== 'number') return;
       cancelAnimationFrame(frameRef.current);
       move(next);
     };

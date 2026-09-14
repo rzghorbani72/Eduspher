@@ -3,7 +3,7 @@
  * header). Mirrored in Backend's `common/services/meeting-link.service.ts` —
  * keep both in sync when adding a host.
  */
-const EMBEDDABLE_HOSTS = ["meet.jit.si", "skyroom.online", "www.skyroom.online"];
+const EMBEDDABLE_HOSTS = ['meet.jit.si', 'skyroom.online', 'www.skyroom.online'];
 
 export const isEmbeddable = (url: string | null | undefined): boolean => {
   if (!url) return false;

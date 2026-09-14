@@ -1,25 +1,20 @@
-import type { Metadata } from "next";
-import Link from "@/components/ui/link";
-import { BookOpen } from "lucide-react";
-import { redirect } from "next/navigation";
+import type { Metadata } from 'next';
+import Link from '@/components/ui/link';
+import { BookOpen } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
-import { TemplatedCourseCard } from "@/components/courses/templated-course-card";
-import { COURSE_CARD_GRID_CLASS } from "@/components/courses/course-card-layout";
-import { CourseFilters } from "@/components/courses/course-filters";
-import { CourseSearch } from "@/components/courses/course-search";
-import { EmptyState } from "@/components/ui/empty-state";
-import {
-  getCourses,
-  getCategories,
-  getCurrentAcademy,
-  getAcademyBySlug,
-} from "@/lib/api/server";
-import { buildAcademyPath, toPersianDigits } from "@/lib/utils";
-import { getAcademyContext } from "@/lib/store-context";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
-import { buildSiteMetadata } from "@/lib/seo/build-metadata";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
+import { TemplatedCourseCard } from '@/components/courses/templated-course-card';
+import { COURSE_CARD_GRID_CLASS } from '@/components/courses/course-card-layout';
+import { CourseFilters } from '@/components/courses/course-filters';
+import { CourseSearch } from '@/components/courses/course-search';
+import { EmptyState } from '@/components/ui/empty-state';
+import { getCourses, getCategories, getCurrentAcademy, getAcademyBySlug } from '@/lib/api/server';
+import { buildAcademyPath, toPersianDigits } from '@/lib/utils';
+import { getAcademyContext } from '@/lib/store-context';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
+import { buildSiteMetadata } from '@/lib/seo/build-metadata';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
 
 type SearchParams = Promise<{
   q?: string;
@@ -39,19 +34,17 @@ const parseNumber = (value?: string) => {
 
 const parseBoolean = (value?: string) => {
   if (!value) return undefined;
-  return value === "true" || value === "1";
+  return value === 'true' || value === '1';
 };
 
-const buildQueryString = (
-  params: Record<string, string | number | boolean | undefined>,
-) => {
+const buildQueryString = (params: Record<string, string | number | boolean | undefined>) => {
   const query = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === "") return;
+    if (value === undefined || value === null || value === '') return;
     query.set(key, String(value));
   });
   const qs = query.toString();
-  return qs ? `?${qs}` : "";
+  return qs ? `?${qs}` : '';
 };
 
 /**
@@ -62,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ctx = await getSeoRequestContext();
   if (ctx.isPlatform) {
     return {
-      title: "Courses",
+      title: 'Courses',
       robots: { index: false, follow: false },
     };
   }
@@ -76,31 +69,27 @@ export async function generateMetadata(): Promise<Metadata> {
   const language = getAcademyLanguage(null, null);
   const translate = (key: string) => t(key, language);
   const title = academyName
-    ? `${translate("courses.allCourses")} | ${academyName}`
-    : translate("courses.allCourses");
+    ? `${translate('courses.allCourses')} | ${academyName}`
+    : translate('courses.allCourses');
 
   return buildSiteMetadata({
     title,
-    description: translate("courses.heroSubtitle"),
+    description: translate('courses.heroSubtitle'),
     ctx,
   });
 }
 
-export default async function CoursesPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
+export default async function CoursesPage({ searchParams }: { searchParams: SearchParams }) {
   const seoCtx = await getSeoRequestContext();
   if (seoCtx.isPlatform) {
-    redirect("/academies");
+    redirect('/academies');
   }
 
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) =>
     buildAcademyPath(storeContext.isSubdomain ? null : storeContext.slug, path);
   const params = await searchParams;
-  const query = params?.q ?? "";
+  const query = params?.q ?? '';
   const page = parseNumber(params?.page) ?? 1;
   const orderBy = params?.order_by;
   const categoryId = params?.category_id || undefined;
@@ -137,11 +126,11 @@ export default async function CoursesPage({
 
   return (
     <div className="course-catalog relative space-y-7">
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-1/4 w-72 h-72 bg-gradient-to-br from-[var(--theme-primary)]/8 to-[var(--theme-secondary)]/8 rounded-full blur-3xl animate-float-slow" />
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="animate-float-slow absolute top-0 right-1/4 h-72 w-72 rounded-full bg-gradient-to-br from-[var(--theme-primary)]/8 to-[var(--theme-secondary)]/8 blur-3xl" />
         <div
-          className="absolute bottom-0 left-1/4 w-96 h-96 bg-gradient-to-br from-[var(--theme-secondary)]/8 to-[var(--theme-accent)]/8 rounded-full blur-3xl animate-float-slow"
-          style={{ animationDelay: "1.5s" }}
+          className="animate-float-slow absolute bottom-0 left-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-[var(--theme-secondary)]/8 to-[var(--theme-accent)]/8 blur-3xl"
+          style={{ animationDelay: '1.5s' }}
         />
       </div>
 
@@ -151,19 +140,19 @@ export default async function CoursesPage({
             {academyName}
           </span>
         ) : null}
-        <h1 className="mt-4 max-w-3xl text-balance text-4xl font-black leading-tight tracking-tight text-(--cc-ink) sm:text-5xl">
-          {translate("courses.heroTitle")}{" "}
+        <h1 className="mt-4 max-w-3xl text-4xl leading-tight font-black tracking-tight text-balance text-(--cc-ink) sm:text-5xl">
+          {translate('courses.heroTitle')}{' '}
           <span className="bg-linear-to-br from-(--theme-primary) to-(--theme-secondary) bg-clip-text text-transparent">
-            {translate("courses.heroTitleAccent")}
+            {translate('courses.heroTitleAccent')}
           </span>
         </h1>
         <p className="mt-4 max-w-xl text-lg text-(--cc-ink-2)">
-          {translate("courses.heroSubtitle")}
+          {translate('courses.heroSubtitle')}
         </p>
         <CourseSearch initialQuery={query} />
       </section>
 
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+      <div className="animate-in fade-in slide-in-from-bottom-4 delay-100 duration-500">
         <CourseFilters
           categories={categories}
           initialCategoryId={categoryId}
@@ -177,12 +166,12 @@ export default async function CoursesPage({
           {toPersianDigits(total, language)}
         </span>
         <span className="text-[15px] font-semibold text-(--cc-ink-3)">
-          {translate("courses.coursesFound")}
+          {translate('courses.coursesFound')}
         </span>
       </div>
 
       {courses.length > 0 ? (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+        <div className="animate-in fade-in slide-in-from-bottom-4 space-y-6 delay-200 duration-500">
           <div className={COURSE_CARD_GRID_CLASS}>
             {courses.map((course, index) => (
               <div
@@ -193,68 +182,62 @@ export default async function CoursesPage({
                 <TemplatedCourseCard
                   course={course}
                   index={index}
-                  storeSlug={
-                    storeContext.isSubdomain ? null : storeContext.slug
-                  }
+                  storeSlug={storeContext.isSubdomain ? null : storeContext.slug}
                 />
               </div>
             ))}
           </div>
-          {pagination &&
-          (pagination.pages > 1 || (pagination.totalPages ?? 0) > 1) ? (
+          {pagination && (pagination.pages > 1 || (pagination.totalPages ?? 0) > 1) ? (
             <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
               {pagination.hasPreviousPage && (
                 <Link
-                  href={`${buildPath("/courses")}${buildQueryString({
+                  href={`${buildPath('/courses')}${buildQueryString({
                     q: query || undefined,
                     order_by: orderBy || undefined,
                     category_id: categoryId,
                     is_free: isFree,
                     page: page - 1,
                   })}`}
-                  className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border bg-(--cc-card) border-(--cc-bd) px-3 text-sm font-semibold text-(--cc-ink) transition-all hover:scale-105 hover:border-(--cc-brand)"
+                  className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-(--cc-bd) bg-(--cc-card) px-3 text-sm font-semibold text-(--cc-ink) transition-all hover:scale-105 hover:border-(--cc-brand)"
                 >
                   ←
                 </Link>
               )}
-              {Array.from(
-                { length: pagination.totalPages ?? pagination.pages },
-                (_, index) => {
-                  const targetPage = index + 1;
-                  const href = buildQueryString({
-                    q: query || undefined,
-                    order_by: orderBy || undefined,
-                    category_id: categoryId,
-                    is_free: isFree,
-                    page: targetPage,
-                  });
+              {Array.from({ length: pagination.totalPages ?? pagination.pages }, (_, index) => {
+                const targetPage = index + 1;
+                const href = buildQueryString({
+                  q: query || undefined,
+                  order_by: orderBy || undefined,
+                  category_id: categoryId,
+                  is_free: isFree,
+                  page: targetPage,
+                });
 
-                  const isActive = targetPage === page;
-                  return (
-                    <Link
-                      key={targetPage}
-                      href={`${buildPath("/courses")}${href}`}
-                      className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition-all ${
-                        isActive
-                          ? "bg-(--cc-brand) text-(--theme-on-primary) shadow-lg scale-105"
-                          : "border bg-(--cc-card) border-(--cc-bd) text-(--cc-ink) hover:scale-105 hover:border-(--cc-brand)"
-                      }`}
-                    >
-                      {toPersianDigits(targetPage, language)}
-                    </Link>
-                  );
-                },
-              )}
+                const isActive = targetPage === page;
+                return (
+                  <Link
+                    key={targetPage}
+                    href={`${buildPath('/courses')}${href}`}
+                    className={`inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full px-3 text-sm font-semibold transition-all ${
+                      isActive
+                        ? 'scale-105 bg-(--cc-brand) text-(--theme-on-primary) shadow-lg'
+                        : 'border border-(--cc-bd) bg-(--cc-card) text-(--cc-ink) hover:scale-105 hover:border-(--cc-brand)'
+                    }`}
+                  >
+                    {toPersianDigits(targetPage, language)}
+                  </Link>
+                );
+              })}
               {pagination.hasNextPage && (
                 <Link
-                  href={`${buildPath("/courses")}${buildQueryString({
+                  href={`${buildPath('/courses')}${buildQueryString({
                     q: query || undefined,
                     order_by: orderBy || undefined,
                     category_id: categoryId,
                     is_free: isFree,
                     page: page + 1,
                   })}`}
-                  className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border bg-(--cc-card) border-(--cc-bd) px-3 text-sm font-semibold text-(--cc-ink) transition-all hover:scale-105 hover:border-(--cc-brand)"
+                  className="inline-flex h-10 min-w-[2.5rem] items-center justify-center rounded-full border border-(--cc-bd) bg-(--cc-card) px-3 text-sm font-semibold text-(--cc-ink) transition-all hover:scale-105 hover:border-(--cc-brand)"
                 >
                   →
                 </Link>
@@ -265,14 +248,14 @@ export default async function CoursesPage({
       ) : (
         <EmptyState
           icon={<BookOpen size={28} />}
-          title={translate("courses.noCoursesFound")}
-          description={translate("courses.noCoursesDescription")}
+          title={translate('courses.noCoursesFound')}
+          description={translate('courses.noCoursesDescription')}
           action={
             <Link
-              href={buildPath("/courses")}
-              className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-lg shadow-[var(--theme-primary)]/30 transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-xl hover:shadow-[var(--theme-primary)]/40"
+              href={buildPath('/courses')}
+              className="inline-flex h-11 items-center rounded-full bg-[var(--theme-primary)] px-6 text-sm font-semibold text-[var(--theme-on-primary)] shadow-[var(--theme-primary)]/30 shadow-lg transition-all hover:scale-105 hover:bg-[var(--theme-primary)]/90 hover:shadow-[var(--theme-primary)]/40 hover:shadow-xl"
             >
-              {translate("pages.resetFilters")}
+              {translate('pages.resetFilters')}
             </Link>
           }
         />

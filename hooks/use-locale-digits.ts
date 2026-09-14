@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from 'react';
 
-import { useI18n } from "@/lib/i18n/provider";
+import { useI18n } from '@/lib/i18n/provider';
 import {
   formatLtrValue,
   formatNumber,
   formatPercent,
   formatPhoneDisplay,
   toPersianDigits,
-} from "@/lib/utils";
+} from '@/lib/utils';
 
 /**
  * Numbers are stored and sent to the API in English digits; only what the user
@@ -18,10 +18,7 @@ import {
  */
 export function useLocaleDigits() {
   const { language } = useI18n();
-  return useCallback(
-    (value: string | number) => toPersianDigits(value, language),
-    [language],
-  );
+  return useCallback((value: string | number) => toPersianDigits(value, language), [language]);
 }
 
 /**

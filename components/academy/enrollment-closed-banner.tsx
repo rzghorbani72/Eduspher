@@ -18,7 +18,7 @@ export function EnrollmentClosedBanner({
   message,
   reopensAt,
   contactPhone,
-  contactEmail
+  contactEmail,
 }: EnrollmentClosedBannerProps) {
   const { t, language } = useTranslation();
   const contact = [contactPhone, contactEmail].filter(Boolean).join(' · ');
@@ -26,7 +26,7 @@ export function EnrollmentClosedBanner({
     ? new Date(reopensAt).toLocaleDateString(language, {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
+        day: 'numeric',
       })
     : null;
 
@@ -36,12 +36,10 @@ export function EnrollmentClosedBanner({
       className="w-full border-b px-4 py-3 text-center text-sm"
       style={{
         backgroundColor: 'var(--theme-muted, rgba(0,0,0,0.04))',
-        color: 'var(--theme-foreground)'
+        color: 'var(--theme-foreground)',
       }}
     >
-      <p className="font-medium">
-        {message ?? t('academyStatus.enrollmentClosed')}
-      </p>
+      <p className="font-medium">{message ?? t('academyStatus.enrollmentClosed')}</p>
       <p className="mt-1 opacity-80">
         {t('academyStatus.currentStudentsKeepAccess')}
         {reopens ? ` · ${t('academyStatus.reopensOn')} ${reopens}` : ''}

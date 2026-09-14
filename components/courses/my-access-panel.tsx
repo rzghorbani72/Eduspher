@@ -1,27 +1,17 @@
-"use client";
+'use client';
 
-import {
-  ArrowLeft,
-  GraduationCap,
-  KeyRound,
-  Package,
-  PlayCircle,
-  RefreshCw,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowLeft, GraduationCap, KeyRound, Package, PlayCircle, RefreshCw } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-import { EnrolledSideCta, EnrolledSideOverview } from "@/components/courses/enrolled-side-overview";
-import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { formatDate } from "@/lib/utils";
-import type { CourseAccessRow, CourseAccessType } from "@/lib/api/account-types";
-import type { CourseContentStats } from "@/lib/courses/curriculum";
-import type { PurchaseOptionView } from "@/lib/courses/purchase-options";
-import { accessTypeLabelKey } from "@/lib/courses/access-type";
-import {
-  accessTargetFor,
-  accessTargetForType,
-} from "@/lib/courses/access-target";
+import { EnrolledSideCta, EnrolledSideOverview } from '@/components/courses/enrolled-side-overview';
+import { CreditBalanceNote } from '@/components/purchase/credit-balance-note';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { formatDate } from '@/lib/utils';
+import type { CourseAccessRow, CourseAccessType } from '@/lib/api/account-types';
+import type { CourseContentStats } from '@/lib/courses/curriculum';
+import type { PurchaseOptionView } from '@/lib/courses/purchase-options';
+import { accessTypeLabelKey } from '@/lib/courses/access-type';
+import { accessTargetFor, accessTargetForType } from '@/lib/courses/access-target';
 
 const ACCESS_ICON: Record<CourseAccessType, LucideIcon> = {
   STAFF_GRANT: KeyRound,
@@ -61,7 +51,7 @@ export function MyAccessPanel({
   const { t, language } = useTranslation();
   const hrefs = { learnHref, liveClassesHref, tutoringHref };
 
-  const accessType = access?.access_type ?? "ONE_TIME";
+  const accessType = access?.access_type ?? 'ONE_TIME';
   const accessTarget = access ? accessTargetForType(accessType, hrefs) : null;
   const extraOwned = access
     ? owned.filter((option) => accessTargetFor(option, hrefs).href !== accessTarget?.href)
@@ -71,8 +61,8 @@ export function MyAccessPanel({
 
   const untilLabel = (expiresAt: string | null) =>
     expiresAt
-      ? t("courses.accessUntil").replace("{date}", formatDate(expiresAt, language))
-      : t("courses.lifetimeAccess");
+      ? t('courses.accessUntil').replace('{date}', formatDate(expiresAt, language))
+      : t('courses.lifetimeAccess');
 
   return (
     <div>
@@ -84,9 +74,9 @@ export function MyAccessPanel({
       <CreditBalanceNote className="mx-5 mt-3" />
 
       {showAccess ? (
-        <div className="border-y border-theme bg-(--theme-primary)/8 px-5 py-4">
+        <div className="border-theme border-y bg-(--theme-primary)/8 px-5 py-4">
           <h3 className="text-xs font-black text-(--theme-foreground)">
-            {t("courses.myAccessTitle")}
+            {t('courses.myAccessTitle')}
           </h3>
 
           <ul className="mt-3 space-y-2">
@@ -139,7 +129,7 @@ function AccessLink({
     <li>
       <a
         href={href}
-        className="flex items-center gap-3 rounded-xl border border-theme bg-card px-3.5 py-3 transition-colors hover:bg-surface"
+        className="border-theme bg-card hover:bg-surface flex items-center gap-3 rounded-xl border px-3.5 py-3 transition-colors"
       >
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-(--theme-primary)/12 text-(--theme-primary)">
           <Icon className="h-[18px] w-[18px]" />
@@ -148,9 +138,9 @@ function AccessLink({
           <span className="block truncate text-[13px] font-bold text-(--theme-foreground)">
             {title}
           </span>
-          <span className="block text-[11px] text-muted">{subtitle}</span>
+          <span className="text-muted block text-[11px]">{subtitle}</span>
         </span>
-        <ArrowLeft className="h-4 w-4 shrink-0 rtl:rotate-180 text-(--theme-primary)" />
+        <ArrowLeft className="h-4 w-4 shrink-0 text-(--theme-primary) rtl:rotate-180" />
       </a>
     </li>
   );

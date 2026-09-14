@@ -3,38 +3,38 @@
  * Rasterize logo-mark.svg into SERP/favicon sizes using the sharp already
  * vendored by Next. Run from edusphere: `node scripts/generate-brand-icons.mjs`
  */
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 function resolveSharp() {
-  const root = path.join(__dirname, "..", "node_modules", ".pnpm");
-  const entries = fs.readdirSync(root).filter((d) => d.startsWith("sharp@"));
+  const root = path.join(__dirname, '..', 'node_modules', '.pnpm');
+  const entries = fs.readdirSync(root).filter((d) => d.startsWith('sharp@'));
   if (!entries.length) {
-    throw new Error("sharp not found under node_modules/.pnpm");
+    throw new Error('sharp not found under node_modules/.pnpm');
   }
-  return require(path.join(root, entries[0], "node_modules", "sharp"));
+  return require(path.join(root, entries[0], 'node_modules', 'sharp'));
 }
 
 const sharp = resolveSharp();
-const publicDir = path.join(__dirname, "..", "public");
-const appDir = path.join(__dirname, "..", "app");
-const svg = fs.readFileSync(path.join(publicDir, "logo-mark.svg"));
+const publicDir = path.join(__dirname, '..', 'public');
+const appDir = path.join(__dirname, '..', 'app');
+const svg = fs.readFileSync(path.join(publicDir, 'logo-mark.svg'));
 
 async function transparentPng(file, size) {
   await sharp(svg, { density: 512 })
     .resize(size, size, {
-      fit: "contain",
+      fit: 'contain',
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .png()
     .toFile(path.join(publicDir, file));
-  console.log("wrote", file, size);
+  console.log('wrote', file, size);
 }
 
 async function appleTouch(file, size) {
   const mark = await sharp(svg, { density: 512 })
     .resize(Math.round(size * 0.72), Math.round(size * 0.72), {
-      fit: "contain",
+      fit: 'contain',
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
     .png()
@@ -47,10 +47,10 @@ async function appleTouch(file, size) {
       background: { r: 255, g: 255, b: 255, alpha: 255 },
     },
   })
-    .composite([{ input: mark, gravity: "centre" }])
+    .composite([{ input: mark, gravity: 'centre' }])
     .png()
     .toFile(path.join(publicDir, file));
-  console.log("wrote", file, size);
+  console.log('wrote', file, size);
 }
 
 function writeIco(pngBuf, dest) {
@@ -71,25 +71,22 @@ function writeIco(pngBuf, dest) {
 }
 
 (async () => {
-  await transparentPng("icon-48.png", 48);
-  await transparentPng("icon-192.png", 192);
-  await transparentPng("icon-512.png", 512);
-  await transparentPng("logo-mark.png", 512);
-  await appleTouch("apple-touch-icon.png", 180);
+  await transparentPng('icon-48.png', 48);
+  await transparentPng('icon-192.png', 192);
+  await transparentPng('icon-512.png', 512);
+  await transparentPng('logo-mark.png', 512);
+  await appleTouch('apple-touch-icon.png', 180);
 
-  const png48 = await sharp(path.join(publicDir, "icon-48.png")).png().toBuffer();
-  writeIco(png48, path.join(publicDir, "favicon.ico"));
-  console.log("wrote favicon.ico");
+  const png48 = await sharp(path.join(publicDir, 'icon-48.png')).png().toBuffer();
+  writeIco(png48, path.join(publicDir, 'favicon.ico'));
+  console.log('wrote favicon.ico');
 
+  fs.copyFileSync(path.join(publicDir, 'icon-48.png'), path.join(appDir, 'icon.png'));
   fs.copyFileSync(
-    path.join(publicDir, "icon-48.png"),
-    path.join(appDir, "icon.png"),
+    path.join(publicDir, 'apple-touch-icon.png'),
+    path.join(appDir, 'apple-icon.png'),
   );
-  fs.copyFileSync(
-    path.join(publicDir, "apple-touch-icon.png"),
-    path.join(appDir, "apple-icon.png"),
-  );
-  console.log("synced app/icon.png and app/apple-icon.png");
+  console.log('synced app/icon.png and app/apple-icon.png');
 })().catch((err) => {
   console.error(err);
   process.exit(1);

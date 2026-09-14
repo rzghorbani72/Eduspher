@@ -9,54 +9,36 @@
     </style>
     <script data-omelette-injected>
       (() => {
-        var j = ["https://claude.ai", "https://preview.claude.ai"];
+        var j = ['https://claude.ai', 'https://preview.claude.ai'];
         var x = true;
         var S = 30000;
         var f = 3000;
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener('DOMContentLoaded', () => {
           const H = window.Babel;
-          const G = "om-src-id";
-          if (
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[G])
-          ) {
+          const G = 'om-src-id';
+          if (H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[G])) {
             H.registerPlugin(G, ({ types: Y }) => ({
               visitor: {
                 JSXOpeningElement(U, Q) {
                   const J = U.node;
-                  if (J.name && J.name.type === "JSXMemberExpression") return;
+                  if (J.name && J.name.type === 'JSXMemberExpression') return;
                   for (let V = 0; V < J.attributes.length; V++) {
                     const L = J.attributes[V];
-                    if (
-                      L.type === "JSXAttribute" &&
-                      L.name &&
-                      L.name.name === "data-om-id"
-                    )
-                      return;
+                    if (L.type === 'JSXAttribute' && L.name && L.name.name === 'data-om-id') return;
                   }
-                  const W =
-                    (Q.file && Q.file.opts && Q.file.opts.filename) || "?";
+                  const W = (Q.file && Q.file.opts && Q.file.opts.filename) || '?';
                   const Z = J.loc && J.loc.start;
                   const z = `jsx:${W}:${J.start ?? 0}:${Z ? Z.line : 0}:${Z ? Z.column + 1 : 0}`;
                   J.attributes.push(
-                    Y.jsxAttribute(
-                      Y.jsxIdentifier("data-om-id"),
-                      Y.stringLiteral(z),
-                    ),
+                    Y.jsxAttribute(Y.jsxIdentifier('data-om-id'), Y.stringLiteral(z)),
                   );
                 },
               },
             }));
           }
-          const k = "om-text-extract";
+          const k = 'om-text-extract';
           let A = false;
-          if (
-            x &&
-            H &&
-            H.registerPlugin &&
-            !(H.availablePlugins && H.availablePlugins[k])
-          ) {
+          if (x && H && H.registerPlugin && !(H.availablePlugins && H.availablePlugins[k])) {
             const Y = window.React;
             if (Y && Y.useSyncExternalStore && Y.createElement) {
               A = true;
@@ -81,8 +63,8 @@
               window.__OmT = function z(V) {
                 Y.useSyncExternalStore(W, Z, Z);
                 return Y.createElement(
-                  "span",
-                  { "data-om-text": V.i, className: "__om-t" },
+                  'span',
+                  { 'data-om-text': V.i, className: '__om-t' },
                   V.i in U ? U[V.i] : V.children,
                 );
               };
@@ -103,20 +85,17 @@
                   alt: 1,
                   title: 1,
                   label: 1,
-                  "aria-label": 1,
-                  "aria-description": 1,
-                  "aria-placeholder": 1,
+                  'aria-label': 1,
+                  'aria-description': 1,
+                  'aria-placeholder': 1,
                 };
                 const _ = ($, C) =>
                   z.logicalExpression(
-                    "??",
+                    '??',
                     z.memberExpression(
                       z.logicalExpression(
-                        "||",
-                        z.memberExpression(
-                          z.identifier("window"),
-                          z.identifier("__omTextO"),
-                        ),
+                        '||',
+                        z.memberExpression(z.identifier('window'), z.identifier('__omTextO')),
                         z.objectExpression([]),
                       ),
                       z.stringLiteral($),
@@ -124,28 +103,22 @@
                     ),
                     C,
                   );
-                const E = ($) =>
-                  ($.file && $.file.opts && $.file.opts.filename) || "?";
-                const B = ($) => ($.file && $.file.code) || "";
+                const E = ($) => ($.file && $.file.opts && $.file.opts.filename) || '?';
+                const B = ($) => ($.file && $.file.code) || '';
                 const b = ($, C) => {
                   const X = (F) =>
                     F &&
                     F.start != null &&
                     F.end != null &&
-                    (F.type === "StringLiteral" ||
-                      (F.type === "TemplateLiteral" &&
-                        F.expressions.length === 0))
+                    (F.type === 'StringLiteral' ||
+                      (F.type === 'TemplateLiteral' && F.expressions.length === 0))
                       ? [F.start, F.end]
                       : null;
                   const N = X(C);
                   if (N) return N;
-                  if (C && C.type === "Identifier") {
+                  if (C && C.type === 'Identifier') {
                     const F = $.scope.getBinding(C.name);
-                    if (
-                      F &&
-                      F.constant &&
-                      F.path.node.type === "VariableDeclarator"
-                    ) {
+                    if (F && F.constant && F.path.node.type === 'VariableDeclarator') {
                       return X(F.path.node.init);
                     }
                   }
@@ -158,22 +131,17 @@
                     F = true;
                     return z.jsxElement(
                       z.jsxOpeningElement(
-                        z.jsxIdentifier("__OmT"),
-                        [
-                          z.jsxAttribute(
-                            z.jsxIdentifier("i"),
-                            z.stringLiteral(K),
-                          ),
-                        ],
+                        z.jsxIdentifier('__OmT'),
+                        [z.jsxAttribute(z.jsxIdentifier('i'), z.stringLiteral(K))],
                         false,
                       ),
-                      z.jsxClosingElement(z.jsxIdentifier("__OmT")),
+                      z.jsxClosingElement(z.jsxIdentifier('__OmT')),
                       [q],
                       false,
                     );
                   };
                   const D = N.children.map((K) => {
-                    if (K.type === "JSXText") {
+                    if (K.type === 'JSXText') {
                       if (K.start == null || K.end == null) return K;
                       const q = X.slice(K.start, K.end);
                       const R = q.length - q.trimStart().length;
@@ -181,7 +149,7 @@
                       if (R + m >= q.length) return K;
                       return w(`txt:${C}:${K.start + R}:${K.end - m}`, K);
                     }
-                    if (K.type === "JSXExpressionContainer") {
+                    if (K.type === 'JSXExpressionContainer') {
                       const q = b($, K.expression);
                       if (q) return w(`str:${C}:${q[0]}:${q[1]}`, K);
                     }
@@ -197,23 +165,19 @@
                       const F = {};
                       for (let w = 0; w < X.attributes.length; w++) {
                         const D = X.attributes[w];
-                        if (D.type !== "JSXAttribute" || !D.name) continue;
+                        if (D.type !== 'JSXAttribute' || !D.name) continue;
                         const K = D.name.name;
                         if (!L[K]) continue;
-                        if (!D.value || D.value.type !== "StringLiteral")
-                          continue;
-                        if (D.value.start == null || D.value.end == null)
-                          continue;
+                        if (!D.value || D.value.type !== 'StringLiteral') continue;
+                        if (D.value.start == null || D.value.end == null) continue;
                         const q = `txt:${N}:${D.value.start}:${D.value.end}`;
                         F[K] = q;
-                        D.value = z.jsxExpressionContainer(
-                          _(q, z.stringLiteral(D.value.value)),
-                        );
+                        D.value = z.jsxExpressionContainer(_(q, z.stringLiteral(D.value.value)));
                       }
                       if (Object.keys(F).length) {
                         X.attributes.push(
                           z.jsxAttribute(
-                            z.jsxIdentifier("data-om-text-attrs"),
+                            z.jsxIdentifier('data-om-text-attrs'),
                             z.stringLiteral(JSON.stringify(F)),
                           ),
                         );
@@ -222,8 +186,8 @@
                     JSXElement($, C) {
                       const X = $.node.openingElement;
                       const N = X && X.name && X.name.name;
-                      if (N === "__OmT") return;
-                      if (typeof N === "string" && V[N]) return;
+                      if (N === '__OmT') return;
+                      if (typeof N === 'string' && V[N]) return;
                       M($, E(C), B(C));
                     },
                     JSXFragment($, C) {
@@ -234,27 +198,17 @@
               });
             }
           }
-          const u = A
-            ? ["transform-react-jsx-source", G, k]
-            : ["transform-react-jsx-source", G];
+          const u = A ? ['transform-react-jsx-source', G, k] : ['transform-react-jsx-source', G];
           document
-            .querySelectorAll(
-              'script[type="text/babel"],script[type="text/jsx"]',
-            )
+            .querySelectorAll('script[type="text/babel"],script[type="text/jsx"]')
             .forEach((Y, U) => {
-              const Q = Y.getAttribute("data-plugins") || "";
+              const Q = Y.getAttribute('data-plugins') || '';
               const J = u.filter((W) => Q.indexOf(W) < 0);
               if (J.length) {
-                Y.setAttribute(
-                  "data-plugins",
-                  Q ? `${Q},${J.join(",")}` : J.join(","),
-                );
+                Y.setAttribute('data-plugins', Q ? `${Q},${J.join(',')}` : J.join(','));
               }
-              if (!Y.hasAttribute("data-filename")) {
-                Y.setAttribute(
-                  "data-filename",
-                  Y.getAttribute("src") || `inline-${U}`,
-                );
+              if (!Y.hasAttribute('data-filename')) {
+                Y.setAttribute('data-filename', Y.getAttribute('src') || `inline-${U}`);
               }
             });
         });
@@ -262,71 +216,69 @@
         if (y && y !== window) {
           const H = (Q, J) => {
             try {
-              y.postMessage({ __omelette_log: true, type: Q, data: J }, "*");
+              y.postMessage({ __omelette_log: true, type: Q, data: J }, '*');
             } catch {}
           };
-          ["log", "warn", "error"].forEach((Q) => {
+          ['log', 'warn', 'error'].forEach((Q) => {
             const J = console[Q];
             console[Q] = (...W) => {
               const Z = W.map((z) => {
                 try {
-                  return typeof z === "object" ? JSON.stringify(z) : String(z);
+                  return typeof z === 'object' ? JSON.stringify(z) : String(z);
                 } catch {
                   try {
                     return String(z);
                   } catch {
-                    return "[unstringifiable]";
+                    return '[unstringifiable]';
                   }
                 }
-              }).join(" ");
+              }).join(' ');
               H(Q, Z);
               J.apply(console, W);
             };
           });
           window.addEventListener(
-            "error",
+            'error',
             (Q) => {
               const J = Q.target;
               if (J && J !== window && J.tagName) {
-                const W = J.src || J.href || "";
-                H("resource_error", `${J.tagName} failed to load: ${W}`);
+                const W = J.src || J.href || '';
+                H('resource_error', `${J.tagName} failed to load: ${W}`);
               } else {
                 H(
-                  "error",
-                  `${Q.message || "Unknown error"} at ${Q.filename || "?"}:${Q.lineno || 0}:${Q.colno || 0}`,
+                  'error',
+                  `${Q.message || 'Unknown error'} at ${Q.filename || '?'}:${Q.lineno || 0}:${Q.colno || 0}`,
                 );
               }
             },
             true,
           );
-          window.addEventListener("unhandledrejection", (Q) => {
+          window.addEventListener('unhandledrejection', (Q) => {
             const J = Q.reason;
-            const W =
-              J instanceof Error ? `${J.message} ${J.stack}` : String(J);
-            H("error", `Unhandled rejection: ${W}`);
+            const W = J instanceof Error ? `${J.message} ${J.stack}` : String(J);
+            H('error', `Unhandled rejection: ${W}`);
           });
           const G = () => {
             try {
               y.postMessage(
                 {
-                  type: "omelette:height",
+                  type: 'omelette:height',
                   height: document.documentElement.scrollHeight,
                 },
-                "*",
+                '*',
               );
             } catch {}
           };
-          if (document.readyState === "complete") G();
-          else window.addEventListener("load", G);
-          if (window.ResizeObserver)
-            new ResizeObserver(G).observe(document.documentElement);
+          if (document.readyState === 'complete') G();
+          else window.addEventListener('load', G);
+          if (window.ResizeObserver) new ResizeObserver(G).observe(document.documentElement);
           const k = {};
           let A = 0;
           window.claude = {
             complete(Q) {
               return new Promise((J, W) => {
                 if (!j.length) {
-                  W(new Error("claude.complete: no parent origin"));
+                  W(new Error('claude.complete: no parent origin'));
                   return;
                 }
                 const Z = `c${++A}`;
@@ -336,7 +288,7 @@
                     W(new Error(`claude.complete: no data for ${S / 1000}s`));
                   }, S);
                 const V = z();
-                k[Z] = { resolve: J, reject: W, text: "", t: V, arm: z };
+                k[Z] = { resolve: J, reject: W, text: '', t: V, arm: z };
                 try {
                   for (const L of j) {
                     y.postMessage({ __om_api: true, id: Z, body: Q }, L);
@@ -370,7 +322,7 @@
                       {
                         __om_file: true,
                         id: z,
-                        op: "write",
+                        op: 'write',
                         path: Q,
                         content: J,
                       },
@@ -391,27 +343,22 @@
               return JSON.stringify(String(Q));
             }
           };
-          window.addEventListener("message", (Q) => {
+          window.addEventListener('message', (Q) => {
             if (j.indexOf(Q.origin) < 0) return;
             if (Q.source !== y) return;
             const J = Q.data;
             if (!J) return;
-            if (J.type === "omelette-preview-refresh") {
+            if (J.type === 'omelette-preview-refresh') {
               if (
-                typeof J.token !== "string" ||
-                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(
-                  J.token,
-                )
+                typeof J.token !== 'string' ||
+                !/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(J.token)
               )
                 return;
-              const z = Math.max(
-                1,
-                Math.floor((J.expiresAt || 0) - Date.now() / 1000),
-              );
+              const z = Math.max(1, Math.floor((J.expiresAt || 0) - Date.now() / 1000));
               document.cookie =
-                "__Host-omelette-preview=" +
+                '__Host-omelette-preview=' +
                 J.token +
-                "; Path=/; Secure; SameSite=None; Partitioned; Max-Age=" +
+                '; Path=/; Secure; SameSite=None; Partitioned; Max-Age=' +
                 z;
               return;
             }
@@ -421,7 +368,7 @@
               clearTimeout(z.t);
               delete u[J.id];
               if (J.ok) z.resolve();
-              else z.reject(new Error(J.error || "write failed"));
+              else z.reject(new Error(J.error || 'write failed'));
               return;
             }
             if (J.__om_api_r) {
@@ -450,14 +397,11 @@
             if (!J.__om_eval) return;
             const W = J;
             const Z = (z) => {
-              Q.source.postMessage(
-                { ...z, __om_eval_r: 1, id: W.id },
-                Q.origin,
-              );
+              Q.source.postMessage({ ...z, __om_eval_r: 1, id: W.id }, Q.origin);
             };
             try {
               const z = (0, eval)(W.code);
-              if (z && typeof z.then === "function") {
+              if (z && typeof z.then === 'function') {
                 z.then(
                   (V) => Z({ ok: 1, v: U(V) }),
                   (V) => Z({ ok: 0, e: String(V) }),
@@ -478,18 +422,16 @@
     <title>کدیار — یادگیری برنامه‌نویسی حرفه‌ای</title>
     <style>
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 400;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-400.woff2') format('woff2');
       }
       @font-face {
-        font-family: "IRANYekan";
+        font-family: 'IRANYekan';
         font-weight: 700;
         font-display: swap;
-        src: url("https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2")
-          format("woff2");
+        src: url('https://cdn.sqp.ir/Plugins/fonts/IRANYekan/iran-yekan-700.woff2') format('woff2');
       }
 
       *,
@@ -510,7 +452,7 @@
       }
 
       /* LIGHT */
-      [data-theme="light"] {
+      [data-theme='light'] {
         --bg: #fff;
         --bg2: #f8fafc;
         --bg3: #f1f5f9;
@@ -531,16 +473,11 @@
         --pill-bg: #f1f5f9;
         --pill-active: #0f172a;
         --pill-active-fg: #fff;
-        --pass-bg: linear-gradient(
-          135deg,
-          #0f172a 0%,
-          #1e3a8a 50%,
-          #1d4ed8 100%
-        );
+        --pass-bg: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
       }
 
       /* DARK */
-      [data-theme="dark"] {
+      [data-theme='dark'] {
         --bg: #0f1117;
         --bg2: #161b27;
         --bg3: #1e2535;
@@ -561,19 +498,14 @@
         --pill-bg: #1e2535;
         --pill-active: #3b82f6;
         --pill-active-fg: #fff;
-        --pass-bg: linear-gradient(
-          135deg,
-          #06091a 0%,
-          #0f2050 50%,
-          #1a38a0 100%
-        );
+        --pass-bg: linear-gradient(135deg, #06091a 0%, #0f2050 50%, #1a38a0 100%);
       }
 
       html {
         scroll-behavior: smooth;
       }
       body {
-        font-family: "IRANYekan", Tahoma, sans-serif;
+        font-family: 'IRANYekan', Tahoma, sans-serif;
         background: var(--bg);
         color: var(--text);
         line-height: 1.75;
@@ -1143,11 +1075,7 @@
       .c-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(
-          to top,
-          rgba(0, 0, 0, 0.55) 0%,
-          transparent 55%
-        );
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, transparent 55%);
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
@@ -1180,15 +1108,15 @@
         background: #fee2e2;
         color: #991b1b;
       }
-      [data-theme="dark"] .lvl-bg {
+      [data-theme='dark'] .lvl-bg {
         background: #064e3b;
         color: #6ee7b7;
       }
-      [data-theme="dark"] .lvl-im {
+      [data-theme='dark'] .lvl-im {
         background: #451a03;
         color: #fcd34d;
       }
-      [data-theme="dark"] .lvl-adv {
+      [data-theme='dark'] .lvl-adv {
         background: #450a0a;
         color: #fca5a5;
       }
@@ -1276,11 +1204,11 @@
         padding: 2px 8px;
         border-radius: 100px;
       }
-      [data-theme="dark"] .c-badge-new {
+      [data-theme='dark'] .c-badge-new {
         background: #064e3b;
         color: #6ee7b7;
       }
-      [data-theme="dark"] .c-badge-hot {
+      [data-theme='dark'] .c-badge-hot {
         background: #451a03;
         color: #fcd34d;
       }
@@ -1510,7 +1438,7 @@
         color: rgba(255, 255, 255, 0.8);
       }
       .pass-card-item::before {
-        content: "✓";
+        content: '✓';
         color: #4ade80;
         font-weight: 700;
         font-size: 12px;
@@ -1711,9 +1639,7 @@
         <input type="text" placeholder="جستجوی دوره یا موضوع..." />
       </div>
       <div class="nav-end">
-        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
-          🌙
-        </button>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
         <button class="btn-ghost-nav">ورود</button>
         <button class="btn-nav-cta">شروع رایگان</button>
       </div>
@@ -1722,17 +1648,15 @@
     <!-- HERO -->
     <section class="hero">
       <div>
-        <div class="hero-pill">
-          <span class="hero-pill-dot"></span> بیش از ۵۰۰ دوره تخصصی
-        </div>
+        <div class="hero-pill"><span class="hero-pill-dot"></span> بیش از ۵۰۰ دوره تخصصی</div>
         <h1>
           برنامه‌نویسی را از<br />
           <em>متخصص‌های واقعی</em><br />
           یاد بگیر
         </h1>
         <p>
-          دوره‌های جامع و پروژه‌محور برای توسعه‌دهندگان جدی. از مبتدی تا
-          حرفه‌ای، مسیر یادگیری خود را انتخاب کن.
+          دوره‌های جامع و پروژه‌محور برای توسعه‌دهندگان جدی. از مبتدی تا حرفه‌ای، مسیر یادگیری خود
+          را انتخاب کن.
         </p>
         <div class="hero-actions">
           <button class="btn-hero-p">شروع یادگیری ←</button>
@@ -1755,9 +1679,7 @@
           </div>
           <div>
             <div class="trust-stars">★★★★★</div>
-            <div class="trust-label">
-              <strong>+۱۲۰,۰۰۰ دانش‌آموز</strong> از سراسر ایران
-            </div>
+            <div class="trust-label"><strong>+۱۲۰,۰۰۰ دانش‌آموز</strong> از سراسر ایران</div>
           </div>
           <div class="hero-sep"></div>
           <div class="trust-label">
@@ -1767,9 +1689,7 @@
         </div>
       </div>
       <div class="hero-vis">
-        <div class="hero-float2">
-          <span class="f2-dot"></span> هم‌اکنون ۲۳۴ نفر در حال یادگیری
-        </div>
+        <div class="hero-float2"><span class="f2-dot"></span> هم‌اکنون ۲۳۴ نفر در حال یادگیری</div>
         <div class="hero-main-card">
           <img
             src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&q=80"
@@ -1780,14 +1700,10 @@
               <div class="hmc-tag">JavaScript</div>
               <div class="hmc-dur">⏱ ۴۸ ساعت آموزش</div>
             </div>
-            <div class="hmc-title">
-              JavaScript: از صفر تا مسلط — دوره جامع ۲۰۲۴
-            </div>
+            <div class="hmc-title">JavaScript: از صفر تا مسلط — دوره جامع ۲۰۲۴</div>
             <div class="hmc-footer">
               <div class="hmc-price">۱,۲۰۰,۰۰۰ تومان</div>
-              <div class="hmc-rating">
-                <span class="hmc-stars">★★★★★</span> ۴.۹ (۳,۲۴۱)
-              </div>
+              <div class="hmc-rating"><span class="hmc-stars">★★★★★</span> ۴.۹ (۳,۲۴۱)</div>
               <button class="hmc-enroll">ثبت‌نام</button>
             </div>
           </div>
@@ -1842,9 +1758,7 @@
           <div class="c-body">
             <div class="c-topic">🐍 Python</div>
             <div class="c-title">Python برای همه — از صفر تا ساخت پروژه</div>
-            <div class="c-inst">
-              <img src="https://i.pravatar.cc/40?img=3" alt="" /> علی محمدی
-            </div>
+            <div class="c-inst"><img src="https://i.pravatar.cc/40?img=3" alt="" /> علی محمدی</div>
             <div class="c-foot">
               <div class="c-rating">
                 <span class="c-stars">★★★★★</span> ۴.۸
@@ -1870,12 +1784,8 @@
           </div>
           <div class="c-body">
             <div class="c-topic">⚛️ React</div>
-            <div class="c-title">
-              React 18 + Next.js 14 — دوره کامل و پروژه‌محور
-            </div>
-            <div class="c-inst">
-              <img src="https://i.pravatar.cc/40?img=7" alt="" /> سارا احمدی
-            </div>
+            <div class="c-title">React 18 + Next.js 14 — دوره کامل و پروژه‌محور</div>
+            <div class="c-inst"><img src="https://i.pravatar.cc/40?img=7" alt="" /> سارا احمدی</div>
             <div class="c-foot">
               <div class="c-rating">
                 <span class="c-stars">★★★★★</span> ۴.۹
@@ -1901,12 +1811,8 @@
           </div>
           <div class="c-body">
             <div class="c-topic">🟢 Node.js</div>
-            <div class="c-title">
-              Node.js و Express — ساخت API و سرویس‌های حرفه‌ای
-            </div>
-            <div class="c-inst">
-              <img src="https://i.pravatar.cc/40?img=11" alt="" /> رضا کریمی
-            </div>
+            <div class="c-title">Node.js و Express — ساخت API و سرویس‌های حرفه‌ای</div>
+            <div class="c-inst"><img src="https://i.pravatar.cc/40?img=11" alt="" /> رضا کریمی</div>
             <div class="c-foot">
               <div class="c-rating">
                 <span class="c-stars">★★★★☆</span> ۴.۷
@@ -1932,9 +1838,7 @@
           </div>
           <div class="c-body">
             <div class="c-topic">🐋 Docker</div>
-            <div class="c-title">
-              Docker و Kubernetes — استقرار حرفه‌ای اپلیکیشن
-            </div>
+            <div class="c-title">Docker و Kubernetes — استقرار حرفه‌ای اپلیکیشن</div>
             <div class="c-inst">
               <img src="https://i.pravatar.cc/40?img=14" alt="" /> مهسا صادقی
             </div>
@@ -1963,9 +1867,7 @@
           </div>
           <div class="c-body">
             <div class="c-topic">🤖 هوش مصنوعی</div>
-            <div class="c-title">
-              Machine Learning با Python — عملی و پروژه‌محور
-            </div>
+            <div class="c-title">Machine Learning با Python — عملی و پروژه‌محور</div>
             <div class="c-inst">
               <img src="https://i.pravatar.cc/40?img=18" alt="" /> کاوه ناصری
             </div>
@@ -2040,8 +1942,8 @@
           <div class="inst-tag">مدرسان برتر</div>
           <div class="inst-title">از متخصصان واقعی صنعت یاد بگیر</div>
           <div class="inst-desc">
-            مدرسان ما حرفه‌ای‌های فعال در شرکت‌های بزرگ هستند که تجربه عملی را
-            با آموزش ساده ترکیب کرده‌اند.
+            مدرسان ما حرفه‌ای‌های فعال در شرکت‌های بزرگ هستند که تجربه عملی را با آموزش ساده ترکیب
+            کرده‌اند.
           </div>
           <div class="inst-stats">
             <div class="inst-stat">
@@ -2077,12 +1979,10 @@
       <div class="pass-inner">
         <div>
           <div class="pass-tag">اشتراک ویژه</div>
-          <div class="pass-title">
-            دسترسی نامحدود به<br /><em>تمام دوره‌ها</em>
-          </div>
+          <div class="pass-title">دسترسی نامحدود به<br /><em>تمام دوره‌ها</em></div>
           <div class="pass-desc">
-            با یک اشتراک مقرون‌به‌صرفه، به تمام ۵۰۰+ دوره دسترسی داشته باشید و
-            با سرعت دلخواه یاد بگیرید.
+            با یک اشتراک مقرون‌به‌صرفه، به تمام ۵۰۰+ دوره دسترسی داشته باشید و با سرعت دلخواه یاد
+            بگیرید.
           </div>
           <div class="pass-feats">
             <div class="pass-feat">
@@ -2115,9 +2015,7 @@
             <div class="pass-card-item">بدون تبلیغات</div>
           </div>
           <button class="btn-pass-card">شروع رایگان ۷ روزه</button>
-          <div class="pass-guarantee">
-            بدون نیاز به کارت بانکی • لغو هر زمان
-          </div>
+          <div class="pass-guarantee">بدون نیاز به کارت بانکی • لغو هر زمان</div>
         </div>
       </div>
     </section>
@@ -2134,16 +2032,11 @@
         <div class="testi-card">
           <div class="testi-stars">★★★★★</div>
           <div class="testi-quote">
-            «دوره JavaScript کدیار کامل‌ترین چیزی بود که دیدم. پس از اتمام دوره
-            توانستم اولین کارم را پیدا کنم. روش تدریس عالی و مثال‌ها کاملاً
-            کاربردی بود.»
+            «دوره JavaScript کدیار کامل‌ترین چیزی بود که دیدم. پس از اتمام دوره توانستم اولین کارم
+            را پیدا کنم. روش تدریس عالی و مثال‌ها کاملاً کاربردی بود.»
           </div>
           <div class="testi-footer">
-            <img
-              class="testi-av"
-              src="https://i.pravatar.cc/80?img=25"
-              alt=""
-            />
+            <img class="testi-av" src="https://i.pravatar.cc/80?img=25" alt="" />
             <div>
               <div class="testi-name">امیرحسین رضایی</div>
               <div class="testi-role">Front-end Developer</div>
@@ -2153,16 +2046,11 @@
         <div class="testi-card">
           <div class="testi-stars">★★★★★</div>
           <div class="testi-quote">
-            «پس از سال‌ها جستجو برای یک منبع آموزشی فارسی با کیفیت، بالاخره
-            کدیار را پیدا کردم. دوره Docker را که تمام کردم، کاملاً اعتماد به
-            نفس داشتم.»
+            «پس از سال‌ها جستجو برای یک منبع آموزشی فارسی با کیفیت، بالاخره کدیار را پیدا کردم. دوره
+            Docker را که تمام کردم، کاملاً اعتماد به نفس داشتم.»
           </div>
           <div class="testi-footer">
-            <img
-              class="testi-av"
-              src="https://i.pravatar.cc/80?img=30"
-              alt=""
-            />
+            <img class="testi-av" src="https://i.pravatar.cc/80?img=30" alt="" />
             <div>
               <div class="testi-name">زهرا موسوی</div>
               <div class="testi-role">DevOps Engineer</div>
@@ -2172,15 +2060,11 @@
         <div class="testi-card">
           <div class="testi-stars">★★★★★</div>
           <div class="testi-quote">
-            «اشتراک ماهانه کدیار بهترین سرمایه‌گذاری شغلی‌ام بود. توی یک سال سه
-            دوره کامل کردم و حقوقم دو برابر شد.»
+            «اشتراک ماهانه کدیار بهترین سرمایه‌گذاری شغلی‌ام بود. توی یک سال سه دوره کامل کردم و
+            حقوقم دو برابر شد.»
           </div>
           <div class="testi-footer">
-            <img
-              class="testi-av"
-              src="https://i.pravatar.cc/80?img=35"
-              alt=""
-            />
+            <img class="testi-av" src="https://i.pravatar.cc/80?img=35" alt="" />
             <div>
               <div class="testi-name">محمد طاهری</div>
               <div class="testi-role">Full-stack Developer</div>
@@ -2196,20 +2080,14 @@
         <div class="footer-top">
           <div class="footer-brand">
             <div class="footer-logo">
-              <div
-                class="nav-logo-icon"
-                style="width: 30px; height: 30px; font-size: 13px"
-              >
+              <div class="nav-logo-icon" style="width: 30px; height: 30px; font-size: 13px">
                 &lt;/&gt;
               </div>
-              <span
-                style="font-size: 18px; font-weight: 700; color: var(--text)"
-                >کدیار</span
-              >
+              <span style="font-size: 18px; font-weight: 700; color: var(--text)">کدیار</span>
             </div>
             <div class="footer-desc">
-              بهترین پلتفرم آموزش برنامه‌نویسی به زبان فارسی. دوره‌های جامع،
-              مدرسان حرفه‌ای، گواهینامه معتبر.
+              بهترین پلتفرم آموزش برنامه‌نویسی به زبان فارسی. دوره‌های جامع، مدرسان حرفه‌ای،
+              گواهینامه معتبر.
             </div>
             <div class="footer-social">
               <div class="soc-btn">📸</div>
@@ -2253,30 +2131,27 @@
 
     <script>
       // Tab switching
-      document.querySelectorAll(".t-tab").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          document
-            .querySelectorAll(".t-tab")
-            .forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
+      document.querySelectorAll('.t-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.t-tab').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
         });
       });
 
       // Theme toggle
       function toggleTheme() {
         const html = document.documentElement;
-        const isDark = html.getAttribute("data-theme") === "dark";
-        html.setAttribute("data-theme", isDark ? "light" : "dark");
-        document.getElementById("themeBtn").textContent = isDark ? "🌙" : "☀️";
-        localStorage.setItem("codyar-theme", isDark ? "light" : "dark");
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+        localStorage.setItem('codyar-theme', isDark ? 'light' : 'dark');
       }
 
       // Restore theme
-      const saved = localStorage.getItem("codyar-theme");
+      const saved = localStorage.getItem('codyar-theme');
       if (saved) {
-        document.documentElement.setAttribute("data-theme", saved);
-        document.getElementById("themeBtn").textContent =
-          saved === "dark" ? "☀️" : "🌙";
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('themeBtn').textContent = saved === 'dark' ? '☀️' : '🌙';
       }
     </script>
   </body>

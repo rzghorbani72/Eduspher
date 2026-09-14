@@ -59,6 +59,11 @@ export const PARTOW_SECTIONS: TemplateSectionMap = {
   teachers: PartowTeachers,
   cta: PartowCta,
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={PARTOW_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PARTOW_DEFAULTS.footer}
+    />
   ),
 };

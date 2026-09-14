@@ -24,22 +24,61 @@ export function SVGPattern({ patternId, className = '', color = 'currentColor' }
     ),
     'pattern-waves': (
       <pattern id="pattern-waves" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
-        <path d="M0 10 Q25 0 50 10 T100 10" fill="none" stroke={color} strokeWidth="1" opacity="0.1" />
-        <path d="M0 10 Q25 20 50 10 T100 10" fill="none" stroke={color} strokeWidth="1" opacity="0.1" />
+        <path
+          d="M0 10 Q25 0 50 10 T100 10"
+          fill="none"
+          stroke={color}
+          strokeWidth="1"
+          opacity="0.1"
+        />
+        <path
+          d="M0 10 Q25 20 50 10 T100 10"
+          fill="none"
+          stroke={color}
+          strokeWidth="1"
+          opacity="0.1"
+        />
       </pattern>
     ),
     'pattern-hexagons': (
-      <pattern id="pattern-hexagons" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-        <polygon points="50,0 93.3,25 93.3,75 50,100 6.7,75 6.7,25" fill="none" stroke={color} strokeWidth="1" opacity="0.1" />
+      <pattern
+        id="pattern-hexagons"
+        x="0"
+        y="0"
+        width="100"
+        height="100"
+        patternUnits="userSpaceOnUse"
+      >
+        <polygon
+          points="50,0 93.3,25 93.3,75 50,100 6.7,75 6.7,25"
+          fill="none"
+          stroke={color}
+          strokeWidth="1"
+          opacity="0.1"
+        />
       </pattern>
     ),
     'pattern-circles': (
-      <pattern id="pattern-circles" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <pattern
+        id="pattern-circles"
+        x="0"
+        y="0"
+        width="60"
+        height="60"
+        patternUnits="userSpaceOnUse"
+      >
         <circle cx="30" cy="30" r="20" fill="none" stroke={color} strokeWidth="1" opacity="0.1" />
       </pattern>
     ),
     'pattern-diagonal': (
-      <pattern id="pattern-diagonal" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <pattern
+        id="pattern-diagonal"
+        x="0"
+        y="0"
+        width="40"
+        height="40"
+        patternUnits="userSpaceOnUse"
+      >
         <path d="M0 40 L40 0" stroke={color} strokeWidth="1" opacity="0.1" />
       </pattern>
     ),
@@ -64,4 +103,3 @@ export const availablePatterns = [
   { id: 'pattern-circles', name: 'Circles' },
   { id: 'pattern-diagonal', name: 'Diagonal Lines' },
 ];
-

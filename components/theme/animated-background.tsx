@@ -36,7 +36,7 @@ export function AnimatedBackground({
     const resizeCanvas = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      
+
       canvas.width = width;
       canvas.height = height;
     };
@@ -49,7 +49,7 @@ export function AnimatedBackground({
 
     const animate = () => {
       time += 0.01;
-      
+
       switch (type) {
         case 'gradient':
           drawGradient(ctx, canvas, time, primaryColor, secondaryColor, speedValue);
@@ -86,11 +86,11 @@ export function AnimatedBackground({
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 -z-10 pointer-events-none ${className}`}
-      style={{ 
-        width: '100vw', 
+      className={`pointer-events-none fixed inset-0 -z-10 ${className}`}
+      style={{
+        width: '100vw',
         height: '100vh',
-        display: 'block'
+        display: 'block',
       }}
     />
   );
@@ -99,11 +99,7 @@ export function AnimatedBackground({
 function hexToRgb(hex: string): [number, number, number] {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
-    ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16),
-      ]
+    ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)]
     : [59, 130, 246];
 }
 
@@ -113,7 +109,7 @@ function drawGradient(
   time: number,
   primary: string,
   secondary: string,
-  speed: number
+  speed: number,
 ) {
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   const [r1, g1, b1] = hexToRgb(primary);
@@ -136,7 +132,7 @@ function drawParticles(
   time: number,
   primary: string,
   secondary: string,
-  speed: number
+  speed: number,
 ) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const [r1, g1, b1] = hexToRgb(primary);
@@ -147,9 +143,10 @@ function drawParticles(
     const x = (canvas.width / particleCount) * i + Math.sin(time * speed + i) * 50;
     const y = canvas.height / 2 + Math.cos(time * speed + i) * 100;
     const size = 2 + Math.sin(time * speed + i) * 2;
-    const color = i % 2 === 0 
-      ? `rgba(${r1}, ${g1}, ${b1}, ${0.3 + Math.sin(time + i) * 0.2})`
-      : `rgba(${r2}, ${g2}, ${b2}, ${0.3 + Math.cos(time + i) * 0.2})`;
+    const color =
+      i % 2 === 0
+        ? `rgba(${r1}, ${g1}, ${b1}, ${0.3 + Math.sin(time + i) * 0.2})`
+        : `rgba(${r2}, ${g2}, ${b2}, ${0.3 + Math.cos(time + i) * 0.2})`;
 
     ctx.beginPath();
     ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -164,7 +161,7 @@ function drawWaves(
   time: number,
   primary: string,
   secondary: string,
-  speed: number
+  speed: number,
 ) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const [r1, g1, b1] = hexToRgb(primary);
@@ -175,9 +172,7 @@ function drawWaves(
     ctx.moveTo(0, canvas.height / 2);
 
     for (let x = 0; x < canvas.width; x += 5) {
-      const y =
-        canvas.height / 2 +
-        Math.sin((x / 100) + time * speed + i * 2) * (50 + i * 30);
+      const y = canvas.height / 2 + Math.sin(x / 100 + time * speed + i * 2) * (50 + i * 30);
       ctx.lineTo(x, y);
     }
 
@@ -186,9 +181,10 @@ function drawWaves(
     ctx.closePath();
 
     const opacity = 0.15 - i * 0.03;
-    const color = i % 2 === 0 
-      ? `rgba(${r1}, ${g1}, ${b1}, ${opacity})`
-      : `rgba(${r2}, ${g2}, ${b2}, ${opacity})`;
+    const color =
+      i % 2 === 0
+        ? `rgba(${r1}, ${g1}, ${b1}, ${opacity})`
+        : `rgba(${r2}, ${g2}, ${b2}, ${opacity})`;
     ctx.fillStyle = color;
     ctx.fill();
   }
@@ -200,7 +196,7 @@ function drawMesh(
   time: number,
   primary: string,
   secondary: string,
-  speed: number
+  speed: number,
 ) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const [r1, g1, b1] = hexToRgb(primary);
@@ -210,9 +206,10 @@ function drawMesh(
   for (let x = 0; x < canvas.width; x += gridSize) {
     for (let y = 0; y < canvas.height; y += gridSize) {
       const noise = Math.sin((x + y) / 50 + time * speed) * 0.5 + 0.5;
-      const color = noise > 0.5
-        ? `rgba(${r1}, ${g1}, ${b1}, ${noise * 0.1})`
-        : `rgba(${r2}, ${g2}, ${b2}, ${(1 - noise) * 0.1})`;
+      const color =
+        noise > 0.5
+          ? `rgba(${r1}, ${g1}, ${b1}, ${noise * 0.1})`
+          : `rgba(${r2}, ${g2}, ${b2}, ${(1 - noise) * 0.1})`;
 
       ctx.fillStyle = color;
       ctx.fillRect(x, y, gridSize, gridSize);
@@ -226,7 +223,7 @@ function drawGrid(
   time: number,
   primary: string,
   secondary: string,
-  speed: number
+  speed: number,
 ) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const [r1, g1, b1] = hexToRgb(primary);
@@ -251,4 +248,3 @@ function drawGrid(
     ctx.stroke();
   }
 }
-

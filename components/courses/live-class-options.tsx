@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import type { PublicTutoringGroup } from "@/lib/api/server";
+import type { PublicTutoringGroup } from '@/lib/api/server';
 import {
   CLASS_SIZE_LABEL,
   type ClassSize,
   classSizeOf,
   groupAnchorId,
   sortBySize,
-} from "@/lib/courses/live-course";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { formatNumber } from "@/lib/utils";
+} from '@/lib/courses/live-course';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { formatNumber } from '@/lib/utils';
 
 interface LiveClassOptionsProps {
   groups: PublicTutoringGroup[];
@@ -42,12 +42,10 @@ export function LiveClassOptions({ groups }: LiveClassOptionsProps) {
         <li key={row.size}>
           <a
             href={`#${groupAnchorId(row.firstGroupId)}`}
-            className="inline-flex items-center gap-1.5 rounded-full border border-theme bg-surface px-3 py-1 text-xs font-semibold text-(--theme-foreground) transition-colors hover:border-(--theme-primary)"
+            className="border-theme bg-surface inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold text-(--theme-foreground) transition-colors hover:border-(--theme-primary)"
           >
             {t(CLASS_SIZE_LABEL[row.size])}
-            <span className="cd-price text-muted">
-              {formatNumber(row.count, language)}
-            </span>
+            <span className="cd-price text-muted">{formatNumber(row.count, language)}</span>
           </a>
         </li>
       ))}

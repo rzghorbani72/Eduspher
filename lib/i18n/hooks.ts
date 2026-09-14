@@ -2,17 +2,17 @@
  * React hooks for i18n
  */
 
-"use client";
+'use client';
 
-import { useI18n } from "./provider";
-import { t as translate, getTranslations } from "./index";
+import { useI18n } from './provider';
+import { t as translate, getTranslations } from './index';
 
 /**
  * Hook to get translation function
  */
 export function useTranslation() {
   const { language } = useI18n();
-  
+
   return {
     t: (key: string) => translate(key, language),
     language,
@@ -25,7 +25,7 @@ export function useTranslation() {
  */
 export function useLanguage() {
   const { language, direction, isRTL, config } = useI18n();
-  
+
   return {
     language,
     direction,
@@ -33,4 +33,3 @@ export function useLanguage() {
     config,
   };
 }
-

@@ -4,9 +4,9 @@ import {
   buildSiteNavigationJsonLd,
   buildSoftwareApplicationJsonLd,
   buildWebSiteJsonLd,
-} from "@/lib/seo/organization-json-ld";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
-import { serializeJsonLd } from "@/lib/seo/json-ld-script";
+} from '@/lib/seo/organization-json-ld';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
+import { serializeJsonLd } from '@/lib/seo/json-ld-script';
 
 /**
  * Brand entity graph for the platform host. Emitted on every public platform
@@ -34,7 +34,7 @@ export async function PlatformOrganizationJsonLd() {
       {payloads.map((data, index) => (
         <script
           // Stable keys from @id when present keep React reconciliation quiet.
-          key={typeof data["@id"] === "string" ? data["@id"] : `ld-${index}`}
+          key={typeof data['@id'] === 'string' ? data['@id'] : `ld-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
         />

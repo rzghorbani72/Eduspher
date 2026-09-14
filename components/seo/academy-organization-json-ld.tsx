@@ -1,9 +1,9 @@
-import { getAcademyBySlug } from "@/lib/api/server";
-import { buildAcademyOrganizationJsonLd } from "@/lib/seo/organization-json-ld";
-import { getSeoRequestContext } from "@/lib/seo/request-context";
-import { getAcademyContext } from "@/lib/store-context";
-import { resolveAssetUrl } from "@/lib/utils";
-import { serializeJsonLd } from "@/lib/seo/json-ld-script";
+import { getAcademyBySlug } from '@/lib/api/server';
+import { buildAcademyOrganizationJsonLd } from '@/lib/seo/organization-json-ld';
+import { getSeoRequestContext } from '@/lib/seo/request-context';
+import { getAcademyContext } from '@/lib/store-context';
+import { resolveAssetUrl } from '@/lib/utils';
+import { serializeJsonLd } from '@/lib/seo/json-ld-script';
 
 /** Structured data for an academy home page, so search engines list the school. */
 export async function AcademyOrganizationJsonLd() {

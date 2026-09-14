@@ -33,7 +33,10 @@ export function AndishehFeatures({ id, config }: TemplateSectionProps) {
               >
                 {item.no}
               </span>
-              <h3 {...editableItem('items', index, 'title')} className="mt-3 text-[20px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index, 'title')}
+                className="mt-3 text-[20px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p

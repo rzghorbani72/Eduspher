@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Search } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { Search } from 'lucide-react';
 
-import { useDebounce } from "@/lib/hooks/use-debounce";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { useDebounce } from '@/lib/hooks/use-debounce';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface CourseSearchProps {
   initialQuery?: string;
 }
 
-export function CourseSearch({ initialQuery = "" }: CourseSearchProps) {
+export function CourseSearch({ initialQuery = '' }: CourseSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,14 +28,14 @@ export function CourseSearch({ initialQuery = "" }: CourseSearchProps) {
 
   const submit = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value.trim()) params.set("q", value.trim());
-    else params.delete("q");
-    params.delete("page");
+    if (value.trim()) params.set('q', value.trim());
+    else params.delete('q');
+    params.delete('page');
     startTransition(() => router.replace(`${pathname}?${params.toString()}`));
   };
 
   useEffect(() => {
-    const current = searchParams.get("q") ?? "";
+    const current = searchParams.get('q') ?? '';
     if (debouncedQuery !== current) submit(debouncedQuery);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedQuery]);
@@ -46,7 +46,7 @@ export function CourseSearch({ initialQuery = "" }: CourseSearchProps) {
         e.preventDefault();
         submit(query);
       }}
-      className="mt-7 flex max-w-xl items-center gap-2.5 rounded-full border bg-(--cc-card) border-(--cc-bd) py-1.5 pe-1.5 ps-5 shadow-(--cc-sh-sm)"
+      className="mt-7 flex max-w-xl items-center gap-2.5 rounded-full border border-(--cc-bd) bg-(--cc-card) py-1.5 ps-5 pe-1.5 shadow-(--cc-sh-sm)"
     >
       <Search className="h-5 w-5 shrink-0 text-(--cc-ink-3)" />
       <input
@@ -58,7 +58,7 @@ export function CourseSearch({ initialQuery = "" }: CourseSearchProps) {
             isTypingRef.current = false;
           }, 600);
         }}
-        placeholder={t("courses.searchPlaceholder")}
+        placeholder={t('courses.searchPlaceholder')}
         autoComplete="off"
         className="min-w-0 flex-1 bg-transparent! text-base text-(--cc-ink) outline-none placeholder:text-(--cc-ink-3)"
       />
@@ -66,7 +66,7 @@ export function CourseSearch({ initialQuery = "" }: CourseSearchProps) {
         type="submit"
         className="shrink-0 rounded-full bg-(--cc-brand) px-[22px] py-[11px] text-sm font-extrabold text-(--theme-on-primary) transition-transform hover:scale-105"
       >
-        {t("common.search")}
+        {t('common.search')}
       </button>
     </form>
   );

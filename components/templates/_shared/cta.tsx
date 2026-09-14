@@ -42,16 +42,22 @@ export function TemplateCta({
   const body = (
     <div className="grid items-center gap-10 lg:grid-cols-[1.4fr_auto]">
       <div>
-        <span className="text-[13px] font-bold tracking-[0.14em] text-current/70" data-editable="label">
+        <span
+          className="text-[13px] font-bold tracking-[0.14em] text-current/70"
+          data-editable="label"
+        >
           {text(config, 'label', defaults.label)}
         </span>
         <h2
           data-editable="title"
-          className="mt-4 max-w-[20ch] text-[clamp(28px,4vw,42px)] font-bold leading-[1.2] tracking-[-0.02em]"
+          className="mt-4 max-w-[20ch] text-[clamp(28px,4vw,42px)] leading-[1.2] font-bold tracking-[-0.02em]"
         >
           {text(config, 'title', defaults.title)}
         </h2>
-        <p data-editable="subtitle" className="mt-4 max-w-[56ch] text-[16px] leading-[1.9] text-current/75">
+        <p
+          data-editable="subtitle"
+          className="mt-4 max-w-[56ch] text-[16px] leading-[1.9] text-current/75"
+        >
           {text(config, 'subtitle', defaults.subtitle)}
         </p>
       </div>

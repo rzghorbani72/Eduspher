@@ -67,33 +67,6 @@ export const getCountryByCode = (code: string): CountryCode | undefined => {
   return COUNTRY_CODES.find((country) => country.code === code);
 };
 
-const IRAN_COUNTRY =
-  COUNTRY_CODES.find((country) => country.code === 'IR') ?? COUNTRY_CODES[0];
+const IRAN_COUNTRY = COUNTRY_CODES.find((country) => country.code === 'IR') ?? COUNTRY_CODES[0];
 
 export const getDefaultCountry = (): CountryCode => IRAN_COUNTRY;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

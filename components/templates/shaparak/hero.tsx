@@ -50,18 +50,26 @@ export function ShaparakHero({ id, config, storeContext }: TemplateSectionProps)
               {text(config, 'kicker', d.kicker)}
             </span>
 
-            <h1 className="mt-6 text-[clamp(36px,5.6vw,64px)] font-extrabold leading-[1.12] tracking-[-0.03em]">
+            <h1 className="mt-6 text-[clamp(36px,5.6vw,64px)] leading-[1.12] font-extrabold tracking-[-0.03em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-5 max-w-[50ch] text-[16.5px] leading-[1.9] text-(--theme-muted)">
+            <p
+              data-editable="subtitle"
+              className="mt-5 max-w-[50ch] text-[16.5px] leading-[1.9] text-(--theme-muted)"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="primary"
                   size="lg"
@@ -72,7 +80,12 @@ export function ShaparakHero({ id, config, storeContext }: TemplateSectionProps)
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="outline"
                   size="lg"
@@ -85,7 +98,12 @@ export function ShaparakHero({ id, config, storeContext }: TemplateSectionProps)
               </RemovableSlot>
             </div>
 
-            <RemovableSlot config={config} flagKey="showBadges" editMode={editMode} className="mt-8">
+            <RemovableSlot
+              config={config}
+              flagKey="showBadges"
+              editMode={editMode}
+              className="mt-8"
+            >
               <ul className="flex flex-wrap gap-2.5" {...editableList('badges', badges)}>
                 {badges.map((badge, index) => (
                   <li
@@ -101,23 +119,44 @@ export function ShaparakHero({ id, config, storeContext }: TemplateSectionProps)
           </div>
 
           <div className="relative">
-            <span className={`${styles.blob} ${styles.blobA}`} aria-hidden="true" data-motion="drift" />
-            <span className={`${styles.blob} ${styles.blobB}`} aria-hidden="true" data-motion="drift" />
+            <span
+              className={`${styles.blob} ${styles.blobA}`}
+              aria-hidden="true"
+              data-motion="drift"
+            />
+            <span
+              className={`${styles.blob} ${styles.blobB}`}
+              aria-hidden="true"
+              data-motion="drift"
+            />
 
-            <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
+            <RemovableSlot
+              config={config}
+              flagKey="showSideVisual"
+              editMode={editMode}
+              mediaKey="bgImage"
+            >
               <HeroSlideshowSlot
                 config={config}
                 mediaKeys={SLIDE_KEYS}
                 editMode={editMode}
                 className={`${styles.sticker} relative z-[1] aspect-[4/3] min-h-[260px]`}
               >
-                <span data-editable="photoCaption" className="px-8 text-center text-[13.5px] text-(--theme-muted)">
+                <span
+                  data-editable="photoCaption"
+                  className="px-8 text-center text-[13.5px] text-(--theme-muted)"
+                >
                   {text(config, 'photoCaption', d.photoCaption)}
                 </span>
               </HeroSlideshowSlot>
             </RemovableSlot>
 
-            <RemovableSlot config={config} flagKey="showBlocks" editMode={editMode} className="relative z-[1] mt-7">
+            <RemovableSlot
+              config={config}
+              flagKey="showBlocks"
+              editMode={editMode}
+              className="relative z-[1] mt-7"
+            >
               <span
                 data-editable="blocksTitle"
                 className="block text-[13px] font-bold text-(--theme-muted)"

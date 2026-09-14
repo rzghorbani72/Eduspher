@@ -34,14 +34,21 @@ export function ShafaghCategories({ id, config, storeContext }: TemplateSectionP
 
         <div {...editableList('items', items)}>
           {items.map((item, index) => (
-            <a key={item.title} href={templateHref(storeContext, 'courses')} className={`${styles.row} block`}>
+            <a
+              key={item.title}
+              href={templateHref(storeContext, 'courses')}
+              className={`${styles.row} block`}
+            >
               <span className={styles.hair} aria-hidden="true" />
               <div
                 className={`flex items-center gap-6 py-7 transition-[padding] duration-200 ${
                   item.wide ? styles.leadRow : ''
                 }`}
               >
-                <span aria-hidden="true" className={`${styles.numeral} flex-none transition-colors duration-200`}>
+                <span
+                  aria-hidden="true"
+                  className={`${styles.numeral} flex-none transition-colors duration-200`}
+                >
                   {String(index + 1).padStart(2, '0')}
                 </span>
 
@@ -50,7 +57,7 @@ export function ShafaghCategories({ id, config, storeContext }: TemplateSectionP
                     {/* Terracotta on purpose — not the inherited `a` colour. */}
                     <h3
                       {...editableItem('items', index, 'title')}
-                      className={`font-bold leading-[1.3] text-(--theme-primary) ${
+                      className={`leading-[1.3] font-bold text-(--theme-primary) ${
                         item.wide ? 'text-[25px]' : 'text-[21px]'
                       }`}
                     >

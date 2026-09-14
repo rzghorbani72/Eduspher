@@ -37,7 +37,12 @@ export const ELEKTRON_SECTIONS: TemplateSectionMap = {
   ),
   hero: ElektronHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={ELEKTRON_DEFAULTS.marquee.items} tone="accent" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={ELEKTRON_DEFAULTS.marquee.items}
+      tone="accent"
+    />
   ),
   features: ElektronFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -52,11 +57,32 @@ export const ELEKTRON_SECTIONS: TemplateSectionMap = {
   ),
   categories: ElektronCategories,
   showcase: ({ id, config }) => (
-    <TemplateDataTable id={id} config={config} defaults={ELEKTRON_DEFAULTS.showcase} tone="surface" />
+    <TemplateDataTable
+      id={id}
+      config={config}
+      defaults={ELEKTRON_DEFAULTS.showcase}
+      tone="surface"
+    />
   ),
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={ELEKTRON_DEFAULTS.teachers} tone="page" />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={ELEKTRON_DEFAULTS.cta} tone="deep" boxed />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ELEKTRON_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ELEKTRON_DEFAULTS.cta}
+      tone="deep"
+      boxed
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ELEKTRON_DEFAULTS.footer}
+    />
+  ),
 };

@@ -12,14 +12,14 @@ import {
   Twitter,
   Youtube,
   type LucideIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
-import Link from "@/components/ui/link";
-import { t } from "@/lib/i18n/server-translations";
-import { DEFAULT_LANGUAGE, type LanguageCode } from "@/lib/i18n/config";
-import { formatLtrValue } from "@/lib/utils";
-import { buildContactHref, formatContactValue } from "@/lib/academy-contact";
-import type { AcademyContactChannel, AcademyContactLink } from "@/lib/api/server";
+import Link from '@/components/ui/link';
+import { t } from '@/lib/i18n/server-translations';
+import { DEFAULT_LANGUAGE, type LanguageCode } from '@/lib/i18n/config';
+import { formatLtrValue } from '@/lib/utils';
+import { buildContactHref, formatContactValue } from '@/lib/academy-contact';
+import type { AcademyContactChannel, AcademyContactLink } from '@/lib/api/server';
 
 const CHANNEL_ICON: Readonly<Record<AcademyContactChannel, LucideIcon>> = {
   phone: Phone,
@@ -36,19 +36,13 @@ const CHANNEL_ICON: Readonly<Record<AcademyContactChannel, LucideIcon>> = {
   eitaa: AtSign,
 };
 
-const channelLabel = (
-  link: AcademyContactLink,
-  language: LanguageCode,
-): string =>
+const channelLabel = (link: AcademyContactLink, language: LanguageCode): string =>
   link.label?.trim() || t(`academySite.channels.${link.type}`, language);
 
 /** Numbers keep their own direction inside an RTL paragraph. */
-const displayValue = (
-  link: AcademyContactLink,
-  language: LanguageCode,
-): string => {
+const displayValue = (link: AcademyContactLink, language: LanguageCode): string => {
   const value = formatContactValue(link);
-  return link.type === "phone" || link.type === "whatsapp"
+  return link.type === 'phone' || link.type === 'whatsapp'
     ? formatLtrValue(value, language)
     : value;
 };
@@ -74,14 +68,12 @@ export function ContactChannelList({
           <span className="flex items-start gap-3">
             <Icon
               className="mt-0.5 h-5 w-5 shrink-0"
-              style={{ color: "var(--theme-primary)" }}
+              style={{ color: 'var(--theme-primary)' }}
               aria-hidden="true"
             />
             <span className="min-w-0">
-              <span className="block text-xs opacity-60">
-                {channelLabel(link, language)}
-              </span>
-              <span className="block break-words text-sm font-medium">
+              <span className="block text-xs opacity-60">{channelLabel(link, language)}</span>
+              <span className="block text-sm font-medium break-words">
                 {displayValue(link, language)}
               </span>
             </span>
@@ -92,14 +84,14 @@ export function ContactChannelList({
           <li
             key={`${link.type}-${link.value}`}
             className="rounded-xl border p-4"
-            style={{ borderColor: "var(--theme-border-color)" }}
+            style={{ borderColor: 'var(--theme-border-color)' }}
           >
             {href ? (
               <Link
                 href={href}
                 className="transition-opacity hover:opacity-70"
-                target={href.startsWith("http") ? "_blank" : undefined}
-                rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
               >
                 {body}
               </Link>
@@ -132,9 +124,9 @@ export function ContactChannelIcons({
             key={`${link.type}-${link.value}`}
             href={href}
             aria-label={channelLabel(link, language)}
-            target={href.startsWith("http") ? "_blank" : undefined}
-            rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="opacity-40 transition-all hover:opacity-100 hover:text-[var(--theme-primary)]"
+            target={href.startsWith('http') ? '_blank' : undefined}
+            rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            className="opacity-40 transition-all hover:text-[var(--theme-primary)] hover:opacity-100"
           >
             <Icon className="h-5 w-5" />
           </Link>

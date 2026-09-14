@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { holdSeats, releaseSeatHold } from "@/lib/api/client";
-import { logger } from "@/lib/logging/app-logger";
-import { errorFields } from "@/lib/logging/error-fields";
+import { holdSeats, releaseSeatHold } from '@/lib/api/client';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 export type SeatHoldState = {
   expiresAt: string | null;
@@ -49,7 +49,7 @@ export function useSeatHold(input: {
       })
       .catch((err) => {
         setStatus({ expiresAt: null, expired: false, full: true });
-        logger.warn("Payments", "SeatHoldFailed", errorFields(err));
+        logger.warn('Payments', 'SeatHoldFailed', errorFields(err));
       });
   }, [enabled, groupId, seats, joinCode]);
 
@@ -71,7 +71,7 @@ export function useSeatHold(input: {
 
   const markExpired = useCallback(() => {
     setStatus((prev) => ({ ...prev, expired: true }));
-    logger.warn("Payments", "SeatHoldExpired", { group_id: groupId ?? "" });
+    logger.warn('Payments', 'SeatHoldExpired', { group_id: groupId ?? '' });
   }, [groupId]);
 
   return { ...status, renew, markExpired };

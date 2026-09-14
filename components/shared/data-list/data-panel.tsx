@@ -1,6 +1,6 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface DataPanelProps {
   title?: ReactNode;
@@ -25,21 +25,21 @@ export function DataPanel({
   const hasHeader = Boolean(title || subtitle || actions);
 
   return (
-    <section className={cn("rounded-2xl border border-theme bg-card shadow-sm", className)}>
+    <section className={cn('border-theme bg-card rounded-2xl border shadow-sm', className)}>
       {hasHeader ? (
-        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-theme px-5 py-4">
+        <header className="border-theme flex flex-wrap items-start justify-between gap-3 border-b px-5 py-4">
           <div className="space-y-0.5">
             {title ? (
               <h2 className="text-base font-semibold text-(--theme-foreground)">{title}</h2>
             ) : null}
-            {subtitle ? <p className="text-sm text-muted">{subtitle}</p> : null}
+            {subtitle ? <p className="text-muted text-sm">{subtitle}</p> : null}
           </div>
           {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
         </header>
       ) : null}
-      {filters ? <div className="border-b border-theme px-5 py-3">{filters}</div> : null}
+      {filters ? <div className="border-theme border-b px-5 py-3">{filters}</div> : null}
       <div className="p-5">{children}</div>
-      {footer ? <div className="border-t border-theme px-5 py-3">{footer}</div> : null}
+      {footer ? <div className="border-theme border-t px-5 py-3">{footer}</div> : null}
     </section>
   );
 }

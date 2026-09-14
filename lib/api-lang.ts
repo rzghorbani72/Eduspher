@@ -3,27 +3,27 @@
  * Keep aligned with Backend/src/common/api-lang.ts when adding languages.
  */
 export const API_LANGS = [
-  "fa",
-  "en",
-  "ar",
-  "tr",
-  "de",
-  "fr",
-  "es",
-  "et",
-  "it",
-  "ru",
-  "zh",
-  "ja",
-  "ko",
-  "hi",
-  "ur",
-  "he",
+  'fa',
+  'en',
+  'ar',
+  'tr',
+  'de',
+  'fr',
+  'es',
+  'et',
+  'it',
+  'ru',
+  'zh',
+  'ja',
+  'ko',
+  'hi',
+  'ur',
+  'he',
 ] as const;
 
 export type ApiLang = (typeof API_LANGS)[number];
 
-export const DEFAULT_API_LANG: ApiLang = "fa";
+export const DEFAULT_API_LANG: ApiLang = 'fa';
 
 const API_LANG_SET = new Set<string>(API_LANGS);
 

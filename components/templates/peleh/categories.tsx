@@ -45,7 +45,7 @@ export function PelehCategories({ id, config, storeContext }: TemplateSectionPro
               </span>
               <h3
                 {...editableItem('items', index, 'title')}
-                className={`${styles.cardTitle} flex-none text-[20px] font-bold leading-[1.3] md:w-[26%]`}
+                className={`${styles.cardTitle} flex-none text-[20px] leading-[1.3] font-bold md:w-[26%]`}
               >
                 {item.title}
               </h3>

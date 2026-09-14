@@ -1,12 +1,12 @@
-import { Code2, ShieldCheck, UserRound, Wallet, Zap } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Code2, ShieldCheck, UserRound, Wallet, Zap } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { CircledWord } from "./circled-word";
-import { Container } from "./landing-container";
-import { LANDING } from "./landing.messages";
-import { SectionHeading } from "./section-heading";
+import { CircledWord } from './circled-word';
+import { Container } from './landing-container';
+import { LANDING } from './landing.messages';
+import { SectionHeading } from './section-heading';
 
 const ICONS: Record<string, LucideIcon> = {
   code: Code2,
@@ -40,19 +40,15 @@ export function WhySection() {
               <article
                 key={item.id}
                 className={cn(
-                  "rounded-2xl border border-lp-line bg-white p-7 transition-colors hover:border-lp-mint/50",
-                  item.wide ? "lg:col-span-2" : "lg:col-span-1"
+                  'border-lp-line hover:border-lp-mint/50 rounded-2xl border bg-white p-7 transition-colors',
+                  item.wide ? 'lg:col-span-2' : 'lg:col-span-1',
                 )}
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lp-blue/10 text-lp-blue">
+                <span className="bg-lp-blue/10 text-lp-blue flex h-10 w-10 items-center justify-center rounded-xl">
                   <Icon size={18} strokeWidth={2.2} aria-hidden="true" />
                 </span>
-                <h3 className="mt-6 text-[17px] font-bold text-lp-ink">
-                  {item.title}
-                </h3>
-                <p className="mt-2.5 text-[14.5px] leading-[1.9] text-lp-muted">
-                  {item.body}
-                </p>
+                <h3 className="text-lp-ink mt-6 text-[17px] font-bold">{item.title}</h3>
+                <p className="text-lp-muted mt-2.5 text-[14.5px] leading-[1.9]">{item.body}</p>
               </article>
             );
           })}

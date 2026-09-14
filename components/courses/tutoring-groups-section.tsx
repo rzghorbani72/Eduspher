@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { seatPriceOfGroup } from "@/lib/courses/live-course";
-import { formatCurrencyWithAcademy } from "@/lib/utils";
-import { useEnrollmentClosed } from "@/components/academy/enrollment-status-provider";
-import { usePurchase } from "@/components/purchase/use-purchase";
-import { CheckoutDialog } from "@/components/purchase/checkout-dialog";
-import { TutoringGroupCard } from "@/components/courses/tutoring-group-card";
-import { ClassPurchaseSummary } from "@/components/courses/class-purchase-summary";
-import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
-import { useSeatHold } from "@/components/purchase/use-seat-hold";
-import type { PublicTutoringGroup } from "@/lib/api/server";
-import type { CurrencyConfig } from "@/components/courses/purchase-panel";
-import { GROUP_CLASSES_ANCHOR_ID } from "@/components/courses/live-course-panel";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { seatPriceOfGroup } from '@/lib/courses/live-course';
+import { formatCurrencyWithAcademy } from '@/lib/utils';
+import { useEnrollmentClosed } from '@/components/academy/enrollment-status-provider';
+import { usePurchase } from '@/components/purchase/use-purchase';
+import { CheckoutDialog } from '@/components/purchase/checkout-dialog';
+import { TutoringGroupCard } from '@/components/courses/tutoring-group-card';
+import { ClassPurchaseSummary } from '@/components/courses/class-purchase-summary';
+import { CreditBalanceNote } from '@/components/purchase/credit-balance-note';
+import { useSeatHold } from '@/components/purchase/use-seat-hold';
+import type { PublicTutoringGroup } from '@/lib/api/server';
+import type { CurrencyConfig } from '@/components/courses/purchase-panel';
+import { GROUP_CLASSES_ANCHOR_ID } from '@/components/courses/live-course-panel';
 
 interface Props {
   groups: PublicTutoringGroup[];
@@ -42,9 +42,7 @@ export const TutoringGroupsSection = ({
     loginHref,
   });
   const [seatsByGroup, setSeatsByGroup] = useState<Record<string, number>>({});
-  const [confirming, setConfirming] = useState<PublicTutoringGroup | null>(
-    null,
-  );
+  const [confirming, setConfirming] = useState<PublicTutoringGroup | null>(null);
   const hold = useSeatHold({
     groupId: confirming?.id ?? null,
     seats: confirming ? (seatsByGroup[confirming.id] ?? 1) : 1,
@@ -54,8 +52,7 @@ export const TutoringGroupsSection = ({
 
   if (!groups.length) return null;
 
-  const format = (amount: number) =>
-    formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
+  const format = (amount: number) => formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
 
   const seatsFor = (group: PublicTutoringGroup) => seatsByGroup[group.id] ?? 1;
 
@@ -66,12 +63,13 @@ export const TutoringGroupsSection = ({
     useCredit: boolean,
   ) => {
     const seats = seatsFor(group);
-    return purchase(
-      { tutoring_group_id: group.id },
-      seatPriceOfGroup(group) * seats,
-      group.id,
-      { seats, joinCode, provider, couponCode, useCredit },
-    );
+    return purchase({ tutoring_group_id: group.id }, seatPriceOfGroup(group) * seats, group.id, {
+      seats,
+      joinCode,
+      provider,
+      couponCode,
+      useCredit,
+    });
   };
 
   return (
@@ -81,20 +79,15 @@ export const TutoringGroupsSection = ({
       aria-labelledby="group-classes-title"
     >
       <div className="space-y-1">
-        <h2
-          id="group-classes-title"
-          className="text-xl font-bold text-(--theme-foreground)"
-        >
-          {t("courses.groupClassesTitle")}
+        <h2 id="group-classes-title" className="text-xl font-bold text-(--theme-foreground)">
+          {t('courses.groupClassesTitle')}
         </h2>
-        <p className="text-sm text-muted">
-          {t("courses.groupClassesSubtitle")}
-        </p>
+        <p className="text-muted text-sm">{t('courses.groupClassesSubtitle')}</p>
         <CreditBalanceNote />
       </div>
 
       {closed ? (
-        <p className="text-sm text-muted">{t("courses.enrollmentClosed")}</p>
+        <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
       ) : (
         <div className="space-y-4">
           {groups.map((group) => (
@@ -104,9 +97,7 @@ export const TutoringGroupsSection = ({
               format={format}
               seats={seatsFor(group)}
               pending={pendingKey === group.id}
-              onSeatsChange={(seats) =>
-                setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))
-              }
+              onSeatsChange={(seats) => setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))}
               onJoin={() => setConfirming(group)}
               enrolledHref={`/account/classes/${group.id}`}
             />

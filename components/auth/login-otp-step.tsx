@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Loader2 } from "lucide-react";
+import { Loader2 } from 'lucide-react';
 
-import { OtpBoxInput } from "@/components/ui/otp-box-input";
-import { useLocaleDigits } from "@/hooks/use-locale-digits";
-import { AuthError } from "@/components/auth/auth-notice";
-import type { useLogin } from "@/hooks/use-login";
+import { OtpBoxInput } from '@/components/ui/otp-box-input';
+import { useLocaleDigits } from '@/hooks/use-locale-digits';
+import { AuthError } from '@/components/auth/auth-notice';
+import type { useLogin } from '@/hooks/use-login';
 
 type Login = ReturnType<typeof useLogin>;
 
@@ -29,14 +29,12 @@ export function LoginOtpStep({ login }: { login: Login }) {
       }}
     >
       <div className="space-y-1 text-center">
-        <p className="text-sm font-semibold">{t("auth.otpVerification")}</p>
+        <p className="text-sm font-semibold">{t('auth.otpVerification')}</p>
         <p className="text-xs text-[color:var(--auth-card-muted)]">
-          {t("auth.enterVerificationCode")
-            .split("{phone}")
+          {t('auth.enterVerificationCode')
+            .split('{phone}')
             .flatMap((part, i) =>
-              i === 0
-                ? [part]
-                : [<bdi key={i}>{localeDigits(login.otpTarget)}</bdi>, part],
+              i === 0 ? [part] : [<bdi key={i}>{localeDigits(login.otpTarget)}</bdi>, part],
             )}
         </p>
       </div>
@@ -59,11 +57,11 @@ export function LoginOtpStep({ login }: { login: Login }) {
               onClick={login.resendOtp}
               disabled={login.otpResending || login.pending}
             >
-              {login.otpResending ? t("auth.resending") : t("auth.resendOtp")}
+              {login.otpResending ? t('auth.resending') : t('auth.resendOtp')}
             </button>
           ) : (
             <span className="tabular-nums">
-              {t("auth.resendIn")} <bdi>{login.otpTimer.formatted}</bdi>
+              {t('auth.resendIn')} <bdi>{login.otpTimer.formatted}</bdi>
             </span>
           )}
         </div>
@@ -77,15 +75,11 @@ export function LoginOtpStep({ login }: { login: Login }) {
         disabled={login.pending || login.otp.length < OTP_LENGTH}
       >
         {login.pending && <Loader2 className="h-4 w-4 animate-spin" />}
-        {login.pending ? t("auth.signingIn") : t("auth.verifyAndSignIn")}
+        {login.pending ? t('auth.signingIn') : t('auth.verifyAndSignIn')}
       </button>
 
-      <button
-        type="button"
-        onClick={login.changeIdentifier}
-        className="auth-secondary-btn"
-      >
-        {t("common.back")}
+      <button type="button" onClick={login.changeIdentifier} className="auth-secondary-btn">
+        {t('common.back')}
       </button>
     </form>
   );

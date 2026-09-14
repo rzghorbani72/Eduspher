@@ -37,7 +37,7 @@ export function RouzanHero({ id, config, storeContext }: TemplateSectionProps) {
           <div>
             <LeadLabel editableKey="kicker">{text(config, 'kicker', d.kicker)}</LeadLabel>
 
-            <h1 className="mt-3 max-w-[15ch] text-[clamp(42px,5.2vw,78px)] font-bold leading-[1.06]">
+            <h1 className="mt-3 max-w-[15ch] text-[clamp(42px,5.2vw,78px)] leading-[1.06] font-bold">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -52,7 +52,12 @@ export function RouzanHero({ id, config, storeContext }: TemplateSectionProps) {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
                 <Button
                   tone="primary"
                   editableKey="ctaText"
@@ -92,7 +97,7 @@ export function RouzanHero({ id, config, storeContext }: TemplateSectionProps) {
                   <div key={stat.label} className={`${styles.fact} max-sm:basis-1/2`}>
                     <dd
                       {...editableItem('stats', index, 'value')}
-                      className="block text-[30px] font-bold leading-[1.2]"
+                      className="block text-[30px] leading-[1.2] font-bold"
                     >
                       {stat.value}
                     </dd>
@@ -129,7 +134,10 @@ export function RouzanHero({ id, config, storeContext }: TemplateSectionProps) {
                 </span>
               </div>
 
-              <HeroVideoSlot config={config} className={`${styles.frame} grid aspect-video place-items-center`}>
+              <HeroVideoSlot
+                config={config}
+                className={`${styles.frame} grid aspect-video place-items-center`}
+              >
                 <span className={styles.play} aria-hidden="true" />
                 <span className={styles.progress} aria-hidden="true">
                   <i />
@@ -138,7 +146,10 @@ export function RouzanHero({ id, config, storeContext }: TemplateSectionProps) {
                   <b data-editable="videoCaption" className="text-[14px] font-medium">
                     {text(config, 'videoCaption', d.videoCaption)}
                   </b>
-                  <span data-editable="videoCaptionSub" className="ms-auto text-[12.5px] opacity-70">
+                  <span
+                    data-editable="videoCaptionSub"
+                    className="ms-auto text-[12.5px] opacity-70"
+                  >
                     {text(config, 'videoCaptionSub', d.videoCaptionSub)}
                   </span>
                 </figcaption>

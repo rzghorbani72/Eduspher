@@ -44,7 +44,7 @@ export function SectionHead({
       ) : null}
       <h2
         data-editable={titleKey}
-        className="mt-2.5 text-[clamp(28px,3.6vw,46px)] font-bold leading-[1.2]"
+        className="mt-2.5 text-[clamp(28px,3.6vw,46px)] leading-[1.2] font-bold"
       >
         {title}
       </h2>

@@ -1,19 +1,15 @@
-import Link from "@/components/ui/link";
-import {
-  getAcademyBySlug,
-  getCurrentAcademy,
-  getCurrentUser,
-} from "@/lib/api/server";
-import { getAcademyContext } from "@/lib/store-context";
-import { resolveAssetUrl } from "@/lib/utils";
-import { sizedImageUrl } from "@/lib/images/sized-image-url";
-import { AccountMenuDropdown } from "@/components/layout/account-menu-dropdown";
-import { Container } from "./section";
-import { Button } from "./primitives";
-import { RemovableSlot } from "./removable-slot";
-import { list, text, type SectionConfig } from "./types";
-import { templateHref, type TemplateRoute } from "./routes";
-import { editableList, editableItem } from "./editable-list";
+import Link from '@/components/ui/link';
+import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { getAcademyContext } from '@/lib/store-context';
+import { resolveAssetUrl } from '@/lib/utils';
+import { sizedImageUrl } from '@/lib/images/sized-image-url';
+import { AccountMenuDropdown } from '@/components/layout/account-menu-dropdown';
+import { Container } from './section';
+import { Button } from './primitives';
+import { RemovableSlot } from './removable-slot';
+import { list, text, type SectionConfig } from './types';
+import { templateHref, type TemplateRoute } from './routes';
+import { editableList, editableItem } from './editable-list';
 
 export interface HeaderNavItem {
   label: string;
@@ -35,10 +31,10 @@ export interface HeaderDefaults {
  * identical across templates so it lives in one place.
  */
 export interface HeaderSpec {
-  tone: "page" | "surface" | "deep";
+  tone: 'page' | 'surface' | 'deep';
   /** Bar height in px, matching the source design. */
   height: number;
-  navStyle: "plain" | "underline" | "border" | "pill";
+  navStyle: 'plain' | 'underline' | 'border' | 'pill';
   /** Per-template CSS-module class drawing the logo mark. Omitted = no mark. */
   markClassName?: string;
   /** Tavan draws a short accent rule along the bottom edge. */
@@ -60,25 +56,24 @@ interface TemplateHeaderProps {
 }
 
 const TONE_CLASS = {
-  page: "bg-(--theme-background) text-(--theme-foreground)",
-  surface: "bg-(--theme-surface) text-(--theme-foreground)",
-  deep: "bg-(--theme-deep) text-(--theme-on-deep)",
+  page: 'bg-(--theme-background) text-(--theme-foreground)',
+  surface: 'bg-(--theme-surface) text-(--theme-foreground)',
+  deep: 'bg-(--theme-deep) text-(--theme-on-deep)',
 } as const;
 
 // `text-current` keeps every link on the header's own tone (page/surface use the
 // foreground, deep uses on-deep). Without it the global `a { color: primary }`
 // base rule wins and the nav renders in the brand colour on a light bar.
 const NAV_LINK_CLASS = {
-  plain:
-    "text-current px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100",
+  plain: 'text-current px-3 py-2 text-[15px] font-medium opacity-80 hover:opacity-100',
   // The underline/border variants draw their rule on the link box itself, so
   // they need their own horizontal padding: the nav row's `gap-1` alone left
   // 4px between words and the items read as one run-on string.
   underline:
-    "text-current mx-1.5 border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
+    'text-current mx-1.5 border-b-[1.5px] border-transparent py-1.5 text-[14.5px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)',
   border:
-    "text-current mx-1.5 border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)",
-  pill: "text-current rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)",
+    'text-current mx-1.5 border-b-2 border-transparent py-1.5 text-[15px] font-medium hover:border-(--theme-primary) hover:text-(--theme-primary)',
+  pill: 'text-current rounded-full px-4 py-2 text-[15px] font-bold hover:bg-(--theme-surface-alt)',
 } as const;
 
 /**
@@ -105,19 +100,18 @@ export async function TemplateTopBar({
   // Visitors are anonymous, so /academies/current is empty for them — fall back
   // to the public record or the header renders unbranded for everyone signed out.
   const academy =
-    currentAcademy ??
-    (storeContext.slug ? await getAcademyBySlug(storeContext.slug) : null);
+    currentAcademy ?? (storeContext.slug ? await getAcademyBySlug(storeContext.slug) : null);
 
-  const brandName = text(config, "brandName", academy?.name ?? "آکادمی");
+  const brandName = text(config, 'brandName', academy?.name ?? 'آکادمی');
   // The academy's uploaded logo replaces the template's decorative mark; without
   // one the template mark stays, so no header ever renders an empty slot.
   const logoUrl = resolveAssetUrl(academy?.logo?.publicUrl);
-  const tagline = text(config, "tagline", defaults.tagline);
-  const nav = list<HeaderNavItem>(config, "nav", defaults.nav);
+  const tagline = text(config, 'tagline', defaults.tagline);
+  const nav = list<HeaderNavItem>(config, 'nav', defaults.nav);
   const isAuthenticated = Boolean(user);
   const accountLabel = user?.display_name?.trim() || defaults.accountText;
   const accountAvatarUrl = resolveAssetUrl(user?.avatar?.url);
-  const loginText = text(config, "loginText", defaults.loginText);
+  const loginText = text(config, 'loginText', defaults.loginText);
 
   const ctaSlot = (
     <RemovableSlot
@@ -129,10 +123,10 @@ export async function TemplateTopBar({
       <Button
         tone="primary"
         size="sm"
-        href={templateHref(storeContext, "courses")}
+        href={templateHref(storeContext, 'courses')}
         editableKey="ctaText"
       >
-        {text(config, "ctaText", defaults.ctaText)}
+        {text(config, 'ctaText', defaults.ctaText)}
       </Button>
     </RemovableSlot>
   );
@@ -143,11 +137,11 @@ export async function TemplateTopBar({
         <AccountMenuDropdown
           displayName={accountLabel}
           avatarUrl={accountAvatarUrl}
-          deepTone={spec.tone === "deep"}
+          deepTone={spec.tone === 'deep'}
         />
       ) : (
         <Link
-          href={templateHref(storeContext, "login")}
+          href={templateHref(storeContext, 'login')}
           className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
         >
           <span data-editable="loginText">{loginText}</span>
@@ -157,17 +151,17 @@ export async function TemplateTopBar({
   );
 
   const borderClass = spec.thickBorder
-    ? "border-b-2 border-(--theme-border-color)"
-    : spec.tone === "deep"
-      ? "border-b border-current/12"
-      : "border-b border-(--theme-border-color)";
+    ? 'border-b-2 border-(--theme-border-color)'
+    : spec.tone === 'deep'
+      ? 'border-b border-current/12'
+      : 'border-b border-(--theme-border-color)';
 
   return (
     <header
-      id={id || "header"}
+      id={id || 'header'}
       className={`sticky top-0 z-50 ${
         spec.translucent
-          ? "bg-(--theme-background)/88 text-(--theme-foreground) backdrop-blur-md"
+          ? 'bg-(--theme-background)/88 text-(--theme-foreground) backdrop-blur-md'
           : TONE_CLASS[spec.tone]
       } ${borderClass}`}
     >
@@ -175,16 +169,16 @@ export async function TemplateTopBar({
         <span
           aria-hidden="true"
           data-motion="hue"
-          className="absolute -bottom-px start-0 h-[3px] w-[38%] bg-linear-to-r from-(--theme-primary) via-(--theme-accent) to-(--theme-primary)"
+          className="absolute start-0 -bottom-px h-[3px] w-[38%] bg-linear-to-r from-(--theme-primary) via-(--theme-accent) to-(--theme-primary)"
         />
       ) : null}
 
       <Container>
-        <div
-          className="flex items-center gap-6"
-          style={{ minHeight: `${spec.height}px` }}
-        >
-          <Link href={templateHref(storeContext, "home")} className="flex flex-none items-center gap-3">
+        <div className="flex items-center gap-6" style={{ minHeight: `${spec.height}px` }}>
+          <Link
+            href={templateHref(storeContext, 'home')}
+            className="flex flex-none items-center gap-3"
+          >
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -199,17 +193,15 @@ export async function TemplateTopBar({
             <span>
               <b
                 data-editable="brandName"
-                className="block text-[19px] font-bold leading-[1.2] tracking-[-0.02em] whitespace-nowrap"
+                className="block text-[19px] leading-[1.2] font-bold tracking-[-0.02em] whitespace-nowrap"
               >
                 {brandName}
               </b>
               <span
                 data-editable="tagline"
                 className={`block text-[10.5px] tracking-[0.22em] whitespace-nowrap ${
-                  spec.tone === "deep"
-                    ? "text-current/60"
-                    : "text-(--theme-muted)"
-                } ${spec.monoTagline ? "font-mono" : ""}`}
+                  spec.tone === 'deep' ? 'text-current/60' : 'text-(--theme-muted)'
+                } ${spec.monoTagline ? 'font-mono' : ''}`}
               >
                 {tagline}
               </span>
@@ -219,13 +211,13 @@ export async function TemplateTopBar({
           <nav
             aria-label="ناوبری اصلی"
             className="hidden flex-1 items-center gap-1 lg:flex"
-            {...editableList("nav", nav)}
+            {...editableList('nav', nav)}
           >
             {nav.map((item, index) => (
               <a
                 key={item.route}
                 href={templateHref(storeContext, item.route)}
-                {...editableItem("nav", index, "label")}
+                {...editableItem('nav', index, 'label')}
                 className={NAV_LINK_CLASS[spec.navStyle]}
               >
                 {item.label}
@@ -247,9 +239,9 @@ export async function TemplateTopBar({
               </summary>
               <div
                 className={`absolute end-0 top-[calc(100%+8px)] z-50 w-56 rounded-(--theme-border-radius) border p-2 shadow-(--theme-shadow) ${
-                  spec.tone === "deep"
-                    ? "border-current/18 bg-(--theme-deep)"
-                    : "border-(--theme-border-color) bg-(--theme-surface)"
+                  spec.tone === 'deep'
+                    ? 'border-current/18 bg-(--theme-deep)'
+                    : 'border-(--theme-border-color) bg-(--theme-surface)'
                 }`}
               >
                 {nav.map((item) => (
@@ -266,13 +258,13 @@ export async function TemplateTopBar({
                     <AccountMenuDropdown
                       displayName={accountLabel}
                       avatarUrl={accountAvatarUrl}
-                      deepTone={spec.tone === "deep"}
+                      deepTone={spec.tone === 'deep'}
                       inline
                     />
                   </div>
                 ) : (
                   <a
-                    href={templateHref(storeContext, "login")}
+                    href={templateHref(storeContext, 'login')}
                     className="flex items-center gap-2 rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
                   >
                     {loginText}
@@ -293,27 +285,25 @@ export async function TemplateTopBar({
  * section they pointed at.
  */
 export const FULL_NAV: readonly HeaderNavItem[] = [
-  { label: "خانه", route: "home" },
-  { label: "دوره‌ها", route: "courses" },
-  { label: "بسته‌ها", route: "bundles" },
-  { label: "وبلاگ", route: "blog" },
+  { label: 'خانه', route: 'home' },
+  { label: 'دوره‌ها', route: 'courses' },
+  { label: 'بسته‌ها', route: 'bundles' },
+  { label: 'وبلاگ', route: 'blog' },
 ];
 
 /** Kept as a separate export so templates can opt into a shorter bar. */
 export const COMPACT_NAV: readonly HeaderNavItem[] = [
-  { label: "خانه", route: "home" },
-  { label: "دوره‌ها", route: "courses" },
-  { label: "بسته‌ها", route: "bundles" },
+  { label: 'خانه', route: 'home' },
+  { label: 'دوره‌ها', route: 'courses' },
+  { label: 'بسته‌ها', route: 'bundles' },
 ];
 
-export function headerDefaults(
-  overrides: Partial<HeaderDefaults> = {},
-): HeaderDefaults {
+export function headerDefaults(overrides: Partial<HeaderDefaults> = {}): HeaderDefaults {
   return {
-    tagline: "",
-    ctaText: "ثبت‌نام در دوره",
-    loginText: "ورود",
-    accountText: "حساب من",
+    tagline: '',
+    ctaText: 'ثبت‌نام در دوره',
+    loginText: 'ورود',
+    accountText: 'حساب من',
     nav: FULL_NAV,
     ...overrides,
   };

@@ -103,9 +103,7 @@ export function HeroSlideshowSlot({
           )}
         </div>
       ) : (
-        <div className="flex h-full w-full items-center justify-center">
-          {children}
-        </div>
+        <div className="flex h-full w-full items-center justify-center">{children}</div>
       )}
 
       {editMode && mediaKeys.length > 1 && (

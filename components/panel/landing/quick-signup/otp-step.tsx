@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { OtpBoxInput } from "@/components/ui/otp-box-input";
-import { formatPhoneDisplay, toPersianDigits } from "@/lib/utils";
-import { LANDING } from "../landing.messages";
-import { DialogButton } from "./dialog-button";
-import type { useQuickSignup } from "./use-quick-signup";
+import { OtpBoxInput } from '@/components/ui/otp-box-input';
+import { formatPhoneDisplay, toPersianDigits } from '@/lib/utils';
+import { LANDING } from '../landing.messages';
+import { DialogButton } from './dialog-button';
+import type { useQuickSignup } from './use-quick-signup';
 
 const M = LANDING.quickSignup;
 
@@ -12,18 +12,18 @@ export function OtpStep({ flow }: { flow: ReturnType<typeof useQuickSignup> }) {
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-start text-[13px] text-lp-muted">
-          {M.otpSentBeforePhone}{" "}
+        <p className="text-lp-muted text-start text-[13px]">
+          {M.otpSentBeforePhone}{' '}
           <strong dir="ltr" className="font-semibold text-[#181c20]">
-            {formatPhoneDisplay(flow.fullPhone, "fa")}
-          </strong>{" "}
+            {formatPhoneDisplay(flow.fullPhone, 'fa')}
+          </strong>{' '}
           {M.otpSentAfterPhone}
         </p>
         <button
           type="button"
           onClick={flow.editPhone}
           disabled={flow.pending}
-          className="shrink-0 text-[13px] text-primary hover:underline disabled:opacity-60"
+          className="text-primary shrink-0 text-[13px] hover:underline disabled:opacity-60"
         >
           {M.edit}
         </button>
@@ -49,15 +49,10 @@ export function OtpStep({ flow }: { flow: ReturnType<typeof useQuickSignup> }) {
         type="button"
         onClick={flow.resendOtp}
         disabled={flow.resendIn > 0 || flow.pending}
-        className="w-full text-center text-[12px] text-lp-muted underline disabled:no-underline disabled:opacity-60"
+        className="text-lp-muted w-full text-center text-[12px] underline disabled:no-underline disabled:opacity-60"
       >
         {flow.resendIn > 0 ? (
-          <>
-            {M.otpResendIn.replace(
-              "{seconds}",
-              toPersianDigits(String(flow.resendIn), "fa"),
-            )}
-          </>
+          <>{M.otpResendIn.replace('{seconds}', toPersianDigits(String(flow.resendIn), 'fa'))}</>
         ) : (
           M.otpResend
         )}

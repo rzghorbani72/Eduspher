@@ -46,7 +46,7 @@ function initialsOf(name: string | null): string {
 
 export async function loadTemplateCourses(
   storeContext: TemplateStoreContext | undefined,
-  limit: number
+  limit: number,
 ): Promise<TemplateCourse[]> {
   const [payload, currencyStore] = await Promise.all([
     getCourses({
@@ -81,7 +81,7 @@ function formatDurationLabel(minutes: number | null): string | null {
 export function toTemplateCourse(
   course: CourseSummary,
   storeSlug: string | null,
-  currencyStore: CurrencyConfig | null
+  currencyStore: CurrencyConfig | null,
 ): TemplateCourse {
   const teacherName = course.author?.display_name ?? course.Profile?.display_name ?? null;
   const minutes = course.duration ?? null;

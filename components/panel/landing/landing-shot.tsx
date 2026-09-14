@@ -1,4 +1,4 @@
-import Image, { type ImageProps } from "next/image";
+import Image, { type ImageProps } from 'next/image';
 
 /**
  * Product screenshots under /public/landing. Static files we ship ourselves, so

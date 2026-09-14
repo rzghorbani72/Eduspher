@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
 
-import { LANDING } from "../landing.messages";
-import { useQuickSignup } from "./use-quick-signup";
-import { IdentityStep } from "./identity-step";
-import { PhoneStep } from "./phone-step";
-import { OtpStep } from "./otp-step";
-import { SuccessStep } from "./success-step";
-import { StepDots } from "./step-dots";
+import { LANDING } from '../landing.messages';
+import { useQuickSignup } from './use-quick-signup';
+import { IdentityStep } from './identity-step';
+import { PhoneStep } from './phone-step';
+import { OtpStep } from './otp-step';
+import { SuccessStep } from './success-step';
+import { StepDots } from './step-dots';
 
 const M = LANDING.quickSignup;
 
@@ -28,23 +28,23 @@ type Props = {
  */
 export function QuickSignupDialog({ onClose }: Props) {
   const flow = useQuickSignup();
-  const done = flow.step === "done";
-  const redirecting = flow.step === "redirecting";
+  const done = flow.step === 'done';
+  const redirecting = flow.step === 'redirecting';
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !flow.pending && !redirecting) onClose();
+      if (event.key === 'Escape' && !flow.pending && !redirecting) onClose();
     };
-    document.addEventListener("keydown", onKey);
+    document.addEventListener('keydown', onKey);
     const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener("keydown", onKey);
+      document.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
     };
   }, [flow.pending, redirecting, onClose]);
 
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
 
   return createPortal(
     <div
@@ -58,40 +58,38 @@ export function QuickSignupDialog({ onClose }: Props) {
         aria-modal="true"
         aria-label={M.title}
         dir="rtl"
-        className="qs-dialog relative w-full max-w-[460px] rounded-2xl bg-white p-6 text-[#181c20] shadow-2xl sm:p-8 [color-scheme:light]"
+        className="qs-dialog relative w-full max-w-[460px] rounded-2xl bg-white p-6 text-[#181c20] [color-scheme:light] shadow-2xl sm:p-8"
       >
         <button
           type="button"
           onClick={onClose}
           disabled={flow.pending || redirecting}
           aria-label={M.close}
-          className="absolute end-4 top-4 rounded-full p-1.5 text-lp-muted transition-colors hover:bg-black/5 hover:text-lp-ink disabled:opacity-40"
+          className="text-lp-muted hover:text-lp-ink absolute end-4 top-4 rounded-full p-1.5 transition-colors hover:bg-black/5 disabled:opacity-40"
         >
           <X className="h-4 w-4" />
         </button>
 
         {!done && !redirecting && (
           <header className="mb-6 text-center">
-            <h2 className="text-xl font-extrabold text-lp-ink">{M.title}</h2>
-            <p className="mt-1.5 text-sm text-lp-muted">{M.subtitle}</p>
+            <h2 className="text-lp-ink text-xl font-extrabold">{M.title}</h2>
+            <p className="text-lp-muted mt-1.5 text-sm">{M.subtitle}</p>
             <StepDots step={flow.step} />
           </header>
         )}
 
-        {flow.step === "identity" && <IdentityStep flow={flow} />}
-        {flow.step === "phone" && <PhoneStep flow={flow} />}
-        {flow.step === "otp" && <OtpStep flow={flow} />}
+        {flow.step === 'identity' && <IdentityStep flow={flow} />}
+        {flow.step === 'phone' && <PhoneStep flow={flow} />}
+        {flow.step === 'otp' && <OtpStep flow={flow} />}
         {redirecting && (
-          <p className="py-8 text-center text-sm font-semibold text-lp-ink">
-            {M.redirecting}
-          </p>
+          <p className="text-lp-ink py-8 text-center text-sm font-semibold">{M.redirecting}</p>
         )}
         {done && flow.result && <SuccessStep result={flow.result} />}
 
         {flow.error && !done && (
           <p
             role="alert"
-            className="mt-4 rounded-lp bg-red-50 px-3 py-2 text-center text-[13px] text-red-600"
+            className="rounded-lp mt-4 bg-red-50 px-3 py-2 text-center text-[13px] text-red-600"
           >
             {flow.error}
           </p>

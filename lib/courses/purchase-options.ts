@@ -1,5 +1,5 @@
-import type { CourseSummary } from "@/lib/api/types";
-import type { PublicCourseOffering, PublicPaymentPlan } from "@/lib/api/server";
+import type { CourseSummary } from '@/lib/api/types';
+import type { PublicCourseOffering, PublicPaymentPlan } from '@/lib/api/server';
 
 /**
  * Everything a student can buy for one course, flattened into a single ranked
@@ -9,12 +9,7 @@ import type { PublicCourseOffering, PublicPaymentPlan } from "@/lib/api/server";
  */
 
 export type PurchaseKind =
-  | "FREE"
-  | "ONE_TIME"
-  | "SUBSCRIPTION"
-  | "PRIVATE"
-  | "PAYMENT_PLAN"
-  | "TUTORING";
+  'FREE' | 'ONE_TIME' | 'SUBSCRIPTION' | 'PRIVATE' | 'PAYMENT_PLAN' | 'TUTORING';
 
 export type PurchaseSelector =
   | { offer_id: string }
@@ -62,9 +57,7 @@ const fromOffering = (
   // before that field existed fall back to the course's own struck-through
   // price, and only when this offer really sells at the course price.
   const ownCompareAt =
-    (offering.compare_at_price ?? 0) > offering.price
-      ? (offering.compare_at_price ?? null)
-      : null;
+    (offering.compare_at_price ?? 0) > offering.price ? (offering.compare_at_price ?? null) : null;
   // Only the course's own default offer inherits the course discount; another
   // offer priced the same is a separate selling way and carries no badge.
   const carriesCourseDiscount =
@@ -72,8 +65,7 @@ const fromOffering = (
     offering.source_course_id === course.id &&
     (course.original_price ?? 0) > course.price;
   const originalPrice =
-    ownCompareAt ??
-    (carriesCourseDiscount ? (course.original_price ?? null) : null);
+    ownCompareAt ?? (carriesCourseDiscount ? (course.original_price ?? null) : null);
 
   return {
     key: offering.id,
@@ -89,8 +81,7 @@ const fromOffering = (
         : carriesCourseDiscount
           ? (course.discount_percent ?? null)
           : Math.round((1 - offering.price / originalPrice) * 100),
-    accessDurationDays:
-      offering.access_duration_days ?? course.access_duration_days ?? null,
+    accessDurationDays: offering.access_duration_days ?? course.access_duration_days ?? null,
     includesLive: offering.includes_live ?? true,
     installments: null,
     tutorName: null,
@@ -102,7 +93,7 @@ const fromOffering = (
 
 const fromPaymentPlan = (plan: PublicPaymentPlan): PurchaseOptionView => ({
   key: plan.id,
-  kind: "PAYMENT_PLAN",
+  kind: 'PAYMENT_PLAN',
   selector: { payment_plan_id: plan.id },
   title: plan.name,
   description: null,
@@ -128,15 +119,13 @@ const fromPaymentPlan = (plan: PublicPaymentPlan): PurchaseOptionView => ({
  */
 const fallbackOption = (course: CourseSummary): PurchaseOptionView => ({
   key: `course-${course.id}`,
-  kind: course.is_free ? "FREE" : "ONE_TIME",
+  kind: course.is_free ? 'FREE' : 'ONE_TIME',
   selector: { course_id: course.id },
   title: null,
   description: null,
   price: course.is_free ? 0 : course.price,
   originalPrice:
-    (course.original_price ?? 0) > course.price
-      ? (course.original_price ?? null)
-      : null,
+    (course.original_price ?? 0) > course.price ? (course.original_price ?? null) : null,
   discountPercent: course.discount_percent ?? null,
   accessDurationDays: course.access_duration_days ?? null,
   includesLive: true,
@@ -153,7 +142,7 @@ export const buildPurchaseOptions = (
   paymentPlans: PublicPaymentPlan[],
 ): PurchaseOptionView[] => {
   // A live course sells seats per class, never a course-level price.
-  if (course.course_type === "LIVE") return [];
+  if (course.course_type === 'LIVE') return [];
   const options = [
     ...offerings.filter((o) => o.is_active).map((o) => fromOffering(o, course)),
     ...paymentPlans.map(fromPaymentPlan),
@@ -161,12 +150,8 @@ export const buildPurchaseOptions = (
 
   if (options.length === 0) options.push(fallbackOption(course));
 
-  return options.sort(
-    (a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || a.price - b.price,
-  );
+  return options.sort((a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || a.price - b.price);
 };
 
 export const totalOf = (option: PurchaseOptionView): number =>
-  option.installments
-    ? option.installments.count * option.installments.amount
-    : option.price;
+  option.installments ? option.installments.count * option.installments.amount : option.price;

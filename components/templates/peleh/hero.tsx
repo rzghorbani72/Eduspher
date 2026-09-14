@@ -41,30 +41,58 @@ export function PelehHero({ id, config, storeContext }: TemplateSectionProps) {
               {text(config, 'kicker', d.kicker)}
             </span>
 
-            <h1 className="mt-5 text-[clamp(36px,5.6vw,66px)] font-extrabold leading-[1.1] tracking-[-0.03em]">
+            <h1 className="mt-5 text-[clamp(36px,5.6vw,66px)] leading-[1.1] font-extrabold tracking-[-0.03em]">
               <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
               <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>
               <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
             </h1>
 
-            <p data-editable="subtitle" className="mt-5 max-w-[50ch] text-[16.5px] leading-[1.9] text-(--theme-muted)">
+            <p
+              data-editable="subtitle"
+              className="mt-5 max-w-[50ch] text-[16.5px] leading-[1.9] text-(--theme-muted)"
+            >
               {text(config, 'subtitle', d.subtitle)}
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3.5">
-              <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-                <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCta"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="primary"
+                  size="lg"
+                  editableKey="ctaText"
+                  href={templateHref(storeContext, 'courses')}
+                >
                   {text(config, 'ctaText', d.ctaText)}
                 </Button>
               </RemovableSlot>
-              <RemovableSlot config={config} flagKey="showHeroCtaSecondary" editMode={editMode} className="inline-flex">
-                <Button tone="outline" size="lg" editableKey="ctaSecondary" href={templateHref(storeContext, 'register')}>
+              <RemovableSlot
+                config={config}
+                flagKey="showHeroCtaSecondary"
+                editMode={editMode}
+                className="inline-flex"
+              >
+                <Button
+                  tone="outline"
+                  size="lg"
+                  editableKey="ctaSecondary"
+                  href={templateHref(storeContext, 'register')}
+                >
                   {text(config, 'ctaSecondary', d.ctaSecondary)}
                 </Button>
               </RemovableSlot>
             </div>
 
-            <RemovableSlot config={config} flagKey="showCountdown" editMode={editMode} className="mt-9">
+            <RemovableSlot
+              config={config}
+              flagKey="showCountdown"
+              editMode={editMode}
+              className="mt-9"
+            >
               <div className={`${styles.countdown} inline-flex items-baseline gap-3 px-6 py-4`}>
                 <span data-editable="countdownLabel" className="text-[14px] font-bold">
                   {text(config, 'countdownLabel', d.countdownLabel)}
@@ -75,7 +103,10 @@ export function PelehHero({ id, config, storeContext }: TemplateSectionProps) {
                 >
                   {text(config, 'countdownValue', d.countdownValue)}
                 </b>
-                <span data-editable="countdownUnit" className="text-[14px] font-bold text-(--theme-muted)">
+                <span
+                  data-editable="countdownUnit"
+                  className="text-[14px] font-bold text-(--theme-muted)"
+                >
                   {text(config, 'countdownUnit', d.countdownUnit)}
                 </span>
               </div>
@@ -83,14 +114,22 @@ export function PelehHero({ id, config, storeContext }: TemplateSectionProps) {
           </div>
 
           <div>
-            <RemovableSlot config={config} flagKey="showSideVisual" editMode={editMode} mediaKey="bgImage">
+            <RemovableSlot
+              config={config}
+              flagKey="showSideVisual"
+              editMode={editMode}
+              mediaKey="bgImage"
+            >
               <HeroSlideshowSlot
                 config={config}
                 mediaKeys={SLIDE_KEYS}
                 editMode={editMode}
-                className="rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) aspect-[4/3] min-h-[260px] shadow-(--theme-shadow)"
+                className="aspect-[4/3] min-h-[260px] rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow)"
               >
-                <span data-editable="photoCaption" className="px-8 text-center text-[13.5px] text-(--theme-muted)">
+                <span
+                  data-editable="photoCaption"
+                  className="px-8 text-center text-[13.5px] text-(--theme-muted)"
+                >
                   {text(config, 'photoCaption', d.photoCaption)}
                 </span>
               </HeroSlideshowSlot>
@@ -112,7 +151,10 @@ export function PelehHero({ id, config, storeContext }: TemplateSectionProps) {
                     >
                       {item.rank}
                     </b>
-                    <span {...editableItem('ranks', index, 'name')} className="mt-2 block text-[14px] font-bold">
+                    <span
+                      {...editableItem('ranks', index, 'name')}
+                      className="mt-2 block text-[14px] font-bold"
+                    >
                       {item.name}
                     </span>
                     <span

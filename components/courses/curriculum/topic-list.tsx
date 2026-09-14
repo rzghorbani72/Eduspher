@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { toPersianDigits } from "@/lib/utils";
-import type { CourseTopic } from "@/lib/api/account-types";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { toPersianDigits } from '@/lib/utils';
+import type { CourseTopic } from '@/lib/api/account-types';
 
 export function CourseTopicList({ topics }: { topics: CourseTopic[] }) {
   const { t, language } = useTranslation();
@@ -11,11 +11,9 @@ export function CourseTopicList({ topics }: { topics: CourseTopic[] }) {
     <div className="space-y-5">
       <div>
         <h2 className="text-xl font-black text-(--theme-foreground)">
-          {t("courses.syllabusTitle")}
+          {t('courses.syllabusTitle')}
         </h2>
-        <p className="mt-1 text-[13px] text-(--theme-muted)">
-          {t("courses.syllabusSubtitle")}
-        </p>
+        <p className="mt-1 text-[13px] text-(--theme-muted)">{t('courses.syllabusSubtitle')}</p>
       </div>
 
       <ol className="space-y-3">

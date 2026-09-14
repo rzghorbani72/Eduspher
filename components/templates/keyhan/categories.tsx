@@ -30,17 +30,23 @@ export function KeyhanCategories({ id, config, storeContext }: TemplateSectionPr
             <a
               key={item.title}
               href={templateHref(storeContext, 'courses')}
-              className={`group flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 transition-[transform,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary) ${
+              className={`group flex flex-col gap-3 rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 shadow-(--theme-shadow) transition-[transform,border-color,background-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary) ${
                 item.wide ? 'md:col-span-3 lg:col-span-3' : ''
               }`}
             >
               <span className="text-[13px] font-bold tracking-[0.14em] text-(--theme-primary)">
                 <span {...editableItem('items', index, 'count')}>{item.count}</span> دوره
               </span>
-              <h3 {...editableItem('items', index, 'title')} className="text-[21px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index, 'title')}
+                className="text-[21px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
-              <p {...editableItem('items', index, 'body')} className="text-[14.5px] leading-[1.8] text-(--theme-muted)">
+              <p
+                {...editableItem('items', index, 'body')}
+                className="text-[14.5px] leading-[1.8] text-(--theme-muted)"
+              >
                 {item.body}
               </p>
               <span className="mt-auto pt-2 text-[13.5px] font-bold text-(--theme-primary) transition-transform duration-200 group-hover:-translate-x-1">

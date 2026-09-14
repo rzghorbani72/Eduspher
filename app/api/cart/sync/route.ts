@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-import { getSession } from "@/lib/auth/session";
-import { syncCart, UnauthorizedError } from "@/lib/api/server";
+import { getSession } from '@/lib/auth/session';
+import { syncCart, UnauthorizedError } from '@/lib/api/server';
 
 /**
  * POST /api/cart/sync — cookie-auth bridge to Nest `/cart/sync`.
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     const result = await syncCart(items);
     return NextResponse.json({
-      message: result.message || "Cart synced successfully",
+      message: result.message || 'Cart synced successfully',
       removedItems: result.removedItems,
     });
   } catch (error) {

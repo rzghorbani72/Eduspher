@@ -1,4 +1,4 @@
-import backendImageLoader from "./image-loader";
+import backendImageLoader from './image-loader';
 
 /**
  * The escape hatch for images that cannot be a next/image: CSS

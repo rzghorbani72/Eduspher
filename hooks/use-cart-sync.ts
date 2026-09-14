@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { loadAndMergeCart } from "@/app/actions/cart";
+import { useEffect } from 'react';
+import { loadAndMergeCart } from '@/app/actions/cart';
 
 /**
  * Hook to sync cart when user is authenticated
@@ -29,4 +29,3 @@ export async function syncCartAfterLogin(): Promise<void> {
     // Silently fail
   }
 }
-

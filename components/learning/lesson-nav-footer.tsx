@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-import Link from "@/components/ui/link";
-import type { FlatLesson } from "@/lib/learning/lesson-list";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { learnPath } from "@/lib/content-paths";
-import { buildAcademyPath } from "@/lib/utils";
+import Link from '@/components/ui/link';
+import type { FlatLesson } from '@/lib/learning/lesson-list';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { learnPath } from '@/lib/content-paths';
+import { buildAcademyPath } from '@/lib/utils';
 
 interface LessonNavFooterProps {
   courseSlug: string;
@@ -23,7 +23,7 @@ interface LessonNavFooterProps {
 }
 
 const STEP =
-  "flex items-center gap-3 rounded-lg border border-theme px-3.5 py-2.5 text-inherit transition-colors hover:bg-surface";
+  'flex items-center gap-3 rounded-lg border border-theme px-3.5 py-2.5 text-inherit transition-colors hover:bg-surface';
 
 /**
  * The one place a student moves on from a lesson: finish it, or step to the
@@ -52,29 +52,19 @@ export function LessonNavFooter({
     if (saved && next) router.push(href(next));
   };
 
-  const step = (lesson: FlatLesson, direction: "previous" | "next") => (
+  const step = (lesson: FlatLesson, direction: 'previous' | 'next') => (
     <Link href={href(lesson)} className={`${STEP} max-w-[290px]`}>
-      {direction === "previous" ? (
-        <ArrowLeft
-          className="size-4 shrink-0 text-muted rtl:rotate-180"
-          aria-hidden="true"
-        />
+      {direction === 'previous' ? (
+        <ArrowLeft className="text-muted size-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
       ) : null}
       <span className="min-w-0">
-        <span className="block text-[11px] text-muted">
-          {direction === "previous"
-            ? t("learning.previousLesson")
-            : t("learning.nextLesson")}
+        <span className="text-muted block text-[11px]">
+          {direction === 'previous' ? t('learning.previousLesson') : t('learning.nextLesson')}
         </span>
-        <span className="block truncate text-[13px] font-bold">
-          {lesson.lesson.title}
-        </span>
+        <span className="block truncate text-[13px] font-bold">{lesson.lesson.title}</span>
       </span>
-      {direction === "next" ? (
-        <ArrowRight
-          className="size-4 shrink-0 text-muted rtl:rotate-180"
-          aria-hidden="true"
-        />
+      {direction === 'next' ? (
+        <ArrowRight className="text-muted size-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
       ) : null}
     </Link>
   );
@@ -85,19 +75,17 @@ export function LessonNavFooter({
     <Link
       href={href(previous)}
       aria-label={previous.lesson.title}
-      className="grid size-[46px] shrink-0 place-items-center rounded-lg border border-theme text-muted"
+      className="border-theme text-muted grid size-[46px] shrink-0 place-items-center rounded-lg border"
     >
       <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
     </Link>
   ) : null;
 
   return (
-    <div className="flex items-center gap-2 border-t border-theme bg-card px-4 py-3 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4 sm:px-8 sm:py-3.5">
+    <div className="border-theme bg-card flex items-center gap-2 border-t px-4 py-3 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4 sm:px-8 sm:py-3.5">
       <div className="sm:justify-self-start">
         <span className="sm:hidden">{compactPrevious}</span>
-        <span className="hidden sm:block">
-          {previous ? step(previous, "previous") : null}
-        </span>
+        <span className="hidden sm:block">{previous ? step(previous, 'previous') : null}</span>
       </div>
 
       {canTrackProgress ? (
@@ -105,26 +93,24 @@ export function LessonNavFooter({
           type="button"
           onClick={() => void completeAndContinue()}
           disabled={saving}
-          className="inline-flex h-[46px] flex-1 items-center justify-center gap-2.5 rounded-lg sm:h-auto sm:flex-none sm:justify-self-center bg-(--theme-primary) px-6 py-3 text-[15px] font-extrabold text-white shadow-[0_6px_18px_color-mix(in_srgb,var(--theme-primary)_30%,transparent)] transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="inline-flex h-[46px] flex-1 items-center justify-center gap-2.5 rounded-lg bg-(--theme-primary) px-6 py-3 text-[15px] font-extrabold text-white shadow-[0_6px_18px_color-mix(in_srgb,var(--theme-primary)_30%,transparent)] transition-opacity hover:opacity-90 disabled:opacity-60 sm:h-auto sm:flex-none sm:justify-self-center"
         >
           <Check className="size-4" aria-hidden="true" />
           {saving
-            ? t("common.saving")
+            ? t('common.saving')
             : isCompleted
               ? next
-                ? t("learning.nextLesson")
-                : t("learning.completed")
+                ? t('learning.nextLesson')
+                : t('learning.completed')
               : next
-                ? t("learning.completeAndContinue")
-                : t("learning.markComplete")}
+                ? t('learning.completeAndContinue')
+                : t('learning.markComplete')}
         </button>
       ) : (
         <span />
       )}
 
-      <div className="hidden sm:block sm:justify-self-end">
-        {next ? step(next, "next") : null}
-      </div>
+      <div className="hidden sm:block sm:justify-self-end">{next ? step(next, 'next') : null}</div>
     </div>
   );
 }

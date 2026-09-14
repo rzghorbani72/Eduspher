@@ -29,12 +29,15 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
 
         <h2
           data-editable="title"
-          className="mb-10 max-w-[22ch] text-[clamp(28px,4vw,40px)] font-bold leading-[1.25] tracking-[-0.02em]"
+          className="mb-10 max-w-[22ch] text-[clamp(28px,4vw,40px)] leading-[1.25] font-bold tracking-[-0.02em]"
         >
           {text(config, 'title', d.title)}
         </h2>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]" {...editableList('items', items)}>
+        <div
+          className="grid gap-5 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]"
+          {...editableList('items', items)}
+        >
           {items.map((item, index) => (
             <a
               key={item.title}
@@ -48,7 +51,9 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
               <span
                 {...editableItem('items', index, 'index')}
                 className={`text-[12px] font-bold tracking-[0.16em] ${
-                  item.lead ? 'text-(--theme-accent)' : 'text-(--theme-primary) group-hover:text-(--theme-accent)'
+                  item.lead
+                    ? 'text-(--theme-accent)'
+                    : 'text-(--theme-primary) group-hover:text-(--theme-accent)'
                 }`}
               >
                 {item.index}
@@ -63,7 +68,9 @@ export function DastanCategories({ id, config, storeContext }: TemplateSectionPr
                 <p
                   {...editableItem('items', index, 'body')}
                   className={`mt-2 text-[14px] leading-[1.8] ${
-                    item.lead ? 'text-current/72' : 'text-(--theme-muted) group-hover:text-current/72'
+                    item.lead
+                      ? 'text-current/72'
+                      : 'text-(--theme-muted) group-hover:text-current/72'
                   }`}
                 >
                   {item.body}

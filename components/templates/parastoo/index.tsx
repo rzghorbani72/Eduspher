@@ -29,7 +29,19 @@ export const PARASTOO_COURSE_CARD: CourseCardSpec = {
 
 export const PARASTOO_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={PARASTOO_HEADER} spec={{ tone: 'page', height: 84, navStyle: 'pill', markClassName: styles.logoMark, thickBorder: true }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={PARASTOO_HEADER}
+      spec={{
+        tone: 'page',
+        height: 84,
+        navStyle: 'pill',
+        markClassName: styles.logoMark,
+        thickBorder: true,
+      }}
+    />
   ),
   hero: ParastooHero,
   marquee: ({ id, config }) => (
@@ -59,7 +71,21 @@ export const PARASTOO_SECTIONS: TemplateSectionMap = {
     <TemplateTeachers id={id} config={config} defaults={PARASTOO_DEFAULTS.teachers} tone="page" />
   ),
   cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={PARASTOO_DEFAULTS.cta} tone="accent" boxed />
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PARASTOO_DEFAULTS.cta}
+      tone="accent"
+      boxed
+    />
   ),
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={PARASTOO_DEFAULTS.footer} />,
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PARASTOO_DEFAULTS.footer}
+    />
+  ),
 };

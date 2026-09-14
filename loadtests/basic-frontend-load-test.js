@@ -22,12 +22,12 @@ export const options = {
     { duration: '30s', target: 0, name: 'Ramp-down' },
   ],
   thresholds: {
-    'http_req_duration': [
-      'p(95)<1000',   // 95th percentile < 1s for frontend
-      'p(99)<2000',   // 99th percentile < 2s
+    http_req_duration: [
+      'p(95)<1000', // 95th percentile < 1s for frontend
+      'p(99)<2000', // 99th percentile < 2s
     ],
-    'http_req_failed': ['rate<0.1'],
-    'checks': ['rate>0.90'],
+    http_req_failed: ['rate<0.1'],
+    checks: ['rate>0.90'],
   },
 };
 

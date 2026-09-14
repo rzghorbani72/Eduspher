@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/lib/i18n/hooks';
 import {
   createSupportTicket,
   listSupportResponsibles,
@@ -13,11 +13,19 @@ import {
   type TicketDetail,
   type TicketPriority,
   type TicketResponsible,
-} from "@/lib/api/client";
-import { AttachmentInput } from "./attachment-input";
+} from '@/lib/api/client';
+import { AttachmentInput } from './attachment-input';
 
-const CATEGORIES: TicketCategory[] = ["COURSE_ACCESS", "LIVE_CLASS", "PAYMENT", "BILLING", "TECHNICAL", "CONTENT", "OTHER"];
-const PRIORITIES: TicketPriority[] = ["LOW", "NORMAL", "HIGH", "URGENT"];
+const CATEGORIES: TicketCategory[] = [
+  'COURSE_ACCESS',
+  'LIVE_CLASS',
+  'PAYMENT',
+  'BILLING',
+  'TECHNICAL',
+  'CONTENT',
+  'OTHER',
+];
+const PRIORITIES: TicketPriority[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
 
 interface Props {
   onCreated: (ticket: TicketDetail) => void;
@@ -25,27 +33,27 @@ interface Props {
 }
 
 const fieldClass =
-  "h-11 w-full rounded-full border border-theme bg-surface px-4 text-sm text-foreground focus:border-primary focus:outline-none";
+  'h-11 w-full rounded-full border border-theme bg-surface px-4 text-sm text-foreground focus:border-primary focus:outline-none';
 
 export function NewTicketForm({ onCreated, onCancel }: Props) {
   const { t } = useTranslation();
   const [responsibles, setResponsibles] = useState<TicketResponsible[]>([]);
-  const [subject, setSubject] = useState("");
-  const [category, setCategory] = useState<TicketCategory>("OTHER");
-  const [priority, setPriority] = useState<TicketPriority>("NORMAL");
-  const [responsibleId, setResponsibleId] = useState("");
-  const [body, setBody] = useState("");
+  const [subject, setSubject] = useState('');
+  const [category, setCategory] = useState<TicketCategory>('OTHER');
+  const [priority, setPriority] = useState<TicketPriority>('NORMAL');
+  const [responsibleId, setResponsibleId] = useState('');
+  const [body, setBody] = useState('');
   const [imageIds, setImageIds] = useState<string[]>([]);
   const [requestCall, setRequestCall] = useState(false);
-  const [phone, setPhone] = useState("");
-  const [preferredTime, setPreferredTime] = useState("");
+  const [phone, setPhone] = useState('');
+  const [preferredTime, setPreferredTime] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     listSupportResponsibles()
       .then(setResponsibles)
-      .catch(() => setError(t("support.error")));
+      .catch(() => setError(t('support.error')));
   }, [t]);
 
   const submit = async (e: React.FormEvent) => {
@@ -63,11 +71,12 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
         image_ids: imageIds.length ? imageIds : undefined,
         request_call: requestCall || undefined,
         phone: requestCall ? phone : undefined,
-        preferred_time: requestCall && preferredTime ? new Date(preferredTime).toISOString() : undefined,
+        preferred_time:
+          requestCall && preferredTime ? new Date(preferredTime).toISOString() : undefined,
       });
       onCreated(ticket);
     } catch {
-      setError(t("support.error"));
+      setError(t('support.error'));
     } finally {
       setSubmitting(false);
     }
@@ -76,15 +85,15 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
   return (
     <form onSubmit={submit} className="mx-auto max-w-2xl space-y-5">
       <div className="space-y-1.5">
-        <Label>{t("support.responsible")}</Label>
+        <Label>{t('support.responsible')}</Label>
         <select
-          aria-label={t("support.responsible")}
+          aria-label={t('support.responsible')}
           className={fieldClass}
           value={responsibleId}
           onChange={(e) => setResponsibleId(e.target.value)}
           required
         >
-          <option value="">{t("support.selectResponsible")}</option>
+          <option value="">{t('support.selectResponsible')}</option>
           {responsibles.map((r) => (
             <option key={r.id} value={r.id}>
               {r.display_name}
@@ -94,7 +103,7 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <Label>{t("support.subject")}</Label>
+        <Label>{t('support.subject')}</Label>
         <Input
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
@@ -105,9 +114,9 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label>{t("support.category")}</Label>
+          <Label>{t('support.category')}</Label>
           <select
-            aria-label={t("support.category")}
+            aria-label={t('support.category')}
             className={fieldClass}
             value={category}
             onChange={(e) => setCategory(e.target.value as TicketCategory)}
@@ -120,9 +129,9 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
           </select>
         </div>
         <div className="space-y-1.5">
-          <Label>{t("support.priority")}</Label>
+          <Label>{t('support.priority')}</Label>
           <select
-            aria-label={t("support.priority")}
+            aria-label={t('support.priority')}
             className={fieldClass}
             value={priority}
             onChange={(e) => setPriority(e.target.value as TicketPriority)}
@@ -137,32 +146,32 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <Label>{t("support.message")}</Label>
+        <Label>{t('support.message')}</Label>
         <Textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
           rows={5}
           maxLength={5000}
-          placeholder={t("support.messagePlaceholder")}
+          placeholder={t('support.messagePlaceholder')}
           required
         />
       </div>
 
       <AttachmentInput imageIds={imageIds} onChange={setImageIds} />
 
-      <label className="flex items-center gap-2 rounded-xl bg-surface px-3.5 py-3 text-sm text-(--theme-foreground)">
+      <label className="bg-surface flex items-center gap-2 rounded-xl px-3.5 py-3 text-sm text-(--theme-foreground)">
         <input
           type="checkbox"
           checked={requestCall}
           onChange={(e) => setRequestCall(e.target.checked)}
-          className="size-4 rounded border-theme"
+          className="border-theme size-4 rounded"
         />
-        {t("support.requestCall")}
+        {t('support.requestCall')}
       </label>
       {requestCall ? (
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>{t("support.phone")}</Label>
+            <Label>{t('support.phone')}</Label>
             <Input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -170,7 +179,7 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label>{t("support.preferredTime")}</Label>
+            <Label>{t('support.preferredTime')}</Label>
             <Input
               type="datetime-local"
               value={preferredTime}
@@ -184,10 +193,10 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
 
       <div className="flex flex-wrap gap-3 pt-1">
         <Button type="submit" loading={submitting} disabled={submitting}>
-          {submitting ? t("support.sending") : t("support.submit")}
+          {submitting ? t('support.sending') : t('support.submit')}
         </Button>
         <Button type="button" variant="ghost" onClick={onCancel}>
-          {t("support.cancel")}
+          {t('support.cancel')}
         </Button>
       </div>
     </form>

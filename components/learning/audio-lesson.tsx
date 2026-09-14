@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
-import { getClientBackendApiBaseUrl } from "@/lib/env";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { toPlayableMediaUrl } from "@/components/media/playable-media-url";
+import { getClientBackendApiBaseUrl } from '@/lib/env';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { toPlayableMediaUrl } from '@/components/media/playable-media-url';
 
 interface AudioLessonProps {
   title: string;
@@ -13,12 +13,7 @@ interface AudioLessonProps {
   onHeartbeat: (position: number, duration?: number) => void;
 }
 
-export function AudioLesson({
-  title,
-  audioId,
-  initialPosition,
-  onHeartbeat,
-}: AudioLessonProps) {
+export function AudioLesson({ title, audioId, initialPosition, onHeartbeat }: AudioLessonProps) {
   const { t } = useTranslation();
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -37,27 +32,23 @@ export function AudioLesson({
       audio.currentTime = Math.min(initialPosition, audio.duration - 1);
     };
     if (audio.readyState >= 1) resume();
-    else audio.addEventListener("loadedmetadata", resume, { once: true });
-    return () => audio.removeEventListener("loadedmetadata", resume);
+    else audio.addEventListener('loadedmetadata', resume, { once: true });
+    return () => audio.removeEventListener('loadedmetadata', resume);
   }, [initialPosition]);
 
   if (!audioId) {
     return (
-      <div className="flex min-h-[120px] w-full flex-col justify-center gap-2 rounded-[10px] border border-dashed border-theme bg-surface px-8 text-center">
-        <p className="text-base font-extrabold">{t("learning.audioUnavailable")}</p>
+      <div className="border-theme bg-surface flex min-h-[120px] w-full flex-col justify-center gap-2 rounded-[10px] border border-dashed px-8 text-center">
+        <p className="text-base font-extrabold">{t('learning.audioUnavailable')}</p>
       </div>
     );
   }
 
-  const src = toPlayableMediaUrl(
-    `${getClientBackendApiBaseUrl()}/audios/stream/${audioId}`,
-  );
+  const src = toPlayableMediaUrl(`${getClientBackendApiBaseUrl()}/audios/stream/${audioId}`);
 
   return (
-    <div className="rounded-[10px] border border-theme bg-card p-5">
-      <p className="mb-3 text-sm font-extrabold text-(--theme-foreground)">
-        {title}
-      </p>
+    <div className="border-theme bg-card rounded-[10px] border p-5">
+      <p className="mb-3 text-sm font-extrabold text-(--theme-foreground)">{title}</p>
       <audio
         ref={audioRef}
         src={src}

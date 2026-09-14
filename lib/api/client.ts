@@ -1,17 +1,16 @@
-"use client";
+'use client';
 
-import type { AuthResponse } from "@/lib/api/types";
-import { notifyLoginRequiredAndRedirect } from "@/lib/api/notify-api-error";
-import { getClientBackendApiBaseUrl, env } from "@/lib/env";
-import { assertNoRequestStorm } from "@/lib/api/request-storm";
+import type { AuthResponse } from '@/lib/api/types';
+import { notifyLoginRequiredAndRedirect } from '@/lib/api/notify-api-error';
+import { getClientBackendApiBaseUrl, env } from '@/lib/env';
+import { assertNoRequestStorm } from '@/lib/api/request-storm';
 
-const withTrailingSlash = (value: string) =>
-  value.endsWith("/") ? value.slice(0, -1) : value;
+const withTrailingSlash = (value: string) => (value.endsWith('/') ? value.slice(0, -1) : value);
 
 const getBaseUrl = () => withTrailingSlash(getClientBackendApiBaseUrl());
 
 const apiFetch = (path: string, init: RequestInit): Promise<Response> => {
-  assertNoRequestStorm(init.method ?? "GET", path, !isPreSessionAuthPath(path));
+  assertNoRequestStorm(init.method ?? 'GET', path, !isPreSessionAuthPath(path));
   return fetch(`${getBaseUrl()}${path}`, init);
 };
 
@@ -21,7 +20,7 @@ export type RequestOptions = {
 };
 
 const getCookieValue = (name: string) => {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
   const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
   return match ? decodeURIComponent(match[1]) : null;
 };
@@ -45,9 +44,7 @@ const getAcademyId = (): string => {
   if (academyId) {
     return academyId;
   }
-  throw new Error(
-    "Academy ID is required but not found in cookies or environment variables",
-  );
+  throw new Error('Academy ID is required but not found in cookies or environment variables');
 };
 
 const getAcademySlug = (): string | null => {
@@ -59,9 +56,9 @@ let csrfBootstrap: Promise<string | null> | null = null;
 
 /** Quietly mint a csrf-token cookie for fresh / private windows. */
 async function ensureCsrfToken(force = false): Promise<string | null> {
-  if (typeof window === "undefined") return null;
+  if (typeof window === 'undefined') return null;
   if (!force) {
-    const existing = getCookieValue("csrf-token");
+    const existing = getCookieValue('csrf-token');
     if (existing) return existing;
   }
   if (csrfBootstrap) return csrfBootstrap;
@@ -69,17 +66,17 @@ async function ensureCsrfToken(force = false): Promise<string | null> {
   csrfBootstrap = (async () => {
     try {
       const response = await fetch(`${getBaseUrl()}/auth/csrf`, {
-        method: "GET",
-        credentials: "include",
-        cache: "no-store",
+        method: 'GET',
+        credentials: 'include',
+        cache: 'no-store',
       });
-      if (!response.ok) return getCookieValue("csrf-token");
+      if (!response.ok) return getCookieValue('csrf-token');
       const data = (await response.json().catch(() => null)) as {
         csrf_token?: string;
       } | null;
-      return data?.csrf_token ?? getCookieValue("csrf-token");
+      return data?.csrf_token ?? getCookieValue('csrf-token');
     } catch {
-      return getCookieValue("csrf-token");
+      return getCookieValue('csrf-token');
     } finally {
       csrfBootstrap = null;
     }
@@ -95,23 +92,23 @@ const buildHeaders = async (
   const headers = new Headers(additionalHeaders);
   const academyId = resolveAcademyId();
   if (academyId) {
-    headers.set("X-Academy-ID", academyId);
+    headers.set('X-Academy-ID', academyId);
   }
 
   const academySlug = getAcademySlug();
   if (academySlug) {
-    headers.set("X-Academy-Slug", academySlug);
+    headers.set('X-Academy-Slug', academySlug);
   }
 
   if (options?.mutate) {
     const csrfToken = await ensureCsrfToken();
     if (csrfToken) {
-      headers.set("X-CSRF-Token", csrfToken);
+      headers.set('X-CSRF-Token', csrfToken);
     }
   } else {
-    const csrfToken = getCookieValue("csrf-token");
+    const csrfToken = getCookieValue('csrf-token');
     if (csrfToken) {
-      headers.set("X-CSRF-Token", csrfToken);
+      headers.set('X-CSRF-Token', csrfToken);
     }
   }
 
@@ -134,22 +131,22 @@ async function refreshToken(): Promise<boolean> {
   refreshPromise = (async () => {
     try {
       const response = await fetch(`${getBaseUrl()}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (response.ok) {
-        console.log("[Auth] Token refreshed successfully");
+        console.log('[Auth] Token refreshed successfully');
         return true;
       }
 
-      console.warn("[Auth] Token refresh failed:", response.status);
+      console.warn('[Auth] Token refresh failed:', response.status);
       return false;
     } catch (error) {
-      console.error("[Auth] Token refresh error:", error);
+      console.error('[Auth] Token refresh error:', error);
       return false;
     } finally {
       isRefreshing = false;
@@ -164,16 +161,16 @@ async function refreshToken(): Promise<boolean> {
  * Session is gone — snackbar with Go to login, then soft redirect.
  */
 function redirectToLogin(): void {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   const currentPath = window.location.pathname + window.location.search;
-  if (currentPath.includes("/auth/login") || currentPath.includes("/login")) {
+  if (currentPath.includes('/auth/login') || currentPath.includes('/login')) {
     return;
   }
   notifyLoginRequiredAndRedirect();
 }
 
-export const LEGAL_CONSENT_REQUIRED_CODE = "LEGAL_CONSENT_REQUIRED";
-export const LEGAL_CONSENT_REQUIRED_EVENT = "mentoma:legal-consent-required";
+export const LEGAL_CONSENT_REQUIRED_CODE = 'LEGAL_CONSENT_REQUIRED';
+export const LEGAL_CONSENT_REQUIRED_EVENT = 'mentoma:legal-consent-required';
 
 async function handleResponse<T>(
   response: Response,
@@ -181,31 +178,31 @@ async function handleResponse<T>(
   skipRefresh?: boolean,
   retriedCsrf = false,
 ): Promise<T> {
-  const contentType = response.headers.get("Content-Type") ?? "";
-  const isJson = contentType.includes("application/json");
+  const contentType = response.headers.get('Content-Type') ?? '';
+  const isJson = contentType.includes('application/json');
 
   // Check if response is not in 2xx range
   if (!response.ok) {
-    let errorMessage = response.statusText || "Request failed";
+    let errorMessage = response.statusText || 'Request failed';
     let errorCode: string | undefined;
 
     if (isJson) {
       try {
         const parsed = (await response.json()) as unknown;
-        if (typeof parsed === "object" && parsed !== null) {
+        if (typeof parsed === 'object' && parsed !== null) {
           // The stable code is what callers branch on (e.g. CAPTCHA_REQUIRED);
           // the message is already translated and is only for display.
-          if ("code" in parsed && typeof parsed.code === "string") {
+          if ('code' in parsed && typeof parsed.code === 'string') {
             errorCode = parsed.code;
           }
           // Try to extract error message from various possible fields
-          if ("message" in parsed && typeof parsed.message === "string") {
+          if ('message' in parsed && typeof parsed.message === 'string') {
             errorMessage = parsed.message;
-          } else if ("error" in parsed && typeof parsed.error === "string") {
+          } else if ('error' in parsed && typeof parsed.error === 'string') {
             errorMessage = parsed.error;
           } else if (
-            "error" in parsed &&
-            typeof parsed.error === "object" &&
+            'error' in parsed &&
+            typeof parsed.error === 'object' &&
             parsed.error !== null
           ) {
             const errorObj = parsed.error as { message?: string };
@@ -230,7 +227,7 @@ async function handleResponse<T>(
 
     // Handle 401 - attempt token refresh
     if (response.status === 401 && !skipRefresh && retryFn) {
-      console.log("[Auth] Access token expired, attempting refresh...");
+      console.log('[Auth] Access token expired, attempting refresh...');
       const refreshSuccess = await refreshToken();
 
       if (refreshSuccess) {
@@ -257,15 +254,12 @@ async function handleResponse<T>(
     // A new terms/privacy version 403s every authenticated call. Announce it once
     // so the consent gate can open, instead of letting the whole account area
     // fail with an unexplained error.
-    if (
-      errorCode === LEGAL_CONSENT_REQUIRED_CODE &&
-      typeof window !== "undefined"
-    ) {
+    if (errorCode === LEGAL_CONSENT_REQUIRED_CODE && typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent(LEGAL_CONSENT_REQUIRED_EVENT));
     }
 
     // Fresh tab / rotated cookie — mint CSRF once and retry without toasting.
-    if (errorCode === "CSRF_REQUIRED" && retryFn && !retriedCsrf) {
+    if (errorCode === 'CSRF_REQUIRED' && retryFn && !retriedCsrf) {
       await ensureCsrfToken(true);
       return retryFn();
     }
@@ -292,20 +286,20 @@ async function handleResponse<T>(
  * not trigger a token refresh or a redirect; the error has to reach the form.
  */
 const PRE_SESSION_AUTH_PATHS = [
-  "/auth/public/login",
-  "/auth/staff/login",
-  "/auth/admin/login",
-  "/auth/public/identify",
-  "/auth/register",
-  "/auth/quick-signup",
-  "/auth/refresh",
-  "/auth/logout",
-  "/auth/login-by-phone-otp",
-  "/auth/login-by-email-otp",
-  "/auth/confirm-phone",
-  "/auth/set-new-password",
-  "/auth/forget-password",
-  "/auth/otp/",
+  '/auth/public/login',
+  '/auth/staff/login',
+  '/auth/admin/login',
+  '/auth/public/identify',
+  '/auth/register',
+  '/auth/quick-signup',
+  '/auth/refresh',
+  '/auth/logout',
+  '/auth/login-by-phone-otp',
+  '/auth/login-by-email-otp',
+  '/auth/confirm-phone',
+  '/auth/set-new-password',
+  '/auth/forget-password',
+  '/auth/otp/',
 ] as const;
 
 const isPreSessionAuthPath = (path: string): boolean =>
@@ -316,21 +310,18 @@ export const postJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions,
 ): Promise<T> => {
-  const makeRequest = async (
-    skipRefresh = false,
-    retriedCsrf = false,
-  ): Promise<T> => {
+  const makeRequest = async (skipRefresh = false, retriedCsrf = false): Promise<T> => {
     const headers = await buildHeaders(
       {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       { mutate: true },
     );
 
     const response = await apiFetch(path, {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       headers,
       body: JSON.stringify(body),
       signal: options?.signal,
@@ -354,17 +345,14 @@ export const postJson = async <T>(
  * form, landing quick-signup). Skips X-Academy-ID — panel-root clears the
  * academy cookie and signup must not depend on a fake default academy id.
  */
-export const getPublicJson = async <T>(
-  path: string,
-  options?: RequestOptions,
-): Promise<T> => {
+export const getPublicJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
   const makeRequest = async (): Promise<T> => {
     const response = await apiFetch(path, {
-      method: "GET",
-      credentials: "include",
-      headers: { Accept: "application/json" },
+      method: 'GET',
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
       signal: options?.signal,
-      cache: "no-store",
+      cache: 'no-store',
     });
     return handleResponse<T>(response, () => makeRequest(), true);
   };
@@ -379,55 +367,39 @@ export const postPublicJson = async <T>(
 ): Promise<T> => {
   const makeRequest = async (retriedCsrf = false): Promise<T> => {
     const headers = new Headers({
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
     });
     const csrfToken = await ensureCsrfToken();
-    if (csrfToken) headers.set("X-CSRF-Token", csrfToken);
+    if (csrfToken) headers.set('X-CSRF-Token', csrfToken);
 
     const response = await apiFetch(path, {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       headers,
       body: JSON.stringify(body),
       signal: options?.signal,
     });
 
-    return handleResponse<T>(
-      response,
-      () => makeRequest(true),
-      true,
-      retriedCsrf,
-    );
+    return handleResponse<T>(response, () => makeRequest(true), true, retriedCsrf);
   };
 
   return makeRequest();
 };
 
-export const getJson = async <T>(
-  path: string,
-  options?: RequestOptions,
-): Promise<T> => {
-  const makeRequest = async (
-    skipRefresh = false,
-    retriedCsrf = false,
-  ): Promise<T> => {
+export const getJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
+  const makeRequest = async (skipRefresh = false, retriedCsrf = false): Promise<T> => {
     const headers = await buildHeaders({
-      Accept: "application/json",
+      Accept: 'application/json',
     });
 
     const response = await apiFetch(path, {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
       headers,
       signal: options?.signal,
     });
-    return handleResponse<T>(
-      response,
-      () => makeRequest(true, true),
-      skipRefresh,
-      retriedCsrf,
-    );
+    return handleResponse<T>(response, () => makeRequest(true, true), skipRefresh, retriedCsrf);
   };
 
   return makeRequest(options?.skipRefresh);
@@ -438,31 +410,23 @@ const putJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions,
 ): Promise<T> => {
-  const makeRequest = async (
-    skipRefresh = false,
-    retriedCsrf = false,
-  ): Promise<T> => {
+  const makeRequest = async (skipRefresh = false, retriedCsrf = false): Promise<T> => {
     const headers = await buildHeaders(
       {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       { mutate: true },
     );
 
     const response = await apiFetch(path, {
-      method: "PUT",
-      credentials: "include",
+      method: 'PUT',
+      credentials: 'include',
       headers,
       body: JSON.stringify(body),
       signal: options?.signal,
     });
-    return handleResponse<T>(
-      response,
-      () => makeRequest(true, true),
-      skipRefresh,
-      retriedCsrf,
-    );
+    return handleResponse<T>(response, () => makeRequest(true, true), skipRefresh, retriedCsrf);
   };
 
   return makeRequest(options?.skipRefresh);
@@ -473,63 +437,44 @@ export const patchJson = async <T>(
   body: Record<string, unknown>,
   options?: RequestOptions,
 ): Promise<T> => {
-  const makeRequest = async (
-    skipRefresh = false,
-    retriedCsrf = false,
-  ): Promise<T> => {
+  const makeRequest = async (skipRefresh = false, retriedCsrf = false): Promise<T> => {
     const headers = await buildHeaders(
       {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       { mutate: true },
     );
 
     const response = await apiFetch(path, {
-      method: "PATCH",
-      credentials: "include",
+      method: 'PATCH',
+      credentials: 'include',
       headers,
       body: JSON.stringify(body),
       signal: options?.signal,
     });
-    return handleResponse<T>(
-      response,
-      () => makeRequest(true, true),
-      skipRefresh,
-      retriedCsrf,
-    );
+    return handleResponse<T>(response, () => makeRequest(true, true), skipRefresh, retriedCsrf);
   };
 
   return makeRequest(options?.skipRefresh);
 };
 
-const deleteJson = async <T>(
-  path: string,
-  options?: RequestOptions,
-): Promise<T> => {
-  const makeRequest = async (
-    skipRefresh = false,
-    retriedCsrf = false,
-  ): Promise<T> => {
+const deleteJson = async <T>(path: string, options?: RequestOptions): Promise<T> => {
+  const makeRequest = async (skipRefresh = false, retriedCsrf = false): Promise<T> => {
     const headers = await buildHeaders(
       {
-        Accept: "application/json",
+        Accept: 'application/json',
       },
       { mutate: true },
     );
 
     const response = await apiFetch(path, {
-      method: "DELETE",
-      credentials: "include",
+      method: 'DELETE',
+      credentials: 'include',
       headers,
       signal: options?.signal,
     });
-    return handleResponse<T>(
-      response,
-      () => makeRequest(true, true),
-      skipRefresh,
-      retriedCsrf,
-    );
+    return handleResponse<T>(response, () => makeRequest(true, true), skipRefresh, retriedCsrf);
   };
 
   return makeRequest(options?.skipRefresh);
@@ -542,12 +487,9 @@ export type LoginPayload = {
   role?: string;
 };
 
-export const login = async (
-  payload: LoginPayload,
-  options?: RequestOptions,
-) => {
+export const login = async (payload: LoginPayload, options?: RequestOptions) => {
   return postJson<AuthResponse>(
-    "/auth/public/login",
+    '/auth/public/login',
     {
       ...payload,
       academy_id: payload.academy_id ?? getAcademyId(),
@@ -557,13 +499,13 @@ export const login = async (
 };
 
 export const isCaptchaRequiredError = (error: unknown): boolean =>
-  typeof error === "object" &&
+  typeof error === 'object' &&
   error !== null &&
-  (error as { code?: string }).code === "CAPTCHA_REQUIRED";
+  (error as { code?: string }).code === 'CAPTCHA_REQUIRED';
 
 export type AccountIdentity = {
   exists: boolean;
-  channel: "phone" | "email";
+  channel: 'phone' | 'email';
   can_use_password: boolean;
   can_use_otp: boolean;
   captcha_required: boolean;
@@ -584,7 +526,7 @@ export const identifyAccount = async (
   options?: RequestOptions,
 ) => {
   return postJson<AccountIdentity>(
-    "/auth/public/identify",
+    '/auth/public/identify',
     {
       identifier,
       academy_id: getAcademyId(),
@@ -608,14 +550,11 @@ export type RegisterPayload = {
   location?: string;
 };
 
-export const register = async (
-  payload: RegisterPayload,
-  options?: RequestOptions,
-) => {
+export const register = async (payload: RegisterPayload, options?: RequestOptions) => {
   return postJson<AuthResponse>(
-    "/auth/register",
+    '/auth/register',
     {
-      role: "USER",
+      role: 'USER',
       academy_id: resolveAcademyId() ?? undefined,
       ...payload,
     },
@@ -624,14 +563,11 @@ export const register = async (
 };
 
 export const logout = async (options?: RequestOptions) => {
-  return postJson<AuthResponse>("/auth/logout", {}, options);
+  return postJson<AuthResponse>('/auth/logout', {}, options);
 };
 
 export const me = (options?: RequestOptions) => {
-  return getJson<{ id?: string; status?: string; data?: unknown }>(
-    "/auth/me",
-    options,
-  );
+  return getJson<{ id?: string; status?: string; data?: unknown }>('/auth/me', options);
 };
 
 export type QuickSignupPayload = {
@@ -646,15 +582,8 @@ export type QuickSignupPayload = {
  * (existing → login; new → register). No password — the OTP just verified IS
  * the credential. Then `quickStartAcademy` creates the academy.
  */
-export const quickSignup = (
-  payload: QuickSignupPayload,
-  options?: RequestOptions,
-) => {
-  return postPublicJson<AuthResponse>(
-    "/auth/quick-signup",
-    { ...payload },
-    options,
-  );
+export const quickSignup = (payload: QuickSignupPayload, options?: RequestOptions) => {
+  return postPublicJson<AuthResponse>('/auth/quick-signup', { ...payload }, options);
 };
 
 export type QuickStartResult = {
@@ -668,16 +597,12 @@ export const quickStartAcademy = (
   payload: { name: string; private_domain: string },
   options?: RequestOptions,
 ) => {
-  return postJson<QuickStartResult>(
-    "/academies/quick-start",
-    { ...payload },
-    options,
-  );
+  return postJson<QuickStartResult>('/academies/quick-start', { ...payload }, options);
 };
 
 /** Mint a 60s code so the panel origin can open the same session. */
 export const createPanelHandoff = (options?: RequestOptions) => {
-  return postJson<{ code?: string }>("/auth/panel-handoff", {}, options);
+  return postJson<{ code?: string }>('/auth/panel-handoff', {}, options);
 };
 
 export const checkAcademySlug = (slug: string, options?: RequestOptions) => {
@@ -702,25 +627,21 @@ export type LegalDocumentSummary = {
 export const getLegalDocuments = async (
   options?: RequestOptions,
 ): Promise<LegalDocumentSummary[]> => {
-  const response = await apiFetch("/legal/documents", {
-    method: "GET",
-    credentials: "include",
-    headers: { Accept: "application/json" },
+  const response = await apiFetch('/legal/documents', {
+    method: 'GET',
+    credentials: 'include',
+    headers: { Accept: 'application/json' },
     signal: options?.signal,
-    cache: "no-store",
+    cache: 'no-store',
   });
   if (!response.ok) {
-    throw Object.assign(new Error(response.statusText || "Request failed"), {
+    throw Object.assign(new Error(response.statusText || 'Request failed'), {
       status: response.status,
     });
   }
   const raw = (await response.json()) as unknown;
   if (Array.isArray(raw)) return raw as LegalDocumentSummary[];
-  if (
-    raw &&
-    typeof raw === "object" &&
-    Array.isArray((raw as { data?: unknown }).data)
-  ) {
+  if (raw && typeof raw === 'object' && Array.isArray((raw as { data?: unknown }).data)) {
     return (raw as { data: LegalDocumentSummary[] }).data;
   }
   return [];
@@ -751,19 +672,16 @@ export type LegalDocumentDiff = {
 
 export const getLegalAcceptanceStatus = (options?: RequestOptions) =>
   getJson<{ up_to_date: boolean; pending: LegalPendingDocument[] }>(
-    "/legal/acceptances/status",
+    '/legal/acceptances/status',
     options,
   );
 
 export const getLegalAcceptanceDiff = (options?: RequestOptions) =>
-  getJson<LegalDocumentDiff[]>("/legal/acceptances/diff", options);
+  getJson<LegalDocumentDiff[]>('/legal/acceptances/diff', options);
 
-export const acceptPlatformLegalDocuments = (
-  locale?: string,
-  options?: RequestOptions,
-) =>
+export const acceptPlatformLegalDocuments = (locale?: string, options?: RequestOptions) =>
   postJson<{ accepted: string[] }>(
-    "/legal/acceptances/platform",
+    '/legal/acceptances/platform',
     locale ? { locale } : {},
     options,
   );
@@ -784,8 +702,8 @@ export const listNotifications = (
   options?: RequestOptions,
 ) => {
   const query = new URLSearchParams();
-  query.set("page", String(params?.page ?? 1));
-  query.set("limit", String(params?.limit ?? 30));
+  query.set('page', String(params?.page ?? 1));
+  query.set('limit', String(params?.limit ?? 30));
   return getJson<{
     status: string;
     data: { notifications: NotificationRow[]; pagination: { total: number } };
@@ -793,21 +711,14 @@ export const listNotifications = (
 };
 
 export const getUnreadNotificationCount = (options?: RequestOptions) =>
-  getJson<{ status: string; data: { count: number } }>(
-    "/notifications/unread-count",
-    options,
-  );
+  getJson<{ status: string; data: { count: number } }>('/notifications/unread-count', options);
 
 export const markNotificationRead = (id: string, options?: RequestOptions) =>
-  patchJson<{ status: string; data: { id: string } }>(
-    `/notifications/${id}/read`,
-    {},
-    options,
-  );
+  patchJson<{ status: string; data: { id: string } }>(`/notifications/${id}/read`, {}, options);
 
 export const markAllNotificationsRead = (options?: RequestOptions) =>
   postJson<{ status: string; data: { updated_count: number } }>(
-    "/notifications/read-all",
+    '/notifications/read-all',
     {},
     options,
   );
@@ -821,7 +732,7 @@ export const requestRefund = (
   options?: RequestOptions,
 ) => {
   return postJson<{ status: string; message: string; data: { id: string } }>(
-    "/refunds/requests",
+    '/refunds/requests',
     payload,
     options,
   );
@@ -835,7 +746,7 @@ export const getMyLegalAcceptances = (options?: RequestOptions) =>
       accepted_at: string;
       locale: string;
     }>
-  >("/legal/acceptances/me", options);
+  >('/legal/acceptances/me', options);
 
 export type SendOtpPayload = {
   email?: string;
@@ -867,7 +778,7 @@ export const validatePhoneAndEmail = (
     phone_number: string;
     email: string;
   }>(
-    "/auth/otp/validate-phone-email",
+    '/auth/otp/validate-phone-email',
     {
       ...(phone_number ? { phone_number } : {}),
       ...(email ? { email } : {}),
@@ -876,13 +787,9 @@ export const validatePhoneAndEmail = (
   );
 };
 
-export const sendEmailOtp = (
-  email: string,
-  type: string,
-  options?: RequestOptions,
-) => {
+export const sendEmailOtp = (email: string, type: string, options?: RequestOptions) => {
   return postJson<{ message: string; status: string }>(
-    "/auth/otp/send-email",
+    '/auth/otp/send-email',
     {
       email,
       type,
@@ -891,13 +798,9 @@ export const sendEmailOtp = (
   );
 };
 
-export const sendPhoneOtp = (
-  phone_number: string,
-  type: string,
-  options?: RequestOptions,
-) => {
+export const sendPhoneOtp = (phone_number: string, type: string, options?: RequestOptions) => {
   return postPublicJson<{ message: string; status: string }>(
-    "/auth/otp/send-phone",
+    '/auth/otp/send-phone',
     {
       phone_number,
       type,
@@ -907,13 +810,9 @@ export const sendPhoneOtp = (
   );
 };
 
-export const loginByPhoneOtp = (
-  phone_number: string,
-  otp: string,
-  options?: RequestOptions,
-) => {
+export const loginByPhoneOtp = (phone_number: string, otp: string, options?: RequestOptions) => {
   return postJson<AuthResponse>(
-    "/auth/login-by-phone-otp",
+    '/auth/login-by-phone-otp',
     {
       phone_number,
       otp,
@@ -923,13 +822,9 @@ export const loginByPhoneOtp = (
   );
 };
 
-export const loginByEmailOtp = (
-  email: string,
-  otp: string,
-  options?: RequestOptions,
-) => {
+export const loginByEmailOtp = (email: string, otp: string, options?: RequestOptions) => {
   return postJson<AuthResponse>(
-    "/auth/login-by-email-otp",
+    '/auth/login-by-email-otp',
     {
       email,
       otp,
@@ -946,7 +841,7 @@ export const verifyEmailOtp = (
   options?: RequestOptions,
 ) => {
   return postJson<{ message: string; status: string; success?: boolean }>(
-    "/auth/otp/verify-email",
+    '/auth/otp/verify-email',
     {
       email,
       otp,
@@ -963,7 +858,7 @@ export const verifyPhoneOtp = (
   options?: RequestOptions,
 ) => {
   return postPublicJson<{ message: string; status: string; success?: boolean }>(
-    "/auth/otp/verify-phone",
+    '/auth/otp/verify-phone',
     {
       phone_number,
       otp,
@@ -973,12 +868,9 @@ export const verifyPhoneOtp = (
   );
 };
 
-export const forgetPassword = (
-  payload: ForgetPasswordPayload,
-  options?: RequestOptions,
-) => {
+export const forgetPassword = (payload: ForgetPasswordPayload, options?: RequestOptions) => {
   return postJson<{ message: string; status: string }>(
-    "/auth/forget-password",
+    '/auth/forget-password',
     {
       ...payload,
       academy_id: payload.academy_id ?? resolveAcademyId() ?? undefined,
@@ -997,7 +889,7 @@ export const changePassword = (
   options?: RequestOptions,
 ) => {
   return postJson<{ message: string; status: string; success?: boolean }>(
-    "/auth/change-password",
+    '/auth/change-password',
     payload,
     options,
   );
@@ -1031,16 +923,13 @@ export const uploadImage = async (
   options?: RequestOptions,
 ): Promise<{ id: string; url: string; publicUrl: string | null }> => {
   const body = new FormData();
-  body.append("imagefile", file);
-  body.append("alt", alt);
+  body.append('imagefile', file);
+  body.append('alt', alt);
 
-  const response = await apiFetch("/images/upload", {
-    method: "POST",
-    credentials: "include",
-    headers: await buildHeaders(
-      { Accept: "application/json" },
-      { mutate: true },
-    ),
+  const response = await apiFetch('/images/upload', {
+    method: 'POST',
+    credentials: 'include',
+    headers: await buildHeaders({ Accept: 'application/json' }, { mutate: true }),
     body,
     signal: options?.signal,
   });
@@ -1064,7 +953,7 @@ export const updateStore = async (
       name: string;
       description?: string;
     };
-  }>("/academies/current", data, options);
+  }>('/academies/current', data, options);
   return response.data;
 };
 
@@ -1090,15 +979,12 @@ export type LessonLiveSession = {
   updated_at: string;
 };
 
-export const getLesson = async (
-  lessonId: string | number,
-  options?: RequestOptions,
-) => {
+export const getLesson = async (lessonId: string | number, options?: RequestOptions) => {
   const raw = await getJson<{
     status?: string;
     data?: Record<string, unknown> | null;
   }>(`/lessons/${lessonId}`, options);
-  if (raw && typeof raw === "object" && raw.status === "ok" && raw.data) {
+  if (raw && typeof raw === 'object' && raw.status === 'ok' && raw.data) {
     return raw.data;
   }
   return null;
@@ -1113,7 +999,7 @@ export const getLessonLiveSession = async (
     data?: LessonLiveSession | null;
     message?: string;
   }>(`/lessons/${lessonId}/live-session`, options);
-  if (raw && typeof raw === "object" && raw.status === "ok" && raw.data) {
+  if (raw && typeof raw === 'object' && raw.status === 'ok' && raw.data) {
     return raw.data;
   }
   return null;
@@ -1145,10 +1031,7 @@ export interface CourseQnAList {
   can_moderate: boolean;
 }
 
-export const getCourseQnAs = async (
-  courseId: string,
-  options?: RequestOptions,
-) => {
+export const getCourseQnAs = async (courseId: string, options?: RequestOptions) => {
   const response = await getJson<{
     message: string;
     status: string;
@@ -1184,11 +1067,7 @@ export const approveCourseQnA = async (
     message: string;
     status: string;
     data: CourseQnA;
-  }>(
-    `/courses/${courseId}/qna/${qnaId}/approve`,
-    { is_approved: isApproved },
-    options,
-  );
+  }>(`/courses/${courseId}/qna/${qnaId}/approve`, { is_approved: isApproved }, options);
   return response.data;
 };
 
@@ -1233,10 +1112,7 @@ export interface CourseReviewsResponse {
   };
 }
 
-export const getCourseReviews = async (
-  courseId: string,
-  options?: RequestOptions,
-) => {
+export const getCourseReviews = async (courseId: string, options?: RequestOptions) => {
   const response = await getJson<{
     message: string;
     status: string;
@@ -1278,17 +1154,14 @@ export const getActiveSessions = async (options?: RequestOptions) => {
   const response = await getJson<{
     success: boolean;
     sessions: ActiveSession[];
-  }>("/auth/sessions", options);
+  }>('/auth/sessions', options);
   return response.sessions ?? [];
 };
 
 /**
  * Revoke a specific session by ID
  */
-export const revokeSession = async (
-  sessionId: string,
-  options?: RequestOptions,
-) => {
+export const revokeSession = async (sessionId: string, options?: RequestOptions) => {
   return deleteJson<{
     success: boolean;
     message: string;
@@ -1302,15 +1175,15 @@ export const logoutAllDevices = async (options?: RequestOptions) => {
   return postJson<{
     message: string;
     revokedCount: number;
-  }>("/auth/logout-all", {}, options);
+  }>('/auth/logout-all', {}, options);
 };
 
 // =====================================================================
 // Quiz, Assessment & Discussion (checklist 5.19)
 // =====================================================================
 
-export type QuizQuestionType = "MULTIPLE_CHOICE" | "TRUE_FALSE" | "SHORT_TEXT";
-export type QuizAttemptStatus = "IN_PROGRESS" | "PENDING_REVIEW" | "GRADED";
+export type QuizQuestionType = 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'SHORT_TEXT';
+export type QuizAttemptStatus = 'IN_PROGRESS' | 'PENDING_REVIEW' | 'GRADED';
 
 export interface QuizOption {
   id: string;
@@ -1383,24 +1256,11 @@ export interface DiscussionMessage {
 
 type Envelope<T> = { message: string; status: string; data: T };
 
-export const getLessonQuiz = async (
-  lessonId: string,
-  options?: RequestOptions,
-) =>
-  (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options))
-    .data;
+export const getLessonQuiz = async (lessonId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options)).data;
 
-export const startQuizAttempt = async (
-  quizId: string,
-  options?: RequestOptions,
-) =>
-  (
-    await postJson<Envelope<QuizAttempt>>(
-      `/quizzes/${quizId}/attempt`,
-      {},
-      options,
-    )
-  ).data;
+export const startQuizAttempt = async (quizId: string, options?: RequestOptions) =>
+  (await postJson<Envelope<QuizAttempt>>(`/quizzes/${quizId}/attempt`, {}, options)).data;
 
 export const saveQuizAnswers = async (
   attemptId: string,
@@ -1415,29 +1275,13 @@ export const saveQuizAnswers = async (
     )
   ).data;
 
-export const submitQuizAttempt = async (
-  attemptId: string,
-  options?: RequestOptions,
-) =>
-  (
-    await postJson<Envelope<QuizAttempt>>(
-      `/quiz-attempts/${attemptId}/submit`,
-      {},
-      options,
-    )
-  ).data;
+export const submitQuizAttempt = async (attemptId: string, options?: RequestOptions) =>
+  (await postJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}/submit`, {}, options)).data;
 
-export const getQuizAttempt = async (
-  attemptId: string,
-  options?: RequestOptions,
-) =>
-  (await getJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}`, options))
-    .data;
+export const getQuizAttempt = async (attemptId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<QuizAttempt>>(`/quiz-attempts/${attemptId}`, options)).data;
 
-export const getDiscussionThread = async (
-  threadId: string,
-  options?: RequestOptions,
-) =>
+export const getDiscussionThread = async (threadId: string, options?: RequestOptions) =>
   (
     await getJson<Envelope<{ thread: unknown; messages: DiscussionMessage[] }>>(
       `/discussions/threads/${threadId}`,
@@ -1458,20 +1302,15 @@ export type DiscussionParent = {
  * The thread for a parent, whether or not it exists yet. A chat box has to
  * render before anyone has written in it, and threads are created lazily.
  */
-export const findDiscussionThread = async (
-  parent: DiscussionParent,
-  options?: RequestOptions,
-) => {
+export const findDiscussionThread = async (parent: DiscussionParent, options?: RequestOptions) => {
   const query = new URLSearchParams(
-    Object.entries(parent).filter(([, value]) => Boolean(value)) as [
-      string,
-      string,
-    ][],
+    Object.entries(parent).filter(([, value]) => Boolean(value)) as [string, string][],
   );
   return (
-    await getJson<
-      Envelope<{ thread: { id: string } | null; messages: DiscussionMessage[] }>
-    >(`/discussions/thread?${query.toString()}`, options)
+    await getJson<Envelope<{ thread: { id: string } | null; messages: DiscussionMessage[] }>>(
+      `/discussions/thread?${query.toString()}`,
+      options,
+    )
   ).data;
 };
 
@@ -1490,48 +1329,28 @@ export const postDiscussionMessage = async (
   ).data;
 
 /** A file for a chat message; the id is then sent with the message. */
-export const uploadDiscussionAttachment = async (
-  file: File,
-  options?: RequestOptions,
-) => {
+export const uploadDiscussionAttachment = async (file: File, options?: RequestOptions) => {
   const form = new FormData();
-  form.append("file", file);
+  form.append('file', file);
   // No Content-Type: the browser sets the multipart boundary itself.
   const headers = await buildHeaders({}, { mutate: true });
-  const response = await apiFetch("/discussions/attachments", {
-    method: "POST",
-    credentials: "include",
+  const response = await apiFetch('/discussions/attachments', {
+    method: 'POST',
+    credentials: 'include',
     headers,
     body: form,
     signal: options?.signal,
   });
-  return (
-    await handleResponse<Envelope<DiscussionAttachment>>(
-      response,
-      undefined,
-      true,
-    )
-  ).data;
+  return (await handleResponse<Envelope<DiscussionAttachment>>(response, undefined, true)).data;
 };
 
 // ----- Support tickets -----
 
 export type TicketStatus =
-  | "OPEN"
-  | "IN_PROGRESS"
-  | "WAITING_ON_USER"
-  | "RESOLVED"
-  | "CLOSED"
-  | "REOPENED";
-export type TicketPriority = "LOW" | "NORMAL" | "HIGH" | "URGENT";
+  'OPEN' | 'IN_PROGRESS' | 'WAITING_ON_USER' | 'RESOLVED' | 'CLOSED' | 'REOPENED';
+export type TicketPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
 export type TicketCategory =
-  | "BILLING"
-  | "PAYMENT"
-  | "COURSE_ACCESS"
-  | "LIVE_CLASS"
-  | "TECHNICAL"
-  | "CONTENT"
-  | "OTHER";
+  'BILLING' | 'PAYMENT' | 'COURSE_ACCESS' | 'LIVE_CLASS' | 'TECHNICAL' | 'CONTENT' | 'OTHER';
 
 export interface TicketPerson {
   id: string;
@@ -1563,7 +1382,7 @@ export interface TicketAttachmentView {
 
 export interface TicketMessageView {
   id: string;
-  kind: "USER_MESSAGE" | "INTERNAL_NOTE" | "SYSTEM_EVENT";
+  kind: 'USER_MESSAGE' | 'INTERNAL_NOTE' | 'SYSTEM_EVENT';
   body: string;
   author_id: string;
   author_role: string;
@@ -1590,7 +1409,7 @@ export interface TicketDetail {
   status: TicketStatus;
   priority: TicketPriority;
   category: TicketCategory;
-  scope: "ACADEMY" | "PLATFORM";
+  scope: 'ACADEMY' | 'PLATFORM';
   created_at: string;
   CreatedBy: TicketPerson | null;
   AssignedTo: TicketPerson | null;
@@ -1619,18 +1438,13 @@ export interface CreateTicketPayload {
 }
 
 export const listSupportResponsibles = async (options?: RequestOptions) =>
-  (
-    await getJson<Envelope<TicketResponsible[]>>(
-      `/support/responsibles`,
-      options,
-    )
-  ).data;
+  (await getJson<Envelope<TicketResponsible[]>>(`/support/responsibles`, options)).data;
 
 export const listMySupportTickets = async (
   params?: { status?: TicketStatus },
   options?: RequestOptions,
 ) => {
-  const qs = params?.status ? `?status=${params.status}` : "";
+  const qs = params?.status ? `?status=${params.status}` : '';
   return (
     await getJson<Envelope<{ items: TicketListItem[]; total: number }>>(
       `/support/tickets/mine${qs}`,
@@ -1640,20 +1454,10 @@ export const listMySupportTickets = async (
 };
 
 export const getSupportTicket = async (id: string, options?: RequestOptions) =>
-  (await getJson<Envelope<TicketDetail>>(`/support/tickets/${id}`, options))
-    .data;
+  (await getJson<Envelope<TicketDetail>>(`/support/tickets/${id}`, options)).data;
 
-export const createSupportTicket = async (
-  payload: CreateTicketPayload,
-  options?: RequestOptions,
-) =>
-  (
-    await postJson<Envelope<TicketDetail>>(
-      `/support/tickets`,
-      { ...payload },
-      options,
-    )
-  ).data;
+export const createSupportTicket = async (payload: CreateTicketPayload, options?: RequestOptions) =>
+  (await postJson<Envelope<TicketDetail>>(`/support/tickets`, { ...payload }, options)).data;
 
 export const replySupportTicket = async (
   id: string,
@@ -1694,17 +1498,14 @@ export const rateSupportTicket = async (
     )
   ).data;
 
-export const uploadSupportAttachment = async (
-  file: File,
-  options?: RequestOptions,
-) => {
+export const uploadSupportAttachment = async (file: File, options?: RequestOptions) => {
   const form = new FormData();
-  form.append("file", file);
+  form.append('file', file);
   // No Content-Type: the browser sets the multipart boundary itself.
   const headers = await buildHeaders({}, { mutate: true });
-  const response = await apiFetch("/support/attachments", {
-    method: "POST",
-    credentials: "include",
+  const response = await apiFetch('/support/attachments', {
+    method: 'POST',
+    credentials: 'include',
     headers,
     body: form,
     signal: options?.signal,

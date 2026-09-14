@@ -36,14 +36,17 @@ export function ElektronCategories({ id, config, storeContext }: TemplateSection
               href={templateHref(storeContext, 'courses')}
               className={`${styles.track} flex items-center gap-6 py-7`}
             >
-              <span aria-hidden="true" className={`${styles.trackNo} flex-none text-[15px] font-bold`}>
+              <span
+                aria-hidden="true"
+                className={`${styles.trackNo} flex-none text-[15px] font-bold`}
+              >
                 {String(index + 1).padStart(2, '0')}
               </span>
 
               <div className="min-w-0 flex-1 md:flex md:items-center md:gap-10">
                 <h3
                   {...editableItem('items', index, 'title')}
-                  className={`${styles.trackTitle} text-[21px] font-bold leading-[1.3] md:w-[34%] md:flex-none`}
+                  className={`${styles.trackTitle} text-[21px] leading-[1.3] font-bold md:w-[34%] md:flex-none`}
                 >
                   {item.title}
                 </h3>
@@ -55,7 +58,9 @@ export function ElektronCategories({ id, config, storeContext }: TemplateSection
                 </p>
               </div>
 
-              <span className={`${styles.trackMuted} flex-none text-[13px] font-bold text-(--theme-muted)`}>
+              <span
+                className={`${styles.trackMuted} flex-none text-[13px] font-bold text-(--theme-muted)`}
+              >
                 <span {...editableItem('items', index, 'count')}>{item.count}</span> دوره
               </span>
               <span aria-hidden="true" className="flex-none text-[18px]">

@@ -123,13 +123,27 @@
   place-items: center;
   border-bottom: 2px solid var(--theme-foreground);
 }
-.t1 { background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-accent)); }
-.t2 { background-image: linear-gradient(215deg, var(--theme-accent), var(--theme-secondary)); }
-.t3 { background-image: linear-gradient(90deg, var(--theme-accent), color-mix(in srgb, var(--theme-primary) 60%, var(--theme-accent))); }
-.t4 { background-image: linear-gradient(160deg, var(--theme-secondary), var(--theme-primary)); }
+.t1 {
+  background-image: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+}
+.t2 {
+  background-image: linear-gradient(215deg, var(--theme-accent), var(--theme-secondary));
+}
+.t3 {
+  background-image: linear-gradient(
+    90deg,
+    var(--theme-accent),
+    color-mix(in srgb, var(--theme-primary) 60%, var(--theme-accent))
+  );
+}
+.t4 {
+  background-image: linear-gradient(160deg, var(--theme-secondary), var(--theme-primary));
+}
 
 @media (max-width: 900px) {
-  .spine::before { display: none; }
+  .spine::before {
+    display: none;
+  }
 }
 
 /* Header logo mark: asymmetric squircle with an accent nub. */

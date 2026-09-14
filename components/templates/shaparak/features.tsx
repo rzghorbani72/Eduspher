@@ -27,11 +27,18 @@ export function ShaparakFeatures({ id, config }: TemplateSectionProps) {
         <div className="grid gap-6 md:grid-cols-2" {...editableList('items', items)}>
           {items.map((item, index) => (
             <article key={item.title} className={`${styles.sticker} flex gap-5 p-7`}>
-              <span {...editableItem('items', index, 'icon')} className={styles.iconTile} aria-hidden="true">
+              <span
+                {...editableItem('items', index, 'icon')}
+                className={styles.iconTile}
+                aria-hidden="true"
+              >
                 {item.icon}
               </span>
               <div className="min-w-0">
-                <h3 {...editableItem('items', index, 'title')} className="text-[20px] font-bold leading-[1.35]">
+                <h3
+                  {...editableItem('items', index, 'title')}
+                  className="text-[20px] leading-[1.35] font-bold"
+                >
                   {item.title}
                 </h3>
                 <p

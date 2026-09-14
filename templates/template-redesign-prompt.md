@@ -17,13 +17,13 @@ All five are **personal-brand teacher** designs — one instructor selling their
 teaching — as opposed to the other fourteen, which are institution sites. They ship
 under the gallery category `personal` (برند شخصی).
 
-| Key | Name | Vertical | `AcademyField` | Signature |
-|-----|------|----------|----------------|-----------|
-| `rouzan` | روزن | Fullstack programming teacher | `coding` | Video-first hero in an editor window; near-white page, huge tight type |
-| `daneshvar` | دانشور | University teacher / faculty | `general` | Ruled paper, brass keyline, matted portrait plate, publications table |
-| `peleh` | پله | Konkur & highschool teacher | `exam` | Stair motif, oversized rank numerals as proof, exam countdown |
-| `andisheh` | اندیشه | AI & DevOps mentor | `coding` | Dark terminal stage, deployment-pipeline rail, video-first demo frame |
-| `shaparak` | شاپرک | Programming for children (7–14) | `coding` | Blobs, sticker cards with hard offset shadow, Scratch-style command blocks |
+| Key         | Name   | Vertical                        | `AcademyField` | Signature                                                                  |
+| ----------- | ------ | ------------------------------- | -------------- | -------------------------------------------------------------------------- |
+| `rouzan`    | روزن   | Fullstack programming teacher   | `coding`       | Video-first hero in an editor window; near-white page, huge tight type     |
+| `daneshvar` | دانشور | University teacher / faculty    | `general`      | Ruled paper, brass keyline, matted portrait plate, publications table      |
+| `peleh`     | پله    | Konkur & highschool teacher     | `exam`         | Stair motif, oversized rank numerals as proof, exam countdown              |
+| `andisheh`  | اندیشه | AI & DevOps mentor              | `coding`       | Dark terminal stage, deployment-pipeline rail, video-first demo frame      |
+| `shaparak`  | شاپرک  | Programming for children (7–14) | `coding`       | Blobs, sticker cards with hard offset shadow, Scratch-style command blocks |
 
 `AcademyField` is the classifier bucket in
 `Backend/src/ui-template/templates/template-content.ts` (`ACADEMY_FIELDS =
@@ -32,21 +32,21 @@ academy is seeded with, via `presetCandidates` on each field. **Do not change a
 template's field** — it is what keeps a kids-coding academy off the university design.
 
 Two of them deliberately overlap an institution template on subject, and are separated
-by *who the site is for*, not by topic. Keep that separation visible in the redesign:
+by _who the site is for_, not by topic. Keep that separation visible in the redesign:
 
 - `nokhbeh` (نخبه) is a konkur **academy**; `peleh` is one konkur **teacher**.
 - `parastoo` (پرستو) is a kids **academy**; `shaparak` is one kids-coding **teacher**.
 
 ## Stack
 
-| Layer | What it is |
-|-------|-----------|
-| Framework | Next.js 16 (App Router), React 19, **server components by default** — a template section only becomes `'use client'` if it genuinely needs state |
-| Language | TypeScript, `strict: true`. No `any`, no `as` casts to escape a type |
-| Styling | Tailwind CSS v4 (CSS-first `@theme` in `app/globals.css`, no `tailwind.config.js` colours) **+ one CSS Module per template** for decoration Tailwind can't express |
-| Theming | Runtime CSS custom properties (`--theme-*`) emitted per academy by `lib/theme-apply.ts` |
-| Direction | Persian (`fa`), **RTL**, IRANYekan |
-| Build | lightningcss via Tailwind v4 — it silently drops rules it cannot parse |
+| Layer     | What it is                                                                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework | Next.js 16 (App Router), React 19, **server components by default** — a template section only becomes `'use client'` if it genuinely needs state                   |
+| Language  | TypeScript, `strict: true`. No `any`, no `as` casts to escape a type                                                                                               |
+| Styling   | Tailwind CSS v4 (CSS-first `@theme` in `app/globals.css`, no `tailwind.config.js` colours) **+ one CSS Module per template** for decoration Tailwind can't express |
+| Theming   | Runtime CSS custom properties (`--theme-*`) emitted per academy by `lib/theme-apply.ts`                                                                            |
+| Direction | Persian (`fa`), **RTL**, IRANYekan                                                                                                                                 |
+| Build     | lightningcss via Tailwind v4 — it silently drops rules it cannot parse                                                                                             |
 
 ---
 
@@ -74,11 +74,11 @@ AVOID:    Looking like the other four (see table) or like a generic SaaS landing
 ### 0. What this template is for
 
 A **single teacher's personal site**, not a school's. The visitor is deciding whether
-to trust *this person*. That means: the intro video, the teacher's own voice in the
+to trust _this person_. That means: the intro video, the teacher's own voice in the
 copy, proof of results, and a clear next step. It does **not** mean a faculty grid, a
 campus photo, or an "about our institution" band.
 
-The buyer of the platform is an academy manager, but the audience of *this page* is the
+The buyer of the platform is an academy manager, but the audience of _this page_ is the
 teacher's prospective student (or, for `shaparak`, their parent — write to the parent).
 
 ### 1. Hard constraints — these are not style preferences
@@ -124,8 +124,8 @@ teacher's prospective student (or, for `shaparak`, their parent — write to the
 **Motion**
 
 - Motion is opt-in and decoration-only. Nothing a person reads may move.
-- Two budgets: *ambient* (18–30s loops, a few px or a few percent of opacity — felt, not
-  seen) and *signal* (2–3s, reserved for liveness and scarcity: a class running now, a
+- Two budgets: _ambient_ (18–30s loops, a few px or a few percent of opacity — felt, not
+  seen) and _signal_ (2–3s, reserved for liveness and scarcity: a class running now, a
   nearly-full seat count).
 - Everything must be correct with motion fully disabled (`prefers-reduced-motion`).
 
@@ -230,7 +230,7 @@ From the header comment of `Backend/src/ui-template/templates/template-presets.t
 ```ts
 export interface TemplateSectionProps {
   id?: string;
-  config?: SectionConfig;              // Record<string, unknown>
+  config?: SectionConfig; // Record<string, unknown>
   storeContext?: TemplateStoreContext; // { name, slug, isSubdomain, stats, editMode, … }
 }
 ```
@@ -245,16 +245,16 @@ default: `text(config, 'title', d.title)`, `list<T>(config, 'items', d.items)`,
 - A repeated field: spread `editableList('items', items)` on the container and
   `editableItem('items', index, 'title')` on each cell (`_shared/editable-list.ts`).
 - An optional decoration: wrap it in `<RemovableSlot config flagKey="showStats"
-  editMode={storeContext?.editMode}>` so a manager can hide and restore it.
+editMode={storeContext?.editMode}>` so a manager can hide and restore it.
 - An inline highlighted word: `<EditableAccent config>` — gives it a per-span colour picker.
 
 **Hero media** — pick one, do not hand-roll a frame:
 
-| Need | Use |
-|---|---|
-| Video is the design (`rouzan`, `andisheh`) | `HeroVideoSlot` directly; ship `mediaRatio: '16:9'` on the preset's hero block |
-| Photo by default, video when chosen | `HeroSlideshowSlot` — it swaps in `HeroVideoSlot` automatically when `heroVideoUrl` is set |
-| One photo, possibly as a background | `HeroVisualSlot` (`_shared/hero-media.tsx`) |
+| Need                                       | Use                                                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Video is the design (`rouzan`, `andisheh`) | `HeroVideoSlot` directly; ship `mediaRatio: '16:9'` on the preset's hero block             |
+| Photo by default, video when chosen        | `HeroSlideshowSlot` — it swaps in `HeroVideoSlot` automatically when `heroVideoUrl` is set |
+| One photo, possibly as a background        | `HeroVisualSlot` (`_shared/hero-media.tsx`)                                                |
 
 All three share `resolveBoxStyle` (`_shared/hero-box.ts`), so the manager's ratio and
 height controls work without extra wiring. Video config keys are fixed:

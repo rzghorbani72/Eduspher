@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
-import { Play } from "lucide-react";
+import { useState } from 'react';
+import { Play } from 'lucide-react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { SecureVideoPlayer } from "./secure-video-player";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { SecureVideoPlayer } from './secure-video-player';
 
 interface LazySecureVideoProps {
   videoId: string;
@@ -23,12 +23,7 @@ interface LazySecureVideoProps {
  * videos, where opening a playback session for each on load would spend egress
  * on every anonymous visit for nothing.
  */
-export function LazySecureVideo({
-  videoId,
-  title,
-  poster,
-  className,
-}: LazySecureVideoProps) {
+export function LazySecureVideo({ videoId, title, poster, className }: LazySecureVideoProps) {
   const { t } = useTranslation();
   const [playing, setPlaying] = useState(false);
 
@@ -49,8 +44,8 @@ export function LazySecureVideo({
     <button
       type="button"
       onClick={() => setPlaying(true)}
-      aria-label={`${t("learning.playVideo")}: ${title}`}
-      className={`group relative block w-full overflow-hidden bg-black ${className ?? ""}`}
+      aria-label={`${t('learning.playVideo')}: ${title}`}
+      className={`group relative block w-full overflow-hidden bg-black ${className ?? ''}`}
     >
       {poster ? (
         <img

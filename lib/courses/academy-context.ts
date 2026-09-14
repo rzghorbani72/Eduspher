@@ -1,16 +1,16 @@
-import "server-only";
+import 'server-only';
 
-import { cache } from "react";
+import { cache } from 'react';
 
-import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from "@/lib/api/server";
-import { getAcademyContext } from "@/lib/store-context";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import type { LanguageCode } from "@/lib/i18n/config";
+import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { getAcademyContext } from '@/lib/store-context';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import type { LanguageCode } from '@/lib/i18n/config';
 
 export interface CurrencyConfig {
   currency?: string;
   currency_symbol?: string;
-  currency_position?: "before" | "after";
+  currency_position?: 'before' | 'after';
   country_code?: string;
   language?: string;
 }
@@ -44,10 +44,7 @@ export async function resolveAcademyForRequest(
     academy = await getAcademyBySlug(slug).catch(() => null);
   }
 
-  const language = getAcademyLanguage(
-    academy?.language ?? null,
-    academy?.country_code ?? null,
-  );
+  const language = getAcademyLanguage(academy?.language ?? null, academy?.country_code ?? null);
 
   const currencyConfig: CurrencyConfig | null =
     user?.currentAcademy ??

@@ -1,6 +1,6 @@
-import { env } from "@/lib/env";
+import { env } from '@/lib/env';
 
-const stripPort = (host: string) => host.split(":")[0].toLowerCase();
+const stripPort = (host: string) => host.split(':')[0].toLowerCase();
 
 /**
  * Registrable domain of the current host, e.g. "mentoma.ir" for
@@ -9,11 +9,11 @@ const stripPort = (host: string) => host.split(":")[0].toLowerCase();
  * where there is no admin subdomain to derive.
  */
 function baseDomainFromHost(host: string): string | null {
-  const clean = stripPort(host).replace(/^www\./, "");
-  if (clean === "localhost" || /^\d+\.\d+\.\d+\.\d+$/.test(clean)) return null;
-  const labels = clean.split(".");
+  const clean = stripPort(host).replace(/^www\./, '');
+  if (clean === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(clean)) return null;
+  const labels = clean.split('.');
   if (labels.length < 2) return null;
-  return labels.slice(-2).join(".");
+  return labels.slice(-2).join('.');
 }
 
 /** Admin panel origin for the current host: admin.<base-domain>, or the
@@ -23,10 +23,9 @@ export function adminOriginFromHost(host?: string | null): string {
   return base ? `https://admin.${base}` : env.adminPanelOrigin;
 }
 
-export function getAdminPanelUrl(path = "", host?: string | null): string {
-  const resolvedHost =
-    host ?? (typeof window !== "undefined" ? window.location.host : null);
-  const normalized = path.startsWith("/") ? path : path ? `/${path}` : "";
+export function getAdminPanelUrl(path = '', host?: string | null): string {
+  const resolvedHost = host ?? (typeof window !== 'undefined' ? window.location.host : null);
+  const normalized = path.startsWith('/') ? path : path ? `/${path}` : '';
   return `${adminOriginFromHost(resolvedHost)}${normalized}`;
 }
 
@@ -36,11 +35,10 @@ export function getAdminPanelUrl(path = "", host?: string | null): string {
  * used instead — the same page, reachable in dev.
  */
 export function academySiteUrl(slug: string, host?: string | null): string {
-  const resolvedHost =
-    host ?? (typeof window !== "undefined" ? window.location.host : null);
+  const resolvedHost = host ?? (typeof window !== 'undefined' ? window.location.host : null);
   const base = resolvedHost ? baseDomainFromHost(resolvedHost) : null;
   if (!base) {
-    return `${typeof window !== "undefined" ? window.location.origin : ""}/${slug}`;
+    return `${typeof window !== 'undefined' ? window.location.origin : ''}/${slug}`;
   }
   return `https://${slug}.${base}`;
 }

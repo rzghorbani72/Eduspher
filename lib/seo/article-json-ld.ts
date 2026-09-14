@@ -1,4 +1,4 @@
-import type { ArticleSummary } from "@/lib/api/types";
+import type { ArticleSummary } from '@/lib/api/types';
 
 type ArticleJsonLdInput = {
   article: ArticleSummary;
@@ -14,27 +14,22 @@ export function buildArticleJsonLd({
   imageUrl,
 }: ArticleJsonLdInput): Record<string, unknown> {
   return {
-    "@context": "https://schema.org",
-    "@type": "Article",
+    '@context': 'https://schema.org',
+    '@type': 'Article',
     headline: article.title,
     description:
-      article.meta_description ||
-      article.excerpt ||
-      article.description ||
-      article.title,
+      article.meta_description || article.excerpt || article.description || article.title,
     url: canonicalUrl,
     mainEntityOfPage: canonicalUrl,
     datePublished: article.published_at ?? undefined,
     author: article.author?.display_name
-      ? { "@type": "Person", name: article.author.display_name }
-      : { "@type": "Organization", name: siteName },
+      ? { '@type': 'Person', name: article.author.display_name }
+      : { '@type': 'Organization', name: siteName },
     publisher: {
-      "@type": "Organization",
+      '@type': 'Organization',
       name: siteName,
     },
     ...(imageUrl ? { image: [imageUrl] } : {}),
-    ...(article.category?.name
-      ? { articleSection: article.category.name }
-      : {}),
+    ...(article.category?.name ? { articleSection: article.category.name } : {}),
   };
 }

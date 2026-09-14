@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { ImagePlus, X } from "lucide-react";
-import { useTranslation } from "@/lib/i18n/hooks";
-import { uploadSupportAttachment } from "@/lib/api/client";
+import { useRef, useState } from 'react';
+import { ImagePlus, X } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/hooks';
+import { uploadSupportAttachment } from '@/lib/api/client';
 
 const MAX = 5;
-const ACCEPT = "image/png,image/jpeg,image/webp";
+const ACCEPT = 'image/png,image/jpeg,image/webp';
 
 interface Props {
   imageIds: string[];
@@ -27,10 +27,10 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
 
   const pick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (inputRef.current) inputRef.current.value = "";
+    if (inputRef.current) inputRef.current.value = '';
     if (!file) return;
     if (imageIds.length >= MAX) {
-      setError(t("support.attachmentTooMany"));
+      setError(t('support.attachmentTooMany'));
       return;
     }
     setUploading(true);
@@ -40,7 +40,7 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
       onChange([...imageIds, result.id]);
       setPreviews((p) => [...p, { id: result.id, url: URL.createObjectURL(file) }]);
     } catch {
-      setError(t("support.onlyImages"));
+      setError(t('support.onlyImages'));
     } finally {
       setUploading(false);
     }
@@ -55,14 +55,17 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
         {previews.map((p) => (
-          <div key={p.id} className="relative h-16 w-16 overflow-hidden rounded-lg border border-theme">
+          <div
+            key={p.id}
+            className="border-theme relative h-16 w-16 overflow-hidden rounded-lg border"
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={p.url} alt="" className="h-full w-full object-cover" />
             <button
               type="button"
-              aria-label={t("support.cancel")}
+              aria-label={t('support.cancel')}
               onClick={() => remove(p.id)}
-              className="absolute right-0 top-0 rounded-bl bg-black/60 p-0.5 text-white"
+              className="absolute top-0 right-0 rounded-bl bg-black/60 p-0.5 text-white"
             >
               <X className="h-3 w-3" />
             </button>
@@ -73,14 +76,21 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex h-16 w-16 items-center justify-center rounded-lg border border-dashed border-theme text-muted hover:text-primary disabled:opacity-50"
+            className="border-theme text-muted hover:text-primary flex h-16 w-16 items-center justify-center rounded-lg border border-dashed disabled:opacity-50"
           >
             <ImagePlus className="h-5 w-5" />
           </button>
         )}
-        <input ref={inputRef} type="file" accept={ACCEPT} className="hidden" onChange={pick} aria-label={t("support.addImage")} />
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ACCEPT}
+          className="hidden"
+          onChange={pick}
+          aria-label={t('support.addImage')}
+        />
       </div>
-      <p className="text-xs text-muted">{t("support.onlyImages")}</p>
+      <p className="text-muted text-xs">{t('support.onlyImages')}</p>
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   );

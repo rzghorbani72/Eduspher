@@ -10,11 +10,11 @@ export function ThemeDetector() {
       const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const lightQuery = window.matchMedia('(prefers-color-scheme: light)');
       const htmlElement = document.documentElement;
-      
+
       // Priority: explicit light > explicit dark > default to light
       // This handles cases where browser extensions force dark mode
       let isDark = false;
-      
+
       if (lightQuery.matches) {
         // Explicit light preference - highest priority
         isDark = false;
@@ -25,7 +25,7 @@ export function ThemeDetector() {
         // No preference or ambiguous - default to light
         isDark = false;
       }
-      
+
       if (isDark) {
         htmlElement.classList.add('dark');
       } else {
@@ -39,15 +39,15 @@ export function ThemeDetector() {
     // Listen for system theme changes
     const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const lightQuery = window.matchMedia('(prefers-color-scheme: light)');
-    
+
     const handleChange = () => {
       const htmlElement = document.documentElement;
       const darkMatches = darkQuery.matches;
       const lightMatches = lightQuery.matches;
-      
+
       // Priority: explicit light > explicit dark > default to light
       let isDark = false;
-      
+
       if (lightMatches) {
         isDark = false;
       } else if (darkMatches && !lightMatches) {
@@ -55,7 +55,7 @@ export function ThemeDetector() {
       } else {
         isDark = false;
       }
-      
+
       if (isDark) {
         htmlElement.classList.add('dark');
       } else {
@@ -87,4 +87,3 @@ export function ThemeDetector() {
 
   return null;
 }
-

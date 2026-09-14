@@ -1,24 +1,18 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
-import { useTranslation } from "@/lib/i18n/hooks";
-import { cn, toPersianDigits } from "@/lib/utils";
-import type {
-  CourseContentStats,
-  CurriculumSeasonView,
-} from "@/lib/courses/curriculum";
-import { LessonRow } from "@/components/courses/curriculum/lesson-row";
-import {
-  formatMinutes,
-  formatSeconds,
-} from "@/components/courses/curriculum/format";
-import { CourseTopicList } from "@/components/courses/curriculum/topic-list";
-import { EmptyState } from "@/components/ui/empty-state";
-import { useNow } from "@/lib/hooks/use-now";
-import type { CourseTopic } from "@/lib/api/account-types";
+import { useTranslation } from '@/lib/i18n/hooks';
+import { cn, toPersianDigits } from '@/lib/utils';
+import type { CourseContentStats, CurriculumSeasonView } from '@/lib/courses/curriculum';
+import { LessonRow } from '@/components/courses/curriculum/lesson-row';
+import { formatMinutes, formatSeconds } from '@/components/courses/curriculum/format';
+import { CourseTopicList } from '@/components/courses/curriculum/topic-list';
+import { EmptyState } from '@/components/ui/empty-state';
+import { useNow } from '@/lib/hooks/use-now';
+import type { CourseTopic } from '@/lib/api/account-types';
 
 interface CourseCurriculumProps {
   seasons: CurriculumSeasonView[];
@@ -40,19 +34,17 @@ export function CourseCurriculum({
 }: CourseCurriculumProps) {
   const { t, language } = useTranslation();
   const now = useNow();
-  const [openIds, setOpenIds] = useState<string[]>(() =>
-    seasons.slice(0, 1).map((s) => s.id),
-  );
+  const [openIds, setOpenIds] = useState<string[]>(() => seasons.slice(0, 1).map((s) => s.id));
 
   const summary = useMemo(
     () =>
       [
-        `${toPersianDigits(stats.seasonCount, language)} ${t("courses.sectionsLabel")}`,
-        `${toPersianDigits(stats.lessonCount, language)} ${t("courses.lesson")}`,
+        `${toPersianDigits(stats.seasonCount, language)} ${t('courses.sectionsLabel')}`,
+        `${toPersianDigits(stats.lessonCount, language)} ${t('courses.lesson')}`,
         formatMinutes(stats.totalMinutes, language, t),
       ]
         .filter(Boolean)
-        .join(" · "),
+        .join(' · '),
     [stats, language, t],
   );
 
@@ -63,16 +55,14 @@ export function CourseCurriculum({
   if (seasons.length === 0) {
     return (
       <EmptyState
-        title={t("courses.lessonsComingSoon")}
-        description={t("courses.lessonsComingSoonCheckBack")}
+        title={t('courses.lessonsComingSoon')}
+        description={t('courses.lessonsComingSoonCheckBack')}
       />
     );
   }
 
   const toggle = (id: string) =>
-    setOpenIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    setOpenIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   const allOpen = openIds.length === seasons.length;
 
   return (
@@ -80,22 +70,18 @@ export function CourseCurriculum({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-xl font-black text-(--theme-foreground)">
-            {t("courses.curriculumTitle")}
+            {t('courses.curriculumTitle')}
           </h2>
-          <p className="mt-1 text-[13px] text-(--theme-muted)">
-            {t("courses.curriculumSubtitle")}
-          </p>
+          <p className="mt-1 text-[13px] text-(--theme-muted)">{t('courses.curriculumSubtitle')}</p>
         </div>
         <div className="flex items-center gap-3 pt-1">
-          <span className="cd-price text-sm font-semibold text-(--theme-muted)">
-            {summary}
-          </span>
+          <span className="cd-price text-sm font-semibold text-(--theme-muted)">{summary}</span>
           <button
             type="button"
             onClick={() => setOpenIds(allOpen ? [] : seasons.map((s) => s.id))}
             className="cursor-pointer text-xs font-bold text-(--theme-primary) hover:underline"
           >
-            {allOpen ? t("courses.collapseAll") : t("courses.expandAll")}
+            {allOpen ? t('courses.collapseAll') : t('courses.expandAll')}
           </button>
         </div>
       </div>
@@ -104,17 +90,14 @@ export function CourseCurriculum({
         {seasons.map((season, index) => {
           const isOpen = openIds.includes(season.id);
           const seasonSummary = [
-            `${toPersianDigits(season.lessons.length, language)} ${t("courses.lesson")}`,
+            `${toPersianDigits(season.lessons.length, language)} ${t('courses.lesson')}`,
             formatSeconds(season.totalSeconds, language, t),
           ]
             .filter(Boolean)
-            .join(" · ");
+            .join(' · ');
 
           return (
-            <div
-              key={season.id}
-              className="cd-review-card overflow-hidden rounded-2xl border"
-            >
+            <div key={season.id} className="cd-review-card overflow-hidden rounded-2xl border">
               <button
                 type="button"
                 onClick={() => toggle(season.id)}
@@ -139,8 +122,8 @@ export function CourseCurriculum({
                 </span>
                 <ChevronDown
                   className={cn(
-                    "h-4 w-4 shrink-0 text-(--theme-muted) transition-transform duration-300",
-                    isOpen && "rotate-180",
+                    'h-4 w-4 shrink-0 text-(--theme-muted) transition-transform duration-300',
+                    isOpen && 'rotate-180',
                   )}
                 />
               </button>
@@ -149,7 +132,7 @@ export function CourseCurriculum({
                 {isOpen && season.lessons.length > 0 && (
                   <motion.ul
                     initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
+                    animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     className="divide-y divide-(--theme-border-color) overflow-hidden border-t border-(--theme-border-color)"
@@ -160,8 +143,7 @@ export function CourseCurriculum({
                         lesson={lesson}
                         now={now}
                         previewHref={
-                          (lesson.isPreview || hasLessonAccess) &&
-                          previewBasePath
+                          (lesson.isPreview || hasLessonAccess) && previewBasePath
                             ? `${previewBasePath}/${encodeURIComponent(lesson.slug || lesson.id)}`
                             : null
                         }

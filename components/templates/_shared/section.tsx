@@ -29,9 +29,17 @@ export function Section({ id, tone = 'page', className = '', children }: Section
   );
 }
 
-export function Container({ className = '', children }: { className?: string; children: ReactNode }) {
+export function Container({
+  className = '',
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <div className={`mx-auto w-full max-w-(--theme-container-max-width) px-5 md:px-8 lg:px-10 ${className}`}>
+    <div
+      className={`mx-auto w-full max-w-(--theme-container-max-width) px-5 md:px-8 lg:px-10 ${className}`}
+    >
       {children}
     </div>
   );
@@ -66,7 +74,13 @@ interface SectionHeadProps {
 }
 
 /** Eyebrow + title + supporting paragraph — the head every design repeats. */
-export function SectionHead({ eyebrow, title, subtitle, align = 'between', className = '' }: SectionHeadProps) {
+export function SectionHead({
+  eyebrow,
+  title,
+  subtitle,
+  align = 'between',
+  className = '',
+}: SectionHeadProps) {
   return (
     <div
       className={
@@ -83,13 +97,16 @@ export function SectionHead({ eyebrow, title, subtitle, align = 'between', class
         ) : null}
         <h2
           data-editable="title"
-          className="max-w-[22ch] text-[clamp(28px,4vw,44px)] font-bold leading-[1.2] tracking-[-0.02em]"
+          className="max-w-[22ch] text-[clamp(28px,4vw,44px)] leading-[1.2] font-bold tracking-[-0.02em]"
         >
           {title}
         </h2>
       </div>
       {subtitle ? (
-        <p data-editable="subtitle" className="max-w-[46ch] text-[16px] leading-[1.85] text-(--theme-muted)">
+        <p
+          data-editable="subtitle"
+          className="max-w-[46ch] text-[16px] leading-[1.85] text-(--theme-muted)"
+        >
           {subtitle}
         </p>
       ) : null}
@@ -98,6 +115,12 @@ export function SectionHead({ eyebrow, title, subtitle, align = 'between', class
 }
 
 /** Section vertical rhythm driven by the manager's spacing choice. */
-export function SectionBody({ className = '', children }: { className?: string; children: ReactNode }) {
+export function SectionBody({
+  className = '',
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
   return <div className={`py-(--theme-section-padding-y) ${className}`}>{children}</div>;
 }

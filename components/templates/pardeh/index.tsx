@@ -33,7 +33,12 @@ export const PARDEH_SECTIONS: TemplateSectionMap = {
   ),
   hero: PardehHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={PARDEH_DEFAULTS.marquee.items} tone="brand" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={PARDEH_DEFAULTS.marquee.items}
+      tone="brand"
+    />
   ),
   features: ShafaghFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -51,12 +56,30 @@ export const PARDEH_SECTIONS: TemplateSectionMap = {
     <TemplateDataTable id={id} config={config} defaults={PARDEH_DEFAULTS.showcase} tone="surface" />
   ),
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={PARDEH_DEFAULTS.teachers} tone="page" avatarShape="round" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={PARDEH_DEFAULTS.teachers}
+      tone="page"
+      avatarShape="round"
+    />
   ),
   cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={PARDEH_DEFAULTS.cta} tone="deep" boxed />
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PARDEH_DEFAULTS.cta}
+      tone="deep"
+      boxed
+    />
   ),
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={PARDEH_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={PARDEH_DEFAULTS.footer}
+    />
   ),
 };

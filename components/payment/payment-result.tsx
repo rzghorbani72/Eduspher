@@ -1,18 +1,18 @@
-import Link from "next/link";
-import { CheckCircle2, XCircle } from "lucide-react";
+import Link from 'next/link';
+import { CheckCircle2, XCircle } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 export type PaymentResultRow = { label: string; value: string };
 
 export type PaymentResultAction = {
   href: string;
   label: string;
-  variant?: "primary" | "secondary";
+  variant?: 'primary' | 'secondary';
 };
 
 interface PaymentResultProps {
-  variant: "success" | "failure";
+  variant: 'success' | 'failure';
   title: string;
   message: string;
   /** The purchased item, shown big above the amount. */
@@ -38,43 +38,36 @@ export function PaymentResult({
   actions,
   footer,
 }: PaymentResultProps) {
-  const ok = variant === "success";
+  const ok = variant === 'success';
   const Icon = ok ? CheckCircle2 : XCircle;
 
   return (
     <div className="mx-auto w-full max-w-lg px-4 py-14">
-      <div className="cd-side-card overflow-hidden rounded-3xl border bg-card shadow-xl">
+      <div className="cd-side-card bg-card overflow-hidden rounded-3xl border shadow-xl">
         <div
           className={cn(
-            "flex flex-col items-center gap-4 px-6 pt-10 pb-6 text-center",
-            ok ? "bg-emerald-500/10" : "bg-red-500/10",
+            'flex flex-col items-center gap-4 px-6 pt-10 pb-6 text-center',
+            ok ? 'bg-emerald-500/10' : 'bg-red-500/10',
           )}
         >
           <span
             className={cn(
-              "flex h-16 w-16 items-center justify-center rounded-full",
-              ok ? "bg-emerald-500/15" : "bg-red-500/15",
+              'flex h-16 w-16 items-center justify-center rounded-full',
+              ok ? 'bg-emerald-500/15' : 'bg-red-500/15',
             )}
           >
-            <Icon
-              className={cn("h-9 w-9", ok ? "text-emerald-600" : "text-red-600")}
-              aria-hidden
-            />
+            <Icon className={cn('h-9 w-9', ok ? 'text-emerald-600' : 'text-red-600')} aria-hidden />
           </span>
           <div className="space-y-1.5">
-            <h1 className="text-2xl font-black text-(--theme-foreground)">
-              {title}
-            </h1>
-            <p className="text-sm text-muted">{message}</p>
+            <h1 className="text-2xl font-black text-(--theme-foreground)">{title}</h1>
+            <p className="text-muted text-sm">{message}</p>
           </div>
         </div>
 
         {(itemTitle || amountLabel) && (
-          <div className="space-y-1 border-b border-theme px-6 py-5 text-center">
+          <div className="border-theme space-y-1 border-b px-6 py-5 text-center">
             {itemTitle && (
-              <p className="text-sm font-bold text-(--theme-foreground)">
-                {itemTitle}
-              </p>
+              <p className="text-sm font-bold text-(--theme-foreground)">{itemTitle}</p>
             )}
             {amountLabel && (
               <p className="cd-price text-3xl font-black text-(--theme-foreground)">
@@ -92,9 +85,7 @@ export function PaymentResult({
                 className="flex items-center justify-between gap-4 py-3.5 text-sm"
               >
                 <dt className="text-muted">{row.label}</dt>
-                <dd className="text-end font-medium text-(--theme-foreground)">
-                  {row.value}
-                </dd>
+                <dd className="text-end font-medium text-(--theme-foreground)">{row.value}</dd>
               </div>
             ))}
           </dl>
@@ -106,18 +97,16 @@ export function PaymentResult({
               key={action.href + action.label}
               href={action.href}
               className={cn(
-                "flex h-12 w-full items-center justify-center rounded-full text-sm font-bold transition-all",
-                action.variant === "secondary"
-                  ? "border border-theme text-(--theme-foreground) hover:bg-surface"
-                  : "cd-cta-btn text-white hover:-translate-y-0.5",
+                'flex h-12 w-full items-center justify-center rounded-full text-sm font-bold transition-all',
+                action.variant === 'secondary'
+                  ? 'border-theme hover:bg-surface border text-(--theme-foreground)'
+                  : 'cd-cta-btn text-white hover:-translate-y-0.5',
               )}
             >
               {action.label}
             </Link>
           ))}
-          {footer && (
-            <div className="pt-2 text-center text-xs text-muted">{footer}</div>
-          )}
+          {footer && <div className="text-muted pt-2 text-center text-xs">{footer}</div>}
         </div>
       </div>
     </div>

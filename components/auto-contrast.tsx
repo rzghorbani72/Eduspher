@@ -12,7 +12,7 @@ export function AutoContrast() {
     const updateContrast = () => {
       // Find all elements that need contrast adjustment
       const elements = document.querySelectorAll<HTMLElement>(
-        'button, a, [role="button"], [class*="bg-"]'
+        'button, a, [role="button"], [class*="bg-"]',
       );
 
       elements.forEach((element) => {
@@ -29,7 +29,7 @@ export function AutoContrast() {
 
         // Determine appropriate text color
         const textColor = getContrastColor(bgColor);
-        
+
         // Apply text color
         if (textColor === 'white') {
           element.style.color = 'white';
@@ -71,7 +71,3 @@ export function AutoContrast() {
 
   return null;
 }
-
-
-
-

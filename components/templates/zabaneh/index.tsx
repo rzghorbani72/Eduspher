@@ -28,11 +28,22 @@ export const ZABANEH_COURSE_CARD: CourseCardSpec = {
 
 export const ZABANEH_SECTIONS: TemplateSectionMap = {
   header: ({ id, config, storeContext }) => (
-    <TemplateTopBar id={id} config={config} editMode={storeContext?.editMode} defaults={ZABANEH_HEADER} spec={{ tone: 'surface', height: 74, navStyle: 'underline' }} />
+    <TemplateTopBar
+      id={id}
+      config={config}
+      editMode={storeContext?.editMode}
+      defaults={ZABANEH_HEADER}
+      spec={{ tone: 'surface', height: 74, navStyle: 'underline' }}
+    />
   ),
   hero: ZabanehHero,
   marquee: ({ id, config }) => (
-    <TemplateMarquee id={id} config={config} fallbackItems={ZABANEH_DEFAULTS.marquee.items} tone="deep" />
+    <TemplateMarquee
+      id={id}
+      config={config}
+      fallbackItems={ZABANEH_DEFAULTS.marquee.items}
+      tone="deep"
+    />
   ),
   features: ZabanehFeatures,
   courses: ({ id, config, storeContext }) => (
@@ -47,8 +58,29 @@ export const ZABANEH_SECTIONS: TemplateSectionMap = {
   ),
   showcase: ZabanehLevels,
   teachers: ({ id, config }) => (
-    <TemplateTeachers id={id} config={config} defaults={ZABANEH_DEFAULTS.teachers} tone="page" avatarShape="round" />
+    <TemplateTeachers
+      id={id}
+      config={config}
+      defaults={ZABANEH_DEFAULTS.teachers}
+      tone="page"
+      avatarShape="round"
+    />
   ),
-  cta: ({ id, config, storeContext }) => <TemplateCta id={id} config={config} storeContext={storeContext} defaults={ZABANEH_DEFAULTS.cta} tone="deep" />,
-  footer: ({ id, config, storeContext }) => <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ZABANEH_DEFAULTS.footer} />,
+  cta: ({ id, config, storeContext }) => (
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ZABANEH_DEFAULTS.cta}
+      tone="deep"
+    />
+  ),
+  footer: ({ id, config, storeContext }) => (
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ZABANEH_DEFAULTS.footer}
+    />
+  ),
 };

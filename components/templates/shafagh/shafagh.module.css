@@ -9,8 +9,16 @@
 
 .wash {
   background:
-    radial-gradient(70% 60% at 88% -5%, color-mix(in srgb, var(--theme-accent) 30%, transparent) 0%, transparent 62%),
-    radial-gradient(50% 45% at 0% 96%, color-mix(in srgb, var(--theme-primary) 14%, transparent) 0%, transparent 62%),
+    radial-gradient(
+      70% 60% at 88% -5%,
+      color-mix(in srgb, var(--theme-accent) 30%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      50% 45% at 0% 96%,
+      color-mix(in srgb, var(--theme-primary) 14%, transparent) 0%,
+      transparent 62%
+    ),
     var(--theme-background);
 }
 
@@ -55,7 +63,11 @@
   inset: 0;
   pointer-events: none;
   opacity: 0.55;
-  background-image: radial-gradient(1.5px 1.5px at 50% 50%, var(--theme-primary) 55%, transparent 56%);
+  background-image: radial-gradient(
+    1.5px 1.5px at 50% 50%,
+    var(--theme-primary) 55%,
+    transparent 56%
+  );
   background-size: 16px 16px;
 }
 
@@ -101,7 +113,15 @@
 }
 
 /* Empty course thumbnails: flat tonal plates, no gradients. */
-.tA { background: color-mix(in srgb, var(--theme-accent) 38%, var(--theme-surface-alt)); }
-.tB { background: color-mix(in srgb, var(--theme-primary) 22%, var(--theme-surface-alt)); }
-.tC { background: var(--theme-deep); }
-.tD { background: color-mix(in srgb, var(--theme-accent) 62%, var(--theme-surface-alt)); }
+.tA {
+  background: color-mix(in srgb, var(--theme-accent) 38%, var(--theme-surface-alt));
+}
+.tB {
+  background: color-mix(in srgb, var(--theme-primary) 22%, var(--theme-surface-alt));
+}
+.tC {
+  background: var(--theme-deep);
+}
+.tD {
+  background: color-mix(in srgb, var(--theme-accent) 62%, var(--theme-surface-alt));
+}

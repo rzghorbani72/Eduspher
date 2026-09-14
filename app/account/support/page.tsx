@@ -1,14 +1,14 @@
-import Link from "@/components/ui/link";
-import { LifeBuoy } from "lucide-react";
+import Link from '@/components/ui/link';
+import { LifeBuoy } from 'lucide-react';
 
-import { SupportCenter } from "@/components/account/support/support-center";
-import { EmptyState } from "@/components/ui/empty-state";
-import { getSession } from "@/lib/auth/session";
-import { getAcademyContext } from "@/lib/store-context";
-import { getCurrentAcademy, getAcademyBySlug } from "@/lib/api/server";
-import { buildAcademyPath } from "@/lib/utils";
-import { getAcademyLanguage } from "@/lib/i18n/server";
-import { t } from "@/lib/i18n/server-translations";
+import { SupportCenter } from '@/components/account/support/support-center';
+import { EmptyState } from '@/components/ui/empty-state';
+import { getSession } from '@/lib/auth/session';
+import { getAcademyContext } from '@/lib/store-context';
+import { getCurrentAcademy, getAcademyBySlug } from '@/lib/api/server';
+import { buildAcademyPath } from '@/lib/utils';
+import { getAcademyLanguage } from '@/lib/i18n/server';
+import { t } from '@/lib/i18n/server-translations';
 
 export default async function SupportPage() {
   const session = await getSession();
@@ -30,13 +30,13 @@ export default async function SupportPage() {
     return (
       <EmptyState
         icon={<LifeBuoy className="size-7" aria-hidden="true" />}
-        title={translate("account.loginToViewHub")}
+        title={translate('account.loginToViewHub')}
         action={
           <Link
-            href={buildPath("/auth/login")}
-            className="inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary"
+            href={buildPath('/auth/login')}
+            className="bg-primary text-on-primary inline-flex h-11 items-center rounded-full px-6 text-sm font-semibold"
           >
-            {translate("auth.login")}
+            {translate('auth.login')}
           </Link>
         }
       />

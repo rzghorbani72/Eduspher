@@ -35,7 +35,9 @@ export function ShabtabHero({ id, config, storeContext }: TemplateSectionProps) 
           {text(config, 'tag', d.tag)}
         </span>
 
-        <h1 className={`${a.block} mt-7 max-w-[18ch] text-[clamp(38px,6.4vw,74px)] font-bold leading-[1.06] tracking-[-0.035em]`}>
+        <h1
+          className={`${a.block} mt-7 max-w-[18ch] text-[clamp(38px,6.4vw,74px)] leading-[1.06] font-bold tracking-[-0.035em]`}
+        >
           <span data-editable="title">{text(config, 'title', d.title)}</span>{' '}
           <EditableAccent config={config}>{text(config, 'titleEm', d.titleEm)}</EditableAccent>{' '}
           <span data-editable="titleEnd">{text(config, 'titleEnd', d.titleEnd)}</span>
@@ -49,12 +51,27 @@ export function ShabtabHero({ id, config, storeContext }: TemplateSectionProps) 
         </p>
 
         <div className={`mt-9 flex flex-wrap items-center ${a.justify} gap-3.5`}>
-          <RemovableSlot config={config} flagKey="showHeroCta" editMode={editMode} className="inline-flex">
-            <Button tone="primary" size="lg" editableKey="ctaText" href={templateHref(storeContext, 'courses')}>
+          <RemovableSlot
+            config={config}
+            flagKey="showHeroCta"
+            editMode={editMode}
+            className="inline-flex"
+          >
+            <Button
+              tone="primary"
+              size="lg"
+              editableKey="ctaText"
+              href={templateHref(storeContext, 'courses')}
+            >
               {text(config, 'ctaText', d.ctaText)}
             </Button>
           </RemovableSlot>
-          <RemovableSlot config={config} flagKey="showNote" editMode={editMode} className="inline-flex">
+          <RemovableSlot
+            config={config}
+            flagKey="showNote"
+            editMode={editMode}
+            className="inline-flex"
+          >
             <span data-editable="note" className="text-[13.5px] text-current/60">
               {text(config, 'note', d.note)}
             </span>
@@ -75,7 +92,10 @@ export function ShabtabHero({ id, config, storeContext }: TemplateSectionProps) 
             className={`${styles.glass} min-h-[300px]`}
           >
             <div className="flex min-h-[300px] items-center justify-center p-10">
-              <span data-editable="photoCaption" className="text-[14px] font-medium text-current/60">
+              <span
+                data-editable="photoCaption"
+                className="text-[14px] font-medium text-current/60"
+              >
                 {text(config, 'photoCaption', d.photoCaption)}
               </span>
             </div>

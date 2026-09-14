@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 const ALWAYS_VISIBLE_ABOVE = 80;
 const DELTA_THRESHOLD = 8;
@@ -27,8 +27,8 @@ export function useHideOnScroll(): boolean {
       setHidden(y > ALWAYS_VISIBLE_ABOVE && delta > 0);
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return hidden;

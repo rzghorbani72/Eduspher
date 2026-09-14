@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
 export const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2] as const;
 
@@ -55,13 +55,10 @@ export function useVideoControls(
     const video = videoRef.current;
     if (!video) return;
 
-    const patch = (next: Partial<VideoControlsState>) =>
-      setState((prev) => ({ ...prev, ...next }));
+    const patch = (next: Partial<VideoControlsState>) => setState((prev) => ({ ...prev, ...next }));
 
     const onTime = () => {
-      const end = video.buffered.length
-        ? video.buffered.end(video.buffered.length - 1)
-        : 0;
+      const end = video.buffered.length ? video.buffered.end(video.buffered.length - 1) : 0;
       patch({ current: video.currentTime, buffered: end });
     };
     const onMeta = () =>
@@ -80,35 +77,35 @@ export function useVideoControls(
     const onPipOn = () => patch({ pipActive: true });
     const onPipOff = () => patch({ pipActive: false });
 
-    video.addEventListener("timeupdate", onTime);
-    video.addEventListener("progress", onTime);
-    video.addEventListener("loadedmetadata", onMeta);
-    video.addEventListener("durationchange", onMeta);
-    video.addEventListener("play", onPlay);
-    video.addEventListener("pause", onPause);
-    video.addEventListener("waiting", onWaiting);
-    video.addEventListener("canplay", onCanPlay);
-    video.addEventListener("playing", onCanPlay);
-    video.addEventListener("volumechange", onVolume);
-    video.addEventListener("ratechange", onRate);
-    video.addEventListener("enterpictureinpicture", onPipOn);
-    video.addEventListener("leavepictureinpicture", onPipOff);
+    video.addEventListener('timeupdate', onTime);
+    video.addEventListener('progress', onTime);
+    video.addEventListener('loadedmetadata', onMeta);
+    video.addEventListener('durationchange', onMeta);
+    video.addEventListener('play', onPlay);
+    video.addEventListener('pause', onPause);
+    video.addEventListener('waiting', onWaiting);
+    video.addEventListener('canplay', onCanPlay);
+    video.addEventListener('playing', onCanPlay);
+    video.addEventListener('volumechange', onVolume);
+    video.addEventListener('ratechange', onRate);
+    video.addEventListener('enterpictureinpicture', onPipOn);
+    video.addEventListener('leavepictureinpicture', onPipOff);
     onMeta();
 
     return () => {
-      video.removeEventListener("timeupdate", onTime);
-      video.removeEventListener("progress", onTime);
-      video.removeEventListener("loadedmetadata", onMeta);
-      video.removeEventListener("durationchange", onMeta);
-      video.removeEventListener("play", onPlay);
-      video.removeEventListener("pause", onPause);
-      video.removeEventListener("waiting", onWaiting);
-      video.removeEventListener("canplay", onCanPlay);
-      video.removeEventListener("playing", onCanPlay);
-      video.removeEventListener("volumechange", onVolume);
-      video.removeEventListener("ratechange", onRate);
-      video.removeEventListener("enterpictureinpicture", onPipOn);
-      video.removeEventListener("leavepictureinpicture", onPipOff);
+      video.removeEventListener('timeupdate', onTime);
+      video.removeEventListener('progress', onTime);
+      video.removeEventListener('loadedmetadata', onMeta);
+      video.removeEventListener('durationchange', onMeta);
+      video.removeEventListener('play', onPlay);
+      video.removeEventListener('pause', onPause);
+      video.removeEventListener('waiting', onWaiting);
+      video.removeEventListener('canplay', onCanPlay);
+      video.removeEventListener('playing', onCanPlay);
+      video.removeEventListener('volumechange', onVolume);
+      video.removeEventListener('ratechange', onRate);
+      video.removeEventListener('enterpictureinpicture', onPipOn);
+      video.removeEventListener('leavepictureinpicture', onPipOff);
     };
   }, [videoRef]);
 
@@ -118,8 +115,8 @@ export function useVideoControls(
         ...prev,
         fullscreen: document.fullscreenElement === containerRef.current,
       }));
-    document.addEventListener("fullscreenchange", onChange);
-    return () => document.removeEventListener("fullscreenchange", onChange);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
   }, [containerRef]);
 
   const togglePlay = useCallback(() => {
@@ -167,19 +164,15 @@ export function useVideoControls(
   const cycleRate = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    const index = PLAYBACK_RATES.indexOf(
-      video.playbackRate as (typeof PLAYBACK_RATES)[number],
-    );
-    video.playbackRate =
-      PLAYBACK_RATES[(index + 1) % PLAYBACK_RATES.length] ?? 1;
+    const index = PLAYBACK_RATES.indexOf(video.playbackRate as (typeof PLAYBACK_RATES)[number]);
+    video.playbackRate = PLAYBACK_RATES[(index + 1) % PLAYBACK_RATES.length] ?? 1;
   }, [videoRef]);
 
   const togglePip = useCallback(async () => {
     const video = videoRef.current;
     if (!video || !document.pictureInPictureEnabled) return;
     try {
-      if (document.pictureInPictureElement)
-        await document.exitPictureInPicture();
+      if (document.pictureInPictureElement) await document.exitPictureInPicture();
       else await video.requestPictureInPicture();
     } catch {
       // A browser may refuse PiP (policy, or no user gesture); the bar stays put.

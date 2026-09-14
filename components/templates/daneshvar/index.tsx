@@ -59,15 +59,31 @@ export const DANESHVAR_SECTIONS: TemplateSectionMap = {
   ),
   categories: DaneshvarCategories,
   showcase: ({ id, config }) => (
-    <TemplateDataTable id={id} config={config} defaults={DANESHVAR_DEFAULTS.showcase} tone="surface" />
+    <TemplateDataTable
+      id={id}
+      config={config}
+      defaults={DANESHVAR_DEFAULTS.showcase}
+      tone="surface"
+    />
   ),
   teachers: ({ id, config }) => (
     <TemplateTeachers id={id} config={config} defaults={DANESHVAR_DEFAULTS.teachers} tone="page" />
   ),
   cta: ({ id, config, storeContext }) => (
-    <TemplateCta id={id} config={config} storeContext={storeContext} defaults={DANESHVAR_DEFAULTS.cta} tone="deep" />
+    <TemplateCta
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={DANESHVAR_DEFAULTS.cta}
+      tone="deep"
+    />
   ),
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={DANESHVAR_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={DANESHVAR_DEFAULTS.footer}
+    />
   ),
 };

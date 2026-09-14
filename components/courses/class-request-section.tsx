@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus } from 'lucide-react';
 
-import { ClassRequestForm } from "@/components/courses/class-request-form";
-import { CLASS_REQUEST_ANCHOR_ID } from "@/components/courses/live-course-panel";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { ClassRequestForm } from '@/components/courses/class-request-form';
+import { CLASS_REQUEST_ANCHOR_ID } from '@/components/courses/live-course-panel';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface ClassRequestSectionProps {
   courseId: string;
@@ -32,25 +32,18 @@ export function ClassRequestSection({
           id="request-class-title"
           className="flex items-center gap-2 text-xl font-bold text-(--theme-foreground)"
         >
-          <CalendarPlus
-            className="size-5 text-(--theme-primary)"
-            aria-hidden="true"
-          />
-          {t("courses.requestClassTitle")}
+          <CalendarPlus className="size-5 text-(--theme-primary)" aria-hidden="true" />
+          {t('courses.requestClassTitle')}
         </h2>
-        <p className="text-sm text-muted">
+        <p className="text-muted text-sm">
           {hasOpenClasses
-            ? t("courses.requestClassHintWithClasses")
-            : t("courses.requestClassHint")}
+            ? t('courses.requestClassHintWithClasses')
+            : t('courses.requestClassHint')}
         </p>
       </div>
-      <div className="rounded-2xl border border-theme bg-card p-5 md:p-6">
+      <div className="border-theme bg-card rounded-2xl border p-5 md:p-6">
         <div className="max-w-xl">
-          <ClassRequestForm
-            courseId={courseId}
-            isLoggedIn={isLoggedIn}
-            loginHref={loginHref}
-          />
+          <ClassRequestForm courseId={courseId} isLoggedIn={isLoggedIn} loginHref={loginHref} />
         </div>
       </div>
     </section>

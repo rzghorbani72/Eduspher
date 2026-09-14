@@ -2,6 +2,7 @@
 // tools/check-oversize-allowlist.mjs fails when a listed file fits the limit again.
 export const MAX_LINES = 400;
 export const OVERSIZE_ALLOWLIST = [
+  'components/ui-blocks/course-grid-block.tsx',
   'proxy.ts',
   'components/ui-blocks/hero-block.tsx',
   'lib/api/server.ts',

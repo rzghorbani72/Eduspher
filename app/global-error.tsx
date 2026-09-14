@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import * as Sentry from "@sentry/nextjs";
-import { useEffect } from "react";
+import * as Sentry from '@sentry/nextjs';
+import { useEffect } from 'react';
 
-import "./globals.css";
+import './globals.css';
 
-import { AppErrorView } from "@/components/error/app-error-view";
+import { AppErrorView } from '@/components/error/app-error-view';
 
 export default function GlobalError({
   error,

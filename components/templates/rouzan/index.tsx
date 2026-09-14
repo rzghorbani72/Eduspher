@@ -57,6 +57,11 @@ export const ROUZAN_SECTIONS: TemplateSectionMap = {
   teachers: RouzanTeachers,
   cta: RouzanCta,
   footer: ({ id, config, storeContext }) => (
-    <TemplateSiteFooter id={id} config={config} storeContext={storeContext} defaults={ROUZAN_DEFAULTS.footer} />
+    <TemplateSiteFooter
+      id={id}
+      config={config}
+      storeContext={storeContext}
+      defaults={ROUZAN_DEFAULTS.footer}
+    />
   ),
 };

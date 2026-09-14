@@ -22,14 +22,10 @@ export async function POST(request: Request): Promise<Response> {
   } catch {
     return new NextResponse(null, { status: 400 });
   }
-  ingestLogBatch(
-    { body, ip, request_id: request.headers.get('x-request-id') ?? undefined },
-    sink,
-    {
-      app: 'website',
-      env: process.env.NODE_ENV ?? 'development',
-      release: process.env.NEXT_PUBLIC_RELEASE ?? 'dev',
-    },
-  );
+  ingestLogBatch({ body, ip, request_id: request.headers.get('x-request-id') ?? undefined }, sink, {
+    app: 'website',
+    env: process.env.NODE_ENV ?? 'development',
+    release: process.env.NEXT_PUBLIC_RELEASE ?? 'dev',
+  });
   return new NextResponse(null, { status: 204 });
 }

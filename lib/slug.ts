@@ -5,11 +5,9 @@
  */
 const MAX_SLUG_LENGTH = 40;
 
-export type SlugStatus =
-  "idle" | "checking" | "available" | "taken" | "invalid";
+export type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
 
-export const ACADEMY_DOMAIN =
-  process.env.NEXT_PUBLIC_ACADEMY_DOMAIN ?? "mentoma.ir";
+export const ACADEMY_DOMAIN = process.env.NEXT_PUBLIC_ACADEMY_DOMAIN ?? 'mentoma.ir';
 
 /**
  * Latin-only, so a Persian academy name yields "" and the manager types their
@@ -20,15 +18,13 @@ export function toSlug(value: string): string {
   return value
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-+/, "")
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+/, '')
     .slice(0, MAX_SLUG_LENGTH);
 }
 
 export function isValidSlug(slug: string): boolean {
-  return new RegExp(
-    `^[a-z0-9](?:[a-z0-9-]{0,${MAX_SLUG_LENGTH - 2}}[a-z0-9])?$`,
-  ).test(slug);
+  return new RegExp(`^[a-z0-9](?:[a-z0-9-]{0,${MAX_SLUG_LENGTH - 2}}[a-z0-9])?$`).test(slug);
 }

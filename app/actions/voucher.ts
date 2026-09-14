@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
-import { validateDiscount } from "@/lib/api/server";
-import { getSession } from "@/lib/auth/session";
+import { validateDiscount } from '@/lib/api/server';
+import { getSession } from '@/lib/auth/session';
 
 interface ValidateVoucherRequest {
   code: string;
@@ -19,7 +19,7 @@ interface ValidateVoucherResult {
 }
 
 export async function validateVoucher(
-  request: ValidateVoucherRequest
+  request: ValidateVoucherRequest,
 ): Promise<ValidateVoucherResult> {
   try {
     const session = await getSession();
@@ -39,12 +39,10 @@ export async function validateVoucher(
       discount_code_id: result.discount_code_id,
     };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to validate voucher code";
+    const errorMessage = error instanceof Error ? error.message : 'Failed to validate voucher code';
     return {
       success: false,
       error: errorMessage,
     };
   }
 }
-

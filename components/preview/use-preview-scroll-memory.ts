@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-const SCROLL_KEY = "me-preview-scroll";
+const SCROLL_KEY = 'me-preview-scroll';
 /** How long to keep re-asserting the offset while late content lands. */
 const RESTORE_WINDOW_MS = 1500;
 
@@ -19,9 +19,9 @@ const RESTORE_WINDOW_MS = 1500;
  */
 export function usePreviewScrollMemory(): void {
   useEffect(() => {
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-    const saved = Number(sessionStorage.getItem(SCROLL_KEY) ?? "0");
+    const saved = Number(sessionStorage.getItem(SCROLL_KEY) ?? '0');
     const deadline = performance.now() + RESTORE_WINDOW_MS;
     let settled = !(saved > 0);
 
@@ -48,18 +48,18 @@ export function usePreviewScrollMemory(): void {
       });
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("wheel", release, { passive: true });
-    window.addEventListener("touchstart", release, { passive: true });
-    window.addEventListener("keydown", release);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('wheel', release, { passive: true });
+    window.addEventListener('touchstart', release, { passive: true });
+    window.addEventListener('keydown', release);
 
     return () => {
       settled = true;
       if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("wheel", release);
-      window.removeEventListener("touchstart", release);
-      window.removeEventListener("keydown", release);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('wheel', release);
+      window.removeEventListener('touchstart', release);
+      window.removeEventListener('keydown', release);
     };
   }, []);
 }

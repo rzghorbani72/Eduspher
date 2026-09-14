@@ -1,13 +1,13 @@
-import "server-only";
+import 'server-only';
 
-import { cache } from "react";
-import { cookies, headers as nextHeaders } from "next/headers";
+import { cache } from 'react';
+import { cookies, headers as nextHeaders } from 'next/headers';
 
-import { decodePathSegment } from "@/lib/content-paths";
-import { getBackendApiBaseUrl, env } from "@/lib/env";
-import { logger } from "@/lib/logging/app-logger";
-import { DEFAULT_LANGUAGE } from "@/lib/i18n/config";
-import { resolvePublicOriginFromHeaders } from "@/lib/public-request-origin";
+import { decodePathSegment } from '@/lib/content-paths';
+import { getBackendApiBaseUrl, env } from '@/lib/env';
+import { logger } from '@/lib/logging/app-logger';
+import { DEFAULT_LANGUAGE } from '@/lib/i18n/config';
+import { resolvePublicOriginFromHeaders } from '@/lib/public-request-origin';
 
 /**
  * Custom error class for 401 Unauthorized errors
@@ -17,9 +17,9 @@ export class UnauthorizedError extends Error {
   status: number;
   redirectTo: string;
 
-  constructor(message: string, redirectTo: string = "/auth/login") {
+  constructor(message: string, redirectTo: string = '/auth/login') {
     super(message);
-    this.name = "UnauthorizedError";
+    this.name = 'UnauthorizedError';
     this.status = 401;
     this.redirectTo = redirectTo;
   }
@@ -33,11 +33,11 @@ export class UnauthorizedError extends Error {
  */
 export class LegalConsentRequiredError extends Error {
   status = 403;
-  code = "LEGAL_CONSENT_REQUIRED";
+  code = 'LEGAL_CONSENT_REQUIRED';
 
   constructor() {
-    super("Legal consent required");
-    this.name = "LegalConsentRequiredError";
+    super('Legal consent required');
+    this.name = 'LegalConsentRequiredError';
   }
 }
 
@@ -46,17 +46,14 @@ export const isLegalConsentError = (error: unknown): boolean =>
 
 const isUnauthorizedError = (error: unknown): boolean => {
   if (error instanceof UnauthorizedError) return true;
-  if (error && typeof error === "object" && "status" in error) {
+  if (error && typeof error === 'object' && 'status' in error) {
     return (error as { status?: number }).status === 401;
   }
   return error instanceof Error && /401/.test(error.message);
 };
 
-import type {
-  CertificateVerification,
-  CourseTopic,
-} from "@/lib/api/account-types";
-import type { PublicActiveDiscount } from "@/lib/discounts/format-active-discount";
+import type { CertificateVerification, CourseTopic } from '@/lib/api/account-types';
+import type { PublicActiveDiscount } from '@/lib/discounts/format-active-discount';
 import type {
   ApiEnvelope,
   ArticleSummary,
@@ -69,7 +66,7 @@ import type {
   EnrollmentSummary,
   LessonSummary,
   Pagination,
-} from "@/lib/api/types";
+} from '@/lib/api/types';
 
 type FetchOptions = RequestInit & {
   query?: Record<string, string | number | boolean | undefined>;
@@ -87,18 +84,14 @@ type FetchOptions = RequestInit & {
 /** Public data is shared by every visitor, so a short window is safe and cheap. */
 const PUBLIC_REVALIDATE_SECONDS = 60;
 
-const buildUrl = (
-  path: string,
-  query?: FetchOptions["query"],
-  lang: string = DEFAULT_LANGUAGE,
-) => {
-  const cleanedPath = path.replace(/^\//, "");
+const buildUrl = (path: string, query?: FetchOptions['query'], lang: string = DEFAULT_LANGUAGE) => {
+  const cleanedPath = path.replace(/^\//, '');
   const baseRoot = getBackendApiBaseUrl(lang);
-  const base = baseRoot.endsWith("/") ? baseRoot : `${baseRoot}/`;
+  const base = baseRoot.endsWith('/') ? baseRoot : `${baseRoot}/`;
   const url = new URL(cleanedPath, base);
   if (query) {
     Object.entries(query).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === "") return;
+      if (value === undefined || value === null || value === '') return;
       url.searchParams.set(key, String(value));
     });
   }
@@ -111,21 +104,17 @@ const buildHeaders = async (
 ): Promise<HeadersInit> => {
   const headers = new Headers(initHeaders);
   const headerStore = await nextHeaders();
-  if (!headers.has("Accept")) {
-    headers.set("Accept", "application/json");
+  if (!headers.has('Accept')) {
+    headers.set('Accept', 'application/json');
   }
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
   }
   const cookieStore = await cookies();
   const headerAcademyId =
-    headerStore?.get?.("x-academy-id") ??
-    headerStore?.get?.("X-Academy-ID") ??
-    null;
+    headerStore?.get?.('x-academy-id') ?? headerStore?.get?.('X-Academy-ID') ?? null;
   const headerAcademySlug =
-    headerStore?.get?.("x-academy-slug") ??
-    headerStore?.get?.("X-Academy-Slug") ??
-    null;
+    headerStore?.get?.('x-academy-slug') ?? headerStore?.get?.('X-Academy-Slug') ?? null;
   const cookieAcademyId = cookieStore.get(env.academyIdCookie)?.value;
   const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
   const resolvedAcademySlug =
@@ -133,47 +122,40 @@ const buildHeaders = async (
   const resolvedAcademyId =
     headerAcademyId ??
     cookieAcademyId ??
-    (resolvedAcademySlug
-      ? null
-      : env.defaultAcademyId
-        ? String(env.defaultAcademyId)
-        : null);
-  if (resolvedAcademyId && !headers.has("X-Academy-ID")) {
-    headers.set("X-Academy-ID", resolvedAcademyId);
+    (resolvedAcademySlug ? null : env.defaultAcademyId ? String(env.defaultAcademyId) : null);
+  if (resolvedAcademyId && !headers.has('X-Academy-ID')) {
+    headers.set('X-Academy-ID', resolvedAcademyId);
   }
-  if (resolvedAcademySlug && !headers.has("X-Academy-Slug")) {
-    headers.set("X-Academy-Slug", resolvedAcademySlug);
+  if (resolvedAcademySlug && !headers.has('X-Academy-Slug')) {
+    headers.set('X-Academy-Slug', resolvedAcademySlug);
   }
   const proto =
-    headerStore?.get?.("x-forwarded-proto") ??
-    (process.env.NODE_ENV === "development" ? "http" : "https");
+    headerStore?.get?.('x-forwarded-proto') ??
+    (process.env.NODE_ENV === 'development' ? 'http' : 'https');
   const forwardedHost =
-    headerStore?.get?.("x-forwarded-host") ??
-    headerStore?.get?.("host") ??
-    null;
-  const publicAppUrl =
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? null;
+    headerStore?.get?.('x-forwarded-host') ?? headerStore?.get?.('host') ?? null;
+  const publicAppUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ?? null;
   const isInternalHost = (host: string) => {
-    const hostname = host.split(":")[0];
+    const hostname = host.split(':')[0];
     return (
       /^(10\.|192\.168\.|127\.)/.test(hostname) ||
       /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
-      hostname.includes(".svc") ||
-      hostname.includes(".cluster.local")
+      hostname.includes('.svc') ||
+      hostname.includes('.cluster.local')
     );
   };
-  if (!headers.has("Referer")) {
+  if (!headers.has('Referer')) {
     if (forwardedHost && !isInternalHost(forwardedHost)) {
-      headers.set("Referer", `${proto}://${forwardedHost}`);
+      headers.set('Referer', `${proto}://${forwardedHost}`);
     } else if (publicAppUrl) {
-      headers.set("Referer", publicAppUrl);
+      headers.set('Referer', publicAppUrl);
     }
   }
   // Do not set Origin on server-side fetch — in K8s, Host can be a pod IP and breaks API CORS.
   if (includeAuth) {
-    const token = cookieStore.get("jwt")?.value;
-    if (token && !headers.has("Authorization")) {
-      headers.set("Authorization", `Bearer ${token}`);
+    const token = cookieStore.get('jwt')?.value;
+    if (token && !headers.has('Authorization')) {
+      headers.set('Authorization', `Bearer ${token}`);
     }
   }
   return headers;
@@ -184,7 +166,7 @@ const baseFetch = async (
   { query, includeAuth = true, revalidate, tags, ...init }: FetchOptions = {},
 ) => {
   const cookieStore = await cookies();
-  const lang = cookieStore.get("preferred_language")?.value ?? DEFAULT_LANGUAGE;
+  const lang = cookieStore.get('preferred_language')?.value ?? DEFAULT_LANGUAGE;
   const url = buildUrl(path, query, lang);
   const headers = await buildHeaders(includeAuth, init.headers);
 
@@ -199,33 +181,28 @@ const baseFetch = async (
   // `revalidate: 0` is an explicit opt-out: a caller uses it for anonymous GETs
   // whose answer is per-request work-in-progress (the site-builder draft
   // preview), where a cached response would hide the edit that was just made.
-  const method = (init.method ?? "GET").toUpperCase();
-  const isCacheable =
-    includeAuth === false && method === "GET" && revalidate !== 0;
+  const method = (init.method ?? 'GET').toUpperCase();
+  const isCacheable = includeAuth === false && method === 'GET' && revalidate !== 0;
   const scopeHeaders = new Headers(headers);
   const academyTagScope =
-    scopeHeaders.get("X-Academy-Slug") ??
-    scopeHeaders.get("X-Academy-ID") ??
-    "global";
-  const cacheOptions: Pick<RequestInit, "cache" | "next"> = isCacheable
+    scopeHeaders.get('X-Academy-Slug') ?? scopeHeaders.get('X-Academy-ID') ?? 'global';
+  const cacheOptions: Pick<RequestInit, 'cache' | 'next'> = isCacheable
     ? {
         next: {
           revalidate: revalidate ?? PUBLIC_REVALIDATE_SECONDS,
-          ...(tags
-            ? { tags: tags.map((tag) => `${academyTagScope}:${tag}`) }
-            : {}),
+          ...(tags ? { tags: tags.map((tag) => `${academyTagScope}:${tag}`) } : {}),
         },
       }
-    : { cache: "no-store", next: { revalidate: 0 } };
+    : { cache: 'no-store', next: { revalidate: 0 } };
   // Only uncached calls get a correlation id — headers are part of Next's fetch cache key.
-  if (!isCacheable && !scopeHeaders.has("X-Request-Id")) {
-    scopeHeaders.set("X-Request-Id", crypto.randomUUID());
+  if (!isCacheable && !scopeHeaders.has('X-Request-Id')) {
+    scopeHeaders.set('X-Request-Id', crypto.randomUUID());
   }
 
   const response = await fetch(url, {
     ...init,
     headers: scopeHeaders,
-    credentials: "include",
+    credentials: 'include',
     ...cacheOptions,
   });
 
@@ -235,34 +212,24 @@ const baseFetch = async (
     if (response.status === 401) {
       // Check if this is an account/profile-related endpoint
       const isAccountOrProfileEndpoint =
-        path.includes("/auth/me") ||
-        path.includes("/auth/profiles") ||
-        path.includes("/enrollments") ||
-        path.includes("/account");
+        path.includes('/auth/me') ||
+        path.includes('/auth/profiles') ||
+        path.includes('/enrollments') ||
+        path.includes('/account');
 
       if (isAccountOrProfileEndpoint) {
         // Get store context to build proper login path
         const cookieStore = await cookies();
         const headerStore = await nextHeaders();
         const cookieAcademySlug = cookieStore.get(env.academySlugCookie)?.value;
-        const headerAcademySlug = headerStore?.get?.("x-academy-slug") ?? null;
-        const isSubdomain = headerStore?.get?.("x-academy-subdomain") === "1";
-        const storeSlug =
-          headerAcademySlug ??
-          cookieAcademySlug ??
-          env.defaultAcademySlug ??
-          null;
+        const headerAcademySlug = headerStore?.get?.('x-academy-slug') ?? null;
+        const isSubdomain = headerStore?.get?.('x-academy-subdomain') === '1';
+        const storeSlug = headerAcademySlug ?? cookieAcademySlug ?? env.defaultAcademySlug ?? null;
 
         // In subdomain mode the slug is already in the hostname — paths must be bare
-        const loginPath =
-          !isSubdomain && storeSlug
-            ? `/${storeSlug}/auth/login`
-            : "/auth/login";
+        const loginPath = !isSubdomain && storeSlug ? `/${storeSlug}/auth/login` : '/auth/login';
 
-        throw new UnauthorizedError(
-          `Unauthorized (401): ${response.statusText}`,
-          loginPath,
-        );
+        throw new UnauthorizedError(`Unauthorized (401): ${response.statusText}`, loginPath);
       }
       // For non-account/profile endpoints, just throw a regular error (no redirect)
     }
@@ -271,26 +238,20 @@ const baseFetch = async (
     let errorMessage = `${response.status} ${response.statusText}`;
     let errorCode: string | null = null;
     try {
-      const contentType = response.headers.get("Content-Type") ?? "";
-      if (contentType.includes("application/json")) {
+      const contentType = response.headers.get('Content-Type') ?? '';
+      if (contentType.includes('application/json')) {
         const errorData = await response.json().catch(() => null);
         if (errorData) {
-          if (typeof errorData === "object" && errorData !== null) {
-            if ("code" in errorData && typeof errorData.code === "string") {
+          if (typeof errorData === 'object' && errorData !== null) {
+            if ('code' in errorData && typeof errorData.code === 'string') {
               errorCode = errorData.code;
             }
-            if (
-              "message" in errorData &&
-              typeof errorData.message === "string"
-            ) {
+            if ('message' in errorData && typeof errorData.message === 'string') {
               errorMessage = errorData.message;
-            } else if ("error" in errorData) {
-              if (typeof errorData.error === "string") {
+            } else if ('error' in errorData) {
+              if (typeof errorData.error === 'string') {
                 errorMessage = errorData.error;
-              } else if (
-                typeof errorData.error === "object" &&
-                errorData.error !== null
-              ) {
+              } else if (typeof errorData.error === 'object' && errorData.error !== null) {
                 const errorObj = errorData.error as { message?: string };
                 if (errorObj.message) {
                   errorMessage = errorObj.message;
@@ -304,7 +265,7 @@ const baseFetch = async (
       // If parsing fails, use default message
     }
 
-    if (errorCode === "LEGAL_CONSENT_REQUIRED") {
+    if (errorCode === 'LEGAL_CONSENT_REQUIRED') {
       throw new LegalConsentRequiredError();
     }
 
@@ -317,43 +278,33 @@ const baseFetch = async (
   return response;
 };
 
-export async function serverFetch<T>(
-  path: string,
-  config?: FetchOptions,
-): Promise<ApiEnvelope<T>> {
+export async function serverFetch<T>(path: string, config?: FetchOptions): Promise<ApiEnvelope<T>> {
   const response = await baseFetch(path, config);
   return response.json();
 }
 
-export const serverFetchRaw = async <T>(
-  path: string,
-  config?: FetchOptions,
-): Promise<T> => {
+export const serverFetchRaw = async <T>(path: string, config?: FetchOptions): Promise<T> => {
   const response = await baseFetch(path, config);
   return response.json() as Promise<T>;
 };
 
-export async function getAcademiesPublic(params?: {
-  search?: string;
-  limit?: number;
-}) {
+export async function getAcademiesPublic(params?: { search?: string; limit?: number }) {
   const query = new URLSearchParams();
-  if (params?.search) query.set("search", params.search);
-  if (params?.limit) query.set("limit", String(params.limit));
-  const suffix = query.size > 0 ? `?${query.toString()}` : "";
-  const result = await serverFetch<StoreSummary[]>(
-    `/academies/public${suffix}`,
-    { includeAuth: false },
-  );
+  if (params?.search) query.set('search', params.search);
+  if (params?.limit) query.set('limit', String(params.limit));
+  const suffix = query.size > 0 ? `?${query.toString()}` : '';
+  const result = await serverFetch<StoreSummary[]>(`/academies/public${suffix}`, {
+    includeAuth: false,
+  });
   return result.data;
 }
 
 export async function getCategories(): Promise<CategorySummary[]> {
   try {
-    const result = await serverFetch<CategorySummary[]>("/categories", {
+    const result = await serverFetch<CategorySummary[]>('/categories', {
       includeAuth: false,
     });
-    if (!result || result.status !== "ok" || !Array.isArray(result.data)) {
+    if (!result || result.status !== 'ok' || !Array.isArray(result.data)) {
       return [];
     }
     return result.data;
@@ -368,7 +319,7 @@ export async function getCategories(): Promise<CategorySummary[]> {
  * missing tenant can never widen the query to every academy's posts.
  */
 export async function getBlogArticles(academySlug?: string | null) {
-  const result = await serverFetch<ArticleSummary[]>("/blog", {
+  const result = await serverFetch<ArticleSummary[]>('/blog', {
     includeAuth: false,
     query: academySlug ? { academy_slug: academySlug } : undefined,
   });
@@ -390,7 +341,7 @@ export async function getCourses(params?: {
   academy_id?: string;
 }) {
   try {
-    const result = await serverFetch<CourseListPayload>("/courses", {
+    const result = await serverFetch<CourseListPayload>('/courses', {
       query: {
         ...params,
       },
@@ -398,7 +349,7 @@ export async function getCourses(params?: {
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      const fallback = await serverFetch<CourseListPayload>("/courses/public", {
+      const fallback = await serverFetch<CourseListPayload>('/courses/public', {
         includeAuth: false,
         query: {
           ...params,
@@ -418,12 +369,9 @@ export async function getCourseById(id: string | number) {
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      const fallback = await serverFetch<CourseSummary>(
-        `/courses/public/${key}`,
-        {
-          includeAuth: false,
-        },
-      ).catch(() => null);
+      const fallback = await serverFetch<CourseSummary>(`/courses/public/${key}`, {
+        includeAuth: false,
+      }).catch(() => null);
       return fallback?.data ?? null;
     }
     throw error;
@@ -470,23 +418,17 @@ export async function getPublicLesson(id: string) {
   return result?.data ?? null;
 }
 
-export async function getBlogArticleBySlug(
-  slug: string,
-  academySlug?: string | null,
-) {
-  const result = await serverFetch<ArticleSummary>(
-    `/blog/${encodeURIComponent(slug)}`,
-    {
-      includeAuth: false,
-      query: academySlug ? { academy_slug: academySlug } : undefined,
-    },
-  );
+export async function getBlogArticleBySlug(slug: string, academySlug?: string | null) {
+  const result = await serverFetch<ArticleSummary>(`/blog/${encodeURIComponent(slug)}`, {
+    includeAuth: false,
+    query: academySlug ? { academy_slug: academySlug } : undefined,
+  });
   return result.data;
 }
 
 export async function getCurrentAcademy() {
   try {
-    const result = await serverFetch<StoreDetail>("/academies/current");
+    const result = await serverFetch<StoreDetail>('/academies/current');
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
@@ -504,40 +446,36 @@ export async function getCurrentAcademy() {
  * Returns `null` when the list could not be fetched, so callers can tell
  * "no such academy" apart from "backend unavailable".
  */
-export const getPublicAcademies = cache(
-  async (): Promise<StoreSummary[] | null> => {
-    try {
-      const result = await serverFetchRaw<{
-        status: string;
-        data: StoreSummary[];
-      }>("/academies/public", { includeAuth: false });
-      return result.data ?? null;
-    } catch {
-      return null;
-    }
-  },
-);
+export const getPublicAcademies = cache(async (): Promise<StoreSummary[] | null> => {
+  try {
+    const result = await serverFetchRaw<{
+      status: string;
+      data: StoreSummary[];
+    }>('/academies/public', { includeAuth: false });
+    return result.data ?? null;
+  } catch {
+    return null;
+  }
+});
 
 /**
  * Public branding/identity for one academy. Asks the directory for this slug
  * only — the unfiltered list is capped, so scanning it would silently miss any
  * academy past the cap.
  */
-export const getAcademyBySlug = cache(
-  async (slug: string): Promise<StoreSummary | null> => {
-    try {
-      const result = await serverFetchRaw<{
-        status: string;
-        data: StoreSummary[];
-      }>(`/academies/public?slug=${encodeURIComponent(slug)}`, {
-        includeAuth: false,
-      });
-      return result.data?.[0] ?? null;
-    } catch {
-      return null;
-    }
-  },
-);
+export const getAcademyBySlug = cache(async (slug: string): Promise<StoreSummary | null> => {
+  try {
+    const result = await serverFetchRaw<{
+      status: string;
+      data: StoreSummary[];
+    }>(`/academies/public?slug=${encodeURIComponent(slug)}`, {
+      includeAuth: false,
+    });
+    return result.data?.[0] ?? null;
+  } catch {
+    return null;
+  }
+});
 
 export type AcademyEnrollmentStatus = {
   /** True while the academy is closed to NEW enrollments. */
@@ -561,7 +499,7 @@ export async function getAcademyEnrollmentStatus(
     const result = await serverFetchRaw<{
       status: string;
       data: AcademyEnrollmentStatus;
-    }>("/academies/public/site-status", {
+    }>('/academies/public/site-status', {
       includeAuth: false,
       query: { slug },
     });
@@ -574,19 +512,17 @@ export async function getAcademyEnrollmentStatus(
 export type { PublicActiveDiscount };
 
 /** Live student coupon codes for the storefront promo strip. */
-export async function getActiveStudentDiscounts(
-  slug: string,
-): Promise<PublicActiveDiscount[]> {
+export async function getActiveStudentDiscounts(slug: string): Promise<PublicActiveDiscount[]> {
   if (!slug) return [];
   try {
     const result = await serverFetchRaw<{
       status: string;
       data: PublicActiveDiscount[];
-    }>("/discounts/public/active", {
+    }>('/discounts/public/active', {
       includeAuth: false,
       query: { slug },
       revalidate: PUBLIC_REVALIDATE_SECONDS,
-      tags: ["active-discounts"],
+      tags: ['active-discounts'],
     });
     return result.data ?? [];
   } catch {
@@ -623,7 +559,7 @@ export async function getCurrentUser() {
         } | null;
         permissions: string[];
       };
-    }>("/auth/me");
+    }>('/auth/me');
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
@@ -643,7 +579,7 @@ export async function getPublicPricingConfig() {
         subtitle: string;
         cta_label: string;
       };
-    }>("/academies/public/pricing-config", {
+    }>('/academies/public/pricing-config', {
       includeAuth: false,
     });
 
@@ -683,12 +619,9 @@ export type PublicPlan = {
 
 export async function getPublicPlans(): Promise<PublicPlan[]> {
   try {
-    return await serverFetchRaw<PublicPlan[]>(
-      "/platform-settings/plans/active",
-      {
-        includeAuth: false,
-      },
-    );
+    return await serverFetchRaw<PublicPlan[]>('/platform-settings/plans/active', {
+      includeAuth: false,
+    });
   } catch {
     return [];
   }
@@ -696,13 +629,10 @@ export async function getPublicPlans(): Promise<PublicPlan[]> {
 
 export async function getUserProfiles() {
   try {
-    const result = await serverFetchRaw<UserProfilesResponse>(
-      "/auth/profiles",
-      {
-        method: "POST",
-        body: JSON.stringify({}),
-      },
-    );
+    const result = await serverFetchRaw<UserProfilesResponse>('/auth/profiles', {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
 
     return result.profiles ?? [];
   } catch (error) {
@@ -724,12 +654,10 @@ export async function getEnrollments(params?: {
       message: string;
       status: string;
       data: {
-        enrollments: Array<
-          EnrollmentSummary & { Course?: EnrollmentSummary["course"] }
-        >;
+        enrollments: Array<EnrollmentSummary & { Course?: EnrollmentSummary['course'] }>;
         pagination: Pagination;
       };
-    }>("/enrollments", {
+    }>('/enrollments', {
       query: {
         ...params,
       },
@@ -776,14 +704,14 @@ export async function createPayment(data: {
         coupon_code?: string | null;
         created_at: string;
       };
-    }>("/payments", {
-      method: "POST",
+    }>('/payments', {
+      method: 'POST',
       body: JSON.stringify(data),
     });
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      throw new Error("Unauthorized. Please log in to continue.");
+      throw new Error('Unauthorized. Please log in to continue.');
     }
     throw error;
   }
@@ -794,11 +722,10 @@ export async function initiateCheckoutPayment(data: {
   amount: number;
   coupon_code?: string;
   mobile?: string;
-  provider?: "BITPAY" | "PAYPING" | "SAMAN_SEP";
+  provider?: 'BITPAY' | 'PAYPING' | 'SAMAN_SEP';
 }) {
   const headerStore = await nextHeaders();
-  const fallbackBaseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const fallbackBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const baseUrl = resolvePublicOriginFromHeaders(headerStore, fallbackBaseUrl);
 
   const payload = {
@@ -813,20 +740,20 @@ export async function initiateCheckoutPayment(data: {
       amount: number;
       redirect_url: string;
     };
-  }>("/payments/checkout", {
-    method: "POST",
+  }>('/payments/checkout', {
+    method: 'POST',
     body: JSON.stringify(payload),
   });
 
   return result.data;
 }
 
-export async function getAcademyPlansPublic(kind?: "SUBSCRIPTION" | "PACKAGE") {
+export async function getAcademyPlansPublic(kind?: 'SUBSCRIPTION' | 'PACKAGE') {
   const result = await serverFetchRaw<{
     status: string;
     data: Array<{
       id: string;
-      kind: "SUBSCRIPTION" | "PACKAGE";
+      kind: 'SUBSCRIPTION' | 'PACKAGE';
       name: string;
       description: string | null;
       price: number;
@@ -834,8 +761,8 @@ export async function getAcademyPlansPublic(kind?: "SUBSCRIPTION" | "PACKAGE") {
       duration_days: number | null;
       AcademyPlanCourse: Array<{ Course: { id: string; title: string } }>;
     }>;
-  }>(`/academy-plans/public${kind ? `?kind=${kind}` : ""}`, {
-    method: "GET",
+  }>(`/academy-plans/public${kind ? `?kind=${kind}` : ''}`, {
+    method: 'GET',
   });
   return result.data ?? [];
 }
@@ -871,24 +798,19 @@ export interface PublicBundleOffer {
 }
 
 export async function getAcademyBundlesPublic(): Promise<PublicBundleOffer[]> {
-  const result = await serverFetchRaw<PublicBundleOffer[]>(
-    "/offers/public/bundles",
-    {
-      method: "GET",
-    },
-  ).catch(() => []);
+  const result = await serverFetchRaw<PublicBundleOffer[]>('/offers/public/bundles', {
+    method: 'GET',
+  }).catch(() => []);
   return Array.isArray(result) ? result : [];
 }
 
 /** One bundle by slug, for its own learning-path page. Null when not found. */
-export async function getAcademyBundlePublic(
-  slug: string,
-): Promise<PublicBundleOffer | null> {
+export async function getAcademyBundlePublic(slug: string): Promise<PublicBundleOffer | null> {
   const result = await serverFetchRaw<PublicBundleOffer>(
     `/offers/public/bundles/${encodeURIComponent(slug)}`,
-    { method: "GET" },
+    { method: 'GET' },
   ).catch(() => null);
-  return result && typeof result === "object" && "id" in result ? result : null;
+  return result && typeof result === 'object' && 'id' in result ? result : null;
 }
 
 export interface PublicPaymentPlan {
@@ -904,12 +826,10 @@ export interface PublicPaymentPlan {
  * Installments are behind a deployment flag; when it is off the endpoint is
  * unavailable and the storefront simply offers no installment option.
  */
-export async function getCoursePaymentPlans(
-  courseId: string,
-): Promise<PublicPaymentPlan[]> {
+export async function getCoursePaymentPlans(courseId: string): Promise<PublicPaymentPlan[]> {
   const result = await serverFetchRaw<PublicPaymentPlan[]>(
     `/payment-plans/courses/${encodeURIComponent(courseId)}`,
-    { method: "GET" },
+    { method: 'GET' },
   ).catch(() => []);
   return Array.isArray(result) ? result : [];
 }
@@ -927,14 +847,12 @@ export interface PublicTutoringOffer {
   owned?: boolean;
 }
 
-export async function getTutoringOffersPublic(
-  courseId: string,
-): Promise<PublicTutoringOffer[]> {
+export async function getTutoringOffersPublic(courseId: string): Promise<PublicTutoringOffer[]> {
   const result = await serverFetchRaw<{
     status: string;
     data: PublicTutoringOffer[];
   }>(`/tutoring/offers/public?course_id=${encodeURIComponent(courseId)}`, {
-    method: "GET",
+    method: 'GET',
   });
   return result.data ?? [];
 }
@@ -958,13 +876,13 @@ export interface PublicTutoringGroup {
   min_students: number;
   age_min: number | null;
   age_max: number | null;
-  status: "WAITING" | "CONFIRMED" | "RUNNING";
+  status: 'WAITING' | 'CONFIRMED' | 'RUNNING';
   starts_on: string | null;
   ends_on: string | null;
   term_weeks: number;
   session_count: number | null;
   join_deadline: string | null;
-  visibility: "PUBLIC" | "PRIVATE";
+  visibility: 'PUBLIC' | 'PRIVATE';
   course_id: string;
   /** Per-seat price of this class; null = the course's per-seat offer price. */
   seat_price: number | null;
@@ -978,39 +896,33 @@ export interface PublicTutoringGroup {
 }
 
 /** Syllabus of a live course — what the meetings will cover. */
-export async function getCourseTopicsPublic(
-  courseId: string,
-): Promise<CourseTopic[]> {
+export async function getCourseTopicsPublic(courseId: string): Promise<CourseTopic[]> {
   const result = await serverFetchRaw<{ status: string; data: CourseTopic[] }>(
     `/courses/${encodeURIComponent(courseId)}/topics`,
-    { method: "GET" },
+    { method: 'GET' },
   );
   return result.data ?? [];
 }
 
 /** Scheduled group classes of a course that anyone may join. */
-export async function getTutoringGroupsPublic(
-  courseId: string,
-): Promise<PublicTutoringGroup[]> {
+export async function getTutoringGroupsPublic(courseId: string): Promise<PublicTutoringGroup[]> {
   const result = await serverFetchRaw<{
     status: string;
     data: PublicTutoringGroup[];
   }>(`/tutoring/groups/public?course_id=${encodeURIComponent(courseId)}`, {
-    method: "GET",
+    method: 'GET',
   });
   return result.data ?? [];
 }
 
 /** A private class opened by its share code, so friends can book it together. */
-export async function getTutoringGroupByCode(
-  code: string,
-): Promise<PublicTutoringGroup | null> {
+export async function getTutoringGroupByCode(code: string): Promise<PublicTutoringGroup | null> {
   try {
     const result = await serverFetchRaw<{
       status: string;
       data: PublicTutoringGroup;
     }>(`/tutoring/groups/by-code/${encodeURIComponent(code)}`, {
-      method: "GET",
+      method: 'GET',
     });
     return result.data ?? null;
   } catch {
@@ -1018,8 +930,7 @@ export async function getTutoringGroupByCode(
   }
 }
 
-export type PublicOfferingType =
-  "FREE" | "ONE_TIME" | "SUBSCRIPTION" | "PRIVATE" | "PAYMENT_PLAN";
+export type PublicOfferingType = 'FREE' | 'ONE_TIME' | 'SUBSCRIPTION' | 'PRIVATE' | 'PAYMENT_PLAN';
 
 export interface PublicCourseOffering {
   id: string;
@@ -1044,7 +955,7 @@ export interface PublicCourseOffering {
   access_expires_at?: string | null;
 }
 
-type OfferRow = Omit<PublicCourseOffering, "course_id"> & {
+type OfferRow = Omit<PublicCourseOffering, 'course_id'> & {
   Courses?: Array<{ Course: { id: string } }>;
 };
 
@@ -1069,26 +980,22 @@ export interface PaymentSummary {
  * The paid receipt line the return-from-bank pages show. Ownership is enforced
  * by the backend, so a payment id in the URL can only ever load the buyer's own.
  */
-export async function getPaymentSummary(
-  paymentId: string,
-): Promise<PaymentSummary | null> {
+export async function getPaymentSummary(paymentId: string): Promise<PaymentSummary | null> {
   try {
     const result = await serverFetchRaw<{
       status?: string;
       data?: PaymentSummary;
-    }>(`/payments/${encodeURIComponent(paymentId)}`, { method: "GET" });
+    }>(`/payments/${encodeURIComponent(paymentId)}`, { method: 'GET' });
     return result.data ?? null;
   } catch {
     return null;
   }
 }
 
-export async function getCourseOfferingsPublic(
-  courseId: string,
-): Promise<PublicCourseOffering[]> {
+export async function getCourseOfferingsPublic(courseId: string): Promise<PublicCourseOffering[]> {
   const result = await serverFetchRaw<OfferRow[]>(
     `/offers/course/${encodeURIComponent(courseId)}`,
-    { method: "GET" },
+    { method: 'GET' },
   ).catch(() => []);
   if (!Array.isArray(result)) return [];
   // An offer can span several courses (a bundle); flatten it onto the one asked for.
@@ -1105,15 +1012,14 @@ export async function initiateAcademyPlanPayment(data: {
   mobile?: string;
 }) {
   const headerStore = await nextHeaders();
-  const fallbackBaseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
+  const fallbackBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
   const baseUrl = resolvePublicOriginFromHeaders(headerStore, fallbackBaseUrl);
 
   const result = await serverFetchRaw<{
     status: string;
     data: { payment_id: string; amount: number; redirect_url: string };
-  }>("/payments/checkout", {
-    method: "POST",
+  }>('/payments/checkout', {
+    method: 'POST',
     body: JSON.stringify({
       ...data,
       callback_url: `${baseUrl}/payment/callback`,
@@ -1145,24 +1051,21 @@ export async function createEnrollment(data: {
         progress_percent: number;
         payment_id?: string | null;
       };
-    }>("/enrollments", {
-      method: "POST",
+    }>('/enrollments', {
+      method: 'POST',
       body: JSON.stringify(data),
     });
     return result.data;
   } catch (error) {
     if (error instanceof Error && /401/.test(error.message)) {
-      throw new Error("Unauthorized. Please log in to continue.");
+      throw new Error('Unauthorized. Please log in to continue.');
     }
     throw error;
   }
 }
 
 // Theme and UI Template functions
-export async function getStoreThemeConfig(
-  storeSlug?: string,
-  previewToken?: string,
-) {
+export async function getStoreThemeConfig(storeSlug?: string, previewToken?: string) {
   try {
     // Theme config should always use public endpoint
     // If no storeSlug provided, we can't fetch theme (theme is store-specific)
@@ -1208,17 +1111,17 @@ export async function getStoreThemeConfig(
       };
     }>(path, {
       includeAuth: false, // Always use public endpoint for theme config
-      tags: ["theme"],
+      tags: ['theme'],
     });
     return result.data;
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return null;
     }
-    if (process.env.NODE_ENV === "development" && error instanceof Error) {
+    if (process.env.NODE_ENV === 'development' && error instanceof Error) {
       const status = (error as Error & { status?: number }).status;
-      if (status !== 404 && !error.message.includes("404")) {
-        console.error("Failed to fetch theme config:", error);
+      if (status !== 404 && !error.message.includes('404')) {
+        console.error('Failed to fetch theme config:', error);
       }
     }
     return null;
@@ -1235,7 +1138,7 @@ export async function getStoreThemeConfig(
  */
 export async function getCurrentUITemplate() {
   try {
-    const path = "/ui-template/current";
+    const path = '/ui-template/current';
 
     const result = await serverFetchRaw<{
       message: string;
@@ -1267,9 +1170,7 @@ export async function getCurrentUITemplate() {
     // Return the data object with blocks sorted by order
     const templateData = result.data;
     if (templateData.blocks && Array.isArray(templateData.blocks)) {
-      templateData.blocks = templateData.blocks.sort(
-        (a, b) => a.order - b.order,
-      );
+      templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
     }
 
     return templateData;
@@ -1278,10 +1179,7 @@ export async function getCurrentUITemplate() {
   }
 }
 
-export async function getStoreUITemplate(
-  storeSlug?: string,
-  previewToken?: string,
-) {
+export async function getStoreUITemplate(storeSlug?: string, previewToken?: string) {
   try {
     // Only use public endpoint if storeSlug is provided
     // Otherwise return null to avoid authentication issues
@@ -1321,9 +1219,7 @@ export async function getStoreUITemplate(
     // Return the data object with blocks sorted by order
     const templateData = result.data;
     if (templateData.blocks && Array.isArray(templateData.blocks)) {
-      templateData.blocks = templateData.blocks.sort(
-        (a, b) => a.order - b.order,
-      );
+      templateData.blocks = templateData.blocks.sort((a, b) => a.order - b.order);
     }
 
     return templateData;
@@ -1334,13 +1230,10 @@ export async function getStoreUITemplate(
       const status = (error as Error & { status?: number }).status;
       // Only log non-404 errors to avoid noise
       // 404 means store/template doesn't exist, which is acceptable
-      if (status !== 404 && !error.message.includes("404")) {
+      if (status !== 404 && !error.message.includes('404')) {
         // Log with more context in development
-        if (process.env.NODE_ENV === "development") {
-          console.error(
-            `Failed to fetch UI template for store "${storeSlug}":`,
-            error.message,
-          );
+        if (process.env.NODE_ENV === 'development') {
+          console.error(`Failed to fetch UI template for store "${storeSlug}":`, error.message);
         }
       }
     }
@@ -1375,8 +1268,8 @@ export async function getPreviewPreset(
 ): Promise<PreviewPreset | null> {
   try {
     const params = new URLSearchParams();
-    if (previewToken) params.set("preview", previewToken);
-    if (draft) params.set("draft", "1");
+    if (previewToken) params.set('preview', previewToken);
+    if (draft) params.set('draft', '1');
     const qs = params.toString();
     const path = qs
       ? `/ui-template/preset/${encodeURIComponent(key)}?${qs}`
@@ -1393,7 +1286,7 @@ export async function getPreviewPreset(
     // The canvas can only render "No preview available" when this comes back
     // thin, so say WHY here — otherwise a blank site builder has no trace at all.
     if (!preset?.blocks?.length) {
-      logger.warn("SitePreview", "PresetEmpty", {
+      logger.warn('SitePreview', 'PresetEmpty', {
         template_key: key,
         draft: draft ? 1 : 0,
         has_token: previewToken ? 1 : 0,
@@ -1405,7 +1298,7 @@ export async function getPreviewPreset(
     }
     return preset;
   } catch (error) {
-    logger.error("SitePreview", "PresetFetchFailed", {
+    logger.error('SitePreview', 'PresetFetchFailed', {
       template_key: key,
       draft: draft ? 1 : 0,
       has_token: previewToken ? 1 : 0,
@@ -1442,9 +1335,9 @@ export interface CourseQnA {
 }
 
 function isCourseQnA(value: unknown): value is CourseQnA {
-  if (typeof value !== "object" || value === null) return false;
-  if (!("id" in value) || !("question" in value)) return false;
-  return typeof value.id === "string" && typeof value.question === "string";
+  if (typeof value !== 'object' || value === null) return false;
+  if (!('id' in value) || !('question' in value)) return false;
+  return typeof value.id === 'string' && typeof value.question === 'string';
 }
 
 function qnaItemsFromPayload(payload: unknown): CourseQnA[] {
@@ -1453,8 +1346,8 @@ function qnaItemsFromPayload(payload: unknown): CourseQnA[] {
   }
   if (
     payload !== null &&
-    typeof payload === "object" &&
-    "items" in payload &&
+    typeof payload === 'object' &&
+    'items' in payload &&
     Array.isArray(payload.items)
   ) {
     return payload.items.filter(isCourseQnA);
@@ -1482,7 +1375,7 @@ export async function createCourseQnA(courseId: number, question: string) {
     status: string;
     data: CourseQnA;
   }>(`/courses/${courseId}/qna`, {
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify({ question }),
   });
   return result.data;
@@ -1503,8 +1396,8 @@ export async function validateDiscount(data: {
         final_amount: number;
         discount_code_id: string;
       };
-    }>("/discounts/validate", {
-      method: "POST",
+    }>('/discounts/validate', {
+      method: 'POST',
       body: JSON.stringify(data),
       includeAuth: false,
     });
@@ -1533,8 +1426,8 @@ export async function getCart() {
         created_at: string;
         updated_at: string;
       };
-    }>("/cart", {
-      method: "GET",
+    }>('/cart', {
+      method: 'GET',
     });
     return result.data;
   } catch (error) {
@@ -1547,7 +1440,7 @@ export async function getCart() {
 
 export async function syncCart(
   items: Array<{
-    item_type: "COURSE" | "PRODUCT";
+    item_type: 'COURSE' | 'PRODUCT';
     course_id?: string;
     product_id?: string;
     course_title?: string;
@@ -1578,8 +1471,8 @@ export async function syncCart(
         id: string;
         reason: string;
       }>;
-    }>("/cart/sync", {
-      method: "POST",
+    }>('/cart/sync', {
+      method: 'POST',
       body: JSON.stringify({ items }),
     });
     return result;
@@ -1599,8 +1492,8 @@ export async function addToCart(course_id: string) {
         course_id: string;
         created_at: string;
       };
-    }>("/cart/items", {
-      method: "POST",
+    }>('/cart/items', {
+      method: 'POST',
       body: JSON.stringify({ course_id }),
     });
     return result.data;
@@ -1615,7 +1508,7 @@ export async function removeFromCart(cart_item_id: number) {
       message: string;
       status: string;
     }>(`/cart/items/${cart_item_id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
     return true;
   } catch (error) {
@@ -1628,8 +1521,8 @@ export async function clearCart() {
     await serverFetchRaw<{
       message: string;
       status: string;
-    }>("/cart", {
-      method: "DELETE",
+    }>('/cart', {
+      method: 'DELETE',
     });
     return true;
   } catch (error) {
@@ -1659,8 +1552,8 @@ export async function createBasket(data: {
         }>;
         created_at: string;
       };
-    }>("/baskets", {
-      method: "POST",
+    }>('/baskets', {
+      method: 'POST',
       body: JSON.stringify(data),
     });
     return result.data;
@@ -1670,18 +1563,18 @@ export async function createBasket(data: {
 }
 
 export type AcademyContactChannel =
-  | "phone"
-  | "email"
-  | "address"
-  | "website"
-  | "instagram"
-  | "telegram"
-  | "whatsapp"
-  | "linkedin"
-  | "youtube"
-  | "twitter"
-  | "aparat"
-  | "eitaa";
+  | 'phone'
+  | 'email'
+  | 'address'
+  | 'website'
+  | 'instagram'
+  | 'telegram'
+  | 'whatsapp'
+  | 'linkedin'
+  | 'youtube'
+  | 'twitter'
+  | 'aparat'
+  | 'eitaa';
 
 export type AcademyContactLink = {
   type: AcademyContactChannel;
@@ -1690,7 +1583,7 @@ export type AcademyContactLink = {
 };
 
 export type AcademyStaticPage = {
-  slug: "about" | "contact";
+  slug: 'about' | 'contact';
   title: string;
   body: string;
   is_published: boolean;

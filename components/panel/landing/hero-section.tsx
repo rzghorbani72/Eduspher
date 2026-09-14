@@ -1,6 +1,6 @@
-import { LANDING } from "./landing.messages";
-import { LandingShot } from "./landing-shot";
-import { StartFreeLink } from "./quick-signup/start-free-link";
+import { LANDING } from './landing.messages';
+import { LandingShot } from './landing-shot';
+import { StartFreeLink } from './quick-signup/start-free-link';
 
 type Props = {
   registerUrl: string;
@@ -20,7 +20,7 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
   return (
     <section
       data-lp="hero"
-      className="relative overflow-hidden bg-lp-hero pt-[104px] lg:pt-[132px]"
+      className="bg-lp-hero relative overflow-hidden pt-[104px] lg:pt-[132px]"
     >
       <div className="relative flex flex-col">
         <LandingShot
@@ -33,26 +33,26 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
           className="order-2 hidden h-auto w-full lg:block"
         />
 
-        <div className="order-1 z-10 mx-auto flex w-full max-w-[560px] flex-col items-center px-5 pb-12 text-center lg:absolute lg:inset-y-0 lg:order-0 lg:mx-0 lg:w-[40%] lg:max-w-none lg:items-stretch lg:justify-center lg:px-0 lg:pb-0 lg:text-start lg:start-[6%]">
-          <h1 className="text-balance text-[30px] font-extrabold leading-tight tracking-[-0.022em] text-lp-ink sm:text-[38px] lg:text-[40px] xl:text-[46px]">
+        <div className="z-10 order-1 mx-auto flex w-full max-w-[560px] flex-col items-center px-5 pb-12 text-center lg:absolute lg:inset-y-0 lg:start-[6%] lg:order-0 lg:mx-0 lg:w-[40%] lg:max-w-none lg:items-stretch lg:justify-center lg:px-0 lg:pb-0 lg:text-start">
+          <h1 className="text-lp-ink text-[30px] leading-tight font-extrabold tracking-[-0.022em] text-balance sm:text-[38px] lg:text-[40px] xl:text-[46px]">
             {LANDING.hero.titleLead}
             <span className="text-lp-blue">{LANDING.hero.titleHighlight}</span>
           </h1>
 
-          <p className="mt-4 text-pretty text-base leading-[1.85] text-lp-muted lg:text-[17px]">
+          <p className="text-lp-muted mt-4 text-base leading-[1.85] text-pretty lg:text-[17px]">
             {LANDING.hero.subtitle}
           </p>
 
           <div className="mt-9 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center lg:w-full">
             <StartFreeLink
               href={registerUrl}
-              className="flex h-14 items-center justify-center rounded-lp bg-lp-mint px-8 text-[16px] font-bold text-lp-ink shadow-lp-mint transition-transform hover:-translate-y-0.5"
+              className="rounded-lp bg-lp-mint text-lp-ink shadow-lp-mint flex h-14 items-center justify-center px-8 text-[16px] font-bold transition-transform hover:-translate-y-0.5"
             >
               {LANDING.hero.ctaPrimary}
             </StartFreeLink>
             <a
               href={demoUrl}
-              className="flex h-14 items-center justify-center rounded-lp border border-lp-line-2 bg-white px-8 text-[15px] font-semibold text-lp-ink transition-colors hover:border-lp-ink/25"
+              className="rounded-lp border-lp-line-2 text-lp-ink hover:border-lp-ink/25 flex h-14 items-center justify-center border bg-white px-8 text-[15px] font-semibold transition-colors"
             >
               {LANDING.hero.ctaSecondary}
             </a>
@@ -60,11 +60,8 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
 
           <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
             {LANDING.hero.bullets.map((bullet) => (
-              <li
-                key={bullet}
-                className="flex items-center gap-2 text-[13px] text-lp-muted"
-              >
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-lp-mint" />
+              <li key={bullet} className="text-lp-muted flex items-center gap-2 text-[13px]">
+                <span className="bg-lp-mint h-1.5 w-1.5 shrink-0 rounded-full" />
                 {bullet}
               </li>
             ))}

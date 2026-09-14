@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Play, RotateCcw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Play, RotateCcw } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
-import { VideoControls, formatClock } from "@/components/media/video-controls";
-import { useSecurePlayback } from "./use-secure-playback";
-import { VideoPreparingPoster } from "./video-preparing-poster";
-import { useVideoControls } from "@/components/media/use-video-controls";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { VideoControls, formatClock } from '@/components/media/video-controls';
+import { useSecurePlayback } from './use-secure-playback';
+import { VideoPreparingPoster } from './video-preparing-poster';
+import { useVideoControls } from '@/components/media/use-video-controls';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface SecureVideoPlayerProps {
   videoId: string;
@@ -29,7 +29,7 @@ interface SecureVideoPlayerProps {
  * `left`, not `end`: this is placed over the video picture, which does not
  * mirror in an RTL page the way the interface around it does.
  */
-const WATERMARK_POSITION = "bottom-[92px] left-[22px]";
+const WATERMARK_POSITION = 'bottom-[92px] left-[22px]';
 
 /**
  * The one video player for protected content.
@@ -60,18 +60,13 @@ export function SecureVideoPlayer({
   const [retryToken, setRetryToken] = useState(0);
   const [resumeOffered, setResumeOffered] = useState(initialPosition > 0);
   const [hasStarted, setHasStarted] = useState(false);
-  const { session, status } = useSecurePlayback(
-    videoId,
-    videoRef,
-    retryToken,
-    initialPosition,
-  );
+  const { session, status } = useSecurePlayback(videoId, videoRef, retryToken, initialPosition);
   const controls = useVideoControls(videoRef, stageRef);
   const posterSrc = poster ?? session?.poster;
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || initialPosition <= 0 || status !== "ready") return;
+    if (!video || initialPosition <= 0 || status !== 'ready') return;
     const resume = () => {
       if (!Number.isFinite(video.duration) || video.duration <= 0) {
         video.currentTime = initialPosition;
@@ -82,47 +77,40 @@ export function SecureVideoPlayer({
         setResumeOffered(false);
         return;
       }
-      video.currentTime = Math.min(
-        initialPosition,
-        Math.max(0, video.duration - 1),
-      );
+      video.currentTime = Math.min(initialPosition, Math.max(0, video.duration - 1));
     };
     if (video.readyState >= 1) {
       resume();
     } else {
-      video.addEventListener("loadedmetadata", resume, { once: true });
+      video.addEventListener('loadedmetadata', resume, { once: true });
     }
-    return () => video.removeEventListener("loadedmetadata", resume);
+    return () => video.removeEventListener('loadedmetadata', resume);
   }, [initialPosition, status]);
 
   useEffect(() => {
-    if (!autoPlay || status !== "ready") return;
+    if (!autoPlay || status !== 'ready') return;
     void videoRef.current?.play().catch(() => undefined);
   }, [autoPlay, status]);
 
-  const buffering = status === "loading" || controls.waiting;
-  const shape = fill ? "h-full w-full" : "aspect-video w-full";
+  const buffering = status === 'loading' || controls.waiting;
+  const shape = fill ? 'h-full w-full' : 'aspect-video w-full';
 
-  if (status === "error") {
+  if (status === 'error') {
     // Same footprint as the player it replaces, so a failure never resizes the
     // slot it sits in.
     return (
       <div
-        className={`flex flex-col justify-center gap-3 rounded-[10px] bg-[#0d0c0c] px-[30px] text-[#f3f2f2] ${shape} ${className ?? ""}`}
+        className={`flex flex-col justify-center gap-3 rounded-[10px] bg-[#0d0c0c] px-[30px] text-[#f3f2f2] ${shape} ${className ?? ''}`}
       >
-        <p className="text-[17px] font-extrabold">
-          {t("learning.videoPlaybackFailedTitle")}
-        </p>
-        <p className="text-[13px] text-white/60">
-          {t("learning.videoPlaybackFailed")}
-        </p>
+        <p className="text-[17px] font-extrabold">{t('learning.videoPlaybackFailedTitle')}</p>
+        <p className="text-[13px] text-white/60">{t('learning.videoPlaybackFailed')}</p>
         <button
           type="button"
           onClick={() => setRetryToken((token) => token + 1)}
           className="inline-flex w-fit items-center gap-2 rounded-lg bg-(--theme-primary) px-[18px] py-2.5 text-[13px] font-extrabold text-white"
         >
           <RotateCcw className="size-4" aria-hidden="true" />
-          {t("learning.tryAgain")}
+          {t('learning.tryAgain')}
         </button>
       </div>
     );
@@ -131,7 +119,7 @@ export function SecureVideoPlayer({
   return (
     <div
       ref={stageRef}
-      className={`group relative overflow-hidden rounded-[10px] ${posterSrc ? "bg-[#0d0c0c]" : "bg-transparent"} ${className ?? ""}`}
+      className={`group relative overflow-hidden rounded-[10px] ${posterSrc ? 'bg-[#0d0c0c]' : 'bg-transparent'} ${className ?? ''}`}
     >
       <video
         ref={videoRef}
@@ -157,18 +145,16 @@ export function SecureVideoPlayer({
               : undefined,
           );
         }}
-        className={fill ? "h-full w-full object-contain" : "aspect-video w-full"}
+        className={fill ? 'h-full w-full object-contain' : 'aspect-video w-full'}
       />
 
-      {posterSrc && !hasStarted ? (
-        <VideoPreparingPoster src={posterSrc} />
-      ) : null}
+      {posterSrc && !hasStarted ? <VideoPreparingPoster src={posterSrc} /> : null}
 
-      {status === "ready" && !controls.playing && !buffering ? (
+      {status === 'ready' && !controls.playing && !buffering ? (
         <button
           type="button"
           onClick={controls.togglePlay}
-          aria-label={t("learning.play")}
+          aria-label={t('learning.play')}
           className="absolute inset-0 grid place-items-center"
         >
           <span className="grid size-[84px] place-items-center rounded-full bg-(--theme-primary)/90 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
@@ -181,14 +167,11 @@ export function SecureVideoPlayer({
         </button>
       ) : null}
 
-      {status === "ready" && resumeOffered && !buffering ? (
+      {status === 'ready' && resumeOffered && !buffering ? (
         <div className="absolute end-[18px] top-[18px] flex items-center gap-3.5 rounded-lg border border-white/15 bg-[rgba(18,17,17,0.82)] px-3.5 py-2.5">
           <RotateCcw className="size-4 text-white/70" aria-hidden="true" />
           <span className="text-[13px] font-bold text-[#f3f2f2]">
-            {t("learning.continueFrom").replace(
-              "{time}",
-              formatClock(initialPosition, language),
-            )}
+            {t('learning.continueFrom').replace('{time}', formatClock(initialPosition, language))}
           </span>
           <span className="h-3.5 w-px bg-white/20" aria-hidden="true" />
           <button
@@ -199,7 +182,7 @@ export function SecureVideoPlayer({
             }}
             className="text-xs text-white/70 hover:text-white"
           >
-            {t("learning.startFromBeginning")}
+            {t('learning.startFromBeginning')}
           </button>
         </div>
       ) : null}
@@ -207,7 +190,7 @@ export function SecureVideoPlayer({
       {session?.watermark ? (
         <span
           aria-hidden="true"
-          className={`pointer-events-none absolute select-none text-xs tracking-[0.05em] text-white/25 ${WATERMARK_POSITION}`}
+          className={`pointer-events-none absolute text-xs tracking-[0.05em] text-white/25 select-none ${WATERMARK_POSITION}`}
         >
           {session.watermark}
         </span>
@@ -215,11 +198,11 @@ export function SecureVideoPlayer({
 
       {buffering ? (
         <span className="pointer-events-none absolute inset-0 grid place-items-center bg-black/25 text-sm text-white/90">
-          {t("learning.videoLoading")}
+          {t('learning.videoLoading')}
         </span>
       ) : null}
 
-      <VideoControls api={controls} ready={status === "ready"} />
+      <VideoControls api={controls} ready={status === 'ready'} />
     </div>
   );
 }

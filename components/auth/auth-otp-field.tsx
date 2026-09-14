@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from 'lucide-react';
 
-import { OtpBoxInput } from "@/components/ui/otp-box-input";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { OtpBoxInput } from '@/components/ui/otp-box-input';
+import { useTranslation } from '@/lib/i18n/hooks';
 
 interface AuthOtpFieldProps {
   label: string;
@@ -54,7 +54,7 @@ export function AuthOtpField({
         <span className="auth-otp-label">{label}</span>
         <p className="auth-otp-verified">
           <CheckCircle2 className="h-4 w-4" />
-          {t("auth.verified")}
+          {t('auth.verified')}
         </p>
       </div>
     );
@@ -72,7 +72,7 @@ export function AuthOtpField({
           disabled={loading || !canSend}
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          {loading ? t("auth.sending") : sendLabel}
+          {loading ? t('auth.sending') : sendLabel}
         </button>
       </div>
     );
@@ -95,11 +95,11 @@ export function AuthOtpField({
       <div className="auth-otp-resend">
         {canResend ? (
           <button type="button" onClick={onSend} disabled={loading}>
-            {loading ? t("auth.sending") : t("auth.resendOtp")}
+            {loading ? t('auth.sending') : t('auth.resendOtp')}
           </button>
         ) : (
           <span className="tabular-nums">
-            {t("auth.resendIn")} <bdi>{countdown}</bdi>
+            {t('auth.resendIn')} <bdi>{countdown}</bdi>
           </span>
         )}
       </div>
@@ -112,7 +112,7 @@ export function AuthOtpField({
           disabled={loading || value.length < length}
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          {loading ? t("auth.verifying") : verifyLabel}
+          {loading ? t('auth.verifying') : verifyLabel}
         </button>
       )}
     </div>

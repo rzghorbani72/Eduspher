@@ -1,15 +1,15 @@
-import type { CSSProperties } from "react";
-import { getPreviewPreset } from "@/lib/api/server";
-import { BlocksRenderer } from "@/components/ui-blocks/blocks-renderer";
-import { buildThemeCssVariables } from "@/lib/theme-apply";
-import { PreviewEditBridge } from "@/components/preview/preview-edit-bridge";
-import { PlaceholderSection } from "@/components/preview/placeholder-section";
+import type { CSSProperties } from 'react';
+import { getPreviewPreset } from '@/lib/api/server';
+import { BlocksRenderer } from '@/components/ui-blocks/blocks-renderer';
+import { buildThemeCssVariables } from '@/lib/theme-apply';
+import { PreviewEditBridge } from '@/components/preview/preview-edit-bridge';
+import { PlaceholderSection } from '@/components/preview/placeholder-section';
 
 // Standalone render surface embedded (scaled) by AdminPanel as gallery-card and
 // section-picker thumbnails. Renders a specific preset's blocks — or a single
 // block via `only` — with that preset's theme applied. No page chrome (see
 // isPreview in app/layout.tsx).
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default async function PreviewBlocksPage({
   searchParams,
@@ -17,41 +17,34 @@ export default async function PreviewBlocksPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const sp = await searchParams;
-  const template = typeof sp.template === "string" ? sp.template : undefined;
-  const only = typeof sp.only === "string" ? sp.only : undefined;
-  const token = typeof sp.token === "string" ? sp.token : undefined;
-  const draft = sp.draft === "1";
-  const edit = sp.edit === "1";
+  const template = typeof sp.template === 'string' ? sp.template : undefined;
+  const only = typeof sp.only === 'string' ? sp.only : undefined;
+  const token = typeof sp.token === 'string' ? sp.token : undefined;
+  const draft = sp.draft === '1';
+  const edit = sp.edit === '1';
   // Real-data mode renders dynamic blocks (e.g. courses) with the editing
   // academy's own records instead of placeholder/sample content.
-  const realData = sp.data === "real";
+  const realData = sp.data === 'real';
   // Preview-only sample top-up. This route IS the preview surface, so it is on
   // by default and can be turned off with `sample=0` to inspect true empty
   // states. The published storefront never reaches this file.
-  const sampleData = sp.sample !== "0";
+  const sampleData = sp.sample !== '0';
   // Live hero-variant thumbnails: force the hero's `style` so the picker can
   // preview every design with the academy's real theme and content.
-  const heroStyle = typeof sp.heroStyle === "string" ? sp.heroStyle : undefined;
+  const heroStyle = typeof sp.heroStyle === 'string' ? sp.heroStyle : undefined;
 
   if (!template) return null;
 
   const preset = await getPreviewPreset(template, token, draft);
   if (!preset || !preset.blocks?.length) {
-    return (
-      <div className="p-4 text-sm text-(--theme-muted)">
-        No preview available
-      </div>
-    );
+    return <div className="p-4 text-sm text-(--theme-muted)">No preview available</div>;
   }
 
-  const selected = only
-    ? preset.blocks.filter((block) => block.id === only)
-    : preset.blocks;
+  const selected = only ? preset.blocks.filter((block) => block.id === only) : preset.blocks;
   const blocks = heroStyle
     ? selected.map((block) => {
-        if (block.type !== "hero") return block;
-        const currentStyle =
-          typeof block.config?.style === "string" ? block.config.style : null;
+        if (block.type !== 'hero') return block;
+        const currentStyle = typeof block.config?.style === 'string' ? block.config.style : null;
         // Variant-picker thumbnails force a design. Keep uploaded media only on
         // the thumbnail that matches the block's real style — otherwise every
         // card in "طراحی بنر" inherits the selected banner's image.
@@ -104,23 +97,17 @@ export default async function PreviewBlocksPage({
   // for the chosen font to actually render in the editor preview.
   const canvasStyle: CSSProperties = {
     ...themeVars,
-    backgroundColor: "var(--theme-background)",
-    color: "var(--theme-foreground)",
-    fontFamily: "var(--theme-font-family)",
-    minHeight: "100%",
+    backgroundColor: 'var(--theme-background)',
+    color: 'var(--theme-foreground)',
+    fontFamily: 'var(--theme-font-family)',
+    minHeight: '100%',
   } as CSSProperties;
 
   // Direction from theme config overrides the HTML-level dir set by layout.tsx.
-  const canvasDir =
-    (preset.theme?.text_direction as "ltr" | "rtl" | undefined) ?? "rtl";
+  const canvasDir = (preset.theme?.text_direction as 'ltr' | 'rtl' | undefined) ?? 'rtl';
 
   return (
-    <div
-      style={canvasStyle}
-      dir={canvasDir}
-      data-theme-canvas
-      data-edit-mode={edit || undefined}
-    >
+    <div style={canvasStyle} dir={canvasDir} data-theme-canvas data-edit-mode={edit || undefined}>
       {edit && <PreviewEditBridge />}
       {/* Cloned by the bridge when a section is deleted, so the slot appears
           in place without a server rebuild. */}
@@ -130,7 +117,7 @@ export default async function PreviewBlocksPage({
         </template>
       )}
       {blocks.map((block, index) => {
-        const animate = !edit && block.type !== "header";
+        const animate = !edit && block.type !== 'header';
         // A hidden block still needs its wrapper (the bridge toggles it back on
         // by id), but the wrapper is empty — without display:none it leaves a
         // blank band in the canvas.
@@ -140,15 +127,15 @@ export default async function PreviewBlocksPage({
             key={block.id}
             data-block-id={block.id}
             data-block-type={block.type}
-            className={animate ? "preview-block-enter" : undefined}
+            className={animate ? 'preview-block-enter' : undefined}
             style={
               {
                 ...(animate ? { animationDelay: `${index * 90}ms` } : {}),
-                ...(hidden ? { display: "none" } : {}),
+                ...(hidden ? { display: 'none' } : {}),
               } as CSSProperties
             }
           >
-            {block.type === "placeholder" ? (
+            {block.type === 'placeholder' ? (
               <PlaceholderSection />
             ) : (
               <BlocksRenderer

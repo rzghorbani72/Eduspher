@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-const CART_STORAGE_KEY = "edusphere_cart";
-const CART_SYNC_KEY = "edusphere_cart_synced";
+const CART_STORAGE_KEY = 'edusphere_cart';
+const CART_SYNC_KEY = 'edusphere_cart_synced';
 
 export interface CartItem {
   course_id: string;
@@ -15,18 +15,18 @@ function normalizeRawCart(raw: unknown[]): CartItem[] {
   const out: CartItem[] = [];
   const seen = new Set<string>();
   for (const row of raw) {
-    if (!row || typeof row !== "object") continue;
+    if (!row || typeof row !== 'object') continue;
     const r = row as Record<string, unknown>;
     const cid = r.course_id;
-    if (typeof cid !== "string" || cid.length === 0) continue;
+    if (typeof cid !== 'string' || cid.length === 0) continue;
     if (seen.has(cid)) continue;
     seen.add(cid);
     out.push({
       course_id: cid,
-      course_title: typeof r.course_title === "string" ? r.course_title : undefined,
-      course_price: typeof r.course_price === "number" ? r.course_price : undefined,
-      course_cover: typeof r.course_cover === "string" ? r.course_cover : undefined,
-      added_at: typeof r.added_at === "string" ? r.added_at : new Date().toISOString(),
+      course_title: typeof r.course_title === 'string' ? r.course_title : undefined,
+      course_price: typeof r.course_price === 'number' ? r.course_price : undefined,
+      course_cover: typeof r.course_cover === 'string' ? r.course_cover : undefined,
+      added_at: typeof r.added_at === 'string' ? r.added_at : new Date().toISOString(),
     });
   }
   return out;
@@ -45,7 +45,7 @@ function deduplicateCart(cart: CartItem[]): CartItem[] {
 }
 
 export function getLocalCart(): CartItem[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
     const cartData = localStorage.getItem(CART_STORAGE_KEY);
@@ -57,7 +57,7 @@ export function getLocalCart(): CartItem[] {
 
     if (serialized !== cartData) {
       localStorage.setItem(CART_STORAGE_KEY, serialized);
-      window.dispatchEvent(new CustomEvent("cartUpdated"));
+      window.dispatchEvent(new CustomEvent('cartUpdated'));
     }
 
     return deduplicated;
@@ -66,8 +66,8 @@ export function getLocalCart(): CartItem[] {
   }
 }
 
-export function addToLocalCart(item: Omit<CartItem, "added_at">): boolean {
-  if (typeof window === "undefined") return false;
+export function addToLocalCart(item: Omit<CartItem, 'added_at'>): boolean {
+  if (typeof window === 'undefined') return false;
 
   try {
     const cart = getLocalCart();
@@ -82,7 +82,7 @@ export function addToLocalCart(item: Omit<CartItem, "added_at">): boolean {
 
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     localStorage.removeItem(CART_SYNC_KEY);
-    window.dispatchEvent(new CustomEvent("cartUpdated"));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
 
     return true;
   } catch {
@@ -91,13 +91,13 @@ export function addToLocalCart(item: Omit<CartItem, "added_at">): boolean {
 }
 
 export function removeFromLocalCart(course_id: string): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === 'undefined') return false;
 
   try {
     const cart = getLocalCart().filter((item) => item.course_id !== course_id);
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     localStorage.removeItem(CART_SYNC_KEY);
-    window.dispatchEvent(new CustomEvent("cartUpdated"));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
     return true;
   } catch {
     return false;
@@ -105,12 +105,12 @@ export function removeFromLocalCart(course_id: string): boolean {
 }
 
 export function clearLocalCart(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === 'undefined') return false;
 
   try {
     localStorage.removeItem(CART_STORAGE_KEY);
     localStorage.removeItem(CART_SYNC_KEY);
-    window.dispatchEvent(new CustomEvent("cartUpdated"));
+    window.dispatchEvent(new CustomEvent('cartUpdated'));
     return true;
   } catch {
     return false;
@@ -118,22 +118,22 @@ export function clearLocalCart(): boolean {
 }
 
 export function isCartSynced(): boolean {
-  if (typeof window === "undefined") return false;
-  return localStorage.getItem(CART_SYNC_KEY) === "true";
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem(CART_SYNC_KEY) === 'true';
 }
 
 export function markCartSynced(): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(CART_SYNC_KEY, "true");
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(CART_SYNC_KEY, 'true');
 }
 
 export async function syncCartToServer(): Promise<boolean> {
-  if (typeof window === "undefined") return false;
+  if (typeof window === 'undefined') return false;
 
   try {
     const localCart = getLocalCart();
     const transformedItems = localCart.map((item) => ({
-      item_type: "COURSE" as const,
+      item_type: 'COURSE' as const,
       course_id: item.course_id,
       product_id: undefined as undefined,
       title: item.course_title,
@@ -142,23 +142,27 @@ export async function syncCartToServer(): Promise<boolean> {
       added_at: item.added_at,
     }));
 
-    const response = await fetch("/api/cart/sync", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch('/api/cart/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items: transformedItems }),
     });
 
     if (response.ok) {
       const result = await response.json();
 
-      if (result.removedItems && Array.isArray(result.removedItems) && result.removedItems.length > 0) {
+      if (
+        result.removedItems &&
+        Array.isArray(result.removedItems) &&
+        result.removedItems.length > 0
+      ) {
         const currentCart = getLocalCart();
         const removedIds = new Set(
           result.removedItems.map((item: { type: string; id: number }) => item.id),
         );
         const updatedCart = currentCart.filter((item) => !removedIds.has(item.course_id));
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(updatedCart));
-        window.dispatchEvent(new Event("cartUpdated"));
+        window.dispatchEvent(new Event('cartUpdated'));
       }
 
       markCartSynced();
@@ -167,20 +171,20 @@ export async function syncCartToServer(): Promise<boolean> {
       return false;
     } else {
       const errorText = await response.text();
-      console.error("Cart sync failed:", response.status, errorText);
+      console.error('Cart sync failed:', response.status, errorText);
       return false;
     }
   } catch (error) {
-    console.error("Cart sync error:", error);
+    console.error('Cart sync error:', error);
     return false;
   }
 }
 
 export async function loadCartFromServer(): Promise<CartItem[]> {
-  if (typeof window === "undefined") return [];
+  if (typeof window === 'undefined') return [];
 
   try {
-    const response = await fetch("/api/cart");
+    const response = await fetch('/api/cart');
     if (!response.ok) return [];
 
     const data = await response.json();
@@ -189,9 +193,8 @@ export async function loadCartFromServer(): Promise<CartItem[]> {
     return data.items
       .filter((item: { item_type?: string; course_id?: number }) => {
         const isCourse =
-          item.item_type === "COURSE" ||
-          (item.course_id != null && item.item_type !== "PRODUCT");
-        return isCourse && typeof item.course_id === "number";
+          item.item_type === 'COURSE' || (item.course_id != null && item.item_type !== 'PRODUCT');
+        return isCourse && typeof item.course_id === 'number';
       })
       .map(
         (item: {

@@ -44,7 +44,7 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
           {items.map((item, index) => (
             <article
               key={item.title}
-              className={`flex flex-col rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) p-6 ${SPAN[item.size]}`}
+              className={`flex flex-col rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) p-6 shadow-(--theme-shadow) ${SPAN[item.size]}`}
             >
               <span
                 {...editableItem('items', index, 'kicker')}
@@ -52,7 +52,10 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
               >
                 {item.kicker}
               </span>
-              <h3 {...editableItem('items', index, 'title')} className="mt-3 text-[21px] font-bold leading-[1.35]">
+              <h3
+                {...editableItem('items', index, 'title')}
+                className="mt-3 text-[21px] leading-[1.35] font-bold"
+              >
                 {item.title}
               </h3>
               <p
@@ -77,7 +80,7 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
                       </span>
                       <b
                         {...editableItem('items', index, 'rows', rowIndex, 'value')}
-                        className="whitespace-nowrap font-bold"
+                        className="font-bold whitespace-nowrap"
                       >
                         {row.value}
                       </b>
@@ -92,7 +95,10 @@ export function TavanFeatures({ id, config }: TemplateSectionProps) {
             <p data-editable="quoteBody" className="text-[17px] leading-[1.85]">
               {text(config, 'quoteBody', d.quote.body)}
             </p>
-            <cite data-editable="quoteCite" className="mt-3 block text-[13.5px] not-italic text-(--theme-muted)">
+            <cite
+              data-editable="quoteCite"
+              className="mt-3 block text-[13.5px] text-(--theme-muted) not-italic"
+            >
               {text(config, 'quoteCite', d.quote.cite)}
             </cite>
           </blockquote>
