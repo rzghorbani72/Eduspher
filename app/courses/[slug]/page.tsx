@@ -12,6 +12,7 @@ import {
 } from "@/components/courses/preview-player-context";
 import { PurchasePanel } from "@/components/courses/purchase-panel";
 import { LiveCoursePanel } from "@/components/courses/live-course-panel";
+import { ClassRequestSection } from "@/components/courses/class-request-section";
 import { TutoringGroupsSection } from "@/components/courses/tutoring-groups-section";
 import {
   getCourses,
@@ -200,6 +201,9 @@ export default async function CourseDetailPage({
     : (previewMedia.find((item) => item.videoId)?.lessonId ?? null);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
   const learnPathHref = buildPath(learnPath(course.slug));
+  const loginHref = buildPath(
+    `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
+  );
   // Free lessons open the full learning page for everyone, enrolled or not —
   // the page itself only requires sign-in, not a purchase, for a free lesson.
   const previewBasePath = learnPathHref;
@@ -258,7 +262,7 @@ export default async function CourseDetailPage({
         media={previewMedia}
         defaultLessonId={defaultPreviewId}
       >
-        <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_380px]">
+        <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_340px]">
           <div className="min-w-0">
             <CoursePreviewPlayer
               promoVideoId={promoVideoId}
@@ -285,43 +289,45 @@ export default async function CourseDetailPage({
               />
             </div>
 
-            {isLiveCourse(course) && tutoringGroups.length ? (
-              <div className="mt-10">
-                <TutoringGroupsSection
-                  groups={tutoringGroups}
-                  currencyConfig={currencyConfig}
-                  language={language}
-                  loginHref={buildPath(
-                    `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
-                  )}
-                />
+            {isLiveCourse(course) ? (
+              <div className="mt-10 space-y-8">
+                {tutoringGroups.length ? (
+                  <TutoringGroupsSection
+                    groups={tutoringGroups}
+                    currencyConfig={currencyConfig}
+                    language={language}
+                    loginHref={loginHref}
+                  />
+                ) : (
+                  <p className="rounded-2xl border border-dashed border-theme p-6 text-center text-sm text-muted">
+                    {translate("courses.liveNoClassesYet")}
+                  </p>
+                )}
+                {!isEnrolled ? (
+                  <ClassRequestSection
+                    courseId={course.id}
+                    hasOpenClasses={tutoringGroups.length > 0}
+                    isLoggedIn={!!user}
+                    loginHref={loginHref}
+                  />
+                ) : null}
               </div>
-            ) : isLiveCourse(course) ? (
-              <p className="mt-10 rounded-2xl border border-dashed border-(--theme-border-color) p-6 text-center text-sm text-muted">
-                {translate("courses.liveNoClassesYet")}
-              </p>
             ) : null}
           </div>
 
-          <aside className="lg:sticky lg:top-[86px]">
+          <aside className="lg:sticky lg:top-[72px]">
             {isLiveCourse(course) && !isEnrolled ? (
               <LiveCoursePanel
-                courseId={course.id}
                 groups={tutoringGroups}
                 currencyConfig={currencyConfig}
                 isLoggedIn={!!user}
-                loginHref={buildPath(
-                  `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
-                )}
               />
             ) : (
               <PurchasePanel
                 options={options}
                 language={language}
                 currencyConfig={currencyConfig}
-                loginHref={buildPath(
-                  `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
-                )}
+                loginHref={loginHref}
                 continueHref={isEnrolled ? learnPathHref : null}
                 learnHref={learnPathHref}
                 liveClassesHref={buildPath("/account/classes")}

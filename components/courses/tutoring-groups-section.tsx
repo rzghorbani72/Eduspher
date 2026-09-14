@@ -14,6 +14,7 @@ import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
 import { useSeatHold } from "@/components/purchase/use-seat-hold";
 import type { PublicTutoringGroup } from "@/lib/api/server";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
+import { GROUP_CLASSES_ANCHOR_ID } from "@/components/courses/live-course-panel";
 
 interface Props {
   groups: PublicTutoringGroup[];
@@ -74,7 +75,11 @@ export const TutoringGroupsSection = ({
   };
 
   return (
-    <section className="space-y-4" aria-labelledby="group-classes-title">
+    <section
+      id={GROUP_CLASSES_ANCHOR_ID}
+      className="scroll-mt-24 space-y-4"
+      aria-labelledby="group-classes-title"
+    >
       <div className="space-y-1">
         <h2
           id="group-classes-title"
@@ -91,7 +96,7 @@ export const TutoringGroupsSection = ({
       {closed ? (
         <p className="text-sm text-muted">{t("courses.enrollmentClosed")}</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-4">
           {groups.map((group) => (
             <TutoringGroupCard
               key={group.id}

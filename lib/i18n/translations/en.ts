@@ -91,6 +91,11 @@ export const en = {
     liveNoClassesYet:
       "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
     liveSeatsSoldPerClass: "Seats are booked per class — pick one from the classes below.",
+    classCount: "{count} classes",
+    fromPrice: "from {price}",
+    openClasses: "{count} open classes",
+    liveChooseClass: "See and pick a class",
+    requestClassLinkWithClasses: "No time fits? Suggest your own",
     requestClassTitle: "Ask for a class time",
     requestClassHint: "Tell the teacher when you can attend. When a class opens in your window, you get an SMS to book it.",
     requestClassHintWithClasses: "None of the times above work for you? Propose your own — the teacher opens a new class or runs it privately.",

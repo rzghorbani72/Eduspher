@@ -73,6 +73,11 @@ export const ar = {
       "Scheduled classes with a set weekly time. A class starts once enough students have booked a seat.",
     liveNoClassesYet:
       "Classes for this course have not been scheduled yet. Contact the academy for the timetable.",
+    classCount: "{count} classes",
+    fromPrice: "from {price}",
+    openClasses: "{count} open classes",
+    liveChooseClass: "See and pick a class",
+    requestClassLinkWithClasses: "No time fits? Suggest your own",
     groupTerm: "Runs",
     groupStarts: "Starts",
     groupSeatsLeft: "Seats left",

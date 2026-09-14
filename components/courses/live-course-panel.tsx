@@ -2,75 +2,92 @@
 
 import { CalendarClock } from "lucide-react";
 
-import { ClassRequestForm } from "@/components/courses/class-request-form";
 import { LiveClassOptions } from "@/components/courses/live-class-options";
 import type { CurrencyConfig } from "@/components/courses/purchase-panel";
 import { CreditBalanceNote } from "@/components/purchase/credit-balance-note";
 import type { PublicTutoringGroup } from "@/lib/api/server";
+import { seatPriceOfGroup } from "@/lib/courses/live-course";
 import { useTranslation } from "@/lib/i18n/hooks";
-import { formatCurrencyWithAcademy } from "@/lib/utils";
+import { formatCurrencyWithAcademy, formatNumber } from "@/lib/utils";
+
+export const CLASS_REQUEST_ANCHOR_ID = "request-class";
+export const GROUP_CLASSES_ANCHOR_ID = "group-classes";
 
 interface LiveCoursePanelProps {
-  courseId: string;
   groups: PublicTutoringGroup[];
   currencyConfig: CurrencyConfig | null;
   isLoggedIn: boolean;
-  loginHref: string;
 }
 
 /**
- * The buy box of a live course. Seats are bought per class (listed on the
- * page), so this side card only explains that and takes a time request.
+ * The compact buy box of a live course: lowest seat price, how many classes
+ * are open, and a jump to the class list. The time-request form lives below.
  */
 export function LiveCoursePanel({
-  courseId,
   groups,
   currencyConfig,
   isLoggedIn,
-  loginHref,
 }: LiveCoursePanelProps) {
   const { t, language } = useTranslation();
   const hasOpenClasses = groups.length > 0;
   const format = (amount: number) =>
     formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
+  const fromPrice = hasOpenClasses
+    ? Math.min(...groups.map(seatPriceOfGroup))
+    : null;
+  const seatsLeft = groups.reduce((sum, group) => sum + group.seats_left, 0);
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
-      <div className="space-y-2 px-6 pt-6 pb-4">
-        <h2 className="flex items-center gap-2 text-lg font-black text-(--theme-foreground)">
-          <CalendarClock
-            className="size-5 text-(--theme-primary)"
-            aria-hidden="true"
-          />
+      <div className="space-y-4 p-5">
+        <div className="flex items-center gap-2 text-xs font-bold text-(--theme-primary-ink)">
+          <CalendarClock className="size-4" aria-hidden="true" />
           {t("courses.liveCourse")}
-        </h2>
-        <p className="text-[13px] text-(--theme-muted)">
-          {hasOpenClasses
-            ? t("courses.liveSeatsSoldPerClass")
-            : t("courses.liveNoClassesYet")}
-        </p>
-        {isLoggedIn ? <CreditBalanceNote className="mt-3" /> : null}
-        {hasOpenClasses ? (
-          <div className="pt-2">
-            <LiveClassOptions groups={groups} format={format} />
+        </div>
+
+        {fromPrice !== null ? (
+          <div>
+            <p className="text-[11px] text-muted">{t("courses.groupPerSeat")}</p>
+            <p className="cd-price text-2xl font-black text-(--theme-foreground)">
+              {groups.length > 1
+                ? t("courses.fromPrice").replace("{price}", format(fromPrice))
+                : format(fromPrice)}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              {t("courses.openClasses").replace(
+                "{count}",
+                formatNumber(groups.length, language),
+              )}
+              {" · "}
+              {t("courses.groupSeatsLeft")}: {formatNumber(seatsLeft, language)}
+            </p>
           </div>
+        ) : (
+          <p className="text-sm text-muted">{t("courses.liveNoClassesYet")}</p>
+        )}
+
+        {hasOpenClasses ? <LiveClassOptions groups={groups} /> : null}
+
+        {hasOpenClasses ? (
+          <a
+            href={`#${GROUP_CLASSES_ANCHOR_ID}`}
+            className="flex h-11 items-center justify-center rounded-xl bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90"
+          >
+            {t("courses.liveChooseClass")}
+          </a>
         ) : null}
+
+        {isLoggedIn ? <CreditBalanceNote /> : null}
       </div>
-      <div className="border-t border-theme px-6 py-5">
-        <h3 className="text-sm font-black text-(--theme-foreground)">
-          {t("courses.requestClassTitle")}
-        </h3>
-        <p className="mt-1 mb-4 text-xs text-(--theme-muted)">
-          {hasOpenClasses
-            ? t("courses.requestClassHintWithClasses")
-            : t("courses.requestClassHint")}
-        </p>
-        <ClassRequestForm
-          courseId={courseId}
-          isLoggedIn={isLoggedIn}
-          loginHref={loginHref}
-        />
-      </div>
+
+      <a
+        href={`#${CLASS_REQUEST_ANCHOR_ID}`}
+        className="block border-t border-theme px-5 py-3 text-center text-xs font-semibold text-(--theme-primary-ink) transition-colors hover:bg-surface"
+      >
+        {hasOpenClasses
+          ? t("courses.requestClassLinkWithClasses")
+          : t("courses.requestClassTitle")}
+      </a>
     </div>
   );
 }
