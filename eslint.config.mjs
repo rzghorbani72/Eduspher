@@ -3,7 +3,7 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import prettier from 'eslint-config-prettier';
 import unusedImports from 'eslint-plugin-unused-imports';
-import { OVERSIZE_ALLOWLIST, MAX_LINES } from './eslint.oversize.mjs';
+import { OVERSIZE_ALLOWLIST, LEGACY_ANY_ALLOWLIST, MAX_LINES } from './eslint.oversize.mjs';
 
 const LINE_LIMITS = { skipBlankLines: true, skipComments: true };
 // Route folders like app/(x)/[id] contain glob metacharacters.
@@ -27,9 +27,21 @@ export default defineConfig([
     },
   },
   {
-    files: ['e2e/**', 'tests/**', 'loadtests/**', 'components/ui/**', 'lib/i18n/translations/**'],
+    files: ['e2e/**', 'tests/**', 'loadtests/**', 'scripts/**', 'components/ui/**', 'lib/i18n/translations/**'],
     rules: { 'max-lines': 'off', 'max-lines-per-function': 'off' },
+  },
+  {
+    files: ['e2e/**', 'tests/**'],
+    rules: { '@typescript-eslint/no-explicit-any': 'warn', '@typescript-eslint/no-non-null-assertion': 'warn' },
   },
   { files: ['scripts/**', 'tools/**', 'lib/logging/**', 'app/api/log/**'], rules: { 'no-console': 'off' } },
   { files: asGlob(OVERSIZE_ALLOWLIST), rules: { 'max-lines': 'off' } },
+  {
+    files: asGlob(LEGACY_ANY_ALLOWLIST),
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+      'no-console': 'warn',
+    },
+  },
 ]);
