@@ -193,11 +193,15 @@ const RESERVED_PATH_SEGMENTS = new Set([
   'robots.txt',
   'sitemap.xml',
   'academy-not-found',
-  // Academy-scoped routes
+  // Academy-scoped routes — never treat these as an academy slug prefix.
+  // Missing one here breaks custom domains: /classes/join/:code was rewritten
+  // to /join/:code because "classes" looked like a path-based academy slug.
   'account',
   'blog',
   'bundles',
+  'certificates',
   'checkout',
+  'classes',
   'courses',
   'learn',
   'payment',
@@ -327,7 +331,7 @@ const matchStore = (
       return true;
     }
     const privateAddress = store.domain?.private_address?.toLowerCase();
-    const publicAddress = store.domain?.public_address?.toLowerCase();
+    const publicAddress = store.domain?.public_address?.toLowerCase()?.replace(/^www\./, '');
     if (
       host &&
       privateAddress &&
@@ -340,6 +344,20 @@ const matchStore = (
     }
     return false;
   });
+};
+
+/** Custom hostname the academy owns (not a Mentoma subdomain). */
+const matchStoreByCustomHost = (stores: PublicStore[], host: string | null): PublicStore | null => {
+  if (!host) return null;
+  const normalized = host.toLowerCase().replace(/^www\./, '');
+  if (normalized === BASE_DOMAIN) return null;
+  if (host.toLowerCase().endsWith(`.${BASE_DOMAIN}`)) return null;
+  return (
+    stores.find((store) => {
+      const publicAddress = store.domain?.public_address?.toLowerCase()?.replace(/^www\./, '');
+      return Boolean(publicAddress && normalized === publicAddress);
+    }) ?? null
+  );
 };
 
 const fetchStores = async () => {
@@ -437,10 +455,15 @@ export async function proxy(request: NextRequest) {
   const searchParamSlug = requestUrl.searchParams.get('academy');
   const hostHeader = extractHost(request.headers.get('host'));
   const subdomainSlug = extractSubdomainSlug(hostHeader);
-  const isSubdomainRequest = Boolean(subdomainSlug);
-  // On subdomain requests the first path segment is never an academy slug.
+  const stores = await fetchStores();
+  // Custom domains carry the academy in the Host header the same way Mentoma
+  // subdomains do — path segments must stay as real routes, never as slugs.
+  const customDomainStore = stores ? matchStoreByCustomHost(stores, hostHeader) : null;
+  const isHostBoundRequest = Boolean(subdomainSlug) || Boolean(customDomainStore);
+  const isSubdomainRequest = isHostBoundRequest;
+  // On host-bound requests the first path segment is never an academy slug.
   const slugFromPath =
-    !isSubdomainRequest && firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment)
+    !isHostBoundRequest && firstSegment && !RESERVED_PATH_SEGMENTS.has(firstSegment)
       ? firstSegment
       : null;
   const isAcademyHomePath = Boolean(slugFromPath) && pathnameSegments.length === 1;
@@ -448,19 +471,19 @@ export async function proxy(request: NextRequest) {
     searchParamSlug ??
     slugFromPath ??
     subdomainSlug ??
+    customDomainStore?.slug ??
     extractCandidateSlug(hostHeader) ??
     DEFAULT_ACADEMY_SLUG;
   const numericSlugId = slugFromPath && /^\d+$/.test(slugFromPath) ? slugFromPath : null;
 
-  const stores = await fetchStores();
   const pathAcademySlug = searchParamSlug ?? slugFromPath;
   const hasPathAcademy = Boolean(pathAcademySlug);
   const isPanelRoot =
-    !isSubdomainRequest && !hasPathAcademy && PLATFORM_PATHS.has(requestUrl.pathname);
-  let matchedStore: PublicStore | null = null;
+    !isHostBoundRequest && !hasPathAcademy && PLATFORM_PATHS.has(requestUrl.pathname);
+  let matchedStore: PublicStore | null = customDomainStore;
 
   if (stores) {
-    if (subdomainSlug) {
+    if (!matchedStore && subdomainSlug) {
       matchedStore =
         matchStore(stores, {
           slug: subdomainSlug,
@@ -485,15 +508,16 @@ export async function proxy(request: NextRequest) {
           id: numericSlugId ?? undefined,
         }) ?? null;
     }
-    if (!matchedStore && !isSubdomainRequest && !hasPathAcademy && !isPanelRoot && existingId) {
+    if (!matchedStore && !isHostBoundRequest && !hasPathAcademy && !isPanelRoot && existingId) {
       matchedStore = matchStore(stores, { id: existingId }) ?? null;
     }
   }
 
-  // A subdomain names one academy and nothing else. If it resolves to no
-  // academy we must never fall through to the platform landing page — that
-  // would serve platform marketing under a tenant's own brand host.
-  if (isSubdomainRequest && !matchedStore) {
+  // A host-bound name (Mentoma subdomain or custom domain) maps to one academy
+  // and nothing else. If it resolves to no academy we must never fall through
+  // to the platform landing page — that would serve platform marketing under a
+  // tenant's own brand host.
+  if (isHostBoundRequest && !matchedStore) {
     if (!stores) {
       // Backend unreachable: this is an outage, not a missing academy. A 404
       // here would tell search engines the academy is permanently gone.
