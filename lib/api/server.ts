@@ -942,12 +942,6 @@ const joinInviteBlockReason = (error: unknown): 'course' | 'class' | null => {
   return 'course';
 };
 
-const fetchErrorStatus = (error: unknown): number | undefined => {
-  if (!error || typeof error !== 'object' || !('status' in error)) return undefined;
-  const status = (error as { status?: number }).status;
-  return typeof status === 'number' ? status : undefined;
-};
-
 export async function getTutoringGroupByCode(code: string): Promise<TutoringGroupByCodeResult> {
   try {
     const result = await serverFetchRaw<{
@@ -960,18 +954,11 @@ export async function getTutoringGroupByCode(code: string): Promise<TutoringGrou
     });
     return result.data ? { status: 'ok', group: result.data } : { status: 'not_found' };
   } catch (error) {
-    const status = fetchErrorStatus(error);
-    if (status === 404) {
-      return { status: 'not_found' };
-    }
     const blockReason = joinInviteBlockReason(error);
     if (blockReason === 'class') {
       return { status: 'class_unpublished' };
     }
-    if (status === 400 || blockReason === 'course') {
-      return { status: 'course_unpublished' };
-    }
-    return { status: 'not_found' };
+    return { status: 'course_unpublished' };
   }
 }
 

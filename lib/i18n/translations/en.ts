@@ -127,7 +127,7 @@ export const en = {
     groupEnter: 'Enter your class',
     groupInviteTitle: 'You were invited to a class',
     groupInviteCourseNotPublished:
-      'This course is not published yet. The invite link will work after the academy publishes the course.',
+      'No class is published for this course yet. The invite link will work after the academy publishes the course.',
     groupInviteClassNotPublished:
       'This class is not open for enrollment yet. The invite link will work after the teacher publishes the class.',
     classSizePrivate: 'Private class',

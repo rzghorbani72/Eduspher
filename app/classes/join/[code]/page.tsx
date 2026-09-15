@@ -1,5 +1,3 @@
-import { notFound } from 'next/navigation';
-
 import { TutoringGroupsSection } from '@/components/courses/tutoring-groups-section';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getCurrentUser, getPublicCourseDetail, getTutoringGroupByCode } from '@/lib/api/server';
@@ -12,8 +10,9 @@ import { t } from '@/lib/i18n/server-translations';
 export const dynamic = 'force-dynamic';
 
 /**
- * A private class opened by its share code. This is how a student gathers their
- * own friends into a class instead of waiting for strangers to fill it.
+ * A share code is only an enrollment page when the parent course is live on
+ * the storefront. Anything else — draft course, draft class, unknown code —
+ * is the same empty state. Never 404: the visitor already has the link.
  */
 export default async function JoinClassByCodePage({
   params,
@@ -26,48 +25,22 @@ export default async function JoinClassByCodePage({
     getTutoringGroupByCode(code),
     getCurrentUser().catch(() => null),
   ]);
+  const { language, currencyConfig } = await resolveAcademyForRequest(user, academyContext.slug);
 
-  if (lookup.status === 'course_unpublished' || lookup.status === 'class_unpublished') {
-    const { language } = await resolveAcademyForRequest(user, academyContext.slug);
-    const titleKey =
-      lookup.status === 'class_unpublished'
-        ? 'courses.groupInviteClassNotPublished'
-        : 'courses.groupInviteCourseNotPublished';
-    return (
-      <main className="mx-auto w-full max-w-3xl px-4 py-10">
-        <EmptyState title={t(titleKey, language)} />
-      </main>
-    );
-  }
+  const unpublished = (
+    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+      <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
+    </main>
+  );
 
-  if (lookup.status === 'not_found') return notFound();
-  if (lookup.status !== 'ok') {
-    const { language } = await resolveAcademyForRequest(user, academyContext.slug);
-    return (
-      <main className="mx-auto w-full max-w-3xl px-4 py-10">
-        <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
-      </main>
-    );
-  }
+  if (lookup.status !== 'ok') return unpublished;
 
   const group = lookup.group;
   const publicCourse = await getPublicCourseDetail(group.course_id, { fresh: true });
-  if (!publicCourse) {
-    const { language } = await resolveAcademyForRequest(user, academyContext.slug);
-    return (
-      <main className="mx-auto w-full max-w-3xl px-4 py-10">
-        <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
-      </main>
-    );
-  }
+  if (!publicCourse) return unpublished;
 
-  const { language, currencyConfig } = await resolveAcademyForRequest(user, academyContext.slug);
   const buildPath = (path: string) =>
     buildAcademyPath(academyContext.isSubdomain ? null : academyContext.slug, path);
-
-  const liveClassHref = publicCourse.slug
-    ? buildPath(liveClassPath(publicCourse.slug))
-    : buildPath('/courses');
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -80,7 +53,7 @@ export default async function JoinClassByCodePage({
         language={language}
         loginHref={buildPath(`/auth/login?redirect=/classes/join/${code}`)}
         joinCode={code}
-        liveClassHref={liveClassHref}
+        liveClassHref={buildPath(liveClassPath(publicCourse.slug))}
       />
     </main>
   );
