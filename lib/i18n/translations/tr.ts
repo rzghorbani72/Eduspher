@@ -51,6 +51,7 @@ export const tr = {
     currentStudentsKeepAccess: 'Zaten kayıtlıysanız erişiminiz her zamanki gibi devam eder.',
     reopensOn: 'Yeniden açılış',
     enrollmentClosedShort: 'Kayıtlar kapalı',
+    managerContact: 'Akademi yöneticisine ulaşın',
   },
   navigation: {
     home: 'Ana Sayfa',

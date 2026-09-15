@@ -51,6 +51,7 @@ export const ar = {
     currentStudentsKeepAccess: 'إذا كنت مسجلاً بالفعل، فسيستمر وصولك كالمعتاد.',
     reopensOn: 'يُعاد الفتح في',
     enrollmentClosedShort: 'التسجيل مغلق',
+    managerContact: 'التواصل مع مدير الأكاديمية',
   },
   navigation: {
     home: 'الرئيسية',

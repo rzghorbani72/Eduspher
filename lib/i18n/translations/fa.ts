@@ -51,6 +51,7 @@ export const fa = {
     currentStudentsKeepAccess: 'اگر قبلاً ثبت‌نام کرده‌اید، دسترسی شما مثل قبل برقرار است.',
     reopensOn: 'بازگشایی در',
     enrollmentClosedShort: 'ثبت‌نام بسته است',
+    managerContact: 'تماس با مدیر آکادمی',
   },
   activeDiscount: {
     codeIntro: 'کد',

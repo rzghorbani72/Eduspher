@@ -51,6 +51,7 @@ export const en = {
     currentStudentsKeepAccess: 'If you are already enrolled, your access continues as normal.',
     reopensOn: 'Reopens on',
     enrollmentClosedShort: 'Enrollment closed',
+    managerContact: 'Contact academy manager',
   },
   activeDiscount: {
     codeIntro: 'Use code',
