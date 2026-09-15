@@ -36,7 +36,15 @@ export default async function JoinClassByCodePage({
     );
   }
 
-  if (lookup.status !== 'ok') return notFound();
+  if (lookup.status === 'not_found') return notFound();
+  if (lookup.status !== 'ok') {
+    const { language } = await resolveAcademyForRequest(user, academyContext.slug);
+    return (
+      <main className="mx-auto w-full max-w-3xl px-4 py-10">
+        <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
+      </main>
+    );
+  }
 
   const group = lookup.group;
   const publicCourse = await getPublicCourseDetail(group.course_id, { fresh: true });
@@ -53,7 +61,9 @@ export default async function JoinClassByCodePage({
   const buildPath = (path: string) =>
     buildAcademyPath(academyContext.isSubdomain ? null : academyContext.slug, path);
 
-  const liveClassHref = buildPath(liveClassPath(publicCourse.slug));
+  const liveClassHref = publicCourse.slug
+    ? buildPath(liveClassPath(publicCourse.slug))
+    : buildPath('/courses');
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
