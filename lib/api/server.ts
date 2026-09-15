@@ -385,11 +385,17 @@ export async function getCourseById(id: string | number) {
  * is the same for a guest and a signed-in student — the authed `/courses/:id`
  * is the panel's editor view and returns a different, narrower shape.
  */
-export async function getPublicCourseDetail(id: string) {
+export async function getPublicCourseDetail(
+  id: string,
+  options?: {
+    /** Skip Next fetch cache — use before granting storefront access. */ fresh?: boolean;
+  },
+) {
   const result = await serverFetch<CourseSummary>(
     `/courses/public/${encodeURIComponent(decodePathSegment(id))}`,
     {
       includeAuth: false,
+      revalidate: options?.fresh ? 0 : undefined,
     },
   ).catch(() => null);
   return result?.data ?? null;
@@ -939,6 +945,8 @@ export async function getTutoringGroupByCode(code: string): Promise<TutoringGrou
       data: PublicTutoringGroup;
     }>(`/tutoring/groups/by-code/${encodeURIComponent(code)}`, {
       method: 'GET',
+      includeAuth: false,
+      revalidate: 0,
     });
     return result.data ? { status: 'ok', group: result.data } : { status: 'not_found' };
   } catch (error) {

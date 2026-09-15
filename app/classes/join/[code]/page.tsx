@@ -9,6 +9,8 @@ import { getAcademyContext } from '@/lib/store-context';
 import { buildAcademyPath } from '@/lib/utils';
 import { t } from '@/lib/i18n/server-translations';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * A private class opened by its share code. This is how a student gathers their
  * own friends into a class instead of waiting for strangers to fill it.
@@ -37,7 +39,7 @@ export default async function JoinClassByCodePage({
   if (lookup.status !== 'ok') return notFound();
 
   const group = lookup.group;
-  const publicCourse = await getPublicCourseDetail(group.course_id);
+  const publicCourse = await getPublicCourseDetail(group.course_id, { fresh: true });
   if (!publicCourse) {
     const { language } = await resolveAcademyForRequest(user, academyContext.slug);
     return (
