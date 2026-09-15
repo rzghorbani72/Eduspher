@@ -14,6 +14,8 @@ import {
   formatLiveSchedule,
   resolveLiveSchedule,
 } from '@/lib/learning/live-schedule';
+import { withMeetAppName } from '@/lib/live/embeddable';
+import { useAcademyContext } from '@/components/providers/store-provider';
 
 /** The join link is time-gated server-side, so re-poll to catch it opening. */
 const LIVE_SESSION_REFRESH_MS = 60_000;
@@ -26,6 +28,7 @@ interface LiveLessonProps {
 
 export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonProps) {
   const { t, language } = useTranslation();
+  const { name: academyName } = useAcademyContext();
   const { data, error, isLoading } = useApiQuery({
     queryKey: queryKeys.liveLesson(lessonId),
     queryFn: (signal) => getLessonLiveSession(lessonId, { signal }),
@@ -52,7 +55,8 @@ export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonPro
   }
 
   // Students get our join route (staff still get the room URL directly).
-  const joinUrl = resolveAssetUrl(data.join_url) ?? data.meeting_url ?? null;
+  const rawJoin = resolveAssetUrl(data.join_url) ?? data.meeting_url ?? null;
+  const joinUrl = rawJoin ? withMeetAppName(rawJoin, academyName, language) : null;
 
   const scheduleLabel = formatLiveSchedule(
     schedule.startsAt,

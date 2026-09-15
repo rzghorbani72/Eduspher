@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import type { MyTutoringGroupSession } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNow } from '@/lib/hooks/use-now';
-import { isEmbeddable } from '@/lib/live/embeddable';
+import { isEmbeddable, withMeetAppName } from '@/lib/live/embeddable';
 import { sessionState } from '@/lib/live/session-state';
 import { formatDate } from '@/lib/utils';
+import { useAcademyContext } from '@/components/providers/store-provider';
 
 /** The link is time-gated on the server, so re-poll to catch it opening. */
 const REFRESH_MS = 60_000;
@@ -28,13 +29,16 @@ interface MeetingRoomProps {
  */
 export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps) {
   const { t, language } = useTranslation();
+  const { name: academyName } = useAcademyContext();
   const router = useRouter();
   const now = useNow();
   const [isRefreshing, startRefresh] = useTransition();
   const refresh = () => startRefresh(() => router.refresh());
 
   const state = session ? sessionState(session, now) : 'upcoming';
-  const meetingUrl = session?.meeting_url ?? null;
+  const meetingUrl = session?.meeting_url
+    ? withMeetAppName(session.meeting_url, academyName, language)
+    : null;
   const waiting = state === 'upcoming' && !meetingUrl;
 
   useEffect(() => {
