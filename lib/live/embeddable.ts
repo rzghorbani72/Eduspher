@@ -57,12 +57,22 @@ export const withMeetAppName = (
     }
     const appName = mentomaMeetAppName(academyName, language);
     const params = new URLSearchParams(parsed.hash.replace(/^#/, ''));
-    if (!params.has('interfaceConfig.APP_NAME')) {
-      params.set('interfaceConfig.APP_NAME', JSON.stringify(appName));
-    }
-    if (!params.has('config.subject')) {
-      params.set('config.subject', JSON.stringify(appName));
-    }
+    params.set('config.defaultLanguage', JSON.stringify('fa'));
+    params.set('interfaceConfig.APP_NAME', JSON.stringify('منتوما'));
+    params.set('interfaceConfig.NATIVE_APP_NAME', JSON.stringify(appName));
+    params.set('interfaceConfig.PROVIDER_NAME', JSON.stringify('منتوما'));
+    params.set('interfaceConfig.SHOW_JITSI_WATERMARK', 'false');
+    params.set('interfaceConfig.SHOW_POWERED_BY', 'false');
+    params.set(
+      'interfaceConfig.DEFAULT_LOGO_URL',
+      JSON.stringify('https://mentoma.ir/meet-branding/logo-mark.svg'),
+    );
+    params.set(
+      'interfaceConfig.DEFAULT_WELCOME_PAGE_LOGO_URL',
+      JSON.stringify('https://mentoma.ir/meet-branding/logo-type.svg'),
+    );
+    params.set('config.subject', JSON.stringify(appName));
+    params.set('config.localSubject', JSON.stringify(appName));
     parsed.hash = params.toString();
     return parsed.toString();
   } catch {
