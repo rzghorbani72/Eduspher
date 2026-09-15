@@ -29,7 +29,7 @@ import { getCourseAccess } from '@/lib/api/account-server';
 import { getAcademyContext } from '@/lib/store-context';
 import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
 import { buildAcademyPath, resolveAssetUrl, truncate } from '@/lib/utils';
-import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
+import { coursePath, decodePathSegment, learnPath, liveClassPath } from '@/lib/content-paths';
 import { markdownToPlainText } from '@/lib/markdown';
 import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
 import { t } from '@/lib/i18n/server-translations';
@@ -134,7 +134,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const access = courseAccess.find((row) => row.course_id === course.id) ?? null;
   // A tutoring student goes straight into the classroom, which lives next to
   // the recorded learn page; the page itself resolves group seat vs 1:1.
-  const tutoringHref = buildPath(`${learnPath(course.slug)}/live`);
+  const tutoringHref = buildPath(liveClassPath(course.slug));
   const progressPercent =
     myEnrollment && Number.isFinite(myEnrollment.progress_percent)
       ? Math.min(100, Math.max(0, Math.round(myEnrollment.progress_percent)))
@@ -169,6 +169,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     : (previewMedia.find((item) => item.videoId)?.lessonId ?? null);
   const avatarUrl = resolveAssetUrl(course.author?.Image?.publicUrl);
   const learnPathHref = buildPath(learnPath(course.slug));
+  const liveClassHref = buildPath(liveClassPath(course.slug));
   const loginHref = buildPath(
     `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
   );
@@ -258,6 +259,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     currencyConfig={currencyConfig}
                     language={language}
                     loginHref={loginHref}
+                    liveClassHref={liveClassHref}
                   />
                 ) : (
                   <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
@@ -291,7 +293,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 loginHref={loginHref}
                 continueHref={isEnrolled ? learnPathHref : null}
                 learnHref={learnPathHref}
-                liveClassesHref={buildPath('/account/classes')}
+                liveClassesHref={liveClassHref}
                 tutoringHref={tutoringHref}
                 access={access}
                 stats={stats}

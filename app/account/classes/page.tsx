@@ -9,7 +9,7 @@ import { getMyTutoringGroups } from '@/lib/api/account-server';
 import { getAcademyLanguage } from '@/lib/i18n/server';
 import { t } from '@/lib/i18n/server-translations';
 import { getAcademyContext } from '@/lib/store-context';
-import { learnPath } from '@/lib/content-paths';
+import { learnPath, liveClassPath } from '@/lib/content-paths';
 import { buildAcademyPath, formatDate } from '@/lib/utils';
 
 type LiveLesson = {
@@ -72,6 +72,14 @@ export default async function AccountClassesPage() {
 
   const { upcoming, past } = await splitByStartTime(liveLessons);
 
+  const courseSlugs = new Map<string, string>();
+  await Promise.all(
+    [...new Set(groupRows.map((row) => row.group.course_id))].map(async (courseId) => {
+      const course = await getCourseById(courseId).catch(() => null);
+      if (course?.slug) courseSlugs.set(courseId, course.slug);
+    }),
+  );
+
   return (
     <div className="space-y-6">
       <AccountPageHeader
@@ -83,21 +91,27 @@ export default async function AccountClassesPage() {
       {groupRows.length ? (
         <DataPanel title={translate('account.groupClasses')}>
           <ul className="space-y-3">
-            {groupRows.map((row) => (
-              <li key={row.engagement_id}>
-                <Link
-                  href={buildAcademyPath(slugForPaths, `/account/classes/${row.group.id}`)}
-                  className="border-theme bg-card flex flex-wrap items-center justify-between gap-4 rounded-xl border p-4 transition hover:border-(--theme-primary)/40"
-                >
-                  <span className="font-medium">{row.group.title}</span>
-                  <span className="text-muted text-sm">
-                    {row.group.next_session
-                      ? formatDate(row.group.next_session.starts_at, language)
-                      : translate('account.groupWaitingToStart')}
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {groupRows.map((row) => {
+              const slug = courseSlugs.get(row.group.course_id);
+              const href = slug
+                ? buildAcademyPath(slugForPaths, liveClassPath(slug))
+                : buildAcademyPath(slugForPaths, `/account/classes/${row.group.id}`);
+              return (
+                <li key={row.engagement_id}>
+                  <Link
+                    href={href}
+                    className="border-theme bg-card flex flex-wrap items-center justify-between gap-4 rounded-xl border p-4 transition hover:border-(--theme-primary)/40"
+                  >
+                    <span className="font-medium">{row.group.title}</span>
+                    <span className="text-muted text-sm">
+                      {row.group.next_session
+                        ? formatDate(row.group.next_session.starts_at, language)
+                        : translate('account.groupWaitingToStart')}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </DataPanel>
       ) : null}

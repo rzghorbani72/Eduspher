@@ -21,6 +21,8 @@ interface Props {
   currencyConfig: CurrencyConfig | null;
   language: string;
   loginHref: string;
+  /** Where enrolled students open the live classroom. */
+  liveClassHref: string;
   /** Present only for a private class opened through its share link. */
   joinCode?: string;
 }
@@ -34,6 +36,7 @@ export const TutoringGroupsSection = ({
   currencyConfig,
   language,
   loginHref,
+  liveClassHref,
   joinCode,
 }: Props) => {
   const { t } = useTranslation();
@@ -99,7 +102,7 @@ export const TutoringGroupsSection = ({
               pending={pendingKey === group.id}
               onSeatsChange={(seats) => setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))}
               onJoin={() => setConfirming(group)}
-              enrolledHref={`/account/classes/${group.id}`}
+              enrolledHref={liveClassHref}
             />
           ))}
         </div>

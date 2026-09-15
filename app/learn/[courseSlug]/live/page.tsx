@@ -6,7 +6,7 @@ import { LiveRoomShell } from '@/components/live/live-room-shell';
 import { getMyLiveRoomForCourse } from '@/lib/api/account-server';
 import { getCourseById } from '@/lib/api/server';
 import { getSession } from '@/lib/auth/session';
-import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
+import { coursePath, decodePathSegment, liveClassPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
 import { buildAcademyPath } from '@/lib/utils';
 
@@ -26,7 +26,7 @@ export default async function LiveLearningPage({
   const storeSlug = storeContext.isSubdomain ? null : storeContext.slug;
 
   if (!session) {
-    const returnPath = buildAcademyPath(storeSlug, `${learnPath(courseSlug)}/live`);
+    const returnPath = buildAcademyPath(storeSlug, liveClassPath(courseSlug));
     redirect(
       `${buildAcademyPath(storeSlug, '/auth/login')}?redirect=${encodeURIComponent(returnPath)}`,
     );

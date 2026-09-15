@@ -127,6 +127,8 @@ export const fa = {
     groupBookWhole: 'رزرو کل کلاس',
     groupEnter: 'ورود به کلاس',
     groupInviteTitle: 'به یک کلاس دعوت شده‌اید',
+    groupInviteCourseNotPublished:
+      'این دوره هنوز منتشر نشده است. پس از انتشار دوره توسط آموزشگاه، لینک دعوت فعال می‌شود.',
     classSizePrivate: 'کلاس خصوصی',
     classSizeSmall: 'گروه کوچک',
     classSizePublic: 'کلاس عمومی',

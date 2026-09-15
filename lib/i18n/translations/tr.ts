@@ -91,6 +91,8 @@ export const tr = {
     groupBookWhole: 'Book the whole class',
     groupEnter: 'Enter your class',
     groupInviteTitle: 'You were invited to a class',
+    groupInviteCourseNotPublished:
+      'This course is not published yet. The invite link will work after the academy publishes the course.',
     classSizePrivate: 'Private class',
     classSizeSmall: 'Small group',
     classSizePublic: 'Public class',

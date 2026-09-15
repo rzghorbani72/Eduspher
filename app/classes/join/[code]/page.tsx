@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation';
 
 import { TutoringGroupsSection } from '@/components/courses/tutoring-groups-section';
-import { getCurrentUser, getTutoringGroupByCode } from '@/lib/api/server';
+import { EmptyState } from '@/components/ui/empty-state';
+import { getCurrentUser, getCourseById, getTutoringGroupByCode } from '@/lib/api/server';
 import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
+import { liveClassPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
 import { buildAcademyPath } from '@/lib/utils';
 import { t } from '@/lib/i18n/server-translations';
@@ -18,16 +20,31 @@ export default async function JoinClassByCodePage({
 }) {
   const { code } = await params;
   const academyContext = await getAcademyContext();
-  const [group, user] = await Promise.all([
+  const [lookup, user] = await Promise.all([
     getTutoringGroupByCode(code),
     getCurrentUser().catch(() => null),
   ]);
 
-  if (!group) return notFound();
+  if (lookup.status === 'course_unpublished') {
+    const { language } = await resolveAcademyForRequest(user, academyContext.slug);
+    return (
+      <main className="mx-auto w-full max-w-3xl px-4 py-10">
+        <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
+      </main>
+    );
+  }
 
+  if (lookup.status !== 'ok') return notFound();
+
+  const group = lookup.group;
   const { language, currencyConfig } = await resolveAcademyForRequest(user, academyContext.slug);
   const buildPath = (path: string) =>
     buildAcademyPath(academyContext.isSubdomain ? null : academyContext.slug, path);
+
+  const course = await getCourseById(group.course_id).catch(() => null);
+  const liveClassHref = course?.slug
+    ? buildPath(liveClassPath(course.slug))
+    : buildPath('/account/classes');
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -40,6 +57,7 @@ export default async function JoinClassByCodePage({
         language={language}
         loginHref={buildPath(`/auth/login?redirect=/classes/join/${code}`)}
         joinCode={code}
+        liveClassHref={liveClassHref}
       />
     </main>
   );

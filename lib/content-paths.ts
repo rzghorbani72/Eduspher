@@ -20,3 +20,8 @@ export function learnPath(courseSlug: string, lessonSlug?: string): string {
   const course = `/learn/${encodePathSegment(courseSlug)}`;
   return lessonSlug ? `${course}/${encodePathSegment(lessonSlug)}` : course;
 }
+
+/** Live group classroom for a course (same family as recorded learn). */
+export function liveClassPath(courseSlug: string): string {
+  return `${learnPath(courseSlug)}/live`;
+}

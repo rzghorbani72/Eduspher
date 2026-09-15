@@ -916,7 +916,12 @@ export async function getTutoringGroupsPublic(courseId: string): Promise<PublicT
 }
 
 /** A private class opened by its share code, so friends can book it together. */
-export async function getTutoringGroupByCode(code: string): Promise<PublicTutoringGroup | null> {
+export type TutoringGroupByCodeResult =
+  | { status: 'ok'; group: PublicTutoringGroup }
+  | { status: 'not_found' }
+  | { status: 'course_unpublished' };
+
+export async function getTutoringGroupByCode(code: string): Promise<TutoringGroupByCodeResult> {
   try {
     const result = await serverFetchRaw<{
       status: string;
@@ -924,9 +929,15 @@ export async function getTutoringGroupByCode(code: string): Promise<PublicTutori
     }>(`/tutoring/groups/by-code/${encodeURIComponent(code)}`, {
       method: 'GET',
     });
-    return result.data ?? null;
-  } catch {
-    return null;
+    return result.data ? { status: 'ok', group: result.data } : { status: 'not_found' };
+  } catch (error) {
+    const status =
+      error && typeof error === 'object' ? (error as { status?: number }).status : undefined;
+    const message = error instanceof Error ? error.message : '';
+    if (status === 400 && message.includes('not published')) {
+      return { status: 'course_unpublished' };
+    }
+    return { status: 'not_found' };
   }
 }
 
