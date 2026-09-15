@@ -129,6 +129,8 @@ export const fa = {
     groupInviteTitle: 'به یک کلاس دعوت شده‌اید',
     groupInviteCourseNotPublished:
       'این دوره هنوز منتشر نشده است. پس از انتشار دوره توسط آموزشگاه، لینک دعوت فعال می‌شود.',
+    groupInviteClassNotPublished:
+      'این کلاس هنوز برای ثبت‌نام باز نشده است. پس از انتشار کلاس توسط مدرس، لینک دعوت فعال می‌شود.',
     classSizePrivate: 'کلاس خصوصی',
     classSizeSmall: 'گروه کوچک',
     classSizePublic: 'کلاس عمومی',

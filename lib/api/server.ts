@@ -927,15 +927,19 @@ export async function getTutoringGroupsPublic(courseId: string): Promise<PublicT
 export type TutoringGroupByCodeResult =
   | { status: 'ok'; group: PublicTutoringGroup }
   | { status: 'not_found' }
-  | { status: 'course_unpublished' };
+  | { status: 'course_unpublished' }
+  | { status: 'class_unpublished' };
 
-const isUnpublishedCourseJoinError = (error: unknown): boolean => {
-  if (!error || typeof error !== 'object') return false;
+const joinInviteBlockReason = (error: unknown): 'course' | 'class' | null => {
+  if (!error || typeof error !== 'object') return null;
   const enriched = error as { status?: number; code?: string };
-  if (enriched.code === 'COURSE_NOT_PUBLISHED') return true;
-  if (enriched.status !== 400) return false;
+  if (enriched.code === 'CLASS_NOT_PUBLISHED') return 'class';
+  if (enriched.code === 'COURSE_NOT_PUBLISHED') return 'course';
+  if (enriched.status !== 400) return null;
   const message = error instanceof Error ? error.message : '';
-  return /COURSE_NOT_PUBLISHED|not published|منتشر نشده/i.test(message);
+  if (/CLASS_NOT_PUBLISHED|کلاس هنوز برای ثبت‌نام باز نشده/i.test(message)) return 'class';
+  if (/COURSE_NOT_PUBLISHED|not published|منتشر نشده/i.test(message)) return 'course';
+  return 'course';
 };
 
 const fetchErrorStatus = (error: unknown): number | undefined => {
@@ -960,7 +964,11 @@ export async function getTutoringGroupByCode(code: string): Promise<TutoringGrou
     if (status === 404) {
       return { status: 'not_found' };
     }
-    if (status === 400 || isUnpublishedCourseJoinError(error)) {
+    const blockReason = joinInviteBlockReason(error);
+    if (blockReason === 'class') {
+      return { status: 'class_unpublished' };
+    }
+    if (status === 400 || blockReason === 'course') {
       return { status: 'course_unpublished' };
     }
     return { status: 'not_found' };

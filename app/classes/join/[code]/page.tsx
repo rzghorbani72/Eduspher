@@ -27,11 +27,15 @@ export default async function JoinClassByCodePage({
     getCurrentUser().catch(() => null),
   ]);
 
-  if (lookup.status === 'course_unpublished') {
+  if (lookup.status === 'course_unpublished' || lookup.status === 'class_unpublished') {
     const { language } = await resolveAcademyForRequest(user, academyContext.slug);
+    const titleKey =
+      lookup.status === 'class_unpublished'
+        ? 'courses.groupInviteClassNotPublished'
+        : 'courses.groupInviteCourseNotPublished';
     return (
       <main className="mx-auto w-full max-w-3xl px-4 py-10">
-        <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
+        <EmptyState title={t(titleKey, language)} />
       </main>
     );
   }

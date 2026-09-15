@@ -92,6 +92,8 @@ export const ar = {
     groupBookWhole: 'Book the whole class',
     groupEnter: 'Enter your class',
     groupInviteTitle: 'You were invited to a class',
+    groupInviteClassNotPublished:
+      'This class is not open for enrollment yet. The invite link will work after the teacher publishes the class.',
     groupInviteCourseNotPublished:
       'This course is not published yet. The invite link will work after the academy publishes the course.',
     classSizePrivate: 'Private class',

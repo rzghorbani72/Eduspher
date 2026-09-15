@@ -128,6 +128,8 @@ export const en = {
     groupInviteTitle: 'You were invited to a class',
     groupInviteCourseNotPublished:
       'This course is not published yet. The invite link will work after the academy publishes the course.',
+    groupInviteClassNotPublished:
+      'This class is not open for enrollment yet. The invite link will work after the teacher publishes the class.',
     classSizePrivate: 'Private class',
     classSizeSmall: 'Small group',
     classSizePublic: 'Public class',
