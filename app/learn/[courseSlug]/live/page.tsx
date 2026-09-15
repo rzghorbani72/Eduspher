@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { AccountPageHeader } from '@/components/account/account-page-header';
 import { LiveRoomShell } from '@/components/live/live-room-shell';
 import { getMyLiveRoomForCourse } from '@/lib/api/account-server';
-import { getCourseById } from '@/lib/api/server';
+import { getPublicCourseDetail } from '@/lib/api/server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, liveClassPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
@@ -32,8 +32,8 @@ export default async function LiveLearningPage({
     );
   }
 
-  const course = await getCourseById(courseSlug).catch(() => null);
-  if (!course) redirect(buildAcademyPath(storeSlug, coursePath(courseSlug)));
+  const course = await getPublicCourseDetail(courseSlug);
+  if (!course) redirect(buildAcademyPath(storeSlug, '/courses'));
 
   const room = await getMyLiveRoomForCourse(course.id);
   if (!room) redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));

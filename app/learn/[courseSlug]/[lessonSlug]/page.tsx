@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 
 import { LearningShell } from '@/components/learning/learning-shell';
-import { getCourseById, getCurrentUser, getEnrollments } from '@/lib/api/server';
+import { getCurrentUser, getEnrollments, getPublicCourseDetail } from '@/lib/api/server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
@@ -23,7 +23,7 @@ export default async function LearningLessonPage({ params }: { params: PageParam
     );
   }
 
-  const course = await getCourseById(courseSlug).catch(() => null);
+  const course = await getPublicCourseDetail(courseSlug);
   const [enrollmentData, user] = await Promise.all([
     course ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null) : null,
     getCurrentUser().catch(() => null),
@@ -37,9 +37,7 @@ export default async function LearningLessonPage({ params }: { params: PageParam
       (item.status === 'ACTIVE' || item.status === 'COMPLETED'),
   );
 
-  if (!course || !user) {
-    redirect(buildAcademyPath(storeSlug, coursePath(courseSlug)));
-  }
+  if (!course || !user) notFound();
 
   const seasons = course.Season ?? [];
   const selectedLesson = seasons

@@ -271,7 +271,9 @@ const baseFetch = async (
 
     const message = `API request failed: ${errorMessage}`;
     const error = new Error(message);
-    (error as Error & { status?: number }).status = response.status;
+    const enriched = error as Error & { status?: number; code?: string };
+    enriched.status = response.status;
+    if (errorCode) enriched.code = errorCode;
     throw error;
   }
 
@@ -921,6 +923,15 @@ export type TutoringGroupByCodeResult =
   | { status: 'not_found' }
   | { status: 'course_unpublished' };
 
+const isUnpublishedCourseJoinError = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') return false;
+  const enriched = error as { status?: number; code?: string };
+  if (enriched.code === 'COURSE_NOT_PUBLISHED') return true;
+  if (enriched.status !== 400) return false;
+  const message = error instanceof Error ? error.message : '';
+  return /not published/i.test(message);
+};
+
 export async function getTutoringGroupByCode(code: string): Promise<TutoringGroupByCodeResult> {
   try {
     const result = await serverFetchRaw<{
@@ -931,10 +942,7 @@ export async function getTutoringGroupByCode(code: string): Promise<TutoringGrou
     });
     return result.data ? { status: 'ok', group: result.data } : { status: 'not_found' };
   } catch (error) {
-    const status =
-      error && typeof error === 'object' ? (error as { status?: number }).status : undefined;
-    const message = error instanceof Error ? error.message : '';
-    if (status === 400 && message.includes('not published')) {
+    if (isUnpublishedCourseJoinError(error)) {
       return { status: 'course_unpublished' };
     }
     return { status: 'not_found' };

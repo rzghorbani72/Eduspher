@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { EmptyState } from '@/components/ui/empty-state';
-import { getCourseById, getEnrollments } from '@/lib/api/server';
+import { getEnrollments, getPublicCourseDetail } from '@/lib/api/server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
 import { isLiveCourse } from '@/lib/courses/live-course';
@@ -25,7 +25,7 @@ export default async function LearningCoursePage({ params }: { params: PageParam
     );
   }
 
-  const course = await getCourseById(courseSlug).catch(() => null);
+  const course = await getPublicCourseDetail(courseSlug);
   const enrollmentData = course
     ? await getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
     : null;
@@ -38,9 +38,7 @@ export default async function LearningCoursePage({ params }: { params: PageParam
       (item.status === 'ACTIVE' || item.status === 'COMPLETED'),
   );
 
-  if (!course) {
-    redirect(buildAcademyPath(storeSlug, coursePath(courseSlug)));
-  }
+  if (!course) notFound();
 
   const publishedLessons = (course.Season ?? [])
     .flatMap((season) => season.Lesson ?? [])

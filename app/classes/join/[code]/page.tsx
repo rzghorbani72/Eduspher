@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 
 import { TutoringGroupsSection } from '@/components/courses/tutoring-groups-section';
 import { EmptyState } from '@/components/ui/empty-state';
-import { getCurrentUser, getCourseById, getTutoringGroupByCode } from '@/lib/api/server';
+import { getCurrentUser, getPublicCourseDetail, getTutoringGroupByCode } from '@/lib/api/server';
 import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
 import { liveClassPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
@@ -37,14 +37,21 @@ export default async function JoinClassByCodePage({
   if (lookup.status !== 'ok') return notFound();
 
   const group = lookup.group;
+  const publicCourse = await getPublicCourseDetail(group.course_id);
+  if (!publicCourse) {
+    const { language } = await resolveAcademyForRequest(user, academyContext.slug);
+    return (
+      <main className="mx-auto w-full max-w-3xl px-4 py-10">
+        <EmptyState title={t('courses.groupInviteCourseNotPublished', language)} />
+      </main>
+    );
+  }
+
   const { language, currencyConfig } = await resolveAcademyForRequest(user, academyContext.slug);
   const buildPath = (path: string) =>
     buildAcademyPath(academyContext.isSubdomain ? null : academyContext.slug, path);
 
-  const course = await getCourseById(group.course_id).catch(() => null);
-  const liveClassHref = course?.slug
-    ? buildPath(liveClassPath(course.slug))
-    : buildPath('/account/classes');
+  const liveClassHref = buildPath(liveClassPath(publicCourse.slug));
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
