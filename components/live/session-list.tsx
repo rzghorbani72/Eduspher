@@ -6,7 +6,7 @@ import type { MyTutoringGroupSession } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNow } from '@/lib/hooks/use-now';
 import { sessionName, sessionState } from '@/lib/live/session-state';
-import { cn, formatDate } from '@/lib/utils';
+import { cn, formatDate, formatNumber } from '@/lib/utils';
 
 interface SessionListProps {
   sessions: MyTutoringGroupSession[];
@@ -74,7 +74,10 @@ export function SessionList({
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5">
                   <span className="min-w-0 truncate text-sm font-medium">
-                    {sessionName(session, `${t('live.session')} ${index + 1}`)}
+                    {sessionName(
+                      session,
+                      `${t('live.session')} ${formatNumber(index + 1, language)}`,
+                    )}
                   </span>
                   {state === 'live' ? (
                     <span className="rounded-full bg-(--theme-primary) px-1.5 py-0.5 text-[10px] font-bold text-(--theme-on-primary)">
