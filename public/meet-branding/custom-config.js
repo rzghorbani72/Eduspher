@@ -2,6 +2,8 @@
 
 config.defaultLanguage = 'fa';
 config.disableDeepLinking = true;
+config.enableWelcomePage = false;
+config.enableClosePage = false;
 config.subject = 'جلسه منتوما';
 config.localSubject = 'جلسه منتوما';
 config.defaultLogoUrl = 'https://mentoma.ir/meet-branding/logo-mark.svg';

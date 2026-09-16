@@ -75,6 +75,7 @@ export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonPro
         startsAtMs={schedule.startsAt?.getTime() ?? null}
         meetingUrl={joinUrl}
         embeddable={Boolean(data.embeddable)}
+        sessionKey={`${lessonId}:${schedule.startsAt?.toISOString() ?? 'live'}`}
         playbackUrl={data.playback_url ?? null}
         calendarUrl={buildCalendarUrl(lessonTitle, schedule.startsAt, schedule.endsAt, joinUrl)}
       />

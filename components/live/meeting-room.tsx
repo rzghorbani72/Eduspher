@@ -4,6 +4,7 @@ import { ExternalLink, Radio, RefreshCw, Video, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useTransition } from 'react';
 
+import { MentomaMeetEmbed } from '@/components/live/mentoma-meet-embed';
 import { Button } from '@/components/ui/button';
 import type { MyTutoringGroupSession } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -39,6 +40,10 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
     ? withMeetAppName(session.meeting_url, academyName, language)
     : null;
   const waiting = !meetingUrl && (state === 'upcoming' || state === 'live');
+  const subject =
+    language === 'fa' && academyName.trim()
+      ? `${academyName.trim()} جلسه`
+      : 'جلسه منتوما';
 
   useEffect(() => {
     if (!waiting) return;
@@ -49,14 +54,13 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
 
   if (meetingUrl && state === 'live' && isEmbeddable(meetingUrl)) {
     return (
-      <div className="border-theme overflow-hidden rounded-2xl border bg-black">
-        <iframe
-          src={meetingUrl}
-          title={title}
-          allow="camera; microphone; fullscreen; display-capture; autoplay"
-          className="aspect-video w-full"
-        />
-      </div>
+      <MentomaMeetEmbed
+        key={session?.id ?? meetingUrl}
+        meetingUrl={meetingUrl}
+        sessionKey={session?.id ?? meetingUrl}
+        title={title}
+        subject={subject}
+      />
     );
   }
 
@@ -110,10 +114,7 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
         <div className="mt-5 space-y-3">
           <p className="text-muted text-sm">
             {session
-              ? t('live.nextSessionWhen').replace(
-                  '{when}',
-                  formatSessionWhen(session, language),
-                )
+              ? t('live.nextSessionWhen').replace('{when}', formatSessionWhen(session, language))
               : t('live.noSessionsYet')}
           </p>
           {session ? (

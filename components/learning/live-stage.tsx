@@ -3,7 +3,9 @@
 import { CalendarPlus, ExternalLink, PlayCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { MentomaMeetEmbed } from '@/components/live/mentoma-meet-embed';
 import { formatClock } from '@/components/media/video-controls';
+import { useAcademyContext } from '@/components/providers/store-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { initialsOf, type LivePhase } from '@/lib/learning/live-schedule';
 
@@ -17,6 +19,8 @@ interface LiveStageProps {
   meetingUrl: string | null;
   /** Whether the room behind meetingUrl can be shown in an iframe. */
   embeddable?: boolean;
+  /** Stable key so remount/dispose happens when the live occurrence changes. */
+  sessionKey?: string;
   playbackUrl: string | null;
   calendarUrl: string | null;
 }
@@ -34,11 +38,17 @@ export function LiveStage({
   startsAtMs,
   meetingUrl,
   embeddable,
+  sessionKey,
   playbackUrl,
   calendarUrl,
 }: LiveStageProps) {
   const { t, language } = useTranslation();
+  const { name: academyName } = useAcademyContext();
   const [now, setNow] = useState(() => Date.now());
+  const subject =
+    language === 'fa' && academyName.trim()
+      ? `${academyName.trim()} جلسه`
+      : 'جلسه منتوما';
 
   useEffect(() => {
     if (phase === 'ENDED') return;
@@ -101,14 +111,13 @@ export function LiveStage({
 
   if (isLive && meetingUrl && embeddable) {
     return (
-      <div className="border-theme overflow-hidden rounded-[10px] border bg-black">
-        <iframe
-          src={meetingUrl}
-          title={scheduleLabel}
-          allow="camera; microphone; fullscreen; display-capture; autoplay"
-          className="aspect-video w-full"
-        />
-      </div>
+      <MentomaMeetEmbed
+        key={sessionKey ?? meetingUrl}
+        meetingUrl={meetingUrl}
+        sessionKey={sessionKey ?? meetingUrl}
+        title={scheduleLabel}
+        subject={subject}
+      />
     );
   }
 
