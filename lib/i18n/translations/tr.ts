@@ -81,7 +81,6 @@ export const tr = {
     groupTerm: 'Runs',
     groupStarts: 'Starts',
     groupSeatsLeft: 'Seats left',
-    groupAgeRange: 'Ages',
     groupWaiting: 'Waiting for more students to start',
     groupStartingSoon: 'Starting on the next class day',
     groupReserveWhole: 'Seats to book',
@@ -95,9 +94,6 @@ export const tr = {
       'This class is not open for enrollment yet. The invite link will work after the teacher publishes the class.',
     groupInviteCourseNotPublished:
       'No class is published for this course yet. The invite link will work after the academy publishes the course.',
-    classSizePrivate: 'Private class',
-    classSizeSmall: 'Small group',
-    classSizePublic: 'Public class',
     groupSeatPrice: 'Per seat',
     groupWholePrice: 'Whole class ({count} seats)',
     groupPerSeat: 'per seat',

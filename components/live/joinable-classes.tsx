@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { MoveToClassPanel } from '@/components/live/move-to-class-panel';
 import { SlotChips } from '@/components/live/slot-chips';
 import type { JoinableGroup } from '@/lib/api/account-types';
-import { CLASS_SIZE_LABEL, classSizeOf } from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatCurrency, formatNumber, toPersianDigits } from '@/lib/utils';
 
@@ -48,9 +47,6 @@ export function JoinableClasses({
             <div className="border-theme bg-card space-y-3 rounded-2xl border p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 space-y-1">
-                  <span className="inline-block rounded-md bg-(--theme-primary-subtle) px-2 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
-                    {t(CLASS_SIZE_LABEL[classSizeOf(group.capacity)])}
-                  </span>
                   <p className="truncate text-base font-bold text-(--theme-foreground)">
                     {group.title}
                   </p>

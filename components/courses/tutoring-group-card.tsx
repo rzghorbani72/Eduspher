@@ -5,8 +5,6 @@ import { CalendarClock, Users } from 'lucide-react';
 import { TutoringGroupPricing } from '@/components/courses/tutoring-group-pricing';
 import { clockRangeLabel } from '@/components/live/slot-chips';
 import {
-  CLASS_SIZE_LABEL,
-  classSizeOf,
   groupAnchorId,
   seatPriceOfGroup,
   sessionsOfGroup,
@@ -28,7 +26,7 @@ type Props = {
 
 /**
  * One scheduled class as a student sees it before buying: when it meets, how
- * many seats are left, who it is for, and whether it is still waiting to fill.
+ * many seats are left, and whether it is still waiting to fill.
  */
 export const TutoringGroupCard = ({
   group,
@@ -64,9 +62,6 @@ export const TutoringGroupCard = ({
     >
       <div className="space-y-3">
         <header className="space-y-1">
-          <span className="inline-block rounded-md bg-(--theme-primary-subtle) px-2 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
-            {t(CLASS_SIZE_LABEL[classSizeOf(group.capacity)])}
-          </span>
           <h3 className="text-base font-semibold text-(--theme-foreground)">{group.title}</h3>
           {group.Tutor?.display_name ? (
             <p className="text-muted text-xs">{group.Tutor.display_name}</p>
@@ -102,12 +97,6 @@ export const TutoringGroupCard = ({
             <Users className="size-3.5" />
             {t('courses.groupSeatsLeft')}: {formatNumber(group.seats_left, language)}
           </span>
-          {group.age_min || group.age_max ? (
-            <span>
-              {t('courses.groupAgeRange')}: {formatNumber(group.age_min ?? 0, language)}–
-              {formatNumber(group.age_max ?? 0, language)}
-            </span>
-          ) : null}
         </div>
 
         {waiting ? (

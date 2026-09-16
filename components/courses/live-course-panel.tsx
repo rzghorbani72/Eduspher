@@ -2,7 +2,6 @@
 
 import { CalendarClock } from 'lucide-react';
 
-import { LiveClassOptions } from '@/components/courses/live-class-options';
 import type { CurrencyConfig } from '@/components/courses/purchase-panel';
 import { CreditBalanceNote } from '@/components/purchase/credit-balance-note';
 import type { PublicTutoringGroup } from '@/lib/api/server';
@@ -55,8 +54,6 @@ export function LiveCoursePanel({ groups, currencyConfig, isLoggedIn }: LiveCour
         ) : (
           <p className="text-muted text-sm">{t('courses.liveNoClassesYet')}</p>
         )}
-
-        {hasOpenClasses ? <LiveClassOptions groups={groups} /> : null}
 
         {hasOpenClasses ? (
           <a

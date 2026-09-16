@@ -117,7 +117,6 @@ export const fa = {
     groupTerm: 'بازهٔ برگزاری',
     groupStarts: 'شروع',
     groupSeatsLeft: 'صندلی باقی‌مانده',
-    groupAgeRange: 'بازهٔ سنی',
     groupWaiting: 'در انتظار دانشجوی بیشتر برای شروع',
     groupStartingSoon: 'از اولین روز کلاس شروع می‌شود',
     groupReserveWhole: 'تعداد صندلی',
@@ -131,9 +130,6 @@ export const fa = {
       'هیچ کلاسی برای این دوره منتشر نشده است. پس از انتشار دوره توسط آموزشگاه، لینک دعوت فعال می‌شود.',
     groupInviteClassNotPublished:
       'این کلاس هنوز برای ثبت‌نام باز نشده است. پس از انتشار کلاس توسط مدرس، لینک دعوت فعال می‌شود.',
-    classSizePrivate: 'کلاس خصوصی',
-    classSizeSmall: 'گروه کوچک',
-    classSizePublic: 'کلاس عمومی',
     groupSeatPrice: 'هر صندلی',
     groupWholePrice: 'کل کلاس ({count} صندلی)',
     groupPerSeat: 'برای هر صندلی',

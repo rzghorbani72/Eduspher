@@ -23,18 +23,6 @@ export const seatPriceOfGroup = (group: {
   Offer: { price: number } | null;
 }): number => group.seat_price ?? group.Offer?.price ?? 0;
 
-export type ClassSize = 'PRIVATE' | 'SMALL' | 'PUBLIC';
-
-/** Private 1:1, a small group, or a big open class — priced and sold differently. */
-export const classSizeOf = (capacity: number): ClassSize =>
-  capacity === 1 ? 'PRIVATE' : capacity <= 15 ? 'SMALL' : 'PUBLIC';
-
-export const CLASS_SIZE_LABEL: Record<ClassSize, string> = {
-  PRIVATE: 'courses.classSizePrivate',
-  SMALL: 'courses.classSizeSmall',
-  PUBLIC: 'courses.classSizePublic',
-};
-
 export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
 
 /** Meetings a seat buys: the planned count, else one per weekly slot per week. */
@@ -43,7 +31,3 @@ export const sessionsOfGroup = (group: {
   term_weeks: number;
   Slots: unknown[];
 }): number => group.session_count ?? group.term_weeks * Math.max(group.Slots.length, 1);
-
-/** Private → small → public, so the price ladder reads top to bottom. */
-export const sortBySize = <T extends { capacity: number }>(groups: T[]): T[] =>
-  [...groups].sort((a, b) => a.capacity - b.capacity);

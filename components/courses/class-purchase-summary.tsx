@@ -3,7 +3,7 @@
 import { Check } from 'lucide-react';
 
 import { SlotChips, type SlotLike } from '@/components/live/slot-chips';
-import { CLASS_SIZE_LABEL, classSizeOf, sessionsOfGroup } from '@/lib/courses/live-course';
+import { sessionsOfGroup } from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatDate, formatNumber } from '@/lib/utils';
 
@@ -59,9 +59,6 @@ export function ClassPurchaseSummary({
     <section className="border-theme space-y-2 rounded-xl border p-3">
       <p className="text-muted text-xs">{t('checkout.classSummaryTitle')}</p>
       <header className="space-y-1">
-        <span className="inline-block rounded-md bg-(--theme-primary-subtle) px-1.5 py-0.5 text-[11px] font-bold text-(--theme-primary-ink)">
-          {t(CLASS_SIZE_LABEL[classSizeOf(group.capacity)])}
-        </span>
         <p className="text-sm font-bold text-(--theme-foreground)">{group.title}</p>
         {group.Tutor?.display_name ? (
           <p className="text-muted text-xs">
