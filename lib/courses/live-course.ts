@@ -25,6 +25,10 @@ export const seatPriceOfGroup = (group: {
 
 export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
 
+/** A published class a student can still pick: seats left, or already theirs. */
+export const isJoinablePublicGroup = (group: { seats_left: number; joined?: boolean }): boolean =>
+  group.seats_left > 0 || Boolean(group.joined);
+
 /** Meetings a seat buys: the planned count, else one per weekly slot per week. */
 export const sessionsOfGroup = (group: {
   session_count: number | null;

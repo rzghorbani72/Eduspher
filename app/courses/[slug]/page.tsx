@@ -34,7 +34,7 @@ import { markdownToPlainText } from '@/lib/markdown';
 import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
 import { t } from '@/lib/i18n/server-translations';
 import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
-import { isLiveCourse } from '@/lib/courses/live-course';
+import { isLiveCourse, isJoinablePublicGroup } from '@/lib/courses/live-course';
 import { buildPurchaseOptions } from '@/lib/courses/purchase-options';
 import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
 import { buildCourseJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo/course-json-ld';
@@ -132,7 +132,6 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
       (myEnrollment && (myEnrollment.status === 'ACTIVE' || myEnrollment.status === 'COMPLETED'))),
   );
   const hasLiveSeat = tutoringGroups.some((group) => group.joined);
-  const canEnterLiveClass = isEnrolled || hasLiveSeat;
   const access = courseAccess.find((row) => row.course_id === course.id) ?? null;
   // A tutoring student goes straight into the classroom, which lives next to
   // the recorded learn page; the page itself resolves group seat vs 1:1.
@@ -257,7 +256,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               <div className="mt-10 space-y-8">
                 {tutoringGroups.length ? (
                   <TutoringGroupsSection
-                    groups={tutoringGroups}
+                    groups={tutoringGroups.filter(isJoinablePublicGroup)}
                     currencyConfig={currencyConfig}
                     language={language}
                     loginHref={loginHref}
@@ -268,7 +267,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     {translate('courses.liveNoClassesYet')}
                   </p>
                 )}
-                {!canEnterLiveClass ? (
+                {!hasLiveSeat ? (
                   <ClassRequestSection
                     courseId={course.id}
                     hasOpenClasses={tutoringGroups.length > 0}
@@ -286,7 +285,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 groups={tutoringGroups}
                 currencyConfig={currencyConfig}
                 isLoggedIn={!!user}
-                joinHref={canEnterLiveClass ? liveClassHref : null}
+                joinHref={hasLiveSeat ? liveClassHref : null}
                 loginHref={loginHref}
               />
             ) : (

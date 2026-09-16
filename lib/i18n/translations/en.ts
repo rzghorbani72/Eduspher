@@ -96,6 +96,8 @@ export const en = {
     liveEnrollAndJoin: 'Enroll and join the class',
     liveEnrollLogin: 'Sign in to enroll and join',
     liveHasAccessHint: 'You already have access. Join the class.',
+    liveSidebarPickHint:
+      'Pick a published class that still has seats. Enroll, or join if the teacher already gave you access.',
     requestClassLinkWithClasses: 'No time fits? Suggest your own',
     requestClassTitle: 'Ask for a class time',
     requestClassHint:

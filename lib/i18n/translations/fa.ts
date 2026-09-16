@@ -97,6 +97,8 @@ export const fa = {
     liveEnrollAndJoin: 'ثبت‌نام و ورود به کلاس',
     liveEnrollLogin: 'وارد شو و در کلاس ثبت‌نام کن',
     liveHasAccessHint: 'به این کلاس دسترسی داری. می‌توانی وارد شوی.',
+    liveSidebarPickHint:
+      'یک کلاس منتشرشده با صندلی خالی را انتخاب کن. ثبت‌نام کن، یا اگر مدرس دسترسی داده وارد شو.',
     requestClassLinkWithClasses: 'زمان مناسبی نیست؟ زمان خودت را پیشنهاد بده',
     requestClassTitle: 'درخواست زمان کلاس',
     requestClassHint:

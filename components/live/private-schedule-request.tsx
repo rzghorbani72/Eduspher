@@ -2,10 +2,10 @@
 
 import { CalendarClock, Clock3, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
 
-import { ClassRequestForm } from '@/components/courses/class-request-form';
+import { CLASS_REQUEST_ANCHOR_ID } from '@/components/courses/live-course-panel';
 import { JoinableClasses } from '@/components/live/joinable-classes';
+import Link from '@/components/ui/link';
 import type { TutoringGroupRoom } from '@/lib/api/account-types';
 import { weekdayLabelKey } from '@/lib/courses/weekly-rule';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -21,9 +21,9 @@ const minuteLabel = (minute: number) =>
   `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
 
 /**
- * The stage of a paid private class before its first session exists. Instead
- * of a dark, empty player the student is asked when they can meet; once sent,
- * the same spot shows what they asked for and that the teacher is on it.
+ * Stage of a paid private class before its first session exists. Open published
+ * classes of this course are listed here; asking for a new time lives on the
+ * course page, not in this classroom.
  */
 export function PrivateScheduleRequest({
   room,
@@ -32,9 +32,9 @@ export function PrivateScheduleRequest({
 }: PrivateScheduleRequestProps) {
   const { t, language } = useTranslation();
   const router = useRouter();
-  const requestRef = useRef<HTMLDivElement>(null);
   const pending = room.pending_request ?? null;
   const joinable = room.joinable_groups ?? [];
+  const requestHref = `${courseHref}#${CLASS_REQUEST_ANCHOR_ID}`;
 
   return (
     <section className="border-theme bg-card rounded-2xl border p-6">
@@ -65,47 +65,39 @@ export function PrivateScheduleRequest({
             groups={joinable}
             paidValue={room.paid_value ?? 0}
             courseHref={courseHref}
-            onKeepPrivate={() => requestRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            onKeepPrivate={() => router.push(requestHref)}
           />
         </div>
       ) : null}
 
-      <div className="mt-5" ref={requestRef}>
-        {joinable.length ? (
-          <h3 className="mb-3 text-sm font-black text-(--theme-foreground)">
-            {t('live.privateOrAskTimes')}
-          </h3>
-        ) : null}
-        {pending ? (
-          <ul className="flex flex-wrap gap-2">
-            {pending.windows.map((w, index) => (
-              <li
-                key={index}
-                className="border-theme bg-surface rounded-lg border px-3 py-1.5 text-sm"
-              >
-                {t(weekdayLabelKey(w.weekday) ?? '')}{' '}
-                {toPersianDigits(
-                  `${minuteLabel(w.start_minute)}–${minuteLabel(w.end_minute)}`,
-                  language,
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ClassRequestForm
-            courseId={room.course_id}
-            engagementId={room.id}
-            isLoggedIn
-            loginHref="#"
-            onDone={() => router.refresh()}
-          />
-        )}
-      </div>
+      {pending ? (
+        <ul className="mt-5 flex flex-wrap gap-2">
+          {pending.windows.map((w, index) => (
+            <li
+              key={index}
+              className="border-theme bg-surface rounded-lg border px-3 py-1.5 text-sm"
+            >
+              {t(weekdayLabelKey(w.weekday) ?? '')}{' '}
+              {toPersianDigits(
+                `${minuteLabel(w.start_minute)}–${minuteLabel(w.end_minute)}`,
+                language,
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Link
+          href={requestHref}
+          className="mt-5 inline-flex text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+        >
+          {t('courses.requestClassTitle')}
+        </Link>
+      )}
 
       <button
         type="button"
         onClick={onOpenChat}
-        className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+        className="mt-5 flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
       >
         <MessageCircle className="size-4" aria-hidden="true" />
         {t('live.privateMessageTeacher')}
