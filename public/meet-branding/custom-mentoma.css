@@ -1,26 +1,117 @@
 /**
- * Mentoma Meet — custom Jitsi UI skin.
+ * Mentoma Meet — Jitsi welcome + in-call skin.
  * Hosted at: https://mentoma.ir/meet-branding/custom-mentoma.css
  */
 
-/* Hide stock Jitsi chrome */
-.leftwatermark,
-.rightwatermark,
-.watermark,
-.jitsi-watermark,
-.poweredby,
-.welcome .header .header-logo-image,
-.premeeting-screen .jitsi-watermark {
-  display: none !important;
-}
-
+.welcome,
 .premeeting-screen,
 #videoconference_page {
   --mentoma-accent: #0a8fed;
   --mentoma-mint: #35fab9;
   --mentoma-bg: #0b0f14;
-  --mentoma-panel: #121820;
   --mentoma-ink: #f3f6fa;
+}
+
+.welcome,
+#welcome_page,
+.premeeting-screen,
+#videoconference_page {
+  font-family: Tahoma, 'IRANSansX', 'Vazirmatn', system-ui, sans-serif !important;
+}
+
+.welcome,
+#welcome_page {
+  direction: rtl;
+  background: var(--mentoma-bg) !important;
+}
+
+.welcome .header {
+  background-color: var(--mentoma-bg) !important;
+  background-image:
+    radial-gradient(120% 80% at 100% 0%, rgba(10, 143, 237, 0.38) 0%, transparent 55%),
+    radial-gradient(90% 60% at 0% 100%, rgba(53, 250, 185, 0.16) 0%, transparent 50%),
+    linear-gradient(180deg, #0b0f14 0%, #121820 100%) !important;
+}
+
+.welcome .leftwatermark,
+.welcome .rightwatermark,
+.welcome .jitsi-watermark,
+.welcome .poweredby,
+.premeeting-screen .jitsi-watermark,
+.welcome-footer,
+.welcome-footer-centered,
+.deep-linking,
+#new-toolbox .jitsi-watermark {
+  display: none !important;
+}
+
+.welcome .header-container::before {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  background: url('https://mentoma.ir/meet-branding/logo-mark.svg') center / contain no-repeat;
+}
+
+.welcome .header-logo-image {
+  display: none !important;
+}
+
+.welcome .header-text-title {
+  visibility: hidden;
+  position: relative;
+  color: var(--mentoma-ink) !important;
+}
+
+.welcome .header-text-title::after {
+  visibility: visible;
+  content: 'منتوما';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--mentoma-ink);
+}
+
+.welcome .header-text-subtitle {
+  color: rgba(243, 246, 250, 0.82) !important;
+  font-weight: 600 !important;
+}
+
+.welcome .welcome-page-settings {
+  left: 16px !important;
+  right: auto !important;
+}
+
+.welcome #enter_room .join-meeting-container {
+  direction: rtl;
+  text-align: right;
+  border-radius: 12px !important;
+}
+
+.welcome .enter-room-input {
+  text-align: right;
+  font-family: Tahoma, 'IRANSansX', sans-serif !important;
+}
+
+.welcome .welcome-page-button,
+.welcome button.welcome-page-button {
+  background: linear-gradient(135deg, var(--mentoma-accent), #0768b8) !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+}
+
+.welcome .welcome-cards-container,
+.welcome .tab-container,
+.welcome .welcome-card {
+  direction: rtl;
+  text-align: right;
+  font-family: Tahoma, 'IRANSansX', sans-serif !important;
 }
 
 .premeeting-screen {
@@ -28,8 +119,6 @@
     radial-gradient(120% 80% at 100% 0%, rgba(10, 143, 237, 0.22) 0%, transparent 55%),
     radial-gradient(90% 60% at 0% 100%, rgba(53, 250, 185, 0.12) 0%, transparent 50%),
     var(--mentoma-bg) !important;
-  font-family:
-    'Vazirmatn', 'IRANSansX', 'Tahoma', system-ui, -apple-system, sans-serif !important;
 }
 
 .premeeting-screen .content {
@@ -37,60 +126,31 @@
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 16px !important;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
-  backdrop-filter: blur(10px);
 }
 
 .premeeting-screen h1,
 .premeeting-screen .prejoin-input-area h1 {
   font-weight: 800 !important;
-  letter-spacing: -0.02em !important;
-  color: var(--mentoma-ink) !important;
-}
-
-.premeeting-screen .room-name,
-.premeeting-screen .meeting-name,
-.premeeting-screen .conference-info,
-.subject-text,
-.subject-info-container {
-  font-family:
-    'Vazirmatn', 'IRANSansX', 'Tahoma', system-ui, sans-serif !important;
-  color: rgba(243, 246, 250, 0.72) !important;
-}
-
-.premeeting-screen input[type='text'],
-.premeeting-screen .prejoin-input {
-  border-radius: 12px !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  background: rgba(0, 0, 0, 0.35) !important;
   color: var(--mentoma-ink) !important;
 }
 
 .premeeting-screen .action-btn,
 .premeeting-screen button.primary,
-.prejoin-preview button[type='submit'],
 .premeeting-screen .action-button {
   background: linear-gradient(135deg, var(--mentoma-accent), #0768b8) !important;
   border: none !important;
   border-radius: 12px !important;
   font-weight: 700 !important;
-  box-shadow: 0 10px 28px rgba(10, 143, 237, 0.35) !important;
 }
 
 .new-toolbox .toolbox-content-items {
   background: rgba(12, 16, 22, 0.88) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 16px !important;
-  backdrop-filter: blur(12px);
 }
 
-.hangup-button {
-  border-radius: 12px !important;
-}
-
-/* Toast / notification chrome */
 .notification-container .notification,
 .notif-container .notification {
   border-radius: 12px !important;
-  font-family:
-    'Vazirmatn', 'IRANSansX', 'Tahoma', system-ui, sans-serif !important;
+  font-family: Tahoma, 'IRANSansX', sans-serif !important;
 }
