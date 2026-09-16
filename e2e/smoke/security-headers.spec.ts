@@ -16,6 +16,11 @@ test.describe('edusphere security headers (smoke)', () => {
     expect(h['referrer-policy']).toBeTruthy();
     expect(h['content-security-policy']).toContain("frame-ancestors 'none'");
     expect(h['content-security-policy']).toContain('worker-src');
+    expect(h['content-security-policy']).toContain('frame-src');
+    expect(h['content-security-policy']).toContain('https://meet.mentoma.ir');
+    expect(h['content-security-policy']).toContain('https://www.googletagmanager.com');
+    expect(h['content-security-policy']).toContain('https://scripts.clarity.ms');
+    expect(h['content-security-policy']).toContain('https://sentry.hamravesh.com');
     // No legacy powered-by leak.
     expect(h['x-powered-by']).toBeFalsy();
   });

@@ -6,12 +6,12 @@
  * Mentoma Meet (`JITSI_BASE_URL` / `NEXT_PUBLIC_JITSI_HOST`) is always allowed
  * so a self-hosted room embeds without a code change per deploy host.
  */
-const EMBEDDABLE_HOSTS = [
+export const EMBEDDABLE_MEET_HOSTS = [
   'meet.jit.si',
   'meet.mentoma.ir',
   'skyroom.online',
   'www.skyroom.online',
-];
+] as const;
 
 const configuredHost = (): string | null => {
   const raw = (process.env.NEXT_PUBLIC_JITSI_HOST ?? '').trim().toLowerCase();
@@ -28,14 +28,17 @@ export const isEmbeddable = (url: string | null | undefined): boolean => {
   try {
     const host = new URL(url).hostname.toLowerCase();
     const configured = configuredHost();
-    return host === configured || EMBEDDABLE_HOSTS.includes(host);
+    return host === configured || (EMBEDDABLE_MEET_HOSTS as readonly string[]).includes(host);
   } catch {
     return false;
   }
 };
 
 /** en: Mentoma Meet · fa: `{academy} جلسه` — for iframe / new-tab hash overrides. */
-export const mentomaMeetAppName = (academyName: string | null | undefined, language: string): string => {
+export const mentomaMeetAppName = (
+  academyName: string | null | undefined,
+  language: string,
+): string => {
   const name = academyName?.trim();
   if (language === 'fa' && name) return `${name} جلسه`;
   return 'Mentoma Meet';
