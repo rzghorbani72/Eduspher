@@ -29,14 +29,14 @@ type PublicJoinGroup = {
   seats_left: number;
   joined?: boolean;
   status: string;
-  starts_on: string | null;
   join_deadline?: string | null;
 };
 
+const JOINABLE_STATUSES = new Set(['WAITING', 'CONFIRMED', 'RUNNING']);
+
 const stillOpenToRegister = (group: PublicJoinGroup): boolean => {
   if (group.seats_left <= 0) return false;
-  if (group.status !== 'WAITING' && group.status !== 'CONFIRMED') return false;
-  if (group.starts_on && Date.parse(group.starts_on) <= Date.now()) return false;
+  if (!JOINABLE_STATUSES.has(group.status)) return false;
   if (group.join_deadline && Date.parse(group.join_deadline) <= Date.now()) return false;
   return true;
 };
