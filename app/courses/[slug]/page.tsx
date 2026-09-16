@@ -131,6 +131,8 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     (courseAccess.some((row) => row.course_id === course.id) ||
       (myEnrollment && (myEnrollment.status === 'ACTIVE' || myEnrollment.status === 'COMPLETED'))),
   );
+  const hasLiveSeat = tutoringGroups.some((group) => group.joined);
+  const canEnterLiveClass = isEnrolled || hasLiveSeat;
   const access = courseAccess.find((row) => row.course_id === course.id) ?? null;
   // A tutoring student goes straight into the classroom, which lives next to
   // the recorded learn page; the page itself resolves group seat vs 1:1.
@@ -266,7 +268,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     {translate('courses.liveNoClassesYet')}
                   </p>
                 )}
-                {!isEnrolled ? (
+                {!canEnterLiveClass ? (
                   <ClassRequestSection
                     courseId={course.id}
                     hasOpenClasses={tutoringGroups.length > 0}
@@ -279,11 +281,13 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
           </div>
 
           <aside className="lg:sticky lg:top-[72px]">
-            {isLiveCourse(course) && !isEnrolled ? (
+            {isLiveCourse(course) ? (
               <LiveCoursePanel
                 groups={tutoringGroups}
                 currencyConfig={currencyConfig}
                 isLoggedIn={!!user}
+                joinHref={canEnterLiveClass ? liveClassHref : null}
+                loginHref={loginHref}
               />
             ) : (
               <PurchasePanel

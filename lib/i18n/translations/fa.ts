@@ -94,6 +94,9 @@ export const fa = {
     fromPrice: 'از {price}',
     openClasses: '{count} کلاس باز',
     liveChooseClass: 'مشاهده و انتخاب کلاس',
+    liveEnrollAndJoin: 'ثبت‌نام و ورود به کلاس',
+    liveEnrollLogin: 'وارد شو و در کلاس ثبت‌نام کن',
+    liveHasAccessHint: 'به این کلاس دسترسی داری. می‌توانی وارد شوی.',
     requestClassLinkWithClasses: 'زمان مناسبی نیست؟ زمان خودت را پیشنهاد بده',
     requestClassTitle: 'درخواست زمان کلاس',
     requestClassHint:
