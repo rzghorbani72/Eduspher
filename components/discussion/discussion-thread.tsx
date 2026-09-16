@@ -1,10 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { MessageSquare, Paperclip, Send, X } from 'lucide-react';
-import { MessageAttachment } from '@/components/discussion/message-attachment';
+
+import { DiscussionComposer } from '@/components/discussion/discussion-composer';
+import { DiscussionMessagePane } from '@/components/discussion/discussion-message-pane';
 import {
   findDiscussionThread,
   getDiscussionThread,
@@ -14,31 +13,21 @@ import {
   type DiscussionParent,
 } from '@/lib/api/client';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { cn } from '@/lib/utils';
+
+const POLL_MS = 8_000;
 
 interface DiscussionThreadProps {
-  /** Provide exactly one parent. */
   attemptId?: string;
   submissionId?: string;
-  /** A class-wide chat, or a student alone with their teacher. */
   groupId?: string;
   engagementId?: string;
-  /** One meeting of a live class. */
   sessionId?: string;
-  /** Existing thread id (skips the first lazy create); optional. */
   threadId?: string;
   currentProfileId?: string;
-  /** Heading shown above the messages. Defaults to "discussion". */
-  title?: string;
   placeholder?: string;
+  emptyDescription?: string;
 }
 
-/**
- * Reusable contextual discussion thread. Attaches to a quiz attempt OR an
- * assignment submission. No real-time, no DMs — permanent learning-record
- * history. Message bodies are rendered as plain text (React escapes them),
- * so a `<script>` payload can never execute.
- */
 export function DiscussionThread({
   attemptId,
   submissionId,
@@ -47,8 +36,8 @@ export function DiscussionThread({
   sessionId,
   threadId,
   currentProfileId,
-  title,
   placeholder,
+  emptyDescription,
 }: DiscussionThreadProps) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
@@ -56,7 +45,6 @@ export function DiscussionThread({
   const [sending, setSending] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
   const activeThreadId = useRef<string | undefined>(threadId);
 
   const parent: DiscussionParent = attemptId
@@ -70,21 +58,21 @@ export function DiscussionThread({
           : { engagement_id: engagementId };
 
   const parentKey = JSON.stringify(parent);
+  const parentRef = useRef(parent);
+  parentRef.current = parent;
 
   const load = useCallback(async () => {
     try {
-      // Look the thread up by its parent: a class chat has to render before
-      // anyone has written in it, and a thread only exists after the first post.
       if (activeThreadId.current) {
         const data = await getDiscussionThread(activeThreadId.current);
         setMessages(data.messages);
         return;
       }
-      const found = await findDiscussionThread(JSON.parse(parentKey));
+      const found = await findDiscussionThread(JSON.parse(parentKey) as DiscussionParent);
       activeThreadId.current = found.thread?.id;
       setMessages(found.messages);
     } catch {
-      /* an empty chat is a valid state — leave the box ready to write in */
+      /* empty chat is valid until the first post */
     }
   }, [parentKey]);
 
@@ -93,7 +81,20 @@ export function DiscussionThread({
     void load();
   }, [load, threadId]);
 
-  const send = async () => {
+  useEffect(() => {
+    const tick = () => {
+      if (document.visibilityState !== 'visible') return;
+      void load();
+    };
+    const id = window.setInterval(tick, POLL_MS);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', tick);
+    };
+  }, [load]);
+
+  const send = useCallback(async () => {
     const text = body.trim();
     if (!text && !file) return;
     setSending(true);
@@ -108,7 +109,7 @@ export function DiscussionThread({
           return;
         }
       }
-      const msg = await postDiscussionMessage(parent, text, documentId);
+      const msg = await postDiscussionMessage(parentRef.current, text, documentId);
       activeThreadId.current = msg.thread_id;
       setBody('');
       setFile(null);
@@ -119,93 +120,30 @@ export function DiscussionThread({
     } finally {
       setSending(false);
     }
-  };
+  }, [body, file, load, t]);
 
   return (
-    <div className="space-y-4">
-      <div className="text-foreground flex items-center gap-2 text-sm font-medium">
-        <MessageSquare className="h-4 w-4" />
-        <span>{title ?? t('learning.discussion')}</span>
-      </div>
-
-      <div className="space-y-3">
-        {messages.length === 0 && (
-          <p className="text-muted-foreground text-sm">{t('learning.noMessages')}</p>
-        )}
-        {messages.map((m) => {
-          const mine = currentProfileId && m.Author?.id === currentProfileId;
-          return (
-            <div key={m.id} className={cn('flex flex-col', mine ? 'items-end' : 'items-start')}>
-              <div
-                className={cn(
-                  'max-w-[85%] rounded-lg px-3 py-2 text-sm',
-                  mine ? 'bg-primary text-primary-foreground' : 'bg-muted',
-                )}
-              >
-                <p className="mb-1 text-xs opacity-70">
-                  {m.Author?.display_name ?? t('account.unknown')}
-                </p>
-                {m.body ? <p className="wrap-break-word whitespace-pre-wrap">{m.body}</p> : null}
-                {m.Document ? (
-                  <MessageAttachment attachment={m.Document} mine={Boolean(mine)} />
-                ) : null}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {file ? (
-        <div className="bg-muted flex items-center gap-2 rounded-md px-3 py-1.5 text-xs">
-          <Paperclip className="size-3.5" aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate">{file.name}</span>
-          <button
-            type="button"
-            onClick={() => setFile(null)}
-            aria-label={t('live.removeAttachment')}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <X className="size-3.5" />
-          </button>
-        </div>
-      ) : null}
-      <div className="flex items-end gap-2">
-        <input
-          ref={fileInput}
-          type="file"
-          hidden
-          accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        />
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => fileInput.current?.click()}
-          disabled={sending}
-          aria-label={t('live.attachFile')}
-        >
-          <Paperclip className="h-4 w-4" />
-        </Button>
-        <Textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder={placeholder ?? t('learning.writeMessage')}
-          aria-label={placeholder ?? t('learning.writeMessage')}
-          rows={2}
-          maxLength={5000}
-          className="flex-1"
-        />
-        <Button
-          onClick={send}
-          disabled={sending || (!body.trim() && !file)}
-          size="sm"
-          aria-label={t('learning.sendMessage')}
-        >
-          <Send className="h-4 w-4" />
-        </Button>
-      </div>
-      {error && <p className="text-destructive text-sm">{error}</p>}
+    <div className="space-y-3">
+      <DiscussionMessagePane
+        messages={messages}
+        currentProfileId={currentProfileId}
+        emptyDescription={emptyDescription ?? t('learning.noMessages')}
+        jumpLabel={t('live.chatJumpLatest')}
+      />
+      <DiscussionComposer
+        body={body}
+        onBodyChange={setBody}
+        file={file}
+        onPickFile={setFile}
+        sending={sending}
+        placeholder={placeholder ?? t('learning.writeMessage')}
+        attachLabel={t('live.attachFile')}
+        removeLabel={t('live.removeAttachment')}
+        sendLabel={t('learning.sendMessage')}
+        hint={t('live.chatComposerHint')}
+        onSend={() => void send()}
+      />
+      {error ? <p className="text-destructive text-sm">{error}</p> : null}
     </div>
   );
 }
