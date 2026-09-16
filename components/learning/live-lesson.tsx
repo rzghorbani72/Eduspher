@@ -29,7 +29,7 @@ interface LiveLessonProps {
 export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonProps) {
   const { t, language } = useTranslation();
   const { name: academyName } = useAcademyContext();
-  const { data, error, isLoading } = useApiQuery({
+  const { data, error, isLoading, refetch } = useApiQuery({
     queryKey: queryKeys.liveLesson(lessonId),
     queryFn: (signal) => getLessonLiveSession(lessonId, { signal }),
     refetchInterval: LIVE_SESSION_REFRESH_MS,
@@ -54,9 +54,12 @@ export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonPro
     );
   }
 
-  // Students get our join route (staff still get the room URL directly).
-  const rawJoin = resolveAssetUrl(data.join_url) ?? data.meeting_url ?? null;
-  const joinUrl = rawJoin ? withMeetAppName(rawJoin, academyName, language) : null;
+  // Prefer the signed Meet URL when we have it (staff). Students only get
+  // join_url (API redirect) — that cannot drive External API; open in tab instead.
+  const rawMeet = data.meeting_url ?? null;
+  const rawJoin = resolveAssetUrl(data.join_url) ?? null;
+  const embedUrl = rawMeet ? withMeetAppName(rawMeet, academyName, language) : null;
+  const openUrl = embedUrl ?? (rawJoin ? withMeetAppName(rawJoin, academyName, language) : null);
 
   const scheduleLabel = formatLiveSchedule(
     schedule.startsAt,
@@ -73,11 +76,14 @@ export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonPro
         teacherName={teacherName}
         scheduleLabel={scheduleLabel}
         startsAtMs={schedule.startsAt?.getTime() ?? null}
-        meetingUrl={joinUrl}
-        embeddable={Boolean(data.embeddable)}
+        meetingUrl={embedUrl ?? openUrl}
+        embeddable={Boolean(data.embeddable && embedUrl)}
         sessionKey={`${lessonId}:${schedule.startsAt?.toISOString() ?? 'live'}`}
         playbackUrl={data.playback_url ?? null}
-        calendarUrl={buildCalendarUrl(lessonTitle, schedule.startsAt, schedule.endsAt, joinUrl)}
+        calendarUrl={buildCalendarUrl(lessonTitle, schedule.startsAt, schedule.endsAt, openUrl)}
+        onBeforeRejoin={async () => {
+          await refetch();
+        }}
       />
 
       {data.notes ? (

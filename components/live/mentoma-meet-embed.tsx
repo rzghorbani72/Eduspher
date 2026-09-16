@@ -1,13 +1,14 @@
 'use client';
 
+import { Loader2, Radio } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { parseMeetUrl } from '@/lib/live/parse-meet-url';
-import { Radio } from 'lucide-react';
 
-type MeetPhase = 'loading' | 'inCall' | 'left';
+type MeetPhase = 'loading' | 'inCall' | 'left' | 'error';
 
 type JitsiApi = {
   dispose: () => void;
@@ -23,6 +24,9 @@ declare global {
 }
 
 const scriptPromises = new Map<string, Promise<JitsiApiCtor>>();
+
+/** Let Prosody drop the previous participant before the same JWT rejoins. */
+const REJOIN_SETTLE_MS = 400;
 
 const loadExternalApi = (domain: string): Promise<JitsiApiCtor> => {
   const existing = scriptPromises.get(domain);
@@ -56,6 +60,8 @@ interface MentomaMeetEmbedProps {
   title: string;
   displayName?: string | null;
   subject?: string | null;
+  /** Refresh a signed join link (fresh JWT) before rebooting the embed. */
+  onBeforeRejoin?: () => void | Promise<void>;
 }
 
 /**
@@ -69,18 +75,20 @@ export function MentomaMeetEmbed({
   title,
   displayName,
   subject,
+  onBeforeRejoin,
 }: MentomaMeetEmbedProps) {
   const { t } = useTranslation();
   const hostRef = useRef<HTMLDivElement | null>(null);
   const apiRef = useRef<JitsiApi | null>(null);
   const [phase, setPhase] = useState<MeetPhase>('loading');
   const [bootKey, setBootKey] = useState(0);
+  const [rejoining, setRejoining] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     const parsed = parseMeetUrl(meetingUrl);
     if (!parsed || !hostRef.current) {
-      setPhase('left');
+      setPhase('error');
       return;
     }
 
@@ -129,9 +137,11 @@ export function MentomaMeetEmbed({
         apiRef.current = api;
         setPhase('inCall');
 
+        // Only readyToClose = intentional hangup. videoConferenceLeft also fires
+        // while disposing/rebooting and was bouncing rejoin straight back to "left".
         let closed = false;
-        const onLeft = () => {
-          if (closed) return;
+        const onHangup = () => {
+          if (closed || cancelled) return;
           closed = true;
           try {
             api.dispose();
@@ -139,13 +149,11 @@ export function MentomaMeetEmbed({
             // already disposed
           }
           apiRef.current = null;
-          if (!cancelled) setPhase('left');
+          setPhase('left');
         };
-
-        api.addListener('readyToClose', onLeft);
-        api.addListener('videoConferenceLeft', onLeft);
+        api.addListener('readyToClose', onHangup);
       } catch {
-        if (!cancelled) setPhase('left');
+        if (!cancelled) setPhase('error');
       }
     };
 
@@ -171,33 +179,58 @@ export function MentomaMeetEmbed({
     };
   }, [meetingUrl, sessionKey, bootKey, title, displayName, subject]);
 
+  const joinAgain = async () => {
+    if (rejoining) return;
+    setRejoining(true);
+    setPhase('loading');
+    toast.info(t('live.rejoining'), { toastId: 'meet-rejoining', autoClose: 2000 });
+    try {
+      await onBeforeRejoin?.();
+      await new Promise((resolve) => setTimeout(resolve, REJOIN_SETTLE_MS));
+      setBootKey((key) => key + 1);
+    } catch {
+      setPhase('error');
+      toast.error(t('live.rejoinFailed'), { toastId: 'meet-rejoin-failed' });
+    } finally {
+      setRejoining(false);
+    }
+  };
+
+  const showLobby = phase === 'left' || phase === 'error';
+
   return (
     <div className="border-theme relative overflow-hidden rounded-2xl border bg-black">
-      {phase === 'left' ? (
+      {phase === 'loading' ? (
+        <div className="bg-card/95 absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 p-6 text-center">
+          <Loader2 className="size-8 animate-spin text-(--theme-primary)" aria-hidden="true" />
+          <p className="text-sm font-medium">{t('live.rejoining')}</p>
+        </div>
+      ) : null}
+
+      {showLobby ? (
         <div className="bg-card absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 p-6 text-center">
           <span className="grid size-12 place-items-center rounded-xl bg-(--theme-primary)/10 text-(--theme-primary)">
             <Radio className="size-6" aria-hidden="true" />
           </span>
           <div>
-            <h2 className="text-lg font-bold">{t('live.leftMeeting')}</h2>
-            <p className="text-muted mt-1 text-sm">{t('live.leftMeetingHint')}</p>
+            <h2 className="text-lg font-bold">
+              {phase === 'error' ? t('live.rejoinFailed') : t('live.leftMeeting')}
+            </h2>
+            <p className="text-muted mt-1 text-sm">
+              {phase === 'error' ? t('live.rejoinFailedHint') : t('live.leftMeetingHint')}
+            </p>
           </div>
-          <Button
-            type="button"
-            onClick={() => {
-              setPhase('loading');
-              setBootKey((key) => key + 1);
-            }}
-          >
+          <Button type="button" loading={rejoining} onClick={() => void joinAgain()}>
             {t('live.joinAgain')}
           </Button>
         </div>
       ) : null}
+
       <div
         ref={hostRef}
         className="aspect-video w-full"
         title={title}
-        aria-hidden={phase === 'left'}
+        aria-hidden={showLobby || phase === 'loading'}
       />
     </div>
   );

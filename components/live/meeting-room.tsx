@@ -60,6 +60,14 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
         sessionKey={session?.id ?? meetingUrl}
         title={title}
         subject={subject}
+        onBeforeRejoin={async () => {
+          await new Promise<void>((resolve) => {
+            startRefresh(() => {
+              router.refresh();
+              resolve();
+            });
+          });
+        }}
       />
     );
   }

@@ -23,6 +23,8 @@ interface LiveStageProps {
   sessionKey?: string;
   playbackUrl: string | null;
   calendarUrl: string | null;
+  /** Refresh a signed join link before Mentoma Meet reboots. */
+  onBeforeRejoin?: () => void | Promise<void>;
 }
 
 const STAGE =
@@ -41,6 +43,7 @@ export function LiveStage({
   sessionKey,
   playbackUrl,
   calendarUrl,
+  onBeforeRejoin,
 }: LiveStageProps) {
   const { t, language } = useTranslation();
   const { name: academyName } = useAcademyContext();
@@ -117,6 +120,7 @@ export function LiveStage({
         sessionKey={sessionKey ?? meetingUrl}
         title={scheduleLabel}
         subject={subject}
+        onBeforeRejoin={onBeforeRejoin}
       />
     );
   }
