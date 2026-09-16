@@ -92,7 +92,7 @@ export function SessionList({
                   ) : null}
                 </span>
                 <span className="text-muted mt-0.5 block text-xs">
-                  {formatDate(session.starts_at, language)}
+                  {formatDate(session.starts_at, language, true)}
                   {detailed || state === 'cancelled' ? ` · ${stateLabel[state]}` : ''}
                 </span>
               </span>

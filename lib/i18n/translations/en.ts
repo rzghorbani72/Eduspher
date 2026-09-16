@@ -1061,6 +1061,7 @@ export const en = {
     privateOrAskTimes: 'Or tell us your free times',
     joinClass: 'Join the class',
     linkOpensSoon: 'The join link opens shortly before the class starts.',
+    nextSessionWhen: 'Next session: {when}',
     checkLinkAgain: 'Check the link again',
     session: 'Session',
     sessionCancelled: 'cancelled',

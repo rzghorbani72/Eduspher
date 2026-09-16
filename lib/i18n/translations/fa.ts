@@ -1061,6 +1061,7 @@ export const fa = {
     privateOrAskTimes: 'یا زمان‌های آزادت را بگو',
     joinClass: 'ورود به کلاس',
     linkOpensSoon: 'پیوند ورود، کمی پیش از شروع کلاس فعال می‌شود.',
+    nextSessionWhen: 'جلسهٔ بعدی: {when}',
     checkLinkAgain: 'بررسی دوبارهٔ پیوند',
     session: 'جلسه',
     sessionCancelled: 'لغو شد',

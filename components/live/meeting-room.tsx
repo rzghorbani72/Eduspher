@@ -9,8 +9,7 @@ import type { MyTutoringGroupSession } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useNow } from '@/lib/hooks/use-now';
 import { isEmbeddable, withMeetAppName } from '@/lib/live/embeddable';
-import { sessionState } from '@/lib/live/session-state';
-import { formatDate } from '@/lib/utils';
+import { formatSessionWhen, sessionState } from '@/lib/live/session-state';
 import { useAcademyContext } from '@/components/providers/store-provider';
 
 /** The link is time-gated on the server, so re-poll to catch it opening. */
@@ -39,7 +38,7 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
   const meetingUrl = session?.meeting_url
     ? withMeetAppName(session.meeting_url, academyName, language)
     : null;
-  const waiting = state === 'upcoming' && !meetingUrl;
+  const waiting = !meetingUrl && (state === 'upcoming' || state === 'live');
 
   useEffect(() => {
     if (!waiting) return;
@@ -70,7 +69,7 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
       </span>
       <h2 className="mt-4 text-lg font-bold">{title}</h2>
       {session ? (
-        <p className="text-muted mt-1 text-sm">{formatDate(session.starts_at, language)}</p>
+        <p className="text-muted mt-1 text-sm">{formatSessionWhen(session, language)}</p>
       ) : null}
 
       {state === 'live' && meetingUrl ? (
@@ -80,6 +79,22 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
             <ExternalLink className="size-4" aria-hidden="true" />
           </a>
         </Button>
+      ) : state === 'live' ? (
+        <div className="mt-5">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={refresh}
+            disabled={isRefreshing}
+          >
+            <RefreshCw
+              className={isRefreshing ? 'size-4 animate-spin' : 'size-4'}
+              aria-hidden="true"
+            />
+            {t('live.checkLinkAgain')}
+          </Button>
+        </div>
       ) : state === 'held' ? (
         <div className="mt-5 space-y-3">
           <p className="text-muted text-sm">
@@ -94,7 +109,12 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
       ) : (
         <div className="mt-5 space-y-3">
           <p className="text-muted text-sm">
-            {session ? t('live.linkOpensSoon') : t('live.noSessionsYet')}
+            {session
+              ? t('live.nextSessionWhen').replace(
+                  '{when}',
+                  formatSessionWhen(session, language),
+                )
+              : t('live.noSessionsYet')}
           </p>
           {session ? (
             <Button

@@ -25,9 +25,25 @@ export const seatPriceOfGroup = (group: {
 
 export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
 
-/** A published class a student can still pick: seats left, or already theirs. */
-export const isJoinablePublicGroup = (group: { seats_left: number; joined?: boolean }): boolean =>
-  group.seats_left > 0 || Boolean(group.joined);
+type PublicJoinGroup = {
+  seats_left: number;
+  joined?: boolean;
+  status: string;
+  starts_on: string | null;
+  join_deadline?: string | null;
+};
+
+const stillOpenToRegister = (group: PublicJoinGroup): boolean => {
+  if (group.seats_left <= 0) return false;
+  if (group.status !== 'WAITING' && group.status !== 'CONFIRMED') return false;
+  if (group.starts_on && Date.parse(group.starts_on) <= Date.now()) return false;
+  if (group.join_deadline && Date.parse(group.join_deadline) <= Date.now()) return false;
+  return true;
+};
+
+/** A class still open to pick, or one the student already holds a seat in. */
+export const isJoinablePublicGroup = (group: PublicJoinGroup): boolean =>
+  Boolean(group.joined) || stillOpenToRegister(group);
 
 /** Meetings a seat buys: the planned count, else one per weekly slot per week. */
 export const sessionsOfGroup = (group: {
