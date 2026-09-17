@@ -96,6 +96,9 @@ export const en = {
     liveEnrollAndJoin: 'Enroll and join the class',
     liveEnrollLogin: 'Sign in to enroll and join',
     enrollLogin: 'Sign in to enroll',
+    guestClassesHint:
+      'Classes are open. Sign in to see session times and enroll, or create an account.',
+    groupUpcomingSessions: 'Upcoming sessions',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
     liveSessionOnHint: 'A live session is on now. Enter it to join the video.',

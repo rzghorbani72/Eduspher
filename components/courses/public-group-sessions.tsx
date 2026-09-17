@@ -13,14 +13,14 @@ interface PublicGroupSessionsProps {
   timezone?: string;
 }
 
-/** Timetable a guest can read on the course page. Join links stay off this list. */
+/** Upcoming meeting dates for a signed-in student. Join links stay off this list. */
 export function PublicGroupSessions({ sessions, timezone }: PublicGroupSessionsProps) {
   const { t, language } = useTranslation();
   if (!sessions?.length) return null;
 
   return (
     <div className="space-y-1.5">
-      <p className="text-muted text-xs font-semibold">{t('courses.groupSessions')}</p>
+      <p className="text-muted text-xs font-semibold">{t('courses.groupUpcomingSessions')}</p>
       <ol className="space-y-1">
         {sessions.map((session) => (
           <li key={session.starts_at} className="text-sm text-(--theme-foreground)">

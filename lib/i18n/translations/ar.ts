@@ -81,6 +81,8 @@ export const ar = {
     liveEnrollAndJoin: 'Enroll and join the class',
     liveEnrollLogin: 'Sign in to enroll and join',
     enrollLogin: 'سجّل الدخول للتسجيل',
+    guestClassesHint: 'الصفوف مفتوحة. سجّل الدخول لرؤية مواعيد الحصص والتسجيل، أو أنشئ حساباً.',
+    groupUpcomingSessions: 'الحصص القادمة',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
     liveSessionOnHint: 'A live session is on now. Enter it to join the video.',

@@ -102,38 +102,48 @@ export function LiveCoursePanel({
                 </p>
               </div>
             ) : null}
-            <p className="text-muted text-xs">{t('courses.liveSidebarPickHint')}</p>
-            <ul className="space-y-2">
-              {openGroups.map((group) => (
-                <li key={group.id}>
-                  <a
-                    href={`#${groupAnchorId(group.id)}`}
-                    className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
-                  >
-                    <p className="truncate text-sm font-bold text-(--theme-foreground)">
-                      {group.title}
-                    </p>
-                    <div className="mt-2">
-                      <SlotChips slots={group.Slots} />
-                    </div>
-                    <p className="text-muted mt-2 text-[11px]">
-                      {t('courses.groupSeatsLeft')}: {formatNumber(group.seats_left, language)}
-                    </p>
-                  </a>
-                </li>
-              ))}
-            </ul>
             {closed ? (
               <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
+            ) : isLoggedIn ? (
+              <>
+                <p className="text-muted text-xs">{t('courses.liveSidebarPickHint')}</p>
+                <ul className="space-y-2">
+                  {openGroups.map((group) => (
+                    <li key={group.id}>
+                      <a
+                        href={`#${groupAnchorId(group.id)}`}
+                        className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
+                      >
+                        <p className="truncate text-sm font-bold text-(--theme-foreground)">
+                          {group.title}
+                        </p>
+                        <div className="mt-2">
+                          <SlotChips slots={group.Slots} />
+                        </div>
+                        <p className="text-muted mt-2 text-[11px]">
+                          {t('courses.groupSeatsLeft')}: {formatNumber(group.seats_left, language)}
+                        </p>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={`#${GROUP_CLASSES_ANCHOR_ID}`} className={ctaClassName}>
+                  {t('courses.liveEnrollAndJoin')}
+                </Link>
+                <CreditBalanceNote />
+              </>
             ) : (
               <>
-                <Link
-                  href={isLoggedIn ? `#${GROUP_CLASSES_ANCHOR_ID}` : loginHref}
-                  className={ctaClassName}
-                >
-                  {isLoggedIn ? t('courses.liveEnrollAndJoin') : t('courses.liveEnrollLogin')}
+                <p className="text-muted text-xs">{t('courses.guestClassesHint')}</p>
+                <Link href={loginHref} className={ctaClassName}>
+                  {t('courses.liveEnrollLogin')}
                 </Link>
-                {isLoggedIn ? <CreditBalanceNote /> : null}
+                <Link
+                  href={loginHref.replace('/auth/login', '/auth/register')}
+                  className="block text-center text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+                >
+                  {t('auth.registerTitle')}
+                </Link>
               </>
             )}
           </>

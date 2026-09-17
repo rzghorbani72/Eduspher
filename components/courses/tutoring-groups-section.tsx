@@ -12,6 +12,7 @@ import { TutoringGroupCard } from '@/components/courses/tutoring-group-card';
 import { ClassPurchaseSummary } from '@/components/courses/class-purchase-summary';
 import { CreditBalanceNote } from '@/components/purchase/credit-balance-note';
 import { useSeatHold } from '@/components/purchase/use-seat-hold';
+import Link from '@/components/ui/link';
 import type { PublicTutoringGroup } from '@/lib/api/server';
 import type { CurrencyConfig } from '@/components/courses/purchase-panel';
 import { GROUP_CLASSES_ANCHOR_ID } from '@/components/courses/live-course-panel';
@@ -91,7 +92,23 @@ export const TutoringGroupsSection = ({
         {isLoggedIn ? <CreditBalanceNote /> : null}
       </div>
 
-      {groups.length ? (
+      {!isLoggedIn ? (
+        <div className="border-theme bg-card space-y-4 rounded-2xl border p-5 md:p-6">
+          <p className="text-sm text-(--theme-foreground)">{t('courses.guestClassesHint')}</p>
+          <Link
+            href={loginHref}
+            className="flex h-11 items-center justify-center rounded-xl bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90"
+          >
+            {t('courses.liveEnrollLogin')}
+          </Link>
+          <Link
+            href={loginHref.replace('/auth/login', '/auth/register')}
+            className="block text-center text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+          >
+            {t('auth.registerTitle')}
+          </Link>
+        </div>
+      ) : groups.length ? (
         <div className="space-y-4">
           {groups.map((group) => (
             <TutoringGroupCard
