@@ -949,7 +949,6 @@ export async function getTutoringGroupByCode(code: string): Promise<TutoringGrou
       data: PublicTutoringGroup;
     }>(`/tutoring/groups/by-code/${encodeURIComponent(code)}`, {
       method: 'GET',
-      includeAuth: false,
       revalidate: 0,
     });
     return result.data ? { status: 'ok', group: result.data } : { status: 'not_found' };

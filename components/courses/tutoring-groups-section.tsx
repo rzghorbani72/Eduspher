@@ -89,11 +89,11 @@ export const TutoringGroupsSection = ({
         <CreditBalanceNote />
       </div>
 
-      {closed ? (
+      {closed && !groups.some((group) => group.joined) ? (
         <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
       ) : (
         <div className="space-y-4">
-          {groups.map((group) => (
+          {(closed ? groups.filter((group) => group.joined) : groups).map((group) => (
             <TutoringGroupCard
               key={group.id}
               group={group}
@@ -103,8 +103,10 @@ export const TutoringGroupsSection = ({
               onSeatsChange={(seats) => setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))}
               onJoin={() => setConfirming(group)}
               enrolledHref={liveClassHref}
+              canPurchase={!closed}
             />
           ))}
+          {closed ? <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p> : null}
         </div>
       )}
 

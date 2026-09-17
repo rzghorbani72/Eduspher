@@ -95,6 +95,8 @@ export const ar = {
     groupJoin: 'Join this class',
     groupBookWhole: 'Book the whole class',
     groupEnter: 'Enter your class',
+    groupBuyMoreSeats: 'Enroll more seats',
+    groupBuyMoreHint: 'You already have a seat. Buy extra ones for friends if any are left.',
     groupInviteTitle: 'You were invited to a class',
     groupInviteClassNotPublished:
       'This class is not open for enrollment yet. The invite link will work after the teacher publishes the class.',

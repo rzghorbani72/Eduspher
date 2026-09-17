@@ -2,12 +2,18 @@
 
 import { CalendarClock } from 'lucide-react';
 
+import { useEnrollmentClosed } from '@/components/academy/enrollment-status-provider';
 import type { CurrencyConfig } from '@/components/courses/purchase-panel';
 import { CreditBalanceNote } from '@/components/purchase/credit-balance-note';
 import { SlotChips } from '@/components/live/slot-chips';
 import Link from '@/components/ui/link';
 import type { PublicTutoringGroup } from '@/lib/api/server';
-import { groupAnchorId, isJoinablePublicGroup, seatPriceOfGroup } from '@/lib/courses/live-course';
+import {
+  canBuyMoreSeats,
+  groupAnchorId,
+  isJoinablePublicGroup,
+  seatPriceOfGroup,
+} from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatCurrencyWithAcademy, formatNumber } from '@/lib/utils';
 
@@ -25,6 +31,8 @@ interface LiveCoursePanelProps {
 
 const ctaClassName =
   'flex h-11 items-center justify-center rounded-xl bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90';
+const secondaryCtaClassName =
+  'flex h-11 items-center justify-center rounded-xl border border-(--theme-primary) text-sm font-bold text-(--theme-primary-ink) transition-opacity hover:opacity-90';
 
 /**
  * Course-page sidebar for a live course: pick a published open time, enroll,
@@ -39,6 +47,7 @@ export function LiveCoursePanel({
   loginHref,
 }: LiveCoursePanelProps) {
   const { t, language } = useTranslation();
+  const closed = useEnrollmentClosed();
   const openGroups = groups.filter((group) => isJoinablePublicGroup(group));
   const enrolledGroup = groups.find((group) => group.joined) ?? null;
   const format = (amount: number) => formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
@@ -60,6 +69,11 @@ export function LiveCoursePanel({
             <Link href={joinHref} className={ctaClassName}>
               {t('courses.groupEnter')}
             </Link>
+            {canBuyMoreSeats(enrolledGroup) && !closed ? (
+              <a href={`#${groupAnchorId(enrolledGroup.id)}`} className={secondaryCtaClassName}>
+                {t('courses.groupBuyMoreSeats')}
+              </a>
+            ) : null}
           </>
         ) : openGroups.length ? (
           <>

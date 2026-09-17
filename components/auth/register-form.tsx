@@ -25,7 +25,7 @@ import { AuthOtpField } from '@/components/auth/auth-otp-field';
 import { RegisterDetailsStep } from '@/components/auth/register-details-step';
 import { useStorePath } from '@/components/providers/store-provider';
 import { safeRedirectPath } from '@/lib/auth/redirect-target';
-import { getDefaultCountry, getCountryByCode, type CountryCode } from '@/lib/country-codes';
+import { getDefaultCountry, getCountryByCode } from '@/lib/country-codes';
 import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from '@/lib/phone-utils';
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { isPasswordValid } from '@/lib/password-utils';
@@ -136,8 +136,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     },
   });
 
-  const getInitialCountry = () => getCountryByCode('IR') ?? getDefaultCountry();
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const selectedCountry = getCountryByCode('IR') ?? getDefaultCountry();
   const [phoneNumber, setPhoneNumber] = useState(prefilledIsEmail ? '' : prefilledIdentifier);
   const [phoneOtp, setPhoneOtp] = useState('');
   const [emailOtp, setEmailOtp] = useState('');
@@ -444,15 +443,6 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
                   setValue('phone_number', getFullPhoneNumber(cleaned, selectedCountry), {
                     shouldValidate: isValidPhone(value),
                   });
-                }}
-                onCountryChange={(country) => {
-                  setSelectedCountry(country);
-                  if (phoneNumber) {
-                    const cleaned = cleanPhoneNumber(phoneNumber, country);
-                    setValue('phone_number', getFullPhoneNumber(cleaned, country), {
-                      shouldValidate: isValidPhoneInput(phoneNumber, country),
-                    });
-                  }
                 }}
                 defaultCountry={selectedCountry}
                 className="auth-phone"

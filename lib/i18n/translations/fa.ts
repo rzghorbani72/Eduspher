@@ -130,6 +130,8 @@ export const fa = {
     groupJoin: 'ثبت‌نام در این کلاس',
     groupBookWhole: 'رزرو کل کلاس',
     groupEnter: 'ورود به کلاس',
+    groupBuyMoreSeats: 'ثبت‌نام صندلی بیشتر',
+    groupBuyMoreHint: 'صندلی خودت را داری. اگر صندلی خالی مانده، برای دوستانت هم بخر.',
     groupInviteTitle: 'به یک کلاس دعوت شده‌اید',
     groupInviteCourseNotPublished:
       'هیچ کلاسی برای این دوره منتشر نشده است. پس از انتشار دوره توسط آموزشگاه، لینک دعوت فعال می‌شود.',

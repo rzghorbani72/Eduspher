@@ -13,10 +13,19 @@ type Props = {
   seats: number;
   format: (amount: number) => string;
   onSeatsChange: (seats: number) => void;
+  /** Student already holds a seat and is buying extras for others. */
+  buyMore?: boolean;
 };
 
 /** Seat price, whole-class price, and how many seats to buy now. */
-export const TutoringGroupPricing = ({ group, seatPrice, seats, format, onSeatsChange }: Props) => {
+export const TutoringGroupPricing = ({
+  group,
+  seatPrice,
+  seats,
+  format,
+  onSeatsChange,
+  buyMore = false,
+}: Props) => {
   const { t, language } = useTranslation();
   const sessions = sessionsOfGroup(group);
   const maxSeats = group.whole_class_booking
@@ -25,7 +34,12 @@ export const TutoringGroupPricing = ({ group, seatPrice, seats, format, onSeatsC
 
   return (
     <>
-      <dl className="bg-surface grid grid-cols-2 gap-3 rounded-xl p-3">
+      <dl
+        className={cn(
+          'bg-surface grid gap-3 rounded-xl p-3',
+          !buyMore && group.capacity > 1 ? 'grid-cols-2' : 'grid-cols-1',
+        )}
+      >
         <div className="space-y-0.5">
           <dt className="text-muted text-[11px]">{t('courses.groupSeatPrice')}</dt>
           <dd className="cd-price text-sm font-black text-(--theme-foreground)">
@@ -40,7 +54,7 @@ export const TutoringGroupPricing = ({ group, seatPrice, seats, format, onSeatsC
             </dd>
           ) : null}
         </div>
-        {group.capacity > 1 ? (
+        {!buyMore && group.capacity > 1 ? (
           <div className="space-y-0.5">
             <dt className="text-muted text-[11px]">
               {t('courses.groupWholePrice').replace(
@@ -56,45 +70,47 @@ export const TutoringGroupPricing = ({ group, seatPrice, seats, format, onSeatsC
       </dl>
 
       {group.seats_left > 1 ? (
-        <div className="space-y-1">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-muted text-xs">{t('courses.groupReserveWhole')}</span>
-            <div
-              role="group"
-              aria-label={t('courses.groupReserveWhole')}
-              className="border-theme inline-flex h-9 items-center overflow-hidden rounded-lg border"
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-muted text-xs">{t('courses.groupReserveWhole')}</span>
+          <div
+            role="group"
+            aria-label={t('courses.groupReserveWhole')}
+            className="border-theme inline-flex h-9 items-center overflow-hidden rounded-lg border"
+          >
+            <button
+              type="button"
+              aria-label={t('courses.seatsDecrease')}
+              disabled={seats <= 1}
+              onClick={() => onSeatsChange(seats - 1)}
+              className={cn(
+                'grid size-9 place-items-center text-(--theme-foreground)',
+                'hover:bg-surface disabled:opacity-40',
+              )}
             >
-              <button
-                type="button"
-                aria-label={t('courses.seatsDecrease')}
-                disabled={seats <= 1}
-                onClick={() => onSeatsChange(seats - 1)}
-                className={cn(
-                  'grid size-9 place-items-center text-(--theme-foreground)',
-                  'hover:bg-surface disabled:opacity-40',
-                )}
-              >
-                <Minus className="size-3.5" aria-hidden="true" />
-              </button>
-              <span className="cd-price min-w-8 px-1 text-center text-sm font-bold tabular-nums">
-                {formatNumber(seats, language)}
-              </span>
-              <button
-                type="button"
-                aria-label={t('courses.seatsIncrease')}
-                disabled={seats >= maxSeats}
-                onClick={() => onSeatsChange(seats + 1)}
-                className={cn(
-                  'grid size-9 place-items-center text-(--theme-foreground)',
-                  'hover:bg-surface disabled:opacity-40',
-                )}
-              >
-                <Plus className="size-3.5" aria-hidden="true" />
-              </button>
-            </div>
+              <Minus className="size-3.5" aria-hidden="true" />
+            </button>
+            <span className="cd-price min-w-8 px-1 text-center text-sm font-bold tabular-nums">
+              {formatNumber(seats, language)}
+            </span>
+            <button
+              type="button"
+              aria-label={t('courses.seatsIncrease')}
+              disabled={seats >= maxSeats}
+              onClick={() => onSeatsChange(seats + 1)}
+              className={cn(
+                'grid size-9 place-items-center text-(--theme-foreground)',
+                'hover:bg-surface disabled:opacity-40',
+              )}
+            >
+              <Plus className="size-3.5" aria-hidden="true" />
+            </button>
           </div>
-          <p className="text-muted text-[11px]">{t('courses.groupShareHint')}</p>
         </div>
+      ) : null}
+      {buyMore || group.seats_left > 1 ? (
+        <p className="text-muted text-[11px]">
+          {t(buyMore ? 'courses.groupBuyMoreHint' : 'courses.groupShareHint')}
+        </p>
       ) : null}
     </>
   );

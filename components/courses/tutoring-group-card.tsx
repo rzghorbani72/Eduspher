@@ -5,6 +5,7 @@ import { CalendarClock, Users } from 'lucide-react';
 import { TutoringGroupPricing } from '@/components/courses/tutoring-group-pricing';
 import { clockRangeLabel } from '@/components/live/slot-chips';
 import {
+  canBuyMoreSeats,
   groupAnchorId,
   seatPriceOfGroup,
   sessionsOfGroup,
@@ -22,11 +23,13 @@ type Props = {
   onSeatsChange: (seats: number) => void;
   onJoin: () => void;
   enrolledHref?: string;
+  /** False when the academy is not selling new seats (existing members can still enter). */
+  canPurchase?: boolean;
 };
 
 /**
- * One scheduled class as a student sees it before buying: when it meets, how
- * many seats are left, and whether it is still waiting to fill.
+ * One scheduled class: timetable, remaining seats, enter if already enrolled,
+ * and a buy button while registration is still open.
  */
 export const TutoringGroupCard = ({
   group,
@@ -36,6 +39,7 @@ export const TutoringGroupCard = ({
   onSeatsChange,
   onJoin,
   enrolledHref,
+  canPurchase = true,
 }: Props) => {
   const { t, language } = useTranslation();
   const seatPrice = seatPriceOfGroup(group);
@@ -54,6 +58,18 @@ export const TutoringGroupCard = ({
       : `${t('courses.groupStarts')}: ${formatDate(group.starts_on, language)}`
     : null;
   const termFacts = [sessionLabel, termLabel].filter(Boolean).join(' · ');
+  const isMember = Boolean(group.joined && enrolledHref);
+  const canBuy = canPurchase && canBuyMoreSeats(group);
+  const primaryCta =
+    'rounded-lg bg-(--theme-primary) px-4 py-2.5 text-center text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60';
+  const secondaryCta =
+    'rounded-lg border border-(--theme-primary) px-4 py-2.5 text-center text-sm font-semibold text-(--theme-primary-ink) disabled:opacity-60';
+  const buyLabel =
+    !isMember && seats === group.capacity && group.capacity > 1
+      ? t('courses.groupBookWhole')
+      : isMember
+        ? t('courses.groupBuyMoreSeats')
+        : t('courses.groupJoin');
 
   return (
     <article
@@ -109,37 +125,38 @@ export const TutoringGroupCard = ({
       </div>
 
       <div className="md:border-theme space-y-3 md:border-s md:ps-5">
-        <TutoringGroupPricing
-          group={group}
-          seatPrice={seatPrice}
-          seats={seats}
-          format={format}
-          onSeatsChange={onSeatsChange}
-        />
+        {canBuy ? (
+          <TutoringGroupPricing
+            group={group}
+            seatPrice={seatPrice}
+            seats={seats}
+            format={format}
+            onSeatsChange={onSeatsChange}
+            buyMore={isMember}
+          />
+        ) : null}
 
         <div className="border-theme flex flex-col gap-2 border-t pt-3">
-          <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
-            {format(price)}
-          </span>
-          {group.joined && enrolledHref ? (
-            <a
-              href={enrolledHref}
-              className="rounded-lg bg-(--theme-primary) px-4 py-2.5 text-center text-sm font-semibold text-(--theme-on-primary)"
-            >
+          {canBuy ? (
+            <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
+              {format(price)}
+            </span>
+          ) : null}
+          {isMember && enrolledHref ? (
+            <a href={enrolledHref} className={primaryCta}>
               {t('courses.groupEnter')}
             </a>
-          ) : (
+          ) : null}
+          {canBuy ? (
             <button
               type="button"
               disabled={pending || group.seats_left < seats}
               onClick={onJoin}
-              className="rounded-lg bg-(--theme-primary) px-4 py-2.5 text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60"
+              className={isMember ? secondaryCta : primaryCta}
             >
-              {seats === group.capacity && group.capacity > 1
-                ? t('courses.groupBookWhole')
-                : t('courses.groupJoin')}
+              {buyLabel}
             </button>
-          )}
+          ) : null}
         </div>
       </div>
     </article>

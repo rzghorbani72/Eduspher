@@ -34,7 +34,8 @@ type PublicJoinGroup = {
 
 const JOINABLE_STATUSES = new Set(['WAITING', 'CONFIRMED', 'RUNNING']);
 
-const stillOpenToRegister = (group: PublicJoinGroup): boolean => {
+/** Seats remain and the class is still taking buyers — including extra seats. */
+export const canBuyMoreSeats = (group: PublicJoinGroup): boolean => {
   if (group.seats_left <= 0) return false;
   if (!JOINABLE_STATUSES.has(group.status)) return false;
   if (group.join_deadline && Date.parse(group.join_deadline) <= Date.now()) return false;
@@ -43,7 +44,7 @@ const stillOpenToRegister = (group: PublicJoinGroup): boolean => {
 
 /** A class still open to pick, or one the student already holds a seat in. */
 export const isJoinablePublicGroup = (group: PublicJoinGroup): boolean =>
-  Boolean(group.joined) || stillOpenToRegister(group);
+  Boolean(group.joined) || canBuyMoreSeats(group);
 
 /** Meetings a seat buys: the planned count, else one per weekly slot per week. */
 export const sessionsOfGroup = (group: {

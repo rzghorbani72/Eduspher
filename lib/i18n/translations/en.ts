@@ -129,6 +129,8 @@ export const en = {
     groupJoin: 'Join this class',
     groupBookWhole: 'Book the whole class',
     groupEnter: 'Enter your class',
+    groupBuyMoreSeats: 'Enroll more seats',
+    groupBuyMoreHint: 'You already have a seat. Buy extra ones for friends if any are left.',
     groupInviteTitle: 'You were invited to a class',
     groupInviteCourseNotPublished:
       'No class is published for this course yet. The invite link will work after the academy publishes the course.',
