@@ -46,6 +46,12 @@ export const canBuyMoreSeats = (group: PublicJoinGroup): boolean => {
 export const isJoinablePublicGroup = (group: PublicJoinGroup): boolean =>
   Boolean(group.joined) || canBuyMoreSeats(group);
 
+/** Classroom page vs live video: the label follows whether a session is on now. */
+export const liveEnterLabelKey = (
+  sessionLive: boolean | undefined,
+): 'courses.groupEnterSession' | 'courses.groupEnter' =>
+  sessionLive ? 'courses.groupEnterSession' : 'courses.groupEnter';
+
 /** Meetings a seat buys: the planned count, else one per weekly slot per week. */
 export const sessionsOfGroup = (group: {
   session_count: number | null;

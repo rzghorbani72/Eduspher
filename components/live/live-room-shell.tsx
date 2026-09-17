@@ -13,7 +13,7 @@ import { SessionAfterClass } from '@/components/live/session-after-class';
 import { SessionList } from '@/components/live/session-list';
 import type { TutoringGroupRoom } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { pickPlaySession, sessionName } from '@/lib/live/session-state';
+import { sessionName } from '@/lib/live/session-state';
 import { formatNumber } from '@/lib/utils';
 
 interface LiveRoomShellProps {
@@ -40,7 +40,7 @@ export function LiveRoomShell({
   // Before the class starts, the timetable shows the planned dates instead.
   const timetable = room.sessions.length ? room.sessions : room.planned_sessions;
   const [selectedId, setSelectedId] = useState<string | null>(
-    pickPlaySession(timetable, Date.now())?.id ??
+    timetable.find((session) => session.link_open)?.id ??
       room.next_session?.id ??
       timetable[0]?.id ??
       null,
@@ -65,6 +65,7 @@ export function LiveRoomShell({
           <MeetingRoom
             session={selected}
             title={heading}
+            staffJoin={room.is_tutor}
             onGoAfterClass={() => setTab('afterClass')}
           />
         )}

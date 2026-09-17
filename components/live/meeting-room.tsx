@@ -20,6 +20,8 @@ interface MeetingRoomProps {
   session: MyTutoringGroupSession | null;
   title: string;
   onGoAfterClass: () => void;
+  /** Teacher/observer: the server already handed them the URL outside the student window. */
+  staffJoin?: boolean;
 }
 
 /**
@@ -27,7 +29,12 @@ interface MeetingRoomProps {
  * takes the place the recorded course page gives its video player. The join
  * link is decided on the server, so "check again" is a server round trip.
  */
-export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps) {
+export function MeetingRoom({
+  session,
+  title,
+  onGoAfterClass,
+  staffJoin = false,
+}: MeetingRoomProps) {
   const { t, language } = useTranslation();
   const { name: academyName } = useAcademyContext();
   const router = useRouter();
@@ -39,11 +46,10 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
   const meetingUrl = session?.meeting_url
     ? withMeetAppName(session.meeting_url, academyName, language)
     : null;
-  const waiting = !meetingUrl && (state === 'upcoming' || state === 'live');
+  const canJoinVideo = Boolean(meetingUrl && (state === 'live' || staffJoin));
+  const waiting = !canJoinVideo && (state === 'upcoming' || state === 'live');
   const subject =
-    language === 'fa' && academyName.trim()
-      ? `${academyName.trim()} جلسه`
-      : 'جلسه منتوما';
+    language === 'fa' && academyName.trim() ? `${academyName.trim()} جلسه` : 'جلسه منتوما';
 
   useEffect(() => {
     if (!waiting) return;
@@ -52,7 +58,7 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waiting]);
 
-  if (meetingUrl && state === 'live' && isEmbeddable(meetingUrl)) {
+  if (canJoinVideo && meetingUrl && isEmbeddable(meetingUrl)) {
     return (
       <MentomaMeetEmbed
         key={session?.id ?? meetingUrl}
@@ -84,7 +90,7 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
         <p className="text-muted mt-1 text-sm">{formatSessionWhen(session, language)}</p>
       ) : null}
 
-      {state === 'live' && meetingUrl ? (
+      {canJoinVideo && meetingUrl ? (
         <Button asChild className="mt-5">
           <a href={meetingUrl} target="_blank" rel="noopener noreferrer">
             {t('live.joinClass')}
@@ -120,6 +126,7 @@ export function MeetingRoom({ session, title, onGoAfterClass }: MeetingRoomProps
         <p className="text-muted mt-5 text-sm">{t('live.sessionCancelledHint')}</p>
       ) : (
         <div className="mt-5 space-y-3">
+          <p className="text-muted text-sm">{t('live.videoOnlyInSession')}</p>
           <p className="text-muted text-sm">
             {session
               ? t('live.nextSessionWhen').replace('{when}', formatSessionWhen(session, language))

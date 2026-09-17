@@ -12,6 +12,7 @@ import {
   canBuyMoreSeats,
   groupAnchorId,
   isJoinablePublicGroup,
+  liveEnterLabelKey,
   seatPriceOfGroup,
 } from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -64,10 +65,16 @@ export function LiveCoursePanel({
 
         {enrolledGroup && joinHref ? (
           <>
-            <p className="text-sm text-(--theme-foreground)">{t('courses.liveHasAccessHint')}</p>
+            <p className="text-sm text-(--theme-foreground)">
+              {t(
+                enrolledGroup.session_live
+                  ? 'courses.liveSessionOnHint'
+                  : 'courses.liveHasAccessHint',
+              )}
+            </p>
             <SlotChips slots={enrolledGroup.Slots} />
             <Link href={joinHref} className={ctaClassName}>
-              {t('courses.groupEnter')}
+              {t(liveEnterLabelKey(enrolledGroup.session_live))}
             </Link>
             {canBuyMoreSeats(enrolledGroup) && !closed ? (
               <a href={`#${groupAnchorId(enrolledGroup.id)}`} className={secondaryCtaClassName}>

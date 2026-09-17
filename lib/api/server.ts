@@ -901,6 +901,8 @@ export interface PublicTutoringGroup {
   Offer: { id: string; price: number; currency: string } | null;
   /** True when the signed-in student already holds a seat in this class. */
   joined?: boolean;
+  /** True when a teacher-scheduled meeting is in the join window right now. */
+  session_live?: boolean;
 }
 
 /** Syllabus of a live course — what the meetings will cover. */

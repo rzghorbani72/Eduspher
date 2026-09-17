@@ -49,9 +49,7 @@ export function LiveStage({
   const { name: academyName } = useAcademyContext();
   const [now, setNow] = useState(() => Date.now());
   const subject =
-    language === 'fa' && academyName.trim()
-      ? `${academyName.trim()} جلسه`
-      : 'جلسه منتوما';
+    language === 'fa' && academyName.trim() ? `${academyName.trim()} جلسه` : 'جلسه منتوما';
 
   useEffect(() => {
     if (phase === 'ENDED') return;
@@ -152,7 +150,7 @@ export function LiveStage({
       )}
 
       <div className="flex flex-wrap items-center gap-4">
-        {meetingUrl ? (
+        {isLive && meetingUrl ? (
           <a
             href={meetingUrl}
             target="_blank"
@@ -187,9 +185,7 @@ export function LiveStage({
       </div>
 
       {isLive ? null : (
-        <p className="text-xs text-white/50">
-          {meetingUrl ? t('learning.joinLinkReady') : t('learning.joinOpensBeforeStart')}
-        </p>
+        <p className="text-xs text-white/50">{t('learning.joinOpensBeforeStart')}</p>
       )}
     </div>
   );

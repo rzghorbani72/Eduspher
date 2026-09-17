@@ -7,6 +7,7 @@ import { clockRangeLabel } from '@/components/live/slot-chips';
 import {
   canBuyMoreSeats,
   groupAnchorId,
+  liveEnterLabelKey,
   seatPriceOfGroup,
   sessionsOfGroup,
 } from '@/lib/courses/live-course';
@@ -144,7 +145,7 @@ export const TutoringGroupCard = ({
           ) : null}
           {isMember && enrolledHref ? (
             <a href={enrolledHref} className={primaryCta}>
-              {t('courses.groupEnter')}
+              {t(liveEnterLabelKey(group.session_live))}
             </a>
           ) : null}
           {canBuy ? (
