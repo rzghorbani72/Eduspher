@@ -12,6 +12,13 @@ test.describe('edusphere student login — step 1', () => {
     await expect(page.locator('#password')).toHaveCount(0);
   });
 
+  test('phone field has no country code and uses a local 09 placeholder', async ({ page }) => {
+    await page.goto('/auth/login');
+    await page.getByRole('button', { name: /تلفن|Phone/ }).click();
+    await expect(page.getByPlaceholder(/0912\*\*\* \*\* \*\*|۰۹۱۲\*\*\* \*\* \*\*/)).toBeVisible();
+    await expect(page.getByText('+98')).toHaveCount(0);
+  });
+
   test('keeps continue disabled until the identifier is complete', async ({ page }) => {
     await page.goto('/auth/login');
 

@@ -10,6 +10,8 @@ test.describe('edusphere student register — validation', () => {
 
     await expect(page.locator('input[name="display_name"]')).toHaveCount(0);
     await expect(page.getByText('نام نمایشی')).toHaveCount(0);
+    await expect(page.getByPlaceholder(/0912\*\*\* \*\* \*\*|۰۹۱۲\*\*\* \*\* \*\*/)).toBeVisible();
+    await expect(page.getByText('+98')).toHaveCount(0);
 
     const submit = page.locator('button[type="submit"]');
     const phone = page.locator('#phone_number');
@@ -31,9 +33,8 @@ test.describe('edusphere student register — validation', () => {
     await expect(invalid).toHaveCount(0);
     await expect(submit).toBeEnabled();
 
-    // The habitual leading zero is dropped, not counted against the length.
     await phone.fill('09120001234');
-    await expect(phone).toHaveValue('۹۱۲۰۰۰۱۲۳۴');
+    await expect(phone).toHaveValue('۰۹۱۲۰۰۰۱۲۳۴');
     await expect(submit).toBeEnabled();
   });
 });

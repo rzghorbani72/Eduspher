@@ -12,7 +12,7 @@ import { OtpType } from '@/lib/constants';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
-import { getDefaultCountry, getCountryByCode, type CountryCode } from '@/lib/country-codes';
+import { getDefaultCountry, getCountryByCode } from '@/lib/country-codes';
 import { getFullPhoneNumber, cleanPhoneNumber } from '@/lib/phone-utils';
 
 interface AddContactFormProps {
@@ -67,7 +67,7 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
     }
     return getDefaultCountry();
   };
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(getInitialCountry());
+  const selectedCountry = getInitialCountry();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
@@ -277,6 +277,7 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
           <Label htmlFor="phone">{t('account.phoneNumber')}</Label>
           <PhoneInput
             id="phone"
+            lockCountryCode="IR"
             value={phoneNumber}
             onChange={(value) => {
               setPhoneNumber(value);
@@ -285,17 +286,7 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
               const error = fullPhone ? getPhoneValidationError(fullPhone, t) : null;
               setPhoneError(error);
             }}
-            onCountryChange={(country) => {
-              setSelectedCountry(country);
-              if (phoneNumber) {
-                const cleaned = cleanPhoneNumber(phoneNumber, country);
-                const fullPhone = getFullPhoneNumber(cleaned, country);
-                const error = fullPhone ? getPhoneValidationError(fullPhone, t) : null;
-                setPhoneError(error);
-              }
-            }}
             defaultCountry={selectedCountry}
-            placeholder={t('account.phonePlaceholder')}
             autoComplete="tel"
             className={phoneError ? 'border-amber-500 focus:border-amber-500' : ''}
           />
