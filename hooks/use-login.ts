@@ -100,7 +100,7 @@ export function useLogin() {
     // navigation, and a client-side router.push can race the cookie write and
     // bounce back to the first login step. A full reload always sees the
     // committed cookie (same fix as AdminPanel's use-delayed-redirect.ts).
-    window.location.href = safeRedirectPath(searchParams.get('redirect'), buildPath('/'));
+    window.location.href = safeRedirectPath(searchParams.get('redirect'), buildPath('/account'));
   }
 
   function failed(err: unknown) {

@@ -8,6 +8,9 @@ test.describe('edusphere student register — validation', () => {
   test('checks the phone length first, then its format', async ({ page }) => {
     await page.goto('/auth/register');
 
+    await expect(page.locator('input[name="display_name"]')).toHaveCount(0);
+    await expect(page.getByText('نام نمایشی')).toHaveCount(0);
+
     const submit = page.locator('button[type="submit"]');
     const phone = page.locator('#phone_number');
     const invalid = page.getByText('شماره تلفن نامعتبر');

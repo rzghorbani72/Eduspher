@@ -29,7 +29,7 @@ test.describe('edusphere student journey @backend', () => {
     await page.locator('#password').click();
     await page.locator('#password').pressSequentially(password!);
     await page.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\/courses/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/account/, { timeout: 15_000 });
   }
 
   test('logs in, browses catalog, opens account/orders without a broken screen', async ({
@@ -38,7 +38,6 @@ test.describe('edusphere student journey @backend', () => {
   }) => {
     await login(page, baseURL!);
 
-    // Catalog renders (the authed student landing).
     await page.goto('/courses');
     await expect(page).toHaveURL(/\/courses/);
     await expect(page.locator('body')).not.toContainText('Internal Server Error');

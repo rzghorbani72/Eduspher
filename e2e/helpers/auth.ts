@@ -35,5 +35,5 @@ export async function studentLogin(
   await page.locator('#password').click();
   await page.locator('#password').pressSequentially(password);
   await page.locator('button[type="submit"]').click();
-  await expect(page).toHaveURL(/\/courses/, { timeout: 20_000 });
+  await expect(page).toHaveURL(/\/account/, { timeout: 20_000 });
 }

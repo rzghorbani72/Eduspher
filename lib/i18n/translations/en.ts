@@ -726,7 +726,7 @@ export const en = {
     enterOtpFirst: 'Please enter the OTP',
     phoneVerifyFirst: 'Please verify your phone OTP first',
     emailVerifyFirst: 'Please verify your email OTP first',
-    registrationSuccess: 'Registration successful! Redirecting to login...',
+    registrationSuccess: 'Registration successful!',
     enterFullName: 'Enter your full name',
     displayNameRequired: 'Display name is required',
     maxBioLength: 'Maximum 300 characters',

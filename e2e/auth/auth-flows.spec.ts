@@ -54,11 +54,10 @@ test.describe('edusphere auth flows @backend', () => {
 
     await expect(page.locator('input[name="name"]')).toBeVisible({ timeout: 15_000 });
     await page.locator('input[name="name"]').fill('E2E Student');
-    await page.locator('input[name="display_name"]').fill('E2E');
     await page.locator('input[name="password"]').fill(PASSWORD);
     await page.locator('input[name="confirmed_password"]').fill(PASSWORD);
     await page.locator('button[type="submit"]').first().click();
-    await expect(page.getByText(/موفق|success/i).first()).toBeVisible({ timeout: 20_000 });
+    await expect(page).toHaveURL(/\/account/, { timeout: 20_000 });
 
     // ── Login: identifier first, then the method that account really has ──
     await page.goto('/auth/login');

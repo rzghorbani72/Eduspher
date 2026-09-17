@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState, useRef, useMemo, useEffect } from 'react';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
 import { useForm } from 'react-hook-form';
@@ -38,7 +38,6 @@ type RegisterValues = {
   name: string;
   email?: string;
   phone_number?: string;
-  display_name: string;
   password: string;
   confirmed_password: string;
 };
@@ -51,7 +50,6 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFormProps) => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   // Login sends the identifier it could not find, so signup never asks for it twice.
   const prefilledIdentifier = searchParams.get('identifier') ?? '';
@@ -110,7 +108,6 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
             primaryVerificationMethod === 'phone'
               ? z.string().min(6, t('auth.invalidPhone'))
               : z.string().min(6, t('auth.invalidPhone')).optional().or(z.literal('')),
-          display_name: z.string().min(2, t('auth.displayNameRequired')),
           password: z.string().refine(isPasswordValid, t('auth.passwordTooWeak')),
           confirmed_password: z.string().min(1, t('auth.passwordRequired')),
         })
@@ -136,7 +133,6 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       phone_number: prefilledIsEmail ? '' : prefilledIdentifier,
       password: '',
       confirmed_password: '',
-      display_name: '',
     },
   });
 
@@ -284,17 +280,16 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       // A gate response carries no session, so claiming one here would leave a
       // "signed in" page whose every request 401s. Login finishes those steps.
       if (result?.phone_verification_required || result?.password_reset_required) {
-        router.replace(loginHref);
+        window.location.href = loginHref;
         return;
       }
       setAuthenticated(true);
       const { loadAndMergeCart } = await import('@/app/actions/cart');
       loadAndMergeCart().catch(() => {});
-      router.replace(safeRedirectPath(redirectParam, buildPath('/account')));
+      window.location.href = safeRedirectPath(redirectParam, buildPath('/account'));
     } catch {
-      router.replace(loginHref);
+      window.location.href = loginHref;
     }
-    router.refresh();
   };
 
   const onFormSubmit = handleSubmit(async (values) => {
@@ -341,7 +336,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         accepted_privacy_version?: string;
       } = {
         name: values.name,
-        display_name: values.display_name,
+        display_name: values.name,
         password: values.password,
         confirmed_password: values.confirmed_password,
         role: 'USER',
@@ -529,13 +524,11 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
           password={watch('password')}
           fields={{
             name: register('name'),
-            display_name: register('display_name'),
             password: register('password'),
             confirmed_password: register('confirmed_password'),
           }}
           errors={{
             name: errors.name?.message,
-            display_name: errors.display_name?.message,
             password: errors.password?.message,
             confirmed_password: errors.confirmed_password?.message,
           }}

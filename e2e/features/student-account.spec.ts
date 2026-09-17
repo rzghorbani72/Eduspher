@@ -86,9 +86,9 @@ test.describe('Student login — happy path @backend', () => {
   test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
   test.skip(!STUDENT_EMAIL, 'E2E_STUDENT_EMAIL required');
 
-  test('student logs in and reaches courses page', async ({ page, baseURL }) => {
+  test('student logs in and reaches account', async ({ page, baseURL }) => {
     await studentLogin(page, baseURL!);
-    await expect(page).toHaveURL(/\/courses/);
+    await expect(page).toHaveURL(/\/account/);
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
   });
 

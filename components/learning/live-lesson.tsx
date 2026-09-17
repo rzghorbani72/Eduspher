@@ -29,7 +29,7 @@ interface LiveLessonProps {
 export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonProps) {
   const { t, language } = useTranslation();
   const { name: academyName } = useAcademyContext();
-  const { data, error, isLoading, refetch } = useApiQuery({
+  const { data, error, isLoading, refresh } = useApiQuery({
     queryKey: queryKeys.liveLesson(lessonId),
     queryFn: (signal) => getLessonLiveSession(lessonId, { signal }),
     refetchInterval: LIVE_SESSION_REFRESH_MS,
@@ -82,7 +82,7 @@ export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonPro
         playbackUrl={data.playback_url ?? null}
         calendarUrl={buildCalendarUrl(lessonTitle, schedule.startsAt, schedule.endsAt, openUrl)}
         onBeforeRejoin={async () => {
-          await refetch();
+          await refresh();
         }}
       />
 

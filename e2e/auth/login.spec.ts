@@ -36,7 +36,7 @@ test.describe('edusphere student login — step 1', () => {
 test.describe('edusphere student login — happy path @backend', () => {
   test.skip(!process.env.E2E_BACKEND, 'set E2E_BACKEND=1 to run against the API');
 
-  test('logs in and lands back on the academy home', async ({ page, baseURL }) => {
+  test('logs in and lands on the student account', async ({ page, baseURL }) => {
     const email = process.env.E2E_STUDENT_EMAIL;
     const password = process.env.E2E_STUDENT_PASSWORD;
     const academyId = process.env.E2E_ACADEMY_ID;
@@ -61,7 +61,7 @@ test.describe('edusphere student login — happy path @backend', () => {
     await page.locator('#password').pressSequentially(password!);
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).not.toHaveURL(/\/auth\/login/, { timeout: 15_000 });
+    await expect(page).toHaveURL(/\/account/, { timeout: 15_000 });
   });
 
   test('an unknown account is offered signup, not a password box', async ({ page, baseURL }) => {

@@ -9,13 +9,12 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { sanitizePasswordInput } from '@/lib/password-utils';
 
 export type RegisterFieldErrors = Partial<
-  Record<'name' | 'display_name' | 'password' | 'confirmed_password', string>
+  Record<'name' | 'password' | 'confirmed_password', string>
 >;
 
 interface RegisterDetailsStepProps {
   fields: {
     name: UseFormRegisterReturn;
-    display_name: UseFormRegisterReturn;
     password: UseFormRegisterReturn;
     confirmed_password: UseFormRegisterReturn;
   };
@@ -81,13 +80,6 @@ export function RegisterDetailsStep({
         disabled={loading}
         error={errors.name}
         {...fields.name}
-      />
-
-      <AuthField
-        label={t('account.displayName')}
-        disabled={loading}
-        error={errors.display_name}
-        {...fields.display_name}
       />
 
       <div className="space-y-1.5">

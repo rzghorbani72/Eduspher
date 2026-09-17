@@ -725,7 +725,7 @@ export const fa = {
     enterOtpFirst: 'لطفاً کد تأیید را وارد کنید',
     phoneVerifyFirst: 'لطفاً ابتدا کد تلفن را تأیید کنید',
     emailVerifyFirst: 'لطفاً ابتدا کد ایمیل را تأیید کنید',
-    registrationSuccess: 'ثبت‌نام موفق! در حال انتقال به صفحه ورود...',
+    registrationSuccess: 'ثبت‌نام موفق شد',
     enterFullName: 'نام کامل خود را وارد کنید',
     displayNameRequired: 'نام نمایشی الزامی است',
     maxBioLength: 'حداکثر ۳۰۰ کاراکتر',
