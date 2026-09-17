@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
  * directly by URL bounces to /auth/login (preserving a ?redirect= back), never
  * rendering the account/checkout shell.
  */
-const PROTECTED = ['/account', '/account/orders', '/checkout'];
+const PROTECTED = ['/account', '/account/orders', '/checkout', '/learn/demo/live'];
 
 test.describe('edusphere auth guard (smoke)', () => {
   for (const route of PROTECTED) {

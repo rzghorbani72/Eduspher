@@ -52,6 +52,7 @@ export default async function JoinClassByCodePage({
         currencyConfig={currencyConfig}
         language={language}
         loginHref={buildPath(`/auth/login?redirect=/classes/join/${code}`)}
+        isLoggedIn={Boolean(user)}
         joinCode={code}
         liveClassHref={buildPath(liveClassPath(publicCourse.slug))}
       />

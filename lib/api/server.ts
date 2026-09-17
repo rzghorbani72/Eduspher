@@ -903,6 +903,8 @@ export interface PublicTutoringGroup {
   joined?: boolean;
   /** True when a teacher-scheduled meeting is in the join window right now. */
   session_live?: boolean;
+  /** Upcoming meetings, dates only — no join link. */
+  sessions?: readonly { starts_at: string; ends_at: string }[];
 }
 
 /** Syllabus of a live course — what the meetings will cover. */

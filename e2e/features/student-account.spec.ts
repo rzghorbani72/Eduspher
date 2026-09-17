@@ -10,7 +10,7 @@ import { studentLogin, setAcademyCookie, STUDENT_EMAIL } from '../helpers/auth';
  *      pnpm test:e2e e2e/features/student-account.spec.ts
  */
 test.describe('Student account — unauthenticated guard (no backend)', () => {
-  const GUARDED = ['/account', '/account/orders', '/checkout'];
+  const GUARDED = ['/account', '/account/orders', '/checkout', '/learn/demo/live'];
 
   for (const route of GUARDED) {
     test(`unauthenticated ${route} → redirected to /auth/login`, async ({ page }) => {

@@ -260,6 +260,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     currencyConfig={currencyConfig}
                     language={language}
                     loginHref={loginHref}
+                    isLoggedIn={!!user}
                     liveClassHref={liveClassHref}
                   />
                 ) : (
@@ -294,6 +295,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 language={language}
                 currencyConfig={currencyConfig}
                 loginHref={loginHref}
+                isLoggedIn={!!user}
                 continueHref={isEnrolled ? learnPathHref : null}
                 learnHref={learnPathHref}
                 liveClassesHref={liveClassHref}

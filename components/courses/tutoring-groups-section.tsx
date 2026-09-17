@@ -21,6 +21,7 @@ interface Props {
   currencyConfig: CurrencyConfig | null;
   language: string;
   loginHref: string;
+  isLoggedIn: boolean;
   /** Where enrolled students open the live classroom. */
   liveClassHref: string;
   /** Present only for a private class opened through its share link. */
@@ -36,6 +37,7 @@ export const TutoringGroupsSection = ({
   currencyConfig,
   language,
   loginHref,
+  isLoggedIn,
   liveClassHref,
   joinCode,
 }: Props) => {
@@ -86,14 +88,12 @@ export const TutoringGroupsSection = ({
           {t('courses.groupClassesTitle')}
         </h2>
         <p className="text-muted text-sm">{t('courses.groupClassesSubtitle')}</p>
-        <CreditBalanceNote />
+        {isLoggedIn ? <CreditBalanceNote /> : null}
       </div>
 
-      {closed && !groups.some((group) => group.joined) ? (
-        <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
-      ) : (
+      {groups.length ? (
         <div className="space-y-4">
-          {(closed ? groups.filter((group) => group.joined) : groups).map((group) => (
+          {groups.map((group) => (
             <TutoringGroupCard
               key={group.id}
               group={group}
@@ -103,12 +103,14 @@ export const TutoringGroupsSection = ({
               onSeatsChange={(seats) => setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))}
               onJoin={() => setConfirming(group)}
               enrolledHref={liveClassHref}
+              loginHref={loginHref}
+              isLoggedIn={isLoggedIn}
               canPurchase={!closed}
             />
           ))}
           {closed ? <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p> : null}
         </div>
-      )}
+      ) : null}
 
       {error ? <p className="text-sm text-red-500">{error}</p> : null}
 

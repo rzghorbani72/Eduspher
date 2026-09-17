@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
 
+import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from '@/lib/utils';
 import { useEnrollmentClosed } from '@/components/academy/enrollment-status-provider';
@@ -29,6 +30,7 @@ interface PurchasePanelProps {
   language: string;
   currencyConfig: CurrencyConfig | null;
   loginHref: string;
+  isLoggedIn: boolean;
   /** Set when the visitor already owns the course; buying is replaced by "continue". */
   continueHref: string | null;
   /** Where each owned way is entered. */
@@ -61,6 +63,7 @@ export function PurchasePanel({
   language,
   currencyConfig,
   loginHref,
+  isLoggedIn,
   continueHref,
   learnHref,
   liveClassesHref,
@@ -125,7 +128,7 @@ export function PurchasePanel({
             ? t('courses.chooseEnrollMethodHint')
             : t('courses.singleEnrollMethodHint')}
         </p>
-        <CreditBalanceNote className="mt-3" />
+        {isLoggedIn ? <CreditBalanceNote className="mt-3" /> : null}
       </div>
 
       <div role="radiogroup" className="space-y-2.5 px-4 py-3">
@@ -142,22 +145,31 @@ export function PurchasePanel({
       </div>
 
       <div className="px-5 pb-5">
-        <button
-          type="button"
-          disabled={disabled}
-          title={enrollmentClosed ? t('academyStatus.enrollmentClosed') : undefined}
-          onClick={() => setConfirming(true)}
-          className={cn(
-            'cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all',
-            disabled ? 'cursor-not-allowed opacity-60' : 'hover:-translate-y-0.5',
-          )}
-        >
-          {enrollmentClosed
-            ? t('academyStatus.enrollmentClosedShort')
-            : isBusy
-              ? t('common.loading')
-              : t(CTA_KEY[selected.kind] ?? 'courses.ctaBuy')}
-        </button>
+        {isLoggedIn ? (
+          <button
+            type="button"
+            disabled={disabled}
+            title={enrollmentClosed ? t('academyStatus.enrollmentClosed') : undefined}
+            onClick={() => setConfirming(true)}
+            className={cn(
+              'cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all',
+              disabled ? 'cursor-not-allowed opacity-60' : 'hover:-translate-y-0.5',
+            )}
+          >
+            {enrollmentClosed
+              ? t('academyStatus.enrollmentClosedShort')
+              : isBusy
+                ? t('common.loading')
+                : t(CTA_KEY[selected.kind] ?? 'courses.ctaBuy')}
+          </button>
+        ) : (
+          <Link
+            href={loginHref}
+            className="cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all hover:-translate-y-0.5"
+          >
+            {t('courses.enrollLogin')}
+          </Link>
+        )}
 
         {selected.installments && (
           <p className="cd-price mt-2.5 text-center text-xs text-(--theme-muted)">
@@ -177,7 +189,7 @@ export function PurchasePanel({
         </p>
       </div>
 
-      {confirming && (
+      {isLoggedIn && confirming && (
         <CheckoutDialog
           selector={selected.selector}
           fallbackAmount={selected.price}

@@ -123,13 +123,19 @@ export function LiveCoursePanel({
                 </li>
               ))}
             </ul>
-            <Link
-              href={isLoggedIn ? `#${GROUP_CLASSES_ANCHOR_ID}` : loginHref}
-              className={ctaClassName}
-            >
-              {isLoggedIn ? t('courses.liveEnrollAndJoin') : t('courses.liveEnrollLogin')}
-            </Link>
-            {isLoggedIn ? <CreditBalanceNote /> : null}
+            {closed ? (
+              <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
+            ) : (
+              <>
+                <Link
+                  href={isLoggedIn ? `#${GROUP_CLASSES_ANCHOR_ID}` : loginHref}
+                  className={ctaClassName}
+                >
+                  {isLoggedIn ? t('courses.liveEnrollAndJoin') : t('courses.liveEnrollLogin')}
+                </Link>
+                {isLoggedIn ? <CreditBalanceNote /> : null}
+              </>
+            )}
           </>
         ) : (
           <p className="text-muted text-sm">{t('courses.liveNoClassesYet')}</p>

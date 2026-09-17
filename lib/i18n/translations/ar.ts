@@ -80,6 +80,7 @@ export const ar = {
     liveChooseClass: 'See and pick a class',
     liveEnrollAndJoin: 'Enroll and join the class',
     liveEnrollLogin: 'Sign in to enroll and join',
+    enrollLogin: 'سجّل الدخول للتسجيل',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
     liveSessionOnHint: 'A live session is on now. Enter it to join the video.',

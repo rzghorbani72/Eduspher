@@ -2,6 +2,7 @@
 
 import { CalendarClock, Users } from 'lucide-react';
 
+import { PublicGroupSessions } from '@/components/courses/public-group-sessions';
 import { TutoringGroupPricing } from '@/components/courses/tutoring-group-pricing';
 import { clockRangeLabel } from '@/components/live/slot-chips';
 import {
@@ -24,6 +25,8 @@ type Props = {
   onSeatsChange: (seats: number) => void;
   onJoin: () => void;
   enrolledHref?: string;
+  loginHref: string;
+  isLoggedIn: boolean;
   /** False when the academy is not selling new seats (existing members can still enter). */
   canPurchase?: boolean;
 };
@@ -40,6 +43,8 @@ export const TutoringGroupCard = ({
   onSeatsChange,
   onJoin,
   enrolledHref,
+  loginHref,
+  isLoggedIn,
   canPurchase = true,
 }: Props) => {
   const { t, language } = useTranslation();
@@ -109,6 +114,8 @@ export const TutoringGroupCard = ({
           <p className="text-xs font-medium text-(--theme-foreground)">{termFacts}</p>
         ) : null}
 
+        <PublicGroupSessions sessions={group.sessions} timezone={group.timezone} />
+
         <div className="text-muted flex flex-wrap items-center gap-2 text-xs">
           <span className="inline-flex items-center gap-1">
             <Users className="size-3.5" />
@@ -126,7 +133,7 @@ export const TutoringGroupCard = ({
       </div>
 
       <div className="md:border-theme space-y-3 md:border-s md:ps-5">
-        {canBuy ? (
+        {isLoggedIn && canBuy ? (
           <TutoringGroupPricing
             group={group}
             seatPrice={seatPrice}
@@ -140,15 +147,15 @@ export const TutoringGroupCard = ({
         <div className="border-theme flex flex-col gap-2 border-t pt-3">
           {canBuy ? (
             <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
-              {format(price)}
+              {format(isLoggedIn ? price : seatPrice)}
             </span>
           ) : null}
-          {isMember && enrolledHref ? (
+          {isLoggedIn && isMember && enrolledHref ? (
             <a href={enrolledHref} className={primaryCta}>
               {t(liveEnterLabelKey(group.session_live))}
             </a>
           ) : null}
-          {canBuy ? (
+          {isLoggedIn && canBuy ? (
             <button
               type="button"
               disabled={pending || group.seats_left < seats}
@@ -157,6 +164,11 @@ export const TutoringGroupCard = ({
             >
               {buyLabel}
             </button>
+          ) : null}
+          {!isLoggedIn && canBuy ? (
+            <a href={loginHref} className={primaryCta}>
+              {t('courses.liveEnrollLogin')}
+            </a>
           ) : null}
         </div>
       </div>

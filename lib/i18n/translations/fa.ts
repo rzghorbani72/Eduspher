@@ -96,6 +96,7 @@ export const fa = {
     liveChooseClass: 'مشاهده و انتخاب کلاس',
     liveEnrollAndJoin: 'ثبت‌نام و ورود به کلاس',
     liveEnrollLogin: 'وارد شو و در کلاس ثبت‌نام کن',
+    enrollLogin: 'برای ثبت‌نام وارد شو',
     liveHasAccessHint:
       'کلاس همیشه باز است. ویدیوی زنده فقط در جلسه‌هایی که مدرس زمان‌بندی کرده فعال می‌شود.',
     liveSessionOnHint: 'جلسهٔ زنده در حال برگزاری است. وارد شو تا به ویدیو بپیوندی.',
