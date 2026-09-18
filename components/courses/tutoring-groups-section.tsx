@@ -1,9 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import { useTranslation } from '@/lib/i18n/hooks';
-import { seatPriceOfGroup } from '@/lib/courses/live-course';
+import {
+  canBuyMoreSeats,
+  enrollHref,
+  groupAnchorId,
+  seatPriceOfGroup,
+} from '@/lib/courses/live-course';
 import { formatCurrencyWithAcademy } from '@/lib/utils';
 import { useEnrollmentClosed } from '@/components/academy/enrollment-status-provider';
 import { usePurchase } from '@/components/purchase/use-purchase';
@@ -12,6 +18,7 @@ import { TutoringGroupCard } from '@/components/courses/tutoring-group-card';
 import { ClassPurchaseSummary } from '@/components/courses/class-purchase-summary';
 import { CreditBalanceNote } from '@/components/purchase/credit-balance-note';
 import { useSeatHold } from '@/components/purchase/use-seat-hold';
+import { QuickEnrollDialog } from '@/components/courses/quick-enroll/quick-enroll-dialog';
 import type { PublicTutoringGroup } from '@/lib/api/server';
 import type { CurrencyConfig } from '@/components/courses/purchase-panel';
 import { GROUP_CLASSES_ANCHOR_ID } from '@/components/courses/live-course-panel';
@@ -48,6 +55,21 @@ export const TutoringGroupsSection = ({
   });
   const [seatsByGroup, setSeatsByGroup] = useState<Record<string, number>>({});
   const [confirming, setConfirming] = useState<PublicTutoringGroup | null>(null);
+  const [authFor, setAuthFor] = useState<PublicTutoringGroup | null>(null);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const resumeClassId = searchParams.get('class');
+
+  // `?class=<id>` means "start enrolling in this class": the sidebar button
+  // sets it, and the sign-in dialog reloads to it so the server sees the new
+  // session. Runs after mount because both dialogs portal into document.body.
+  useEffect(() => {
+    if (!resumeClassId) return;
+    const picked = groups.find((group) => group.id === resumeClassId);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from the URL once
+    if (picked && canBuyMoreSeats(picked)) (isLoggedIn ? setConfirming : setAuthFor)(picked);
+    window.history.replaceState(null, '', `${pathname}#${groupAnchorId(resumeClassId)}`);
+  }, [isLoggedIn, resumeClassId, groups, pathname]);
   const hold = useSeatHold({
     groupId: confirming?.id ?? null,
     seats: confirming ? (seatsByGroup[confirming.id] ?? 1) : 1,
@@ -104,9 +126,8 @@ export const TutoringGroupsSection = ({
             seats={seatsFor(group)}
             pending={pendingKey === group.id}
             onSeatsChange={(seats) => setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))}
-            onJoin={() => setConfirming(group)}
+            onJoin={() => (isLoggedIn ? setConfirming(group) : setAuthFor(group))}
             enrolledHref={liveClassHref}
-            loginHref={loginHref}
             isLoggedIn={isLoggedIn}
             canPurchase={!closed}
           />
@@ -115,6 +136,15 @@ export const TutoringGroupsSection = ({
       </div>
 
       {error ? <p className="text-sm text-red-500">{error}</p> : null}
+
+      {authFor ? (
+        <QuickEnrollDialog
+          classTitle={authFor.title}
+          loginHref={loginHref}
+          onDone={() => window.location.assign(`${pathname}${enrollHref(authFor.id)}`)}
+          onClose={() => setAuthFor(null)}
+        />
+      ) : null}
 
       {confirming ? (
         <CheckoutDialog

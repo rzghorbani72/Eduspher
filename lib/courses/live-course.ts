@@ -25,6 +25,10 @@ export const seatPriceOfGroup = (group: {
 
 export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
 
+/** Same-page link that starts enrolling in one class (see TutoringGroupsSection). */
+export const enrollHref = (groupId: string): string =>
+  `?class=${groupId}#${groupAnchorId(groupId)}`;
+
 type PublicJoinGroup = {
   seats_left: number;
   joined?: boolean;

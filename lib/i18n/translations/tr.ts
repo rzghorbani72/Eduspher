@@ -78,9 +78,15 @@ export const tr = {
     openClasses: '{count} open classes',
     liveChooseClass: 'See and pick a class',
     liveEnrollAndJoin: 'Enroll and join the class',
-    liveEnrollLogin: 'Sign in to enroll and join',
     enrollLogin: 'Kaydolmak için giriş yapın',
-    guestClassesHint: 'Sınıflara aşağıdan bakın. Kaydolmak için giriş yapın veya hesap oluşturun.',
+    guestClassesHint:
+      'Saatleri sana uyan sınıfı seç ve Kaydol’a bas — yalnızca telefon numaran ve bir kodla giriş yaparsın.',
+    quickEnrollTitle: 'Kayıt için hızlı giriş',
+    quickEnrollHint: 'Cep numaranı gir; sana bir kod göndeririz. Şifre gerekmez.',
+    quickEnrollConfirm: 'Doğrula ve devam et',
+    quickEnrollPasswordOnly: 'Bu hesap şifreyle giriş yapar.',
+    quickEnrollLegalPrefix: 'Devam ederek',
+    quickEnrollLegalSuffix: 'kabul edersin.',
     groupUpcomingSessions: 'Yaklaşan oturumlar',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',

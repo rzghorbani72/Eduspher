@@ -94,9 +94,15 @@ export const en = {
     openClasses: '{count} open classes',
     liveChooseClass: 'See and pick a class',
     liveEnrollAndJoin: 'Enroll and join the class',
-    liveEnrollLogin: 'Sign in to enroll and join',
     enrollLogin: 'Sign in to enroll',
-    guestClassesHint: 'Browse the classes below. Sign in or create an account to enroll.',
+    guestClassesHint:
+      'Pick the class whose times suit you and press Enroll — you sign in with just your phone number and a code.',
+    quickEnrollTitle: 'Quick sign-in to enroll',
+    quickEnrollHint: 'Enter your mobile number; we will text you a code. No password needed.',
+    quickEnrollConfirm: 'Verify and continue',
+    quickEnrollPasswordOnly: 'This account signs in with a password.',
+    quickEnrollLegalPrefix: 'By continuing you accept the',
+    quickEnrollLegalSuffix: '.',
     groupUpcomingSessions: 'Upcoming sessions',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',

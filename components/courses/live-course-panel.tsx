@@ -10,6 +10,7 @@ import Link from '@/components/ui/link';
 import type { PublicTutoringGroup } from '@/lib/api/server';
 import {
   canBuyMoreSeats,
+  enrollHref,
   groupAnchorId,
   liveEnterLabelKey,
   seatPriceOfGroup,
@@ -26,7 +27,6 @@ interface LiveCoursePanelProps {
   isLoggedIn: boolean;
   /** Classroom URL when this student already holds a seat or a teacher grant. */
   joinHref: string | null;
-  loginHref: string;
 }
 
 const ctaClassName =
@@ -44,7 +44,6 @@ export function LiveCoursePanel({
   currencyConfig,
   isLoggedIn,
   joinHref,
-  loginHref,
 }: LiveCoursePanelProps) {
   const { t, language } = useTranslation();
   const closed = useEnrollmentClosed();
@@ -131,10 +130,14 @@ export function LiveCoursePanel({
             ) : buyableGroups.length || isLoggedIn ? (
               <>
                 <Link
-                  href={isLoggedIn ? `#${GROUP_CLASSES_ANCHOR_ID}` : loginHref}
+                  href={
+                    buyableGroups.length === 1
+                      ? enrollHref(buyableGroups[0].id)
+                      : `#${GROUP_CLASSES_ANCHOR_ID}`
+                  }
                   className={ctaClassName}
                 >
-                  {isLoggedIn ? t('courses.liveEnrollAndJoin') : t('courses.liveEnrollLogin')}
+                  {t('courses.liveEnrollAndJoin')}
                 </Link>
                 {isLoggedIn ? <CreditBalanceNote /> : null}
               </>

@@ -95,9 +95,16 @@ export const fa = {
     openClasses: '{count} کلاس باز',
     liveChooseClass: 'مشاهده و انتخاب کلاس',
     liveEnrollAndJoin: 'ثبت‌نام و ورود به کلاس',
-    liveEnrollLogin: 'وارد شو و در کلاس ثبت‌نام کن',
     enrollLogin: 'برای ثبت‌نام وارد شو',
-    guestClassesHint: 'کلاس‌ها را پایین ببین. برای ثبت‌نام وارد شو یا حساب بساز.',
+    guestClassesHint:
+      'کلاسی را که زمانش برایت مناسب است انتخاب کن و «ثبت‌نام» را بزن؛ فقط با شماره موبایل و کد تأیید وارد می‌شوی.',
+    quickEnrollTitle: 'ورود سریع برای ثبت‌نام',
+    quickEnrollHint:
+      'شماره موبایلت را وارد کن؛ یک کد تأیید برایت پیامک می‌شود. رمز عبور لازم نیست.',
+    quickEnrollConfirm: 'تأیید و ادامهٔ ثبت‌نام',
+    quickEnrollPasswordOnly: 'این حساب با رمز عبور وارد می‌شود.',
+    quickEnrollLegalPrefix: 'با ادامه،',
+    quickEnrollLegalSuffix: 'را می‌پذیری.',
     groupUpcomingSessions: 'جلسه‌های پیش رو',
     liveHasAccessHint:
       'کلاس همیشه باز است. ویدیوی زنده فقط در جلسه‌هایی که مدرس زمان‌بندی کرده فعال می‌شود.',

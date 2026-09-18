@@ -25,7 +25,6 @@ type Props = {
   onSeatsChange: (seats: number) => void;
   onJoin: () => void;
   enrolledHref?: string;
-  loginHref: string;
   isLoggedIn: boolean;
   /** False when the academy is not selling new seats (existing members can still enter). */
   canPurchase?: boolean;
@@ -33,7 +32,8 @@ type Props = {
 
 /**
  * One scheduled class: timetable, remaining seats, enter if already enrolled,
- * and a buy button while registration is still open.
+ * and a buy button while registration is still open. Guests get the same
+ * button; the section opens the phone-code dialog before checkout.
  */
 export const TutoringGroupCard = ({
   group,
@@ -43,7 +43,6 @@ export const TutoringGroupCard = ({
   onSeatsChange,
   onJoin,
   enrolledHref,
-  loginHref,
   isLoggedIn,
   canPurchase = true,
 }: Props) => {
@@ -153,7 +152,7 @@ export const TutoringGroupCard = ({
               {t(liveEnterLabelKey(group.session_live))}
             </a>
           ) : null}
-          {isLoggedIn && canBuy ? (
+          {canBuy ? (
             <button
               type="button"
               disabled={pending || group.seats_left < seats}
@@ -162,19 +161,6 @@ export const TutoringGroupCard = ({
             >
               {buyLabel}
             </button>
-          ) : null}
-          {!isLoggedIn && canBuy ? (
-            <>
-              <a href={loginHref} className={primaryCta}>
-                {t('courses.liveEnrollLogin')}
-              </a>
-              <a
-                href={loginHref.replace('/auth/login', '/auth/register')}
-                className="text-center text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
-              >
-                {t('auth.registerTitle')}
-              </a>
-            </>
           ) : null}
           {!canBuy && group.seats_left <= 0 ? (
             <p className="text-muted text-xs">{t('courses.groupFull')}</p>

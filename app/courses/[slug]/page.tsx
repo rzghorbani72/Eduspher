@@ -287,7 +287,6 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 currencyConfig={currencyConfig}
                 isLoggedIn={!!user}
                 joinHref={hasLiveSeat ? liveClassHref : null}
-                loginHref={loginHref}
               />
             ) : (
               <PurchasePanel

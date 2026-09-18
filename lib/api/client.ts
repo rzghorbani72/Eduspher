@@ -586,6 +586,18 @@ export const quickSignup = (payload: QuickSignupPayload, options?: RequestOption
   return postPublicJson<AuthResponse>('/auth/quick-signup', { ...payload }, options);
 };
 
+/**
+ * Course-page enroll dialog, after OTP: join this academy as a student (new
+ * phone) or sign in (already a member). No password — the OTP is the credential.
+ */
+export const quickJoin = (payload: QuickSignupPayload, options?: RequestOptions) => {
+  return postPublicJson<AuthResponse>(
+    '/auth/public/quick-join',
+    { ...payload, academy_id: resolveAcademyId() ?? undefined },
+    options,
+  );
+};
+
 export type QuickStartResult = {
   data?: { id?: string; slug?: string };
   site_ready?: boolean;
