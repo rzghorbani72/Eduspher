@@ -145,11 +145,9 @@ export const TutoringGroupCard = ({
         ) : null}
 
         <div className="border-theme flex flex-col gap-2 border-t pt-3">
-          {canBuy ? (
-            <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
-              {format(isLoggedIn ? price : seatPrice)}
-            </span>
-          ) : null}
+          <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
+            {format(isLoggedIn && canBuy ? price : seatPrice)}
+          </span>
           {isLoggedIn && isMember && enrolledHref ? (
             <a href={enrolledHref} className={primaryCta}>
               {t(liveEnterLabelKey(group.session_live))}
@@ -166,9 +164,20 @@ export const TutoringGroupCard = ({
             </button>
           ) : null}
           {!isLoggedIn && canBuy ? (
-            <a href={loginHref} className={primaryCta}>
-              {t('courses.liveEnrollLogin')}
-            </a>
+            <>
+              <a href={loginHref} className={primaryCta}>
+                {t('courses.liveEnrollLogin')}
+              </a>
+              <a
+                href={loginHref.replace('/auth/login', '/auth/register')}
+                className="text-center text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+              >
+                {t('auth.registerTitle')}
+              </a>
+            </>
+          ) : null}
+          {!canBuy && group.seats_left <= 0 ? (
+            <p className="text-muted text-xs">{t('courses.groupFull')}</p>
           ) : null}
         </div>
       </div>

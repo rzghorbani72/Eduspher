@@ -918,13 +918,26 @@ export async function getCourseTopicsPublic(courseId: string): Promise<CourseTop
 
 /** Scheduled group classes of a course that anyone may join. */
 export async function getTutoringGroupsPublic(courseId: string): Promise<PublicTutoringGroup[]> {
-  const result = await serverFetchRaw<{
-    status: string;
-    data: PublicTutoringGroup[];
-  }>(`/tutoring/groups/public?course_id=${encodeURIComponent(courseId)}`, {
-    method: 'GET',
-  });
-  return result.data ?? [];
+  const load = (includeAuth: boolean) =>
+    serverFetchRaw<{
+      status: string;
+      data: PublicTutoringGroup[];
+    }>(`/tutoring/groups/public?course_id=${encodeURIComponent(courseId)}`, {
+      method: 'GET',
+      includeAuth,
+    });
+
+  try {
+    const authed = await load(true);
+    return authed.data ?? [];
+  } catch {
+    try {
+      const anonymous = await load(false);
+      return anonymous.data ?? [];
+    } catch {
+      return [];
+    }
+  }
 }
 
 /** A private class opened by its share code, so friends can book it together. */

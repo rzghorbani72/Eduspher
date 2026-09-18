@@ -34,7 +34,7 @@ import { markdownToPlainText } from '@/lib/markdown';
 import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
 import { t } from '@/lib/i18n/server-translations';
 import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
-import { isLiveCourse, isJoinablePublicGroup } from '@/lib/courses/live-course';
+import { isLiveCourse } from '@/lib/courses/live-course';
 import { buildPurchaseOptions } from '@/lib/courses/purchase-options';
 import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
 import { buildCourseJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo/course-json-ld';
@@ -256,7 +256,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
               <div className="mt-10 space-y-8">
                 {tutoringGroups.length ? (
                   <TutoringGroupsSection
-                    groups={tutoringGroups.filter(isJoinablePublicGroup)}
+                    groups={tutoringGroups}
                     currencyConfig={currencyConfig}
                     language={language}
                     loginHref={loginHref}

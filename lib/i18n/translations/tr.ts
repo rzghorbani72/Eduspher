@@ -80,8 +80,7 @@ export const tr = {
     liveEnrollAndJoin: 'Enroll and join the class',
     liveEnrollLogin: 'Sign in to enroll and join',
     enrollLogin: 'Kaydolmak için giriş yapın',
-    guestClassesHint:
-      'Sınıflar açık. Oturum saatlerini görmek ve kaydolmak için giriş yapın veya hesap oluşturun.',
+    guestClassesHint: 'Sınıflara aşağıdan bakın. Kaydolmak için giriş yapın veya hesap oluşturun.',
     groupUpcomingSessions: 'Yaklaşan oturumlar',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',

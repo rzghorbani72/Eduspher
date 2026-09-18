@@ -13,7 +13,7 @@ interface PublicGroupSessionsProps {
   timezone?: string;
 }
 
-/** Upcoming meeting dates for a signed-in student. Join links stay off this list. */
+/** Upcoming meeting dates on the course page. Join links stay off this list. */
 export function PublicGroupSessions({ sessions, timezone }: PublicGroupSessionsProps) {
   const { t, language } = useTranslation();
   if (!sessions?.length) return null;

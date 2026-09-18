@@ -11,7 +11,6 @@ import type { PublicTutoringGroup } from '@/lib/api/server';
 import {
   canBuyMoreSeats,
   groupAnchorId,
-  isJoinablePublicGroup,
   liveEnterLabelKey,
   seatPriceOfGroup,
 } from '@/lib/courses/live-course';
@@ -49,11 +48,11 @@ export function LiveCoursePanel({
 }: LiveCoursePanelProps) {
   const { t, language } = useTranslation();
   const closed = useEnrollmentClosed();
-  const openGroups = groups.filter((group) => isJoinablePublicGroup(group));
+  const buyableGroups = groups.filter((group) => canBuyMoreSeats(group));
   const enrolledGroup = groups.find((group) => group.joined) ?? null;
   const format = (amount: number) => formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
-  const fromPrice = openGroups.length ? Math.min(...openGroups.map(seatPriceOfGroup)) : null;
-  const seatsLeft = openGroups.reduce((sum, group) => sum + group.seats_left, 0);
+  const fromPrice = groups.length ? Math.min(...groups.map(seatPriceOfGroup)) : null;
+  const seatsLeft = groups.reduce((sum, group) => sum + group.seats_left, 0);
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
@@ -82,70 +81,64 @@ export function LiveCoursePanel({
               </a>
             ) : null}
           </>
-        ) : openGroups.length ? (
+        ) : groups.length ? (
           <>
             {fromPrice !== null ? (
               <div>
                 <p className="text-muted text-[11px]">{t('courses.groupPerSeat')}</p>
                 <p className="cd-price text-2xl font-black text-(--theme-foreground)">
-                  {openGroups.length > 1
+                  {groups.length > 1
                     ? t('courses.fromPrice').replace('{price}', format(fromPrice))
                     : format(fromPrice)}
                 </p>
                 <p className="text-muted mt-1 text-xs">
                   {t('courses.openClasses').replace(
                     '{count}',
-                    formatNumber(openGroups.length, language),
+                    formatNumber(groups.length, language),
                   )}
                   {' · '}
                   {t('courses.groupSeatsLeft')}: {formatNumber(seatsLeft, language)}
                 </p>
               </div>
             ) : null}
+            <p className="text-muted text-xs">
+              {isLoggedIn ? t('courses.liveSidebarPickHint') : t('courses.guestClassesHint')}
+            </p>
+            <ul className="space-y-2">
+              {groups.map((group) => (
+                <li key={group.id}>
+                  <a
+                    href={`#${groupAnchorId(group.id)}`}
+                    className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
+                  >
+                    <p className="truncate text-sm font-bold text-(--theme-foreground)">
+                      {group.title}
+                    </p>
+                    <div className="mt-2">
+                      <SlotChips slots={group.Slots} />
+                    </div>
+                    <p className="text-muted mt-2 text-[11px]">
+                      {t('courses.groupSeatsLeft')}: {formatNumber(group.seats_left, language)}
+                      {' · '}
+                      {format(seatPriceOfGroup(group))}
+                    </p>
+                  </a>
+                </li>
+              ))}
+            </ul>
             {closed ? (
               <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
-            ) : isLoggedIn ? (
+            ) : buyableGroups.length || isLoggedIn ? (
               <>
-                <p className="text-muted text-xs">{t('courses.liveSidebarPickHint')}</p>
-                <ul className="space-y-2">
-                  {openGroups.map((group) => (
-                    <li key={group.id}>
-                      <a
-                        href={`#${groupAnchorId(group.id)}`}
-                        className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
-                      >
-                        <p className="truncate text-sm font-bold text-(--theme-foreground)">
-                          {group.title}
-                        </p>
-                        <div className="mt-2">
-                          <SlotChips slots={group.Slots} />
-                        </div>
-                        <p className="text-muted mt-2 text-[11px]">
-                          {t('courses.groupSeatsLeft')}: {formatNumber(group.seats_left, language)}
-                        </p>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-                <Link href={`#${GROUP_CLASSES_ANCHOR_ID}`} className={ctaClassName}>
-                  {t('courses.liveEnrollAndJoin')}
-                </Link>
-                <CreditBalanceNote />
-              </>
-            ) : (
-              <>
-                <p className="text-muted text-xs">{t('courses.guestClassesHint')}</p>
-                <Link href={loginHref} className={ctaClassName}>
-                  {t('courses.liveEnrollLogin')}
-                </Link>
                 <Link
-                  href={loginHref.replace('/auth/login', '/auth/register')}
-                  className="block text-center text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+                  href={isLoggedIn ? `#${GROUP_CLASSES_ANCHOR_ID}` : loginHref}
+                  className={ctaClassName}
                 >
-                  {t('auth.registerTitle')}
+                  {isLoggedIn ? t('courses.liveEnrollAndJoin') : t('courses.liveEnrollLogin')}
                 </Link>
+                {isLoggedIn ? <CreditBalanceNote /> : null}
               </>
-            )}
+            ) : null}
           </>
         ) : (
           <p className="text-muted text-sm">{t('courses.liveNoClassesYet')}</p>
