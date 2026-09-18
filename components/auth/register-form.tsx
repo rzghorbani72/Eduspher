@@ -26,10 +26,16 @@ import { RegisterDetailsStep } from '@/components/auth/register-details-step';
 import { useStorePath } from '@/components/providers/store-provider';
 import { safeRedirectPath } from '@/lib/auth/redirect-target';
 import { getDefaultCountry, getCountryByCode } from '@/lib/country-codes';
-import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from '@/lib/phone-utils';
+import {
+  getFullPhoneNumber,
+  cleanPhoneNumber,
+  toEnglishDigits,
+  toLocalPhoneNumber,
+} from '@/lib/phone-utils';
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { isPasswordValid } from '@/lib/password-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useLocaleDigits } from '@/hooks/use-locale-digits';
 import { cn } from '@/lib/utils';
 import { toast } from 'react-toastify';
 import { useOtpNotifier } from '@/hooks/use-otp-notifier';
@@ -55,6 +61,10 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   const prefilledIdentifier = searchParams.get('identifier') ?? '';
   const redirectParam = searchParams.get('redirect');
   const prefilledIsEmail = prefilledIdentifier.includes('@');
+  const selectedCountry = getCountryByCode('IR') ?? getDefaultCountry();
+  const prefilledPhone = prefilledIsEmail
+    ? ''
+    : toLocalPhoneNumber(prefilledIdentifier, selectedCountry);
   const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
   const loginHref = buildPath(
@@ -130,14 +140,14 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     defaultValues: {
       name: '',
       email: prefilledIsEmail ? prefilledIdentifier : '',
-      phone_number: prefilledIsEmail ? '' : prefilledIdentifier,
+      phone_number: prefilledPhone,
       password: '',
       confirmed_password: '',
     },
   });
 
-  const selectedCountry = getCountryByCode('IR') ?? getDefaultCountry();
-  const [phoneNumber, setPhoneNumber] = useState(prefilledIsEmail ? '' : prefilledIdentifier);
+  const localeDigits = useLocaleDigits();
+  const [phoneNumber, setPhoneNumber] = useState(prefilledPhone);
   const [phoneOtp, setPhoneOtp] = useState('');
   const [emailOtp, setEmailOtp] = useState('');
 
@@ -239,6 +249,16 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       setOtpLoading(false);
     }
     return false;
+  };
+
+  const changeContact = () => {
+    setPhoneOtpSent(false);
+    setPhoneOtpVerified(false);
+    setPhoneOtp('');
+    setEmailOtpSent(false);
+    setEmailOtpVerified(false);
+    setEmailOtp('');
+    setError(null);
   };
 
   const handleVerificationSubmit = async (e: React.FormEvent) => {
@@ -411,8 +431,16 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     <div className="space-y-5">
       {step === 'verification' && (
         <form onSubmit={handleVerificationSubmit} className="space-y-5">
-          {/* Primary identifier input */}
-          {primaryVerificationMethod === 'email' ? (
+          {primarySent ? (
+            <div className="auth-identity">
+              <bdi className="auth-identity-value">
+                {primaryVerificationMethod === 'phone' ? localeDigits(phoneNumber) : watchedEmail}
+              </bdi>
+              <button type="button" onClick={changeContact} disabled={otpLoading || isLoading}>
+                {t('auth.changeIdentifier')}
+              </button>
+            </div>
+          ) : primaryVerificationMethod === 'email' ? (
             <div>
               <input
                 id="email"
@@ -453,7 +481,6 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
             </div>
           )}
 
-          {/* OTP row */}
           {primaryVerificationMethod === 'phone' ? (
             <AuthOtpField
               label={t('auth.phoneOtp')}

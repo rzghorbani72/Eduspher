@@ -432,10 +432,9 @@ export const ar = {
     sendLoginCode: 'إرسال الرمز',
     continueLabel: 'متابعة',
     changeIdentifier: 'تغيير',
+    enterOtpHint: 'أدخل الرمز الذي أرسلناه إلى:',
     useOtpInstead: 'تسجيل الدخول برمز لمرة واحدة',
     accountNotRegisteredForLogin: 'لا يوجد حساب مسجل بهذه البيانات.',
-    registerToLoginHint: 'أنشئ حسابًا مجانيًا أولاً، ثم سجّل الدخول.',
-    createAccountToContinue: 'إنشاء حساب',
     noSignInMethodAvailable:
       'لا توجد طريقة لتسجيل الدخول إلى هذا الحساب بعد. يرجى التواصل مع الأكاديمية.',
     signin: 'تسجيل الدخول',

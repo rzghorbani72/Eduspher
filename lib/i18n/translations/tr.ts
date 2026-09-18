@@ -436,10 +436,9 @@ export const tr = {
     sendLoginCode: 'Kod gönder',
     continueLabel: 'Devam',
     changeIdentifier: 'Değiştir',
+    enterOtpHint: 'Şu adrese gönderdiğimiz kodu girin:',
     useOtpInstead: 'Tek kullanımlık kodla giriş yap',
     accountNotRegisteredForLogin: 'Bu bilgilerle kayıtlı hesap yok.',
-    registerToLoginHint: 'Önce ücretsiz hesap oluşturun, sonra giriş yapın.',
-    createAccountToContinue: 'Hesap oluştur',
     noSignInMethodAvailable:
       'Bu hesap için henüz bir giriş yöntemi tanımlı değil. Lütfen akademiyle iletişime geçin.',
     signin: 'Giriş Yap',

@@ -21,6 +21,7 @@ test.describe('edusphere student login — step 1', () => {
 
   test('keeps continue disabled until the identifier is complete', async ({ page }) => {
     await page.goto('/auth/login');
+    await page.getByRole('button', { name: /ایمیل|Email/ }).click();
 
     const submit = page.locator('button[type="submit"]');
     await expect(submit).toBeDisabled();
@@ -61,6 +62,7 @@ test.describe('edusphere student login — happy path @backend', () => {
     ]);
 
     await page.goto('/auth/login');
+    await page.getByRole('button', { name: /ایمیل|Email/ }).click();
     await page.locator('#identifier').fill(email!);
     await page.locator('button[type="submit"]').click();
 
@@ -71,7 +73,7 @@ test.describe('edusphere student login — happy path @backend', () => {
     await expect(page).toHaveURL(/\/account/, { timeout: 15_000 });
   });
 
-  test('an unknown account is offered signup, not a password box', async ({ page, baseURL }) => {
+  test('an unknown account is sent to signup, not a password box', async ({ page, baseURL }) => {
     const academyId = process.env.E2E_ACADEMY_ID;
     test.skip(!academyId, 'E2E_ACADEMY_ID required');
 
@@ -80,12 +82,11 @@ test.describe('edusphere student login — happy path @backend', () => {
       .addCookies([{ name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! }]);
 
     await page.goto('/auth/login');
+    await page.getByRole('button', { name: /ایمیل|Email/ }).click();
     await page.locator('#identifier').fill('nobody-e2e@example.com');
     await page.locator('button[type="submit"]').click();
 
-    await expect(page.locator('a[href*="/auth/register"]').first()).toBeVisible({
-      timeout: 15_000,
-    });
+    await expect(page).toHaveURL(/\/auth\/register\?identifier=/, { timeout: 15_000 });
     await expect(page.locator('#password')).toHaveCount(0);
   });
 });

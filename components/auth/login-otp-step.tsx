@@ -30,13 +30,14 @@ export function LoginOtpStep({ login }: { login: Login }) {
     >
       <div className="space-y-1 text-center">
         <p className="text-sm font-semibold">{t('auth.otpVerification')}</p>
-        <p className="text-xs text-[color:var(--auth-card-muted)]">
-          {t('auth.enterVerificationCode')
-            .split('{phone}')
-            .flatMap((part, i) =>
-              i === 0 ? [part] : [<bdi key={i}>{localeDigits(login.otpTarget)}</bdi>, part],
-            )}
-        </p>
+        <p className="text-xs text-[color:var(--auth-card-muted)]">{t('auth.enterOtpHint')}</p>
+      </div>
+
+      <div className="auth-identity">
+        <bdi className="auth-identity-value">{localeDigits(login.otpTarget)}</bdi>
+        <button type="button" onClick={login.changeIdentifier} disabled={login.pending}>
+          {t('auth.changeIdentifier')}
+        </button>
       </div>
 
       <div className="auth-otp">
@@ -76,10 +77,6 @@ export function LoginOtpStep({ login }: { login: Login }) {
       >
         {login.pending && <Loader2 className="h-4 w-4 animate-spin" />}
         {login.pending ? t('auth.signingIn') : t('auth.verifyAndSignIn')}
-      </button>
-
-      <button type="button" onClick={login.changeIdentifier} className="auth-secondary-btn">
-        {t('common.back')}
       </button>
     </form>
   );

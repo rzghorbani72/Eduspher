@@ -621,10 +621,9 @@ export const fa = {
     sendLoginCode: 'ارسال کد',
     continueLabel: 'ادامه',
     changeIdentifier: 'تغییر',
+    enterOtpHint: 'کد ارسال‌شده به این شماره/ایمیل را وارد کنید:',
     useOtpInstead: 'ورود با کد یکبارمصرف',
     accountNotRegisteredForLogin: 'حسابی با این مشخصات ثبت نشده است.',
-    registerToLoginHint: 'ابتدا حساب رایگان بسازید، سپس وارد شوید.',
-    createAccountToContinue: 'ایجاد حساب',
     noSignInMethodAvailable:
       'برای این حساب راهی برای ورود تنظیم نشده است. لطفاً با پشتیبانی آکادمی تماس بگیرید.',
     signin: 'ورود',

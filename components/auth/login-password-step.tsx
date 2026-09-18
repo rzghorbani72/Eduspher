@@ -32,7 +32,7 @@ export function LoginPasswordStep({ login }: { login: Login }) {
       }}
     >
       <div className="auth-identity">
-        <bdi className="auth-identity-value">{localeDigits(login.identifier)}</bdi>
+        <bdi className="auth-identity-value">{localeDigits(login.displayIdentifier)}</bdi>
         <button type="button" onClick={login.changeIdentifier}>
           {t('auth.changeIdentifier')}
         </button>

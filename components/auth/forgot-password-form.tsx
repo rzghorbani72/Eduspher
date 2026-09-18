@@ -35,7 +35,7 @@ export const ForgotPasswordForm = () => {
   const buildPath = useStorePath();
   const { t } = useTranslation();
   const [step, setStep] = useState<Step>('identifier');
-  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
+  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('phone');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -226,7 +226,7 @@ export const ForgotPasswordForm = () => {
         <div className="space-y-5">
           {/* Method switcher — same pill style as login form */}
           <div className="auth-segment">
-            {(['email', 'phone'] as const).map((m) => (
+            {(['phone', 'email'] as const).map((m) => (
               <button
                 key={m}
                 type="button"

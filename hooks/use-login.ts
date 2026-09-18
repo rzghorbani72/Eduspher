@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import { toast } from 'react-toastify';
 
@@ -24,7 +24,12 @@ import { safeRedirectPath } from '@/lib/auth/redirect-target';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useStorePath } from '@/components/providers/store-provider';
 import { getDefaultCountry } from '@/lib/country-codes';
-import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from '@/lib/phone-utils';
+import {
+  getFullPhoneNumber,
+  cleanPhoneNumber,
+  toEnglishDigits,
+  toLocalPhoneNumber,
+} from '@/lib/phone-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { OtpType } from '@/lib/constants';
 
@@ -38,6 +43,7 @@ export type LoginStep = 'identify' | 'password' | 'otpLogin' | 'otpGate' | 'pass
  */
 export function useLogin() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
   const { t } = useTranslation();
@@ -45,10 +51,9 @@ export function useLogin() {
   const [pending, startTransition] = useTransition();
   const [step, setStep] = useState<LoginStep>('identify');
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
-  const [notRegistered, setNotRegistered] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [channel, setChannel] = useState<LoginChannel>('email');
+  const [channel, setChannel] = useState<LoginChannel>('phone');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
@@ -81,6 +86,8 @@ export function useLogin() {
         ? getFullPhoneNumber(cleanPhoneNumber(phoneNumber, country), country)
         : ''
       : email.trim();
+  const displayIdentifier =
+    channel === 'phone' ? toLocalPhoneNumber(identifier, country) : identifier;
 
   // The identifier is only judged once it is complete, so the button turns on
   // exactly when a whole phone number (or email) has been typed.
@@ -133,13 +140,22 @@ export function useLogin() {
     });
   }
 
+  // No account yet: carry the typed identifier into signup so it is verified
+  // there, then name + password — the visitor never types it twice.
+  function goToRegister() {
+    const query = new URLSearchParams({ identifier: displayIdentifier });
+    const redirect = searchParams.get('redirect');
+    if (redirect) query.set('redirect', redirect);
+    toast.info(t('auth.accountNotRegisteredForLogin'), { toastId: 'login-register' });
+    router.push(buildPath(`/auth/register?${query}`));
+  }
+
   function submitIdentify() {
     if (!identifier) {
       setError(channel === 'phone' ? t('auth.phoneRequired') : t('auth.emailRequired'));
       return;
     }
     clearFeedback();
-    setNotRegistered(false);
     startTransition(async () => {
       try {
         const result = await identifyAccount(identifier, captchaToken || undefined);
@@ -150,7 +166,7 @@ export function useLogin() {
         // already scoped to this academy), but it means "no account here" all
         // the same, so it must never fall through to a password box.
         if (next === 'register' || next === 'member_elsewhere') {
-          setNotRegistered(true);
+          goToRegister();
           return;
         }
         if (next === 'panel_blocked') {
@@ -305,19 +321,15 @@ export function useLogin() {
 
   function changeChannel(next: LoginChannel) {
     setChannel(next);
-    setNotRegistered(false);
     clearFeedback();
   }
 
   return {
     t,
     buildPath,
-    // Kept so a detour through signup still ends on the page the visitor wanted.
-    redirectParam: searchParams.get('redirect'),
     step,
     pending,
     error,
-    notRegistered,
     captchaRequired,
     setCaptchaToken,
     canUseOtp: identity?.can_use_otp ?? false,
@@ -329,12 +341,13 @@ export function useLogin() {
     setPhoneNumber,
     country,
     identifier,
+    displayIdentifier,
     identifierValid,
     password,
     setPassword: (v: string) => setPassword(toEnglishDigits(v)),
     otp,
     setOtp: (v: string) => setOtp(toEnglishDigits(v)),
-    otpTarget: step === 'otpGate' ? (otpGate?.maskedPhone ?? '') : identifier,
+    otpTarget: step === 'otpGate' ? (otpGate?.maskedPhone ?? '') : displayIdentifier,
     otpResending,
     otpTimer: step === 'otpGate' ? otpGateTimer : otpLoginTimer,
     submitIdentify,

@@ -103,3 +103,9 @@ export const getFullPhoneNumber = (phoneNumber: string, countryCode: CountryCode
   if (!phoneNumber) return '';
   return `${countryCode.dialCode}${phoneNumber}`;
 };
+
+/** `+989121234567` → `09121234567`: the form people actually read and type. */
+export const toLocalPhoneNumber = (phoneNumber: string, countryCode: CountryCode): string => {
+  const national = cleanPhoneNumber(phoneNumber, countryCode);
+  return national ? `0${national}` : '';
+};
