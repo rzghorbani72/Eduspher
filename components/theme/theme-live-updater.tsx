@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react';
 
 import { useAcademyContext } from '@/components/providers/store-provider';
 import { useThemeConfig } from './theme-provider';
-import { backendApiBaseUrl } from '@/lib/env';
+import { getClientBackendApiBaseUrl } from '@/lib/env';
 import {
   applyThemeCssVariables,
   DEFAULT_PLATFORM_THEME,
@@ -21,7 +21,8 @@ async function fetchThemeConfig(slug: string): Promise<ThemeConfigInput | null> 
       typeof window !== 'undefined'
         ? new URLSearchParams(window.location.search).get('preview')
         : null;
-    const url = `${backendApiBaseUrl}/theme/public/${slug}/config${
+    // Same-origin path — next.config.ts rewrites /:lang/v1/* to the backend.
+    const url = `${getClientBackendApiBaseUrl()}/theme/public/${slug}/config${
       previewToken ? `?preview=${encodeURIComponent(previewToken)}` : ''
     }`;
     const res = await fetch(url, { cache: 'no-store' });
