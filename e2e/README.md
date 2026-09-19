@@ -44,5 +44,5 @@ E2E_ACADEMY_ID=<academy cuid> \
 pnpm test:e2e
 ```
 
-The spec sets the `skillforge_selected_academy_id` cookie to `E2E_ACADEMY_ID` so
+The spec sets the `academy_id` cookie to `E2E_ACADEMY_ID` so
 the login form sends the correct (cuid) academy to public login.

@@ -41,9 +41,7 @@ test.describe('edusphere auth flows @backend', () => {
 
     // Fresh national mobile number, so the account cannot already exist.
     const phone = '9' + String(Date.now()).slice(-9);
-    await page
-      .context()
-      .addCookies([{ name: 'skillforge_selected_academy_id', value: academyId!, url: baseURL! }]);
+    await page.context().addCookies([{ name: 'academy_id', value: academyId!, url: baseURL! }]);
 
     // ── Register: one button walks send → verify → continue ──────────────
     await page.goto('/auth/register');

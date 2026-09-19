@@ -134,10 +134,9 @@ async function verifyJWT(token: string): Promise<{ valid: boolean; payload: JWTP
 const BACKEND_ORIGIN = process.env.NEXT_PUBLIC_BACKEND_ORIGIN ?? 'http://localhost:3000';
 const BACKEND_API_PATH = process.env.NEXT_PUBLIC_BACKEND_API_PATH ?? '/api';
 const DEFAULT_ACADEMY_SLUG = process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_SLUG ?? null;
-const ACADEMY_ID_COOKIE =
-  process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'skillforge_selected_academy_id';
-const ACADEMY_SLUG_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? 'eduspher_academy_slug';
-const ACADEMY_NAME_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'eduspher_academy_name';
+const ACADEMY_ID_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'academy_id';
+const ACADEMY_SLUG_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? 'academy_slug';
+const ACADEMY_NAME_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'academy_name';
 const ACADEMY_HEADER_ID = 'x-academy-id';
 const ACADEMY_HEADER_SLUG = 'x-academy-slug';
 const ACADEMY_NOT_FOUND_PATH = '/academy-not-found';

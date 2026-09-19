@@ -478,11 +478,11 @@ export const tr = {
     welcomeBack: 'Tekrar hoş geldiniz',
     welcomeBackDescription:
       'Öğrenme yolunuzu sürdürün, kaydedilmiş kaynakları gözden geçirin ve daha hızlı ilerlemenize yardımcı olmaya hazır mentorlarla bağlantı kurun.',
-    newToEduSpher: "EduSpher'a yeni misiniz?",
+    newToPlatform: "Mentoma'ya yeni misiniz?",
     createFreeAccount: 'Ücretsiz hesap oluşturun',
     takesLessThanTwoMinutes: 'İki dakikadan az sürer.',
     resetItHere: 'Buradan sıfırlayın',
-    joinEduSpher: "EduSpher'a katılın",
+    joinPlatform: "Mentoma'ya katılın",
     joinDescription:
       'Seçilmiş kurslar, rehberli mentorluk ve ilerlemenizi çizen analitikleri açın. Tam deneyime erişmek için öğrenci profilinizi oluşturun.',
     personalisedRoadmap: 'Hedeflerinize uygun kişiselleştirilmiş öğrenme yol haritası',

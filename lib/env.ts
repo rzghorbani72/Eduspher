@@ -17,10 +17,9 @@ const normalizeApiPath = (path: string) => {
 // sent as the academy_id "NaN" and rejected by the API.
 const defaultAcademyId = process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_ID?.trim() || null;
 const defaultAcademySlug = process.env.NEXT_PUBLIC_DEFAULT_ACADEMY_SLUG ?? null;
-const academyIdCookie =
-  process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'skillforge_selected_academy_id';
-const academySlugCookie = process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? 'eduspher_academy_slug';
-const academyNameCookie = process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'eduspher_academy_name';
+const academyIdCookie = process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'academy_id';
+const academySlugCookie = process.env.NEXT_PUBLIC_ACADEMY_SLUG_COOKIE ?? 'academy_slug';
+const academyNameCookie = process.env.NEXT_PUBLIC_ACADEMY_NAME_COOKIE ?? 'academy_name';
 
 const adminPanelOrigin = normalizeBaseUrl(
   process.env.NEXT_PUBLIC_ADMIN_PANEL_URL ?? 'http://localhost:4000',

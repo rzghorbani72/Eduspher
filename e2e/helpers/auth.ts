@@ -2,7 +2,7 @@ import { Page, BrowserContext, expect } from '@playwright/test';
 
 // The academy cookie name comes from NEXT_PUBLIC_ACADEMY_ID_COOKIE in env.local.
 // Default falls back to the library default so tests work without the env set.
-const ACADEMY_ID_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'eduspher_academy_id';
+const ACADEMY_ID_COOKIE = process.env.NEXT_PUBLIC_ACADEMY_ID_COOKIE ?? 'academy_id';
 
 // The app uses NEXT_PUBLIC_DEFAULT_ACADEMY_ID=1 from env.local, so this cookie
 // is only needed when the env default is not set or we want a specific academy.

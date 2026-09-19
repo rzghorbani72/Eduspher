@@ -6,7 +6,7 @@ import { getAcademyBySlug } from '@/lib/api/server';
 
 export const metadata: Metadata = {
   title: 'Create account',
-  description: 'Join EduSpher and start your personalised learning journey.',
+  description: 'Join Mentoma and start your personalised learning journey.',
 };
 
 export default async function RegisterPage() {

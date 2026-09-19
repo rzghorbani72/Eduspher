@@ -657,11 +657,11 @@ export const en = {
     welcomeBack: 'Welcome back',
     welcomeBackDescription:
       'Continue your learning path, review saved resources, and connect with mentors ready to help you level up faster.',
-    newToEduSpher: 'New to EduSpher?',
+    newToPlatform: 'New to Mentoma?',
     createFreeAccount: 'Create a free account',
     takesLessThanTwoMinutes: 'It takes less than two minutes.',
     resetItHere: 'Reset it here',
-    joinEduSpher: 'Join EduSpher',
+    joinPlatform: 'Join Mentoma',
     joinDescription:
       'Unlock curated courses, guided mentoring, and analytics that chart your progress. Create your learner profile to access the full experience.',
     personalisedRoadmap: 'Personalised learning roadmap matched to your goals',

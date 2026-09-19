@@ -114,7 +114,7 @@ export async function loadAndMergeCart(): Promise<CartItem[]> {
 
     // Update localStorage with merged cart
     if (typeof window !== 'undefined') {
-      localStorage.setItem('edusphere_cart', JSON.stringify(merged));
+      localStorage.setItem('academy_cart', JSON.stringify(merged));
       markCartSynced();
       window.dispatchEvent(new CustomEvent('cartUpdated'));
     }

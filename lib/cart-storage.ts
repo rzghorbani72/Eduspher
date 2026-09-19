@@ -1,6 +1,6 @@
 'use client';
 
-const CART_STORAGE_KEY = 'edusphere_cart';
+const CART_STORAGE_KEY = 'academy_cart';
 
 export interface CartItem {
   course_id: string;

@@ -475,11 +475,11 @@ export const ar = {
     welcomeBack: 'مرحباً بعودتك',
     welcomeBackDescription:
       'تابع مسار التعلم الخاص بك، ومراجعة الموارد المحفوظة، والتواصل مع المرشدين المستعدين لمساعدتك على التقدم بشكل أسرع.',
-    newToEduSpher: 'جديد في EduSpher؟',
+    newToPlatform: 'جديد في Mentoma؟',
     createFreeAccount: 'إنشاء حساب مجاني',
     takesLessThanTwoMinutes: 'يستغرق أقل من دقيقتين.',
     resetItHere: 'إعادة تعيين هنا',
-    joinEduSpher: 'انضم إلى EduSpher',
+    joinPlatform: 'انضم إلى Mentoma',
     joinDescription:
       'افتح الدورات المختارة والإرشاد الموجه والتحليلات التي ترسم تقدمك. أنشئ ملف المتعلم الخاص بك للوصول إلى التجربة الكاملة.',
     personalisedRoadmap: 'خارطة طريق التعلم المخصصة المطابقة لأهدافك',
