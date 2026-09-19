@@ -46,6 +46,22 @@ export const canBuyMoreSeats = (group: PublicJoinGroup): boolean => {
   return true;
 };
 
+export type ClosedReason = 'full' | 'deadline' | 'ended';
+
+/** Why a class takes no new seats — null while it is still open. */
+export const closedReasonOf = (group: PublicJoinGroup): ClosedReason | null => {
+  if (canBuyMoreSeats(group)) return null;
+  if (group.seats_left <= 0) return 'full';
+  if (group.join_deadline && Date.parse(group.join_deadline) <= Date.now()) return 'deadline';
+  return 'ended';
+};
+
+export const CLOSED_REASON_KEY: Record<ClosedReason, string> = {
+  full: 'courses.groupFull',
+  deadline: 'courses.groupClosedDeadline',
+  ended: 'courses.groupClosedEnded',
+};
+
 /** A class still open to pick, or one the student already holds a seat in. */
 export const isJoinablePublicGroup = (group: PublicJoinGroup): boolean =>
   Boolean(group.joined) || canBuyMoreSeats(group);

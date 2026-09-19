@@ -87,6 +87,11 @@ export const ar = {
     quickEnrollPasswordOnly: 'هذا الحساب يدخل بكلمة مرور.',
     quickEnrollLegalPrefix: 'بالمتابعة فإنك تقبل',
     quickEnrollLegalSuffix: '.',
+    groupClosedDeadline: 'انتهت مهلة التسجيل في هذا الصف.',
+    groupClosedEnded: 'هذا الصف لا يقبل طلاباً جدداً.',
+    groupSessionsHeld: 'عُقدت {held} من {total} جلسة',
+    groupClosedBadge: 'مغلق',
+    liveSidebarPickOne: 'اختر صفاً لبدء التسجيل.',
     groupUpcomingSessions: 'الحصص القادمة',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',

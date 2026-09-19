@@ -905,6 +905,8 @@ export interface PublicTutoringGroup {
   session_live?: boolean;
   /** Upcoming meetings, dates only — no join link. */
   sessions?: readonly { starts_at: string; ends_at: string }[];
+  /** Meetings already over — how far along a running class is. */
+  sessions_held?: number;
 }
 
 /** Syllabus of a live course — what the meetings will cover. */

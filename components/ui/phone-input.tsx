@@ -1,11 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  getCountryByCode,
-  getDefaultCountry,
-  type CountryCode,
-} from '@/lib/country-codes';
+import { getCountryByCode, getDefaultCountry, type CountryCode } from '@/lib/country-codes';
 import {
   toEnglishDigits,
   getPhoneRule,
@@ -61,6 +57,12 @@ export const PhoneInput = ({
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let digits = toEnglishDigits(e.target.value).replace(/\D/g, '');
+    // Autofill pastes "+98 912 …": longer than a national number means a dial
+    // code is in front, so drop it and show the local 09… form.
+    const dialCode = country.dialCode.replace('+', '');
+    if (digits.length > nationalMax && digits.startsWith(dialCode)) {
+      digits = `0${digits.slice(dialCode.length)}`;
+    }
     if (digits.startsWith('0')) {
       digits = `0${digits.replace(/^0+/, '')}`.slice(0, nationalMax + 1);
     } else {

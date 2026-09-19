@@ -103,6 +103,11 @@ export const en = {
     quickEnrollPasswordOnly: 'This account signs in with a password.',
     quickEnrollLegalPrefix: 'By continuing you accept the',
     quickEnrollLegalSuffix: '.',
+    groupClosedDeadline: 'Registration for this class has closed.',
+    groupClosedEnded: 'This class is not taking new students.',
+    groupSessionsHeld: '{held} of {total} sessions held',
+    groupClosedBadge: 'Closed',
+    liveSidebarPickOne: 'Pick a class to start enrolling.',
     groupUpcomingSessions: 'Upcoming sessions',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',

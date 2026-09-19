@@ -21,9 +21,12 @@ export function PublicGroupSessions({ sessions, timezone }: PublicGroupSessionsP
   return (
     <div className="space-y-1.5">
       <p className="text-muted text-xs font-semibold">{t('courses.groupUpcomingSessions')}</p>
-      <ol className="space-y-1">
+      <ol className="flex flex-wrap gap-1.5">
         {sessions.map((session) => (
-          <li key={session.starts_at} className="text-sm text-(--theme-foreground)">
+          <li
+            key={session.starts_at}
+            className="bg-surface cd-price rounded-lg px-2 py-1 text-xs text-(--theme-foreground)"
+          >
             {formatDateTime(session.starts_at, language, timezone)}
           </li>
         ))}

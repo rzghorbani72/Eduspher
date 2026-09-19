@@ -6,7 +6,9 @@ import { PublicGroupSessions } from '@/components/courses/public-group-sessions'
 import { TutoringGroupPricing } from '@/components/courses/tutoring-group-pricing';
 import { clockRangeLabel } from '@/components/live/slot-chips';
 import {
+  CLOSED_REASON_KEY,
   canBuyMoreSeats,
+  closedReasonOf,
   groupAnchorId,
   liveEnterLabelKey,
   seatPriceOfGroup,
@@ -65,6 +67,14 @@ export const TutoringGroupCard = ({
   const termFacts = [sessionLabel, termLabel].filter(Boolean).join(' · ');
   const isMember = Boolean(group.joined && enrolledHref);
   const canBuy = canPurchase && canBuyMoreSeats(group);
+  const closedReason = closedReasonOf(group);
+  const held = group.sessions_held ?? 0;
+  const heldLabel =
+    held > 0 && sessions > 0
+      ? t('courses.groupSessionsHeld')
+          .replace('{held}', formatNumber(held, language))
+          .replace('{total}', formatNumber(sessions, language))
+      : null;
   const primaryCta =
     'rounded-lg bg-(--theme-primary) px-4 py-2.5 text-center text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60';
   const secondaryCta =
@@ -143,10 +153,11 @@ export const TutoringGroupCard = ({
           />
         ) : null}
 
-        <div className="border-theme flex flex-col gap-2 border-t pt-3">
+        <div className="flex flex-col gap-2">
           <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
             {format(isLoggedIn && canBuy ? price : seatPrice)}
           </span>
+          {heldLabel ? <p className="text-muted text-xs">{heldLabel}</p> : null}
           {isLoggedIn && isMember && enrolledHref ? (
             <a href={enrolledHref} className={primaryCta}>
               {t(liveEnterLabelKey(group.session_live))}
@@ -162,8 +173,10 @@ export const TutoringGroupCard = ({
               {buyLabel}
             </button>
           ) : null}
-          {!canBuy && group.seats_left <= 0 ? (
-            <p className="text-muted text-xs">{t('courses.groupFull')}</p>
+          {closedReason ? (
+            <p className="rounded-lg bg-(--theme-primary-subtle) px-3 py-2 text-xs text-(--theme-primary-ink)">
+              {t(CLOSED_REASON_KEY[closedReason])}
+            </p>
           ) : null}
         </div>
       </div>

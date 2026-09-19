@@ -9,7 +9,9 @@ import { SlotChips } from '@/components/live/slot-chips';
 import Link from '@/components/ui/link';
 import type { PublicTutoringGroup } from '@/lib/api/server';
 import {
+  CLOSED_REASON_KEY,
   canBuyMoreSeats,
+  closedReasonOf,
   enrollHref,
   groupAnchorId,
   liveEnterLabelKey,
@@ -101,46 +103,55 @@ export function LiveCoursePanel({
               </div>
             ) : null}
             <p className="text-muted text-xs">
-              {isLoggedIn ? t('courses.liveSidebarPickHint') : t('courses.guestClassesHint')}
+              {buyableGroups.length > 1
+                ? t('courses.liveSidebarPickOne')
+                : isLoggedIn
+                  ? t('courses.liveSidebarPickHint')
+                  : t('courses.guestClassesHint')}
             </p>
             <ul className="space-y-2">
-              {groups.map((group) => (
-                <li key={group.id}>
-                  <a
-                    href={`#${groupAnchorId(group.id)}`}
-                    className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
-                  >
-                    <p className="truncate text-sm font-bold text-(--theme-foreground)">
-                      {group.title}
-                    </p>
-                    <div className="mt-2">
-                      <SlotChips slots={group.Slots} />
-                    </div>
-                    <p className="text-muted mt-2 text-[11px]">
-                      {t('courses.groupSeatsLeft')}: {formatNumber(group.seats_left, language)}
-                      {' · '}
-                      {format(seatPriceOfGroup(group))}
-                    </p>
-                  </a>
-                </li>
-              ))}
+              {groups.map((group) => {
+                const reason = closedReasonOf(group);
+                return (
+                  <li key={group.id}>
+                    <Link
+                      href={reason || closed ? `#${groupAnchorId(group.id)}` : enrollHref(group.id)}
+                      className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-sm font-bold text-(--theme-foreground)">
+                          {group.title}
+                        </p>
+                        {reason ? (
+                          <span className="bg-surface text-muted shrink-0 rounded-full px-2 py-0.5 text-[10px]">
+                            {t('courses.groupClosedBadge')}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="mt-2">
+                        <SlotChips slots={group.Slots} />
+                      </div>
+                      <p className="text-muted mt-2 text-[11px]">
+                        {reason
+                          ? t(CLOSED_REASON_KEY[reason])
+                          : `${t('courses.groupSeatsLeft')}: ${formatNumber(group.seats_left, language)} · ${format(seatPriceOfGroup(group))}`}
+                      </p>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
             {closed ? (
               <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
-            ) : buyableGroups.length || isLoggedIn ? (
+            ) : buyableGroups.length === 1 ? (
               <>
-                <Link
-                  href={
-                    buyableGroups.length === 1
-                      ? enrollHref(buyableGroups[0].id)
-                      : `#${GROUP_CLASSES_ANCHOR_ID}`
-                  }
-                  className={ctaClassName}
-                >
+                <Link href={enrollHref(buyableGroups[0].id)} className={ctaClassName}>
                   {t('courses.liveEnrollAndJoin')}
                 </Link>
                 {isLoggedIn ? <CreditBalanceNote /> : null}
               </>
+            ) : isLoggedIn && buyableGroups.length ? (
+              <CreditBalanceNote />
             ) : null}
           </>
         ) : (

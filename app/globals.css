@@ -2315,6 +2315,12 @@ select[class*='rounded-sm'] {
   border-color: var(--auth-accent);
   box-shadow: 0 0 0 3px var(--auth-accent-tint);
 }
+.auth-input:-webkit-autofill,
+.auth-phone input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--auth-card-bg) inset;
+  -webkit-text-fill-color: var(--auth-card-ink);
+  caret-color: var(--auth-card-ink);
+}
 .auth-input.has-error {
   border-color: hsl(var(--destructive));
 }

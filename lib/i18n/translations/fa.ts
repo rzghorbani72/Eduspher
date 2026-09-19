@@ -105,6 +105,11 @@ export const fa = {
     quickEnrollPasswordOnly: 'این حساب با رمز عبور وارد می‌شود.',
     quickEnrollLegalPrefix: 'با ادامه،',
     quickEnrollLegalSuffix: 'را می‌پذیری.',
+    groupClosedDeadline: 'مهلت ثبت‌نام این کلاس تمام شده.',
+    groupClosedEnded: 'ثبت‌نام این کلاس بسته است.',
+    groupSessionsHeld: '{held} از {total} جلسه برگزار شده',
+    groupClosedBadge: 'بسته',
+    liveSidebarPickOne: 'یک کلاس را انتخاب کن تا ثبت‌نام شروع شود.',
     groupUpcomingSessions: 'جلسه‌های پیش رو',
     liveHasAccessHint:
       'کلاس همیشه باز است. ویدیوی زنده فقط در جلسه‌هایی که مدرس زمان‌بندی کرده فعال می‌شود.',

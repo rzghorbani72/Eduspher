@@ -87,6 +87,11 @@ export const tr = {
     quickEnrollPasswordOnly: 'Bu hesap şifreyle giriş yapar.',
     quickEnrollLegalPrefix: 'Devam ederek',
     quickEnrollLegalSuffix: 'kabul edersin.',
+    groupClosedDeadline: 'Bu sınıfın kayıt süresi bitti.',
+    groupClosedEnded: 'Bu sınıf yeni öğrenci almıyor.',
+    groupSessionsHeld: '{total} dersten {held} tanesi yapıldı',
+    groupClosedBadge: 'Kapalı',
+    liveSidebarPickOne: 'Kayda başlamak için bir sınıf seç.',
     groupUpcomingSessions: 'Yaklaşan oturumlar',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
