@@ -192,6 +192,8 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       if (result.success !== false) {
         setPhoneOtpVerified(true);
         toast.success(t('auth.phoneVerified'));
+        setStep('form');
+        setError(null);
         return true;
       }
       setError(t('auth.invalidOtp'));
@@ -240,6 +242,8 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       if (result.success !== false) {
         setEmailOtpVerified(true);
         toast.success(t('auth.emailVerified'));
+        setStep('form');
+        setError(null);
         return true;
       }
       setError(t('auth.invalidOtp'));

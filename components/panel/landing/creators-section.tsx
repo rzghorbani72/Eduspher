@@ -12,15 +12,14 @@ type Props = {
 };
 
 /**
- * Landing keeps only academies with both card + phone shots. The full
- * published roster lives on /academies so this section stays a highlight.
+ * Landing highlights academies with both card + phone shots first; the full
+ * published roster lives on /academies. Nav links (and the hero/CTA "see
+ * examples" buttons) point here on the home page, so this section must
+ * always render something as long as any academy is published.
  */
 export function CreatorsSection({ academies }: Props) {
   const cards = sortAcademyCards(
-    academies
-      .filter((academy) => Boolean(academy.slug))
-      .map(toAcademyCard)
-      .filter((card) => card.featured),
+    academies.filter((academy) => Boolean(academy.slug)).map(toAcademyCard),
   ).slice(0, 3);
 
   if (cards.length === 0) return null;

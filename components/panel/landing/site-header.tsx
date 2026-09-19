@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { BrandLockup } from '@/components/brand/brand-lockup';
 import { Container } from './landing-container';
 import { LANDING } from './landing.messages';
+import { SmartNavLink } from './smart-nav-link';
 import { ThemeToggle } from './theme-toggle';
 import { useHideOnScroll } from './use-hide-on-scroll';
 import { StartFreeLink } from './quick-signup/start-free-link';
@@ -26,14 +27,15 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
           </Link>
 
           <div className="hidden items-center gap-1.5 lg:flex">
-            {LANDING.nav.links.map(({ href, label }) => (
-              <Link
+            {LANDING.nav.links.map(({ href, label, sectionId }) => (
+              <SmartNavLink
                 key={href}
                 href={href}
+                sectionId={sectionId}
                 className="text-lp-ink-2 hover:bg-lp-mint/15 hover:text-lp-ink rounded-full px-3.5 py-[9px] text-[15px] leading-6 font-semibold transition-colors"
               >
                 {label}
-              </Link>
+              </SmartNavLink>
             ))}
           </div>
 

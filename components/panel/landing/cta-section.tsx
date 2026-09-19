@@ -2,14 +2,16 @@ import { ChevronLeft } from 'lucide-react';
 
 import { Container } from './landing-container';
 import { LANDING } from './landing.messages';
+import { SmartNavLink } from './smart-nav-link';
 import { StartFreeLink } from './quick-signup/start-free-link';
 
 type Props = {
   registerUrl: string;
   demoUrl: string;
+  demoSectionId?: string;
 };
 
-export function CtaSection({ registerUrl, demoUrl }: Props) {
+export function CtaSection({ registerUrl, demoUrl, demoSectionId }: Props) {
   return (
     <section data-lp-reveal className="bg-lp-surface py-20 lg:py-28">
       <Container>
@@ -32,12 +34,13 @@ export function CtaSection({ registerUrl, demoUrl }: Props) {
                 />
                 {LANDING.cta.primary}
               </StartFreeLink>
-              <a
+              <SmartNavLink
                 href={demoUrl}
+                sectionId={demoSectionId}
                 className="rounded-lp border-lp-line-2 text-lp-ink hover:border-lp-ink/25 flex h-14 items-center justify-center border bg-white px-8 text-[15px] font-semibold transition-colors"
               >
                 {LANDING.cta.secondary}
-              </a>
+              </SmartNavLink>
             </div>
           </div>
         </div>

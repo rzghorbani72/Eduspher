@@ -1,6 +1,5 @@
 import { Instagram, Linkedin, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import Link from 'next/link';
 
 import { BrandLockup } from '@/components/brand/brand-lockup';
 import { EnamadSeal } from '@/components/academy/enamad-seal';
@@ -8,6 +7,7 @@ import { PLATFORM_ENAMAD_SEAL_CODE, PLATFORM_ENAMAD_SEAL_ID } from '@/lib/seo/en
 import { PoweredBy } from '@/components/shared/powered-by';
 import { Container } from './landing-container';
 import { LANDING } from './landing.messages';
+import { SmartNavLink } from './smart-nav-link';
 
 const SOCIAL_ICONS: Record<string, LucideIcon> = {
   instagram: Instagram,
@@ -58,12 +58,13 @@ export function SiteFooter() {
               <ul className="mt-4 flex flex-col gap-3">
                 {column.links.map((link) => (
                   <li key={`${column.title}-${link.label}`}>
-                    <Link
+                    <SmartNavLink
                       href={link.href}
+                      sectionId={link.sectionId}
                       className="text-lp-muted hover:text-lp-ink text-[13.5px] transition-colors"
                     >
                       {link.label}
-                    </Link>
+                    </SmartNavLink>
                   </li>
                 ))}
               </ul>

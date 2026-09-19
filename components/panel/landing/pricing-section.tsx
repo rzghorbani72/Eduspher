@@ -127,10 +127,10 @@ export function PricingSection({ loginUrl, plans = [], as }: Props) {
               <article
                 key={plan.id}
                 className={cn(
-                  'bg-lp-surface flex h-full flex-col rounded-2xl border p-6 transition-colors',
+                  'bg-lp-surface flex h-full flex-col rounded-2xl border p-6 transition-all',
                   isFeatured
                     ? 'border-lp-line shadow-lp-card lg:-my-5 lg:p-7'
-                    : 'border-lp-line/70 hover:border-lp-line',
+                    : 'border-lp-line/70 hover:border-lp-line hover:shadow-lp-card',
                 )}
               >
                 <h3 className="text-lp-ink text-center text-[15px] font-bold">{plan.name}</h3>

@@ -1,10 +1,12 @@
 import { LANDING } from './landing.messages';
 import { LandingShot } from './landing-shot';
+import { SmartNavLink } from './smart-nav-link';
 import { StartFreeLink } from './quick-signup/start-free-link';
 
 type Props = {
   registerUrl: string;
   demoUrl: string;
+  demoSectionId?: string;
 };
 
 /**
@@ -16,7 +18,7 @@ type Props = {
  * photo's proportions — the hero has to read as the same page as everything
  * below it.
  */
-export function HeroSection({ registerUrl, demoUrl }: Props) {
+export function HeroSection({ registerUrl, demoUrl, demoSectionId }: Props) {
   return (
     <section
       data-lp="hero"
@@ -50,12 +52,13 @@ export function HeroSection({ registerUrl, demoUrl }: Props) {
             >
               {LANDING.hero.ctaPrimary}
             </StartFreeLink>
-            <a
+            <SmartNavLink
               href={demoUrl}
+              sectionId={demoSectionId}
               className="rounded-lp border-lp-line-2 text-lp-ink hover:border-lp-ink/25 flex h-14 items-center justify-center border bg-white px-8 text-[15px] font-semibold transition-colors"
             >
               {LANDING.hero.ctaSecondary}
-            </a>
+            </SmartNavLink>
           </div>
 
           <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">

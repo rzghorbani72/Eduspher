@@ -113,9 +113,15 @@
 html {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE / Edge */
+  scroll-behavior: smooth;
 }
 html::-webkit-scrollbar {
   display: none; /* Chrome / Safari / Opera */
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Tab auto-advance progress bar. Kept in CSS so the fill costs zero React
@@ -1456,6 +1462,11 @@ select[class*='rounded-sm'] {
 @layer base {
   .lp-root a {
     color: inherit;
+  }
+
+  .lp-root a[href],
+  .lp-root button:not(:disabled) {
+    cursor: pointer;
   }
 }
 

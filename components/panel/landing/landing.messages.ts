@@ -1,11 +1,11 @@
 export const LANDING = {
   nav: {
     links: [
-      { href: '/academies', label: 'نمونه آکادمی‌ها' },
-      { href: '/pricing', label: 'تعرفه و پلن‌ها' },
-      { href: '/about', label: 'درباره ما' },
-      { href: '/contact', label: 'تماس با ما' },
-      { href: '/#features', label: 'امکانات' },
+      { href: '/academies', label: 'نمونه آکادمی‌ها', sectionId: 'examples' },
+      { href: '/pricing', label: 'تعرفه و پلن‌ها', sectionId: 'pricing' },
+      { href: '/about', label: 'درباره ما', sectionId: undefined },
+      { href: '/contact', label: 'تماس با ما', sectionId: undefined },
+      { href: '/#features', label: 'امکانات', sectionId: undefined },
     ],
     login: 'ورود به منتوما',
     cta: 'شروع رایگان',
@@ -305,26 +305,26 @@ export const LANDING = {
       {
         title: 'محصول',
         links: [
-          { href: '/#features', label: 'امکانات' },
-          { href: '/pricing', label: 'تعرفه و پلن‌ها' },
-          { href: '/academies', label: 'نمونه آکادمی‌ها' },
-          { href: '#how', label: 'چطور کار می‌کند' },
+          { href: '/#features', label: 'امکانات', sectionId: undefined },
+          { href: '/pricing', label: 'تعرفه و پلن‌ها', sectionId: 'pricing' },
+          { href: '/academies', label: 'نمونه آکادمی‌ها', sectionId: 'examples' },
+          { href: '#how', label: 'چطور کار می‌کند', sectionId: undefined },
         ],
       },
       {
         title: 'شرکت',
         links: [
-          { href: '/about', label: 'درباره ما' },
-          { href: '/contact', label: 'تماس با ما' },
-          { href: '/blog', label: 'وبلاگ' },
+          { href: '/about', label: 'درباره ما', sectionId: undefined },
+          { href: '/contact', label: 'تماس با ما', sectionId: undefined },
+          { href: '/blog', label: 'وبلاگ', sectionId: undefined },
         ],
       },
       {
         title: 'قوانین',
         links: [
-          { href: '/privacy', label: 'حریم خصوصی' },
-          { href: '/terms', label: 'قوانین و مقررات' },
-          { href: '/refund', label: 'سیاست بازگشت وجه' },
+          { href: '/privacy', label: 'حریم خصوصی', sectionId: undefined },
+          { href: '/terms', label: 'قوانین و مقررات', sectionId: undefined },
+          { href: '/refund', label: 'سیاست بازگشت وجه', sectionId: undefined },
         ],
       },
     ],

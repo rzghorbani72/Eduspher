@@ -12,6 +12,7 @@ import { LogosStrip } from './logos-strip';
 import { PricingSection } from './pricing-section';
 import { PublishSection } from './publish-section';
 import { SectionReveal } from './section-reveal';
+import { StepsSection } from './steps-section';
 import { WhySection } from './why-section';
 
 type Props = {
@@ -24,15 +25,16 @@ type Props = {
 export function LandingPage({ adminLoginUrl, adminRegisterUrl, academies, plans }: Props) {
   return (
     <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
-      <HeroSection registerUrl={adminRegisterUrl} demoUrl="#examples" />
+      <HeroSection registerUrl={adminRegisterUrl} demoUrl="/academies" demoSectionId="examples" />
       <LogosStrip academies={academies} />
       <ForYouSection />
       <PublishSection registerUrl={adminRegisterUrl} pricingUrl="#pricing" />
+      <StepsSection />
       <WhySection />
       <CreatorsSection academies={academies} />
       <PricingSection loginUrl={adminLoginUrl} plans={plans} />
       <FaqSection />
-      <CtaSection registerUrl={adminRegisterUrl} demoUrl="#examples" />
+      <CtaSection registerUrl={adminRegisterUrl} demoUrl="/academies" demoSectionId="examples" />
 
       <SectionReveal />
       <LandingMotion />

@@ -162,6 +162,7 @@ export default async function RootLayout({
       dir={direction}
       suppressHydrationWarning
       data-theme={dataTheme}
+      data-scroll-behavior="smooth"
       // Don't force dark mode - let system preference handle it
       style={
         {
