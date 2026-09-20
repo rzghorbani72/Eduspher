@@ -1,6 +1,5 @@
 import { ChevronLeft, TrendingUp, UserRound, Zap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { AppImage } from '@/components/ui/app-image';
 import Link from 'next/link';
 
 import { CircledWord } from '../landing/circled-word';
@@ -99,7 +98,7 @@ export function PlatformAboutPage({ adminLoginUrl, adminRegisterUrl }: Props) {
         </Container>
       </section>
 
-      <section className="bg-lp-surface py-16 lg:py-24">
+      {/* <section className="bg-lp-surface py-16 lg:py-24">
         <Container>
           <SectionHeading title={ABOUT.team.title} subtitle={ABOUT.team.subtitle} />
 
@@ -123,7 +122,7 @@ export function PlatformAboutPage({ adminLoginUrl, adminRegisterUrl }: Props) {
             ))}
           </div>
         </Container>
-      </section>
+      </section> */}
 
       <section className="bg-lp-surface pb-20 lg:pb-28">
         <Container>
