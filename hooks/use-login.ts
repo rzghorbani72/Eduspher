@@ -17,6 +17,7 @@ import {
 } from '@/lib/api/client';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
 import { useOtpNotifier } from '@/hooks/use-otp-notifier';
+import { ACCOUNT_HOME_PATH } from '@/lib/account-index-path';
 import { isPasswordValid } from '@/lib/password-utils';
 import { nextStepFor } from '@/lib/auth-identify';
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
@@ -107,7 +108,10 @@ export function useLogin() {
     // navigation, and a client-side router.push can race the cookie write and
     // bounce back to the first login step. A full reload always sees the
     // committed cookie (same fix as AdminPanel's use-delayed-redirect.ts).
-    window.location.href = safeRedirectPath(searchParams.get('redirect'), buildPath('/account'));
+    window.location.href = safeRedirectPath(
+      searchParams.get('redirect'),
+      buildPath(ACCOUNT_HOME_PATH),
+    );
   }
 
   function failed(err: unknown) {

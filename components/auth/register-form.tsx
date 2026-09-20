@@ -18,6 +18,7 @@ import {
   getLegalDocuments,
   resolveAcademyId,
 } from '@/lib/api/client';
+import { ACCOUNT_HOME_PATH } from '@/lib/account-index-path';
 import { OtpType } from '@/lib/constants';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -309,7 +310,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       setAuthenticated(true);
       const { loadAndMergeCart } = await import('@/app/actions/cart');
       loadAndMergeCart().catch(() => {});
-      window.location.href = safeRedirectPath(redirectParam, buildPath('/account'));
+      window.location.href = safeRedirectPath(redirectParam, buildPath(ACCOUNT_HOME_PATH));
     } catch {
       window.location.href = loginHref;
     }

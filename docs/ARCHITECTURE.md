@@ -37,6 +37,8 @@ sequenceDiagram
 
 Platform marketing pages (`app/(platform)/*`) are the no-academy-context path — `proxy.ts` leaves them alone.
 
+`proxy.ts` also owns the auth guard for `/account/*` and `/learn/*` (redirect to login), and bounces the bare `/account` entry point to `/account/courses` (or the `?tab=` route, see `lib/account-index-path.ts`) before any render — there is no `app/account/page.tsx`.
+
 ## Request → render (server-first)
 
 ```mermaid

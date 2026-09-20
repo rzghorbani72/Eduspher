@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { jwtVerify, decodeJwt, type JWTPayload } from 'jose';
 
+import { accountIndexPath } from './lib/account-index-path';
 import { env } from './lib/env';
 import { maybeEnamadTxtResponse } from './lib/seo/enamad-txt-response';
 
@@ -719,6 +720,19 @@ export async function proxy(request: NextRequest) {
       applyPreviewEmbedResponse(loginRedirect, previewEmbed.preview, previewEmbed.embed);
     }
     return loginRedirect;
+  }
+
+  // Bare /account is only an entry point: bounce here instead of rendering the
+  // account layout (three backend calls) just to redirect from its page.
+  if (actualPathname === '/account') {
+    const prefix = slugFromPath ? `/${slugFromPath}` : '';
+    const accountUrl = new URL(
+      `${prefix}${accountIndexPath(requestUrl.searchParams.get('tab'))}`,
+      requestUrl.origin,
+    );
+    const accountRedirect = NextResponse.redirect(accountUrl);
+    applyAuthCookies(accountRedirect);
+    return accountRedirect;
   }
 
   let internalUrl: URL | null = null;
