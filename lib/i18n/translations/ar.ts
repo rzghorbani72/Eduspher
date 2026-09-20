@@ -757,6 +757,8 @@ export const ar = {
     dueDate: 'موعد التسليم',
     quizUnavailable: 'الاختبار غير متاح',
     quizSubmitFailed: 'تعذر إرسال الاختبار.',
+    quizDraftSaved: 'تم حفظ الإجابات.',
+    quizDraftSaveFailed: 'لم تُحفظ الإجابات؛ تحقق من الاتصال.',
     loadingQuiz: 'جارٍ تحميل الاختبار...',
     awaitingReview: 'بانتظار المراجعة',
     passed: 'ناجح',

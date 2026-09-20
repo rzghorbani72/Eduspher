@@ -127,6 +127,16 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Quiz: {
+    description: 'A student taking a lesson quiz in the browser.',
+    actions: {
+      DraftSaveFailed: {
+        description: 'Autosave of a student\'s in-progress quiz answers failed; the student keeps typing and sees an inline warning.',
+        level: 'warn',
+        fields: ['attempt_id'] as const,
+      },
+    },
+  },
   RequestStorm: {
     description: 'Client-side circuit breaker: one API route called far above human speed.',
     actions: {

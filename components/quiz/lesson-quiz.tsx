@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,10 +13,14 @@ import {
   submitQuizAttempt,
   type StudentQuiz,
   type QuizAttempt,
+  type QuizAnswer,
   type AnswerInput,
 } from '@/lib/api/client';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 import { useTranslation } from '@/lib/i18n/hooks';
+import { useDebounce } from '@/lib/hooks/use-debounce';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface LessonQuizProps {
   lessonId: string;
@@ -28,10 +32,27 @@ type AnswerState = Record<
   { selected_option_id?: string; answer_boolean?: boolean; answer_text?: string }
 >;
 
+const DRAFT_SAVE_DELAY_MS = 800;
+
+function restoreDrafts(saved: QuizAnswer[] = []): AnswerState {
+  const drafts: AnswerState = {};
+  for (const a of saved) {
+    if (a.selected_option_id) drafts[a.question_id] = { selected_option_id: a.selected_option_id };
+    else if (a.answer_boolean != null) drafts[a.question_id] = { answer_boolean: a.answer_boolean };
+    else if (a.answer_text) drafts[a.question_id] = { answer_text: a.answer_text };
+  }
+  return drafts;
+}
+
+function toPayload(answers: AnswerState): AnswerInput[] {
+  return Object.entries(answers).map(([question_id, v]) => ({ question_id, ...v }));
+}
+
 /**
  * Student quiz experience: load the published quiz (answer keys already stripped
  * server-side), answer each question by type, submit, then show the result and
- * the contextual discussion thread.
+ * the contextual discussion thread. Drafts are restored from the resumed attempt
+ * and autosaved so a refresh never loses work.
  */
 export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
   const { t } = useTranslation();
@@ -42,6 +63,9 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [draftState, setDraftState] = useState<'idle' | 'saved' | 'failed'>('idle');
+  const lastSaved = useRef('');
+  const debouncedAnswers = useDebounce(answers, DRAFT_SAVE_DELAY_MS);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -50,6 +74,9 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
       setQuiz(q);
       const a = await startQuizAttempt(q.id);
       setAttempt(a);
+      const drafts = restoreDrafts(a.Answer);
+      lastSaved.current = JSON.stringify(drafts);
+      setAnswers(drafts);
     } catch {
       setError(quizUnavailable);
     } finally {
@@ -61,6 +88,23 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (!attempt || attempt.status !== 'IN_PROGRESS') return;
+    const snapshot = JSON.stringify(debouncedAnswers);
+    if (snapshot === lastSaved.current) return;
+    const attemptId = attempt.id;
+    void (async () => {
+      try {
+        await saveQuizAnswers(attemptId, toPayload(debouncedAnswers));
+        lastSaved.current = snapshot;
+        setDraftState('saved');
+      } catch (err) {
+        logger.warn('Quiz', 'DraftSaveFailed', { attempt_id: attemptId, ...errorFields(err) });
+        setDraftState('failed');
+      }
+    })();
+  }, [debouncedAnswers, attempt]);
+
   const setAnswer = (questionId: string, value: AnswerState[string]) =>
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
 
@@ -69,10 +113,7 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
     setSubmitting(true);
     setError(null);
     try {
-      const payload: AnswerInput[] = Object.entries(answers).map(([question_id, v]) => ({
-        question_id,
-        ...v,
-      }));
+      const payload = toPayload(answers);
       if (payload.length) await saveQuizAnswers(attempt.id, payload);
       const result = await submitQuizAttempt(attempt.id);
       setAttempt(result);
@@ -186,9 +227,17 @@ export function LessonQuiz({ lessonId, currentProfileId }: LessonQuizProps) {
       ))}
 
       {error && <p className="text-destructive text-sm">{error}</p>}
-      <Button onClick={submit} disabled={submitting}>
-        {submitting ? t('learning.submittingQuiz') : t('learning.submitQuiz')}
-      </Button>
+      <div className="flex items-center gap-3">
+        <Button onClick={submit} disabled={submitting}>
+          {submitting ? t('learning.submittingQuiz') : t('learning.submitQuiz')}
+        </Button>
+        {draftState === 'saved' && (
+          <span className="text-muted-foreground text-xs">{t('learning.quizDraftSaved')}</span>
+        )}
+        {draftState === 'failed' && (
+          <span className="text-destructive text-xs">{t('learning.quizDraftSaveFailed')}</span>
+        )}
+      </div>
     </div>
   );
 }

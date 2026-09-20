@@ -1248,6 +1248,8 @@ export const en = {
     dueDate: 'Due',
     quizUnavailable: 'Quiz unavailable',
     quizSubmitFailed: 'The quiz could not be submitted.',
+    quizDraftSaved: 'Answers saved.',
+    quizDraftSaveFailed: 'Answers not saved; check your connection.',
     loadingQuiz: 'Loading quiz...',
     awaitingReview: 'Awaiting review',
     passed: 'Passed',

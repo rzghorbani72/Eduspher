@@ -6,6 +6,7 @@
     "Legal": "Legal document publishing and user consent acceptance.",
     "Media": "Video and file storage, transcoding and secure playback.",
     "Payments": "Student and academy payments: checkout, gateway callbacks, refunds.",
+    "Quiz": "A student taking a lesson quiz in the browser.",
     "RequestStorm": "Client-side circuit breaker: one API route called far above human speed.",
     "SitePreview": "Preview rendering of an academy site template.",
     "Tutoring": "Logs emitted by the Tutoring domain."
@@ -29,6 +30,7 @@
     "Payments.RefundRequestRejected": "Payments refund request rejected.",
     "Payments.SeatHoldExpired": "The 10-minute seat hold ran out while the checkout dialog was open.",
     "Payments.SeatHoldFailed": "Holding seats at checkout open failed (class full or not on sale).",
+    "Quiz.DraftSaveFailed": "Autosave of a student's in-progress quiz answers failed; the student keeps typing and sees an inline warning.",
     "RequestStorm.Tripped": "A single route exceeded the per-window hit limit in the student's browser; protected routes force a sign-out and storage wipe.",
     "SitePreview.PresetEmpty": "Site preview preset empty.",
     "SitePreview.PresetFetchFailed": "Site preview preset fetch failed.",

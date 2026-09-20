@@ -764,6 +764,8 @@ export const tr = {
     dueDate: 'Son tarih',
     quizUnavailable: 'Sınav kullanılamıyor',
     quizSubmitFailed: 'Sınav gönderilemedi.',
+    quizDraftSaved: 'Cevaplar kaydedildi.',
+    quizDraftSaveFailed: 'Cevaplar kaydedilemedi; bağlantıyı kontrol edin.',
     loadingQuiz: 'Sınav yükleniyor...',
     awaitingReview: 'İnceleme bekliyor',
     passed: 'Başarılı',

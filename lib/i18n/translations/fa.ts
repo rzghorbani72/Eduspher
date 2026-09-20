@@ -1248,6 +1248,8 @@ export const fa = {
     dueDate: 'مهلت',
     quizUnavailable: 'آزمون در دسترس نیست',
     quizSubmitFailed: 'ارسال آزمون انجام نشد.',
+    quizDraftSaved: 'پاسخ‌ها ذخیره شد.',
+    quizDraftSaveFailed: 'پاسخ‌ها ذخیره نشد؛ اتصال را بررسی کنید.',
     loadingQuiz: 'در حال بارگذاری آزمون...',
     awaitingReview: 'در انتظار بررسی',
     passed: 'قبول',
