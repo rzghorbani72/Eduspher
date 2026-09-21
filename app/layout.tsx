@@ -35,7 +35,6 @@ import { CreativeBackgroundLazy } from '@/components/motion/creative-background-
 import { PreviewModeBanner } from '@/components/theme/preview-mode-banner';
 import { ScrollAnimationProvider } from '@/components/motion/scroll-animation-provider';
 import { resolveAssetUrl } from '@/lib/utils';
-import { GdprConsentBanner } from '@/components/gdpr-consent-banner';
 import { MarketingAnalytics } from '@/components/analytics/marketing-analytics';
 import { ToastContainerWrapper } from '@/components/providers/toast-container-wrapper';
 import { buildSiteMetadata } from '@/lib/seo/build-metadata';
@@ -270,12 +269,7 @@ export default async function RootLayout({
                         </div>
                       </ScrollAnimationProvider>
                     </EnrollmentStatusProvider>
-                    {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && (
-                      <>
-                        <GdprConsentBanner />
-                        <MarketingAnalytics />
-                      </>
-                    )}
+                    {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && <MarketingAnalytics />}
                     <ToastContainerWrapper />
                   </I18nProvider>
                 </ThemeProvider>

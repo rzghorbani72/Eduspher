@@ -601,12 +601,6 @@ export const en = {
     acceptedOn: 'Accepted on',
     noAcceptances: 'You have not accepted any documents yet.',
   },
-  cookieConsent: {
-    message: 'We use cookies to deliver this service and to improve your experience.',
-    learnMore: 'Learn more',
-    decline: 'Decline',
-    accept: 'Accept',
-  },
   auth: {
     login: 'Login',
     register: 'Register',

@@ -1,7 +1,7 @@
 /**
- * Marketing-cookie consent shared between the GDPR banner and the analytics
- * loader. A plain window event (not React context) so a script component far
- * from the banner in the tree can react the instant the visitor decides.
+ * Marketing-cookie consent read by the analytics loader. Iran v1 has no GDPR
+ * duty, so a visitor who never chose counts as accepted; an explicit
+ * `declined` cookie is still honoured. The EU phase brings the banner back.
  */
 const COOKIE_NAME = 'gdpr_consent';
 const CONSENT_EVENT = 'gdpr-consent-changed';
@@ -15,13 +15,7 @@ function readCookie(name: string): string | null {
 }
 
 export function getMarketingConsent(): ConsentValue {
-  const value = readCookie(COOKIE_NAME);
-  return value === 'accepted' || value === 'declined' ? value : null;
-}
-
-export function setMarketingConsent(name: string, value: string, maxAge: number): void {
-  document.cookie = `${name}=${encodeURIComponent(value)}; max-age=${maxAge}; path=/; SameSite=Lax`;
-  window.dispatchEvent(new CustomEvent(CONSENT_EVENT));
+  return readCookie(COOKIE_NAME) === 'declined' ? 'declined' : 'accepted';
 }
 
 export function onConsentChange(callback: () => void): () => void {

@@ -42,21 +42,6 @@ export const LOG_CATALOG = {
       },
     },
   },
-  Gdpr: {
-    description: 'Cookie and privacy consent captured in the browser.',
-    actions: {
-      ConsentAccepted: {
-        description: 'GDPR consent accepted.',
-        level: 'info',
-        fields: ['surface'] as const,
-      },
-      ConsentDeclined: {
-        description: 'GDPR consent declined.',
-        level: 'info',
-        fields: ['surface'] as const,
-      },
-    },
-  },
   Legal: {
     description: 'Legal document publishing and user consent acceptance.',
     actions: {

@@ -7,7 +7,7 @@ type Props = { registerUrl: string };
 
 export function HeroSection({ registerUrl }: Props) {
   return (
-    <section id="hero" className="relative overflow-hidden">
+    <section id="hero" className="relative overflow-x-clip">
       <span
         aria-hidden
         className="absolute -end-[160px] -top-[180px] size-[520px] rounded-full bg-[radial-gradient(circle,rgba(18,135,234,.10),rgba(18,135,234,0)_68%)]"

@@ -1239,7 +1239,10 @@ select[class*='rounded-sm'] {
    the landing's own text utilities still win — an unlayered rule here would beat
    every utility regardless of specificity. */
 @layer base {
-  .lp-root a {
+  /* `html` prefix matches the specificity of the dark-scheme `html:not(.dark) a`
+     rule above, so this later rule wins under both colour schemes. */
+  html .lp-root a,
+  html .lp-root a:hover {
     color: inherit;
   }
 

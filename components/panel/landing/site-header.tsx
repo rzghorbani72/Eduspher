@@ -34,7 +34,7 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
                 key={href}
                 href={href}
                 sectionId={sectionId}
-                className="hover:text-lp-ink transition-colors"
+                className="text-lp-muted hover:text-lp-ink transition-colors"
               >
                 {label}
               </SmartNavLink>

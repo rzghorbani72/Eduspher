@@ -10,12 +10,12 @@ const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 
 /**
  * GA4 + Microsoft Clarity for the PUBLIC marketing/storefront pages only.
- * Never renders under /account (authenticated) and never loads before the
- * GDPR banner is accepted — no learner activity or PII ever reaches Google.
+ * Never renders under /account (authenticated) and honours a declined consent
+ * cookie — no learner activity or PII ever reaches Google.
  */
 export function MarketingAnalytics() {
   const pathname = usePathname();
-  const consent = useSyncExternalStore(onConsentChange, getMarketingConsent, () => null);
+  const consent = useSyncExternalStore(onConsentChange, getMarketingConsent, () => 'declined');
 
   const isPrivateRoute = pathname?.startsWith('/account') || pathname?.startsWith('/learn');
   if (isPrivateRoute || consent !== 'accepted' || (!GA_ID && !CLARITY_ID)) return null;
