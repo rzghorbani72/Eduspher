@@ -7,6 +7,7 @@ import { applyLiveTheme } from './apply-live-theme';
 import type { ThemeConfigInput } from '@/lib/theme-apply';
 import { isTrustedPanelOrigin, postMessageToPanel } from '@/lib/trusted-panel-origin';
 import { sanitizeRichText } from '@/lib/sanitize';
+import { HERO_VIDEO_KEYS } from '@/components/templates/_shared/hero-video-slot';
 
 const HOVER = 'me-hover';
 const SELECTED = 'me-selected';
@@ -251,8 +252,17 @@ function attachMediaUploadButtons(
         requestPick({ blockId, fieldKey, kind });
       });
       if (kind === 'video') {
-        btn.dataset.idleLabel = '↑ بارگذاری ویدیو';
+        btn.dataset.idleLabel = '↑ بارگذاری ویدیو یا تصویر';
         btn.textContent = btn.dataset.idleLabel;
+        // An empty video box is one big upload target; once footage is in,
+        // clicks must reach the player controls, so only the button remains.
+        slot.addEventListener('click', (e) => {
+          if (slot.querySelector('video')) return;
+          e.preventDefault();
+          e.stopPropagation();
+          btn.click();
+        });
+        slot.style.cursor = 'pointer';
         Object.assign(btn.style, {
           // Corner of the banner: the centre is where the headline sits.
           top: '24px',
@@ -1043,7 +1053,8 @@ export function PreviewEditBridge() {
 
     const requestMediaPick = (target: MediaPickRequest) => {
       pendingMedia = target;
-      fileInput.accept = target.kind === 'video' ? 'video/mp4' : 'image/*,image/gif,image/webp';
+      fileInput.accept =
+        target.kind === 'video' ? 'video/mp4,image/*' : 'image/*,image/gif,image/webp';
       fileInput.click();
     };
 
@@ -1054,7 +1065,13 @@ export function PreviewEditBridge() {
       fileInput.value = '';
       if (!file || !pending) return;
 
-      if (pending.kind !== 'video' && file.size > MAX_CANVAS_MEDIA_BYTES) {
+      // An image dropped on a video box becomes its poster (cover frame).
+      const isImage = file.type.startsWith('image/');
+      const kind = pending.kind === 'video' && isImage ? 'image' : (pending.kind ?? 'image');
+      const fieldKey =
+        pending.kind === 'video' && isImage ? HERO_VIDEO_KEYS.poster : pending.fieldKey;
+
+      if (kind !== 'video' && file.size > MAX_CANVAS_MEDIA_BYTES) {
         postMessageToPanel({
           source: 'template-editor',
           type: 'media-error',
@@ -1069,8 +1086,10 @@ export function PreviewEditBridge() {
           source: 'template-editor',
           type: 'media-file-selected',
           blockId: pending.blockId,
-          fieldKey: pending.fieldKey,
-          kind: pending.kind ?? 'image',
+          fieldKey,
+          // Progress is shown on the slot the user clicked, not the field written.
+          progressKey: pending.fieldKey,
+          kind,
           restoreKey: pending.restoreKey,
           fileName: file.name,
           mimeType: file.type || 'image/jpeg',

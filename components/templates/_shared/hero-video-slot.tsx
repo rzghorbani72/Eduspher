@@ -34,9 +34,8 @@ export function resolveHeroVideoPoster(config?: SectionConfig): string | null {
  * same ratio/height controls, same place in the layout, so a template can show
  * a reel where it would otherwise show photos.
  *
- * The video is picked from the academy's media library in the sidebar rather
- * than uploaded on the canvas, because the canvas uploader is image-only and
- * video has to go through the quota-checked direct-upload path.
+ * `data-video-editable` lets the editor canvas upload footage (or a poster
+ * image) right on the box; the sidebar can also pick from the media library.
  */
 export function HeroVideoSlot({
   config,
@@ -55,7 +54,11 @@ export function HeroVideoSlot({
   const autoplay = config?.[HERO_VIDEO_KEYS.autoplay] === true;
 
   return (
-    <div className={`relative overflow-hidden ${className}`} style={resolveBoxStyle(config)}>
+    <div
+      data-video-editable={HERO_VIDEO_KEYS.url}
+      className={`relative overflow-hidden ${className}`}
+      style={resolveBoxStyle(config)}
+    >
       {url ? (
         <div className="absolute inset-0">
           <video
