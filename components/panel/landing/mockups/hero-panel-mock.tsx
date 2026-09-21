@@ -49,13 +49,13 @@ export function HeroPanelMock() {
           <div className="mt-3 grid grid-cols-3 gap-2">
             {M.stats.map((stat) => (
               <div key={stat.label} className="border-lp-ink/8 rounded-[11px] border p-[9px]">
-                <div className="text-lp-faint text-[9px]">{stat.label}</div>
+                <div className="text-lp-faint text-[9px] whitespace-nowrap">{stat.label}</div>
                 <div className="mt-0.5 text-[17px] font-extrabold">{stat.value}</div>
                 <div className="text-lp-faint-2 text-[8px]">{stat.unit}</div>
               </div>
             ))}
             <div className="bg-lp-mint-tint text-lp-green rounded-[11px] border border-[rgba(10,127,92,.18)] p-[9px]">
-              <div className="text-[9px]">{M.commission.label}</div>
+              <div className="text-[9px] whitespace-nowrap">{M.commission.label}</div>
               <div className="mt-0.5 text-[17px] font-extrabold">{M.commission.value}</div>
               <div className="text-[8px]">{M.commission.unit}</div>
             </div>

@@ -21,15 +21,15 @@ export function HeroSection({ registerUrl }: Props) {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
           <HeroCopy registerUrl={registerUrl} />
 
-          <div className="relative mx-auto w-full max-w-[560px] lg:px-6">
-            <div className="relative">
-              <div className="absolute start-0 top-0 hidden w-[66%] -rotate-[1.4deg] lg:block">
+          <div className="relative mx-auto w-full max-w-[600px] lg:pb-8">
+            <div className="relative lg:pt-[84px]">
+              <div className="absolute start-0 top-0 hidden w-[60%] -rotate-[1.4deg] lg:block">
                 <HeroSiteMock />
               </div>
-              <div className="relative lg:ms-[14%] lg:mt-[92px]">
+              <div className="relative z-10 lg:ms-[12%]">
                 <HeroPanelMock />
               </div>
-              <div className="lp-float absolute -end-1.5 -bottom-[26px] hidden w-[190px] lg:block">
+              <div className="lp-float absolute -end-3 -bottom-8 z-20 hidden w-[190px] lg:block">
                 <HeroEditorMock />
               </div>
             </div>
