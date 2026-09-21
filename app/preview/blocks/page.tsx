@@ -3,7 +3,10 @@ import { getPreviewPreset } from '@/lib/api/server';
 import { BlocksRenderer } from '@/components/ui-blocks/blocks-renderer';
 import { buildThemeCssVariables } from '@/lib/theme-apply';
 import { PreviewEditBridge } from '@/components/preview/preview-edit-bridge';
-import { PlaceholderSection } from '@/components/preview/placeholder-section';
+import {
+  PlaceholderSection,
+  PLACEHOLDER_SECTION_HTML,
+} from '@/components/preview/placeholder-section';
 
 // Standalone render surface embedded (scaled) by AdminPanel as gallery-card and
 // section-picker thumbnails. Renders a specific preset's blocks — or a single
@@ -110,11 +113,14 @@ export default async function PreviewBlocksPage({
     <div style={canvasStyle} dir={canvasDir} data-theme-canvas data-edit-mode={edit || undefined}>
       {edit && <PreviewEditBridge />}
       {/* Cloned by the bridge when a section is deleted, so the slot appears
-          in place without a server rebuild. */}
+          in place without a server rebuild. `<template>` content lives in a
+          detached document fragment, not as real child nodes, so React can
+          never hydrate JSX children here — set it via innerHTML instead. */}
       {edit && (
-        <template data-placeholder-template>
-          <PlaceholderSection />
-        </template>
+        <template
+          data-placeholder-template
+          dangerouslySetInnerHTML={{ __html: PLACEHOLDER_SECTION_HTML }}
+        />
       )}
       {blocks.map((block, index) => {
         const animate = !edit && block.type !== 'header';

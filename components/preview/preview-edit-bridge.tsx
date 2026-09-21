@@ -8,12 +8,17 @@ import type { ThemeConfigInput } from '@/lib/theme-apply';
 import { isTrustedPanelOrigin, postMessageToPanel } from '@/lib/trusted-panel-origin';
 import { sanitizeRichText } from '@/lib/sanitize';
 import { HERO_VIDEO_KEYS } from '@/components/templates/_shared/hero-video-slot';
+import {
+  BLOCK_TOOLBAR_ID,
+  removeBlockToolbar,
+  setBlockLabels,
+  showBlockToolbar,
+} from './block-toolbar';
 
 const HOVER = 'me-hover';
 const SELECTED = 'me-selected';
 const EDITING = 'me-editing';
 const TOOLBAR_ID = 'me-format-toolbar';
-const BLOCK_TOOLBAR_ID = 'me-block-toolbar';
 const MEDIA_BTN_CLASS = 'me-media-upload-btn';
 const REMOVE_BTN_CLASS = 'me-remove-btn';
 // Canvas media (hero backgrounds, decorative visuals) renders above the fold
@@ -22,40 +27,8 @@ const REMOVE_BTN_CLASS = 'me-remove-btn';
 // sync with any server-side limit if one is added for this upload path.
 const MAX_CANVAS_MEDIA_BYTES = 4 * 1024 * 1024;
 
-function removeBlockToolbar() {
-  document.getElementById(BLOCK_TOOLBAR_ID)?.remove();
-}
-
 const UNDO_TOAST_ID = 'me-undo-toast';
 
-/** Header and footer are pinned: they cannot be moved out of place or deleted. */
-function isPinnedBlock(blockEl: HTMLElement): boolean {
-  const type = blockEl.dataset.blockType;
-  return type === 'header' || type === 'footer';
-}
-
-/** A movable neighbour in that direction, or none — the button would be dead. */
-function hasMovableNeighbour(blockEl: HTMLElement, dir: 'up' | 'down'): boolean {
-  let sibling =
-    dir === 'up'
-      ? (blockEl.previousElementSibling as HTMLElement | null)
-      : (blockEl.nextElementSibling as HTMLElement | null);
-  while (sibling) {
-    if (sibling.dataset.blockId && !isPinnedBlock(sibling)) return true;
-    sibling =
-      dir === 'up'
-        ? (sibling.previousElementSibling as HTMLElement | null)
-        : (sibling.nextElementSibling as HTMLElement | null);
-  }
-  return false;
-}
-
-/**
- * Hiding or removing a section makes it vanish from the canvas, so the click
- * that did it is also the last place the manager can take it back. The toast
- * asks the panel for a normal undo step — no separate restore path to keep in
- * sync with the editor's history.
- */
 function showUndoToast(message: string) {
   document.getElementById(UNDO_TOAST_ID)?.remove();
   const bar = document.createElement('div');
@@ -103,93 +76,6 @@ function showUndoToast(message: string) {
 
   document.body.appendChild(bar);
   setTimeout(() => bar.remove(), 8000);
-}
-
-function showBlockToolbar(blockEl: HTMLElement) {
-  removeBlockToolbar();
-  const blockId = blockEl.dataset.blockId;
-  if (!blockId) return;
-
-  const bar = document.createElement('div');
-  bar.id = BLOCK_TOOLBAR_ID;
-  Object.assign(bar.style, {
-    position: 'absolute',
-    zIndex: '99998',
-    top: '8px',
-    insetInlineEnd: '8px',
-    display: 'flex',
-    gap: '4px',
-    background: '#18181b',
-    border: '1px solid #3f3f46',
-    borderRadius: '8px',
-    padding: '4px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.45)',
-    pointerEvents: 'all',
-  });
-
-  // Only the actions this section can actually perform: a pinned header keeps
-  // nothing but "hide", and a move button with nowhere to go is never drawn.
-  const pinned = isPinnedBlock(blockEl);
-  const actions = [
-    {
-      action: 'move-up',
-      label: '↑',
-      enabled: !pinned && hasMovableNeighbour(blockEl, 'up'),
-    },
-    {
-      action: 'move-down',
-      label: '↓',
-      enabled: !pinned && hasMovableNeighbour(blockEl, 'down'),
-    },
-    { action: 'edit', label: '✎', enabled: true },
-    { action: 'hide', label: '◌', enabled: true },
-    { action: 'delete', label: '×', enabled: !pinned },
-  ].filter((a) => a.enabled);
-
-  for (const { action, label } of actions) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.title = action;
-    btn.textContent = label;
-    Object.assign(btn.style, {
-      padding: '4px 8px',
-      background: 'transparent',
-      border: 'none',
-      borderRadius: '4px',
-      color: action === 'delete' ? '#f87171' : '#e4e4e7',
-      fontSize: '13px',
-      cursor: 'pointer',
-      lineHeight: '1',
-    });
-    btn.addEventListener('mousedown', (e) => e.preventDefault());
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (action === 'edit') {
-        document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
-        blockEl.classList.add(SELECTED);
-        postMessageToPanel({
-          source: 'template-editor',
-          type: 'select',
-          blockId,
-        });
-        return;
-      }
-      postMessageToPanel({
-        source: 'template-editor',
-        type: 'block-action',
-        blockId,
-        action,
-      });
-      if (action === 'hide') showUndoToast('بخش پنهان شد');
-      if (action === 'delete') showUndoToast('بخش حذف شد');
-    });
-    bar.appendChild(btn);
-  }
-
-  if (getComputedStyle(blockEl).position === 'static') {
-    blockEl.style.position = 'relative';
-  }
-  blockEl.appendChild(bar);
 }
 
 type MediaPickRequest = {
@@ -762,7 +648,7 @@ export function PreviewEditBridge() {
       const target = el ?? document.querySelector<HTMLElement>(`.${SELECTED}`);
       const bar = document.getElementById(BLOCK_TOOLBAR_ID);
       if (!target) return removeBlockToolbar();
-      if (bar?.parentElement !== target) showBlockToolbar(target);
+      if (bar?.parentElement !== target) showBlockToolbar(target, showUndoToast);
     };
 
     // mousedown: the entry point for inline editing.
@@ -871,7 +757,7 @@ export function PreviewEditBridge() {
       if (isInsideDynamic(target, blockEl)) {
         document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
         blockEl.classList.add(SELECTED);
-        showBlockToolbar(blockEl);
+        showBlockToolbar(blockEl, showUndoToast);
         postMessageToPanel({
           source: 'template-editor',
           type: 'select',
@@ -885,7 +771,7 @@ export function PreviewEditBridge() {
       document.querySelectorAll(`.${SELECTED}`).forEach((n) => n.classList.remove(SELECTED));
       blockEl.classList.remove(HOVER);
       blockEl.classList.add(SELECTED);
-      showBlockToolbar(blockEl);
+      showBlockToolbar(blockEl, showUndoToast);
       postMessageToPanel({
         source: 'template-editor',
         type: 'select',
@@ -929,6 +815,7 @@ export function PreviewEditBridge() {
         theme?: ThemeConfigInput;
         direction?: 'ltr' | 'rtl';
         order?: string[];
+        labels?: Record<string, string>;
         uploading?: boolean;
         percent?: number;
       };
@@ -949,6 +836,8 @@ export function PreviewEditBridge() {
 
       // Reorder / delete — the sections are already in the DOM, so move or drop
       // the nodes instead of asking the server to render the same HTML again.
+      if (data.type === 'block-labels' && data.labels) setBlockLabels(data.labels);
+
       if (data.type === 'sync-order' && data.order) {
         const canvas = document.querySelector<HTMLElement>('[data-theme-canvas]');
         if (!canvas) return;
@@ -978,7 +867,7 @@ export function PreviewEditBridge() {
         el.replaceChildren(tpl.content.cloneNode(true));
         el.dataset.blockType = 'placeholder';
         el.style.display = '';
-        if (el.classList.contains(SELECTED)) showBlockToolbar(el);
+        if (el.classList.contains(SELECTED)) showBlockToolbar(el, showUndoToast);
       }
 
       if (data.type === 'highlight') {
@@ -991,7 +880,7 @@ export function PreviewEditBridge() {
         if (data.blockId) {
           const el = document.querySelector<HTMLElement>(`[data-block-id="${data.blockId}"]`);
           el?.classList.add(SELECTED);
-          if (el) showBlockToolbar(el);
+          if (el) showBlockToolbar(el, showUndoToast);
           // Only jump when the user picked a different section. Re-painting the
           // ring after a save-triggered reload must leave scroll where it was.
           if (data.scroll) el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
