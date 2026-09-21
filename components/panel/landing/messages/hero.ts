@@ -2,7 +2,7 @@ export const HERO = {
   badge: 'از یک مدرس تا یک آموزشگاه بزرگ · آکادمی آنلاین خودت را داشته باش',
   titleLead: 'آکادمی آنلاین خودت را در',
   titleHighlight: 'چند کلیک',
-  titleTail: 'بساز.',
+  titleTail: 'بساز',
   subtitleLead: 'وب‌سایت، دوره‌ها، فروش، دانشجوها و ',
   subtitleStrong1: 'کلاس آنلاین',
   subtitleMid:
