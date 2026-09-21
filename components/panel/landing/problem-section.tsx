@@ -8,7 +8,7 @@ const bubble = 'w-fit rounded-2xl px-3 py-2 text-[11px]';
 
 export function ProblemSection() {
   return (
-    <section id="problem" className="bg-lp-ink text-white">
+    <section id="problem" className="bg-lp-navy text-white">
       <div className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
         <SectionLabel number={M.number} label={M.label} tone="dark" />
         <h2 className="mt-6 text-[27px] font-extrabold tracking-[-.015em] md:text-[40px]">

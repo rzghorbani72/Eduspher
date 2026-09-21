@@ -15,7 +15,7 @@ export function SalesSection() {
               {M.title}
             </h2>
             <p className="text-lp-muted mt-4 text-[16px] leading-loose">{M.subtitle}</p>
-            <p className="bg-lp-ink mt-6 rounded-2xl px-5 py-5 text-[17px] leading-[1.85] font-extrabold text-white">
+            <p className="bg-lp-navy mt-6 rounded-2xl px-5 py-5 text-[17px] leading-[1.85] font-extrabold text-white">
               {M.promiseLead}
               <span className="text-lp-mint">{M.promiseStrong}</span>
               {M.promiseTail}

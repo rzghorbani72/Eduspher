@@ -8,7 +8,7 @@ export function HeroSiteMock() {
   return (
     <MockFrame title={M.domain} titleAsUrl size="sm" className="shadow-lp-frame">
       <div className="p-3.5">
-        <div className="from-lp-ink to-lp-navy-2 flex h-[70px] items-center rounded-[11px] bg-linear-115 px-[13px] text-white">
+        <div className="from-lp-navy to-lp-navy-2 flex h-[70px] items-center rounded-[11px] bg-linear-115 px-[13px] text-white">
           <div>
             <div className="text-[11.5px] font-extrabold">{M.name}</div>
             <div className="text-lp-sky-2 mt-1 text-[9px]">{M.tagline}</div>

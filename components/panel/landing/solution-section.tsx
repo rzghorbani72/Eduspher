@@ -13,7 +13,7 @@ export function SolutionSection() {
         {M.title}
       </h2>
       <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] lg:items-stretch">
-        <div className="from-lp-ink to-lp-navy-2 shadow-lp-navy flex flex-col justify-between rounded-[22px] bg-linear-150 p-6 text-white">
+        <div className="from-lp-navy to-lp-navy-2 shadow-lp-navy flex flex-col justify-between rounded-[22px] bg-linear-150 p-6 text-white">
           <div>
             <div className="bg-lp-mint text-lp-on-mint w-fit rounded-[10px] px-3 py-1.5 text-[11.5px] font-extrabold">
               {M.card.badge}

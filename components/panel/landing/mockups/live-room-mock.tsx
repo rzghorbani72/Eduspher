@@ -5,7 +5,7 @@ const tile = 'bg-lp-navy-4 h-[54px] rounded-xl border border-white/7';
 
 export function LiveRoomMock() {
   return (
-    <div className="bg-lp-ink overflow-hidden rounded-[20px] shadow-[0_30px_60px_-36px_rgba(11,26,46,.8)]">
+    <div className="bg-lp-navy overflow-hidden rounded-[20px] shadow-[0_30px_60px_-36px_rgba(11,26,46,.8)]">
       <div className="bg-lp-navy-3 flex h-9 items-center gap-[9px] px-[13px]">
         <span className="lp-live bg-lp-red size-2 rounded-full" />
         <span className="text-lp-sky text-[10px]">{M.title}</span>

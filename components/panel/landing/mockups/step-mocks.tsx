@@ -55,7 +55,7 @@ export function StepCustomizeMock() {
         <div className="flex gap-1.5">
           <span className="bg-lp-mint size-[15px] rounded-[5px]" />
           <span className="bg-lp-blue-2 size-[15px] rounded-[5px]" />
-          <span className="bg-lp-ink size-[15px] rounded-[5px]" />
+          <span className="bg-lp-navy size-[15px] rounded-[5px]" />
         </div>
         <div className="border-lp-ink/8 text-lp-muted-2 rounded-lg border bg-white px-2 py-1.5 text-[9.5px]">
           {M.customize.heroText}

@@ -93,6 +93,8 @@
   --color-lp-blue-soft: #e4f0fc;
   --color-lp-blue-mid: #cfe6fa;
   --color-lp-ink: #0b1a2e;
+  /* Navy surfaces: never re-pointed in dark mode, unlike lp-ink (text). */
+  --color-lp-navy: #0b1a2e;
   --color-lp-ink-2: #17324b;
   --color-lp-muted: #46536b;
   --color-lp-muted-2: #54617a;

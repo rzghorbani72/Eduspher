@@ -8,7 +8,7 @@ const M = LANDING.cta;
 export function CtaSection({ registerUrl }: Props) {
   return (
     <section id="cta" className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
-      <div className="bg-lp-ink relative overflow-hidden rounded-[28px] px-6 py-14 text-center text-white md:px-12 md:py-20">
+      <div className="bg-lp-navy relative overflow-hidden rounded-[28px] px-6 py-14 text-center text-white md:px-12 md:py-20">
         <span
           aria-hidden
           className="absolute -start-[90px] -bottom-[140px] size-[380px] rounded-full bg-[radial-gradient(circle,rgba(63,242,184,.22),rgba(63,242,184,0)_68%)]"

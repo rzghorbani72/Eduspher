@@ -42,7 +42,7 @@ export function SiteEditorMock() {
             </span>
           </div>
           <div className="border-lp-ink/8 overflow-hidden rounded-2xl border bg-white">
-            <div className="from-lp-ink to-lp-navy-2 bg-linear-115 p-4 text-white">
+            <div className="from-lp-navy to-lp-navy-2 bg-linear-115 p-4 text-white">
               <div className="text-[14px] font-extrabold">{M.siteName}</div>
               <div className="text-lp-sky-2 mt-1.5 text-[10.5px]">{M.siteTagline}</div>
               <div className="bg-lp-mint text-lp-on-mint mt-3.5 w-fit rounded-lg px-3 py-1.5 text-[10.5px] font-extrabold">

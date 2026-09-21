@@ -7,8 +7,8 @@ const M = LANDING.live;
 
 function PhoneMock() {
   return (
-    <div className="border-lp-ink mx-auto w-[238px] overflow-hidden rounded-[28px] border-8 bg-white shadow-[0_26px_50px_-30px_rgba(11,26,46,.7)] lg:mx-0">
-      <div className="bg-lp-ink h-5" />
+    <div className="border-lp-navy mx-auto w-[238px] overflow-hidden rounded-[28px] border-8 bg-white shadow-[0_26px_50px_-30px_rgba(11,26,46,.7)] lg:mx-0">
+      <div className="bg-lp-navy h-5" />
       <div className="bg-lp-surface-4 min-h-[246px] p-3.5">
         <div className="text-lp-faint text-[10px]">{M.phone.smsLabel}</div>
         <div className="border-lp-ink/8 mt-2 rounded-2xl rounded-se-md border bg-white p-3.5 text-[11.5px] leading-loose">

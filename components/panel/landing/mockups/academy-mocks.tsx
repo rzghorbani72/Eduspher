@@ -57,7 +57,7 @@ export function AcademyMultiMock() {
   return (
     <>
       <div className="border-lp-blue-2 flex items-center gap-2.5 rounded-xl border-[1.5px] bg-white px-3 py-2.5">
-        <span className="bg-lp-ink size-5 rounded-[7px]" />
+        <span className="bg-lp-navy size-5 rounded-[7px]" />
         <span className="text-[12px] font-extrabold">{M.multi.current}</span>
         <span className="text-lp-faint ms-auto text-[10px]">▾</span>
       </div>
