@@ -30,7 +30,7 @@ export default async function AcademiesPage() {
 
   return (
     <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
-      <section className="py-32 lg:py-40">
+      <section className="py-16 lg:py-24">
         <Container>
           <SectionHeading
             as="h1"

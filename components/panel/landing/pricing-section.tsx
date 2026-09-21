@@ -1,216 +1,78 @@
 'use client';
 
-import { Check } from 'lucide-react';
 import { useState } from 'react';
 
 import type { PublicPlan } from '@/lib/api/server';
 import { cn } from '@/lib/utils';
 
-import { Container } from './landing-container';
 import { LANDING } from './landing.messages';
-import { SectionHeading } from './section-heading';
-
-type Cycle = 'monthly' | 'quarterly';
+import { PricingCompareTable } from './pricing-compare-table';
+import { PlanCard } from './pricing-plan-card';
+import type { Cycle } from './pricing-math';
+import { PricingNotes } from './pricing-notes';
+import { SectionLabel } from './section-label';
 
 type Props = {
-  loginUrl: string;
-  /**
-   * Live plans. Price and the feature bullets both come from here — the
-   * bullets are generated server-side from the same limits the plan actually
-   * enforces (see Backend/prisma/plans.seed.ts), so they can never drift from
-   * what a manager really gets. Tagline/name/CTA stay curated prose; the
-   * `features` arrays below `LANDING.pricing.plans` are a fallback only, for
-   * when the API could not be reached at all.
-   */
+  registerUrl: string;
+  /** Live plans; price and bullets come from here, catalog copy is the fallback. */
   plans?: PublicPlan[];
   /** "h1" when the section is the whole page, not a block on the landing page. */
   as?: 'h1' | 'h2';
 };
 
-const faNumber = (value: number) => value.toLocaleString('fa-IR');
+const M = LANDING.pricing;
 
-const QUARTERLY_STEP = 500_000;
-const QUARTERLY_DISCOUNT_RATE = 0.05;
-
-function quarterlyFromMonthly(monthly: number): {
-  charged: number;
-  full: number;
-  discountPercent: number;
-} {
-  const full = monthly * 3;
-  const discounted = full * (1 - QUARTERLY_DISCOUNT_RATE);
-  const charged = Math.max(
-    QUARTERLY_STEP,
-    Math.floor(discounted / QUARTERLY_STEP) * QUARTERLY_STEP,
-  );
-  const amount = Math.max(0, full - charged);
-  const discountPercent = amount > 0 ? Math.round(QUARTERLY_DISCOUNT_RATE * 100) : 0;
-  return { charged, full, discountPercent };
-}
-
-/**
- * Only used when the API is unreachable, so the pricing page renders a number
- * instead of a zero. The live plan row is authoritative — if the owner edits a
- * price, these stay stale by design and must be refreshed when a tier is
- * repriced for good.
- */
-const FALLBACK_MONTHLY: Record<string, number> = {
-  starter: 3_000_000,
-  growth: 6_500_000,
-  business: 11_000_000,
-};
-
-function resolveMonthlyToman(livePrice: number | undefined, planId: string): number {
-  if (livePrice != null) return livePrice;
-  return FALLBACK_MONTHLY[planId] ?? 0;
-}
-
-function panelPlanLoginUrl(loginUrl: string, planId: string, cycle: Cycle): string {
-  const url = new URL(
-    loginUrl,
-    typeof window !== 'undefined' ? window.location.origin : 'https://admin.mentoma.ir',
-  );
-  url.searchParams.set('plan', planId);
-  url.searchParams.set('period', cycle);
-  return url.toString();
-}
-
-export function PricingSection({ loginUrl, plans = [], as }: Props) {
+export function PricingSection({ registerUrl, plans = [], as: Heading = 'h2' }: Props) {
   const [cycle, setCycle] = useState<Cycle>('monthly');
   const livePlans = new Map(plans.map((plan) => [plan.slug, plan]));
 
   return (
-    <section id="pricing" data-lp-reveal className="bg-lp-surface-2 scroll-mt-32 py-20 lg:py-28">
-      <Container>
-        <SectionHeading as={as} title={LANDING.pricing.title} subtitle={LANDING.pricing.subtitle} />
-
-        <div className="mt-8 flex justify-center">
-          <div role="group" className="bg-lp-surface flex items-center gap-1 rounded-full p-1">
-            {(['monthly', 'quarterly'] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setCycle(option)}
-                aria-pressed={cycle === option}
-                className={cn(
-                  'rounded-full px-5 py-1.5 text-[13px] font-bold transition-colors',
-                  cycle === option ? 'bg-lp-blue text-white' : 'text-lp-muted hover:text-lp-ink',
-                )}
-              >
-                {LANDING.pricing[option]}
-              </button>
-            ))}
-          </div>
+    <section
+      id="pricing"
+      className="mx-auto max-w-[1180px] scroll-mt-24 px-5 py-16 md:px-7 md:py-24"
+    >
+      <SectionLabel number={M.number} label={M.label} />
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
+        <Heading className="text-[27px] font-extrabold tracking-[-.015em] md:text-[40px]">
+          {M.title}
+        </Heading>
+        <div
+          role="group"
+          className="bg-lp-stripe border-lp-ink/8 inline-flex items-center gap-1 rounded-2xl border p-1.5"
+        >
+          {(['monthly', 'quarterly'] as const).map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => setCycle(option)}
+              aria-pressed={cycle === option}
+              className={cn(
+                'rounded-xl px-4 py-2.5 text-[13.5px] font-extrabold transition-colors',
+                cycle === option
+                  ? 'text-lp-ink bg-white shadow-[0_2px_8px_-4px_rgba(11,26,46,.35)]'
+                  : 'text-lp-muted-2',
+              )}
+            >
+              {M[option]}
+            </button>
+          ))}
         </div>
+      </div>
 
-        <div className="mx-auto mt-12 grid max-w-[880px] items-stretch gap-4 lg:grid-cols-[1fr_1.12fr_1fr]">
-          {LANDING.pricing.plans.map((plan) => {
-            const live = livePlans.get(plan.id);
-            const monthly = resolveMonthlyToman(live?.price_monthly_toman, plan.id);
-            const q = quarterlyFromMonthly(monthly);
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
+        {M.plans.map((plan) => (
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            live={livePlans.get(plan.id)}
+            cycle={cycle}
+            registerUrl={registerUrl}
+          />
+        ))}
+      </div>
 
-            const price =
-              cycle === 'quarterly'
-                ? monthly > 0
-                  ? faNumber(q.charged)
-                  : plan.priceQuarterly
-                : live
-                  ? faNumber(live.price_monthly_toman)
-                  : plan.priceMonthly;
-            const upcoming = live?.upcoming_price ?? null;
-            const isFeatured = plan.featured;
-            const showDiscount = cycle === 'quarterly' && q.discountPercent > 0;
-            const features =
-              live?.features && live.features.length > 0 ? live.features : plan.features;
-
-            return (
-              <article
-                key={plan.id}
-                className={cn(
-                  'bg-lp-surface flex h-full flex-col rounded-2xl border p-6 transition-all',
-                  isFeatured
-                    ? 'border-lp-line shadow-lp-card lg:-my-5 lg:p-7'
-                    : 'border-lp-line/70 hover:border-lp-line hover:shadow-lp-card',
-                )}
-              >
-                <h3 className="text-lp-ink text-center text-[15px] font-bold">{plan.name}</h3>
-                <p className="text-lp-muted mt-1.5 text-center text-[12px]">{plan.tagline}</p>
-
-                <p className="mt-6 text-center">
-                  <span className="text-lp-ink text-[30px] leading-none font-black">{price}</span>
-                  <span className="text-lp-muted ms-2 text-[12px]">
-                    {cycle === 'quarterly' ? LANDING.pricing.perQuarter : LANDING.pricing.perMonth}
-                  </span>
-                </p>
-
-                {showDiscount ? (
-                  <p className="mt-2 flex flex-wrap items-center justify-center gap-2 text-[12px]">
-                    <span className="text-lp-muted line-through">{faNumber(q.full)}</span>
-                    <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 font-semibold text-emerald-700">
-                      {LANDING.pricing.discountPercent.replace(
-                        '{percent}',
-                        faNumber(q.discountPercent),
-                      )}
-                    </span>
-                  </p>
-                ) : (
-                  <p className="text-lp-muted mt-2 text-center text-[11.5px]">
-                    {cycle === 'quarterly'
-                      ? LANDING.pricing.cycleNoteQuarterly
-                      : LANDING.pricing.cycleNoteMonthly}
-                  </p>
-                )}
-
-                {showDiscount ? (
-                  <p className="text-lp-muted mt-1.5 text-center text-[11.5px]">
-                    {LANDING.pricing.cycleNoteQuarterly}
-                  </p>
-                ) : null}
-
-                {upcoming ? (
-                  <p className="text-lp-muted mt-2 text-center text-[11px] leading-[1.7]">
-                    {LANDING.pricing.upcomingPrice
-                      .replace('{price}', faNumber(upcoming.price_monthly_toman))
-                      .replace(
-                        '{date}',
-                        new Date(upcoming.effective_at).toLocaleDateString('fa-IR'),
-                      )}
-                  </p>
-                ) : null}
-
-                <ul className="mt-6 flex flex-1 flex-col gap-2.5">
-                  {features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="text-lp-ink/80 flex items-start gap-2 text-[13px] leading-[1.7]"
-                    >
-                      <Check
-                        size={14}
-                        strokeWidth={3}
-                        aria-hidden
-                        className="text-lp-blue mt-1 shrink-0"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                <a
-                  href={panelPlanLoginUrl(loginUrl, plan.id, cycle)}
-                  className={cn(
-                    'mt-7 flex h-11 items-center justify-center rounded-xl text-[13px] font-bold transition-colors',
-                    isFeatured
-                      ? 'bg-lp-blue hover:bg-lp-blue/90 text-white'
-                      : 'bg-lp-surface-2 text-lp-ink hover:bg-lp-line/40',
-                  )}
-                >
-                  {plan.cta}
-                </a>
-              </article>
-            );
-          })}
-        </div>
-      </Container>
+      <PricingCompareTable livePlans={livePlans} />
+      <PricingNotes />
     </section>
   );
 }

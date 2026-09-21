@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { MobileCtaBar } from './mobile-cta-bar';
 import { SiteFooter } from './site-footer';
 import { SiteHeader } from './site-header';
 
@@ -14,8 +15,9 @@ export function LandingShell({ loginUrl, registerUrl, children }: Props) {
   return (
     <div
       dir="rtl"
+      lang="fa"
       data-theme="light"
-      className="lp-root bg-lp-surface text-lp-ink min-h-screen font-[Vazirmatn,system-ui,sans-serif] antialiased"
+      className="lp-root bg-lp-surface text-lp-ink min-h-screen font-[Vazirmatn,system-ui,sans-serif] [text-wrap:pretty] antialiased"
     >
       {/* Restores the saved theme before first paint so a returning dark-mode
           visitor never sees a white flash. Runs ahead of hydration, which is
@@ -27,10 +29,9 @@ export function LandingShell({ loginUrl, registerUrl, children }: Props) {
       />
 
       <SiteHeader loginUrl={loginUrl} registerUrl={registerUrl} />
-
       <main>{children}</main>
-
-      <SiteFooter />
+      <SiteFooter loginUrl={loginUrl} />
+      <MobileCtaBar registerUrl={registerUrl} />
     </div>
   );
 }

@@ -1,400 +1,44 @@
+import { ACADEMY } from './messages/academy';
+import { ACADEMIES } from './messages/academies';
+import { COURSES } from './messages/courses';
+import { CTA } from './messages/cta';
+import { DOMAIN } from './messages/domain';
+import { FAQ } from './messages/faq';
+import { FEATURES } from './messages/features';
+import { FOOTER } from './messages/footer';
+import { HERO } from './messages/hero';
+import { LIVE } from './messages/live';
+import { NAV } from './messages/nav';
+import { PERSONAS } from './messages/personas';
+import { PRICING } from './messages/pricing';
+import { PROBLEM } from './messages/problem';
+import { QUICK_SIGNUP } from './messages/quick-signup';
+import { SALES } from './messages/sales';
+import { SAMPLES } from './messages/samples';
+import { SOLUTION } from './messages/solution';
+import { STEPS } from './messages/steps';
+import { STUDENTS } from './messages/students';
+
+/** Every user-facing string on the platform landing, grouped by section. */
 export const LANDING = {
-  nav: {
-    links: [
-      { href: '/academies', label: 'نمونه آکادمی‌ها', sectionId: 'examples' },
-      { href: '/pricing', label: 'تعرفه و پلن‌ها', sectionId: 'pricing' },
-      { href: '/about', label: 'درباره ما', sectionId: undefined },
-      { href: '/contact', label: 'تماس با ما', sectionId: undefined },
-      { href: '/#features', label: 'امکانات', sectionId: undefined },
-    ],
-    login: 'ورود به منتوما',
-    cta: 'شروع رایگان',
-    themeToggle: 'تغییر تم',
-    home: 'صفحه اصلی',
-  },
-
-  hero: {
-    panelAlt: 'پنل مدیریت دوره‌های آکادمی روی لپ‌تاپ',
-    panelImage: '/landing/hero-wide.webp',
-    titleLead: 'با داشتن وب‌سایت آموزشی شخصی خودت فقط ',
-    titleHighlight: '۱۰ دقیقه فاصله داری',
-    subtitle:
-      'با قالب سفارشی‌شده، سایت آموزشیت را بساز؛ دورهٔ ضبط‌شده یا کلاس آنلاین (زنده) با مدرس — تکی یا گروهی — برگزار کن و کسب‌وکارت را رشد بده.',
-    ctaPrimary: 'شروع ۱۴ روز رایگان',
-    ctaSecondary: 'مشاهده دمو',
-    bullets: ['پشتیبانی ۲۴/۷', '۱۴ روز تست رایگان', 'بدون نیاز به کدنویسی'],
-  },
-
-  logos: {
-    label: 'مورد اعتماد آموزشگاه‌ها و کسب‌وکارهای آموزشی',
-  },
-
-  forYou: {
-    titleCircled: 'منتوما',
-    titleAfter: ' برای توئه !',
-    /**
-     * Each slide owns its own copy; the block under the rail follows the open
-     * panel. `focus` is the CSS object-position of the photo: it decides which
-     * part stays visible when the panel is squeezed into a narrow strip.
-     * First value = horizontal (0% = start of the image, 100% = end),
-     * second = vertical (0% = top, 100% = bottom).
-     */
-    slides: [
-      {
-        src: '/landing/for-you-academy.webp',
-        focus: '39% 45%',
-        alt: 'مدیر آموزشگاه در پذیرش، گزارش دانش‌آموزان روی تبلت',
-        headline: 'اگه آموزشگاه داری و میخوای دوره‌هاتو آنلاین هم برگزار کنی!',
-        points: [
-          'سایتت را با قالب سفارشی‌شده و برند خودت بالا بیاور',
-          'کلاس آنلاین (زنده) تکی یا گروهی با مدرس برگزار کن و فروش را مدیریت کن',
-        ],
-      },
-      {
-        src: '/landing/for-you-teacher.webp',
-        focus: '80% 45%',
-        alt: 'مدرس‌ها در حال ساخت دوره و بررسی پیشرفت دانش‌آموزان',
-        headline: 'اگه معلمی و میخوای دوره‌هاتو آنلاین هم بفروشی!',
-        points: [
-          'دورهٔ ضبط‌شده بساز یا کلاس آنلاین (زنده) تکی و گروهی با دانش‌آموز برگزار کن',
-          'دانش‌آموزات رو مدیریت کن',
-        ],
-      },
-      {
-        src: '/landing/for-you-student.webp',
-        focus: '36% 45%',
-        alt: 'دانش‌آموزان در حال یادگیری آنلاین با لپ‌تاپ',
-        headline: 'اگه دنبال یادگیری و مهارت جدید میگردی!',
-        points: [
-          'دورهٔ ضبط‌شده یا کلاس آنلاین (زنده) با مدرس — تکی یا گروهی — پیدا کن',
-          'پیشرفتت رو دنبال کن',
-        ],
-      },
-    ],
-  },
-
-  publish: {
-    title: 'شروع کسب و کارت با برند شخصی آموزشی',
-    subtitle:
-      'قالب را سفارشی کن، آکادمی‌ات را راه‌اندازی کن و دوره‌های ضبط‌شده یا کلاس آنلاین (زنده) را منتشر کن.',
-    ctaPrimary: 'شروع ۱۴ روز رایگان',
-    ctaSecondary: 'مشاهده پلن',
-    views: [
-      {
-        id: 'student',
-        title: 'چیزی که دانش‌آموزت می‌بینه',
-        body: 'سایت با قالب سفارشی‌شدهٔ برندت، خرید دوره یا اشتراک، و دسترسی به دورهٔ ضبط‌شده یا کلاس آنلاین (زنده) با مدرس — تکی یا گروهی.',
-        image: '/landing/template-parastoo.png',
-        alt: 'قالب پرستو — سایت دانش‌آموز',
-      },
-      {
-        id: 'owner',
-        title: 'چیزی که خودت می‌بینی',
-        body: 'قالب آماده را انتخاب و سفارشی کن، ظاهر سایت را بدون کدنویسی بساز و دوره‌ها، کلاس‌های زنده و دسترسی‌ها را از یک پنل مدیریت کن.',
-        image: '/landing/owner-templates.png',
-        alt: 'انتخاب و سفارشی‌سازی قالب‌ها در پنل مدیر',
-      },
-    ],
-  },
-
-  why: {
-    titleBefore: 'چرا ',
-    titleCircled: 'منتوما',
-    titleAfter: ' همیشه انتخاب میشه؟',
-    subtitle:
-      'از قالب سفارشی تا فروش دوره و کلاس آنلاین (زنده) — هرچیزی که برای رشد آکادمی‌ات لازم داری، بدون پیچیدگی فنی.',
-    items: [
-      {
-        id: 'nocode',
-        icon: 'code',
-        wide: false,
-        title: 'بدون نیاز به کدنویسی',
-        body: 'همه‌چیز با چند کلیک انجام می‌شود. تو روی محتوا تمرکز کن، فنی‌اش با ما.',
-      },
-      {
-        id: 'setup',
-        icon: 'zap',
-        wide: true,
-        title: 'راه‌اندازی در ۱۰ دقیقه',
-        body: 'یک قالب آماده انتخاب و سفارشی کن، برندت را اضافه کن و آکادمی‌ات همین حالا آنلاین است. بدون انتظار، بدون توسعه‌دهنده.',
-      },
-      {
-        id: 'brand',
-        icon: 'user',
-        wide: false,
-        title: 'برند شخصی آموزشی',
-        body: 'دامنه اختصاصی، رنگ و لوگوی خودت روی قالب سفارشی‌شده. آکادمی‌ات کاملاً متعلق به توست.',
-      },
-      {
-        id: 'revenue',
-        icon: 'money',
-        wide: false,
-        title: 'فروش و درآمد پایدار',
-        body: 'اشتراک، فروش تکی، کلاس آنلاین (زنده) تکی یا گروهی، کد تخفیف و پرداخت ریالی — همه یکپارچه.',
-      },
-      {
-        id: 'access',
-        icon: 'shield',
-        wide: false,
-        title: 'کنترل کامل دسترسی‌ها',
-        body: 'سطح دسترسی دانشجو، مدرس و مدیر را دقیق تعیین کن. امن و منعطف.',
-      },
-    ],
-  },
-
-  steps: {
-    title: 'راه‌اندازی آکادمی شخصی در ۳ قدم ساده',
-    stepLabel: 'قدم',
-    items: [
-      {
-        number: '۱',
-        title: 'آکادمی خودت رو بدون کدنویسی بساز',
-        body: 'قالب را انتخاب و سفارشی کن؛ برند، درگاه پرداخت و دامنه اختصاصیت را تنظیم کن.',
-        image: '/landing/owner-appearance.png',
-        alt: 'ظاهر، برند و قالب سفارشی آکادمی در پنل منتوما',
-      },
-      {
-        number: '۲',
-        title: 'دوره‌ها و مدرس‌هات رو اضافه کن',
-        body: 'دورهٔ ضبط‌شده یا کلاس آنلاین (زنده) تکی و گروهی با مدرس بساز؛ مدرس‌ها را دعوت کن و دسترسی‌ها را مشخص کن.',
-        image: '/landing/owner-courses.png',
-        alt: 'افزودن دوره‌ها و کلاس‌های زنده در پنل منتوما',
-      },
-      {
-        number: '۳',
-        title: 'منتشر کن و شروع به فروش کن',
-        body: 'لینک آکادمی‌ات رو منتشر کن و اولین دانش‌آموزهات رو بپذیر.',
-        image: '/landing/owner-financial-v2.png',
-        alt: 'فروش دوره و پیگیری پرداخت‌های دانشجویان در پنل مالی',
-      },
-    ],
-  },
-
-  creators: {
-    title: 'بهترین‌ها از منتوما استفاده می‌کنند',
-    subtitle: 'از آموزش زبان تا عکاسی و طراحی گرافیک — آکادمی‌های واقعی روی منتوما.',
-    visit: 'مشاهده آکادمی',
-    viewAll: 'مشاهده همه آکادمی‌ها',
-  },
-
-  academies: {
-    title: 'همه آکادمی‌های منتوما',
-    subtitle: 'بین آکادمی‌های فعال روی منتوما بگرد و سایت هرکدام را ببین.',
-    searchLabel: 'جستجوی آکادمی',
-    searchPlaceholder: 'نام آکادمی را بنویس…',
-    empty: 'آکادمی‌ای با این نام پیدا نشد.',
-    count: 'آکادمی',
-    back: 'بازگشت به صفحه اصلی',
-  },
-
-  pricing: {
-    title: 'یک پلن برای هر مرحله از رشد',
-    subtitle: '۱۴ روز رایگان امتحان کن، بعد پلن مناسبت را انتخاب کن.',
-    quarterly: '۳ ماهه · تخفیف',
-    monthly: 'ماهانه',
-    perMonth: 'تومان / ماه',
-    perQuarter: 'تومان / ۳ ماه',
-    cycleNoteQuarterly: 'یک‌بار بپرداز؛ تا سه ماه نیازی به تمدید ماهانه نیست.',
-    cycleNoteMonthly: 'بدون تعهد بلندمدت؛ هر ماه قابل تمدید.',
-    discountPercent: '٪{percent} تخفیف',
-    mostPopular: 'پیشنهاد ما',
-    trialBannerTitle: '۱۴ روز رایگان برای شروع',
-    trialBannerBody:
-      'هر مدیر با ۱۴ روز استفادهٔ رایگان و کامل شروع می‌کند — بدون کارت بانکی. این دوره یک‌بار برای هر شخص است و به همهٔ آکادمی‌های او تعلق می‌گیرد. بعد از پایان دوره، یک پلن انتخاب و ثبت‌نام می‌کنی.',
-    upcomingPrice:
-      'از {date} قیمت این پلن به {price} تومان در ماه تغییر می‌کند. تا آن تاریخ می‌توانی با قیمت فعلی ثبت‌نام یا تمدید کنی.',
-    noCommission: 'بدون کارمزد از فروش دوره‌ها',
-    unlimitedSignups:
-      'فروش دوره و اشتراک عمومی در همهٔ پلن‌ها نامحدود است؛ سقف پلن فقط برای دانشجویان تدریس خصوصی (۱:۱) است.',
-    plans: [
-      {
-        id: 'starter',
-        name: 'استارتر',
-        tagline: 'برای آموزشگاه‌های تازه‌شروع',
-        priceQuarterly: '۷,۵۰۰,۰۰۰',
-        priceMonthly: '۲,۸۰۰,۰۰۰',
-        cta: 'خرید پلن',
-        featured: false,
-        features: [
-          '۲ معلم',
-          '۱۲۵ دانشجوی تدریس خصوصی',
-          '۱۵ گیگابایت فضا',
-          'فروش عمومی نامحدود',
-          'دامنه اختصاصی',
-          'بدون کارمزد فروش',
-        ],
-      },
-      {
-        id: 'growth',
-        name: 'رشد',
-        tagline: 'برای آموزشگاه‌های در حال رشد',
-        priceQuarterly: '۱۶,۵۰۰,۰۰۰',
-        priceMonthly: '۵,۸۰۰,۰۰۰',
-        cta: 'خرید پلن',
-        featured: true,
-        features: [
-          '۵ معلم',
-          '۳۵۰ دانشجوی تدریس خصوصی',
-          '۴۰ گیگابایت فضا',
-          'فروش عمومی نامحدود',
-          'دامنه اختصاصی',
-          '۲ مدیر',
-        ],
-      },
-      {
-        id: 'business',
-        name: 'بیزینس',
-        tagline: 'برای آموزشگاه‌های چندمعلمه',
-        priceQuarterly: '۲۵,۵۰۰,۰۰۰',
-        priceMonthly: '۹,۰۰۰,۰۰۰',
-        cta: 'خرید پلن',
-        featured: false,
-        features: [
-          '۱۵ معلم',
-          '۹۰۰ دانشجوی تدریس خصوصی',
-          '۸۰ گیگابایت فضا',
-          'فروش عمومی نامحدود',
-          '۵ مدیر',
-          'دامنه اختصاصی',
-        ],
-      },
-    ],
-  },
-
-  faq: {
-    title: 'هرچه باید بدانی',
-    items: [
-      {
-        q: 'منتوما دقیقاً چیست؟',
-        a: 'منتوما پلتفرم ساخت آکادمی آنلاین بدون کدنویسی است: قالب سفارشی، ساخت سایت، دورهٔ ضبط‌شده و کلاس آنلاین (زنده) با مدرس (تکی یا گروهی)، فروش و مدیریت دانشجو — همه در یک داشبورد.',
-      },
-      {
-        q: 'برای استفاده به دانش فنی نیاز دارم؟',
-        a: 'نه. ثبت‌نام می‌کنی، قالب را سفارشی می‌کنی و بلافاصله می‌توانی دوره یا کلاس آنلاین (زنده) بسازی. هیچ کدنویسی یا سروری لازم نیست.',
-      },
-      {
-        q: 'چطور پول دوره‌هایم را دریافت می‌کنم؟',
-        a: 'از طریق درگاه‌های پرداخت ایرانی. تراکنش‌ها ثبت و در داشبورد مالی قابل پیگیری است و تسویه شفاف انجام می‌شود.',
-      },
-      {
-        q: 'می‌توانم دامنه و برند اختصاصی داشته باشم؟',
-        a: 'بله. آکادمی‌ات روی زیردامنه‌ی اختصاصی بالا می‌آید و در پلن‌های بالاتر می‌توانی دامنه‌ی شخصی‌ات را متصل کنی و برند منتوما را حذف کنی.',
-      },
-      {
-        q: 'محتوای دوره‌هایم امن است؟',
-        a: 'بله. داده‌ی هر آکادمی کاملاً از بقیه جدا نگهداری و پشتیبان‌گیری می‌شود و ویدیوها با دسترسی کنترل‌شده پخش می‌شوند.',
-      },
-      {
-        q: 'می‌توانم رایگان امتحان کنم؟',
-        a: 'بله. هر مدیر ۱۴ روز استفادهٔ کامل و رایگان دارد؛ بدون کارت بانکی. این دوره یک‌بار برای هر شخص است، نه برای هر آکادمی. بعد از آن یکی از پلن‌ها را انتخاب می‌کنی و اطلاعاتت هم سر جایش می‌ماند.',
-      },
-    ],
-  },
-
-  cta: {
-    title: 'آکادمی خودت را همین امروز بساز',
-    subtitle: '۱۴ روز رایگان، بدون کارت بانکی، بدون ریسک. فقط دانش تو و یک داشبورد قدرتمند.',
-    primary: 'شروع ۱۴ روز رایگان',
-    secondary: 'دیدن نمونه‌ها',
-  },
-
-  footer: {
-    tagline:
-      'پلتفرم ساخت آکادمی آنلاین با قالب سفارشی و کلاس آنلاین (زنده) — تکی یا گروهی. دانش را به کسب‌وکار آموزشی تبدیل کن.',
-    columns: [
-      {
-        title: 'محصول',
-        links: [
-          { href: '/#features', label: 'امکانات', sectionId: undefined },
-          { href: '/pricing', label: 'تعرفه و پلن‌ها', sectionId: 'pricing' },
-          { href: '/academies', label: 'نمونه آکادمی‌ها', sectionId: 'examples' },
-          { href: '#how', label: 'چطور کار می‌کند', sectionId: undefined },
-        ],
-      },
-      {
-        title: 'شرکت',
-        links: [
-          { href: '/about', label: 'درباره ما', sectionId: undefined },
-          { href: '/contact', label: 'تماس با ما', sectionId: undefined },
-          { href: '/blog', label: 'وبلاگ', sectionId: undefined },
-        ],
-      },
-      {
-        title: 'قوانین',
-        links: [
-          { href: '/privacy', label: 'حریم خصوصی', sectionId: undefined },
-          { href: '/terms', label: 'قوانین و مقررات', sectionId: undefined },
-          { href: '/refund', label: 'سیاست بازگشت وجه', sectionId: undefined },
-        ],
-      },
-    ],
-    socials: [
-      {
-        id: 'instagram',
-        label: 'اینستاگرام',
-        href: 'https://www.instagram.com/mentoma_ir/',
-      },
-      { id: 'telegram', label: 'تلگرام', href: '' },
-      { id: 'linkedin', label: 'لینکدین', href: '' },
-    ],
-    rights: 'منتوما — همه حقوق محفوظ است.',
-    madeIn: 'ساخته‌شده با ❤️ در ایران',
-  },
-  quickSignup: {
-    open: 'شروع رایگان',
-    title: 'آکادمی‌ات را همین حالا بساز',
-    subtitle: 'سه قدم کوتاه تا وب‌سایت آماده و پنل مدیریت.',
-    close: 'بستن',
-    back: 'بازگشت',
-
-    steps: ['مشخصات آکادمی', 'شماره موبایل', 'کد تأیید'],
-
-    nameLabel: 'نام آکادمی',
-    namePlaceholder: 'مثلاً آموزشگاه زبان پارسا',
-    nameRequired: 'نام آکادمی را وارد کنید',
-
-    slugLabel: 'آدرس وب‌سایت',
-    slugPlaceholder: 'my-academy',
-    slugHint: 'فقط حروف انگلیسی، عدد و خط تیره.',
-    slugRequired: 'آدرس وب‌سایت را وارد کنید',
-    slugInvalid: 'این آدرس معتبر نیست.',
-    slugTaken: 'این آدرس قبلاً گرفته شده است.',
-    slugAvailable: 'این آدرس آزاد است.',
-    slugChecking: 'در حال بررسی…',
-
-    phoneLabel: 'شماره موبایل',
-    phoneHint: 'کد تأیید به این شماره پیامک می‌شود.',
-    phoneInvalid: 'شماره موبایل معتبر نیست.',
-    phoneTaken: 'با این شماره قبلاً حساب ساخته‌اید. وارد شوید.',
-    phoneTakenAction: 'ورود به حساب',
-
-    legalPrefix: 'با ساخت حساب، ',
-    legalTerms: 'قوانین و شرایط',
-    legalAnd: ' و ',
-    legalPrivacy: 'حریم خصوصی',
-    legalSuffix: ' را می‌پذیرم.',
-    legalRequired: 'برای ادامه باید قوانین را بپذیرید.',
-    legalUnavailable: 'قوانین در دسترس نیست. کمی بعد دوباره تلاش کنید.',
-
-    otpSentBeforePhone: 'کد به شماره',
-    otpSentAfterPhone: 'ارسال شد.',
-    edit: 'ویرایش',
-    otpLabel: 'کد تأیید',
-    otpRequired: 'کد تأیید را وارد کنید.',
-    otpResend: 'ارسال دوباره کد',
-    otpResendIn: 'ارسال دوباره تا {seconds} ثانیه دیگر',
-
-    continue: 'ادامه',
-    submit: 'ساخت آکادمی',
-    working: 'در حال ساخت آکادمی…',
-    genericError: 'مشکلی پیش آمد. دوباره تلاش کنید.',
-
-    doneTitle: 'آکادمی‌ات آماده است 🎉',
-    doneSubtitle: 'وب‌سایتت ساخته و منتشر شد. حالا انتخاب کن از کجا شروع کنی.',
-    doneSiteFallback: 'آکادمی ساخته شد. وب‌سایتت را از پنل، بخش «ظاهر سایت» تکمیل کن.',
-    viewSite: 'مشاهده وب‌سایت',
-    goToPanel: 'ورود به پنل مدیریت',
-    trialNote: '۱۴ روز رایگان، بدون نیاز به کارت بانکی.',
-    redirecting: 'در حال ورود به پنل مدیریت…',
-  },
+  nav: NAV,
+  hero: HERO,
+  personas: PERSONAS,
+  steps: STEPS,
+  live: LIVE,
+  solution: SOLUTION,
+  features: FEATURES,
+  domain: DOMAIN,
+  courses: COURSES,
+  students: STUDENTS,
+  sales: SALES,
+  problem: PROBLEM,
+  academy: ACADEMY,
+  samples: SAMPLES,
+  pricing: PRICING,
+  faq: FAQ,
+  cta: CTA,
+  footer: FOOTER,
+  academies: ACADEMIES,
+  quickSignup: QUICK_SIGNUP,
 } as const;

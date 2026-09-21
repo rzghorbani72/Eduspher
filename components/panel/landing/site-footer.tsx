@@ -1,83 +1,47 @@
-import { Instagram, Linkedin, Send } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-
-import { BrandLockup } from '@/components/brand/brand-lockup';
 import { EnamadSeal } from '@/components/academy/enamad-seal';
 import { PLATFORM_ENAMAD_SEAL_CODE, PLATFORM_ENAMAD_SEAL_ID } from '@/lib/seo/enamad';
-import { PoweredBy } from '@/components/shared/powered-by';
-import { Container } from './landing-container';
+
+import { BrandMark } from './brand-mark';
 import { LANDING } from './landing.messages';
 import { SmartNavLink } from './smart-nav-link';
 
-const SOCIAL_ICONS: Record<string, LucideIcon> = {
-  instagram: Instagram,
-  telegram: Send,
-  linkedin: Linkedin,
-};
+type Props = { loginUrl: string };
 
-export function SiteFooter() {
+const M = LANDING.footer;
+
+export function SiteFooter({ loginUrl }: Props) {
   return (
-    <footer className="border-lp-line bg-lp-surface border-t py-16">
-      <Container>
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] lg:gap-16">
+    <footer className="border-lp-line border-t">
+      <div className="mx-auto max-w-[1180px] px-5 py-12 md:px-7">
+        <div className="grid gap-9 md:grid-cols-[minmax(0,1fr)_auto]">
           <div>
-            <BrandLockup />
-
-            <p className="text-lp-muted mt-5 max-w-[330px] text-[13.5px] leading-[1.95]">
-              {LANDING.footer.tagline}
+            <BrandMark size={24} />
+            <p className="text-lp-muted-2 mt-3.5 max-w-[400px] text-[13.5px] leading-loose">
+              {M.tagline}
             </p>
-
-            {LANDING.footer.socials.some((social) => social.href) ? (
-              <ul className="mt-6 flex items-center gap-3">
-                {LANDING.footer.socials.map((social) => {
-                  if (!social.href) return null;
-                  const Icon = SOCIAL_ICONS[social.id] ?? Send;
-                  return (
-                    <li key={social.id}>
-                      <a
-                        href={social.href}
-                        aria-label={social.label}
-                        className="border-lp-line text-lp-muted hover:border-lp-mint/50 hover:text-lp-ink grid h-9 w-9 place-items-center rounded-full border transition-colors"
-                      >
-                        <Icon size={15} aria-hidden="true" />
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : null}
-
-            <div className="mt-6">
-              <EnamadSeal sealId={PLATFORM_ENAMAD_SEAL_ID} code={PLATFORM_ENAMAD_SEAL_CODE} />
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              <div className="border-lp-ink/18 text-lp-faint grid size-[90px] place-items-center overflow-hidden rounded-2xl border border-dashed bg-white text-[10.5px]">
+                <EnamadSeal sealId={PLATFORM_ENAMAD_SEAL_ID} code={PLATFORM_ENAMAD_SEAL_CODE} />
+              </div>
+              <div className="border-lp-ink/18 text-lp-faint grid size-[90px] place-items-center rounded-2xl border border-dashed bg-white text-[10.5px]">
+                {M.license}
+              </div>
             </div>
           </div>
-
-          {LANDING.footer.columns.map((column) => (
-            <nav key={column.title}>
-              <h3 className="text-lp-ink text-[13px] font-bold">{column.title}</h3>
-              <ul className="mt-4 flex flex-col gap-3">
-                {column.links.map((link) => (
-                  <li key={`${column.title}-${link.label}`}>
-                    <SmartNavLink
-                      href={link.href}
-                      sectionId={link.sectionId}
-                      className="text-lp-muted hover:text-lp-ink text-[13.5px] transition-colors"
-                    >
-                      {link.label}
-                    </SmartNavLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          <nav className="text-lp-muted grid grid-cols-2 gap-x-12 gap-y-3 text-[14px] sm:grid-cols-3">
+            {M.links.map((link) => (
+              <SmartNavLink key={link.href} href={link.href} sectionId={link.sectionId}>
+                {link.label}
+              </SmartNavLink>
+            ))}
+            <a href={loginUrl}>{M.login}</a>
+          </nav>
         </div>
-
-        <div className="border-lp-line text-lp-muted mt-14 flex flex-col-reverse items-center justify-between gap-3 border-t pt-6 text-[12.5px] sm:flex-row">
-          <span>{LANDING.footer.madeIn}</span>
-          <PoweredBy />
-          <span>© ۱۴۰۴ {LANDING.footer.rights}</span>
+        <div className="border-lp-line text-lp-faint mt-10 flex flex-wrap items-center gap-3 border-t pt-5 text-[13px]">
+          <span>{M.madeWith}</span>
+          <span className="ms-auto">{M.copyright}</span>
         </div>
-      </Container>
+      </div>
     </footer>
   );
 }

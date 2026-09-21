@@ -10,6 +10,7 @@ type Props = {
   /** id of the matching section embedded on the home page, if any. */
   sectionId?: string;
   className?: string;
+  onClick?: () => void;
   children: ReactNode;
 };
 
@@ -18,12 +19,12 @@ type Props = {
  * of navigating away — the section's own page still exists for SEO/crawling
  * and for direct links from anywhere else.
  */
-export function SmartNavLink({ href, sectionId, className, children }: Props) {
+export function SmartNavLink({ href, sectionId, className, onClick, children }: Props) {
   const pathname = usePathname();
   const resolvedHref = pathname === '/' && sectionId ? `#${sectionId}` : href;
 
   return (
-    <Link href={resolvedHref} className={className}>
+    <Link href={resolvedHref} className={className} onClick={onClick}>
       {children}
     </Link>
   );

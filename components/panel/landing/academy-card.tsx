@@ -51,7 +51,7 @@ export function AcademyCardLink({ card }: { card: AcademyCard }) {
       href={card.href}
       target="_blank"
       rel="noreferrer"
-      aria-label={`${LANDING.creators.visit} ${card.name}`}
+      aria-label={`${LANDING.samples.visit} ${card.name}`}
       className="group relative block h-[340px] w-[340px]"
     >
       <span className="bg-lp-surface-2 shadow-lp-card absolute start-0 bottom-0 block size-[272px] overflow-hidden rounded-[28px]">

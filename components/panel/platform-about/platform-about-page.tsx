@@ -22,7 +22,7 @@ type Props = {
 export function PlatformAboutPage({ adminLoginUrl, adminRegisterUrl }: Props) {
   return (
     <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
-      <section className="bg-lp-hero pt-36 pb-16 lg:pt-44 lg:pb-20">
+      <section className="bg-lp-hero pt-12 pb-16 lg:pt-16 lg:pb-20">
         <Container>
           <SectionHeading
             as="h1"

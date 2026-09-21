@@ -1,0 +1,57 @@
+export const QUICK_SIGNUP = {
+  open: 'شروع رایگان',
+  title: 'آکادمی‌ات را همین حالا بساز',
+  subtitle: 'سه قدم کوتاه تا وب‌سایت آماده و پنل مدیریت.',
+  close: 'بستن',
+  back: 'بازگشت',
+
+  steps: ['مشخصات آکادمی', 'شماره موبایل', 'کد تأیید'],
+
+  nameLabel: 'نام آکادمی',
+  namePlaceholder: 'مثلاً آموزشگاه زبان پارسا',
+  nameRequired: 'نام آکادمی را وارد کنید',
+
+  slugLabel: 'آدرس وب‌سایت',
+  slugPlaceholder: 'my-academy',
+  slugHint: 'فقط حروف انگلیسی، عدد و خط تیره.',
+  slugRequired: 'آدرس وب‌سایت را وارد کنید',
+  slugInvalid: 'این آدرس معتبر نیست.',
+  slugTaken: 'این آدرس قبلاً گرفته شده است.',
+  slugAvailable: 'این آدرس آزاد است.',
+  slugChecking: 'در حال بررسی…',
+
+  phoneLabel: 'شماره موبایل',
+  phoneHint: 'کد تأیید به این شماره پیامک می‌شود.',
+  phoneInvalid: 'شماره موبایل معتبر نیست.',
+  phoneTaken: 'با این شماره قبلاً حساب ساخته‌اید. وارد شوید.',
+  phoneTakenAction: 'ورود به حساب',
+
+  legalPrefix: 'با ساخت حساب، ',
+  legalTerms: 'قوانین و شرایط',
+  legalAnd: ' و ',
+  legalPrivacy: 'حریم خصوصی',
+  legalSuffix: ' را می‌پذیرم.',
+  legalRequired: 'برای ادامه باید قوانین را بپذیرید.',
+  legalUnavailable: 'قوانین در دسترس نیست. کمی بعد دوباره تلاش کنید.',
+
+  otpSentBeforePhone: 'کد به شماره',
+  otpSentAfterPhone: 'ارسال شد.',
+  edit: 'ویرایش',
+  otpLabel: 'کد تأیید',
+  otpRequired: 'کد تأیید را وارد کنید.',
+  otpResend: 'ارسال دوباره کد',
+  otpResendIn: 'ارسال دوباره تا {seconds} ثانیه دیگر',
+
+  continue: 'ادامه',
+  submit: 'ساخت آکادمی',
+  working: 'در حال ساخت آکادمی…',
+  genericError: 'مشکلی پیش آمد. دوباره تلاش کنید.',
+
+  doneTitle: 'آکادمی‌ات آماده است 🎉',
+  doneSubtitle: 'وب‌سایتت ساخته و منتشر شد. حالا انتخاب کن از کجا شروع کنی.',
+  doneSiteFallback: 'آکادمی ساخته شد. وب‌سایتت را از پنل، بخش «ظاهر سایت» تکمیل کن.',
+  viewSite: 'مشاهده وب‌سایت',
+  goToPanel: 'ورود به پنل مدیریت',
+  trialNote: '۱۴ روز رایگان، بدون نیاز به کارت بانکی.',
+  redirecting: 'در حال ورود به پنل مدیریت…',
+} as const;

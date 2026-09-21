@@ -1,128 +1,67 @@
-'use client';
-
-import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { Container } from './landing-container';
 import { LANDING } from './landing.messages';
-import { LandingShot } from './landing-shot';
-import { ProductFrame } from './product-frame';
-import { SectionHeading } from './section-heading';
+import {
+  StepCreatedMock,
+  StepCustomizeMock,
+  StepFormMock,
+  StepPublishMock,
+  StepTemplateMock,
+  StepUploadMock,
+} from './mockups/step-mocks';
+import { SectionLabel } from './section-label';
 
-const STEPS = LANDING.steps.items;
+const M = LANDING.steps;
+const MOCKS: readonly ReactNode[] = [
+  <StepFormMock key="form" />,
+  <StepCreatedMock key="created" />,
+  <StepTemplateMock key="template" />,
+  <StepCustomizeMock key="customize" />,
+  <StepUploadMock key="upload" />,
+  <StepPublishMock key="publish" />,
+];
 
 export function StepsSection() {
-  const [active, setActive] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  // While the section is pinned, scrolling advances the step. `landing-motion`
-  // owns the scroll maths and reports the index here, so this stays a plain
-  // component and GSAP still has exactly one owner.
-  useEffect(() => {
-    const node = sectionRef.current;
-    if (!node) return;
-
-    const onStep = (event: Event) => {
-      const index = (event as CustomEvent<number>).detail;
-      if (typeof index === 'number') setActive(index);
-    };
-
-    node.addEventListener('lp:step', onStep);
-    return () => node.removeEventListener('lp:step', onStep);
-  }, []);
-
-  const go = (index: number) => setActive((index + STEPS.length) % STEPS.length);
-
   return (
-    <section
-      id="how"
-      ref={sectionRef}
-      data-lp="steps"
-      data-lp-step-count={STEPS.length}
-      data-lp-reveal
-      className="bg-lp-surface scroll-mt-32 py-20 lg:py-28"
-    >
-      <Container>
-        <SectionHeading title={LANDING.steps.title} />
-
-        <div
-          data-lp="steps-stage"
-          className="border-lp-line bg-lp-surface-2 mt-14 rounded-[28px] border p-5 sm:p-8"
-        >
-          {/* Horizontal track. All slides are laid out side by side and the
-              track slides; in RTL the flex row runs right-to-left, so advancing
-              a step means translating the track to the right by one slide.
-              The percentage is of the track's own box (= one slide), which is
-              why the track keeps `w-full` while its children overflow it. */}
-          <div className="overflow-hidden">
-            <div
-              className="flex w-full transition-transform duration-500 ease-out motion-reduce:transition-none"
-              style={{ transform: `translateX(${active * 100}%)` }}
-            >
-              {STEPS.map((item, index) => (
-                <div key={item.number} className="w-full shrink-0" aria-hidden={index !== active}>
-                  {/* Capped to a share of the viewport so the whole stage —
-                      image, badge, copy and dots — still fits on screen while
-                      it is pinned. An uncapped 1100x560 image overflows a short
-                      laptop and the controls end up below the fold. */}
-                  <ProductFrame className="h-[46vh] max-h-[520px] min-h-[320px]">
-                    <div className="relative min-h-0 flex-1">
-                      <LandingShot
-                        key={item.image}
-                        src={item.image}
-                        alt={item.alt}
-                        fill
-                        // All three slides sit off-canvas via transform; `lazy`
-                        // never intersects the viewport so step 2/3 stayed blank.
-                        priority
-                        sizes="(max-width: 1024px) 100vw, 1160px"
-                        className="object-cover object-top"
-                      />
-                    </div>
-                  </ProductFrame>
-
-                  {/* z-10 so the number badge sits over the image edge rather
-                      than being covered by it. */}
-                  <div className="relative z-10 -mt-6 flex flex-col items-center">
-                    <span className="border-lp-surface-2 bg-lp-mint text-lp-ink flex h-12 w-12 items-center justify-center rounded-full border-4 text-base font-black">
-                      {item.number}
-                    </span>
-                    <h3 className="text-lp-ink mt-5 text-center text-lg font-bold lg:text-xl">
-                      {item.title}
-                    </h3>
-                    <p className="text-lp-muted mt-2 max-w-[520px] text-center text-[15px] leading-[1.9]">
-                      {item.body}
-                    </p>
-                  </div>
+    <section id="steps" className="bg-lp-surface-2 border-lp-ink/8 border-y">
+      <div className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
+        <SectionLabel number={M.number} label={M.label} />
+        <h2 className="mt-6 text-[27px] font-extrabold tracking-[-.015em] md:text-[40px]">
+          {M.title}
+        </h2>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {M.items.map((item, index) => {
+            const last = index === M.items.length - 1;
+            return (
+              <article
+                key={item.number}
+                className={cn(
+                  'rounded-[18px] bg-white p-5',
+                  last ? 'border-lp-mint border-[1.5px]' : 'border-lp-line border',
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    className={cn(
+                      'text-[13px] font-extrabold',
+                      last ? 'text-lp-green' : 'text-lp-blue',
+                    )}
+                  >
+                    {item.number}
+                  </span>
+                  <p className="text-[14.5px] leading-[1.8] font-bold">{item.text}</p>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-9 flex items-center justify-center gap-4">
-            <div className="flex items-center gap-2">
-              {STEPS.map((item, index) => (
-                <button
-                  key={item.number}
-                  type="button"
-                  onClick={() => go(index)}
-                  aria-label={`${LANDING.steps.stepLabel} ${item.number}`}
-                  aria-current={active === index}
-                  className={cn(
-                    'h-9 w-9 rounded-full text-[13px] font-bold transition-colors',
-                    active === index
-                      ? 'bg-lp-mint text-lp-ink'
-                      : 'border-lp-line text-lp-muted hover:text-lp-ink border bg-white',
-                  )}
-                >
-                  {item.number}
-                </button>
-              ))}
-            </div>
-          </div>
+                {MOCKS[index]}
+              </article>
+            );
+          })}
         </div>
-      </Container>
+        <p className="text-lp-muted-2 mt-8 max-w-[760px] text-[14.5px] leading-loose">
+          {M.footnote}
+        </p>
+      </div>
     </section>
   );
 }

@@ -1,50 +1,38 @@
-import { ChevronLeft } from 'lucide-react';
-
-import { Container } from './landing-container';
 import { LANDING } from './landing.messages';
-import { SmartNavLink } from './smart-nav-link';
 import { StartFreeLink } from './quick-signup/start-free-link';
 
-type Props = {
-  registerUrl: string;
-  demoUrl: string;
-  demoSectionId?: string;
-};
+type Props = { registerUrl: string };
 
-export function CtaSection({ registerUrl, demoUrl, demoSectionId }: Props) {
+const M = LANDING.cta;
+
+export function CtaSection({ registerUrl }: Props) {
   return (
-    <section data-lp-reveal className="bg-lp-surface py-20 lg:py-28">
-      <Container>
-        <div className="border-lp-mint/30 from-lp-mint/25 via-lp-mint/10 relative overflow-hidden rounded-4xl border bg-linear-120 to-transparent px-8 py-20 text-center lg:py-24">
-          <div className="relative mx-auto flex max-w-[640px] flex-col items-center">
-            <h2 className="text-lp-ink text-[30px] leading-tight font-extrabold tracking-[-0.022em] text-balance sm:text-[38px] lg:text-[44px]">
-              {LANDING.cta.title}
-            </h2>
-            <p className="text-lp-muted mt-4 text-base lg:text-[17px]">{LANDING.cta.subtitle}</p>
-
-            <div className="mt-9 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-              <StartFreeLink
-                href={registerUrl}
-                className="group rounded-lp bg-lp-mint text-lp-ink shadow-lp-mint flex h-14 items-center justify-center gap-2 px-8 text-[16px] font-bold transition-transform hover:-translate-y-0.5"
-              >
-                <ChevronLeft
-                  size={17}
-                  aria-hidden="true"
-                  className="transition-transform group-hover:-translate-x-0.5"
-                />
-                {LANDING.cta.primary}
-              </StartFreeLink>
-              <SmartNavLink
-                href={demoUrl}
-                sectionId={demoSectionId}
-                className="rounded-lp border-lp-line-2 text-lp-ink hover:border-lp-ink/25 flex h-14 items-center justify-center border bg-white px-8 text-[15px] font-semibold transition-colors"
-              >
-                {LANDING.cta.secondary}
-              </SmartNavLink>
-            </div>
-          </div>
+    <section id="cta" className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
+      <div className="bg-lp-ink relative overflow-hidden rounded-[28px] px-6 py-14 text-center text-white md:px-12 md:py-20">
+        <span
+          aria-hidden
+          className="absolute -start-[90px] -bottom-[140px] size-[380px] rounded-full bg-[radial-gradient(circle,rgba(63,242,184,.22),rgba(63,242,184,0)_68%)]"
+        />
+        <span
+          aria-hidden
+          className="absolute -end-20 -top-[150px] size-[360px] rounded-full bg-[radial-gradient(circle,rgba(18,135,234,.28),rgba(18,135,234,0)_68%)]"
+        />
+        <div className="relative">
+          <h2 className="mx-auto max-w-[680px] text-[27px] leading-[1.32] font-extrabold tracking-[-.015em] md:text-[42px]">
+            {M.title}
+          </h2>
+          <p className="text-lp-sky-3 mx-auto mt-5 max-w-[620px] text-[16px] leading-loose">
+            {M.subtitle}
+          </p>
+          <p className="text-lp-sky-2 mt-9 text-[12.5px] font-semibold">{M.trialNote}</p>
+          <StartFreeLink
+            href={registerUrl}
+            className="rounded-lp bg-lp-mint text-lp-on-mint mt-3 inline-block px-8 py-4 text-[16.5px] font-extrabold transition-transform hover:-translate-y-0.5"
+          >
+            {M.primary}
+          </StartFreeLink>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

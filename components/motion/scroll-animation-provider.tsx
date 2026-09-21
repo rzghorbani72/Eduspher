@@ -5,8 +5,7 @@ import { usePathname } from 'next/navigation';
 
 /**
  * `enabled` exists because this provider kills every ScrollTrigger on the page
- * on each navigation. The platform landing owns its own GSAP scenes
- * (`panel/landing/landing-motion.tsx`), so running both would tear those down.
+ * on each navigation; a page that owns its own GSAP scenes must opt out.
  */
 export function ScrollAnimationProvider({
   children,
