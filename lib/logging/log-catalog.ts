@@ -147,6 +147,16 @@ export const LOG_CATALOG = {
       },
     },
   },
+  SiteCache: {
+    description: 'Logs emitted by the SiteCache domain.',
+    actions: {
+      Revalidated: {
+        description: 'Site cache revalidated.',
+        level: 'info',
+        fields: ['academy_slug'] as const,
+      },
+    },
+  },
   SitePreview: {
     description: 'Preview rendering of an academy site template.',
     actions: {

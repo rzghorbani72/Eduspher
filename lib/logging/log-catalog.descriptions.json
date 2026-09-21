@@ -8,6 +8,7 @@
     "Payments": "Student and academy payments: checkout, gateway callbacks, refunds.",
     "Quiz": "A student taking a lesson quiz in the browser.",
     "RequestStorm": "Client-side circuit breaker: one API route called far above human speed.",
+    "SiteCache": "Logs emitted by the SiteCache domain.",
     "SitePreview": "Preview rendering of an academy site template.",
     "Tutoring": "Logs emitted by the Tutoring domain."
   },
@@ -32,6 +33,7 @@
     "Payments.SeatHoldFailed": "Holding seats at checkout open failed (class full or not on sale).",
     "Quiz.DraftSaveFailed": "Autosave of a student's in-progress quiz answers failed; the student keeps typing and sees an inline warning.",
     "RequestStorm.Tripped": "A single route exceeded the per-window hit limit in the student's browser; protected routes force a sign-out and storage wipe.",
+    "SiteCache.Revalidated": "Site cache revalidated.",
     "SitePreview.PresetEmpty": "Site preview preset empty.",
     "SitePreview.PresetFetchFailed": "Site preview preset fetch failed.",
     "Tutoring.JoinClassFailed": "Moving a 1:1 student into an open class failed.",

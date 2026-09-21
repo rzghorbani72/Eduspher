@@ -1161,7 +1161,8 @@ export async function getStoreThemeConfig(storeSlug?: string, previewToken?: str
       };
     }>(path, {
       includeAuth: false, // Always use public endpoint for theme config
-      tags: ['theme'],
+      headers: { 'X-Academy-Slug': storeSlug },
+      tags: ['theme', 'site'],
     });
     return result.data;
   } catch (error) {
@@ -1259,6 +1260,8 @@ export async function getStoreUITemplate(storeSlug?: string, previewToken?: stri
       };
     }>(path, {
       includeAuth: false,
+      headers: { 'X-Academy-Slug': storeSlug },
+      tags: ['site'],
     });
 
     // Ensure we have valid data structure
