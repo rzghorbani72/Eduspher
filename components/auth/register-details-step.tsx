@@ -77,6 +77,7 @@ export function RegisterDetailsStep({
       <AuthField
         label={t('account.fullName')}
         autoComplete="name"
+        dir="auto"
         disabled={loading}
         error={errors.name}
         {...fields.name}
