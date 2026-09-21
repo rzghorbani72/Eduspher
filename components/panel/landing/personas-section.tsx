@@ -32,7 +32,7 @@ function PersonaCard({ title, body, features, tone, registerUrl, mock }: CardPro
       </div>
       <p className="text-lp-muted mt-3 text-[15px] leading-[2.05]">{body}</p>
       {mock}
-      <ul className="text-lp-ink-2 mt-5 flex flex-wrap gap-x-4 gap-y-2 text-[13.5px] font-semibold">
+      <ul className="text-lp-ink-2 mt-5 mb-6 flex flex-wrap gap-x-4 gap-y-2 text-[13.5px] font-semibold">
         {features.map((feature) => (
           <li key={feature} className="flex items-center gap-1.5">
             <span className="text-lp-blue">✓</span>
@@ -42,7 +42,7 @@ function PersonaCard({ title, body, features, tone, registerUrl, mock }: CardPro
       </ul>
       <StartFreeLink
         href={registerUrl}
-        className="bg-lp-mint text-lp-on-mint mt-6 inline-block w-fit rounded-[13px] px-5 py-3 text-[14.5px] font-bold"
+        className="bg-lp-mint text-lp-on-mint mt-auto inline-block w-fit rounded-[13px] px-5 py-3 text-[14.5px] font-bold"
       >
         {M.cta}
       </StartFreeLink>
