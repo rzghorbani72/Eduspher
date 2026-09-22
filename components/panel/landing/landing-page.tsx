@@ -33,14 +33,14 @@ export function LandingPage({ adminLoginUrl, adminRegisterUrl, academies, plans 
       <PersonasSection registerUrl={adminRegisterUrl} />
       <StepsSection />
       <LiveSection />
-      <SolutionSection />
+      {/* <SolutionSection /> */}
       <FeaturesSection />
       <DomainSection />
-      <CoursesSection />
-      <StudentsSection />
-      <SalesSection />
+      {/* <CoursesSection /> */}
+      {/* <StudentsSection /> */}
+      {/* <SalesSection /> */}
       <ProblemSection />
-      <AcademySection />
+      {/* <AcademySection /> */}
       <SamplesSection academies={academies} />
       <PricingSection registerUrl={adminRegisterUrl} plans={plans} />
       <FaqSection />

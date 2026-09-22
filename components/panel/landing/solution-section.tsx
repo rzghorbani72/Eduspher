@@ -8,7 +8,7 @@ const M = LANDING.solution;
 export function SolutionSection() {
   return (
     <section id="solution" className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
-      <SectionLabel number={M.number} label={M.label} />
+      <SectionLabel label={M.label} />
       <h2 className="mt-6 max-w-[760px] text-[27px] leading-[1.32] font-extrabold tracking-[-.015em] md:text-[40px]">
         {M.title}
       </h2>

@@ -31,11 +31,7 @@ export function HeroCopy({ registerUrl }: Props) {
       </h1>
 
       <p className="text-lp-muted mt-6 max-w-[540px] text-[17px] leading-loose md:text-[18.5px]">
-        {M.subtitleLead}
-        <strong className="text-lp-ink font-extrabold">{M.subtitleStrong1}</strong>
-        {M.subtitleMid}
-        <strong className="text-lp-ink font-extrabold">{M.subtitleStrong2}</strong>
-        {M.subtitleTail}
+        {M.subtitle}
       </p>
 
       <div className="mt-9 hidden md:block">

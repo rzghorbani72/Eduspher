@@ -1,5 +1,4 @@
 export const PRICING = {
-  number: '۱۳',
   label: 'قیمت‌گذاری',
   title: 'قیمت‌ها شفاف است. کارمزد فروش، صفر',
   monthly: 'ماهانه',
@@ -7,7 +6,7 @@ export const PRICING = {
   perMonth: 'تومان / ماهانه',
   perQuarter: 'تومان / سه‌ماهه',
   mostPopular: 'پرطرفدارترین',
-  cta: 'ساخت آکادمی',
+  cta: 'آکادمی‌ات را رایگان بساز',
   toman: 'تومان',
   gb: 'گیگابایت',
   unlimited: 'نامحدود',

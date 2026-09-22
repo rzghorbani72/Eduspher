@@ -7,9 +7,12 @@ The public marketing page at `/` (composed by `landing-page.tsx`, rendered from
 
 ## Layout
 
-Sixteen numbered sections in design order, each its own file
+Sixteen sections in design order, each its own file
 (`hero-section.tsx` → `cta-section.tsx`). Tinted sections (`steps`, `domain`,
 `students`, `samples`, `faq`) sit on `bg-lp-surface-2` with a `border-y`.
+
+Section numbers (`۰۱…`) appear only on the Steps cards. Other sections may
+show a short label eyebrow via `SectionLabel`, without a checklist number.
 
 `LandingShell` is the shared chrome (sticky pill header, footer, mobile CTA
 bar) and is also worn by `/pricing`, `/academies`, `/about`, `/contact`.

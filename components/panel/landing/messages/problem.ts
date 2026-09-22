@@ -1,5 +1,4 @@
 export const PROBLEM = {
-  number: '۱۰',
   label: 'وضعیت امروز',
   title: 'الان احتمالاً این‌طوری کار می‌کنی',
   chat: { a: 'جزوه جلسه ۳', b: 'video-04.mp4', reply: 'استاد لینک قبلی باز نمیشه' },
@@ -15,7 +14,7 @@ export const PROBLEM = {
   devText: 'برای ساخت یا تغییر سایت، به برنامه‌نویس نیاز داری.',
   tools: ['فروش', 'کلاس آنلاین', 'پرداخت', 'دانشجوها'],
   toolsText: 'فروش، کلاس آنلاین، پرداخت و دانشجوها هرکدام در یک ابزار جدا هستند.',
-  closingLead: 'منتوما همه این‌ها را ',
-  closingStrong: 'در یک محیط',
-  closingTail: ' جمع می‌کند.',
+  closingLead: 'جای این‌همه ابزار و پیام، ',
+  closingStrong: 'یک آدرس',
+  closingTail: ' بده به دانشجو.',
 } as const;
