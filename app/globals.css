@@ -1290,7 +1290,11 @@ select[class*='rounded-sm'] {
   color: var(--color-lp-on-mint);
 }
 
-/* Only one theme icon shows; CSS picks it so the button needs no React state. */
+/* Only one theme icon shows; CSS picks it so the button needs no React state.
+   Sun/Moon share the same outline treatment — keep display rules symmetric. */
+.lp-root .lp-icon-light {
+  display: block;
+}
 .lp-root .lp-icon-dark {
   display: none;
 }

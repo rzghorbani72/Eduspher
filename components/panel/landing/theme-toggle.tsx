@@ -1,6 +1,6 @@
 'use client';
 
-import { Moon } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 
 import { LANDING } from './landing.messages';
 
@@ -31,10 +31,10 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={LANDING.nav.themeToggle}
-      className="border-lp-ink/12 hover:border-lp-ink/30 hidden size-[38px] place-items-center rounded-full border bg-white transition-colors sm:grid"
+      className="border-lp-ink/12 hover:border-lp-ink/30 text-lp-ink hidden size-[38px] place-items-center rounded-full border bg-white transition-colors sm:grid"
     >
-      <span className="lp-icon-light bg-lp-amber size-[11px] rounded-full shadow-[0_0_0_3px_rgba(240,178,58,.22)]" />
-      <Moon size={15} aria-hidden="true" className="lp-icon-dark text-lp-ink" />
+      <Sun size={15} strokeWidth={1.75} aria-hidden="true" className="lp-icon-light" />
+      <Moon size={15} strokeWidth={1.75} aria-hidden="true" className="lp-icon-dark" />
     </button>
   );
 }
