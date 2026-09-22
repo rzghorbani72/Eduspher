@@ -8,7 +8,7 @@ const M = LANDING.students.table;
 export function StudentsTableMock() {
   return (
     <MockFrame title={M.title} dots={0} className="shadow-lp-frame-sm rounded-[20px]">
-      <div className="lp-rail overflow-x-auto">
+      <div className="lp-rail h-10 overflow-x-auto">
         <table className="w-full min-w-[380px] border-collapse">
           <thead>
             <tr className="bg-lp-bar-2">
