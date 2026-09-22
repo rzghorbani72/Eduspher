@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 import { LANDING } from './landing.messages';
 import { PlanCard } from './pricing-plan-card';
 import type { Cycle } from './pricing-math';
-import { PricingNotes } from './pricing-notes';
 
 type Props = {
   registerUrl: string;
@@ -67,7 +66,6 @@ export function PricingSection({ registerUrl, plans = [], as: Heading = 'h2' }: 
           />
         ))}
       </div>
-      <PricingNotes />
     </section>
   );
 }
