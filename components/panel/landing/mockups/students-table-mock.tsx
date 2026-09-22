@@ -9,7 +9,7 @@ export function StudentsTableMock() {
   return (
     <MockFrame title={M.title} dots={0} className="shadow-lp-frame-sm rounded-[20px]">
       <div className="lp-rail overflow-x-auto">
-        <table className="w-full min-w-[580px] border-collapse">
+        <table className="w-full min-w-[380px] border-collapse">
           <thead>
             <tr className="bg-lp-bar-2">
               {M.head.map((head) => (
@@ -27,20 +27,7 @@ export function StudentsTableMock() {
                 className={cn('border-lp-ink/6 border-t', index === 2 && 'bg-lp-bar-2')}
               >
                 <td className="p-3.5 text-[12.5px] font-bold">{row.name}</td>
-                <td className="text-lp-muted p-3.5 text-[12.5px]">{row.phone}</td>
                 <td className="text-lp-muted p-3.5 text-[12.5px]">{row.courses}</td>
-                <td className="p-3.5">
-                  <span
-                    className={cn(
-                      'rounded-lg px-2.5 py-1.5 text-[11px]',
-                      row.active
-                        ? 'bg-lp-mint-soft text-lp-on-mint font-extrabold'
-                        : 'bg-lp-stripe text-lp-muted-2 font-semibold',
-                    )}
-                  >
-                    {row.active ? M.active : M.revoked}
-                  </span>
-                </td>
                 <td className="p-3.5 text-end">
                   <span
                     className={cn(

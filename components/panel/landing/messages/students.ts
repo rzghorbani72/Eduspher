@@ -13,15 +13,13 @@ export const STUDENTS = {
   ],
   table: {
     title: 'دانشجوها · ۲۴ نفر',
-    head: ['نام', 'موبایل', 'دوره‌های خریداری‌شده', 'دسترسی'],
-    active: 'فعال',
-    revoked: 'قطع‌شده',
+    head: ['نام', 'دوره‌های خریداری‌شده'],
     revoke: 'گرفتن دسترسی',
     grant: 'دادن دسترسی',
     rows: [
-      { name: 'زهرا احمدی', phone: '۰۹۱۲۳۴۵۶۷۸۹', courses: 'حسابان ۱ · هندسه', active: true },
-      { name: 'علی مرادی', phone: '۰۹۳۵۱۱۲۲۳۳۴', courses: 'حسابان ۱', active: true },
-      { name: 'نگار سلیمی', phone: '۰۹۰۲۷۷۸۸۹۹۰', courses: 'گسسته (رایگان)', active: false },
+      { name: 'زهرا احمدی', courses: 'حسابان ۱ · هندسه', active: true },
+      { name: 'علی مرادی', courses: 'حسابان ۱', active: true },
+      { name: 'نگار سلیمی', courses: 'گسسته', active: false },
     ],
   },
 } as const;

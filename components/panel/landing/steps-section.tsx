@@ -11,7 +11,6 @@ import {
   StepTemplateMock,
   StepUploadMock,
 } from './mockups/step-mocks';
-import { SectionLabel } from './section-label';
 
 const M = LANDING.steps;
 const MOCKS: readonly ReactNode[] = [
@@ -27,7 +26,6 @@ export function StepsSection() {
   return (
     <section id="steps" className="bg-lp-surface-2 border-lp-ink/8 border-y">
       <div className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
-        <SectionLabel number={M.number} label={M.label} />
         <h2 className="mt-6 text-[27px] font-extrabold tracking-[-.015em] md:text-[40px]">
           {M.title}
         </h2>

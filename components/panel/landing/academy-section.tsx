@@ -1,6 +1,5 @@
 import { LANDING } from './landing.messages';
 import { AcademyMultiMock, AcademyRolesMock, AcademyTeachersMock } from './mockups/academy-mocks';
-import { SectionLabel } from './section-label';
 
 const M = LANDING.academy;
 
@@ -13,7 +12,6 @@ const CARDS = [
 export function AcademySection() {
   return (
     <section id="academy" className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
-      <SectionLabel number={M.number} label={M.label} />
       <p className="text-lp-blue mt-6 text-[13.5px] font-bold">{M.kicker}</p>
       <div className="mt-3 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-end">
         <h2 className="text-[27px] font-extrabold tracking-[-.015em] md:text-[40px]">{M.title}</h2>

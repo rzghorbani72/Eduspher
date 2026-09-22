@@ -6,11 +6,9 @@ import type { PublicPlan } from '@/lib/api/server';
 import { cn } from '@/lib/utils';
 
 import { LANDING } from './landing.messages';
-import { PricingCompareTable } from './pricing-compare-table';
 import { PlanCard } from './pricing-plan-card';
 import type { Cycle } from './pricing-math';
 import { PricingNotes } from './pricing-notes';
-import { SectionLabel } from './section-label';
 
 type Props = {
   registerUrl: string;
@@ -31,7 +29,6 @@ export function PricingSection({ registerUrl, plans = [], as: Heading = 'h2' }: 
       id="pricing"
       className="mx-auto max-w-[1180px] scroll-mt-24 px-5 py-16 md:px-7 md:py-24"
     >
-      <SectionLabel number={M.number} label={M.label} />
       <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
         <Heading className="text-[27px] font-extrabold tracking-[-.015em] md:text-[40px]">
           {M.title}
@@ -70,8 +67,6 @@ export function PricingSection({ registerUrl, plans = [], as: Heading = 'h2' }: 
           />
         ))}
       </div>
-
-      <PricingCompareTable livePlans={livePlans} />
       <PricingNotes />
     </section>
   );

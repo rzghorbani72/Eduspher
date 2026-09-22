@@ -1,14 +1,14 @@
 import { cn } from '@/lib/utils';
 
 type Props = {
-  number: string;
-  label: string;
+  number?: string | null;
+  label?: string | null;
   /** The "problem" section sits on navy, so its label flips to mint/sky. */
   tone?: 'light' | 'dark';
 };
 
 /** "۰۱ · label" eyebrow with the hairline every numbered section starts with. */
-export function SectionLabel({ number, label, tone = 'light' }: Props) {
+export function SectionLabel({ tone = 'light' }: Props) {
   return (
     <div
       className={cn(
@@ -16,7 +16,7 @@ export function SectionLabel({ number, label, tone = 'light' }: Props) {
         tone === 'dark' ? 'border-white/16' : 'border-lp-ink/12',
       )}
     >
-      <span
+      {/* <span
         className={cn(
           'text-[12px] font-extrabold tracking-[.08em]',
           tone === 'dark' ? 'text-lp-mint' : 'text-lp-blue',
@@ -31,7 +31,7 @@ export function SectionLabel({ number, label, tone = 'light' }: Props) {
         )}
       >
         {label}
-      </span>
+      </span> */}
     </div>
   );
 }

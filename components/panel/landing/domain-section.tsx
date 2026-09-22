@@ -1,5 +1,4 @@
 import { LANDING } from './landing.messages';
-import { SectionLabel } from './section-label';
 
 const M = LANDING.domain;
 
@@ -7,7 +6,6 @@ export function DomainSection() {
   return (
     <section id="domain" className="bg-lp-surface-2 border-lp-ink/8 border-y">
       <div className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
-        <SectionLabel number={M.number} label={M.label} />
         <div className="mt-6 grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
             <h2 className="text-[27px] font-extrabold tracking-[-.015em] md:text-[38px]">

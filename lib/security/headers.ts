@@ -35,6 +35,28 @@ const MARKETING_FRAME_SRC = [
   'https://*.clarity.ms',
 ].join(' ');
 
+/** Academy storefront hosts the marketing landing may embed (samples iframes). */
+function academyFrameSrc(): string {
+  const hosts = new Set<string>();
+  for (const raw of [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_IR_DOMAIN,
+    process.env.NEXT_PUBLIC_COM_DOMAIN,
+    'https://mentoma.ir',
+    'https://mentoma.com',
+  ]) {
+    if (!raw?.trim()) continue;
+    try {
+      const { protocol, hostname } = new URL(raw);
+      hosts.add(`${protocol}//${hostname}`);
+      hosts.add(`${protocol}//*.${hostname}`);
+    } catch {
+      // ignore invalid env URLs
+    }
+  }
+  return [...hosts].join(' ');
+}
+
 function extraJitsiHost(): string | null {
   const raw = (process.env.NEXT_PUBLIC_JITSI_HOST ?? '').trim().toLowerCase();
   if (!raw) return null;
@@ -89,7 +111,8 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
       "media-src 'self' http://localhost:* https: blob: data:",
       "worker-src 'self' blob:",
       "frame-src 'self' http://localhost:* https: blob:",
-      "frame-ancestors 'none'",
+      // frame-ancestors is set per-response in proxy.ts (academy home may be
+      // framed by the marketing site; everything else stays 'none').
     ].join('; ');
   }
 
@@ -102,8 +125,7 @@ export function buildContentSecurityPolicy(isDevelopment: boolean): string {
     `connect-src 'self' https: ${MARKETING_CONNECT_SRC}`,
     "media-src 'self' https: blob: data:",
     "worker-src 'self' blob:",
-    `frame-src 'self' blob: ${meetFrameOrigins().join(' ')} ${MARKETING_FRAME_SRC}`,
-    "frame-ancestors 'none'",
+    `frame-src 'self' blob: ${meetFrameOrigins().join(' ')} ${MARKETING_FRAME_SRC} ${academyFrameSrc()}`,
   ].join('; ');
 }
 

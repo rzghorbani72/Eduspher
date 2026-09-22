@@ -38,6 +38,26 @@ function getAdminFrameAncestors(): string {
   return Array.from(origins).join(' ');
 }
 
+/** Apex marketing site may iframe published academy homes (samples section). */
+function getMarketingFrameAncestors(): string {
+  const origins = new Set<string>(["'self'"]);
+  for (const candidate of [
+    process.env.NEXT_PUBLIC_APP_URL,
+    process.env.NEXT_PUBLIC_IR_DOMAIN,
+    process.env.NEXT_PUBLIC_COM_DOMAIN,
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+  ]) {
+    if (!candidate) continue;
+    try {
+      origins.add(new URL(candidate).origin);
+    } catch {
+      // ignore invalid URL values
+    }
+  }
+  return Array.from(origins).join(' ');
+}
+
 function shouldApplyPreviewEmbed(request: NextRequest, isAcademyHome: boolean): boolean {
   const { pathname, searchParams } = request.nextUrl;
   if (searchParams.has('preview') || searchParams.get('embed') === '1') {
@@ -67,10 +87,23 @@ function applyPreviewEmbedRequest(
   return { preview, embed };
 }
 
+function applyFrameAncestors(
+  response: NextResponse,
+  opts: { embed: boolean; allowMarketing: boolean },
+): void {
+  const frameAncestors = opts.embed
+    ? getAdminFrameAncestors()
+    : opts.allowMarketing
+      ? getMarketingFrameAncestors()
+      : "'none'";
+  response.headers.set('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+}
+
 function applyPreviewEmbedResponse(
   response: NextResponse,
   preview: string | null,
   embed: boolean,
+  allowMarketing: boolean,
 ): void {
   if (preview) {
     response.cookies.set('preview_token', preview, {
@@ -89,8 +122,7 @@ function applyPreviewEmbedResponse(
     });
   }
 
-  const frameAncestors = embed ? getAdminFrameAncestors() : "'self'";
-  response.headers.set('Content-Security-Policy', `frame-ancestors ${frameAncestors}`);
+  applyFrameAncestors(response, { embed, allowMarketing });
 }
 
 /**
@@ -701,7 +733,14 @@ export async function proxy(request: NextRequest) {
     const redirectResponse = NextResponse.redirect(redirectUrl);
     applyAuthCookies(redirectResponse);
     if (applyPreviewEmbed) {
-      applyPreviewEmbedResponse(redirectResponse, previewEmbed.preview, previewEmbed.embed);
+      applyPreviewEmbedResponse(
+        redirectResponse,
+        previewEmbed.preview,
+        previewEmbed.embed,
+        isAcademyHomePath,
+      );
+    } else {
+      applyFrameAncestors(redirectResponse, { embed: false, allowMarketing: false });
     }
     return redirectResponse;
   }
@@ -717,7 +756,14 @@ export async function proxy(request: NextRequest) {
     const loginRedirect = NextResponse.redirect(loginUrl);
     applyAuthCookies(loginRedirect);
     if (applyPreviewEmbed) {
-      applyPreviewEmbedResponse(loginRedirect, previewEmbed.preview, previewEmbed.embed);
+      applyPreviewEmbedResponse(
+        loginRedirect,
+        previewEmbed.preview,
+        previewEmbed.embed,
+        isAcademyHomePath,
+      );
+    } else {
+      applyFrameAncestors(loginRedirect, { embed: false, allowMarketing: false });
     }
     return loginRedirect;
   }
@@ -820,7 +866,14 @@ export async function proxy(request: NextRequest) {
       academyRedirect.cookies.set(cookie);
     }
     if (applyPreviewEmbed) {
-      applyPreviewEmbedResponse(academyRedirect, previewEmbed.preview, previewEmbed.embed);
+      applyPreviewEmbedResponse(
+        academyRedirect,
+        previewEmbed.preview,
+        previewEmbed.embed,
+        isAcademyHomePath,
+      );
+    } else {
+      applyFrameAncestors(academyRedirect, { embed: false, allowMarketing: false });
     }
     return academyRedirect;
   }
@@ -830,7 +883,14 @@ export async function proxy(request: NextRequest) {
   response.headers.set('x-pathname', actualPath);
 
   if (applyPreviewEmbed) {
-    applyPreviewEmbedResponse(response, previewEmbed.preview, previewEmbed.embed);
+    applyPreviewEmbedResponse(
+      response,
+      previewEmbed.preview,
+      previewEmbed.embed,
+      isAcademyHomePath,
+    );
+  } else {
+    applyFrameAncestors(response, { embed: false, allowMarketing: false });
   }
 
   return response;

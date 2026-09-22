@@ -2,14 +2,12 @@ import { CheckList } from './check-list';
 import { FlowRail } from './flow-rail';
 import { LANDING } from './landing.messages';
 import { CourseMock } from './mockups/course-mock';
-import { SectionLabel } from './section-label';
 
 const M = LANDING.courses;
 
 export function CoursesSection() {
   return (
     <section id="courses" className="mx-auto max-w-[1180px] px-5 py-16 md:px-7 md:py-24">
-      <SectionLabel number={M.number} label={M.label} />
       <h2 className="mt-6 text-[27px] font-extrabold tracking-[-.015em] md:text-[38px]">
         {M.title}
       </h2>

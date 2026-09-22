@@ -25,7 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const adminLoginUrl = await getServerAdminPanelUrl('/login');
   const adminRegisterUrl = await getServerAdminPanelUrl('/register');
-  const academies = await getAcademiesPublic().catch(() => []);
+  // Published + listed academies only (`/academies/public`). Samples section needs ≥3.
+  const academies = await getAcademiesPublic({ limit: 10 }).catch(() => []);
   const plans = await getPublicPlans().catch(() => []);
   const faqJsonLd = buildLandingFaqJsonLd();
 
