@@ -53,12 +53,15 @@ function RealCard({ card }: { card: AcademyCard }) {
 }
 
 /**
- * Real published academies from `/academies/public` (active, listed, site
- * published). Hidden until at least three exist — no placeholder cards.
+ * Real published academies from `/academies/public?hasBanner=true` (active,
+ * listed, site published, desktop showcase). Hidden until at least three
+ * exist — no placeholder cards.
  */
 export function SamplesSection({ academies }: Props) {
   const cards = sortAcademyCards(
-    academies.filter((academy) => Boolean(academy.slug)).map(toAcademyCard),
+    academies
+      .filter((academy) => Boolean(academy.slug && academy.showcase_desktop))
+      .map(toAcademyCard),
   ).slice(0, MIN_SAMPLES);
 
   if (cards.length < MIN_SAMPLES) return null;

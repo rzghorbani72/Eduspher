@@ -290,10 +290,16 @@ export const serverFetchRaw = async <T>(path: string, config?: FetchOptions): Pr
   return response.json() as Promise<T>;
 };
 
-export async function getAcademiesPublic(params?: { search?: string; limit?: number }) {
+export async function getAcademiesPublic(params?: {
+  search?: string;
+  limit?: number;
+  /** Only academies with a desktop showcase banner (landing samples). */
+  hasBanner?: boolean;
+}) {
   const query = new URLSearchParams();
   if (params?.search) query.set('search', params.search);
   if (params?.limit) query.set('limit', String(params.limit));
+  if (params?.hasBanner) query.set('hasBanner', 'true');
   const suffix = query.size > 0 ? `?${query.toString()}` : '';
   const result = await serverFetch<StoreSummary[]>(`/academies/public${suffix}`, {
     includeAuth: false,
