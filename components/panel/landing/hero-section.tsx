@@ -21,7 +21,7 @@ export function HeroSection({ registerUrl }: Props) {
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
           <HeroCopy registerUrl={registerUrl} />
 
-          <div className="relative mx-auto w-full max-w-[600px] lg:pb-8">
+          <div className="relative mx-auto hidden w-full max-w-[600px] lg:block lg:pb-8">
             <div className="relative lg:pt-[84px]">
               <div className="absolute start-0 top-0 hidden w-[60%] -rotate-[1.4deg] lg:block">
                 <HeroSiteMock />

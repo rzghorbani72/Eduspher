@@ -31,7 +31,11 @@ export function LiveSection() {
         {M.title}
       </h2>
       <p className="text-lp-muted mt-4 max-w-[660px] text-[16px] leading-loose">{M.subtitle}</p>
-      <FlowRail steps={[...M.flow, M.flowLast]} active={M.flow.length} className="mt-7" />
+      <FlowRail
+        steps={[...M.flow, M.flowLast]}
+        active={M.flow.length}
+        className="mt-7 hidden md:block"
+      />
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,250px)] lg:items-start">
         <LiveRoomMock />
         <PhoneMock />

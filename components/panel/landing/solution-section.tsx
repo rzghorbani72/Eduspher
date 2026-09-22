@@ -26,7 +26,7 @@ export function SolutionSection() {
             {M.card.foot}
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="hidden gap-3 sm:grid-cols-2 md:grid lg:grid-cols-3">
           {M.parts.map((part) => (
             <div
               key={part.title}

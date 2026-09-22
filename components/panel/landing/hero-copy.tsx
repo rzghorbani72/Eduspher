@@ -38,7 +38,7 @@ export function HeroCopy({ registerUrl }: Props) {
         {M.subtitleTail}
       </p>
 
-      <div className="mt-9">
+      <div className="mt-9 hidden md:block">
         <p className="text-lp-faint text-[12.5px] font-semibold">{M.trialNote}</p>
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <StartFreeLink

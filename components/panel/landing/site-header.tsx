@@ -64,7 +64,7 @@ export function SiteHeader({ loginUrl, registerUrl }: Props) {
             </a>
             <StartFreeLink
               href={registerUrl}
-              className="bg-lp-mint-2 rounded-full px-5 py-3 text-[14.5px] font-extrabold whitespace-nowrap text-[#04281d] shadow-[0_10px_26px_-12px_rgba(46,230,166,.95)] transition-transform hover:-translate-y-px md:px-6 md:py-3.5 lg:px-8 lg:text-[16px]"
+              className="bg-lp-mint-2 hidden rounded-full px-5 py-3 text-[14.5px] font-extrabold whitespace-nowrap text-[#04281d] shadow-[0_10px_26px_-12px_rgba(46,230,166,.95)] transition-transform hover:-translate-y-px md:block md:px-6 md:py-3.5 lg:px-8 lg:text-[16px]"
             >
               {LANDING.nav.cta}
             </StartFreeLink>
