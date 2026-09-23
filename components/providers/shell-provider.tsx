@@ -44,3 +44,8 @@ export function useShell() {
   }
   return context;
 }
+
+/** Safe for headers that may render in editor preview without shell props. */
+export function useShellOptional() {
+  return useContext(ShellContext);
+}

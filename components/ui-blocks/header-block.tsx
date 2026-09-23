@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, CircleUser, Menu, X } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 
 import Link from '@/components/ui/link';
 import { Button } from '@/components/ui/button';
 import { SiteHeaderShell } from '@/components/layout/site-header-shell';
+import { AccountMenuDropdown } from '@/components/layout/account-menu-dropdown';
 import { cn } from '@/lib/utils';
 import { useAcademyContext, useStorePath } from '@/components/providers/store-provider';
 import { useAuthContext } from '@/components/providers/auth-provider';
+import { useShellOptional } from '@/components/providers/shell-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface HeaderBlockProps {
@@ -84,10 +86,13 @@ function CreativeHeader({
 }) {
   const router = useRouter();
   const { name: academyName } = useAcademyContext();
-  const { isAuthenticated: signedIn } = useAuthContext();
-  const isAuthenticated = previewMode ? false : signedIn;
   const buildPath = useStorePath();
   const { t } = useTranslation();
+  const { isAuthenticated: signedIn, displayName, avatarUrl } = useAuthContext();
+  const shell = useShellOptional();
+  const isAuthenticated = previewMode ? false : signedIn || Boolean(shell?.headerIsAuthenticated);
+  const accountLabel = displayName || shell?.headerDisplayName || t('account.profile');
+  const accountAvatar = avatarUrl || shell?.headerAvatarUrl || null;
   const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -148,13 +153,11 @@ function CreativeHeader({
 
         <div className="flex shrink-0 items-center gap-2.5">
           {isAuthenticated ? (
-            <Link
-              href={buildPath('/account')}
-              className="hidden h-9 items-center gap-2 rounded-full border border-(--theme-border-strong) px-3 text-sm font-medium text-(--theme-foreground) md:inline-flex"
-            >
-              <CircleUser className="h-5 w-5 text-(--theme-primary)" />
-              {t('account.myCourses')}
-            </Link>
+            <AccountMenuDropdown
+              displayName={accountLabel}
+              avatarUrl={accountAvatar}
+              className="hidden md:block"
+            />
           ) : (
             <>
               <Link
@@ -215,10 +218,13 @@ function CodeHeader({
 }) {
   const router = useRouter();
   const { name: academyName } = useAcademyContext();
-  const { isAuthenticated: signedIn } = useAuthContext();
-  const isAuthenticated = previewMode ? false : signedIn;
   const buildPath = useStorePath();
   const { t } = useTranslation();
+  const { isAuthenticated: signedIn, displayName, avatarUrl } = useAuthContext();
+  const shell = useShellOptional();
+  const isAuthenticated = previewMode ? false : signedIn || Boolean(shell?.headerIsAuthenticated);
+  const accountLabel = displayName || shell?.headerDisplayName || t('account.profile');
+  const accountAvatar = avatarUrl || shell?.headerAvatarUrl || null;
   const [query, setQuery] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -280,13 +286,11 @@ function CodeHeader({
 
         <div className="mr-auto flex shrink-0 items-center gap-2.5">
           {isAuthenticated ? (
-            <Link
-              href={buildPath('/account')}
-              className="hidden h-9 items-center gap-2 rounded-full border border-(--theme-border-strong) px-3 text-sm font-medium text-(--theme-foreground) md:inline-flex"
-            >
-              <CircleUser className="h-5 w-5 text-(--theme-primary)" />
-              {t('account.myCourses')}
-            </Link>
+            <AccountMenuDropdown
+              displayName={accountLabel}
+              avatarUrl={accountAvatar}
+              className="hidden md:block"
+            />
           ) : (
             <>
               <Link

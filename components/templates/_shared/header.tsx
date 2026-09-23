@@ -1,5 +1,7 @@
 import Link from '@/components/ui/link';
-import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { getAcademyBySlug, getCurrentAcademy } from '@/lib/api/server';
+import { getHeaderUser } from '@/app/actions/auth';
+import { getSession } from '@/lib/auth/session';
 import { getAcademyContext } from '@/lib/store-context';
 import { resolveAssetUrl } from '@/lib/utils';
 import { sizedImageUrl } from '@/lib/images/sized-image-url';
@@ -79,11 +81,9 @@ const NAV_LINK_CLASS = {
 /**
  * One header for all seven templates.
  *
- * It is a server component: the signed-in state comes from `getCurrentUser()`
- * rather than a client provider, and the mobile menu is a native `<details>`
- * disclosure. That keeps the whole bar at zero client JS while still showing the
- * right account link — the legacy `SiteHeaderClient` stays untouched for
- * academies on older styles.
+ * Signed-in state comes from the session JWT (same rule as the account layout).
+ * `/auth/me` alone is not enough — it can 403 while the student is still signed
+ * in (pending legal consent). Name/avatar come from getHeaderUser().
  */
 export async function TemplateTopBar({
   id,
@@ -92,9 +92,10 @@ export async function TemplateTopBar({
   spec,
   editMode = false,
 }: TemplateHeaderProps) {
-  const [currentAcademy, user, storeContext] = await Promise.all([
+  const [currentAcademy, session, headerUser, storeContext] = await Promise.all([
     getCurrentAcademy().catch(() => null),
-    getCurrentUser().catch(() => null),
+    getSession(),
+    getHeaderUser(),
     getAcademyContext(),
   ]);
   // Visitors are anonymous, so /academies/current is empty for them — fall back
@@ -112,9 +113,9 @@ export async function TemplateTopBar({
   const nav = configuredNav.some((item) => item.route === 'support')
     ? configuredNav
     : [...configuredNav, { label: 'تماس با ما', route: 'support' as const }];
-  const isAuthenticated = Boolean(user);
-  const accountLabel = user?.display_name?.trim() || defaults.accountText;
-  const accountAvatarUrl = resolveAssetUrl(user?.avatar?.url);
+  const isAuthenticated = Boolean(session?.userId);
+  const accountLabel = headerUser.displayName?.trim() || defaults.accountText;
+  const accountAvatarUrl = headerUser.avatarUrl;
   const loginText = text(config, 'loginText', defaults.loginText);
 
   const ctaSlot = (

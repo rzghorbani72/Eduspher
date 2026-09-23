@@ -45,18 +45,47 @@ export async function checkAuth(): Promise<{ isAuthenticated: boolean }> {
   }
 }
 
+/**
+ * Name + avatar for the site header. Session JWT is the auth truth — `/auth/me`
+ * can 403 (e.g. pending legal consent) while the student is still signed in.
+ * Fall back to `/profiles/:id` so the chip still shows their name.
+ */
 export async function getHeaderUser(): Promise<{
   displayName: string | null;
   avatarUrl: string | null;
 }> {
   try {
-    const { getCurrentUser } = await import('@/lib/api/server');
+    const { getSession } = await import('@/lib/auth/session');
+    const session = await getSession();
+    if (!session?.userId) {
+      return { displayName: null, avatarUrl: null };
+    }
+
     const { resolveAssetUrl } = await import('@/lib/utils');
-    const user = await getCurrentUser();
-    return {
-      displayName: user?.display_name || null,
-      avatarUrl: resolveAssetUrl(user?.avatar?.url),
-    };
+
+    try {
+      const { getCurrentUser } = await import('@/lib/api/server');
+      const user = await getCurrentUser();
+      if (user) {
+        return {
+          displayName: user.display_name || null,
+          avatarUrl: resolveAssetUrl(user.avatar?.url),
+        };
+      }
+    } catch {
+      // Session stays valid when /auth/me is blocked (legal consent, etc.).
+    }
+
+    if (session.profileId) {
+      const { getProfile } = await import('@/lib/api/account-server');
+      const profile = await getProfile(String(session.profileId));
+      return {
+        displayName: profile?.display_name || null,
+        avatarUrl: resolveAssetUrl(profile?.avatar?.url),
+      };
+    }
+
+    return { displayName: null, avatarUrl: null };
   } catch {
     return { displayName: null, avatarUrl: null };
   }

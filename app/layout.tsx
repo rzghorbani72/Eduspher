@@ -198,6 +198,8 @@ export default async function RootLayout({
         <QueryProvider>
           <AuthProvider
             initialAuthenticated={isAuthenticated}
+            initialDisplayName={headerUser.displayName}
+            initialAvatarUrl={headerUser.avatarUrl}
             logContext={{
               user_id: session?.userId,
               academy_id: session?.academyId,

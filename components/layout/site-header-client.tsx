@@ -31,7 +31,11 @@ export function SiteHeaderClient({
   isPanelRoot,
   requestHost,
 }: SiteHeaderClientProps) {
-  const { isAuthenticated } = useAuthContext();
+  const {
+    isAuthenticated,
+    displayName: contextDisplayName,
+    avatarUrl: contextAvatarUrl,
+  } = useAuthContext();
   const { name: storeName, slug: storeSlug } = useAcademyContext();
   const pathname = usePathname();
   const pathSlug = slugFromPathname(pathname);
@@ -64,8 +68,11 @@ export function SiteHeaderClient({
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
-  const authStatus = isAuthenticated ?? initialAuth;
-  const accountLabel = displayName || t('account.profile');
+  // Either layer can be ahead after login — never let a stale `false` hide a
+  // fresh shell `true` (boolean `??` never falls through to the prop).
+  const authStatus = isAuthenticated || initialAuth;
+  const accountLabel = contextDisplayName || displayName || t('account.profile');
+  const accountAvatar = contextAvatarUrl || avatarUrl;
 
   return (
     <header
@@ -117,7 +124,7 @@ export function SiteHeaderClient({
           ) : authStatus ? (
             <AccountMenuDropdown
               displayName={accountLabel}
-              avatarUrl={avatarUrl}
+              avatarUrl={accountAvatar}
               className="hidden sm:block"
             />
           ) : (
@@ -180,7 +187,7 @@ export function SiteHeaderClient({
                   {t('panel.managerLogin')}
                 </a>
               ) : authStatus ? (
-                <AccountMenuDropdown displayName={accountLabel} avatarUrl={avatarUrl} inline />
+                <AccountMenuDropdown displayName={accountLabel} avatarUrl={accountAvatar} inline />
               ) : (
                 <Link
                   href={buildPath('/auth/login')}
