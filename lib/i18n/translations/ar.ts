@@ -67,6 +67,7 @@ export const ar = {
     bundles: 'الباقات',
     roadmap: 'خارطة الطريق',
     aboutUs: 'من نحن',
+    contactUs: 'تواصل معنا',
   },
   courses: {
     groupClassesTitle: 'Group classes',

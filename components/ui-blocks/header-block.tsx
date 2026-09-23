@@ -95,6 +95,7 @@ function CreativeHeader({
     { href: '/courses', label: t('navigation.courses') },
     { href: '/about', label: t('navigation.aboutUs') },
     { href: '/pricing', label: t('footer.pricing') },
+    { href: '/account/support?new=1', label: t('navigation.contactUs') },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -226,6 +227,7 @@ function CodeHeader({
     { href: '/paths', label: t('navigation.roadmap') },
     { href: '/pricing', label: t('footer.pricing') },
     { href: '/about', label: t('navigation.aboutUs') },
+    { href: '/account/support?new=1', label: t('navigation.contactUs') },
   ];
 
   const handleSearch = (e: React.FormEvent) => {

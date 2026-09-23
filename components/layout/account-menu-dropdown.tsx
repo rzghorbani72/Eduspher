@@ -1,7 +1,7 @@
 'use client';
 
 import { useTransition, type MouseEvent } from 'react';
-import { CreditCard, GraduationCap, LogOut, UserRound } from 'lucide-react';
+import { CreditCard, GraduationCap, LifeBuoy, LogOut, UserRound } from 'lucide-react';
 
 import Link from '@/components/ui/link';
 import { AccountAvatar } from '@/components/layout/account-avatar';
@@ -56,6 +56,11 @@ export function AccountMenuDropdown({
       href: buildPath('/account/courses'),
       label: t('account.myCourses'),
       icon: GraduationCap,
+    },
+    {
+      href: buildPath('/account/support'),
+      label: t('support.title'),
+      icon: LifeBuoy,
     },
     {
       href: buildPath('/account/transactions'),

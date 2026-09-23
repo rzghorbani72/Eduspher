@@ -107,7 +107,11 @@ export async function TemplateTopBar({
   // one the template mark stays, so no header ever renders an empty slot.
   const logoUrl = resolveAssetUrl(academy?.logo?.publicUrl);
   const tagline = text(config, 'tagline', defaults.tagline);
-  const nav = list<HeaderNavItem>(config, 'nav', defaults.nav);
+  const configuredNav = list<HeaderNavItem>(config, 'nav', defaults.nav);
+  // Contact Us is platform-required: keep it even when a manager customized nav.
+  const nav = configuredNav.some((item) => item.route === 'support')
+    ? configuredNav
+    : [...configuredNav, { label: 'تماس با ما', route: 'support' as const }];
   const isAuthenticated = Boolean(user);
   const accountLabel = user?.display_name?.trim() || defaults.accountText;
   const accountAvatarUrl = resolveAssetUrl(user?.avatar?.url);
@@ -289,6 +293,7 @@ export const FULL_NAV: readonly HeaderNavItem[] = [
   { label: 'دوره‌ها', route: 'courses' },
   { label: 'بسته‌ها', route: 'bundles' },
   { label: 'وبلاگ', route: 'blog' },
+  { label: 'تماس با ما', route: 'support' },
 ];
 
 /** Kept as a separate export so templates can opt into a shorter bar. */
@@ -296,6 +301,7 @@ export const COMPACT_NAV: readonly HeaderNavItem[] = [
   { label: 'خانه', route: 'home' },
   { label: 'دوره‌ها', route: 'courses' },
   { label: 'بسته‌ها', route: 'bundles' },
+  { label: 'تماس با ما', route: 'support' },
 ];
 
 export function headerDefaults(overrides: Partial<HeaderDefaults> = {}): HeaderDefaults {

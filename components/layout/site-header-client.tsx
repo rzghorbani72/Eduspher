@@ -53,6 +53,7 @@ export function SiteHeaderClient({
             { href: '/bundles', label: t('navigation.bundles') },
             { href: '/roadmap', label: t('navigation.roadmap') },
             { href: '/about', label: t('navigation.aboutAcademy') },
+            { href: '/account/support?new=1', label: t('navigation.contactUs') },
           ],
     [showPanelNav, t],
   );

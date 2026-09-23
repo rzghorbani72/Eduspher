@@ -81,6 +81,7 @@ export const en = {
     roadmap: 'Roadmap',
     aboutUs: 'About Us',
     aboutAcademy: 'About academy',
+    contactUs: 'Contact Us',
   },
   courses: {
     groupClassesTitle: 'Group classes',
@@ -1558,6 +1559,14 @@ export const en = {
     responsible: 'Send to',
     selectResponsible: 'Choose a teacher or manager',
     selectCategory: 'Choose a category',
+    course: 'Related course',
+    selectCourse: 'Select a course',
+    courseOptional: 'No course (optional)',
+    noCourses: 'No courses available to select yet.',
+    roles: {
+      TEACHER: 'Teacher',
+      MANAGER: 'Manager',
+    },
     message: 'Message',
     messagePlaceholder: 'Describe your issue. Do not paste code or scripts.',
     attachments: 'Attachments',

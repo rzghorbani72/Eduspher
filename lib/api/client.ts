@@ -1497,10 +1497,44 @@ export interface CreateTicketPayload {
   responsible_id: string;
   body: string;
   image_ids?: string[];
+  context_type?: 'COURSE';
+  context_id?: string;
   request_call?: boolean;
   phone?: string;
   preferred_time?: string;
 }
+
+export type TicketCourseOption = {
+  id: string;
+  title: string;
+};
+
+/** Courses a student can attach to a support ticket (access + published catalog). */
+export const listTicketCourses = async (
+  options?: RequestOptions,
+): Promise<TicketCourseOption[]> => {
+  const [accessResult, catalogResult] = await Promise.all([
+    getJson<Envelope<Array<{ course_id: string; title: string }>>>(
+      `/enrollments/my-access`,
+      options,
+    ).catch(() => null),
+    getJson<Envelope<{ courses: Array<{ id: string; title: string }> }>>(
+      `/courses/public?limit=100&published=true`,
+      options,
+    ).catch(() => null),
+  ]);
+
+  const byId = new Map<string, string>();
+  for (const course of catalogResult?.data?.courses ?? []) {
+    byId.set(course.id, course.title);
+  }
+  for (const row of accessResult?.data ?? []) {
+    byId.set(row.course_id, row.title);
+  }
+  return Array.from(byId.entries())
+    .map(([id, title]) => ({ id, title }))
+    .sort((a, b) => a.title.localeCompare(b.title, 'fa'));
+};
 
 export const listSupportResponsibles = async (options?: RequestOptions) =>
   (await getJson<Envelope<TicketResponsible[]>>(`/support/responsibles`, options)).data;

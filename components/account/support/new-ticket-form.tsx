@@ -9,7 +9,9 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import {
   createSupportTicket,
   listSupportResponsibles,
+  listTicketCourses,
   type TicketCategory,
+  type TicketCourseOption,
   type TicketDetail,
   type TicketPriority,
   type TicketResponsible,
@@ -26,6 +28,7 @@ const CATEGORIES: TicketCategory[] = [
   'OTHER',
 ];
 const PRIORITIES: TicketPriority[] = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
+const COURSE_CATEGORIES = new Set<TicketCategory>(['COURSE_ACCESS', 'LIVE_CLASS', 'CONTENT']);
 
 interface Props {
   onCreated: (ticket: TicketDetail) => void;
@@ -38,10 +41,12 @@ const fieldClass =
 export function NewTicketForm({ onCreated, onCancel }: Props) {
   const { t } = useTranslation();
   const [responsibles, setResponsibles] = useState<TicketResponsible[]>([]);
+  const [courses, setCourses] = useState<TicketCourseOption[]>([]);
   const [subject, setSubject] = useState('');
   const [category, setCategory] = useState<TicketCategory>('OTHER');
   const [priority, setPriority] = useState<TicketPriority>('NORMAL');
   const [responsibleId, setResponsibleId] = useState('');
+  const [courseId, setCourseId] = useState('');
   const [body, setBody] = useState('');
   const [imageIds, setImageIds] = useState<string[]>([]);
   const [requestCall, setRequestCall] = useState(false);
@@ -50,15 +55,24 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const courseRequired = COURSE_CATEGORIES.has(category);
+
   useEffect(() => {
-    listSupportResponsibles()
-      .then(setResponsibles)
+    void Promise.all([listSupportResponsibles(), listTicketCourses()])
+      .then(([nextResponsibles, nextCourses]) => {
+        setResponsibles(nextResponsibles);
+        setCourses(nextCourses);
+      })
       .catch(() => setError(t('support.error')));
   }, [t]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!responsibleId || !subject.trim() || !body.trim()) return;
+    if (courseRequired && !courseId) {
+      setError(t('support.selectCourse'));
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -69,6 +83,7 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
         responsible_id: responsibleId,
         body,
         image_ids: imageIds.length ? imageIds : undefined,
+        ...(courseId ? { context_type: 'COURSE' as const, context_id: courseId } : {}),
         request_call: requestCall || undefined,
         phone: requestCall ? phone : undefined,
         preferred_time:
@@ -80,6 +95,12 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const roleLabel = (role: string) => {
+    if (role === 'TEACHER') return t('support.roles.TEACHER');
+    if (role === 'MANAGER') return t('support.roles.MANAGER');
+    return role;
   };
 
   return (
@@ -96,7 +117,7 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
           <option value="">{t('support.selectResponsible')}</option>
           {responsibles.map((r) => (
             <option key={r.id} value={r.id}>
-              {r.display_name}
+              {r.display_name} ({roleLabel(r.role)})
             </option>
           ))}
         </select>
@@ -143,6 +164,29 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>{t('support.course')}</Label>
+        <select
+          aria-label={t('support.course')}
+          className={fieldClass}
+          value={courseId}
+          onChange={(e) => setCourseId(e.target.value)}
+          required={courseRequired}
+        >
+          <option value="">
+            {courseRequired ? t('support.selectCourse') : t('support.courseOptional')}
+          </option>
+          {courses.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.title}
+            </option>
+          ))}
+        </select>
+        {courses.length === 0 ? (
+          <p className="text-muted text-xs">{t('support.noCourses')}</p>
+        ) : null}
       </div>
 
       <div className="space-y-1.5">

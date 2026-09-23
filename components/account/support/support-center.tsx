@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ChevronRight, LifeBuoy, MessageSquare, Plus } from 'lucide-react';
 
 import { AccountPageHeader } from '@/components/account/account-page-header';
@@ -20,7 +21,10 @@ type View = { mode: 'list' } | { mode: 'new' } | { mode: 'thread'; id: string };
 export function SupportCenter() {
   const { t } = useTranslation();
   const format = useLocaleFormat();
-  const [view, setView] = useState<View>({ mode: 'list' });
+  const searchParams = useSearchParams();
+  const [view, setView] = useState<View>(() =>
+    searchParams.get('new') === '1' ? { mode: 'new' } : { mode: 'list' },
+  );
   const [tickets, setTickets] = useState<TicketListItem[] | null>(null);
 
   const load = () =>

@@ -14,6 +14,7 @@ export const TEMPLATE_ROUTES = {
   courses: '/courses',
   bundles: '/bundles',
   blog: '/blog',
+  support: '/account/support?new=1',
   login: '/auth/login',
   register: '/auth/register',
   account: '/account',

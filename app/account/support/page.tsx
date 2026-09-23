@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from '@/components/ui/link';
 import { LifeBuoy } from 'lucide-react';
 
@@ -45,7 +46,9 @@ export default async function SupportPage() {
 
   return (
     <div className="space-y-6">
-      <SupportCenter />
+      <Suspense fallback={<p className="text-muted text-sm">{translate('support.loading')}</p>}>
+        <SupportCenter />
+      </Suspense>
     </div>
   );
 }

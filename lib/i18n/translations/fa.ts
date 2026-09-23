@@ -81,6 +81,7 @@ export const fa = {
     roadmap: 'نقشه راه',
     aboutUs: 'درباره ما',
     aboutAcademy: 'درباره آکادمی',
+    contactUs: 'تماس با ما',
   },
   courses: {
     groupClassesTitle: 'کلاس‌های گروهی',
@@ -1557,6 +1558,14 @@ export const fa = {
     responsible: 'ارسال به',
     selectResponsible: 'یک معلم یا مدیر را انتخاب کنید',
     selectCategory: 'یک دسته‌بندی را انتخاب کنید',
+    course: 'دوره مربوطه',
+    selectCourse: 'یک دوره را انتخاب کنید',
+    courseOptional: 'بدون دوره (اختیاری)',
+    noCourses: 'هنوز دوره‌ای برای انتخاب وجود ندارد.',
+    roles: {
+      TEACHER: 'معلم',
+      MANAGER: 'مدیر',
+    },
     message: 'پیام',
     messagePlaceholder: 'مشکل خود را توضیح دهید. کد یا اسکریپت وارد نکنید.',
     attachments: 'پیوست‌ها',

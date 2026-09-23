@@ -66,6 +66,7 @@ export const tr = {
     checkout: 'Ödeme',
     bundles: 'Paketler',
     roadmap: 'Yol Haritası',
+    contactUs: 'Bize Ulaşın',
   },
   courses: {
     groupClassesTitle: 'Group classes',
