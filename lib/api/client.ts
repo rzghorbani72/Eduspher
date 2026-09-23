@@ -1308,6 +1308,7 @@ export type DiscussionParent = {
   engagement_id?: string;
   tutoring_session_id?: string;
   tutoring_group_id?: string;
+  lesson_id?: string;
 };
 
 /**
@@ -1354,6 +1355,58 @@ export const uploadDiscussionAttachment = async (file: File, options?: RequestOp
     signal: options?.signal,
   });
   return (await handleResponse<Envelope<DiscussionAttachment>>(response, undefined, true)).data;
+};
+
+/**
+ * Live ClassChat: open an SSE stream (with auth headers). Falls back silently
+ * when the stream cannot start — DiscussionThread keeps polling.
+ */
+export const subscribeDiscussionEvents = (threadId: string, onEvent: () => void): (() => void) => {
+  const controller = new AbortController();
+  let closed = false;
+
+  const run = async () => {
+    try {
+      const headers = await buildHeaders({ Accept: 'text/event-stream' });
+      const response = await apiFetch(`/discussions/threads/${threadId}/events`, {
+        method: 'GET',
+        credentials: 'include',
+        headers,
+        signal: controller.signal,
+      });
+      if (!response.ok || !response.body) return;
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (!closed) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split('\n\n');
+        buffer = chunks.pop() ?? '';
+        for (const chunk of chunks) {
+          const line = chunk.split('\n').find((entry) => entry.startsWith('data:'));
+          if (!line) continue;
+          try {
+            const payload = JSON.parse(line.slice(5).trim()) as { type?: string };
+            if (payload.type === 'message') onEvent();
+          } catch {
+            /* ignore malformed frames */
+          }
+        }
+      }
+    } catch {
+      /* aborted or offline — poll covers it */
+    }
+  };
+
+  void run();
+  return () => {
+    closed = true;
+    controller.abort();
+  };
 };
 
 // ----- Support tickets -----

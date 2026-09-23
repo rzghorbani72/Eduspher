@@ -9,12 +9,14 @@ import { LessonBody } from '@/components/learning/lesson-body';
 import { LessonHeader } from '@/components/learning/lesson-header';
 import { LessonNavFooter } from '@/components/learning/lesson-nav-footer';
 import { MetaDot } from '@/components/learning/meta-dot';
+import { TheaterToggle } from '@/components/learning/theater-toggle';
 import Link from '@/components/ui/link';
 import { Unavailable } from '@/components/learning/unavailable';
 import type { LessonSummary, SeasonSummary } from '@/lib/api/types';
 import { getLearningLesson, getProgress } from '@/lib/api/learning';
 import { useLessonProgress } from '@/hooks/use-lesson-progress';
 import { useApiQuery } from '@/hooks/use-api-query';
+import { useTheaterMode } from '@/lib/hooks/use-theater-mode';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { flattenLessons, neighboursOf, watchPercent } from '@/lib/learning/lesson-list';
 import { buildAcademyPath, cn, formatPercent, resolveAssetUrl, toPersianDigits } from '@/lib/utils';
@@ -51,8 +53,21 @@ export function LearningShell({
   teacherName,
 }: LearningShellProps) {
   const { t, language } = useTranslation();
+  const { theater, setTheater } = useTheaterMode();
   const [curriculumOpen, setCurriculumOpen] = useState(false);
   const lessonId = String(selectedLesson.id);
+
+  const openCurriculum = () => {
+    setTheater(false);
+    setCurriculumOpen(true);
+  };
+  const toggleCurriculum = () => {
+    if (theater) {
+      openCurriculum();
+      return;
+    }
+    setCurriculumOpen((open) => !open);
+  };
   const {
     data: lesson,
     error,
@@ -119,7 +134,7 @@ export function LearningShell({
       position={current?.index ?? 0}
       total={flatLessons.length}
       curriculumOpen={curriculumOpen}
-      onToggleCurriculum={() => setCurriculumOpen((open) => !open)}
+      onToggleCurriculum={toggleCurriculum}
       downloadUrl={canDownload ? resolveAssetUrl(videoDownloadUrl) : null}
     />
   );
@@ -176,6 +191,8 @@ export function LearningShell({
 
         <span className="flex-1" />
 
+        <TheaterToggle compact className="hidden lg:inline-flex" />
+
         {isPreviewing ? null : (
           <div className="flex shrink-0 items-center gap-2.5">
             <span className="text-muted hidden text-xs sm:block">
@@ -210,7 +227,13 @@ export function LearningShell({
         ) : null}
       </div>
 
-      <div className="grid items-start lg:grid-cols-[minmax(0,1fr)_372px]">
+      <div
+        className={cn(
+          'grid items-start',
+          theater ? 'grid-cols-1' : 'lg:grid-cols-[minmax(0,1fr)_372px]',
+        )}
+        data-theater={theater ? 'on' : 'off'}
+      >
         <main className="min-w-0 px-4 pt-[26px] pb-10 sm:px-8">
           {isPreviewing ? (
             <div className="mb-5">
@@ -239,12 +262,15 @@ export function LearningShell({
         ) : null}
 
         <aside
+          data-testid="learning-curriculum-rail"
           className={cn(
             'border-theme bg-card',
             curriculumOpen
               ? 'fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-hidden rounded-t-2xl shadow-2xl'
               : 'hidden',
-            'lg:sticky lg:inset-x-auto lg:top-24 lg:bottom-auto lg:z-auto lg:block lg:max-h-none lg:rounded-none lg:border-s lg:shadow-none',
+            theater
+              ? 'lg:hidden'
+              : 'lg:sticky lg:inset-x-auto lg:top-24 lg:bottom-auto lg:z-auto lg:block lg:max-h-none lg:rounded-none lg:border-s lg:shadow-none',
           )}
         >
           <div className="grid place-items-center pt-2.5 lg:hidden">

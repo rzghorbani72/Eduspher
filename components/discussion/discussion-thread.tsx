@@ -8,6 +8,7 @@ import {
   findDiscussionThread,
   getDiscussionThread,
   postDiscussionMessage,
+  subscribeDiscussionEvents,
   uploadDiscussionAttachment,
   type DiscussionMessage,
   type DiscussionParent,
@@ -15,6 +16,7 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const POLL_MS = 8_000;
+const SSE_BACKUP_POLL_MS = 30_000;
 
 interface DiscussionThreadProps {
   attemptId?: string;
@@ -22,10 +24,14 @@ interface DiscussionThreadProps {
   groupId?: string;
   engagementId?: string;
   sessionId?: string;
+  lessonId?: string;
   threadId?: string;
   currentProfileId?: string;
   placeholder?: string;
   emptyDescription?: string;
+  /** Live ClassChat: SSE with poll fallback. Offline Q&A keeps poll only. */
+  realtime?: boolean;
+  composerHint?: string;
 }
 
 export function DiscussionThread({
@@ -34,10 +40,13 @@ export function DiscussionThread({
   groupId,
   engagementId,
   sessionId,
+  lessonId,
   threadId,
   currentProfileId,
   placeholder,
   emptyDescription,
+  realtime = false,
+  composerHint,
 }: DiscussionThreadProps) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
@@ -45,6 +54,7 @@ export function DiscussionThread({
   const [sending, setSending] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [liveThreadId, setLiveThreadId] = useState<string | undefined>(threadId);
   const activeThreadId = useRef<string | undefined>(threadId);
 
   const parent: DiscussionParent = attemptId
@@ -55,7 +65,9 @@ export function DiscussionThread({
         ? { tutoring_group_id: groupId }
         : sessionId
           ? { tutoring_session_id: sessionId }
-          : { engagement_id: engagementId };
+          : lessonId
+            ? { lesson_id: lessonId }
+            : { engagement_id: engagementId };
 
   const parentKey = JSON.stringify(parent);
   const parentRef = useRef(parent);
@@ -70,6 +82,7 @@ export function DiscussionThread({
       }
       const found = await findDiscussionThread(JSON.parse(parentKey) as DiscussionParent);
       activeThreadId.current = found.thread?.id;
+      if (found.thread?.id) setLiveThreadId(found.thread.id);
       setMessages(found.messages);
     } catch {
       /* empty chat is valid until the first post */
@@ -78,6 +91,7 @@ export function DiscussionThread({
 
   useEffect(() => {
     activeThreadId.current = threadId;
+    setLiveThreadId(threadId);
     void load();
   }, [load, threadId]);
 
@@ -86,13 +100,27 @@ export function DiscussionThread({
       if (document.visibilityState !== 'visible') return;
       void load();
     };
+
+    if (realtime && liveThreadId) {
+      const stop = subscribeDiscussionEvents(liveThreadId, () => {
+        void load();
+      });
+      const backup = window.setInterval(tick, SSE_BACKUP_POLL_MS);
+      document.addEventListener('visibilitychange', tick);
+      return () => {
+        stop();
+        window.clearInterval(backup);
+        document.removeEventListener('visibilitychange', tick);
+      };
+    }
+
     const id = window.setInterval(tick, POLL_MS);
     document.addEventListener('visibilitychange', tick);
     return () => {
       window.clearInterval(id);
       document.removeEventListener('visibilitychange', tick);
     };
-  }, [load]);
+  }, [load, realtime, liveThreadId]);
 
   const send = useCallback(async () => {
     const text = body.trim();
@@ -111,6 +139,7 @@ export function DiscussionThread({
       }
       const msg = await postDiscussionMessage(parentRef.current, text, documentId);
       activeThreadId.current = msg.thread_id;
+      setLiveThreadId(msg.thread_id);
       setBody('');
       setFile(null);
       await load();
@@ -123,7 +152,7 @@ export function DiscussionThread({
   }, [body, file, load, t]);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" data-testid={lessonId ? 'lesson-qa-thread' : 'discussion-thread'}>
       <DiscussionMessagePane
         messages={messages}
         currentProfileId={currentProfileId}
@@ -140,7 +169,7 @@ export function DiscussionThread({
         attachLabel={t('live.attachFile')}
         removeLabel={t('live.removeAttachment')}
         sendLabel={t('learning.sendMessage')}
-        hint={t('live.chatComposerHint')}
+        hint={composerHint ?? t('live.chatComposerHint')}
         onSend={() => void send()}
       />
       {error ? <p className="text-destructive text-sm">{error}</p> : null}

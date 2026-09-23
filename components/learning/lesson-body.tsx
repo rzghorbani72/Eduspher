@@ -10,6 +10,7 @@ import {
 import { LessonTabs, type LessonTab } from '@/components/learning/lesson-tabs';
 import { LiveLesson } from '@/components/learning/live-lesson';
 import { VideoLesson } from '@/components/learning/video-lesson';
+import { DiscussionThread } from '@/components/discussion/discussion-thread';
 import { LessonQuiz } from '@/components/quiz/lesson-quiz';
 import { SafeHtml } from '@/components/safe-html';
 import { Unavailable } from '@/components/learning/unavailable';
@@ -145,6 +146,21 @@ export function LessonBody({
             content: <LessonQuiz lessonId={lessonId} currentProfileId={currentProfileId} />,
           }
         : null,
+      {
+        id: 'qa',
+        label: t('learning.tabQa'),
+        content: enrollmentId ? (
+          <DiscussionThread
+            lessonId={lessonId}
+            currentProfileId={currentProfileId}
+            placeholder={t('learning.qaPlaceholder')}
+            emptyDescription={t('learning.qaEmpty')}
+            composerHint={t('learning.qaComposerHint')}
+          />
+        ) : (
+          <Unavailable message={t('learning.qaNeedsEnrollment')} />
+        ),
+      },
     ] as (LessonTab | null)[]
   ).filter((tab): tab is LessonTab => tab !== null);
 

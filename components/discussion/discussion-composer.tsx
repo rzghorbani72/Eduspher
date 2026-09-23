@@ -79,7 +79,7 @@ export function DiscussionComposer({
           ref={fileInput}
           type="file"
           hidden
-          accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip"
+          accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,.jpg,.jpeg,.png,.gif,.webp,.pdf"
           onChange={(event) => onPickFile(event.target.files?.[0] ?? null)}
         />
         <Button

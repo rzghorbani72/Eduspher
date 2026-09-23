@@ -14,6 +14,8 @@ interface ClassChatProps {
   groupThreadParent: string | null;
   privateThreadParent: string | null;
   currentProfileId: string;
+  /** Prefer SSE when Mentoma is the live chat hub. */
+  realtime?: boolean;
 }
 
 interface ScopeTab {
@@ -29,6 +31,7 @@ export function ClassChat({
   groupThreadParent,
   privateThreadParent,
   currentProfileId,
+  realtime = false,
 }: ClassChatProps) {
   const { t } = useTranslation();
   const tabs: ScopeTab[] = [
@@ -104,6 +107,9 @@ export function ClassChat({
         })}
       </div>
       <p className="text-muted px-1 text-xs leading-relaxed">{active.hint}</p>
+      {realtime ? (
+        <p className="text-muted px-1 text-[11px] leading-relaxed">{t('live.chatRealtimeHint')}</p>
+      ) : null}
       <div role="tabpanel" id={`chat-panel-${active.id}`} aria-labelledby={`chat-tab-${active.id}`}>
         {active.id === 'session' && sessionId ? (
           <DiscussionThread
@@ -112,6 +118,7 @@ export function ClassChat({
             currentProfileId={currentProfileId}
             placeholder={active.placeholder}
             emptyDescription={active.hint}
+            realtime={realtime}
           />
         ) : active.id === 'group' && groupThreadParent ? (
           <DiscussionThread
@@ -120,6 +127,7 @@ export function ClassChat({
             currentProfileId={currentProfileId}
             placeholder={active.placeholder}
             emptyDescription={active.hint}
+            realtime={realtime}
           />
         ) : (
           <DiscussionThread
@@ -128,6 +136,7 @@ export function ClassChat({
             currentProfileId={currentProfileId}
             placeholder={active.placeholder}
             emptyDescription={active.hint}
+            realtime={realtime}
           />
         )}
       </div>

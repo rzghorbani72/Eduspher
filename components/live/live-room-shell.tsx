@@ -7,14 +7,20 @@ import { ClassChat } from '@/components/live/class-chat';
 import { ClassSyllabus } from '@/components/live/class-syllabus';
 import { InviteFriendsCard } from '@/components/live/invite-friends-card';
 import { LiveRoomTabs, type LiveTabKey } from '@/components/live/live-room-tabs';
+import { MeetLinkBar } from '@/components/live/meet-link-bar';
 import { MeetingRoom } from '@/components/live/meeting-room';
 import { PrivateScheduleRequest } from '@/components/live/private-schedule-request';
 import { SessionAfterClass } from '@/components/live/session-after-class';
 import { SessionList } from '@/components/live/session-list';
+import { TheaterToggle } from '@/components/learning/theater-toggle';
+import { useAcademyContext } from '@/components/providers/store-provider';
 import type { TutoringGroupRoom } from '@/lib/api/account-types';
+import { useNow } from '@/lib/hooks/use-now';
+import { useTheaterMode } from '@/lib/hooks/use-theater-mode';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { pickPlaySession, sessionName } from '@/lib/live/session-state';
-import { formatNumber } from '@/lib/utils';
+import { withMeetAppName } from '@/lib/live/embeddable';
+import { pickPlaySession, sessionName, sessionState } from '@/lib/live/session-state';
+import { cn, formatNumber } from '@/lib/utils';
 
 interface LiveRoomShellProps {
   room: TutoringGroupRoom;
@@ -30,25 +36,27 @@ const resolveSessionId = (
   timetable: TutoringGroupRoom['sessions'],
   manualId: string | null,
 ): string | null => {
+  // Explicit rail pick always wins — student may be reviewing a held session.
+  if (manualId && timetable.some((session) => session.id === manualId)) {
+    return manualId;
+  }
   const liveId = timetable.find((session) => session.link_open)?.id ?? null;
-  const preferred =
-    manualId ??
+  return (
     pickPlaySession(timetable, Date.now())?.id ??
     room.next_session?.id ??
     timetable[0]?.id ??
-    null;
-  // Soft refresh can leave a stale pick; prefer the open class when the pick is not open.
-  if (liveId && !timetable.some((session) => session.id === preferred && session.link_open)) {
-    return liveId;
-  }
-  return preferred ?? liveId;
+    liveId ??
+    null
+  );
 };
+
+const defaultTabFor = (state: ReturnType<typeof sessionState> | null): LiveTabKey =>
+  state === 'held' ? 'afterClass' : 'chat';
 
 /**
  * The classroom. Deliberately shaped like the recorded course's learn page —
  * the meeting takes the player's place, the timetable takes the curriculum's.
- * Everything below the stage is about the meeting picked in the timetable:
- * its chat, its homework, what it left behind.
+ * Theater mode collapses the rail so the stage goes full width.
  */
 export function LiveRoomShell({
   room,
@@ -58,7 +66,10 @@ export function LiveRoomShell({
   displayName = null,
 }: LiveRoomShellProps) {
   const { t, language } = useTranslation();
-  const [tab, setTab] = useState<LiveTabKey>('chat');
+  const { name: academyName } = useAcademyContext();
+  const { theater } = useTheaterMode();
+  const now = useNow();
+  const [tabBySession, setTabBySession] = useState<Record<string, LiveTabKey>>({});
   const timetable = room.sessions.length ? room.sessions : room.planned_sessions;
   const [manualId, setManualId] = useState<string | null>(null);
   const selectedId = resolveSessionId(room, timetable, manualId);
@@ -67,10 +78,39 @@ export function LiveRoomShell({
   const realSelectedId = selected && !isPlanned ? selected.id : null;
   const heading = selected ? sessionName(selected, room.title) : room.title;
   const awaitingSchedule = room.capacity === 1 && timetable.length === 0;
+  const selectedState = selected ? sessionState(selected, now) : null;
+  const tabKey = selectedId ?? '__none';
+  const tab = tabBySession[tabKey] ?? defaultTabFor(selectedState);
+  const setTab = (next: LiveTabKey) => {
+    setTabBySession((prev) => ({ ...prev, [tabKey]: next }));
+  };
+  const brandedMeetUrl = selected?.meeting_url
+    ? withMeetAppName(selected.meeting_url, academyName, language)
+    : null;
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div
+      className={cn(
+        'grid items-start gap-6',
+        theater ? 'grid-cols-1' : 'lg:grid-cols-[minmax(0,1fr)_320px]',
+      )}
+      data-theater={theater ? 'on' : 'off'}
+    >
       <main className="min-w-0 space-y-6">
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {room.is_tutor && selectedState === 'upcoming' ? (
+            <span className="rounded-full bg-(--theme-primary)/10 px-2.5 py-1 text-[11px] font-bold text-(--theme-primary)">
+              {t('live.earlyJoinStaff')}
+            </span>
+          ) : null}
+          {selectedState === 'live' ? (
+            <span className="rounded-full bg-(--theme-primary) px-2.5 py-1 text-[11px] font-bold text-(--theme-on-primary)">
+              {t('live.liveNow')}
+            </span>
+          ) : null}
+          <TheaterToggle compact />
+        </div>
+
         {awaitingSchedule ? (
           <PrivateScheduleRequest
             room={room}
@@ -78,13 +118,18 @@ export function LiveRoomShell({
             onOpenChat={() => setTab('chat')}
           />
         ) : (
-          <MeetingRoom
-            session={selected}
-            title={heading}
-            staffJoin={room.is_tutor}
-            displayName={displayName}
-            onGoAfterClass={() => setTab('afterClass')}
-          />
+          <div className="space-y-3">
+            <MeetingRoom
+              session={selected}
+              title={heading}
+              staffJoin={room.is_tutor}
+              displayName={displayName}
+              onGoAfterClass={() => setTab('afterClass')}
+            />
+            {brandedMeetUrl && (selectedState === 'live' || room.is_tutor) ? (
+              <MeetLinkBar meetingUrl={brandedMeetUrl} />
+            ) : null}
+          </div>
         )}
 
         <div className="border-theme bg-card rounded-2xl border">
@@ -96,6 +141,7 @@ export function LiveRoomShell({
                 groupThreadParent={room.group_thread_parent}
                 privateThreadParent={room.private_thread_parent}
                 currentProfileId={currentProfileId}
+                realtime
               />
             ) : null}
             {tab === 'homework' ? (
@@ -129,7 +175,13 @@ export function LiveRoomShell({
         </div>
       </main>
 
-      <aside className="border-theme bg-card rounded-2xl border p-3 lg:sticky lg:top-24">
+      <aside
+        className={cn(
+          'border-theme bg-card rounded-2xl border p-3 lg:sticky lg:top-24',
+          theater && 'hidden',
+        )}
+        data-testid="live-session-rail"
+      >
         <div className="flex items-center justify-between px-3 py-2">
           <h2 className="font-semibold">{t('live.timetable')}</h2>
           <span className="text-muted text-xs">
