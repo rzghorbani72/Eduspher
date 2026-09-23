@@ -9,6 +9,7 @@ Browser tests for the student storefront.
   - `security-headers.spec.ts` — CSP / `X-Frame-Options: DENY` / nosniff / referrer (OWASP A05).
   - `public-pages.spec.ts` — auth pages render, 404 page, Persian RTL `<html dir/lang>`.
   - `auth-guard.spec.ts` — **hacker**: `/account`, `/account/orders`, `/checkout` bounce to `/auth/login` when unauthenticated.
+- `e2e/features/live-reliability.spec.ts` — Mentoma Meet join after reload (fixture at `/e2e-fixtures/live-room` + fake Jitsi; `e2e-fixtures` is a reserved path segment).
 - `e2e/roles/` — `@backend` student persona journey (login → catalog → account/orders).
 
 ## Running

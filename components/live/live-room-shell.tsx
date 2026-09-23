@@ -13,7 +13,7 @@ import { SessionAfterClass } from '@/components/live/session-after-class';
 import { SessionList } from '@/components/live/session-list';
 import type { TutoringGroupRoom } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { sessionName } from '@/lib/live/session-state';
+import { pickPlaySession, sessionName } from '@/lib/live/session-state';
 import { formatNumber } from '@/lib/utils';
 
 interface LiveRoomShellProps {
@@ -21,7 +21,28 @@ interface LiveRoomShellProps {
   currentProfileId: string;
   invitePath: string | null;
   courseHref: string;
+  /** Optional display name for Mentoma Meet (JWT still carries the stable id). */
+  displayName?: string | null;
 }
+
+const resolveSessionId = (
+  room: TutoringGroupRoom,
+  timetable: TutoringGroupRoom['sessions'],
+  manualId: string | null,
+): string | null => {
+  const liveId = timetable.find((session) => session.link_open)?.id ?? null;
+  const preferred =
+    manualId ??
+    pickPlaySession(timetable, Date.now())?.id ??
+    room.next_session?.id ??
+    timetable[0]?.id ??
+    null;
+  // Soft refresh can leave a stale pick; prefer the open class when the pick is not open.
+  if (liveId && !timetable.some((session) => session.id === preferred && session.link_open)) {
+    return liveId;
+  }
+  return preferred ?? liveId;
+};
 
 /**
  * The classroom. Deliberately shaped like the recorded course's learn page —
@@ -34,22 +55,17 @@ export function LiveRoomShell({
   currentProfileId,
   invitePath,
   courseHref,
+  displayName = null,
 }: LiveRoomShellProps) {
   const { t, language } = useTranslation();
   const [tab, setTab] = useState<LiveTabKey>('chat');
-  // Before the class starts, the timetable shows the planned dates instead.
   const timetable = room.sessions.length ? room.sessions : room.planned_sessions;
-  const [selectedId, setSelectedId] = useState<string | null>(
-    timetable.find((session) => session.link_open)?.id ??
-      room.next_session?.id ??
-      timetable[0]?.id ??
-      null,
-  );
+  const [manualId, setManualId] = useState<string | null>(null);
+  const selectedId = resolveSessionId(room, timetable, manualId);
   const selected = timetable.find((session) => session.id === selectedId) ?? null;
   const isPlanned = selected ? selected.id.startsWith('planned-') : false;
   const realSelectedId = selected && !isPlanned ? selected.id : null;
   const heading = selected ? sessionName(selected, room.title) : room.title;
-  // A 1:1 class with nothing on the calendar yet: ask for times, not a player.
   const awaitingSchedule = room.capacity === 1 && timetable.length === 0;
 
   return (
@@ -66,6 +82,7 @@ export function LiveRoomShell({
             session={selected}
             title={heading}
             staffJoin={room.is_tutor}
+            displayName={displayName}
             onGoAfterClass={() => setTab('afterClass')}
           />
         )}
@@ -94,7 +111,7 @@ export function LiveRoomShell({
                 session={isPlanned ? null : selected}
                 sessions={room.sessions}
                 fallbackTitle={room.title}
-                onSelect={setSelectedId}
+                onSelect={setManualId}
               />
             ) : null}
             {tab === 'syllabus' ? (
@@ -104,7 +121,7 @@ export function LiveRoomShell({
               <SessionList
                 sessions={timetable}
                 selectedId={selectedId}
-                onSelect={setSelectedId}
+                onSelect={setManualId}
                 detailed
               />
             ) : null}
@@ -124,7 +141,7 @@ export function LiveRoomShell({
                 )}
           </span>
         </div>
-        <SessionList sessions={timetable} selectedId={selectedId} onSelect={setSelectedId} />
+        <SessionList sessions={timetable} selectedId={selectedId} onSelect={setManualId} />
         {invitePath && !room.is_tutor ? (
           <div className="mt-3">
             <InviteFriendsCard invitePath={invitePath} seatsLeft={room.seats_left} />

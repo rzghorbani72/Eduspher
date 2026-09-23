@@ -239,6 +239,7 @@ const RESERVED_PATH_SEGMENTS = new Set([
   'payment',
   'preview',
   'roadmap',
+  'e2e-fixtures',
   // Platform-only routes — must not be shadowed by an academy slug
   'about',
   'academies',

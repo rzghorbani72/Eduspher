@@ -7,6 +7,8 @@ import { defineConfig, devices } from '@playwright/test';
  * pages may call the API during SSR. Run the backend on :3000 for reliable runs.
  * `@backend`-tagged specs (happy-path) additionally need a seeded student and
  * opt in with `E2E_BACKEND=1`. See e2e/README.md.
+ *
+ * Live reliability fixtures need NEXT_PUBLIC_E2E_FIXTURES=1 (set on webServer).
  */
 const PORT = 5000;
 const BASE_URL = process.env.E2E_BASE_URL || `http://localhost:${PORT}`;
@@ -39,5 +41,10 @@ export default defineConfig({
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    env: {
+      ...process.env,
+      NEXT_PUBLIC_E2E_FIXTURES: '1',
+      NEXT_PUBLIC_JITSI_HOST: process.env.NEXT_PUBLIC_JITSI_HOST ?? 'meet.mentoma.ir',
+    },
   },
 });

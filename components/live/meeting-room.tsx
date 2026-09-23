@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useTransition } from 'react';
 
 import { MentomaMeetEmbed } from '@/components/live/mentoma-meet-embed';
+import { useAcademyContext } from '@/components/providers/store-provider';
 import { Button } from '@/components/ui/button';
 import type { MyTutoringGroupSession } from '@/lib/api/account-types';
-import { useTranslation } from '@/lib/i18n/hooks';
 import { useNow } from '@/lib/hooks/use-now';
+import { useTranslation } from '@/lib/i18n/hooks';
 import { isEmbeddable, withMeetAppName } from '@/lib/live/embeddable';
 import { formatSessionWhen, sessionState } from '@/lib/live/session-state';
-import { useAcademyContext } from '@/components/providers/store-provider';
 
 /** The link is time-gated on the server, so re-poll to catch it opening. */
 const REFRESH_MS = 60_000;
@@ -22,6 +22,7 @@ interface MeetingRoomProps {
   onGoAfterClass: () => void;
   /** Teacher/observer: the server already handed them the URL outside the student window. */
   staffJoin?: boolean;
+  displayName?: string | null;
 }
 
 /**
@@ -34,6 +35,7 @@ export function MeetingRoom({
   title,
   onGoAfterClass,
   staffJoin = false,
+  displayName = null,
 }: MeetingRoomProps) {
   const { t, language } = useTranslation();
   const { name: academyName } = useAcademyContext();
@@ -61,18 +63,16 @@ export function MeetingRoom({
   if (canJoinVideo && meetingUrl && isEmbeddable(meetingUrl)) {
     return (
       <MentomaMeetEmbed
-        key={session?.id ?? meetingUrl}
+        key={session?.id ?? 'meet'}
         meetingUrl={meetingUrl}
         sessionKey={session?.id ?? meetingUrl}
         title={title}
         subject={subject}
+        displayName={displayName}
         onBeforeRejoin={async () => {
-          await new Promise<void>((resolve) => {
-            startRefresh(() => {
-              router.refresh();
-              resolve();
-            });
-          });
+          // JWT TTL covers the class window; avoid router.refresh remount races.
+          // Soft-refresh only updates props for the next intentional boot.
+          startRefresh(() => router.refresh());
         }}
       />
     );
@@ -81,7 +81,11 @@ export function MeetingRoom({
   const Icon = state === 'live' ? Radio : state === 'cancelled' ? XCircle : Video;
 
   return (
-    <div className="border-theme bg-card rounded-2xl border p-6 text-center sm:p-10">
+    <div
+      className="border-theme bg-card rounded-2xl border p-6 text-center sm:p-10"
+      data-live-state={state}
+      data-can-join={canJoinVideo ? 'true' : 'false'}
+    >
       <span className="mx-auto grid size-12 place-items-center rounded-xl bg-(--theme-primary)/10 text-(--theme-primary)">
         <Icon className={state === 'live' ? 'size-6 animate-pulse' : 'size-6'} aria-hidden="true" />
       </span>
@@ -92,7 +96,12 @@ export function MeetingRoom({
 
       {canJoinVideo && meetingUrl ? (
         <Button asChild className="mt-5">
-          <a href={meetingUrl} target="_blank" rel="noopener noreferrer">
+          <a
+            href={meetingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="live-join-external"
+          >
             {t('live.joinClass')}
             <ExternalLink className="size-4" aria-hidden="true" />
           </a>
@@ -105,6 +114,7 @@ export function MeetingRoom({
             size="sm"
             onClick={refresh}
             disabled={isRefreshing}
+            data-testid="live-check-link"
           >
             <RefreshCw
               className={isRefreshing ? 'size-4 animate-spin' : 'size-4'}
