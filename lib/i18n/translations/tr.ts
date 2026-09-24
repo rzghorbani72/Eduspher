@@ -1,7 +1,7 @@
 /**
  * Turkish translations - LTR
  */
-export const tr = {
+const tr = {
   common: {
     loading: 'Yükleniyor...',
     error: 'Bir hata oluştu',
@@ -1045,3 +1045,5 @@ export const tr = {
     error: 'Bildirim gönderilemedi. Lütfen info@mentoma.ir adresine e-posta gönderin.',
   },
 };
+
+export { tr };

@@ -6,8 +6,7 @@ import { cn } from '@/lib/utils';
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 const textareaBaseStyle: CSSProperties = {
-  backgroundColor: 'var(--theme-surface)',
-  borderColor: 'var(--theme-border-color)',
+  backgroundColor: 'var(--theme-background)',
   color: 'var(--theme-foreground)',
   caretColor: 'var(--theme-foreground)',
 };
@@ -18,7 +17,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <textarea
         ref={ref}
         className={cn(
-          'border-theme bg-surface placeholder:text-muted flex w-full rounded-lg border px-4 text-sm text-(--theme-foreground) placeholder:opacity-70 focus-visible:border-(--theme-primary) focus-visible:ring-2 focus-visible:ring-(--theme-primary)/20 focus-visible:outline-none',
+          'placeholder:text-muted flex min-h-28 w-full rounded-xl border border-(--theme-foreground)/10',
+          'bg-(--theme-background)/70 px-3.5 py-3 text-sm text-(--theme-foreground)',
+          'transition-colors placeholder:opacity-70',
+          'focus-visible:border-(--theme-primary) focus-visible:ring-2',
+          'focus-visible:ring-(--theme-primary)/15 focus-visible:outline-none',
           className,
         )}
         style={{ ...textareaBaseStyle, ...style }}

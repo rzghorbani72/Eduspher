@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
+  closeSupportTicket,
   getSupportTicket,
   rateSupportTicket,
   replySupportTicket,
@@ -33,14 +34,24 @@ export function TicketThread({ ticketId, onBack }: Props) {
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    let cancelled = false;
+    void getSupportTicket(ticketId)
+      .then((next) => {
+        if (!cancelled) setTicket(next);
+      })
+      .catch(() => {
+        if (!cancelled) setError(t('support.error'));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ticketId, t]);
+
   const load = () =>
     getSupportTicket(ticketId)
       .then(setTicket)
       .catch(() => setError(t('support.error')));
-  useEffect(() => {
-    void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ticketId]);
 
   const sendReply = async () => {
     if (!body.trim()) return;
@@ -53,6 +64,20 @@ export function TicketThread({ ticketId, onBack }: Props) {
       });
       setBody('');
       setImageIds([]);
+      await load();
+    } catch {
+      setError(t('support.error'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const closeTicket = async () => {
+    if (!window.confirm(t('support.closeTicketConfirm'))) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await closeSupportTicket(ticketId);
       await load();
     } catch {
       setError(t('support.error'));
@@ -87,6 +112,7 @@ export function TicketThread({ ticketId, onBack }: Props) {
 
   const canRate =
     ticket.capabilities.isAuthor && (ticket.status === 'RESOLVED' || ticket.status === 'CLOSED');
+  const canClose = ticket.capabilities.isAuthor && ticket.status !== 'CLOSED';
 
   return (
     <div className="space-y-6">
@@ -113,6 +139,18 @@ export function TicketThread({ ticketId, onBack }: Props) {
               tone={ticketStatusTone(ticket.status)}
             />
             <StatusPill label={t(`support.categories.${ticket.category}`)} tone="neutral" />
+            {canClose ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={closeTicket}
+                loading={busy}
+                disabled={busy}
+              >
+                {t('support.closeTicket')}
+              </Button>
+            ) : null}
           </div>
         }
       >

@@ -18,7 +18,7 @@ import { ticketStatusTone } from './support-format';
 
 type View = { mode: 'list' } | { mode: 'new' } | { mode: 'thread'; id: string };
 
-export function SupportCenter() {
+export function SupportCenter({ phoneNumber }: { phoneNumber: string | null }) {
   const { t } = useTranslation();
   const format = useLocaleFormat();
   const searchParams = useSearchParams();
@@ -27,13 +27,19 @@ export function SupportCenter() {
   );
   const [tickets, setTickets] = useState<TicketListItem[] | null>(null);
 
-  const load = () =>
-    listMySupportTickets()
-      .then((r) => setTickets(r.items))
-      .catch(() => setTickets([]));
-
   useEffect(() => {
-    if (view.mode === 'list') void load();
+    if (view.mode !== 'list') return;
+    let cancelled = false;
+    void listMySupportTickets()
+      .then((r) => {
+        if (!cancelled) setTickets(r.items);
+      })
+      .catch(() => {
+        if (!cancelled) setTickets([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [view.mode]);
 
   if (view.mode === 'new') {
@@ -56,6 +62,7 @@ export function SupportCenter() {
         />
         <AccountSection>
           <NewTicketForm
+            phoneNumber={phoneNumber}
             onCreated={(ticket) => setView({ mode: 'thread', id: ticket.id })}
             onCancel={() => setView({ mode: 'list' })}
           />

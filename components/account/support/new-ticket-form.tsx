@@ -1,10 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Check } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { TimePicker } from '@/components/ui/time-picker';
 import { useTranslation } from '@/lib/i18n/hooks';
 import {
   createSupportTicket,
@@ -16,6 +21,7 @@ import {
   type TicketPriority,
   type TicketResponsible,
 } from '@/lib/api/client';
+import { cn } from '@/lib/utils';
 import { AttachmentInput } from './attachment-input';
 
 const CATEGORIES: TicketCategory[] = [
@@ -33,12 +39,27 @@ const COURSE_CATEGORIES = new Set<TicketCategory>(['COURSE_ACCESS', 'LIVE_CLASS'
 interface Props {
   onCreated: (ticket: TicketDetail) => void;
   onCancel: () => void;
+  /** Logged-in user's phone — sent with call requests, never shown as an input. */
+  phoneNumber: string | null;
 }
 
-const fieldClass =
-  'h-11 w-full rounded-full border border-theme bg-surface px-4 text-sm text-foreground focus:border-primary focus:outline-none';
+function combineDateAndTime(dateYmd: string, timeHm: string): string | undefined {
+  if (!dateYmd || !timeHm) return undefined;
+  const [y, m, d] = dateYmd.split('-').map(Number);
+  const [hh, mm] = timeHm.split(':').map(Number);
+  if (![y, m, d, hh, mm].every((n) => Number.isFinite(n))) return undefined;
+  const local = new Date(y, m - 1, d, hh, mm, 0, 0);
+  if (Number.isNaN(local.getTime())) return undefined;
+  return local.toISOString();
+}
 
-export function NewTicketForm({ onCreated, onCancel }: Props) {
+function timeToMinutes(timeHm: string): number | null {
+  const [hh, mm] = timeHm.split(':').map(Number);
+  if (![hh, mm].every((n) => Number.isFinite(n))) return null;
+  return hh * 60 + mm;
+}
+
+export function NewTicketForm({ onCreated, onCancel, phoneNumber }: Props) {
   const { t } = useTranslation();
   const [responsibles, setResponsibles] = useState<TicketResponsible[]>([]);
   const [courses, setCourses] = useState<TicketCourseOption[]>([]);
@@ -50,21 +71,34 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
   const [body, setBody] = useState('');
   const [imageIds, setImageIds] = useState<string[]>([]);
   const [requestCall, setRequestCall] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [preferredTime, setPreferredTime] = useState('');
+  const [callDate, setCallDate] = useState('');
+  const [startTime, setStartTime] = useState('10:00');
+  const [endTime, setEndTime] = useState('12:00');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const courseRequired = COURSE_CATEGORIES.has(category);
+  const today = useMemo(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  }, []);
 
   useEffect(() => {
+    let cancelled = false;
     void Promise.all([listSupportResponsibles(), listTicketCourses()])
       .then(([nextResponsibles, nextCourses]) => {
+        if (cancelled) return;
         setResponsibles(nextResponsibles);
         setCourses(nextCourses);
       })
-      .catch(() => setError(t('support.error')));
-  }, [t]);
+      .catch(() => {
+        if (!cancelled) setError(t('support.error'));
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only fetch
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,21 +107,47 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
       setError(t('support.selectCourse'));
       return;
     }
+
+    if (requestCall) {
+      if (!phoneNumber) {
+        setError(t('support.phoneMissing'));
+        return;
+      }
+      if (!callDate) {
+        setError(t('support.selectCallDate'));
+        return;
+      }
+      const startMins = timeToMinutes(startTime);
+      const endMins = timeToMinutes(endTime);
+      if (startMins == null || endMins == null || endMins <= startMins) {
+        setError(t('support.invalidCallWindow'));
+        return;
+      }
+    }
+
     setSubmitting(true);
     setError(null);
     try {
+      const preferredTime = requestCall ? combineDateAndTime(callDate, startTime) : undefined;
+      const windowNote =
+        requestCall && callDate
+          ? `\n\n${t('support.callWindowNote')
+              .replace('{date}', callDate)
+              .replace('{start}', startTime)
+              .replace('{end}', endTime)}`
+          : '';
+
       const ticket = await createSupportTicket({
         subject,
         category,
         priority,
         responsible_id: responsibleId,
-        body,
+        body: `${body.trim()}${windowNote}`,
         image_ids: imageIds.length ? imageIds : undefined,
         ...(courseId ? { context_type: 'COURSE' as const, context_id: courseId } : {}),
         request_call: requestCall || undefined,
-        phone: requestCall ? phone : undefined,
-        preferred_time:
-          requestCall && preferredTime ? new Date(preferredTime).toISOString() : undefined,
+        phone: requestCall && phoneNumber ? phoneNumber : undefined,
+        preferred_time: preferredTime,
       });
       onCreated(ticket);
     } catch {
@@ -104,12 +164,10 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
   };
 
   return (
-    <form onSubmit={submit} className="mx-auto max-w-2xl space-y-5">
-      <div className="space-y-1.5">
-        <Label>{t('support.responsible')}</Label>
-        <select
+    <form onSubmit={submit} className="w-full max-w-[575px] space-y-5">
+      <Field label={t('support.responsible')}>
+        <Select
           aria-label={t('support.responsible')}
-          className={fieldClass}
           value={responsibleId}
           onChange={(e) => setResponsibleId(e.target.value)}
           required
@@ -120,25 +178,22 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
               {r.display_name} ({roleLabel(r.role)})
             </option>
           ))}
-        </select>
-      </div>
+        </Select>
+      </Field>
 
-      <div className="space-y-1.5">
-        <Label>{t('support.subject')}</Label>
+      <Field label={t('support.subject')}>
         <Input
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           maxLength={255}
           required
         />
-      </div>
+      </Field>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label>{t('support.category')}</Label>
-          <select
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label={t('support.category')}>
+          <Select
             aria-label={t('support.category')}
-            className={fieldClass}
             value={category}
             onChange={(e) => setCategory(e.target.value as TicketCategory)}
           >
@@ -147,13 +202,11 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
                 {t(`support.categories.${c}`)}
               </option>
             ))}
-          </select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t('support.priority')}</Label>
-          <select
+          </Select>
+        </Field>
+        <Field label={t('support.priority')}>
+          <Select
             aria-label={t('support.priority')}
-            className={fieldClass}
             value={priority}
             onChange={(e) => setPriority(e.target.value as TicketPriority)}
           >
@@ -162,15 +215,16 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
                 {t(`support.priorities.${p}`)}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </Field>
       </div>
 
-      <div className="space-y-1.5">
-        <Label>{t('support.course')}</Label>
-        <select
+      <Field
+        label={t('support.course')}
+        hint={courses.length === 0 ? t('support.noCourses') : undefined}
+      >
+        <Select
           aria-label={t('support.course')}
-          className={fieldClass}
           value={courseId}
           onChange={(e) => setCourseId(e.target.value)}
           required={courseRequired}
@@ -183,14 +237,10 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
               {c.title}
             </option>
           ))}
-        </select>
-        {courses.length === 0 ? (
-          <p className="text-muted text-xs">{t('support.noCourses')}</p>
-        ) : null}
-      </div>
+        </Select>
+      </Field>
 
-      <div className="space-y-1.5">
-        <Label>{t('support.message')}</Label>
+      <Field label={t('support.message')}>
         <Textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
@@ -199,43 +249,65 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
           placeholder={t('support.messagePlaceholder')}
           required
         />
-      </div>
+      </Field>
 
       <AttachmentInput imageIds={imageIds} onChange={setImageIds} />
 
-      <label className="bg-surface flex items-center gap-2 rounded-xl px-3.5 py-3 text-sm text-(--theme-foreground)">
+      <label className="flex cursor-pointer items-center gap-3 rounded-xl bg-(--theme-primary)/5 px-3.5 py-3 text-sm text-(--theme-foreground)">
+        <span
+          className={cn(
+            'flex size-5 shrink-0 items-center justify-center rounded-md border transition-colors',
+            requestCall
+              ? 'border-(--theme-primary) bg-(--theme-primary) text-(--theme-on-primary)'
+              : 'border-(--theme-foreground)/15 bg-(--theme-background)/80',
+          )}
+          aria-hidden="true"
+        >
+          {requestCall ? <Check className="size-3.5" strokeWidth={2.5} /> : null}
+        </span>
         <input
           type="checkbox"
           checked={requestCall}
           onChange={(e) => setRequestCall(e.target.checked)}
-          className="border-theme size-4 rounded"
+          className="sr-only"
         />
-        {t('support.requestCall')}
+        <span>{t('support.requestCall')}</span>
       </label>
+
       {requestCall ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label>{t('support.phone')}</Label>
-            <Input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required={requestCall}
+        <div className="w-full min-w-0 space-y-4 rounded-xl bg-(--theme-background)/50 p-4">
+          <Field label={t('support.preferredDate')}>
+            <DatePicker
+              value={callDate}
+              onChange={setCallDate}
+              minDate={today}
+              aria-label={t('support.preferredDate')}
+              placeholder={t('support.pickDate')}
             />
+          </Field>
+          <div className="grid w-full min-w-0 gap-4 sm:grid-cols-2">
+            <Field label={t('support.startTime')}>
+              <TimePicker
+                value={startTime}
+                onChange={setStartTime}
+                aria-label={t('support.startTime')}
+              />
+            </Field>
+            <Field label={t('support.endTime')}>
+              <TimePicker value={endTime} onChange={setEndTime} aria-label={t('support.endTime')} />
+            </Field>
           </div>
-          <div className="space-y-1.5">
-            <Label>{t('support.preferredTime')}</Label>
-            <Input
-              type="datetime-local"
-              value={preferredTime}
-              onChange={(e) => setPreferredTime(e.target.value)}
-            />
-          </div>
+          {!phoneNumber ? (
+            <p className="text-sm text-amber-700 dark:text-amber-300">
+              {t('support.phoneMissing')}
+            </p>
+          ) : null}
         </div>
       ) : null}
 
       {error ? <p className="text-sm text-red-500">{error}</p> : null}
 
-      <div className="flex flex-wrap gap-3 pt-1">
+      <div className="flex flex-wrap gap-2 pt-1">
         <Button type="submit" loading={submitting} disabled={submitting}>
           {submitting ? t('support.sending') : t('support.submit')}
         </Button>
@@ -244,5 +316,15 @@ export function NewTicketForm({ onCreated, onCancel }: Props) {
         </Button>
       </div>
     </form>
+  );
+}
+
+function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
+  return (
+    <div className="min-w-0 space-y-1.5">
+      <Label className="text-muted text-xs font-medium tracking-wide">{label}</Label>
+      {children}
+      {hint ? <p className="text-muted text-xs leading-relaxed">{hint}</p> : null}
+    </div>
   );
 }

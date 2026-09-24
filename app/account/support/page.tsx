@@ -6,7 +6,7 @@ import { SupportCenter } from '@/components/account/support/support-center';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getSession } from '@/lib/auth/session';
 import { getAcademyContext } from '@/lib/store-context';
-import { getCurrentAcademy, getAcademyBySlug } from '@/lib/api/server';
+import { getCurrentAcademy, getAcademyBySlug, getCurrentUser } from '@/lib/api/server';
 import { buildAcademyPath } from '@/lib/utils';
 import { getAcademyLanguage } from '@/lib/i18n/server';
 import { t } from '@/lib/i18n/server-translations';
@@ -44,10 +44,12 @@ export default async function SupportPage() {
     );
   }
 
+  const user = await getCurrentUser().catch(() => null);
+
   return (
     <div className="space-y-6">
       <Suspense fallback={<p className="text-muted text-sm">{translate('support.loading')}</p>}>
-        <SupportCenter />
+        <SupportCenter phoneNumber={user?.phone_number ?? null} />
       </Suspense>
     </div>
   );

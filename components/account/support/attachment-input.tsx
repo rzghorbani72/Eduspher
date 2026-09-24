@@ -57,30 +57,30 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
         {previews.map((p) => (
           <div
             key={p.id}
-            className="border-theme relative h-16 w-16 overflow-hidden rounded-lg border"
+            className="relative size-16 overflow-hidden rounded-xl bg-(--theme-primary)/5"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.url} alt="" className="h-full w-full object-cover" />
+            <img src={p.url} alt="" className="size-full object-cover" />
             <button
               type="button"
               aria-label={t('support.cancel')}
               onClick={() => remove(p.id)}
-              className="absolute top-0 right-0 rounded-bl bg-black/60 p-0.5 text-white"
+              className="absolute end-1 top-1 rounded-full bg-black/55 p-0.5 text-white"
             >
-              <X className="h-3 w-3" />
+              <X className="size-3" />
             </button>
           </div>
         ))}
-        {imageIds.length < MAX && (
+        {imageIds.length < MAX ? (
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="border-theme text-muted hover:text-primary flex h-16 w-16 items-center justify-center rounded-lg border border-dashed disabled:opacity-50"
+            className="text-muted flex size-16 items-center justify-center rounded-xl border border-dashed border-(--theme-foreground)/15 bg-(--theme-background)/50 transition-colors hover:border-(--theme-primary)/40 hover:bg-(--theme-primary)/5 hover:text-(--theme-primary-ink) disabled:opacity-50"
           >
-            <ImagePlus className="h-5 w-5" />
+            <ImagePlus className="size-5" />
           </button>
-        )}
+        ) : null}
         <input
           ref={inputRef}
           type="file"
@@ -91,7 +91,7 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
         />
       </div>
       <p className="text-muted text-xs">{t('support.onlyImages')}</p>
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error ? <p className="text-xs text-red-500">{error}</p> : null}
     </div>
   );
 }

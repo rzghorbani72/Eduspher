@@ -1584,6 +1584,9 @@ export const requestSupportCall = async (
     )
   ).data;
 
+export const closeSupportTicket = async (id: string, options?: RequestOptions) =>
+  (await postJson<Envelope<TicketDetail>>(`/support/tickets/${id}/close`, {}, options)).data;
+
 export const rateSupportTicket = async (
   id: string,
   payload: { score: number; comment?: string },

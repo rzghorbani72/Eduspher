@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import type { LanguageCode, TextDirection, LanguageConfig } from './config';
 import {
   DEFAULT_LANGUAGE,
@@ -59,26 +67,25 @@ export function I18nProvider({ children, initialLanguage, countryCode }: I18nPro
   const direction = config.direction;
   const rtl = isRTL(language);
 
-  const setLanguage = (next: LanguageCode) => {
+  const setLanguage = useCallback((next: LanguageCode) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem(PREFERRED_LANGUAGE_KEY, next);
     }
     setLanguageState(next);
-  };
+  }, []);
 
-  return (
-    <I18nContext.Provider
-      value={{
-        language,
-        direction,
-        config,
-        setLanguage,
-        isRTL: rtl,
-      }}
-    >
-      {children}
-    </I18nContext.Provider>
+  const value = useMemo(
+    () => ({
+      language,
+      direction,
+      config,
+      setLanguage,
+      isRTL: rtl,
+    }),
+    [language, direction, config, setLanguage, rtl],
   );
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
 
 export function useI18n() {
