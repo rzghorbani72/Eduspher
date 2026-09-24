@@ -88,3 +88,8 @@ export function useI18n() {
   }
   return context;
 }
+
+/** Safe when a caller may render outside the provider (toasts, preview chrome). */
+export function useI18nOptional() {
+  return useContext(I18nContext);
+}

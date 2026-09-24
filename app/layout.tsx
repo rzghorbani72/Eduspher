@@ -198,36 +198,33 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeCSS }}
         />
         <QueryProvider>
-          <AuthProvider
-            initialAuthenticated={isAuthenticated}
-            initialDisplayName={headerUser.displayName}
-            initialAvatarUrl={headerUser.avatarUrl}
-            logContext={{
-              user_id: session?.userId,
-              academy_id: session?.academyId,
-              role: session?.roles[0],
-            }}
-          >
-            <ShellProvider
-              key={shellKey}
-              isPanelRoot={isPanelRoot}
-              headerDisplayName={headerUser.displayName}
-              headerAvatarUrl={headerUser.avatarUrl}
-              headerIsAuthenticated={isAuthenticated}
-              requestHost={requestHost}
+          {/* Above keyed Shell/Store so login refresh does not tear down i18n. */}
+          <I18nProvider initialLanguage={language} countryCode={countryCode || undefined}>
+            <DocumentLangSync />
+            <AuthProvider
+              initialAuthenticated={isAuthenticated}
+              initialDisplayName={headerUser.displayName}
+              initialAvatarUrl={headerUser.avatarUrl}
+              logContext={{
+                user_id: session?.userId,
+                academy_id: session?.academyId,
+                role: session?.roles[0],
+              }}
             >
-              <StoreProvider key={shellKey} initialValue={storeContext}>
-                <ThemeProvider key={themeKey} initialTheme={theme}>
-                  <ThemeStyleSync theme={theme} syncKey={themeKey} />
-                  <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
-                  <ThemeLiveUpdater />
-                  {bareLayout && <ThemeToggleButton />}
-                  <I18nProvider
-                    key={`i18n-${shellKey}-${language}`}
-                    initialLanguage={language}
-                    countryCode={countryCode || undefined}
-                  >
-                    <DocumentLangSync />
+              <ShellProvider
+                key={shellKey}
+                isPanelRoot={isPanelRoot}
+                headerDisplayName={headerUser.displayName}
+                headerAvatarUrl={headerUser.avatarUrl}
+                headerIsAuthenticated={isAuthenticated}
+                requestHost={requestHost}
+              >
+                <StoreProvider key={shellKey} initialValue={storeContext}>
+                  <ThemeProvider key={themeKey} initialTheme={theme}>
+                    <ThemeStyleSync theme={theme} syncKey={themeKey} />
+                    <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
+                    <ThemeLiveUpdater />
+                    {bareLayout && <ThemeToggleButton />}
                     <EnrollmentStatusProvider closed={Boolean(enrollmentStatus?.disabled)}>
                       <ScrollAnimationProvider enabled={!isPanelRoot}>
                         <div
@@ -275,11 +272,11 @@ export default async function RootLayout({
                     </EnrollmentStatusProvider>
                     {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && <MarketingAnalytics />}
                     <ToastContainerWrapper />
-                  </I18nProvider>
-                </ThemeProvider>
-              </StoreProvider>
-            </ShellProvider>
-          </AuthProvider>
+                  </ThemeProvider>
+                </StoreProvider>
+              </ShellProvider>
+            </AuthProvider>
+          </I18nProvider>
         </QueryProvider>
       </body>
     </html>

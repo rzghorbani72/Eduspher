@@ -2,13 +2,15 @@
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useI18n } from '@/lib/i18n/provider';
+import { isRTL as languageIsRtl, DEFAULT_LANGUAGE } from '@/lib/i18n/config';
+import { useI18nOptional } from '@/lib/i18n/provider';
 
 const TOAST_WIDTH = 420;
 
 /** Same toast surface as AdminPanel, so both apps report the same way. */
 export function ToastContainerWrapper() {
-  const { isRTL } = useI18n();
+  const i18n = useI18nOptional();
+  const rtl = i18n?.isRTL ?? languageIsRtl(DEFAULT_LANGUAGE);
 
   return (
     <ToastContainer
@@ -17,7 +19,7 @@ export function ToastContainerWrapper() {
       hideProgressBar={false}
       newestOnTop={false}
       closeOnClick
-      rtl={isRTL}
+      rtl={rtl}
       pauseOnFocusLoss
       draggable
       pauseOnHover
