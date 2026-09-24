@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth/session';
 import { getAcademyContext } from '@/lib/store-context';
 import { resolveAssetUrl } from '@/lib/utils';
 import { sizedImageUrl } from '@/lib/images/sized-image-url';
-import { AccountMenuDropdown } from '@/components/layout/account-menu-dropdown';
+import { HeaderAccountSlot } from '@/components/layout/header-account-slot';
 import { Container } from './section';
 import { Button } from './primitives';
 import { RemovableSlot } from './removable-slot';
@@ -138,20 +138,15 @@ export async function TemplateTopBar({
 
   const accountSlot = (
     <div className="hidden sm:inline-flex">
-      {isAuthenticated ? (
-        <AccountMenuDropdown
-          displayName={accountLabel}
-          avatarUrl={accountAvatarUrl}
-          deepTone={spec.tone === 'deep'}
-        />
-      ) : (
-        <Link
-          href={templateHref(storeContext, 'login')}
-          className="text-[14.5px] font-medium opacity-80 hover:opacity-100"
-        >
-          <span data-editable="loginText">{loginText}</span>
-        </Link>
-      )}
+      <HeaderAccountSlot
+        initialAuthenticated={isAuthenticated}
+        displayName={accountLabel}
+        avatarUrl={accountAvatarUrl}
+        loginHref={templateHref(storeContext, 'login')}
+        loginText={loginText}
+        accountFallbackLabel={defaults.accountText}
+        deepTone={spec.tone === 'deep'}
+      />
     </div>
   );
 
@@ -258,23 +253,19 @@ export async function TemplateTopBar({
                     {item.label}
                   </a>
                 ))}
-                {isAuthenticated ? (
-                  <div className="mt-1 border-t border-current/10 pt-1">
-                    <AccountMenuDropdown
-                      displayName={accountLabel}
-                      avatarUrl={accountAvatarUrl}
-                      deepTone={spec.tone === 'deep'}
-                      inline
-                    />
-                  </div>
-                ) : (
-                  <a
-                    href={templateHref(storeContext, 'login')}
+                <div className="mt-1 border-t border-current/10 pt-1">
+                  <HeaderAccountSlot
+                    initialAuthenticated={isAuthenticated}
+                    displayName={accountLabel}
+                    avatarUrl={accountAvatarUrl}
+                    loginHref={templateHref(storeContext, 'login')}
+                    loginText={loginText}
+                    accountFallbackLabel={defaults.accountText}
+                    deepTone={spec.tone === 'deep'}
+                    inline
                     className="flex items-center gap-2 rounded-(--theme-border-radius) px-3 py-2.5 text-[15px] font-medium hover:bg-(--theme-surface-alt)"
-                  >
-                    {loginText}
-                  </a>
-                )}
+                  />
+                </div>
               </div>
             </details>
           </div>

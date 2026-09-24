@@ -69,7 +69,7 @@ function initialFromQuery(raw: string | null): {
 export function useLogin() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { setAuthenticated } = useAuthContext();
+  const { setAuthenticated, setHeaderUser } = useAuthContext();
   const buildPath = useStorePath();
   const { t } = useTranslation();
 
@@ -149,6 +149,13 @@ export function useLogin() {
   async function finishLogin() {
     clearAuthIdentifierDraft();
     setAuthenticated(true);
+    try {
+      const { getHeaderUser } = await import('@/app/actions/auth');
+      const user = await getHeaderUser();
+      setHeaderUser({ displayName: user.displayName, avatarUrl: user.avatarUrl });
+    } catch {
+      // Name loads after redirect if this fails.
+    }
     const { loadAndMergeCart } = await import('@/app/actions/cart');
     loadAndMergeCart().catch(() => {});
     toast.success(t('auth.loginSuccess'), { toastId: 'login-success' });

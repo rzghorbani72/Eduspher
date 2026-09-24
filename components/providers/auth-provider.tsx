@@ -51,6 +51,30 @@ export const AuthProvider = ({
     setAvatarUrl(initialAvatarUrl);
   }, [initialDisplayName, initialAvatarUrl]);
 
+  // SSR can miss a just-set jwt (middleware refresh / first paint). Recover from
+  // cookies so the header flips to the profile chip without another full reload.
+  useEffect(() => {
+    if (initialAuthenticated) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const { checkAuth, getHeaderUser } = await import('@/app/actions/auth');
+        const { isAuthenticated: hasSession } = await checkAuth();
+        if (cancelled || !hasSession) return;
+        setIsAuthenticated(true);
+        const user = await getHeaderUser();
+        if (cancelled) return;
+        setDisplayName(user.displayName);
+        setAvatarUrl(user.avatarUrl);
+      } catch {
+        // Stay logged-out in the UI if recovery fails.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [initialAuthenticated]);
+
   const { user_id, academy_id, role } = logContext ?? {};
   useEffect(() => {
     setLogContext({ user_id, academy_id, role });

@@ -68,7 +68,9 @@ export default async function RootLayout({
   // must look like a neutral sample site — strip academy chrome and identity so
   // no academy name/logo/imagery leaks into the master being authored.
   const isSamplePreview = headersList.get('x-preview-sample') === '1';
-  const shellKey = isPanelRoot ? 'panel' : `${storeContext.slug ?? ''}-${storeContext.id ?? 0}`;
+  const shellKey = isPanelRoot
+    ? 'panel'
+    : `${storeContext.slug ?? ''}-${storeContext.id ?? 0}-${isAuthenticated ? 'in' : 'out'}`;
   const headerUser =
     isAuthenticated && !isPanelRoot
       ? await getHeaderUser()
