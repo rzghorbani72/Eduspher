@@ -7,6 +7,7 @@ import Link from '@/components/ui/link';
 import { cn } from '@/lib/utils';
 import { useLocaleDigits } from '@/hooks/use-locale-digits';
 import { sanitizePasswordInput } from '@/lib/password-utils';
+import { withAuthIdentifier } from '@/lib/auth/auth-identifier-draft';
 import { AuthError } from '@/components/auth/auth-notice';
 import { HCaptchaWidget } from '@/components/auth/hcaptcha-widget';
 import type { useLogin } from '@/hooks/use-login';
@@ -63,7 +64,9 @@ export function LoginPasswordStep({ login }: { login: Login }) {
         </div>
         <div className="text-start">
           <Link
-            href={buildPath('/auth/forgot-password')}
+            href={withAuthIdentifier(buildPath('/auth/forgot-password'), login.displayIdentifier, {
+              redirect: null,
+            })}
             className="text-xs text-[color:var(--auth-accent)] hover:underline"
           >
             {t('auth.forgotPassword')}

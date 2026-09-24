@@ -70,16 +70,14 @@ test.describe('edusphere auth flows @backend', () => {
     await page.locator('button[type="submit"]').click();
     await expect(page).not.toHaveURL(/\/auth\/login/, { timeout: 20_000 });
 
-    // ── Forgot password: validate → code → new password ───────────────────
+    // ── Forgot password: send code → verify → new password ────────────────
     await page.goto('/auth/forgot-password');
     await page
       .getByRole('button', { name: /^تلفن$|^phone$/i })
       .first()
       .click();
     await page.locator('#identifier').fill(phone);
-    await page.locator('.auth-submit-btn').first().click(); // validate the account
-    await expect(page.getByText(/حساب|account/i).first()).toBeVisible({ timeout: 15_000 });
-    await page.locator('.auth-submit-btn').first().click(); // send the code
+    await page.locator('.auth-submit-btn').first().click(); // validate + send code
     await fillOtp(page, await readOtp(page));
     await page.locator('.auth-submit-btn').first().click(); // verify the code
 

@@ -34,6 +34,12 @@ import {
   toLocalPhoneNumber,
 } from '@/lib/phone-utils';
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
+import {
+  isEmailIdentifier,
+  readAuthIdentifierDraft,
+  withAuthIdentifier,
+  writeAuthIdentifierDraft,
+} from '@/lib/auth/auth-identifier-draft';
 import { isPasswordValid } from '@/lib/password-utils';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useLocaleDigits } from '@/hooks/use-locale-digits';
@@ -61,16 +67,13 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   // Login sends the identifier it could not find, so signup never asks for it twice.
   const prefilledIdentifier = searchParams.get('identifier') ?? '';
   const redirectParam = searchParams.get('redirect');
-  const prefilledIsEmail = prefilledIdentifier.includes('@');
+  const prefilledIsEmail = isEmailIdentifier(prefilledIdentifier);
   const selectedCountry = getCountryByCode('IR') ?? getDefaultCountry();
   const prefilledPhone = prefilledIsEmail
     ? ''
     : toLocalPhoneNumber(prefilledIdentifier, selectedCountry);
   const { setAuthenticated } = useAuthContext();
   const buildPath = useStorePath();
-  const loginHref = buildPath(
-    redirectParam ? `/auth/login?redirect=${encodeURIComponent(redirectParam)}` : '/auth/login',
-  );
   const { t } = useTranslation();
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<Step>('verification');
@@ -151,6 +154,36 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   const [phoneNumber, setPhoneNumber] = useState(prefilledPhone);
   const [phoneOtp, setPhoneOtp] = useState('');
   const [emailOtp, setEmailOtp] = useState('');
+
+  // Restore the other identifier (phone↔email) from login/forgot drafts.
+  useEffect(() => {
+    const draft = readAuthIdentifierDraft();
+    if (!draft) return;
+    if (!prefilledIsEmail && draft.email) setValue('email', draft.email);
+    if ((prefilledIsEmail || !prefilledIdentifier) && draft.phone) {
+      setPhoneNumber((prev) => prev || draft.phone);
+      setValue('phone_number', draft.phone);
+    }
+    if (!prefilledIdentifier && draft.email) setValue('email', draft.email);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- seed once
+  }, []);
+
+  const watchedEmail = watch('email');
+  const loginHref = withAuthIdentifier(
+    buildPath('/auth/login'),
+    (primaryVerificationMethod === 'email' ? watchedEmail : phoneNumber) ||
+      prefilledIdentifier ||
+      '',
+    redirectParam ? { redirect: redirectParam } : undefined,
+  );
+
+  useEffect(() => {
+    writeAuthIdentifierDraft({
+      phone: phoneNumber,
+      email: watchedEmail ?? '',
+      channel: primaryVerificationMethod,
+    });
+  }, [phoneNumber, watchedEmail, primaryVerificationMethod]);
 
   const isValidPhone = (phone: string) => isValidPhoneInput(phone, selectedCountry);
 
@@ -413,7 +446,6 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
       ? t('auth.verifyAndContinue')
       : t('auth.continueLabel');
 
-  const watchedEmail = watch('email');
   const hasEmail = Boolean(watchedEmail && isValidEmail(watchedEmail));
   const identifierValid =
     primaryVerificationMethod === 'phone' ? isValidPhone(phoneNumber) : hasEmail;

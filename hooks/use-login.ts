@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'react-toastify';
 
 import {
@@ -20,6 +20,12 @@ import { useOtpNotifier } from '@/hooks/use-otp-notifier';
 import { ACCOUNT_HOME_PATH } from '@/lib/account-index-path';
 import { isPasswordValid } from '@/lib/password-utils';
 import { nextStepFor } from '@/lib/auth-identify';
+import {
+  clearAuthIdentifierDraft,
+  isEmailIdentifier,
+  readAuthIdentifierDraft,
+  writeAuthIdentifierDraft,
+} from '@/lib/auth/auth-identifier-draft';
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { safeRedirectPath } from '@/lib/auth/redirect-target';
 import { useAuthContext } from '@/components/providers/auth-provider';
@@ -37,6 +43,24 @@ import { OtpType } from '@/lib/constants';
 export type LoginChannel = 'email' | 'phone';
 export type LoginStep = 'identify' | 'password' | 'otpLogin' | 'otpGate' | 'passwordReset';
 
+function initialFromQuery(raw: string | null): {
+  channel: LoginChannel;
+  email: string;
+  phone: string;
+} {
+  const value = raw?.trim() ?? '';
+  if (!value) return { channel: 'phone', email: '', phone: '' };
+  if (isEmailIdentifier(value)) {
+    return { channel: 'email', email: toEnglishDigits(value), phone: '' };
+  }
+  const country = getDefaultCountry();
+  return {
+    channel: 'phone',
+    email: '',
+    phone: toLocalPhoneNumber(value, country) || value.replace(/\D/g, ''),
+  };
+}
+
 /**
  * Identifier-first sign-in for an academy site: look the account up first, then
  * show only the method it really has. Same rule as the panel — see
@@ -49,14 +73,17 @@ export function useLogin() {
   const buildPath = useStorePath();
   const { t } = useTranslation();
 
+  const seeded = initialFromQuery(searchParams.get('identifier'));
+
   const [pending, startTransition] = useTransition();
   const [step, setStep] = useState<LoginStep>('identify');
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [channel, setChannel] = useState<LoginChannel>('phone');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [channel, setChannel] = useState<LoginChannel>(seeded.channel);
+  const [email, setEmail] = useState(seeded.email);
+  const [phoneNumber, setPhoneNumber] = useState(seeded.phone);
+  const [draftReady, setDraftReady] = useState(false);
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
   const country = getDefaultCountry();
   const [password, setPassword] = useState('');
@@ -81,6 +108,26 @@ export function useLogin() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  // Fill any gaps from the last auth screen (e.g. typed phone, then opened forgot).
+  useEffect(() => {
+    const draft = readAuthIdentifierDraft();
+    if (draft) {
+      setPhoneNumber((prev) => prev || draft.phone);
+      setEmail((prev) => prev || draft.email);
+      if (!searchParams.get('identifier') && (draft.phone || draft.email)) {
+        setChannel(draft.channel);
+      }
+    }
+    setDraftReady(true);
+    // Only on mount — URL seed already applied above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional once
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady) return;
+    writeAuthIdentifierDraft({ phone: phoneNumber, email, channel });
+  }, [phoneNumber, email, channel, draftReady]);
+
   const identifier =
     channel === 'phone'
       ? phoneNumber
@@ -100,6 +147,7 @@ export function useLogin() {
   }
 
   async function finishLogin() {
+    clearAuthIdentifierDraft();
     setAuthenticated(true);
     const { loadAndMergeCart } = await import('@/app/actions/cart');
     loadAndMergeCart().catch(() => {});
@@ -147,6 +195,7 @@ export function useLogin() {
   // No account yet: carry the typed identifier into signup so it is verified
   // there, then name + password — the visitor never types it twice.
   function goToRegister() {
+    writeAuthIdentifierDraft({ phone: phoneNumber, email, channel });
     const query = new URLSearchParams({ identifier: displayIdentifier });
     const redirect = searchParams.get('redirect');
     if (redirect) query.set('redirect', redirect);
@@ -325,6 +374,7 @@ export function useLogin() {
 
   function changeChannel(next: LoginChannel) {
     setChannel(next);
+    writeAuthIdentifierDraft({ channel: next, phone: phoneNumber, email });
     clearFeedback();
   }
 
