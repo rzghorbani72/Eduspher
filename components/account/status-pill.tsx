@@ -9,15 +9,12 @@ type Tone = 'success' | 'warning' | 'danger' | 'info' | 'neutral';
  * any card/row background (including themed academy surfaces).
  */
 const TONE_CLASS: Record<Tone, string> = {
-  success:
-    'border-green-200 bg-white text-green-800 dark:border-green-800 dark:bg-white dark:text-green-800',
-  warning:
-    'border-amber-200 bg-white text-amber-900 dark:border-amber-800 dark:bg-white dark:text-amber-900',
-  danger:
-    'border-red-200 bg-white text-red-800 dark:border-red-800 dark:bg-white dark:text-red-800',
-  info: 'border-blue-200 bg-white text-blue-800 dark:border-blue-800 dark:bg-white dark:text-blue-800',
+  success: 'border-transparent bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300',
+  warning: 'border-transparent bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-300',
+  danger: 'border-transparent bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-300',
+  info: 'border-transparent bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300',
   neutral:
-    'border-(--theme-border) bg-white text-(--theme-foreground) dark:border-(--theme-border) dark:bg-white dark:text-zinc-900',
+    'border-transparent bg-(--theme-foreground)/5 text-(--theme-foreground) dark:bg-white/10 dark:text-zinc-100',
 };
 
 /** One status chip shared by assignments, payments, profile and tutoring. */

@@ -36,14 +36,14 @@ export default async function ProfilePage() {
     secondaryMethod === 'email' ? user?.email_confirmed : user?.phone_confirmed;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <AccountPageHeader
         title={translate('account.profile')}
         description={translate('account.profileDescription')}
         icon={UserRound}
       />
 
-      <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+      <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)]">
         <ProfileIdentityCard
           profileId={profileId}
           displayName={profile?.display_name ?? user?.display_name ?? ''}

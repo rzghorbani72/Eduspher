@@ -90,7 +90,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
             type={showCurrentPassword ? 'text' : 'password'}
             {...register('current_password')}
             className={cn(
-              'ps-10 pe-10',
+              'border-(--theme-foreground)/8 bg-(--theme-background)/70 ps-10 pe-10 shadow-none',
               errors.current_password && 'border-amber-500 focus:border-amber-500',
             )}
             autoComplete="current-password"
@@ -122,7 +122,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
             type={showNewPassword ? 'text' : 'password'}
             {...register('new_password')}
             className={cn(
-              'ps-10 pe-10',
+              'border-(--theme-foreground)/8 bg-(--theme-background)/70 ps-10 pe-10 shadow-none',
               errors.new_password && 'border-amber-500 focus:border-amber-500',
             )}
             autoComplete="new-password"
@@ -154,7 +154,7 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
             type={showConfirmPassword ? 'text' : 'password'}
             {...register('confirm_new_password')}
             className={cn(
-              'ps-10 pe-10',
+              'border-(--theme-foreground)/8 bg-(--theme-background)/70 ps-10 pe-10 shadow-none',
               errors.confirm_new_password && 'border-amber-500 focus:border-amber-500',
             )}
             autoComplete="new-password"
@@ -175,19 +175,19 @@ export const ChangePasswordForm = ({ profileId, onSuccess }: ChangePasswordFormP
         )}
       </div>
 
-      {error && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
+      {error ? (
+        <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:bg-amber-950/70 dark:text-amber-300">
           {error}
         </div>
-      )}
+      ) : null}
 
-      {message && !error && (
-        <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+      {message && !error ? (
+        <div className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 dark:bg-green-950/70 dark:text-green-300">
           {message}
         </div>
-      )}
+      ) : null}
 
-      <Button type="submit" disabled={isLoading} className="w-full" loading={isLoading}>
+      <Button type="submit" disabled={isLoading} className="w-full sm:w-auto" loading={isLoading}>
         {isLoading ? t('account.changingPassword') : t('account.changePassword')}
       </Button>
     </form>

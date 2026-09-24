@@ -20,6 +20,9 @@ const PRODUCTION_PUBLIC_DEFAULTS = {
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Sentry OpenTelemetry hooks these; without a top-level install Turbopack
+  // HMR can drop the module factory after layout edits (see terminal warnings).
+  serverExternalPackages: ['import-in-the-middle', 'require-in-the-middle'],
   env: {
     NEXT_PUBLIC_BACKEND_ORIGIN:
       process.env.NEXT_PUBLIC_BACKEND_ORIGIN || PRODUCTION_PUBLIC_DEFAULTS.BACKEND_ORIGIN,

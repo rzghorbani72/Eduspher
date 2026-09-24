@@ -65,7 +65,7 @@ export function AccountSidebar({
 
   return (
     <aside className="flex w-full flex-col gap-4 lg:sticky lg:top-24">
-      <div className="border-theme bg-card flex items-center gap-3 rounded-xl border p-4 text-start lg:flex-col lg:p-5 lg:text-center">
+      <div className="bg-card flex items-center gap-3 rounded-2xl p-4 text-start lg:flex-col lg:p-5 lg:text-center">
         {avatarUrl ? (
           <AppImage
             src={avatarUrl}

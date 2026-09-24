@@ -152,34 +152,45 @@ export const ActiveSessions = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-[var(--theme-primary)]" />
-          <h3 className="text-lg font-semibold text-[var(--theme-foreground)]">{t.title}</h3>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 space-y-1">
+          <h3 className="flex items-center gap-2.5 text-base font-semibold text-(--theme-foreground)">
+            <span
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg"
+              style={{
+                backgroundColor:
+                  'color-mix(in srgb, var(--theme-primary) 12%, var(--theme-background))',
+                color: 'var(--theme-primary-ink)',
+              }}
+            >
+              <Shield className="size-4" aria-hidden="true" />
+            </span>
+            {t.title}
+          </h3>
+          <p className="text-muted text-sm leading-relaxed">{t.description}</p>
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={loadSessions}
           disabled={isLoading}
-          className="text-muted hover:text-foreground"
+          className="text-muted shrink-0 hover:text-(--theme-foreground)"
+          aria-label={t.refresh}
         >
-          <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
+          <RefreshCw className={cn('size-4', isLoading && 'animate-spin')} />
         </Button>
       </div>
 
-      <p className="text-muted text-sm">{t.description}</p>
-
       {error && (
-        <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900 dark:bg-amber-950/70 dark:text-amber-300">
-          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:bg-amber-950/70 dark:text-amber-300">
+          <AlertTriangle className="size-4 shrink-0" />
           {error}
         </div>
       )}
 
       {message && !error && (
-        <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
-          <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+        <div className="flex items-center gap-2 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 dark:bg-green-950/70 dark:text-green-300">
+          <CheckCircle2 className="size-4 shrink-0" />
           {message}
         </div>
       )}
@@ -187,9 +198,9 @@ export const ActiveSessions = () => {
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="border-theme bg-surface animate-pulse rounded-xl border p-4">
+            <div key={i} className="animate-pulse py-1">
               <div className="flex items-center gap-3">
-                <div className="bg-surface-alt h-10 w-10 rounded-full" />
+                <div className="bg-surface-alt size-10 rounded-lg" />
                 <div className="flex-1 space-y-2">
                   <div className="bg-surface-alt h-4 w-32 rounded" />
                   <div className="bg-surface-alt h-3 w-48 rounded" />
@@ -199,53 +210,45 @@ export const ActiveSessions = () => {
           ))}
         </div>
       ) : sessions.length === 0 ? (
-        <div className="border-theme bg-surface rounded-xl border p-6 text-center">
-          <Globe className="text-muted mx-auto h-10 w-10" />
+        <div className="rounded-xl bg-(--theme-primary)/5 px-4 py-8 text-center">
+          <Globe className="text-muted mx-auto size-9" />
           <p className="text-muted mt-2 text-sm">{t.noSessions}</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <ul className="space-y-3">
           {sessions.map((session) => {
             const DeviceIcon = getDeviceIcon(session.device_info);
             const isCurrent = session.is_current;
 
             return (
-              <div
-                key={session.id}
-                className={cn(
-                  'group relative rounded-xl border p-4 transition-all',
-                  isCurrent
-                    ? 'border-[var(--theme-primary)]/30 bg-[var(--theme-primary)]/5 dark:border-[var(--theme-primary)]/30 dark:bg-[var(--theme-primary)]/10'
-                    : 'border-theme bg-card hover:border-theme-strong',
-                )}
-              >
-                <div className="flex items-start gap-4">
+              <li key={session.id}>
+                <div className="flex items-start gap-3.5 rounded-xl bg-(--theme-background)/55 px-3 py-3">
                   <div
                     className={cn(
-                      'flex h-10 w-10 items-center justify-center rounded-full',
+                      'flex size-10 shrink-0 items-center justify-center rounded-lg',
                       isCurrent
-                        ? 'bg-[var(--theme-primary)]/10 text-[var(--theme-primary)]'
+                        ? 'bg-(--theme-primary)/10 text-(--theme-primary-ink)'
                         : 'bg-surface-alt text-muted',
                     )}
                   >
-                    <DeviceIcon className="h-5 w-5" />
+                    <DeviceIcon className="size-5" />
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate font-medium text-[var(--theme-foreground)]">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate font-medium text-(--theme-foreground)">
                         {session.device_info}
                       </p>
-                      {isCurrent && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-[var(--theme-primary)] px-2 py-0.5 text-xs font-medium text-[var(--theme-on-primary)]">
-                          <CheckCircle2 className="h-3 w-3" />
+                      {isCurrent ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-(--theme-primary)/12 px-2 py-0.5 text-xs font-medium text-(--theme-primary-ink)">
+                          <CheckCircle2 className="size-3" />
                           {t.currentSession}
                         </span>
-                      )}
+                      ) : null}
                     </div>
                     <div className="text-muted mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
                       <span className="flex items-center gap-1">
-                        <Globe className="h-3 w-3" />
+                        <Globe className="size-3" />
                         {session.ip_address ? (
                           <span dir="ltr">{format.digits(session.ip_address)}</span>
                         ) : (
@@ -261,7 +264,7 @@ export const ActiveSessions = () => {
                     </div>
                   </div>
 
-                  {!isCurrent && (
+                  {!isCurrent ? (
                     <Button
                       variant="ghost"
                       size="sm"
@@ -270,39 +273,39 @@ export const ActiveSessions = () => {
                       className="shrink-0 text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50"
                     >
                       {isRevoking === session.id ? (
-                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        <RefreshCw className="size-4 animate-spin" />
                       ) : (
                         <>
-                          <Trash2 className="mr-1 h-4 w-4" />
+                          <Trash2 className="me-1 size-4" />
                           {t.revokeSession}
                         </>
                       )}
                     </Button>
-                  )}
+                  ) : null}
                 </div>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
 
-      {sessions.length > 1 && (
-        <div className="border-theme border-t pt-4">
+      {sessions.length > 1 ? (
+        <div className="pt-1">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={handleLogoutAllDevices}
             disabled={isRevokingAll}
-            className="w-full border-red-200 text-red-500 hover:border-red-300 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/50"
+            className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/50"
           >
             {isRevokingAll ? (
-              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              <RefreshCw className="me-2 size-4 animate-spin" />
             ) : (
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="me-2 size-4" />
             )}
             {t.logoutAllDevices}
           </Button>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

@@ -13,7 +13,7 @@ interface AccountSectionProps {
   bodyClassName?: string;
 }
 
-/** Shared card chrome for account settings panels. */
+/** Soft account panel — spacing for hierarchy, no hard divider lines. */
 export function AccountSection({
   title,
   description,
@@ -25,18 +25,15 @@ export function AccountSection({
 }: AccountSectionProps) {
   return (
     <section
-      className={cn(
-        'border-theme bg-card flex h-full flex-col rounded-2xl border p-5 sm:p-6',
-        className,
-      )}
+      className={cn('flex h-full flex-col rounded-2xl bg-(--theme-card-bg) p-5 sm:p-6', className)}
     >
       {title ? (
-        <header className="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 space-y-1">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-(--theme-foreground)">
+            <h2 className="flex items-center gap-2.5 text-base font-semibold text-(--theme-foreground)">
               {Icon ? (
                 <span
-                  className="flex size-8 shrink-0 items-center justify-center rounded-xl"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-lg"
                   style={{
                     backgroundColor:
                       'color-mix(in srgb, var(--theme-primary) 12%, var(--theme-background))',
@@ -48,7 +45,9 @@ export function AccountSection({
               ) : null}
               {title}
             </h2>
-            {description ? <p className="text-muted text-sm">{description}</p> : null}
+            {description ? (
+              <p className="text-muted text-sm leading-relaxed">{description}</p>
+            ) : null}
           </div>
           {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
         </header>

@@ -39,10 +39,10 @@ export function ProfileIdentityCard({
 
   return (
     <AccountSection title={t('account.identity')} icon={UserRound}>
-      <div className="space-y-5">
+      <div className="space-y-4">
         <EditDisplayNameForm profileId={profileId} currentDisplayName={displayName} />
 
-        <dl className="space-y-2">
+        <dl className="space-y-3">
           <ContactRow
             label={t('account.email')}
             value={email}
@@ -60,7 +60,7 @@ export function ProfileIdentityCard({
         </dl>
 
         {needsSecondaryMethod ? (
-          <div className="border-theme bg-surface/60 rounded-2xl border border-dashed p-4">
+          <div className="mt-4 rounded-xl bg-(--theme-primary)/5 px-4 py-4">
             <h3 className="mb-3 text-sm font-semibold text-(--theme-foreground)">
               {secondaryMethod === 'email' ? t('account.addEmail') : t('account.addPhoneNumber')}
             </h3>
@@ -91,7 +91,7 @@ function ContactRow({
 }) {
   if (!value) return null;
   return (
-    <div className="bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl px-3.5 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-3">
       <dt className="text-muted text-sm">{label}</dt>
       <dd className="flex min-w-0 items-center gap-2 font-medium text-(--theme-foreground)">
         <span className="text-sm break-all" dir="ltr">

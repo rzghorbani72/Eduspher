@@ -59,7 +59,7 @@ export function AccountNavGroup({
         />
       </button>
       {expanded ? (
-        <div className="border-theme/50 relative ms-4 mt-0.5 space-y-px overflow-visible border-s ps-2.5">
+        <div className="relative ms-4 mt-0.5 space-y-px overflow-visible border-s border-(--theme-foreground)/8 ps-2.5">
           {section.items.map((item) => {
             const href = `${basePath}${item.segment}`;
             const isActive = currentPath.startsWith(`/account${item.segment}`);

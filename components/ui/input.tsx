@@ -7,7 +7,6 @@ type InputProps = InputHTMLAttributes<HTMLInputElement>;
 
 const inputBaseStyle: CSSProperties = {
   backgroundColor: 'var(--theme-surface)',
-  borderColor: 'var(--theme-border-color)',
   color: 'var(--theme-foreground)',
 };
 
@@ -24,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         type={type}
         {...(isControlled ? { value: String(value) } : {})}
         className={cn(
-          'bg-surface placeholder:text-muted flex h-11 w-full rounded-xl border px-4 text-sm text-(--theme-foreground) transition-colors placeholder:opacity-70 focus-visible:border-(--theme-primary) focus-visible:ring-2 focus-visible:ring-(--theme-primary)/20 focus-visible:outline-none',
+          'bg-surface placeholder:text-muted flex h-11 w-full rounded-xl border border-(--theme-foreground)/10 px-4 text-sm text-(--theme-foreground) transition-colors placeholder:opacity-70 focus-visible:border-(--theme-primary) focus-visible:ring-2 focus-visible:ring-(--theme-primary)/15 focus-visible:outline-none',
           className,
         )}
         style={{ ...inputBaseStyle, ...style }}

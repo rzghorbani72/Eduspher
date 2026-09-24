@@ -36,6 +36,7 @@
     "framer-motion": "^12.23.25",
     "gsap": "^3.13.0",
     "hls.js": "^1.7.1",
+    "import-in-the-middle": "^3.5.1",
     "jose": "^5.9.4",
     "lottie-web": "^5.13.0",
     "lucide-react": "^0.468.0",
@@ -48,6 +49,7 @@
     "react-hook-form": "^7.53.1",
     "react-multi-date-picker": "^4.5.2",
     "react-toastify": "^11.1.0",
+    "require-in-the-middle": "^8.0.1",
     "tailwind-merge": "^2.5.5",
     "zod": "^3.24.1"
   },

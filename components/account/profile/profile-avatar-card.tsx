@@ -68,7 +68,6 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
       return;
     }
 
-    // Instant local preview while the upload finishes.
     if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
     const localPreview = URL.createObjectURL(file);
     objectUrlRef.current = localPreview;
@@ -108,7 +107,7 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
       description={t('account.avatarDescription')}
       icon={ImageIcon}
     >
-      <div className="flex flex-1 flex-col items-center justify-center gap-5 py-2 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-5 py-1 text-center">
         {showImage && previewUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -117,15 +116,15 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
             width={112}
             height={112}
             onError={() => setLoadFailed(true)}
-            className="size-28 rounded-full object-cover ring-4 ring-(--theme-border)"
+            className="size-28 rounded-full object-cover"
           />
         ) : (
-          <div className="flex size-28 items-center justify-center rounded-full bg-(--theme-primary) text-3xl font-bold text-(--theme-on-primary) ring-4 ring-(--theme-border)">
+          <div className="flex size-28 items-center justify-center rounded-full bg-(--theme-primary) text-3xl font-bold text-(--theme-on-primary)">
             {initials}
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-1">
           <input
             ref={inputRef}
             type="file"
@@ -142,7 +141,7 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
             size="sm"
             disabled={busy}
             onClick={() => inputRef.current?.click()}
-            className="bg-card hover:bg-surface shrink-0 border border-(--theme-border) text-(--theme-foreground) hover:text-(--theme-foreground)"
+            className="text-(--theme-foreground) hover:bg-(--theme-primary)/8 hover:text-(--theme-foreground)"
           >
             {busy ? (
               <Loader2 className="size-3.5 shrink-0 animate-spin" aria-hidden="true" />
@@ -174,7 +173,7 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
                   setBusy(false);
                 }
               }}
-              className="text-muted shrink-0 hover:text-(--theme-foreground)"
+              className="text-muted hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40"
             >
               <Trash2 className="size-3.5 shrink-0" aria-hidden="true" />
               {t('account.removeAvatar')}

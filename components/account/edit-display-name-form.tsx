@@ -70,10 +70,10 @@ export const EditDisplayNameForm = ({
 
   if (!isEditing) {
     return (
-      <div className="bg-surface flex flex-wrap items-center justify-between gap-3 rounded-xl px-3.5 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="bg-card flex size-10 shrink-0 items-center justify-center rounded-full ring-1 ring-(--theme-border)">
-            <User className="text-muted size-5" aria-hidden="true" />
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-(--theme-primary)/10 text-(--theme-primary-ink)">
+            <User className="size-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <p className="text-muted text-xs font-medium">{t('account.displayName')}</p>
@@ -87,7 +87,7 @@ export const EditDisplayNameForm = ({
           variant="ghost"
           size="sm"
           onClick={() => setIsEditing(true)}
-          className="bg-card hover:bg-surface shrink-0 border border-(--theme-border) text-(--theme-foreground) hover:text-(--theme-foreground)"
+          className="text-muted shrink-0 hover:bg-(--theme-primary)/8 hover:text-(--theme-foreground)"
         >
           <Edit2 className="size-3.5 shrink-0" aria-hidden="true" />
           {t('common.edit')}
@@ -121,11 +121,11 @@ export const EditDisplayNameForm = ({
         {error && <p className="text-sm text-amber-600 dark:text-amber-400">{error}</p>}
       </div>
 
-      {message && !error && (
-        <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/70 dark:text-green-300">
+      {message && !error ? (
+        <div className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 dark:bg-green-950/70 dark:text-green-300">
           {message}
         </div>
-      )}
+      ) : null}
 
       <div className="flex gap-2">
         <Button
