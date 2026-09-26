@@ -1147,7 +1147,7 @@ export const en = {
     linkCopyFailed: 'Could not copy the link',
     chatHubHint:
       'Video can open in another tab. Class chat stays on this Mentoma page so the conversation is saved.',
-    chatRealtimeHint: 'Messages update live. Attachments: images or PDF only.',
+    chatRealtimeHint: 'Messages update live.',
     earlyJoinStaff: 'Teachers can join early',
   },
 

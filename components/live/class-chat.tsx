@@ -119,6 +119,7 @@ export function ClassChat({
             placeholder={active.placeholder}
             emptyDescription={active.hint}
             realtime={realtime}
+            allowAttachments={false}
           />
         ) : active.id === 'group' && groupThreadParent ? (
           <DiscussionThread
@@ -128,6 +129,7 @@ export function ClassChat({
             placeholder={active.placeholder}
             emptyDescription={active.hint}
             realtime={realtime}
+            allowAttachments={false}
           />
         ) : (
           <DiscussionThread
@@ -137,6 +139,7 @@ export function ClassChat({
             placeholder={active.placeholder}
             emptyDescription={active.hint}
             realtime={realtime}
+            allowAttachments={false}
           />
         )}
       </div>

@@ -5,11 +5,10 @@ import { Paperclip, Send, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 
 const CONTROL = 'h-11 w-11 shrink-0 px-0';
 const MIN_H = 44;
-const MAX_H = 128;
+const MAX_H = 160;
 
 interface DiscussionComposerProps {
   body: string;
@@ -23,11 +22,15 @@ interface DiscussionComposerProps {
   sendLabel: string;
   hint: string;
   onSend: () => void;
+  allowAttachments?: boolean;
 }
 
+// scrollHeight excludes the border, so add it back or the box stays 2px short and scrolls.
 function fitComposer(el: HTMLTextAreaElement): void {
   el.style.height = `${MIN_H}px`;
-  el.style.height = `${Math.min(Math.max(el.scrollHeight, MIN_H), MAX_H)}px`;
+  const needed = el.scrollHeight + el.offsetHeight - el.clientHeight;
+  el.style.height = `${Math.min(Math.max(needed, MIN_H), MAX_H)}px`;
+  el.style.overflowY = needed > MAX_H ? 'auto' : 'hidden';
 }
 
 export function DiscussionComposer({
@@ -42,6 +45,7 @@ export function DiscussionComposer({
   sendLabel,
   hint,
   onSend,
+  allowAttachments = true,
 }: DiscussionComposerProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const fieldRef = useRef<HTMLTextAreaElement>(null);
@@ -60,7 +64,7 @@ export function DiscussionComposer({
 
   return (
     <div className="space-y-2">
-      {file ? (
+      {allowAttachments && file ? (
         <div className="bg-surface flex h-11 items-center gap-2 rounded-xl px-3 text-xs text-(--theme-foreground)">
           <Paperclip className="size-3.5 shrink-0" aria-hidden="true" />
           <span className="min-w-0 flex-1 truncate">{file.name}</span>
@@ -75,24 +79,28 @@ export function DiscussionComposer({
         </div>
       ) : null}
       <div className="flex items-end gap-2">
-        <input
-          ref={fileInput}
-          type="file"
-          hidden
-          accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,.jpg,.jpeg,.png,.gif,.webp,.pdf"
-          onChange={(event) => onPickFile(event.target.files?.[0] ?? null)}
-        />
-        <Button
-          type="button"
-          variant="outline"
-          size="md"
-          onClick={() => fileInput.current?.click()}
-          disabled={sending}
-          aria-label={attachLabel}
-          className={CONTROL}
-        >
-          <Paperclip className="size-4" />
-        </Button>
+        {allowAttachments ? (
+          <>
+            <input
+              ref={fileInput}
+              type="file"
+              hidden
+              accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,.jpg,.jpeg,.png,.gif,.webp,.pdf"
+              onChange={(event) => onPickFile(event.target.files?.[0] ?? null)}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={() => fileInput.current?.click()}
+              disabled={sending}
+              aria-label={attachLabel}
+              className={CONTROL}
+            >
+              <Paperclip className="size-4" />
+            </Button>
+          </>
+        ) : null}
         <Textarea
           ref={fieldRef}
           value={body}
@@ -103,9 +111,7 @@ export function DiscussionComposer({
           aria-describedby="chat-composer-hint"
           rows={1}
           maxLength={5000}
-          className={cn(
-            'max-h-32 min-h-11 flex-1 resize-none overflow-y-auto rounded-xl py-2.5 leading-6',
-          )}
+          className="max-h-40 min-h-11 flex-1 resize-none overflow-hidden rounded-xl py-2.5 leading-6"
         />
         <Button
           type="button"

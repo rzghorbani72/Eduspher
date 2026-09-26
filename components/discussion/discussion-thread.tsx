@@ -32,6 +32,7 @@ interface DiscussionThreadProps {
   /** Live ClassChat: SSE with poll fallback. Offline Q&A keeps poll only. */
   realtime?: boolean;
   composerHint?: string;
+  allowAttachments?: boolean;
 }
 
 export function DiscussionThread({
@@ -47,6 +48,7 @@ export function DiscussionThread({
   emptyDescription,
   realtime = false,
   composerHint,
+  allowAttachments,
 }: DiscussionThreadProps) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
@@ -171,6 +173,7 @@ export function DiscussionThread({
         sendLabel={t('learning.sendMessage')}
         hint={composerHint ?? t('live.chatComposerHint')}
         onSend={() => void send()}
+        allowAttachments={allowAttachments}
       />
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
     </div>
