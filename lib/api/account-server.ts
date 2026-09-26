@@ -113,7 +113,6 @@ export type TutoringSessionRow = {
   starts_at: string;
   ends_at: string | null;
   status: string;
-  meeting_url: string | null;
 };
 
 export type TutoringEngagementRow = {
@@ -156,9 +155,12 @@ export const getTutoringEngagementRoom = (engagementId: string) =>
     return result.data ?? null;
   }, null);
 
+const LIVE_ENGAGEMENT_STATUSES = ['ACTIVE', 'PENDING'];
+const ROOM_ENGAGEMENT_STATUSES = [...LIVE_ENGAGEMENT_STATUSES, 'PAUSED', 'COMPLETED'];
+
 /**
- * The live classroom this student holds for a course: their group seat if
- * they have one, else their 1:1 engagement. Null when they hold neither.
+ * The classroom this student holds for a course: a live group seat, else a
+ * live 1:1, else a finished one — a past class stays readable as their record.
  */
 export const getMyLiveRoomForCourse = async (
   courseId: string,
@@ -167,12 +169,18 @@ export const getMyLiveRoomForCourse = async (
     getMyTutoringGroups(),
     getTutoringEngagements(),
   ]);
-  const group = groups.find((row) => row.group.course_id === courseId)?.group;
-  if (group) return getTutoringGroupRoom(group.id);
-  const solo = engagements.find(
-    (row) => row.course_id === courseId && (row.status === 'ACTIVE' || row.status === 'PENDING'),
+  const groupsForCourse = groups.filter((row) => row.group.course_id === courseId);
+  const solosForCourse = engagements.filter(
+    (row) => row.course_id === courseId && ROOM_ENGAGEMENT_STATUSES.includes(row.status),
   );
-  return solo ? getTutoringEngagementRoom(solo.id) : null;
+  const isLive = (status: string) => LIVE_ENGAGEMENT_STATUSES.includes(status);
+
+  const liveGroup = groupsForCourse.find((row) => isLive(row.engagement_status));
+  if (liveGroup) return getTutoringGroupRoom(liveGroup.group.id);
+  const liveSolo = solosForCourse.find((row) => isLive(row.status));
+  if (liveSolo) return getTutoringEngagementRoom(liveSolo.id);
+  if (groupsForCourse[0]) return getTutoringGroupRoom(groupsForCourse[0].group.id);
+  return solosForCourse[0] ? getTutoringEngagementRoom(solosForCourse[0].id) : null;
 };
 
 export const getPayments = (params?: { page?: number; limit?: number }) =>

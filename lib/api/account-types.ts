@@ -234,6 +234,8 @@ export type MyTutoringGroupSession = {
   meeting_url?: string | null;
   /** True only inside this meeting's joining window. */
   link_open?: boolean;
+  /** After this the join token expires and the embedded room is left. */
+  link_closes_at?: string | null;
   /** The teacher's name for this meeting; falls back to its topic. */
   title?: string | null;
   notes?: string | null;

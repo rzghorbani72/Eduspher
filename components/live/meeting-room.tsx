@@ -20,7 +20,7 @@ interface MeetingRoomProps {
   session: MyTutoringGroupSession | null;
   title: string;
   onGoAfterClass: () => void;
-  /** Teacher/observer: the server already handed them the URL outside the student window. */
+  /** Teacher/observer: the server opens their link earlier than the student window. */
   staffJoin?: boolean;
   displayName?: string | null;
 }
@@ -48,7 +48,11 @@ export function MeetingRoom({
   const meetingUrl = session?.meeting_url
     ? withMeetAppName(session.meeting_url, academyName, language)
     : null;
-  const canJoinVideo = Boolean(meetingUrl && (state === 'live' || staffJoin));
+  const windowClosed = Boolean(
+    session?.link_closes_at && now >= new Date(session.link_closes_at).getTime(),
+  );
+  // Unmounting the embed hangs up, so a class never outlives its window.
+  const canJoinVideo = Boolean(meetingUrl && !windowClosed && (state === 'live' || staffJoin));
   const waiting = !canJoinVideo && (state === 'upcoming' || state === 'live');
   const subject =
     language === 'fa' && academyName.trim() ? `${academyName.trim()} جلسه` : 'جلسه منتوما';
@@ -70,8 +74,7 @@ export function MeetingRoom({
         subject={subject}
         displayName={displayName}
         onBeforeRejoin={async () => {
-          // JWT TTL covers the class window; avoid router.refresh remount races.
-          // Soft-refresh only updates props for the next intentional boot.
+          // The JWT lasts the whole class window; a soft refresh avoids remount races.
           startRefresh(() => router.refresh());
         }}
       />

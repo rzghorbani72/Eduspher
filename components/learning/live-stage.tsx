@@ -16,6 +16,8 @@ interface LiveStageProps {
   scheduleLabel: string;
   /** When the class starts, in epoch ms; the clock counts to or from it. */
   startsAtMs: number | null;
+  /** When the class window closes, in epoch ms; the embedded room is left then. */
+  linkClosesAtMs?: number | null;
   meetingUrl: string | null;
   /** Whether the room behind meetingUrl can be shown in an iframe. */
   embeddable?: boolean;
@@ -38,6 +40,7 @@ export function LiveStage({
   teacherName,
   scheduleLabel,
   startsAtMs,
+  linkClosesAtMs = null,
   meetingUrl,
   embeddable,
   sessionKey,
@@ -109,8 +112,9 @@ export function LiveStage({
   }
 
   const isLive = phase === 'LIVE';
+  const windowOpen = linkClosesAtMs === null || now < linkClosesAtMs;
 
-  if (isLive && meetingUrl && embeddable) {
+  if (isLive && meetingUrl && embeddable && windowOpen) {
     return (
       <MentomaMeetEmbed
         key={sessionKey ?? meetingUrl}

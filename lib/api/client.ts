@@ -978,6 +978,8 @@ export type LessonLiveSession = {
   join_url?: string | null;
   /** Whether the room behind join_url can be shown in an iframe. */
   embeddable?: boolean;
+  /** After this the join token expires and the room is left. */
+  link_closes_at?: string | null;
   playback_url?: string | null;
   starts_at: string;
   ends_at?: string | null;

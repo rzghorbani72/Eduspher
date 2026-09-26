@@ -76,6 +76,7 @@ export function LiveLesson({ lessonId, lessonTitle, teacherName }: LiveLessonPro
         teacherName={teacherName}
         scheduleLabel={scheduleLabel}
         startsAtMs={schedule.startsAt?.getTime() ?? null}
+        linkClosesAtMs={data.link_closes_at ? new Date(data.link_closes_at).getTime() : null}
         meetingUrl={embedUrl ?? openUrl}
         embeddable={Boolean(data.embeddable && embedUrl)}
         sessionKey={`${lessonId}:${schedule.startsAt?.toISOString() ?? 'live'}`}
