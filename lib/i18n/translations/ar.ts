@@ -618,6 +618,8 @@ export const ar = {
   live: {
     joinClass: 'Join live video',
     linkOpensSoon: 'يُفتح رابط الدخول قبل بدء الصف بقليل.',
+    backupLinkPrompt: 'Poor video or audio?',
+    backupLinkAction: 'Join via the backup link',
     videoOnlyInSession: 'Live video opens only during the session the teacher scheduled.',
     nextSessionWhen: 'الجلسة التالية: {when}',
     checkLinkAgain: 'تحقّق من الرابط مجدداً',

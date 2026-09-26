@@ -1075,6 +1075,8 @@ export const fa = {
     privateOrAskTimes: 'یا زمان‌های آزادت را بگو',
     joinClass: 'ورود به جلسهٔ زنده',
     linkOpensSoon: 'پیوند ورود، کمی پیش از شروع کلاس فعال می‌شود.',
+    backupLinkPrompt: 'کیفیت تصویر یا صدا مشکل دارد؟',
+    backupLinkAction: 'ورود از لینک جایگزین',
     videoOnlyInSession: 'ویدیوی زنده فقط در جلسهٔ زمان‌بندی‌شده توسط مدرس باز می‌شود.',
     nextSessionWhen: 'جلسهٔ بعدی: {when}',
     checkLinkAgain: 'بررسی دوبارهٔ پیوند',

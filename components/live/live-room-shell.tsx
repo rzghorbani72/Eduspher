@@ -8,6 +8,7 @@ import { ClassSyllabus } from '@/components/live/class-syllabus';
 import { InviteFriendsCard } from '@/components/live/invite-friends-card';
 import { LiveRoomTabs, type LiveTabKey } from '@/components/live/live-room-tabs';
 import { MeetLinkBar } from '@/components/live/meet-link-bar';
+import { BackupLinkHint } from '@/components/live/backup-link-hint';
 import { MeetingRoom } from '@/components/live/meeting-room';
 import { PrivateScheduleRequest } from '@/components/live/private-schedule-request';
 import { SessionAfterClass } from '@/components/live/session-after-class';
@@ -129,6 +130,7 @@ export function LiveRoomShell({
             {brandedMeetUrl && (selectedState === 'live' || room.is_tutor) ? (
               <MeetLinkBar meetingUrl={brandedMeetUrl} />
             ) : null}
+            {room.backup_meeting_url ? <BackupLinkHint url={room.backup_meeting_url} /> : null}
           </div>
         )}
 

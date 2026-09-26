@@ -34,6 +34,19 @@ export const isEmbeddable = (url: string | null | undefined): boolean => {
   }
 };
 
+const JITSI_HOSTS = ['meet.jit.si', 'meet.mentoma.ir'] as const;
+
+/** Only Jitsi rooms can run in the Mentoma Meet player (External API); Skyroom and others open as links. */
+export const isJitsiMeetUrl = (url: string | null | undefined): boolean => {
+  if (!url) return false;
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === configuredHost() || (JITSI_HOSTS as readonly string[]).includes(host);
+  } catch {
+    return false;
+  }
+};
+
 /** en: Mentoma Meet · fa: `{academy} جلسه` — for iframe / new-tab hash overrides. */
 export const mentomaMeetAppName = (
   academyName: string | null | undefined,

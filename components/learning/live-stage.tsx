@@ -8,6 +8,7 @@ import { formatClock } from '@/components/media/video-controls';
 import { useAcademyContext } from '@/components/providers/store-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { initialsOf, type LivePhase } from '@/lib/learning/live-schedule';
+import { isJitsiMeetUrl } from '@/lib/live/embeddable';
 
 interface LiveStageProps {
   phase: LivePhase;
@@ -114,7 +115,7 @@ export function LiveStage({
   const isLive = phase === 'LIVE';
   const windowOpen = linkClosesAtMs === null || now < linkClosesAtMs;
 
-  if (isLive && meetingUrl && embeddable && windowOpen) {
+  if (isLive && meetingUrl && embeddable && isJitsiMeetUrl(meetingUrl) && windowOpen) {
     return (
       <MentomaMeetEmbed
         key={sessionKey ?? meetingUrl}

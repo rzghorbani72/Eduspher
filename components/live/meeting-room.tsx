@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import type { MyTutoringGroupSession } from '@/lib/api/account-types';
 import { useNow } from '@/lib/hooks/use-now';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { isEmbeddable, withMeetAppName } from '@/lib/live/embeddable';
+import { isJitsiMeetUrl, withMeetAppName } from '@/lib/live/embeddable';
 import { formatSessionWhen, sessionState } from '@/lib/live/session-state';
 
 /** The link is time-gated on the server, so re-poll to catch it opening. */
@@ -64,7 +64,7 @@ export function MeetingRoom({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waiting]);
 
-  if (canJoinVideo && meetingUrl && isEmbeddable(meetingUrl)) {
+  if (canJoinVideo && meetingUrl && isJitsiMeetUrl(meetingUrl)) {
     return (
       <MentomaMeetEmbed
         key={session?.id ?? 'meet'}

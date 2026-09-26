@@ -1074,6 +1074,8 @@ export const en = {
     privateOrAskTimes: 'Or tell us your free times',
     joinClass: 'Join live video',
     linkOpensSoon: 'The join link opens shortly before the class starts.',
+    backupLinkPrompt: 'Poor video or audio?',
+    backupLinkAction: 'Join via the backup link',
     videoOnlyInSession: 'Live video opens only during the session the teacher scheduled.',
     nextSessionWhen: 'Next session: {when}',
     checkLinkAgain: 'Check the link again',

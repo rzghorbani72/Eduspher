@@ -624,6 +624,8 @@ const tr = {
   live: {
     joinClass: 'Join live video',
     linkOpensSoon: 'Katılım bağlantısı ders başlamadan kısa süre önce açılır.',
+    backupLinkPrompt: 'Poor video or audio?',
+    backupLinkAction: 'Join via the backup link',
     videoOnlyInSession: 'Live video opens only during the session the teacher scheduled.',
     nextSessionWhen: 'Sonraki oturum: {when}',
     checkLinkAgain: 'Bağlantıyı yeniden kontrol et',
