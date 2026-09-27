@@ -13,6 +13,7 @@ import {
 import Link from '@/components/ui/link';
 import { MetaDot } from '@/components/learning/meta-dot';
 import type { LessonSummary, LessonType, SeasonSummary } from '@/lib/api/types';
+import type { QuizGate } from '@/lib/api/client';
 import { formatSeconds } from '@/components/courses/curriculum/format';
 import { flattenLessons } from '@/lib/learning/lesson-list';
 import { learnPath } from '@/lib/content-paths';
@@ -51,6 +52,8 @@ interface LearningCurriculumProps {
   seasons: SeasonSummary[];
   selectedLessonId: string;
   completedLessonIds: ReadonlySet<string>;
+  /** Lessons locked behind a required quiz the student has not passed yet. */
+  quizGates: Readonly<Record<string, QuizGate>>;
   storeSlug: string | null;
   lessonLabel: string;
   language: string;
@@ -62,6 +65,7 @@ export function LearningCurriculum({
   seasons,
   selectedLessonId,
   completedLessonIds,
+  quizGates,
   storeSlug,
   lessonLabel,
   language,
@@ -100,7 +104,9 @@ export function LearningCurriculum({
                 const selected = lessonId === selectedLessonId;
                 const completed = completedLessonIds.has(lessonId);
                 const unlockDays = daysUntilUnlock(lesson);
-                const locked = lesson.is_published === false || unlockDays !== null;
+                const gate = quizGates[lessonId];
+                const locked =
+                  lesson.is_published === false || unlockDays !== null || Boolean(gate);
                 const type = lesson.lesson_type ?? 'TEXT';
                 const Icon = TYPE_ICON[type] ?? FileText;
                 const duration = formatSeconds(lesson.duration, language, t);
@@ -165,7 +171,12 @@ export function LearningCurriculum({
                         ) : null}
                       </span>
 
-                      {unlockDays !== null ? (
+                      {gate ? (
+                        <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-(--theme-primary)/15 px-2 py-1 text-[11px] font-semibold text-(--theme-primary-ink)">
+                          <LockKeyhole className="size-3" aria-hidden="true" />
+                          {t('learning.passQuizFirst').replace('{quiz}', gate.title)}
+                        </span>
+                      ) : unlockDays !== null ? (
                         <span className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-(--theme-primary)/15 px-2 py-1 text-[11px] font-semibold text-(--theme-primary-ink)">
                           <LockKeyhole className="size-3" aria-hidden="true" />
                           {t('learning.unlocksInDays').replace(

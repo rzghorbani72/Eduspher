@@ -15,6 +15,7 @@ import { Unavailable } from '@/components/learning/unavailable';
 import type { LessonSummary, SeasonSummary } from '@/lib/api/types';
 import { getLearningLesson, getProgress } from '@/lib/api/learning';
 import { useLessonProgress } from '@/hooks/use-lesson-progress';
+import { useQuizGates } from '@/hooks/use-quiz-gates';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useTheaterMode } from '@/lib/hooks/use-theater-mode';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -22,7 +23,7 @@ import { flattenLessons, neighboursOf, watchPercent } from '@/lib/learning/lesso
 import { buildAcademyPath, cn, formatPercent, resolveAssetUrl, toPersianDigits } from '@/lib/utils';
 import { formatSeconds } from '@/components/courses/curriculum/format';
 import { initialsOf } from '@/lib/learning/live-schedule';
-import { coursePath } from '@/lib/content-paths';
+import { coursePath, learnPath } from '@/lib/content-paths';
 
 interface LearningShellProps {
   courseId: string;
@@ -83,6 +84,11 @@ export function LearningShell({
 
   const flatLessons = useMemo(() => flattenLessons(seasons), [seasons]);
   const { previous, next, current } = neighboursOf(flatLessons, lessonId);
+  const { gates, refresh: refreshGates } = useQuizGates(courseId, enrollmentId !== null);
+  const blockedBy = gates[lessonId] ?? null;
+  const blockingLesson = blockedBy
+    ? flatLessons.find((item) => item.id === blockedBy.lesson_id)
+    : undefined;
 
   const type = (lesson?.lesson_type ?? selectedLesson.lesson_type ?? 'TEXT').toUpperCase();
   const { progress, initialPosition, heartbeat, complete, saving, saveFailed } = useLessonProgress(
@@ -108,6 +114,10 @@ export function LearningShell({
     const saved = await complete();
     if (saved) await refreshCourseProgress();
     return saved;
+  };
+
+  const onQuizPassed = async () => {
+    await Promise.all([refreshGates(), refreshCourseProgress()]);
   };
 
   // The server resolves this: the allow_download_* flags are per access route,
@@ -155,6 +165,24 @@ export function LearningShell({
       </div>
       {header}
     </>
+  ) : blockedBy ? (
+    <>
+      {header}
+      <div className="space-y-3 pt-6 text-center">
+        <Unavailable message={t('learning.passQuizFirst').replace('{quiz}', blockedBy.title)} />
+        {blockingLesson ? (
+          <Link
+            href={buildAcademyPath(
+              storeSlug,
+              learnPath(courseSlug, blockingLesson.lesson.slug ?? blockingLesson.id),
+            )}
+            className="inline-flex rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-bold text-white"
+          >
+            {t('learning.goToQuiz')}
+          </Link>
+        ) : null}
+      </div>
+    </>
   ) : error || !lesson ? (
     <>
       {header}
@@ -174,6 +202,8 @@ export function LearningShell({
       canDownload={canDownload}
       teacherName={teacherName}
       header={header}
+      storeSlug={storeSlug}
+      onQuizPassed={() => void onQuizPassed()}
     />
   );
 
@@ -327,6 +357,7 @@ export function LearningShell({
               seasons={seasons}
               selectedLessonId={lessonId}
               completedLessonIds={completedLessonIds}
+              quizGates={gates}
               storeSlug={storeSlug}
               lessonLabel={t('learning.curriculum')}
               language={language}
@@ -341,6 +372,7 @@ export function LearningShell({
         storeSlug={storeSlug}
         previous={previous}
         next={next}
+        nextLockedBy={next ? (gates[next.id] ?? null) : null}
         isCompleted={progress?.status === 'COMPLETED'}
         saving={saving}
         onComplete={markComplete}

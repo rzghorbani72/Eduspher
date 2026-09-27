@@ -16,9 +16,10 @@ test.describe('@backend student journey: recorded course', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
     await page.getByRole('tab', { name: 'آزمون' }).click();
+    await page.getByRole('button', { name: 'شروع آزمون' }).click();
     await page.getByLabel('درست', { exact: true }).check();
     await page.getByRole('button', { name: 'ارسال آزمون' }).click();
-    await expect(page.getByRole('tabpanel')).toContainText('1 / 1');
+    await expect(page.getByRole('tabpanel')).toContainText('۱ / ۱');
 
     await page.getByRole('tab', { name: 'تکلیف' }).click();
     await page.getByLabel('پاسخ تکلیف').fill('پاسخ دانشجو در آزمون خودکار');

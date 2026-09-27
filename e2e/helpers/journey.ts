@@ -12,6 +12,9 @@ export const JOURNEY = {
   password: process.env.E2E_STUDENT_PASSWORD ?? 'Passw0rd!',
   offlineCourseSlug: process.env.E2E_OFFLINE_COURSE_SLUG ?? 'e2e-journeys-offline',
   liveCourseSlug: process.env.E2E_LIVE_COURSE_SLUG ?? 'e2e-journeys-live',
+  quizStudentPhone: process.env.E2E_QUIZ_STUDENT_PHONE ?? '',
+  quizCourseSlug: process.env.E2E_QUIZ_COURSE_SLUG ?? 'e2e-journeys-quiz',
+  quizLessonTwoSlug: process.env.E2E_QUIZ_LESSON_TWO_SLUG ?? 'e2e-journeys-quiz-2',
 } as const;
 
 export const academyPath = (path: string): string => `/${JOURNEY.academySlug}${path}`;

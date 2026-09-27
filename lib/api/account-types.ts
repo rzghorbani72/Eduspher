@@ -245,6 +245,8 @@ export type MyTutoringGroupSession = {
   recording?: SessionRecording | null;
   /** Handouts the teacher shared after this meeting. */
   Materials?: SessionMaterial[];
+  /** A quiz students take once this meeting has started. */
+  Quiz?: { id: string; is_published: boolean } | null;
 };
 
 /** A handout or helper video the teacher left alongside one meeting. */

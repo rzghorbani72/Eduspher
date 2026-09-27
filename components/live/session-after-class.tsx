@@ -3,6 +3,7 @@
 import { FileText, Image as ImageIcon, StickyNote, Video } from 'lucide-react';
 
 import { VideoLesson } from '@/components/learning/video-lesson';
+import { LessonQuiz } from '@/components/quiz/lesson-quiz';
 import { EmptyState } from '@/components/ui/empty-state';
 import type { MyTutoringGroupSession, SessionMaterial } from '@/lib/api/account-types';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -16,8 +17,14 @@ interface SessionAfterClassProps {
   onSelect: (sessionId: string) => void;
 }
 
+/** A meeting's quiz opens when the meeting starts, and only once it is published. */
+const hasOpenQuiz = (session: MyTutoringGroupSession) =>
+  Boolean(session.Quiz?.is_published) && new Date(session.starts_at).getTime() <= Date.now();
+
 const hasContent = (session: MyTutoringGroupSession) =>
-  Boolean(session.notes || session.recording?.url || session.Materials?.length);
+  Boolean(
+    session.notes || session.recording?.url || session.Materials?.length || hasOpenQuiz(session),
+  );
 
 const isImage = (material: SessionMaterial) =>
   material.kind === 'DOCUMENT' && /\.(png|jpe?g|webp|gif)$/i.test(material.url ?? '');
@@ -53,6 +60,8 @@ export function SessionAfterClass({
 
   return (
     <div className="space-y-6">
+      {hasOpenQuiz(session) ? <LessonQuiz parent={{ kind: 'session', id: session.id }} /> : null}
+
       {session.notes ? (
         <section className="space-y-1">
           <h3 className="flex items-center gap-2 text-sm font-semibold">

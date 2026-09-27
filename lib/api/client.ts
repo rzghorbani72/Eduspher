@@ -1210,17 +1210,44 @@ export interface QuizQuestion {
   type: QuizQuestionType;
   prompt: string;
   points: number;
-  order: number;
   Option: QuizOption[];
 }
 
+export interface QuizAttemptRow {
+  id: string;
+  attempt_number: number;
+  status: QuizAttemptStatus;
+  score: number;
+  max_score: number;
+  passed?: boolean | null;
+  submitted_at?: string | null;
+}
+
+/** The rules and the student's own history; the question bank never comes down. */
 export interface StudentQuiz {
   id: string;
   title: string;
   description?: string | null;
-  passing_score: number;
-  is_published: boolean;
-  Question: QuizQuestion[];
+  lesson_id: string | null;
+  tutoring_session_id: string | null;
+  pass_percent: number;
+  is_required: boolean;
+  is_final: boolean;
+  max_attempts: number | null;
+  question_count: number;
+  attempts: QuizAttemptRow[];
+  passed: boolean;
+  open_attempt_id: string | null;
+  /** null = unlimited. */
+  attempts_left: number | null;
+  can_start: boolean;
+}
+
+/** A lesson the student cannot open yet, and the quiz in the way. */
+export interface QuizGate {
+  quiz_id: string;
+  lesson_id: string;
+  title: string;
 }
 
 export interface QuizAnswer {
@@ -1236,12 +1263,17 @@ export interface QuizAnswer {
 export interface QuizAttempt {
   id: string;
   quiz_id: string;
+  attempt_number: number;
   status: QuizAttemptStatus;
   score: number;
   max_score: number;
   passed?: boolean | null;
   feedback?: string | null;
   Answer?: QuizAnswer[];
+  /** The questions drawn for this attempt, answer keys removed. */
+  Question?: QuizQuestion[];
+  /** Set on the submit that just earned the course certificate. */
+  certificate_number?: string | null;
 }
 
 export interface AnswerInput {
@@ -1272,6 +1304,13 @@ type Envelope<T> = { message: string; status: string; data: T };
 
 export const getLessonQuiz = async (lessonId: string, options?: RequestOptions) =>
   (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options)).data;
+
+export const getSessionQuiz = async (sessionId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<StudentQuiz>>(`/tutoring-sessions/${sessionId}/quiz`, options)).data;
+
+export const getQuizGates = async (courseId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<Record<string, QuizGate>>>(`/courses/${courseId}/quiz-gates`, options))
+    .data;
 
 export const startQuizAttempt = async (quizId: string, options?: RequestOptions) =>
   (await postJson<Envelope<QuizAttempt>>(`/quizzes/${quizId}/attempt`, {}, options)).data;

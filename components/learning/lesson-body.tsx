@@ -33,6 +33,9 @@ interface LessonBodyProps {
   teacherName: string | null;
   /** The title block: it sits under the stage, above the tabs. */
   header: React.ReactNode;
+  storeSlug: string | null;
+  /** A passed quiz may unlock the lessons after it. */
+  onQuizPassed: () => void;
 }
 
 /**
@@ -51,6 +54,8 @@ export function LessonBody({
   canDownload,
   teacherName,
   header,
+  storeSlug,
+  onQuizPassed,
 }: LessonBodyProps) {
   const { t, language } = useTranslation();
 
@@ -143,7 +148,14 @@ export function LessonBody({
         ? {
             id: 'quiz',
             label: t('learning.tabQuiz'),
-            content: <LessonQuiz lessonId={lessonId} currentProfileId={currentProfileId} />,
+            content: (
+              <LessonQuiz
+                parent={{ kind: 'lesson', id: lessonId }}
+                currentProfileId={currentProfileId}
+                storeSlug={storeSlug}
+                onPassed={onQuizPassed}
+              />
+            ),
           }
         : null,
       {

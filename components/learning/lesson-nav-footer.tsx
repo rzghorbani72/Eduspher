@@ -1,10 +1,11 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, LockKeyhole } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import Link from '@/components/ui/link';
 import type { FlatLesson } from '@/lib/learning/lesson-list';
+import type { QuizGate } from '@/lib/api/client';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { learnPath } from '@/lib/content-paths';
 import { buildAcademyPath } from '@/lib/utils';
@@ -14,6 +15,8 @@ interface LessonNavFooterProps {
   storeSlug: string | null;
   previous: FlatLesson | null;
   next: FlatLesson | null;
+  /** The next lesson is locked until this quiz is passed. */
+  nextLockedBy: QuizGate | null;
   isCompleted: boolean;
   saving: boolean;
   /** Resolves false when the progress could not be saved. */
@@ -35,6 +38,7 @@ export function LessonNavFooter({
   storeSlug,
   previous,
   next,
+  nextLockedBy,
   isCompleted,
   saving,
   onComplete,
@@ -47,9 +51,10 @@ export function LessonNavFooter({
 
   // One button ends the lesson: record it, then move on. A failed save keeps the
   // student here with the error visible — advancing would bury a lost record.
+  const reachableNext = nextLockedBy ? null : next;
   const completeAndContinue = async () => {
     const saved = await onComplete();
-    if (saved && next) router.push(href(next));
+    if (saved && reachableNext) router.push(href(reachableNext));
   };
 
   const step = (lesson: FlatLesson, direction: 'previous' | 'next') => (
@@ -99,10 +104,10 @@ export function LessonNavFooter({
           {saving
             ? t('common.saving')
             : isCompleted
-              ? next
+              ? reachableNext
                 ? t('learning.nextLesson')
                 : t('learning.completed')
-              : next
+              : reachableNext
                 ? t('learning.completeAndContinue')
                 : t('learning.markComplete')}
         </button>
@@ -110,7 +115,16 @@ export function LessonNavFooter({
         <span />
       )}
 
-      <div className="hidden sm:block sm:justify-self-end">{next ? step(next, 'next') : null}</div>
+      <div className="hidden sm:block sm:justify-self-end">
+        {nextLockedBy ? (
+          <span className="text-muted flex max-w-[290px] items-center gap-2 text-[12px]">
+            <LockKeyhole className="size-4 shrink-0" aria-hidden="true" />
+            {t('learning.passQuizFirst').replace('{quiz}', nextLockedBy.title)}
+          </span>
+        ) : next ? (
+          step(next, 'next')
+        ) : null}
+      </div>
     </div>
   );
 }
