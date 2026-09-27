@@ -1,15 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, Clock3 } from 'lucide-react';
+import { Clock3 } from 'lucide-react';
 
+import { AttachmentInput } from '@/components/account/support/attachment-input';
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
+import { AssignmentSubmissionStatus } from '@/components/learning/assignment-submission-status';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { uploadAssignmentImage } from '@/lib/api/client';
 import { listSubmissions, submitAssignment } from '@/lib/api/learning';
 import { useLocaleFormat } from '@/hooks/use-locale-digits';
-import { scoreLabel } from '@/lib/account-labels';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { useApiQuery } from '@/hooks/use-api-query';
 
@@ -39,7 +40,7 @@ export function AssignmentSubmissionForm({
   const { t, language } = useTranslation();
   const format = useLocaleFormat();
   const [content, setContent] = useState('');
-  const [fileUrl, setFileUrl] = useState('');
+  const [imageIds, setImageIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -58,21 +59,9 @@ export function AssignmentSubmissionForm({
     : null;
 
   const handleSubmit = async () => {
-    if (!content.trim() && !fileUrl.trim()) {
+    if (!content.trim() && imageIds.length === 0) {
       setFormError(t('learning.assignmentAnswerRequired'));
       return;
-    }
-    if (fileUrl.trim()) {
-      try {
-        const resourceUrl = new URL(fileUrl.trim());
-        if (!['http:', 'https:'].includes(resourceUrl.protocol)) {
-          setFormError(t('learning.invalidResourceLink'));
-          return;
-        }
-      } catch {
-        setFormError(t('learning.invalidResourceLink'));
-        return;
-      }
     }
     setSubmitting(true);
     setFormError(null);
@@ -80,13 +69,13 @@ export function AssignmentSubmissionForm({
       await submitAssignment({
         assignmentId: assignment.id,
         content: content.trim() || undefined,
-        fileUrl: fileUrl.trim() || undefined,
+        imageIds,
       });
       // Re-read rather than patching the cache: what the server stored is the
       // learning record, and that is what the student must see.
       await refreshSubmission();
       setContent('');
-      setFileUrl('');
+      setImageIds([]);
     } catch {
       setFormError(t('learning.assignmentSubmitFailed'));
     } finally {
@@ -118,50 +107,32 @@ export function AssignmentSubmissionForm({
         ) : null}
 
         {submission ? (
-          <div className="bg-surface mt-6 rounded-xl p-4">
-            <p className="flex items-center gap-2 font-medium">
-              <CheckCircle2 className="text-primary size-4" aria-hidden="true" />
-              {submission.status === 'GRADED' ? t('learning.graded') : t('learning.submitted')}
-              {submission.is_late ? (
-                <span className="bg-surface-alt rounded-full px-2 py-0.5 text-xs font-normal">
-                  {t('learning.submittedLate')}
-                </span>
-              ) : null}
-            </p>
-            {submission.score !== null && submission.score !== undefined ? (
-              <p className="mt-2 text-sm">
-                {t('learning.score')}:{' '}
-                {scoreLabel(submission.score, assignment.max_score, t, language)}
-              </p>
-            ) : null}
-            {submission.feedback ? (
-              <p className="mt-3 text-sm whitespace-pre-wrap">{submission.feedback}</p>
-            ) : null}
-          </div>
+          <AssignmentSubmissionStatus submission={submission} maxScore={assignment.max_score} />
         ) : null}
 
-        <div className="mt-6 space-y-4">
-          <Textarea
-            value={content}
-            onChange={(event) => setContent(event.target.value)}
-            placeholder={t('learning.assignmentAnswerPlaceholder')}
-            aria-label={t('learning.assignmentAnswer')}
-            rows={7}
-            maxLength={20_000}
-          />
-          <Input
-            type="url"
-            value={fileUrl}
-            onChange={(event) => setFileUrl(event.target.value)}
-            placeholder={t('learning.resourceLinkPlaceholder')}
-            aria-label={t('learning.resourceLink')}
-          />
-          <p className="text-muted text-xs">{t('learning.uploadUnavailableNote')}</p>
-          {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
-          <Button type="button" onClick={() => void handleSubmit()} disabled={submitting}>
-            {submitting ? t('learning.submittingAssignment') : t('learning.submitAssignment')}
-          </Button>
-        </div>
+        {submission?.status === 'GRADED' ? null : (
+          <div className="mt-6 space-y-4">
+            <Textarea
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              placeholder={t('learning.assignmentAnswerPlaceholder')}
+              aria-label={t('learning.assignmentAnswer')}
+              rows={7}
+              maxLength={20_000}
+            />
+            <AttachmentInput
+              imageIds={imageIds}
+              onChange={setImageIds}
+              upload={uploadAssignmentImage}
+              max={3}
+              hint={t('learning.answerImagesHint')}
+            />
+            {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
+            <Button type="button" onClick={() => void handleSubmit()} disabled={submitting}>
+              {submitting ? t('learning.submittingAssignment') : t('learning.submitAssignment')}
+            </Button>
+          </div>
+        )}
       </section>
 
       {submission ? (

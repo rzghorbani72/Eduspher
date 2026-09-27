@@ -1641,26 +1641,26 @@ export const rateSupportTicket = async (
     )
   ).data;
 
-export const uploadSupportAttachment = async (file: File, options?: RequestOptions) => {
+/** One image as multipart `file`; the browser sets the boundary, so no Content-Type. */
+const postImageFile = async <T>(path: string, file: File, options?: RequestOptions) => {
   const form = new FormData();
   form.append('file', file);
-  // No Content-Type: the browser sets the multipart boundary itself.
   const headers = await buildHeaders({}, { mutate: true });
-  const response = await apiFetch('/support/attachments', {
+  const response = await apiFetch(path, {
     method: 'POST',
     credentials: 'include',
     headers,
     body: form,
     signal: options?.signal,
   });
-  return (
-    await handleResponse<Envelope<{ id: string; mime: string; size: number }>>(
-      response,
-      undefined,
-      true,
-    )
-  ).data;
+  return (await handleResponse<{ data: T }>(response, undefined, true)).data;
 };
+
+export const uploadSupportAttachment = (file: File, options?: RequestOptions) =>
+  postImageFile<{ id: string; mime: string; size: number }>('/support/attachments', file, options);
+
+export const uploadAssignmentImage = (file: File, options?: RequestOptions) =>
+  postImageFile<{ id: string }>('/assignments/submissions/images', file, options);
 
 export type SeatHold = { hold_id: string; seats: number; expires_at: string };
 

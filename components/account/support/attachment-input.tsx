@@ -4,13 +4,16 @@ import { useRef, useState } from 'react';
 import { ImagePlus, X } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { uploadSupportAttachment } from '@/lib/api/client';
+import { ImageLightbox } from '@/components/shared/image-lightbox';
 
-const MAX = 5;
 const ACCEPT = 'image/png,image/jpeg,image/webp';
 
 interface Props {
   imageIds: string[];
   onChange: (ids: string[]) => void;
+  upload?: (file: File) => Promise<{ id: string }>;
+  max?: number;
+  hint?: string;
 }
 
 interface Preview {
@@ -18,25 +21,32 @@ interface Preview {
   url: string;
 }
 
-export function AttachmentInput({ imageIds, onChange }: Props) {
+export function AttachmentInput({
+  imageIds,
+  onChange,
+  upload = uploadSupportAttachment,
+  max = 5,
+  hint,
+}: Props) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<Preview[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const pick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (inputRef.current) inputRef.current.value = '';
     if (!file) return;
-    if (imageIds.length >= MAX) {
+    if (imageIds.length >= max) {
       setError(t('support.attachmentTooMany'));
       return;
     }
     setUploading(true);
     setError(null);
     try {
-      const result = await uploadSupportAttachment(file);
+      const result = await upload(file);
       onChange([...imageIds, result.id]);
       setPreviews((p) => [...p, { id: result.id, url: URL.createObjectURL(file) }]);
     } catch {
@@ -51,16 +61,26 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
     setPreviews((p) => p.filter((x) => x.id !== id));
   };
 
+  // Parent may clear its ids after sending; drop previews it no longer holds.
+  const visible = previews.filter((p) => imageIds.includes(p.id));
+
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        {previews.map((p) => (
+        {visible.map((p, index) => (
           <div
             key={p.id}
             className="relative size-16 overflow-hidden rounded-xl bg-(--theme-primary)/5"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.url} alt="" className="size-full object-cover" />
+            <button
+              type="button"
+              onClick={() => setOpenIndex(index)}
+              aria-label={t('learning.imagePreview')}
+              className="size-full"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={p.url} alt="" className="size-full object-cover" />
+            </button>
             <button
               type="button"
               aria-label={t('support.cancel')}
@@ -71,7 +91,7 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
             </button>
           </div>
         ))}
-        {imageIds.length < MAX ? (
+        {imageIds.length < max ? (
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
@@ -90,8 +110,13 @@ export function AttachmentInput({ imageIds, onChange }: Props) {
           aria-label={t('support.addImage')}
         />
       </div>
-      <p className="text-muted text-xs">{t('support.onlyImages')}</p>
+      <p className="text-muted text-xs">{hint ?? t('support.onlyImages')}</p>
       {error ? <p className="text-xs text-red-500">{error}</p> : null}
+      <ImageLightbox
+        urls={visible.map((p) => p.url)}
+        index={openIndex}
+        onIndexChange={setOpenIndex}
+      />
     </div>
   );
 }

@@ -16,6 +16,7 @@ import type { LessonSummary, SeasonSummary } from '@/lib/api/types';
 import { getLearningLesson, getProgress } from '@/lib/api/learning';
 import { useLessonProgress } from '@/hooks/use-lesson-progress';
 import { useQuizGates } from '@/hooks/use-quiz-gates';
+import { useAssignmentScores } from '@/hooks/use-assignment-scores';
 import { useApiQuery } from '@/hooks/use-api-query';
 import { useTheaterMode } from '@/lib/hooks/use-theater-mode';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -86,6 +87,7 @@ export function LearningShell({
   const { previous, next, current } = neighboursOf(flatLessons, lessonId);
   const { gates, refresh: refreshGates } = useQuizGates(courseId, enrollmentId !== null);
   const blockedBy = gates[lessonId] ?? null;
+  const assignmentScores = useAssignmentScores(courseId, enrollmentId !== null);
   const blockingLesson = blockedBy
     ? flatLessons.find((item) => item.id === blockedBy.lesson_id)
     : undefined;
@@ -358,6 +360,7 @@ export function LearningShell({
               selectedLessonId={lessonId}
               completedLessonIds={completedLessonIds}
               quizGates={gates}
+              assignmentScores={assignmentScores}
               storeSlug={storeSlug}
               lessonLabel={t('learning.curriculum')}
               language={language}

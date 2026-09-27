@@ -12,6 +12,8 @@ import {
 
 import Link from '@/components/ui/link';
 import { MetaDot } from '@/components/learning/meta-dot';
+import { AssignmentScoreChip } from '@/components/learning/assignment-score-chip';
+import type { LessonAssignmentScore } from '@/hooks/use-assignment-scores';
 import type { LessonSummary, LessonType, SeasonSummary } from '@/lib/api/types';
 import type { QuizGate } from '@/lib/api/client';
 import { formatSeconds } from '@/components/courses/curriculum/format';
@@ -54,6 +56,7 @@ interface LearningCurriculumProps {
   completedLessonIds: ReadonlySet<string>;
   /** Lessons locked behind a required quiz the student has not passed yet. */
   quizGates: Readonly<Record<string, QuizGate>>;
+  assignmentScores: Readonly<Record<string, LessonAssignmentScore>>;
   storeSlug: string | null;
   lessonLabel: string;
   language: string;
@@ -66,6 +69,7 @@ export function LearningCurriculum({
   selectedLessonId,
   completedLessonIds,
   quizGates,
+  assignmentScores,
   storeSlug,
   lessonLabel,
   language,
@@ -105,6 +109,7 @@ export function LearningCurriculum({
                 const completed = completedLessonIds.has(lessonId);
                 const unlockDays = daysUntilUnlock(lesson);
                 const gate = quizGates[lessonId];
+                const assignmentResult = assignmentScores[lessonId];
                 const locked =
                   lesson.is_published === false || unlockDays !== null || Boolean(gate);
                 const type = lesson.lesson_type ?? 'TEXT';
@@ -157,6 +162,9 @@ export function LearningCurriculum({
                           <span className="shrink-0 rounded-full bg-(--theme-primary)/15 px-2 py-0.5 text-[10px] font-extrabold text-(--theme-primary-ink)">
                             {t('courses.free')}
                           </span>
+                        ) : null}
+                        {assignmentResult ? (
+                          <AssignmentScoreChip result={assignmentResult} t={t} />
                         ) : null}
                       </span>
 

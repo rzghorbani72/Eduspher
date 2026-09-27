@@ -76,6 +76,7 @@ export interface AssignmentSubmission {
   profile_id: string;
   content?: string | null;
   file_url?: string | null;
+  image_ids?: string[];
   status: SubmissionStatus;
   /** Recorded, never blocking — a late hand-in is still accepted. */
   is_late?: boolean;
@@ -83,7 +84,12 @@ export interface AssignmentSubmission {
   feedback?: string | null;
   submitted_at?: string | null;
   graded_at?: string | null;
-  Assignment?: { id: string; title: string; max_score: number };
+  Assignment?: {
+    id: string;
+    title: string;
+    max_score: number;
+    Lesson?: { id: string } | null;
+  };
   GradedBy?: { id: string; display_name: string } | null;
 }
 
@@ -102,6 +108,7 @@ export const getProgress = async (
   options?: RequestOptions,
 ) => {
   const query = new URLSearchParams();
+  if (params.courseId) query.set('course_id', params.courseId);
   if (params.enrollmentId) query.set('enrollment_id', params.enrollmentId);
   if (params.courseId) query.set('course_id', params.courseId);
   if (params.lessonId) query.set('lesson_id', params.lessonId);
@@ -169,6 +176,7 @@ export const listAssignments = async (
 export const listSubmissions = async (
   params: {
     assignmentId?: string;
+    courseId?: string;
     enrollmentId?: string;
     status?: SubmissionStatus;
     limit?: number;
@@ -177,6 +185,7 @@ export const listSubmissions = async (
 ) => {
   const query = new URLSearchParams();
   if (params.assignmentId) query.set('assignment_id', params.assignmentId);
+  if (params.courseId) query.set('course_id', params.courseId);
   if (params.enrollmentId) query.set('enrollment_id', params.enrollmentId);
   if (params.status) query.set('status', params.status);
   query.set('limit', String(params.limit ?? 100));
@@ -194,12 +203,12 @@ export const listSubmissions = async (
 export const submitAssignment = async (payload: {
   assignmentId: string;
   content?: string;
-  fileUrl?: string;
+  imageIds?: string[];
 }) => {
   const response = await postJson<Envelope<AssignmentSubmission>>('/assignments/submit', {
     assignment_id: payload.assignmentId,
     ...(payload.content ? { content: payload.content } : {}),
-    ...(payload.fileUrl ? { file_url: payload.fileUrl } : {}),
+    ...(payload.imageIds?.length ? { image_ids: payload.imageIds } : {}),
   });
   return response.data;
 };
