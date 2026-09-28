@@ -1,7 +1,7 @@
 import type { PaymentReceipt } from '@/lib/api/account-types';
 import type { LanguageCode } from '@/lib/i18n/config';
 import { t } from '@/lib/i18n/server-translations';
-import { formatCurrencyWithAcademy, formatDate, toPersianDigits } from '@/lib/utils';
+import { formatCurrencyWithAcademy, formatDate, isLatinText, toPersianDigits } from '@/lib/utils';
 
 interface PaymentReceiptCardProps {
   receipt: PaymentReceipt;
@@ -26,7 +26,9 @@ export function PaymentReceiptCard({ receipt, language, academy }: PaymentReceip
         </h2>
         <p className="text-muted text-sm">
           {translate('account.receiptNumber')}:{' '}
-          <span className="font-mono">{receipt.invoice_number}</span>
+          <span className="font-mono" dir="ltr">
+            {receipt.invoice_number}
+          </span>
         </p>
       </header>
 
@@ -68,7 +70,12 @@ function Party({ title, name }: { title: string; name: string | null }) {
   return (
     <div className="border-theme rounded-xl border p-3">
       <p className="text-muted text-xs">{title}</p>
-      <p className="mt-0.5 font-medium text-(--theme-foreground)">{name ?? '—'}</p>
+      <p
+        className="mt-0.5 font-medium text-(--theme-foreground)"
+        dir={name && isLatinText(name) ? 'ltr' : undefined}
+      >
+        {name ?? '—'}
+      </p>
     </div>
   );
 }
@@ -83,6 +90,7 @@ function Row({ label, value, emphasis }: { label: string; value: string; emphasi
             ? 'text-base font-bold text-(--theme-primary-ink)'
             : 'font-medium text-(--theme-foreground)'
         }
+        dir={isLatinText(value) ? 'ltr' : undefined}
       >
         {value}
       </dd>

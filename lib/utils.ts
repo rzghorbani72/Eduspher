@@ -265,6 +265,12 @@ export const formatPercent = (value: number, language?: string): string =>
 export const formatLtrValue = (value: string, language?: string): string =>
   language === 'fa' ? `\u2066${toPersianDigits(value, language)}\u2069` : value;
 
+/**
+ * True when a string has no Persian/Arabic letters, so it can be pinned to LTR
+ * (cuids, English names) without reversing a legitimately Persian value.
+ */
+export const isLatinText = (value: string): boolean => !/[؀-ۿ]/.test(value);
+
 const toEnglishDigits = (value: string): string =>
   value
     .replace(/[۰-۹]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x06f0 + 48))
