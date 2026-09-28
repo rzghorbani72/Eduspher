@@ -101,7 +101,7 @@ export const en = {
     quickEnrollTitle: 'Quick sign-in to enroll',
     quickEnrollHint: 'Enter your mobile number; we will text you a code. No password needed.',
     quickEnrollConfirm: 'Verify and continue',
-    quickEnrollPasswordOnly: 'This account signs in with a password.',
+    quickEnrollTrouble: 'Having trouble? Sign in instead:',
     quickEnrollLegalPrefix: 'By continuing you accept the',
     quickEnrollLegalSuffix: '.',
     groupClosedDeadline: 'Registration for this class has closed.',

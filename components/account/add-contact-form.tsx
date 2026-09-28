@@ -10,6 +10,8 @@ import { PhoneInput } from '@/components/ui/phone-input';
 import { sendEmailOtp, sendPhoneOtp, verifyEmailOtp, verifyPhoneOtp } from '@/lib/api/client';
 import { OtpType } from '@/lib/constants';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 import { getDefaultCountry, getCountryByCode } from '@/lib/country-codes';
@@ -74,6 +76,8 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
   // OTP state
   const [otp, setOtp] = useState('');
   const [, setOtpSent] = useState(false);
+  // The /auth/otp/ routes need a solved captcha even for a logged-in visitor.
+  const captcha = useHumanCheck();
 
   const handleSendOtp = async () => {
     setIsLoading(true);
@@ -95,7 +99,9 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
           setEmailError(emailError);
           return;
         }
-        await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION);
+        const captchaToken = captcha.token;
+        captcha.reset();
+        await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION, captchaToken);
         setMessage(t('auth.otpSentToEmail'));
         setOtpSent(true);
         setStep('otp');
@@ -113,7 +119,9 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
           setPhoneError(phoneError);
           return;
         }
-        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+        const captchaToken = captcha.token;
+        captcha.reset();
+        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
         setMessage(t('auth.otpSentToPhone'));
         setOtpSent(true);
         setStep('otp');
@@ -306,10 +314,12 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
         </div>
       )}
 
+      <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+
       <Button
         type="button"
         onClick={handleSendOtp}
-        disabled={isLoading || !!emailError || !!phoneError}
+        disabled={isLoading || !!emailError || !!phoneError || !captcha.solved}
         className="w-full"
         loading={isLoading}
       >

@@ -29,6 +29,9 @@ importers:
       '@types/dompurify':
         specifier: ^3.0.5
         version: 3.2.0
+      altcha:
+        specifier: 3.2.3
+        version: 3.2.3
       autoprefixer:
         specifier: ^10.4.22
         version: 10.4.22(postcss@8.5.6)
@@ -1608,6 +1611,9 @@ packages:
   ajv@8.20.0:
     resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/ajv/-/ajv-8.20.0.tgz}
 
+  altcha@3.2.3:
+    resolution: {integrity: sha512-yBHJIOoGZyU4/ap3AnlL2kChEVw40QP142BtxYZN5dCjAeBlaScuAEWxmrLDVQjlRBplayapUIvARs0eG48OVw==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/altcha/-/altcha-3.2.3.tgz}
+
   ansi-styles@4.3.0:
     resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/ansi-styles/-/ansi-styles-4.3.0.tgz}
     engines: {node: '>=8'}
@@ -2281,6 +2287,9 @@ packages:
   has-tostringtag@1.0.2:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/has-tostringtag/-/has-tostringtag-1.0.2.tgz}
     engines: {node: '>= 0.4'}
+
+  hash-wasm@4.12.0:
+    resolution: {integrity: sha512-+/2B2rYLb48I/evdOIhP+K/DD2ca2fgBjp6O+GBEnCDk2e4rpeXIK8GvIyRPjTezgmWn9gmKwkQjjx6BtqDHVQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/hash-wasm/-/hash-wasm-4.12.0.tgz}
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==, tarball: https://repo.hmirror.ir/artifactory/api/npm/mirror-npm/hasown/-/hasown-2.0.2.tgz}
@@ -4801,6 +4810,10 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
+  altcha@3.2.3:
+    dependencies:
+      hash-wasm: 4.12.0
+
   ansi-styles@4.3.0:
     dependencies:
       color-convert: 2.0.1
@@ -5624,6 +5637,8 @@ snapshots:
   has-tostringtag@1.0.2:
     dependencies:
       has-symbols: 1.1.0
+
+  hash-wasm@4.12.0: {}
 
   hasown@2.0.2:
     dependencies:

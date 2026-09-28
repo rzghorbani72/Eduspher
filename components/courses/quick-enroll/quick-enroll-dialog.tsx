@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { Loader2, X } from 'lucide-react';
 
 import { AuthError } from '@/components/auth/auth-notice';
+import { HumanCheck } from '@/components/auth/human-check';
 import { useQuickEnrollAuth } from '@/components/courses/quick-enroll/use-quick-enroll-auth';
 import { useStorePath } from '@/components/providers/store-provider';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
@@ -41,7 +42,6 @@ export function QuickEnrollDialog({
   const buildPath = useStorePath();
   const localeDigits = useLocaleDigits();
   const auth = useQuickEnrollAuth(onDone);
-  const isRegister = auth.mode === 'register';
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,14 +90,7 @@ export function QuickEnrollDialog({
                 autoComplete="tel"
                 disabled={auth.pending}
               />
-              {auth.passwordOnly ? (
-                <AuthError>
-                  {t('courses.quickEnrollPasswordOnly')}{' '}
-                  <Link href={loginHref} className="font-semibold underline">
-                    {t('auth.login')}
-                  </Link>
-                </AuthError>
-              ) : null}
+              <HumanCheck key={auth.captcha.resetKey} onVerify={auth.captcha.setToken} />
             </>
           ) : (
             <>
@@ -108,38 +101,41 @@ export function QuickEnrollDialog({
                     i === 0 ? [part] : [<bdi key={i}>{localeDigits(auth.fullPhone)}</bdi>, part],
                   )}
               </p>
-              {isRegister ? (
-                <input
-                  value={auth.name}
-                  onChange={(e) => auth.setName(e.target.value)}
-                  placeholder={t('auth.enterFullName')}
-                  autoComplete="name"
-                  disabled={auth.pending}
-                  className={fieldClassName}
-                />
-              ) : null}
+              <input
+                value={auth.name}
+                onChange={(e) => auth.setName(e.target.value)}
+                placeholder={t('auth.enterFullName')}
+                autoComplete="name"
+                disabled={auth.pending}
+                className={fieldClassName}
+              />
               <OtpBoxInput
                 length={OTP_LENGTH}
                 value={auth.otp}
                 onChange={auth.setOtp}
                 disabled={auth.pending}
-                autoFocus={!isRegister}
                 onComplete={() => {
-                  if (!auth.pending && (!isRegister || auth.name.trim().length >= 2)) {
+                  if (!auth.pending && auth.name.trim().length >= 2) {
                     auth.submitOtp();
                   }
                 }}
               />
               <div className="text-muted text-center text-xs">
                 {auth.timer.canResend ? (
-                  <button
-                    type="button"
-                    onClick={auth.resend}
-                    disabled={auth.pending}
-                    className="font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
-                  >
-                    {t('auth.resendOtp')}
-                  </button>
+                  <div className="flex flex-col items-center gap-2">
+                    <HumanCheck
+                      key={auth.resendCaptcha.resetKey}
+                      onVerify={auth.resendCaptcha.setToken}
+                    />
+                    <button
+                      type="button"
+                      onClick={auth.resend}
+                      disabled={auth.pending || !auth.resendCaptcha.solved}
+                      className="font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
+                    >
+                      {t('auth.resendOtp')}
+                    </button>
+                  </div>
                 ) : (
                   <span className="tabular-nums">
                     {t('auth.resendIn')} <bdi>{auth.timer.formatted}</bdi>
@@ -157,7 +153,9 @@ export function QuickEnrollDialog({
             type="submit"
             disabled={
               auth.pending ||
-              (auth.step === 'phone' ? !auth.phoneValid : auth.otp.length < OTP_LENGTH)
+              (auth.step === 'phone'
+                ? !auth.phoneValid || !auth.captcha.solved
+                : auth.otp.length < OTP_LENGTH)
             }
             className={primaryButtonClassName}
           >
@@ -184,6 +182,12 @@ export function QuickEnrollDialog({
               {t('legal.privacyPolicy')}
             </a>{' '}
             {t('courses.quickEnrollLegalSuffix')}
+          </p>
+          <p className="text-muted text-center text-[11px]">
+            {t('courses.quickEnrollTrouble')}{' '}
+            <Link href={loginHref} className="font-semibold underline">
+              {t('auth.login')}
+            </Link>
           </p>
         </div>
       </form>

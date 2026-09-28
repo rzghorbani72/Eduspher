@@ -37,6 +37,8 @@ import {
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { isPasswordValid, sanitizePasswordInput } from '@/lib/password-utils';
 import { PasswordStrength } from '@/components/ui/password-strength';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
@@ -83,6 +85,7 @@ export const ForgotPasswordForm = () => {
   const [draftReady, setDraftReady] = useState(false);
   const otpTimer = useOtpTimer();
   const notifyOtpSent = useOtpNotifier();
+  const captcha = useHumanCheck();
 
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
   const selectedCountry = getDefaultCountry();
@@ -211,11 +214,13 @@ export const ForgotPasswordForm = () => {
       const emailVal = authMethod === 'email' ? formData.identifier : undefined;
       await validatePhoneAndEmail(phone, emailVal);
 
+      const captchaToken = captcha.token;
+      captcha.reset();
       if (authMethod === 'email') {
-        await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL);
+        await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL, captchaToken);
         notifyOtpSent(t('auth.otpSentToEmail'), 'forgot-otp');
       } else {
-        await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE);
+        await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE, captchaToken);
         notifyOtpSent(t('auth.otpSentToPhone'), 'forgot-otp');
       }
       setStep('otp');
@@ -338,13 +343,15 @@ export const ForgotPasswordForm = () => {
             />
           )}
 
+          <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+
           {errorBlock}
 
           <button
             type="button"
             className="auth-submit-btn"
             onClick={handleSendOtp}
-            disabled={isLoading || !identifierValid}
+            disabled={isLoading || !identifierValid || !captcha.solved}
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             {isLoading ? t('auth.sending') : t('auth.sendOtp')}
@@ -389,14 +396,17 @@ export const ForgotPasswordForm = () => {
 
           <div className="text-center">
             {otpTimer.canResend ? (
-              <button
-                type="button"
-                className="text-sm text-(--auth-accent) hover:underline"
-                onClick={handleSendOtp}
-                disabled={isLoading}
-              >
-                {t('auth.resendOtp')}
-              </button>
+              <div className="flex flex-col items-center gap-2">
+                <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+                <button
+                  type="button"
+                  className="text-sm text-(--auth-accent) hover:underline"
+                  onClick={handleSendOtp}
+                  disabled={isLoading || !captcha.solved}
+                >
+                  {t('auth.resendOtp')}
+                </button>
+              </div>
             ) : (
               <p className="auth-otp-resend tabular-nums">
                 {t('auth.resendIn')} <bdi>{otpTimer.formatted}</bdi>

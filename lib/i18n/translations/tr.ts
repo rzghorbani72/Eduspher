@@ -85,7 +85,7 @@ const tr = {
     quickEnrollTitle: 'Kayıt için hızlı giriş',
     quickEnrollHint: 'Cep numaranı gir; sana bir kod göndeririz. Şifre gerekmez.',
     quickEnrollConfirm: 'Doğrula ve devam et',
-    quickEnrollPasswordOnly: 'Bu hesap şifreyle giriş yapar.',
+    quickEnrollTrouble: 'Sorun mu var? Bunun yerine giriş yapın:',
     quickEnrollLegalPrefix: 'Devam ederek',
     quickEnrollLegalSuffix: 'kabul edersin.',
     groupClosedDeadline: 'Bu sınıfın kayıt süresi bitti.',

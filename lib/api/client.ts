@@ -498,43 +498,11 @@ export const login = async (payload: LoginPayload, options?: RequestOptions) => 
   );
 };
 
-export const isCaptchaRequiredError = (error: unknown): boolean =>
-  typeof error === 'object' &&
-  error !== null &&
-  (error as { code?: string }).code === 'CAPTCHA_REQUIRED';
-
-export type AccountIdentity = {
-  exists: boolean;
-  channel: 'phone' | 'email';
-  can_use_password: boolean;
-  can_use_otp: boolean;
-  captcha_required: boolean;
-  /** Member of some other academy, but not of this one (the panel uses it). */
-  member_elsewhere?: boolean;
-  /** Staff panel only: banned or deactivated panel account. */
-  panel_blocked?: boolean;
-};
-
-/**
- * Identifier-first login step 1: which sign-in methods this identifier has in
- * THIS academy. Lets an unknown visitor be sent to signup instead of failing a
- * password they never had.
- */
-export const identifyAccount = async (
-  identifier: string,
-  captchaToken?: string,
-  options?: RequestOptions,
-) => {
-  return postJson<AccountIdentity>(
-    '/auth/public/identify',
-    {
-      identifier,
-      academy_id: getAcademyId(),
-      ...(captchaToken ? { captcha_token: captchaToken } : {}),
-    },
-    options,
-  );
-};
+/** The stable backend error code carried by a failed request, if any. */
+export const apiErrorCode = (error: unknown): string | undefined =>
+  typeof error === 'object' && error !== null && 'code' in error && typeof error.code === 'string'
+    ? error.code
+    : undefined;
 
 export type RegisterPayload = {
   name: string;
@@ -799,24 +767,36 @@ export const validatePhoneAndEmail = (
   );
 };
 
-export const sendEmailOtp = (email: string, type: string, options?: RequestOptions) => {
+export const sendEmailOtp = (
+  email: string,
+  type: string,
+  captchaToken: string,
+  options?: RequestOptions,
+) => {
   return postJson<{ message: string; status: string }>(
     '/auth/otp/send-email',
     {
       email,
       type,
+      captcha_token: captchaToken,
     },
     options,
   );
 };
 
-export const sendPhoneOtp = (phone_number: string, type: string, options?: RequestOptions) => {
+export const sendPhoneOtp = (
+  phone_number: string,
+  type: string,
+  captchaToken: string,
+  options?: RequestOptions,
+) => {
   return postPublicJson<{ message: string; status: string }>(
     '/auth/otp/send-phone',
     {
       phone_number,
       type,
       academy_id: resolveAcademyId() ?? undefined,
+      captcha_token: captchaToken,
     },
     options,
   );

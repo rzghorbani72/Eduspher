@@ -12,6 +12,7 @@ import {
   createPanelHandoff,
 } from '@/lib/api/client';
 import { OtpType } from '@/lib/constants';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import { cleanPhoneNumber, getFullPhoneNumber, isValidPhoneNumber } from '@/lib/phone-utils';
 import { getCountryByCode, getDefaultCountry, type CountryCode } from '@/lib/country-codes';
 import { academySiteUrl, getAdminPanelUrl } from '@/lib/admin-panel-url';
@@ -66,6 +67,7 @@ export function useQuickSignup(onFinished?: () => void) {
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<QuickSignupResult | null>(null);
   const [resendIn, setResendIn] = useState(0);
+  const captcha = useHumanCheck();
   const legal = useRef<LegalVersions>({
     terms: null,
     privacy: null,
@@ -125,7 +127,7 @@ export function useQuickSignup(onFinished?: () => void) {
   const nationalPhone = phone ? cleanPhoneNumber(phone, country) : '';
   const fullPhone = nationalPhone ? getFullPhoneNumber(nationalPhone, country) : '';
   const phoneValid = isValidPhoneNumber(nationalPhone, country);
-  const canSubmitPhone = phoneValid && accepted;
+  const canSubmitPhone = phoneValid && accepted && captcha.solved;
 
   useEffect(() => {
     if (step !== 'phone') return;
@@ -164,25 +166,35 @@ export function useQuickSignup(onFinished?: () => void) {
   }, [guard, name, slug, slugStatus]);
 
   const submitPhone = useCallback(() => {
-    const problem = !phoneValid ? M.phoneInvalid : !accepted ? M.legalRequired : null;
+    const problem = !phoneValid
+      ? M.phoneInvalid
+      : !accepted
+        ? M.legalRequired
+        : !captcha.solved
+          ? M.genericError
+          : null;
     return guard(problem, async () => {
       const { terms, privacy } = await ensureLegalVersions();
       if (!terms || !privacy) {
         throw new Error(M.legalUnavailable);
       }
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+      const captchaToken = captcha.token;
+      captcha.reset();
+      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
       setResendIn(RESEND_SECONDS);
       setStep('otp');
     });
-  }, [accepted, ensureLegalVersions, fullPhone, guard, phoneValid]);
+  }, [accepted, captcha, ensureLegalVersions, fullPhone, guard, phoneValid]);
 
   const resendOtp = useCallback(() => {
-    if (resendIn > 0) return Promise.resolve();
+    if (resendIn > 0 || !captcha.solved) return Promise.resolve();
     return guard(null, async () => {
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+      const captchaToken = captcha.token;
+      captcha.reset();
+      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
       setResendIn(RESEND_SECONDS);
     });
-  }, [fullPhone, guard, resendIn]);
+  }, [captcha, fullPhone, guard, resendIn]);
 
   const submitOtp = useCallback(
     (code?: string) => {
@@ -258,6 +270,7 @@ export function useQuickSignup(onFinished?: () => void) {
     setOtp,
     accepted,
     setAccepted,
+    captcha,
     error,
     pending,
     result,

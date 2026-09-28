@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react';
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useLocaleDigits } from '@/hooks/use-locale-digits';
 import { AuthError } from '@/components/auth/auth-notice';
+import { HumanCheck } from '@/components/auth/human-check';
 import type { useLogin } from '@/hooks/use-login';
 
 type Login = ReturnType<typeof useLogin>;
@@ -53,13 +54,19 @@ export function LoginOtpStep({ login }: { login: Login }) {
 
         <div className="auth-otp-resend">
           {login.otpTimer.canResend ? (
-            <button
-              type="button"
-              onClick={login.resendOtp}
-              disabled={login.otpResending || login.pending}
-            >
-              {login.otpResending ? t('auth.resending') : t('auth.resendOtp')}
-            </button>
+            <div className="flex flex-col items-center gap-2">
+              <HumanCheck
+                key={login.resendCaptcha.resetKey}
+                onVerify={login.resendCaptcha.setToken}
+              />
+              <button
+                type="button"
+                onClick={login.resendOtp}
+                disabled={login.otpResending || login.pending || !login.resendCaptcha.solved}
+              >
+                {login.otpResending ? t('auth.resending') : t('auth.resendOtp')}
+              </button>
+            </div>
           ) : (
             <span className="tabular-nums">
               {t('auth.resendIn')} <bdi>{login.otpTimer.formatted}</bdi>

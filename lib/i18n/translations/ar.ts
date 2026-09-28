@@ -85,7 +85,7 @@ export const ar = {
     quickEnrollTitle: 'دخول سريع للتسجيل',
     quickEnrollHint: 'أدخل رقم هاتفك؛ سنرسل لك رمزاً نصياً. لا حاجة لكلمة مرور.',
     quickEnrollConfirm: 'تحقّق وتابع',
-    quickEnrollPasswordOnly: 'هذا الحساب يدخل بكلمة مرور.',
+    quickEnrollTrouble: 'تواجه مشكلة؟ سجّل الدخول بدلاً من ذلك:',
     quickEnrollLegalPrefix: 'بالمتابعة فإنك تقبل',
     quickEnrollLegalSuffix: '.',
     groupClosedDeadline: 'انتهت مهلة التسجيل في هذا الصف.',

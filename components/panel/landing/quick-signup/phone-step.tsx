@@ -2,6 +2,7 @@
 
 import { toEnglishDigits } from '@/lib/phone-utils';
 import { useLocaleDigits } from '@/hooks/use-locale-digits';
+import { HumanCheck } from '@/components/auth/human-check';
 import { LANDING } from '../landing.messages';
 import { DialogButton } from './dialog-button';
 import type { useQuickSignup } from './use-quick-signup';
@@ -67,6 +68,8 @@ export function PhoneStep({ flow }: { flow: ReturnType<typeof useQuickSignup> })
           {M.legalSuffix}
         </span>
       </label>
+
+      <HumanCheck key={flow.captcha.resetKey} onVerify={flow.captcha.setToken} />
 
       <DialogButton
         label={M.continue}

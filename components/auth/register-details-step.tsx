@@ -4,7 +4,9 @@ import { CheckCircle2, Loader2 } from 'lucide-react';
 import type { UseFormRegisterReturn } from 'react-hook-form';
 
 import { AuthField } from '@/components/auth/auth-field';
+import { HumanCheck } from '@/components/auth/human-check';
 import { PasswordStrength } from '@/components/ui/password-strength';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { sanitizePasswordInput } from '@/lib/password-utils';
 
@@ -29,6 +31,8 @@ interface RegisterDetailsStepProps {
   termsHref: string;
   privacyHref: string;
   notice?: React.ReactNode;
+  /** Signup does not open a session — the automatic first login needs its own check. */
+  captcha: HumanCheckState;
   onBack: () => void;
   onSubmit: (event: React.FormEvent) => void;
 }
@@ -59,6 +63,7 @@ export function RegisterDetailsStep({
   termsHref,
   privacyHref,
   notice,
+  captcha,
   onBack,
   onSubmit,
 }: RegisterDetailsStepProps) {
@@ -127,9 +132,11 @@ export function RegisterDetailsStep({
         </span>
       </label>
 
+      <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
+
       {notice}
 
-      <button type="submit" className="auth-submit-btn" disabled={loading}>
+      <button type="submit" className="auth-submit-btn" disabled={loading || !captcha.solved}>
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         {loading ? t('auth.registering') : t('auth.register')}
       </button>

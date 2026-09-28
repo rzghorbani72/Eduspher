@@ -23,6 +23,8 @@ import { OtpType } from '@/lib/constants';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { AuthOtpField } from '@/components/auth/auth-otp-field';
+import { HumanCheck } from '@/components/auth/human-check';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import { RegisterDetailsStep } from '@/components/auth/register-details-step';
 import { useStorePath } from '@/components/providers/store-provider';
 import { safeRedirectPath } from '@/lib/auth/redirect-target';
@@ -108,6 +110,10 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   const notifyOtpSent = useOtpNotifier();
   const phoneOtpTimer = useOtpTimer();
   const emailOtpTimer = useOtpTimer();
+  // One captcha for the verification step — a fresh solve gates every send/resend.
+  const captcha = useHumanCheck();
+  // Signup does not open a session, so the automatic first login needs its own check.
+  const loginCaptcha = useHumanCheck();
 
   const registerSchema = useMemo(
     () =>
@@ -199,7 +205,9 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         cleanPhoneNumber(phoneNumber, selectedCountry),
         selectedCountry,
       );
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION);
+      const captchaToken = captcha.token;
+      captcha.reset();
+      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
       notifyOtpSent(t('auth.otpSentToPhone'), 'register-phone-otp');
@@ -248,7 +256,9 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
     setOtpLoading(true);
     setError(null);
     try {
-      await sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION);
+      const captchaToken = captcha.token;
+      captcha.reset();
+      await sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION, captchaToken);
       setEmailOtpSent(true);
       emailOtpTimer.start();
       notifyOtpSent(t('auth.otpSentToEmail'), 'register-email-otp');
@@ -324,7 +334,12 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
    * account is signed in here instead of being sent to the login form. If that
    * call fails the account still exists — fall back to login, not to an error.
    */
-  const signInNewAccount = async (identifier: string, password: string, academyId?: string) => {
+  const signInNewAccount = async (
+    identifier: string,
+    password: string,
+    captchaToken: string,
+    academyId?: string,
+  ) => {
     try {
       const result = await postJson<{
         phone_verification_required?: boolean;
@@ -333,6 +348,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
         identifier,
         password,
         academy_id: academyId,
+        captcha_token: captchaToken,
       });
       // A gate response carries no session, so claiming one here would leave a
       // "signed in" page whose every request 401s. Login finishes those steps.
@@ -423,9 +439,12 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
 
       await postJson('/auth/register', userData);
       toast.success(t('auth.registrationSuccess'));
+      const loginCaptchaToken = loginCaptcha.token;
+      loginCaptcha.reset();
       await signInNewAccount(
         userData.phone_number ?? userData.email ?? '',
         userData.password ?? '',
+        loginCaptchaToken,
         finalAcademyId,
       );
     } catch (err) {
@@ -452,7 +471,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
   // The single button walks send → verify → continue, so each step turns it on
   // only once that step's own input is complete.
   const canSubmitVerification = !primarySent
-    ? identifierValid
+    ? identifierValid && captcha.solved
     : primaryVerified ||
       (primaryVerificationMethod === 'phone'
         ? phoneOtp.trim().length > 0
@@ -531,8 +550,8 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
               sent={phoneOtpSent}
               verified={phoneOtpVerified}
               loading={otpLoading}
-              canSend={Boolean(phoneNumber) && isValidPhone(phoneNumber)}
-              canResend={phoneOtpTimer.canResend}
+              canSend={Boolean(phoneNumber) && isValidPhone(phoneNumber) && captcha.solved}
+              canResend={phoneOtpTimer.canResend && captcha.solved}
               countdown={phoneOtpTimer.formatted}
               onSend={handleSendPhoneOtp}
               onVerify={handleVerifyPhoneOtp}
@@ -551,14 +570,16 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
               sent={emailOtpSent}
               verified={emailOtpVerified}
               loading={otpLoading}
-              canSend={hasEmail}
-              canResend={emailOtpTimer.canResend}
+              canSend={hasEmail && captcha.solved}
+              canResend={emailOtpTimer.canResend && captcha.solved}
               countdown={emailOtpTimer.formatted}
               onSend={handleSendEmailOtp}
               onVerify={handleVerifyEmailOtp}
               showActions={false}
             />
           )}
+
+          {!primaryVerified && <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />}
 
           {errorBlock}
 
@@ -605,6 +626,7 @@ export const RegisterForm = ({ primaryVerificationMethod = 'phone' }: RegisterFo
           termsHref={buildPath('/terms')}
           privacyHref={buildPath('/privacy')}
           notice={errorBlock}
+          captcha={loginCaptcha}
           onBack={() => setStep('verification')}
           onSubmit={onFormSubmit}
         />

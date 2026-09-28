@@ -2,8 +2,7 @@
 
 import Link from '@/components/ui/link';
 import { useLogin } from '@/hooks/use-login';
-import { LoginIdentifyStep } from '@/components/auth/login-identify-step';
-import { LoginPasswordStep } from '@/components/auth/login-password-step';
+import { LoginFormStep } from '@/components/auth/login-form-step';
 import { LoginOtpStep } from '@/components/auth/login-otp-step';
 import { SetNewPasswordStep } from '@/components/auth/set-new-password-step';
 import { withAuthIdentifier } from '@/lib/auth/auth-identifier-draft';
@@ -23,9 +22,9 @@ function GoogleIcon({ className }: { className?: string }) {
 */
 
 /**
- * Identifier-first sign-in: step 1 looks the account up, step 2 asks only for
- * the method that account actually has. The steps live in their own files; this
- * component only decides which one is on screen.
+ * One-step sign-in: identifier, method and a human check on the first screen.
+ * The steps live in their own files; this component only decides which one
+ * is on screen (the form, the OTP screen, or a forced password reset).
  */
 export const LoginForm = () => {
   const login = useLogin();
@@ -35,17 +34,13 @@ export const LoginForm = () => {
     return <LoginOtpStep login={login} />;
   }
 
-  if (login.step === 'password') {
-    return <LoginPasswordStep login={login} />;
-  }
-
   if (login.step === 'passwordReset') {
     return <SetNewPasswordStep login={login} />;
   }
 
   return (
     <div>
-      <LoginIdentifyStep login={login} />
+      <LoginFormStep login={login} />
 
       {/* Google sign-in is hidden until the provider is actually wired up.
       <div className="mt-6 space-y-5">

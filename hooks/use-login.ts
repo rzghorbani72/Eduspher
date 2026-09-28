@@ -5,21 +5,19 @@ import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'react-toastify';
 
 import {
-  identifyAccount,
-  isCaptchaRequiredError,
+  apiErrorCode,
   loginByEmailOtp,
   loginByPhoneOtp,
   postJson,
   resolveAcademyId,
   sendEmailOtp,
   sendPhoneOtp,
-  type AccountIdentity,
 } from '@/lib/api/client';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
 import { useOtpNotifier } from '@/hooks/use-otp-notifier';
+import { useHumanCheck } from '@/hooks/use-human-check';
 import { ACCOUNT_HOME_PATH } from '@/lib/account-index-path';
 import { isPasswordValid } from '@/lib/password-utils';
-import { nextStepFor } from '@/lib/auth-identify';
 import {
   clearAuthIdentifierDraft,
   isEmailIdentifier,
@@ -41,7 +39,8 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { OtpType } from '@/lib/constants';
 
 export type LoginChannel = 'email' | 'phone';
-export type LoginStep = 'identify' | 'password' | 'otpLogin' | 'otpGate' | 'passwordReset';
+export type LoginMethod = 'password' | 'otp';
+export type LoginStep = 'form' | 'otpLogin' | 'otpGate' | 'passwordReset';
 
 function initialFromQuery(raw: string | null): {
   channel: LoginChannel;
@@ -62,9 +61,10 @@ function initialFromQuery(raw: string | null): {
 }
 
 /**
- * Identifier-first sign-in for an academy site: look the account up first, then
- * show only the method it really has. Same rule as the panel — see
- * `lib/auth-identify.ts`.
+ * One-step sign-in for an academy site: identifier, method (password or
+ * one-time code) and a human check, all on the first screen. An unknown
+ * account is routed to signup only once it is actually tried — the captcha
+ * being solved is what makes that answer safe to give.
  */
 export function useLogin() {
   const searchParams = useSearchParams();
@@ -76,20 +76,18 @@ export function useLogin() {
   const seeded = initialFromQuery(searchParams.get('identifier'));
 
   const [pending, startTransition] = useTransition();
-  const [step, setStep] = useState<LoginStep>('identify');
-  const [identity, setIdentity] = useState<AccountIdentity | null>(null);
+  const [step, setStep] = useState<LoginStep>('form');
   const [error, setError] = useState<string | null>(null);
 
   const [channel, setChannel] = useState<LoginChannel>(seeded.channel);
+  const [method, setMethod] = useState<LoginMethod>('password');
   const [email, setEmail] = useState(seeded.email);
   const [phoneNumber, setPhoneNumber] = useState(seeded.phone);
   const [draftReady, setDraftReady] = useState(false);
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
   const country = getDefaultCountry();
   const [password, setPassword] = useState('');
-  // Shown only after repeated failures — the API demands a token from then on.
-  const [captchaRequired, setCaptchaRequired] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState('');
+  const captcha = useHumanCheck();
 
   const [otp, setOtp] = useState('');
   const [otpGate, setOtpGate] = useState<{
@@ -101,6 +99,7 @@ export function useLogin() {
   const notifyOtpSent = useOtpNotifier();
   const otpGateTimer = useOtpTimer();
   const otpLoginTimer = useOtpTimer();
+  const resendCaptcha = useHumanCheck();
 
   // Admin created this account with a one-time password — the user must pick
   // their own before a real session is granted.
@@ -141,6 +140,7 @@ export function useLogin() {
   // exactly when a whole phone number (or email) has been typed.
   const identifierValid =
     channel === 'phone' ? isValidPhoneInput(phoneNumber, country) : isValidEmail(email);
+  const canSubmit = identifierValid && (method === 'otp' || password.length >= 6) && captcha.solved;
 
   function clearFeedback() {
     setError(null);
@@ -169,36 +169,6 @@ export function useLogin() {
     );
   }
 
-  function failed(err: unknown) {
-    if (isCaptchaRequiredError(err)) setCaptchaRequired(true);
-    setCaptchaToken('');
-    setError(err instanceof Error ? err.message : t('auth.unableToLogin'));
-  }
-
-  function showSentCode(sentKey: string) {
-    notifyOtpSent(t(sentKey), 'login-otp');
-  }
-
-  function sendLoginOtp() {
-    if (!identifier) return;
-    clearFeedback();
-    startTransition(async () => {
-      try {
-        if (channel === 'phone') {
-          await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE);
-        } else {
-          await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL);
-        }
-        setOtp('');
-        setStep('otpLogin');
-        otpLoginTimer.start();
-        showSentCode(channel === 'phone' ? 'auth.otpSentToPhone' : 'auth.otpSentToEmail');
-      } catch (err) {
-        failed(err);
-      }
-    });
-  }
-
   // No account yet: carry the typed identifier into signup so it is verified
   // there, then name + password — the visitor never types it twice.
   function goToRegister() {
@@ -210,50 +180,40 @@ export function useLogin() {
     router.push(buildPath(`/auth/register?${query}`));
   }
 
-  function submitIdentify() {
-    if (!identifier) {
-      setError(channel === 'phone' ? t('auth.phoneRequired') : t('auth.emailRequired'));
+  function failed(err: unknown) {
+    captcha.reset();
+    if (apiErrorCode(err) === 'AUTH_USER_NOT_REGISTERED') {
+      goToRegister();
       return;
     }
+    setError(err instanceof Error ? err.message : t('auth.unableToLogin'));
+  }
+
+  function showSentCode(sentKey: string) {
+    notifyOtpSent(t(sentKey), 'login-otp');
+  }
+
+  function sendLoginOtp(captchaToken: string) {
+    if (!identifier) return;
     clearFeedback();
     startTransition(async () => {
       try {
-        const result = await identifyAccount(identifier, captchaToken || undefined);
-        setCaptchaRequired(result.captcha_required);
-        setCaptchaToken('');
-        const next = nextStepFor(result);
-        // "member_elsewhere" cannot happen on an academy site (the lookup is
-        // already scoped to this academy), but it means "no account here" all
-        // the same, so it must never fall through to a password box.
-        if (next === 'register' || next === 'member_elsewhere') {
-          goToRegister();
-          return;
+        if (channel === 'phone') {
+          await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE, captchaToken);
+        } else {
+          await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL, captchaToken);
         }
-        if (next === 'panel_blocked') {
-          setError(t('auth.noSignInMethodAvailable'));
-          return;
-        }
-        setIdentity(result);
-        if (next === 'otp') {
-          sendLoginOtp();
-          return;
-        }
-        if (next === 'blocked') {
-          setError(t('auth.noSignInMethodAvailable'));
-          return;
-        }
-        setStep('password');
+        setOtp('');
+        setStep('otpLogin');
+        otpLoginTimer.start();
+        showSentCode(channel === 'phone' ? 'auth.otpSentToPhone' : 'auth.otpSentToEmail');
       } catch (err) {
         failed(err);
       }
     });
   }
 
-  function submitPassword() {
-    if (password.length < 6) {
-      setError(t('auth.passwordMinLength'));
-      return;
-    }
+  function submitPassword(captchaToken: string) {
     clearFeedback();
     startTransition(async () => {
       try {
@@ -269,7 +229,7 @@ export function useLogin() {
           identifier,
           password,
           academy_id: academyId,
-          ...(captchaToken ? { captcha_token: captchaToken } : {}),
+          captcha_token: captchaToken,
         });
 
         if (result?.phone_verification_required) {
@@ -294,6 +254,25 @@ export function useLogin() {
         failed(err);
       }
     });
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!identifier) {
+      setError(channel === 'phone' ? t('auth.phoneRequired') : t('auth.emailRequired'));
+      return;
+    }
+    if (method === 'password' && password.length < 6) {
+      setError(t('auth.passwordMinLength'));
+      return;
+    }
+    const captchaToken = captcha.token;
+    captcha.reset();
+    if (method === 'otp') {
+      sendLoginOtp(captchaToken);
+    } else {
+      submitPassword(captchaToken);
+    }
   }
 
   function submitOtp() {
@@ -350,9 +329,12 @@ export function useLogin() {
     });
   }
 
+  // Every resend is a new anonymous SMS, so it needs its own captcha widget.
   async function resendOtp() {
+    const captchaToken = resendCaptcha.token;
+    resendCaptcha.reset();
     if (step === 'otpLogin') {
-      sendLoginOtp();
+      sendLoginOtp(captchaToken);
       otpLoginTimer.start();
       return;
     }
@@ -360,7 +342,7 @@ export function useLogin() {
     setOtpResending(true);
     clearFeedback();
     try {
-      await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION);
+      await sendPhoneOtp(otpGate.phone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
       otpGateTimer.start();
       showSentCode('auth.resendOtp');
     } catch (err) {
@@ -371,8 +353,7 @@ export function useLogin() {
   }
 
   function changeIdentifier() {
-    setStep('identify');
-    setIdentity(null);
+    setStep('form');
     setPassword('');
     setOtp('');
     setOtpGate(null);
@@ -385,17 +366,23 @@ export function useLogin() {
     clearFeedback();
   }
 
+  function changeMethod(next: LoginMethod) {
+    setMethod(next);
+    clearFeedback();
+  }
+
   return {
     t,
     buildPath,
     step,
     pending,
     error,
-    captchaRequired,
-    setCaptchaToken,
-    canUseOtp: identity?.can_use_otp ?? false,
+    captcha,
+    resendCaptcha,
     channel,
     changeChannel,
+    method,
+    changeMethod,
     email,
     setEmail: (v: string) => setEmail(toEnglishDigits(v)),
     phoneNumber,
@@ -404,6 +391,7 @@ export function useLogin() {
     identifier,
     displayIdentifier,
     identifierValid,
+    canSubmit,
     password,
     setPassword: (v: string) => setPassword(toEnglishDigits(v)),
     otp,
@@ -411,11 +399,9 @@ export function useLogin() {
     otpTarget: step === 'otpGate' ? (otpGate?.maskedPhone ?? '') : displayIdentifier,
     otpResending,
     otpTimer: step === 'otpGate' ? otpGateTimer : otpLoginTimer,
-    submitIdentify,
-    submitPassword,
+    submit,
     submitOtp,
     resendOtp,
-    useOtpInstead: sendLoginOtp,
     changeIdentifier,
 
     newPassword,

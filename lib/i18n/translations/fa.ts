@@ -103,7 +103,7 @@ export const fa = {
     quickEnrollHint:
       'شماره موبایلت را وارد کن؛ یک کد تأیید برایت پیامک می‌شود. رمز عبور لازم نیست.',
     quickEnrollConfirm: 'تأیید و ادامهٔ ثبت‌نام',
-    quickEnrollPasswordOnly: 'این حساب با رمز عبور وارد می‌شود.',
+    quickEnrollTrouble: 'مشکلی پیش آمد؟ به‌جای آن وارد شوید:',
     quickEnrollLegalPrefix: 'با ادامه،',
     quickEnrollLegalSuffix: 'را می‌پذیری.',
     groupClosedDeadline: 'مهلت ثبت‌نام این کلاس تمام شده.',

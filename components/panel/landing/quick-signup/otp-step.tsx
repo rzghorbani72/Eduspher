@@ -1,6 +1,7 @@
 'use client';
 
 import { OtpBoxInput } from '@/components/ui/otp-box-input';
+import { HumanCheck } from '@/components/auth/human-check';
 import { formatPhoneDisplay, toPersianDigits } from '@/lib/utils';
 import { LANDING } from '../landing.messages';
 import { DialogButton } from './dialog-button';
@@ -45,10 +46,14 @@ export function OtpStep({ flow }: { flow: ReturnType<typeof useQuickSignup> }) {
         onClick={() => flow.submitOtp()}
       />
 
+      {flow.resendIn <= 0 && (
+        <HumanCheck key={flow.captcha.resetKey} onVerify={flow.captcha.setToken} />
+      )}
+
       <button
         type="button"
         onClick={flow.resendOtp}
-        disabled={flow.resendIn > 0 || flow.pending}
+        disabled={flow.resendIn > 0 || flow.pending || !flow.captcha.solved}
         className="text-lp-muted w-full text-center text-[12px] underline disabled:no-underline disabled:opacity-60"
       >
         {flow.resendIn > 0 ? (
