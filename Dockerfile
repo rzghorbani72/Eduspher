@@ -11,7 +11,9 @@ ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 # pnpm install config (registry, retries, timeouts) comes from the project
 # .npmrc copied in the deps stage — no global `pnpm config set` needed.
 RUN npm config set registry "${NPM_REGISTRY}" \
-  && npm install -g pnpm@11.5.2
+  # The Iran mirror intermittently 404s on a package that does exist (transient
+  # proxy hiccup); npm treats a 404 as final and never retries, so retry by hand.
+  && (for i in 1 2 3 4 5; do npm install -g pnpm@11.5.2 && exit 0; sleep 5; done; exit 1)
 
 WORKDIR /app
 
