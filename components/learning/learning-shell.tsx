@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, PanelRightClose } from 'lucide-react';
+import { PanelRightClose } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { FreePreviewBanner } from '@/components/learning/free-preview-banner';
@@ -9,10 +9,12 @@ import { LessonBody } from '@/components/learning/lesson-body';
 import { LessonHeader } from '@/components/learning/lesson-header';
 import { LessonNavFooter } from '@/components/learning/lesson-nav-footer';
 import { MetaDot } from '@/components/learning/meta-dot';
-import { TheaterToggle } from '@/components/learning/theater-toggle';
-import Link from '@/components/ui/link';
+import { LearningTopBar } from '@/components/learning/learning-top-bar';
 import { Unavailable } from '@/components/learning/unavailable';
-import type { LessonSummary, SeasonSummary } from '@/lib/api/types';
+import { QuizBlockedNotice } from '@/components/learning/quiz-blocked-notice';
+import { CourseWorkDialog } from '@/components/learning/course-work/course-work-dialog';
+import type { CourseWork } from '@/components/learning/course-work/course-work';
+import type { LessonQuizSummary, LessonSummary, SeasonSummary } from '@/lib/api/types';
 import { getLearningLesson, getProgress } from '@/lib/api/learning';
 import { useLessonProgress } from '@/hooks/use-lesson-progress';
 import { useQuizGates } from '@/hooks/use-quiz-gates';
@@ -21,9 +23,8 @@ import { useApiQuery } from '@/hooks/use-api-query';
 import { useTheaterMode } from '@/lib/hooks/use-theater-mode';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { flattenLessons, neighboursOf, watchPercent } from '@/lib/learning/lesson-list';
-import { buildAcademyPath, cn, formatPercent, resolveAssetUrl, toPersianDigits } from '@/lib/utils';
+import { buildAcademyPath, cn, resolveAssetUrl, toPersianDigits } from '@/lib/utils';
 import { formatSeconds } from '@/components/courses/curriculum/format';
-import { initialsOf } from '@/lib/learning/live-schedule';
 import { coursePath, learnPath } from '@/lib/content-paths';
 
 interface LearningShellProps {
@@ -31,6 +32,8 @@ interface LearningShellProps {
   courseSlug: string;
   courseTitle: string;
   seasons: SeasonSummary[];
+  /** The course's own quiz (e.g. the final exam), shown after the last season. */
+  courseQuiz: LessonQuizSummary | null;
   selectedLesson: LessonSummary;
   /** Null when a free lesson is being watched without an enrollment. */
   enrollmentId: string | null;
@@ -47,6 +50,7 @@ export function LearningShell({
   courseSlug,
   courseTitle,
   seasons,
+  courseQuiz,
   selectedLesson,
   enrollmentId,
   currentProfileId,
@@ -57,6 +61,7 @@ export function LearningShell({
   const { t, language } = useTranslation();
   const { theater, setTheater } = useTheaterMode();
   const [curriculumOpen, setCurriculumOpen] = useState(false);
+  const [openWork, setOpenWork] = useState<CourseWork | null>(null);
   const lessonId = String(selectedLesson.id);
 
   const openCurriculum = () => {
@@ -170,20 +175,25 @@ export function LearningShell({
   ) : blockedBy ? (
     <>
       {header}
-      <div className="space-y-3 pt-6 text-center">
-        <Unavailable message={t('learning.passQuizFirst').replace('{quiz}', blockedBy.title)} />
-        {blockingLesson ? (
-          <Link
-            href={buildAcademyPath(
-              storeSlug,
-              learnPath(courseSlug, blockingLesson.lesson.slug ?? blockingLesson.id),
-            )}
-            className="inline-flex rounded-lg bg-(--theme-primary) px-4 py-2 text-sm font-bold text-white"
-          >
-            {t('learning.goToQuiz')}
-          </Link>
-        ) : null}
-      </div>
+      <QuizBlockedNotice
+        gate={blockedBy}
+        quizLessonHref={
+          blockingLesson
+            ? buildAcademyPath(
+                storeSlug,
+                learnPath(courseSlug, blockingLesson.lesson.slug ?? blockingLesson.id),
+              )
+            : null
+        }
+        onOpenSeasonQuiz={(seasonId) =>
+          setOpenWork({
+            type: 'quiz',
+            parent: { kind: 'season', id: seasonId },
+            title: blockedBy.title,
+          })
+        }
+        t={t}
+      />
     </>
   ) : error || !lesson ? (
     <>
@@ -211,53 +221,12 @@ export function LearningShell({
 
   return (
     <div className="border-theme bg-background mx-auto max-w-[1500px] overflow-hidden rounded-2xl border shadow-sm">
-      <div className="border-theme bg-card flex h-[60px] items-center gap-4 border-b px-4 sm:px-8">
-        <Link
-          href={buildAcademyPath(storeSlug, coursePath(courseSlug))}
-          title={courseTitle}
-          className="text-muted hover:text-foreground flex min-w-0 items-center gap-2 text-[13px] font-semibold transition-colors"
-        >
-          <ArrowLeft className="size-4 shrink-0 rtl:rotate-180" aria-hidden="true" />
-          <span className="truncate">{t('courses.backToCourse')}</span>
-        </Link>
-
-        <span className="flex-1" />
-
-        <TheaterToggle compact className="hidden lg:inline-flex" />
-
-        {isPreviewing ? null : (
-          <div className="flex shrink-0 items-center gap-2.5">
-            <span className="text-muted hidden text-xs sm:block">
-              {t('learning.coursePercent').replace('{percent}', formatPercent(percent, language))}
-            </span>
-            <div
-              className="h-1.5 w-[110px] overflow-hidden rounded-full bg-(--theme-border-color) sm:w-[150px]"
-              role="progressbar"
-              aria-valuenow={percent}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className="h-full rounded-full bg-(--theme-primary) transition-[width] duration-500"
-                style={{ width: `${percent}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {studentName ? (
-          <div className="hidden shrink-0 items-center gap-2.5 sm:flex">
-            <span className="bg-border h-5 w-px" aria-hidden="true" />
-            <span
-              className="grid size-[30px] place-items-center rounded-full bg-(--theme-primary)/15 text-[11px] font-extrabold text-(--theme-primary-ink)"
-              aria-hidden="true"
-            >
-              {initialsOf(studentName)}
-            </span>
-            <span className="text-xs font-semibold">{studentName}</span>
-          </div>
-        ) : null}
-      </div>
+      <LearningTopBar
+        courseHref={buildAcademyPath(storeSlug, coursePath(courseSlug))}
+        courseTitle={courseTitle}
+        percent={isPreviewing ? null : percent}
+        studentName={studentName}
+      />
 
       <div
         className={cn(
@@ -355,7 +324,13 @@ export function LearningShell({
 
           <div className="max-h-[65vh] overflow-y-auto">
             <LearningCurriculum
+              courseId={courseId}
               courseSlug={courseSlug}
+              courseQuiz={courseQuiz}
+              onOpenWork={(work) => {
+                setCurriculumOpen(false);
+                setOpenWork(work);
+              }}
               seasons={seasons}
               selectedLessonId={lessonId}
               completedLessonIds={completedLessonIds}
@@ -369,6 +344,14 @@ export function LearningShell({
           </div>
         </aside>
       </div>
+
+      <CourseWorkDialog
+        work={openWork}
+        onClose={() => setOpenWork(null)}
+        currentProfileId={currentProfileId}
+        storeSlug={storeSlug}
+        onQuizPassed={() => void onQuizPassed()}
+      />
 
       <LessonNavFooter
         courseSlug={courseSlug}

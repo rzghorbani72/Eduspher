@@ -711,6 +711,9 @@ export const ar = {
   },
 
   learning: {
+    seasonQuiz: 'اختبار الفصل',
+    seasonAssignment: 'واجب الفصل',
+    courseQuiz: 'اختبار الدورة',
     curriculum: 'منهج الدورة',
     noLessons: 'لا توجد دروس متاحة',
     noLessonsDescription: 'لم تنشر الأكاديمية دروساً لهذه الدورة بعد.',

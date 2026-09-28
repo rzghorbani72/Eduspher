@@ -15,7 +15,7 @@ export const queryKeys = {
 
   legalConsent: () => key('legal-consent'),
 
-  assignments: (lessonId: string) => key('assignments', lessonId),
+  assignments: (parentKind: string, parentId: string) => key('assignments', parentKind, parentId),
 
   liveLesson: (lessonId: string) => key('live-lesson', lessonId),
 } as const;

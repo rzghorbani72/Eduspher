@@ -1246,7 +1246,9 @@ export interface StudentQuiz {
 /** A lesson the student cannot open yet, and the quiz in the way. */
 export interface QuizGate {
   quiz_id: string;
-  lesson_id: string;
+  /** Exactly one is set: the quiz sits on a lesson or closes a season. */
+  lesson_id: string | null;
+  season_id: string | null;
   title: string;
 }
 
@@ -1304,6 +1306,12 @@ type Envelope<T> = { message: string; status: string; data: T };
 
 export const getLessonQuiz = async (lessonId: string, options?: RequestOptions) =>
   (await getJson<Envelope<StudentQuiz>>(`/lessons/${lessonId}/quiz`, options)).data;
+
+export const getSeasonQuiz = async (seasonId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<StudentQuiz>>(`/seasons/${seasonId}/quiz`, options)).data;
+
+export const getCourseQuiz = async (courseId: string, options?: RequestOptions) =>
+  (await getJson<Envelope<StudentQuiz>>(`/courses/${courseId}/quiz`, options)).data;
 
 export const getSessionQuiz = async (sessionId: string, options?: RequestOptions) =>
   (await getJson<Envelope<StudentQuiz>>(`/tutoring-sessions/${sessionId}/quiz`, options)).data;

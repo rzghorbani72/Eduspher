@@ -717,6 +717,9 @@ const tr = {
   },
 
   learning: {
+    seasonQuiz: 'Bölüm sınavı',
+    seasonAssignment: 'Bölüm ödevi',
+    courseQuiz: 'Kurs sınavı',
     curriculum: 'Kurs müfredatı',
     noLessons: 'Kullanılabilir ders yok',
     noLessonsDescription: 'Akademiniz bu kurs için henüz ders yayınlamadı.',

@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  getCourseQuiz,
   getLessonQuiz,
+  getSeasonQuiz,
   getSessionQuiz,
   saveQuizAnswers,
   startQuizAttempt,
@@ -16,8 +18,18 @@ import { useDebounce } from '@/lib/hooks/use-debounce';
 import { logger } from '@/lib/logging/app-logger';
 import { errorFields } from '@/lib/logging/error-fields';
 
-/** A quiz belongs to a course lesson or to one live class meeting. */
-export type QuizParent = { kind: 'lesson' | 'session'; id: string };
+/** A quiz belongs to a lesson, a season or the course itself, or to one live class meeting. */
+export interface QuizParent {
+  kind: 'lesson' | 'season' | 'course' | 'session';
+  id: string;
+}
+
+const LOAD_QUIZ = {
+  lesson: getLessonQuiz,
+  season: getSeasonQuiz,
+  course: getCourseQuiz,
+  session: getSessionQuiz,
+};
 
 export type AnswerValue = {
   selected_option_id?: string;
@@ -60,7 +72,7 @@ export function useQuizFlow(parent: QuizParent, onPassed?: () => void) {
 
   const loadQuiz = useCallback(async () => {
     try {
-      const loaded = await (kind === 'lesson' ? getLessonQuiz(id) : getSessionQuiz(id));
+      const loaded = await LOAD_QUIZ[kind](id);
       // Staff get the full question bank instead of a student's rules and history.
       if (Array.isArray(loaded.attempts)) setQuiz(loaded);
       else setFailure('staff');

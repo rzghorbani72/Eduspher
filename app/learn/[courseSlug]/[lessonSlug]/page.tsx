@@ -61,6 +61,7 @@ export default async function LearningLessonPage({ params }: { params: PageParam
       courseSlug={course.slug}
       courseTitle={course.title}
       seasons={seasons}
+      courseQuiz={course.Quiz?.[0] ?? null}
       selectedLesson={selectedLesson}
       enrollmentId={enrollment ? String(enrollment.id) : null}
       currentProfileId={String(user.id)}

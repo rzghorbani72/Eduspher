@@ -7,16 +7,21 @@ import { useApiQuery } from '@/hooks/use-api-query';
 import { queryKeys } from '@/lib/query/keys';
 
 interface AssignmentPanelProps {
-  lessonId: string;
+  parent: { kind: 'lesson' | 'season'; id: string };
   currentProfileId: string;
 }
 
-/** The homework of one recorded lesson. */
-export function AssignmentPanel({ lessonId, currentProfileId }: AssignmentPanelProps) {
+/** The homework of one recorded lesson or season. */
+export function AssignmentPanel({ parent, currentProfileId }: AssignmentPanelProps) {
   const { t } = useTranslation();
+  const { kind, id } = parent;
   const { data: assignmentData, error: assignmentError } = useApiQuery({
-    queryKey: queryKeys.assignments(lessonId),
-    queryFn: (signal) => listAssignments({ lessonId, limit: 1 }, { signal }),
+    queryKey: queryKeys.assignments(kind, id),
+    queryFn: (signal) =>
+      listAssignments(
+        { ...(kind === 'lesson' ? { lessonId: id } : { seasonId: id }), limit: 1 },
+        { signal },
+      ),
   });
   const assignment = assignmentData?.assignments[0];
 

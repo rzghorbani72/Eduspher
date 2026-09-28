@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 import { JOURNEY, academyPath, loginSeededStudent } from '../helpers/journey';
 
@@ -6,8 +6,7 @@ const RIGHT = 'پاسخ درست';
 const WRONG = 'پاسخ نادرست';
 
 /** Pick the same answer for every drawn question, then submit. */
-async function answerAll(page: Page, answer: string) {
-  const panel = page.getByRole('tabpanel');
+async function answerAll(panel: Locator, answer: string) {
   await expect(panel.getByLabel(answer, { exact: true }).first()).toBeVisible();
   for (const option of await panel.getByLabel(answer, { exact: true }).all()) {
     await option.check();
@@ -27,22 +26,26 @@ test.describe('@backend student journey: quiz gates and certificate', () => {
 
     await page.getByRole('tab', { name: 'آزمون' }).click();
     await page.getByRole('button', { name: 'شروع آزمون' }).click();
-    await answerAll(page, WRONG);
+    await answerAll(page.getByRole('tabpanel'), WRONG);
     await expect(page.getByRole('tabpanel')).toContainText('قبول نشده');
 
     await page.getByRole('button', { name: 'شرکت دوباره' }).click();
     await expect(page.getByRole('tabpanel')).toContainText('فرصت باقی‌مانده');
     await page.getByRole('button', { name: 'شرکت دوباره' }).click();
-    await answerAll(page, RIGHT);
+    await answerAll(page.getByRole('tabpanel'), RIGHT);
     await expect(rail).not.toContainText('«آزمون درس اول» قبول شوید');
 
     await page.goto(academyPath(`/learn/${JOURNEY.quizCourseSlug}/${JOURNEY.quizLessonTwoSlug}`));
     await page.getByRole('button', { name: 'تکمیل شد، درس بعد' }).click();
-    await expect(page).toHaveURL(/quiz-final/);
+    await expect(page).toHaveURL(new RegExp(JOURNEY.quizLessonThreeSlug));
+    await page.getByRole('button', { name: 'علامت‌گذاری به‌عنوان تکمیل‌شده' }).click();
 
-    await page.getByRole('button', { name: 'شروع آزمون' }).click();
-    await answerAll(page, RIGHT);
-    await expect(page.getByRole('link', { name: /گواهی شما صادر شد/ })).toBeVisible();
+    // The final exam belongs to the course, not to a lesson: it opens in a dialog.
+    await rail.getByRole('button', { name: /آزمون پایانی دوره/ }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByRole('button', { name: 'شروع آزمون' }).click();
+    await answerAll(dialog, RIGHT);
+    await expect(dialog.getByRole('link', { name: /گواهی شما صادر شد/ })).toBeVisible();
 
     await page.goto(academyPath('/account/certificates'));
     await expect(page.getByText('دوره آزمون‌دار آزمایشی')).toBeVisible();

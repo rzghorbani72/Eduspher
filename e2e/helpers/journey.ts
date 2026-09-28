@@ -15,6 +15,7 @@ export const JOURNEY = {
   quizStudentPhone: process.env.E2E_QUIZ_STUDENT_PHONE ?? '',
   quizCourseSlug: process.env.E2E_QUIZ_COURSE_SLUG ?? 'e2e-journeys-quiz',
   quizLessonTwoSlug: process.env.E2E_QUIZ_LESSON_TWO_SLUG ?? 'e2e-journeys-quiz-2',
+  quizLessonThreeSlug: process.env.E2E_QUIZ_LESSON_THREE_SLUG ?? 'e2e-journeys-quiz-3',
 } as const;
 
 export const academyPath = (path: string): string => `/${JOURNEY.academySlug}${path}`;

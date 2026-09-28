@@ -14,12 +14,14 @@ import Link from '@/components/ui/link';
 import { MetaDot } from '@/components/learning/meta-dot';
 import { AssignmentScoreChip } from '@/components/learning/assignment-score-chip';
 import type { LessonAssignmentScore } from '@/hooks/use-assignment-scores';
-import type { LessonSummary, LessonType, SeasonSummary } from '@/lib/api/types';
+import type { LessonQuizSummary, LessonSummary, LessonType, SeasonSummary } from '@/lib/api/types';
 import type { QuizGate } from '@/lib/api/client';
 import { formatSeconds } from '@/components/courses/curriculum/format';
 import { flattenLessons } from '@/lib/learning/lesson-list';
 import { learnPath } from '@/lib/content-paths';
 import { cn, buildAcademyPath, toPersianDigits } from '@/lib/utils';
+import { CourseWorkItems } from './course-work/course-work-items';
+import { courseWork, seasonWork, type CourseWork } from './course-work/course-work';
 
 const TYPE_ICON: Record<LessonType, typeof PlayCircle> = {
   VIDEO: PlayCircle,
@@ -50,7 +52,10 @@ function daysUntilUnlock(lesson: LessonSummary): number | null {
 }
 
 interface LearningCurriculumProps {
+  courseId: string;
   courseSlug: string;
+  courseQuiz: LessonQuizSummary | null;
+  onOpenWork: (work: CourseWork) => void;
   seasons: SeasonSummary[];
   selectedLessonId: string;
   completedLessonIds: ReadonlySet<string>;
@@ -64,7 +69,10 @@ interface LearningCurriculumProps {
 }
 
 export function LearningCurriculum({
+  courseId,
   courseSlug,
+  courseQuiz,
+  onOpenWork,
   seasons,
   selectedLessonId,
   completedLessonIds,
@@ -77,7 +85,11 @@ export function LearningCurriculum({
 }: LearningCurriculumProps) {
   // Same source of truth as prev/next, so the numbers a student sees and the
   // order they move through never disagree.
-  const numbers = new Map(flattenLessons(seasons).map((item) => [item.id, item.index]));
+  const flat = flattenLessons(seasons);
+  const numbers = new Map(flat.map((item) => [item.id, item.index]));
+  // Season/course work opens right after the lesson before it does.
+  const lockedAfter = (lesson: LessonSummary | undefined) =>
+    !lesson || daysUntilUnlock(lesson) !== null || Boolean(quizGates[String(lesson.id)]);
 
   return (
     <nav aria-label={lessonLabel}>
@@ -224,9 +236,21 @@ export function LearningCurriculum({
                 );
               })}
             </ol>
+            <CourseWorkItems
+              work={seasonWork(season)}
+              locked={lockedAfter(lessons.at(-1))}
+              onOpen={onOpenWork}
+              t={t}
+            />
           </section>
         );
       })}
+      <CourseWorkItems
+        work={courseWork(courseId, courseQuiz)}
+        locked={lockedAfter(flat.at(-1)?.lesson)}
+        onOpen={onOpenWork}
+        t={t}
+      />
     </nav>
   );
 }

@@ -95,6 +95,9 @@ export interface SeasonSummary {
   order?: number | null;
   description?: string | null;
   Lesson?: LessonSummary[];
+  /** Closes the season; not a lesson, opened after the season's last lesson. */
+  Quiz?: LessonQuizSummary | null;
+  Assignment?: LessonAssignmentSummary | null;
 }
 
 export type CourseDifficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
@@ -147,6 +150,8 @@ export interface CourseSummary {
   Category?: CategorySummary | null;
   Image?: MediaAsset | null;
   Season: Array<SeasonSummary> | null;
+  /** The course's own quiz (e.g. the final exam); at most one, never a lesson. */
+  Quiz?: LessonQuizSummary[];
   Video?: MediaAsset | null;
   Audio?: MediaAsset | null;
   Profile?: AuthorSummary | null;

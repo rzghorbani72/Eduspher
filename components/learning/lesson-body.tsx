@@ -138,7 +138,10 @@ export function LessonBody({
             id: 'assignment',
             label: t('learning.tabAssignment'),
             content: enrollmentId ? (
-              <AssignmentPanel lessonId={lessonId} currentProfileId={currentProfileId} />
+              <AssignmentPanel
+                parent={{ kind: 'lesson', id: lessonId }}
+                currentProfileId={currentProfileId}
+              />
             ) : (
               <Unavailable message={t('learning.assignmentNeedsEnrollment')} />
             ),

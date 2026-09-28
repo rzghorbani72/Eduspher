@@ -153,6 +153,7 @@ export const updateProgress = async (
 export const listAssignments = async (
   params: {
     lessonId?: string;
+    seasonId?: string;
     courseId?: string;
     tutoringGroupId?: string;
     tutoringSessionId?: string;
@@ -162,6 +163,7 @@ export const listAssignments = async (
 ) => {
   const query = new URLSearchParams();
   if (params.lessonId) query.set('lesson_id', params.lessonId);
+  if (params.seasonId) query.set('season_id', params.seasonId);
   if (params.courseId) query.set('course_id', params.courseId);
   if (params.tutoringGroupId) query.set('tutoring_group_id', params.tutoringGroupId);
   if (params.tutoringSessionId) query.set('tutoring_session_id', params.tutoringSessionId);
