@@ -8,6 +8,7 @@ import {
   canBuyMoreSeats,
   enrollHref,
   groupAnchorId,
+  liveRoomHref,
   seatPriceOfGroup,
 } from '@/lib/courses/live-course';
 import { formatCurrencyWithAcademy } from '@/lib/utils';
@@ -29,6 +30,8 @@ interface Props {
   language: string;
   loginHref: string;
   isLoggedIn: boolean;
+  /** Academy staff enter their classes and never buy a seat. */
+  isStaff?: boolean;
   /** Where enrolled students open the live classroom. */
   liveClassHref: string;
   /** Present only for a private class opened through its share link. */
@@ -45,6 +48,7 @@ export const TutoringGroupsSection = ({
   language,
   loginHref,
   isLoggedIn,
+  isStaff = false,
   liveClassHref,
   joinCode,
 }: Props) => {
@@ -66,10 +70,12 @@ export const TutoringGroupsSection = ({
   useEffect(() => {
     if (!resumeClassId) return;
     const picked = groups.find((group) => group.id === resumeClassId);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from the URL once
-    if (picked && canBuyMoreSeats(picked)) (isLoggedIn ? setConfirming : setAuthFor)(picked);
+    if (picked && !isStaff && canBuyMoreSeats(picked)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from the URL once
+      (isLoggedIn ? setConfirming : setAuthFor)(picked);
+    }
     window.history.replaceState(null, '', `${pathname}#${groupAnchorId(resumeClassId)}`);
-  }, [isLoggedIn, resumeClassId, groups, pathname]);
+  }, [isLoggedIn, isStaff, resumeClassId, groups, pathname]);
   const hold = useSeatHold({
     groupId: confirming?.id ?? null,
     seats: confirming ? (seatsByGroup[confirming.id] ?? 1) : 1,
@@ -112,7 +118,7 @@ export const TutoringGroupsSection = ({
         <p className="text-muted text-sm">{t('courses.groupClassesSubtitle')}</p>
         {!isLoggedIn ? (
           <p className="text-muted text-sm">{t('courses.guestClassesHint')}</p>
-        ) : (
+        ) : isStaff ? null : (
           <CreditBalanceNote />
         )}
       </div>
@@ -127,9 +133,9 @@ export const TutoringGroupsSection = ({
             pending={pendingKey === group.id}
             onSeatsChange={(seats) => setSeatsByGroup((prev) => ({ ...prev, [group.id]: seats }))}
             onJoin={() => (isLoggedIn ? setConfirming(group) : setAuthFor(group))}
-            enrolledHref={liveClassHref}
+            enrolledHref={liveRoomHref(liveClassHref, group.id)}
             isLoggedIn={isLoggedIn}
-            canPurchase={!closed}
+            canPurchase={!closed && !isStaff}
           />
         ))}
         {closed ? <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p> : null}

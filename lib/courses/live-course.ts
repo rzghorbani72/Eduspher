@@ -29,6 +29,10 @@ export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
 export const enrollHref = (groupId: string): string =>
   `?class=${groupId}#${groupAnchorId(groupId)}`;
 
+/** Classroom link for one class, so staff with several classes open the right one. */
+export const liveRoomHref = (liveClassHref: string, groupId: string): string =>
+  `${liveClassHref}?class=${encodeURIComponent(groupId)}`;
+
 type PublicJoinGroup = {
   seats_left: number;
   joined?: boolean;

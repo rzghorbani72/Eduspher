@@ -5,6 +5,7 @@ import { getCurrentUser, getEnrollments, getPublicCourseDetail } from '@/lib/api
 import { getCourseAccess } from '@/lib/api/account-server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
+import { staffCanOpen } from '@/lib/courses/staff-access';
 import { getAcademyContext } from '@/lib/store-context';
 import { buildAcademyPath } from '@/lib/utils';
 
@@ -53,7 +54,10 @@ export default async function LearningLessonPage({ params }: { params: PageParam
   // A free lesson is open to every signed-in visitor. Everything else needs
   // access by any route (purchase, grant, group, subscription); the backend
   // re-checks each lesson anyway.
-  const hasAccess = Boolean(enrollment) || courseAccess.some((row) => row.course_id === course.id);
+  const hasAccess =
+    Boolean(enrollment) ||
+    courseAccess.some((row) => row.course_id === course.id) ||
+    staffCanOpen({ id: String(user.id), role: user.role }, course.author?.id);
   if (!hasAccess && !selectedLesson.is_free) {
     redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));
   }

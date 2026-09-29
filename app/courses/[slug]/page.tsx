@@ -35,6 +35,7 @@ import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
 import { t } from '@/lib/i18n/server-translations';
 import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
 import { isLiveCourse } from '@/lib/courses/live-course';
+import { isAcademyStaff, staffCanOpen } from '@/lib/courses/staff-access';
 import { buildPurchaseOptions } from '@/lib/courses/purchase-options';
 import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
 import { buildCourseJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo/course-json-ld';
@@ -94,7 +95,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const course = await getPublicCourseDetail(courseKey);
   if (!course) return notFound();
 
-  const [user, tutoringGroups, courseOfferings, paymentPlans, seoCtx, topics] = await Promise.all([
+  const [user, publicGroups, courseOfferings, paymentPlans, seoCtx, topics] = await Promise.all([
     getCurrentUser().catch(() => null),
     getTutoringGroupsPublic(course.id).catch(() => []),
     getCourseOfferingsPublic(course.id).catch(() => []),
@@ -126,10 +127,18 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const myEnrollment = user
     ? enrollment?.enrollments?.find((item) => String(item.profile_id) === String(user.id))
     : undefined;
+  const viewer = user ? { id: String(user.id), role: user.role } : null;
+  const isStaff = isAcademyStaff(viewer);
+  // Staff enter the classes they may run instead of buying a seat.
+  const tutoringGroups = publicGroups.map((group) =>
+    staffCanOpen(viewer, group.Tutor?.id) ? { ...group, joined: true } : group,
+  );
   const isEnrolled = Boolean(
-    user &&
-    (courseAccess.some((row) => row.course_id === course.id) ||
-      (myEnrollment && (myEnrollment.status === 'ACTIVE' || myEnrollment.status === 'COMPLETED'))),
+    staffCanOpen(viewer, course.author?.id) ||
+    (user &&
+      (courseAccess.some((row) => row.course_id === course.id) ||
+        (myEnrollment &&
+          (myEnrollment.status === 'ACTIVE' || myEnrollment.status === 'COMPLETED')))),
   );
   const hasLiveSeat = tutoringGroups.some((group) => group.joined);
   const access = courseAccess.find((row) => row.course_id === course.id) ?? null;
@@ -261,6 +270,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     language={language}
                     loginHref={loginHref}
                     isLoggedIn={!!user}
+                    isStaff={isStaff}
                     liveClassHref={liveClassHref}
                   />
                 ) : (
@@ -268,7 +278,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                     {translate('courses.liveNoClassesYet')}
                   </p>
                 )}
-                {!hasLiveSeat ? (
+                {!hasLiveSeat && !isStaff ? (
                   <ClassRequestSection
                     courseId={course.id}
                     hasOpenClasses={tutoringGroups.length > 0}
@@ -286,6 +296,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 groups={tutoringGroups}
                 currencyConfig={currencyConfig}
                 isLoggedIn={!!user}
+                isStaff={isStaff}
                 joinHref={hasLiveSeat ? liveClassHref : null}
               />
             ) : (

@@ -1,10 +1,11 @@
 import { notFound, redirect } from 'next/navigation';
 
 import { EmptyState } from '@/components/ui/empty-state';
-import { getEnrollments, getPublicCourseDetail } from '@/lib/api/server';
+import { getCurrentUser, getEnrollments, getPublicCourseDetail } from '@/lib/api/server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
 import { isLiveCourse } from '@/lib/courses/live-course';
+import { staffCanOpen } from '@/lib/courses/staff-access';
 import { getAcademyLanguage } from '@/lib/i18n/server';
 import { t } from '@/lib/i18n/server-translations';
 import { getAcademyContext } from '@/lib/store-context';
@@ -26,9 +27,10 @@ export default async function LearningCoursePage({ params }: { params: PageParam
   }
 
   const course = await getPublicCourseDetail(courseSlug);
-  const enrollmentData = course
-    ? await getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null)
-    : null;
+  const [enrollmentData, user] = await Promise.all([
+    course ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null) : null,
+    getCurrentUser().catch(() => null),
+  ]);
   // Staff see the academy's enrollments here, so match this viewer's own row —
   // otherwise progress would be written against another student's enrollment.
   const enrollment = enrollmentData?.enrollments.find(
@@ -46,11 +48,14 @@ export default async function LearningCoursePage({ params }: { params: PageParam
 
   // Without an enrollment the classroom still opens on the free lessons; with
   // nothing free to show there is nothing to open, so back to the sales page.
-  const firstLesson = enrollment
+  const hasFullAccess =
+    Boolean(enrollment) ||
+    staffCanOpen(user ? { id: String(user.id), role: user.role } : null, course.author?.id);
+  const firstLesson = hasFullAccess
     ? publishedLessons[0]
     : publishedLessons.find((lesson) => lesson.is_free);
 
-  if (!enrollment && !firstLesson) {
+  if (!hasFullAccess && !firstLesson) {
     redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));
   }
 

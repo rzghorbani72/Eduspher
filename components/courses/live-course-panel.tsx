@@ -15,6 +15,7 @@ import {
   enrollHref,
   groupAnchorId,
   liveEnterLabelKey,
+  liveRoomHref,
   seatPriceOfGroup,
 } from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -27,6 +28,8 @@ interface LiveCoursePanelProps {
   groups: PublicTutoringGroup[];
   currencyConfig: CurrencyConfig | null;
   isLoggedIn: boolean;
+  /** Academy staff enter their classes and never buy a seat. */
+  isStaff?: boolean;
   /** Classroom URL when this student already holds a seat or a teacher grant. */
   joinHref: string | null;
 }
@@ -45,10 +48,12 @@ export function LiveCoursePanel({
   groups,
   currencyConfig,
   isLoggedIn,
+  isStaff = false,
   joinHref,
 }: LiveCoursePanelProps) {
   const { t, language } = useTranslation();
   const closed = useEnrollmentClosed();
+  const canPurchase = !closed && !isStaff;
   const buyableGroups = groups.filter((group) => canBuyMoreSeats(group));
   const enrolledGroup = groups.find((group) => group.joined) ?? null;
   const format = (amount: number) => formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
@@ -73,10 +78,10 @@ export function LiveCoursePanel({
               )}
             </p>
             <SlotChips slots={enrolledGroup.Slots} />
-            <Link href={joinHref} className={ctaClassName}>
+            <Link href={liveRoomHref(joinHref, enrolledGroup.id)} className={ctaClassName}>
               {t(liveEnterLabelKey(enrolledGroup.session_live))}
             </Link>
-            {canBuyMoreSeats(enrolledGroup) && !closed ? (
+            {canBuyMoreSeats(enrolledGroup) && canPurchase ? (
               <a href={`#${groupAnchorId(enrolledGroup.id)}`} className={secondaryCtaClassName}>
                 {t('courses.groupBuyMoreSeats')}
               </a>
@@ -102,20 +107,26 @@ export function LiveCoursePanel({
                 </p>
               </div>
             ) : null}
-            <p className="text-muted text-xs">
-              {buyableGroups.length > 1
-                ? t('courses.liveSidebarPickOne')
-                : isLoggedIn
-                  ? t('courses.liveSidebarPickHint')
-                  : t('courses.guestClassesHint')}
-            </p>
+            {isStaff ? null : (
+              <p className="text-muted text-xs">
+                {buyableGroups.length > 1
+                  ? t('courses.liveSidebarPickOne')
+                  : isLoggedIn
+                    ? t('courses.liveSidebarPickHint')
+                    : t('courses.guestClassesHint')}
+              </p>
+            )}
             <ul className="space-y-2">
               {groups.map((group) => {
                 const reason = closedReasonOf(group);
                 return (
                   <li key={group.id}>
                     <Link
-                      href={reason || closed ? `#${groupAnchorId(group.id)}` : enrollHref(group.id)}
+                      href={
+                        reason || !canPurchase
+                          ? `#${groupAnchorId(group.id)}`
+                          : enrollHref(group.id)
+                      }
                       className="border-theme hover:bg-surface block rounded-xl border p-3 transition-colors"
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -141,7 +152,7 @@ export function LiveCoursePanel({
                 );
               })}
             </ul>
-            {closed ? (
+            {isStaff ? null : closed ? (
               <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
             ) : buyableGroups.length === 1 ? (
               <>

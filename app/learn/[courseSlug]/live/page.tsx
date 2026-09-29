@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { AccountPageHeader } from '@/components/account/account-page-header';
 import { LiveRoomShell } from '@/components/live/live-room-shell';
-import { getMyLiveRoomForCourse } from '@/lib/api/account-server';
+import { getMyLiveRoomForCourse, getTutoringGroupRoom } from '@/lib/api/account-server';
 import { getPublicCourseDetail } from '@/lib/api/server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, liveClassPath } from '@/lib/content-paths';
@@ -13,14 +13,20 @@ import { buildAcademyPath } from '@/lib/utils';
 /**
  * The live classroom of a course, at the same address family as the recorded
  * learn page. The backend decides membership on every request; a student who
- * holds no seat here is sent back to the sales page.
+ * holds no seat here is sent back to the sales page. `?class=` opens one class
+ * directly — staff hold no seat, so this is how a manager or tutor gets in.
  */
 export default async function LiveLearningPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ courseSlug: string }>;
+  searchParams: Promise<{ class?: string }>;
 }) {
-  const { courseSlug: courseSlugParam } = await params;
+  const [{ courseSlug: courseSlugParam }, { class: classId }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   const courseSlug = decodePathSegment(courseSlugParam);
   const [session, storeContext] = await Promise.all([getSession(), getAcademyContext()]);
   const storeSlug = storeContext.isSubdomain ? null : storeContext.slug;
@@ -35,7 +41,9 @@ export default async function LiveLearningPage({
   const course = await getPublicCourseDetail(courseSlug);
   if (!course) redirect(buildAcademyPath(storeSlug, '/courses'));
 
-  const room = await getMyLiveRoomForCourse(course.id);
+  const pickedRoom = classId ? await getTutoringGroupRoom(classId) : null;
+  const room =
+    pickedRoom?.course_id === course.id ? pickedRoom : await getMyLiveRoomForCourse(course.id);
   if (!room) redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));
 
   return (
