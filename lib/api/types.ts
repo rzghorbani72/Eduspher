@@ -47,7 +47,7 @@ export type LessonType = 'VIDEO' | 'AUDIO' | 'TEXT' | 'QUIZ' | 'ASSIGNMENT' | 'L
 export interface LessonQuizSummary {
   id: string;
   title: string;
-  passing_score: number;
+  pass_percent: number;
   is_published: boolean;
   _count?: { Question: number };
 }

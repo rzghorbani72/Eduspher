@@ -127,7 +127,7 @@ const toLessonView = (lesson: LessonSummary): CurriculumLessonView => ({
   quiz: lesson.Quiz?.is_published
     ? {
         questionCount: lesson.Quiz._count?.Question ?? 0,
-        passingScore: lesson.Quiz.passing_score,
+        passingScore: lesson.Quiz.pass_percent,
       }
     : null,
   assignment: lesson.Assignment

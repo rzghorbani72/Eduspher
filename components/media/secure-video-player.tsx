@@ -119,7 +119,7 @@ export function SecureVideoPlayer({
   return (
     <div
       ref={stageRef}
-      className={`group relative overflow-hidden rounded-[10px] ${posterSrc ? 'bg-[#0d0c0c]' : 'bg-transparent'} ${className ?? ''}`}
+      className={`group relative overflow-hidden rounded-[10px] bg-[#0d0c0c] ${className ?? ''}`}
     >
       <video
         ref={videoRef}

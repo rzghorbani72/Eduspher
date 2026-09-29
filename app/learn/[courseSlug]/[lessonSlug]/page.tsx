@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 
 import { LearningShell } from '@/components/learning/learning-shell';
 import { getCurrentUser, getEnrollments, getPublicCourseDetail } from '@/lib/api/server';
+import { getCourseAccess } from '@/lib/api/account-server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
@@ -24,9 +25,10 @@ export default async function LearningLessonPage({ params }: { params: PageParam
   }
 
   const course = await getPublicCourseDetail(courseSlug);
-  const [enrollmentData, user] = await Promise.all([
+  const [enrollmentData, user, courseAccess] = await Promise.all([
     course ? getEnrollments({ course_id: course.id, limit: 1 }).catch(() => null) : null,
     getCurrentUser().catch(() => null),
+    getCourseAccess(),
   ]);
   // Staff see the academy's enrollments here, so match this viewer's own row —
   // otherwise progress would be written against another student's enrollment.
@@ -48,10 +50,11 @@ export default async function LearningLessonPage({ params }: { params: PageParam
     notFound();
   }
 
-  // A free lesson is open to every signed-in visitor, whichever way they bought
-  // the course — or even if they have not bought it yet. Everything else still
-  // needs a live enrollment, and the backend re-checks each lesson anyway.
-  if (!enrollment && !selectedLesson.is_free) {
+  // A free lesson is open to every signed-in visitor. Everything else needs
+  // access by any route (purchase, grant, group, subscription); the backend
+  // re-checks each lesson anyway.
+  const hasAccess = Boolean(enrollment) || courseAccess.some((row) => row.course_id === course.id);
+  if (!hasAccess && !selectedLesson.is_free) {
     redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));
   }
 
