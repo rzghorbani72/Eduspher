@@ -4,7 +4,9 @@ import { redirect } from 'next/navigation';
 import { AccountPageHeader } from '@/components/account/account-page-header';
 import { LiveRoomShell } from '@/components/live/live-room-shell';
 import { getMyLiveRoomForCourse, getTutoringGroupRoom } from '@/lib/api/account-server';
-import { getPublicCourseDetail } from '@/lib/api/server';
+import { RoleBadges } from '@/components/account/role-badges';
+import { getCurrentUser, getPublicCourseDetail } from '@/lib/api/server';
+import { viewerRoles } from '@/lib/courses/staff-access';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, liveClassPath } from '@/lib/content-paths';
 import { getAcademyContext } from '@/lib/store-context';
@@ -46,8 +48,15 @@ export default async function LiveLearningPage({
     pickedRoom?.course_id === course.id ? pickedRoom : await getMyLiveRoomForCourse(course.id);
   if (!room) redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));
 
+  const user = await getCurrentUser().catch(() => null);
+  const roles = viewerRoles(
+    user ? { id: String(user.id), role: user.role } : null,
+    room.Tutor?.id === String(user?.id) || course.author?.id === String(user?.id),
+  );
+
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6">
+      <RoleBadges roles={roles} />
       <AccountPageHeader
         title={room.title}
         description={room.Tutor?.display_name ?? course.title}

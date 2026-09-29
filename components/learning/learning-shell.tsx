@@ -9,6 +9,7 @@ import { LessonBody } from '@/components/learning/lesson-body';
 import { LessonHeader } from '@/components/learning/lesson-header';
 import { LessonNavFooter } from '@/components/learning/lesson-nav-footer';
 import { MetaDot } from '@/components/learning/meta-dot';
+import type { ViewerRole } from '@/lib/courses/staff-access';
 import { LearningTopBar } from '@/components/learning/learning-top-bar';
 import { Unavailable } from '@/components/learning/unavailable';
 import { QuizBlockedNotice } from '@/components/learning/quiz-blocked-notice';
@@ -43,6 +44,7 @@ interface LearningShellProps {
   storeSlug: string | null;
   /** The course's teacher, shown on a live lesson's stage. */
   teacherName: string | null;
+  roles: readonly ViewerRole[];
 }
 
 export function LearningShell({
@@ -57,6 +59,7 @@ export function LearningShell({
   studentName,
   storeSlug,
   teacherName,
+  roles,
 }: LearningShellProps) {
   const { t, language } = useTranslation();
   const { theater, setTheater } = useTheaterMode();
@@ -226,6 +229,7 @@ export function LearningShell({
         courseTitle={courseTitle}
         percent={isPreviewing ? null : percent}
         studentName={studentName}
+        roles={roles}
       />
 
       <div

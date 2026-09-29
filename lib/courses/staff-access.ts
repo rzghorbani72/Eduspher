@@ -17,3 +17,14 @@ export const staffCanOpen = (viewer: Viewer, teacherProfileId: string | null | u
     (MANAGER_ROLES.has(viewer.role) ||
       (viewer.role === 'TEACHER' && viewer.id === teacherProfileId)),
   );
+
+export type ViewerRole = 'MANAGER' | 'TEACHER';
+
+/** A manager who also authored the course is both, so both badges show. */
+export const viewerRoles = (viewer: Viewer, teaches: boolean): ViewerRole[] => {
+  if (!viewer) return [];
+  const roles: ViewerRole[] = [];
+  if (MANAGER_ROLES.has(viewer.role)) roles.push('MANAGER');
+  if (viewer.role === 'TEACHER' || (teaches && isAcademyStaff(viewer))) roles.push('TEACHER');
+  return roles;
+};

@@ -13,7 +13,9 @@ import { BadgeCheck } from 'lucide-react';
 
 import Link from '@/components/ui/link';
 import { useLocaleFormat } from '@/hooks/use-locale-digits';
+import { RoleBadges } from '@/components/account/role-badges';
 import { roleLabel } from '@/lib/account-labels';
+import type { ViewerRole } from '@/lib/courses/staff-access';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { signOut } from '@/lib/sign-out';
 
@@ -22,6 +24,7 @@ interface AccountSidebarProps {
   contact?: string | null;
   avatarUrl?: string | null;
   roleLabel?: string | null;
+  roles: readonly ViewerRole[];
   isVerified?: boolean;
   academyName?: string | null;
   /** Bare route after the academy-slug rewrite, e.g. "/account/profile". */
@@ -44,6 +47,7 @@ export function AccountSidebar({
   contact,
   avatarUrl,
   roleLabel: rawRole,
+  roles,
   isVerified,
   academyName,
   currentPath,
@@ -89,7 +93,9 @@ export function AccountSidebar({
             </p>
           ) : null}
           {academyName ? <p className="text-muted hidden text-xs lg:block">{academyName}</p> : null}
-          {role ? (
+          {roles.length > 1 ? (
+            <RoleBadges roles={roles} verified={isVerified} />
+          ) : role ? (
             <span className="inline-flex w-fit items-center gap-1 rounded-full bg-(--theme-primary)/15 px-2.5 py-1 text-xs font-semibold text-(--theme-primary-ink) lg:mt-1">
               {isVerified ? (
                 <BadgeCheck className="size-3.5 shrink-0" aria-label={t('account.verified')} />

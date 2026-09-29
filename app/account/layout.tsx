@@ -5,7 +5,8 @@ import { redirect } from 'next/navigation';
 
 import { AccountSidebar } from '@/components/account/account-sidebar';
 import { getProfile } from '@/lib/api/account-server';
-import { getAcademyBySlug, getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { getAcademyBySlug, getCourses, getCurrentAcademy, getCurrentUser } from '@/lib/api/server';
+import { viewerRoles } from '@/lib/courses/staff-access';
 import { getSession } from '@/lib/auth/session';
 import { NOINDEX_ROBOTS } from '@/lib/seo/crawl-policy';
 import { getAcademyContext } from '@/lib/store-context';
@@ -60,6 +61,14 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       ),
   ]);
 
+  // A manager who also authors a course is a teacher too, so both roles show.
+  const isManager = user?.role === 'MANAGER';
+  const authored = isManager
+    ? await getCourses({ academy_id: user.academyId, limit: 100 }).catch(() => null)
+    : null;
+  const teaches = Boolean(authored?.courses?.some((course) => course.Profile?.id === user?.id));
+  const roles = viewerRoles(user ? { id: String(user.id), role: user.role } : null, teaches);
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
@@ -69,6 +78,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
             contact={user?.email ?? user?.phone_number}
             avatarUrl={resolveAssetUrl(profile?.avatar?.url ?? user?.avatar?.url) ?? null}
             roleLabel={profile?.role_label ?? user?.role}
+            roles={roles}
             isVerified={Boolean(user?.email_confirmed || user?.phone_confirmed)}
             academyName={academy?.name ?? academyContext.name}
             currentPath={currentPath}

@@ -2,8 +2,10 @@
 
 import { ArrowLeft } from 'lucide-react';
 
+import { RoleBadges } from '@/components/account/role-badges';
 import { TheaterToggle } from '@/components/learning/theater-toggle';
 import Link from '@/components/ui/link';
+import type { ViewerRole } from '@/lib/courses/staff-access';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { initialsOf } from '@/lib/learning/live-schedule';
 import { formatPercent } from '@/lib/utils';
@@ -14,6 +16,7 @@ interface LearningTopBarProps {
   /** Null while previewing: nothing is recorded, so no progress is shown. */
   percent: number | null;
   studentName: string | null;
+  roles: readonly ViewerRole[];
 }
 
 export function LearningTopBar({
@@ -21,6 +24,7 @@ export function LearningTopBar({
   courseTitle,
   percent,
   studentName,
+  roles,
 }: LearningTopBarProps) {
   const { t, language } = useTranslation();
   return (
@@ -35,6 +39,10 @@ export function LearningTopBar({
       </Link>
 
       <span className="flex-1" />
+
+      <div className="hidden sm:block">
+        <RoleBadges roles={roles} />
+      </div>
 
       <TheaterToggle compact className="hidden lg:inline-flex" />
 

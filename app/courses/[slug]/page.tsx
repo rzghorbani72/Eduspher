@@ -10,6 +10,7 @@ import {
   PreviewPlayerProvider,
   type PreviewMedia,
 } from '@/components/courses/preview-player-context';
+import { RoleBadges } from '@/components/account/role-badges';
 import { PurchasePanel } from '@/components/courses/purchase-panel';
 import { LiveCoursePanel } from '@/components/courses/live-course-panel';
 import { ClassRequestSection } from '@/components/courses/class-request-section';
@@ -35,7 +36,7 @@ import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
 import { t } from '@/lib/i18n/server-translations';
 import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
 import { isLiveCourse } from '@/lib/courses/live-course';
-import { isAcademyStaff, staffCanOpen } from '@/lib/courses/staff-access';
+import { isAcademyStaff, staffCanOpen, viewerRoles } from '@/lib/courses/staff-access';
 import { buildPurchaseOptions } from '@/lib/courses/purchase-options';
 import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
 import { buildCourseJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo/course-json-ld';
@@ -129,6 +130,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
     : undefined;
   const viewer = user ? { id: String(user.id), role: user.role } : null;
   const isStaff = isAcademyStaff(viewer);
+  const roles = viewerRoles(viewer, viewer?.id === course.author?.id);
   // Staff enter the classes they may run instead of buying a seat.
   const tutoringGroups = publicGroups.map((group) =>
     staffCanOpen(viewer, group.Tutor?.id) ? { ...group, joined: true } : group,
@@ -290,7 +292,8 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
             ) : null}
           </div>
 
-          <aside className="lg:sticky lg:top-[72px]">
+          <aside className="space-y-3 lg:sticky lg:top-[72px]">
+            <RoleBadges roles={roles} />
             {isLiveCourse(course) ? (
               <LiveCoursePanel
                 groups={tutoringGroups}

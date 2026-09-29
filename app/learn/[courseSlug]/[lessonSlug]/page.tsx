@@ -5,7 +5,7 @@ import { getCurrentUser, getEnrollments, getPublicCourseDetail } from '@/lib/api
 import { getCourseAccess } from '@/lib/api/account-server';
 import { getSession } from '@/lib/auth/session';
 import { coursePath, decodePathSegment, learnPath } from '@/lib/content-paths';
-import { staffCanOpen } from '@/lib/courses/staff-access';
+import { staffCanOpen, viewerRoles } from '@/lib/courses/staff-access';
 import { getAcademyContext } from '@/lib/store-context';
 import { buildAcademyPath } from '@/lib/utils';
 
@@ -74,6 +74,10 @@ export default async function LearningLessonPage({ params }: { params: PageParam
       currentProfileId={String(user.id)}
       studentName={user.display_name ?? null}
       storeSlug={storeSlug}
+      roles={viewerRoles(
+        { id: String(user.id), role: user.role },
+        String(user.id) === course.author?.id,
+      )}
       teacherName={course.Profile?.display_name ?? course.author?.display_name ?? null}
     />
   );
