@@ -45,7 +45,7 @@ export function HumanCheck({ onVerify }: HumanCheckProps) {
   }, [onVerify]);
 
   return (
-    <div className="flex justify-center py-1">
+    <div className="w-full py-1">
       <altcha-widget
         ref={ref}
         challenge={`${getClientBackendApiBaseUrl()}/captcha/challenge`}

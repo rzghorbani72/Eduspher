@@ -2558,3 +2558,26 @@ select[class*='rounded-sm'] {
 .rmdp-time-picker .rmdp-arrow {
   border-color: currentColor;
 }
+
+/* ALTCHA human check: its shadow DOM only reads --altcha-* variables. */
+altcha-widget {
+  --altcha-max-width: 100%;
+  --altcha-border-width: 1px;
+  --altcha-border-radius: 9999px;
+  --altcha-padding: 0.875rem 1.25rem;
+  --altcha-color-base: var(--theme-background);
+  --altcha-color-base-content: var(--theme-foreground);
+  --altcha-color-primary: var(--theme-primary);
+  --altcha-color-primary-content: var(--theme-on-primary);
+  --altcha-color-success: #16a34a;
+  --altcha-color-success-content: #fff;
+  --altcha-color-error: #dc2626;
+  --altcha-color-error-content: #fff;
+  --altcha-color-neutral: var(--theme-border-strong);
+  --altcha-color-neutral-content: var(--theme-muted);
+  --altcha-border-color: var(--theme-border-strong);
+  --altcha-checkbox-border-color: var(--theme-border-strong);
+  --altcha-checkbox-border-radius: 6px;
+  --altcha-checkbox-outline-color: var(--theme-primary);
+  --altcha-shadow: none;
+}
