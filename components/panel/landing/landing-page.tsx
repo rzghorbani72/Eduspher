@@ -1,8 +1,8 @@
 import type { StoreSummary } from '@/lib/api/types';
 import type { PublicPlan } from '@/lib/api/server';
 
-import { AcademySection } from './academy-section';
-import { CoursesSection } from './courses-section';
+// import { AcademySection } from './academy-section';
+// import { CoursesSection } from './courses-section';
 import { CtaSection } from './cta-section';
 import { DomainSection } from './domain-section';
 import { FaqSection } from './faq-section';
@@ -13,11 +13,11 @@ import { LiveSection } from './live-section';
 import { PersonasSection } from './personas-section';
 import { PricingSection } from './pricing-section';
 import { ProblemSection } from './problem-section';
-import { SalesSection } from './sales-section';
+// import { SalesSection } from './sales-section';
 import { SamplesSection } from './samples-section';
-import { SolutionSection } from './solution-section';
+// import { SolutionSection } from './solution-section';
 import { StepsSection } from './steps-section';
-import { StudentsSection } from './students-section';
+// import { StudentsSection } from './students-section';
 
 type Props = {
   adminLoginUrl: string;
