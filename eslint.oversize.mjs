@@ -1,7 +1,7 @@
 // Legacy files above the max-lines limit. This list may only shrink:
 // tools/check-oversize-allowlist.mjs fails when a listed file fits the limit again.
 export const MAX_LINES = 400;
-export const OVERSIZE_ALLOWLIST = ['components/preview/preview-edit-bridge.tsx', 'proxy.ts'];
+export const OVERSIZE_ALLOWLIST = ['components/preview/preview-edit-bridge.tsx'];
 
 // Legacy files still using `any`, `x!` or `console.*`; cleaned as they are split. May only shrink.
 export const LEGACY_ANY_ALLOWLIST = [
