@@ -1,8 +1,13 @@
 'use client';
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { motion } from 'framer-motion';
 import { FlyingIcons } from './flying-icons';
+import { GridBackground } from './creative-background/grid-background';
+import { GradientBackground } from './creative-background/gradient-background';
+import { MeshBackground } from './creative-background/mesh-background';
+import { ParticlesBackground } from './creative-background/particles-background';
+import { WavesBackground } from './creative-background/waves-background';
+import { BlobsBackground } from './creative-background/blobs-background';
 
 const subscribeNoop = () => () => {};
 
@@ -183,344 +188,73 @@ export function CreativeBackground({
   const renderMotionBlobs = () => {
     if (animationType === 'blobs' || !animationType) {
       return (
-        <>
-          <motion.div
-            key={`blob-1-${primaryColor}-${secondaryColor}`}
-            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '70vw', '20vw', '0vw'],
-              y: ['0vh', '60vh', '30vh', '0vh'],
-              background: [
-                `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
-                `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
-                `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
-              ],
-            }}
-            transition={{
-              duration: 20 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            key={`blob-2-${accentColor}-${primaryColor}`}
-            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '-60vw', '-20vw', '0vw'],
-              y: ['0vh', '50vh', '80vh', '0vh'],
-              background: [
-                `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
-                `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
-                `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
-              ],
-            }}
-            transition={{
-              duration: 25 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            key={`blob-3-${secondaryColor}-${accentColor}`}
-            className="absolute bottom-0 left-1/2 h-[450px] w-[450px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.75)}, ${withOpacity(accentColor, 0.8)})`,
-            }}
-            animate={{
-              x: ['0vw', '40vw', '-30vw', '0vw'],
-              y: ['0vh', '-70vh', '-40vh', '0vh'],
-            }}
-            transition={{
-              duration: 30 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        </>
+        <BlobsBackground
+          accentColor={accentColor}
+          baseDuration={baseDuration}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          withOpacity={withOpacity}
+        />
       );
     }
 
     if (animationType === 'waves') {
       return (
-        <>
-          <motion.div
-            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.7)}, ${withOpacity(secondaryColor, 0.75)})`,
-            }}
-            animate={{
-              x: ['0vw', '80vw', '10vw', '50vw', '0vw'],
-              y: ['0vh', '40vh', '70vh', '20vh', '0vh'],
-            }}
-            transition={{
-              duration: 25 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.7)}, ${withOpacity(accentColor, 0.75)})`,
-            }}
-            animate={{
-              x: ['0vw', '-70vw', '-10vw', '-50vw', '0vw'],
-              y: ['0vh', '60vh', '90vh', '30vh', '0vh'],
-            }}
-            transition={{
-              duration: 30 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute bottom-0 left-1/2 h-[450px] w-[450px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.8)}, ${withOpacity(primaryColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '50vw', '-40vw', '20vw', '0vw'],
-              y: ['0vh', '-60vh', '-20vh', '-80vh', '0vh'],
-            }}
-            transition={{
-              duration: 35 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute top-1/2 left-0 h-[400px] w-[400px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '90vw', '30vw', '60vw', '0vw'],
-              y: ['0vh', '-30vh', '40vh', '-10vh', '0vh'],
-            }}
-            transition={{
-              duration: 28 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        </>
+        <WavesBackground
+          accentColor={accentColor}
+          baseDuration={baseDuration}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          withOpacity={withOpacity}
+        />
       );
     }
 
     if (animationType === 'particles') {
       return (
-        <>
-          {[...Array(6)].map((_, i) => {
-            const startX = (i * 15) % 100;
-            const startY = (i * 20) % 100;
-            return (
-              <motion.div
-                key={i}
-                className="absolute rounded-full blur-[100px]"
-                style={{
-                  width: `${120 + i * 30}px`,
-                  height: `${120 + i * 30}px`,
-                  background: `linear-gradient(to bottom right, ${withOpacity(i % 2 === 0 ? primaryColor : secondaryColor, 0.75)}, ${withOpacity(i % 3 === 0 ? accentColor : primaryColor, 0.8)})`,
-                  top: `${startY}%`,
-                  left: `${startX}%`,
-                }}
-                animate={{
-                  x: [
-                    '0vw',
-                    `${(i % 2 === 0 ? 1 : -1) * (60 + i * 15)}vw`,
-                    `${(i % 2 === 0 ? -1 : 1) * (40 + i * 10)}vw`,
-                    '0vw',
-                  ],
-                  y: [
-                    '0vh',
-                    `${(i % 3 === 0 ? 1 : -1) * (50 + i * 12)}vh`,
-                    `${(i % 3 === 0 ? -1 : 1) * (30 + i * 8)}vh`,
-                    '0vh',
-                  ],
-                  scale: [1, 1.3, 0.8, 1],
-                }}
-                transition={{
-                  duration: (15 + i * 3) * baseDuration,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: i * 0.8,
-                }}
-              />
-            );
-          })}
-        </>
+        <ParticlesBackground
+          accentColor={accentColor}
+          baseDuration={baseDuration}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          withOpacity={withOpacity}
+        />
       );
     }
 
     if (animationType === 'mesh') {
       return (
-        <>
-          <motion.div
-            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '70vw', '30vw', '0vw'],
-              y: ['0vh', '60vh', '80vh', '0vh'],
-            }}
-            transition={{
-              duration: 22 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute top-0 right-0 h-[500px] w-[500px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '-60vw', '-20vw', '0vw'],
-              y: ['0vh', '70vh', '50vh', '0vh'],
-            }}
-            transition={{
-              duration: 28 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute bottom-0 left-0 h-[450px] w-[450px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.75)}, ${withOpacity(primaryColor, 0.8)})`,
-            }}
-            animate={{
-              x: ['0vw', '50vw', '10vw', '0vw'],
-              y: ['0vh', '-70vh', '-40vh', '0vh'],
-            }}
-            transition={{
-              duration: 26 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute right-0 bottom-0 h-[400px] w-[400px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.75)}, ${withOpacity(secondaryColor, 0.8)})`,
-            }}
-            animate={{
-              x: ['0vw', '-50vw', '-10vw', '0vw'],
-              y: ['0vh', '-60vh', '-30vh', '0vh'],
-            }}
-            transition={{
-              duration: 24 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        </>
+        <MeshBackground
+          accentColor={accentColor}
+          baseDuration={baseDuration}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          withOpacity={withOpacity}
+        />
       );
     }
 
     if (animationType === 'grid') {
       return (
-        <>
-          {[...Array(9)].map((_, i) => {
-            const row = Math.floor(i / 3);
-            const col = i % 3;
-            return (
-              <motion.div
-                key={i}
-                className="absolute rounded-full blur-[100px]"
-                style={{
-                  width: `${150 + (i % 3) * 40}px`,
-                  height: `${150 + (i % 3) * 40}px`,
-                  background: `linear-gradient(to bottom right, ${withOpacity(i % 2 === 0 ? primaryColor : secondaryColor, 0.75)}, ${withOpacity(i % 3 === 0 ? accentColor : primaryColor, 0.8)})`,
-                  top: `${10 + row * 25}%`,
-                  left: `${10 + col * 25}%`,
-                }}
-                animate={{
-                  x: [
-                    '0vw',
-                    `${(i % 2 === 0 ? 1 : -1) * (40 + i * 5)}vw`,
-                    `${(i % 2 === 0 ? -1 : 1) * (20 + i * 3)}vw`,
-                    '0vw',
-                  ],
-                  y: [
-                    '0vh',
-                    `${(i % 3 === 0 ? 1 : -1) * (35 + i * 4)}vh`,
-                    `${(i % 3 === 0 ? -1 : 1) * (25 + i * 3)}vh`,
-                    '0vh',
-                  ],
-                }}
-                transition={{
-                  duration: (18 + i * 2) * baseDuration,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: i * 0.5,
-                }}
-              />
-            );
-          })}
-        </>
+        <GridBackground
+          accentColor={accentColor}
+          baseDuration={baseDuration}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          withOpacity={withOpacity}
+        />
       );
     }
 
     if (animationType === 'gradient') {
       return (
-        <>
-          <motion.div
-            className="absolute top-0 left-0 h-[600px] w-[600px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(primaryColor, 0.8)}, ${withOpacity(secondaryColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '75vw', '25vw', '0vw'],
-              y: ['0vh', '65vh', '85vh', '0vh'],
-              scale: [1, 1.3, 0.9, 1],
-            }}
-            transition={{
-              duration: 20 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute right-0 bottom-0 h-80 w-80 rounded-full blur-3xl"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(secondaryColor, 0.8)}, ${withOpacity(accentColor, 0.85)})`,
-            }}
-            animate={{
-              x: ['0vw', '-65vw', '-15vw', '0vw'],
-              y: ['0vh', '-70vh', '-40vh', '0vh'],
-              scale: [1, 1.4, 0.8, 1],
-            }}
-            transition={{
-              duration: 25 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-          <motion.div
-            className="absolute top-1/2 left-1/2 h-[400px] w-[400px] rounded-full blur-[120px]"
-            style={{
-              background: `linear-gradient(to bottom right, ${withOpacity(accentColor, 0.75)}, ${withOpacity(primaryColor, 0.8)})`,
-            }}
-            animate={{
-              x: ['0vw', '50vw', '-40vw', '20vw', '0vw'],
-              y: ['0vh', '-50vh', '60vh', '-30vh', '0vh'],
-              scale: [1, 1.5, 0.7, 1.2, 1],
-            }}
-            transition={{
-              duration: 30 * baseDuration,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        </>
+        <GradientBackground
+          accentColor={accentColor}
+          baseDuration={baseDuration}
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          withOpacity={withOpacity}
+        />
       );
     }
 

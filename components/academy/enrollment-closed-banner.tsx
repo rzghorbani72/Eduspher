@@ -65,7 +65,7 @@ export function EnrollmentClosedBanner({
           {phoneLabel && phoneHref ? (
             <a
               href={`tel:${phoneHref}`}
-              className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 font-semibold tracking-wide underline-offset-4 transition-opacity hover:opacity-80 hover:underline"
+              className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 font-semibold tracking-wide underline-offset-4 transition-opacity hover:underline hover:opacity-80"
               style={{ color: 'var(--theme-primary, var(--theme-foreground))' }}
               dir="ltr"
             >
@@ -75,7 +75,7 @@ export function EnrollmentClosedBanner({
           {contactEmail ? (
             <a
               href={`mailto:${contactEmail}`}
-              className="inline-flex items-center rounded-md px-2 py-0.5 font-medium underline-offset-4 transition-opacity hover:opacity-80 hover:underline"
+              className="inline-flex items-center rounded-md px-2 py-0.5 font-medium underline-offset-4 transition-opacity hover:underline hover:opacity-80"
               style={{ color: 'var(--theme-primary, var(--theme-foreground))' }}
               dir="ltr"
             >

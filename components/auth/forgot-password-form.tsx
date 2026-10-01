@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
 import Link from '@/components/ui/link';
-import { CheckCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import {
@@ -16,8 +16,6 @@ import {
   forgetPassword,
 } from '@/lib/api/client';
 import { OtpType } from '@/lib/constants';
-import { PhoneInput } from '@/components/ui/phone-input';
-import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { useOtpNotifier } from '@/hooks/use-otp-notifier';
 import { useStorePath } from '@/components/providers/store-provider';
 import { getDefaultCountry } from '@/lib/country-codes';
@@ -36,16 +34,12 @@ import {
 } from '@/lib/auth/auth-identifier-draft';
 import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { isPasswordValid, sanitizePasswordInput } from '@/lib/password-utils';
-import { PasswordStrength } from '@/components/ui/password-strength';
-import { HumanCheck } from '@/components/auth/human-check';
 import { useHumanCheck } from '@/hooks/use-human-check';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { cn } from '@/lib/utils';
-
-type Step = 'identifier' | 'otp' | 'password' | 'success';
-type AuthMethod = 'email' | 'phone';
-
-const OTP_LENGTH = 5;
+import { NewPasswordStep } from './forgot-password-form/new-password-step';
+import { OtpStep } from './forgot-password-form/otp-step';
+import { IdentifierStep } from './forgot-password-form/identifier-step';
+import { Step, AuthMethod } from './_lib/forgot-password-form-helpers';
 
 function seedFromQuery(raw: string | null): {
   method: AuthMethod;
@@ -307,181 +301,49 @@ export const ForgotPasswordForm = () => {
   return (
     <div className="space-y-5">
       {step === 'identifier' && (
-        <div className="space-y-5">
-          <div className="auth-segment">
-            {(['phone', 'email'] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                onClick={() => switchMethod(m)}
-                className={cn('auth-segment-item', authMethod === m && 'on')}
-              >
-                {m === 'email' ? t('auth.email') : t('auth.phone')}
-              </button>
-            ))}
-          </div>
-
-          {authMethod === 'email' ? (
-            <input
-              id="identifier"
-              type="email"
-              dir="ltr"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => handleEmailChange(e.target.value)}
-              placeholder={t('auth.enterEmail')}
-              className="auth-input"
-            />
-          ) : (
-            <PhoneInput
-              id="identifier"
-              value={phoneNumber}
-              onChange={handlePhoneChange}
-              lockCountryCode={selectedCountry.code}
-              autoComplete="tel"
-              className="auth-phone"
-            />
-          )}
-
-          <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
-
-          {errorBlock}
-
-          <button
-            type="button"
-            className="auth-submit-btn"
-            onClick={handleSendOtp}
-            disabled={isLoading || !identifierValid || !captcha.solved}
-          >
-            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isLoading ? t('auth.sending') : t('auth.sendOtp')}
-          </button>
-        </div>
+        <IdentifierStep
+          authMethod={authMethod}
+          captcha={captcha}
+          email={email}
+          errorBlock={errorBlock}
+          handleEmailChange={handleEmailChange}
+          handlePhoneChange={handlePhoneChange}
+          handleSendOtp={handleSendOtp}
+          identifierValid={identifierValid}
+          isLoading={isLoading}
+          phoneNumber={phoneNumber}
+          selectedCountry={selectedCountry}
+          switchMethod={switchMethod}
+        />
       )}
 
       {step === 'otp' && (
-        <div className="space-y-5">
-          <div className="auth-otp">
-            <span className="auth-otp-label">{t('auth.otpVerification')}</span>
-            <OtpBoxInput
-              length={OTP_LENGTH}
-              value={formData.otp}
-              onChange={(value) => handleInputChange('otp', value)}
-              disabled={isLoading}
-              onComplete={() => {
-                if (!isLoading) void handleVerifyOtp();
-              }}
-            />
-          </div>
-
-          {errorBlock}
-
-          <button
-            type="button"
-            className="auth-submit-btn"
-            onClick={handleVerifyOtp}
-            disabled={isLoading || formData.otp.length < OTP_LENGTH}
-          >
-            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isLoading ? t('auth.verifying') : t('auth.verifyOtp')}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setStep('identifier')}
-            className="auth-secondary-btn"
-          >
-            {t('common.back')}
-          </button>
-
-          <div className="text-center">
-            {otpTimer.canResend ? (
-              <div className="flex flex-col items-center gap-2">
-                <HumanCheck key={captcha.resetKey} onVerify={captcha.setToken} />
-                <button
-                  type="button"
-                  className="text-sm text-(--auth-accent) hover:underline"
-                  onClick={handleSendOtp}
-                  disabled={isLoading || !captcha.solved}
-                >
-                  {t('auth.resendOtp')}
-                </button>
-              </div>
-            ) : (
-              <p className="auth-otp-resend tabular-nums">
-                {t('auth.resendIn')} <bdi>{otpTimer.formatted}</bdi>
-              </p>
-            )}
-          </div>
-        </div>
+        <OtpStep
+          captcha={captcha}
+          errorBlock={errorBlock}
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleSendOtp={handleSendOtp}
+          handleVerifyOtp={handleVerifyOtp}
+          isLoading={isLoading}
+          otpTimer={otpTimer}
+          setStep={setStep}
+        />
       )}
 
       {step === 'password' && (
-        <div className="space-y-5">
-          <div className="relative">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder={t('auth.enterNewPassword')}
-              value={formData.password}
-              onChange={(e) => handlePasswordChange('password', e.target.value)}
-              className="auth-input with-toggle"
-              autoComplete="new-password"
-              dir="ltr"
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => setShowPassword((v) => !v)}
-              className="auth-input-toggle"
-              aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-            >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-
-          <PasswordStrength password={formData.password} />
-
-          <div className="relative">
-            <input
-              id="confirmed_password"
-              type={showConfirmPassword ? 'text' : 'password'}
-              placeholder={t('auth.confirmNewPasswordPlaceholder')}
-              value={formData.confirmed_password}
-              onChange={(e) => handlePasswordChange('confirmed_password', e.target.value)}
-              className="auth-input with-toggle"
-              autoComplete="new-password"
-              dir="ltr"
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              onClick={() => setShowConfirmPassword((v) => !v)}
-              className="auth-input-toggle"
-              aria-label={showConfirmPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-            >
-              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
-
-          {errorBlock}
-
-          <button
-            type="button"
-            className="auth-submit-btn"
-            onClick={handleResetPassword}
-            disabled={
-              isLoading || !isPasswordValid(formData.password) || !formData.confirmed_password
-            }
-          >
-            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isLoading ? t('auth.resetting') : t('auth.resetPassword')}
-          </button>
-
-          <button type="button" onClick={() => setStep('otp')} className="auth-secondary-btn">
-            {t('common.back')}
-          </button>
-        </div>
+        <NewPasswordStep
+          errorBlock={errorBlock}
+          formData={formData}
+          handlePasswordChange={handlePasswordChange}
+          handleResetPassword={handleResetPassword}
+          isLoading={isLoading}
+          setShowConfirmPassword={setShowConfirmPassword}
+          setShowPassword={setShowPassword}
+          setStep={setStep}
+          showConfirmPassword={showConfirmPassword}
+          showPassword={showPassword}
+        />
       )}
 
       {step === 'success' && (

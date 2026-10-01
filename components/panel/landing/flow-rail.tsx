@@ -10,7 +10,7 @@ type Props = {
 /** Horizontal "step ← step ← step" chips; scrolls inside itself on phones. */
 export function FlowRail({ steps, active, className }: Props) {
   return (
-    <div className={cn('lp-rail h-10 flex items-center gap-2.5 overflow-x-auto pb-1', className)}>
+    <div className={cn('lp-rail flex h-10 items-center gap-2.5 overflow-x-auto pb-1', className)}>
       {steps.map((step, index) => (
         <div key={step} className="contents">
           {index > 0 ? <span className="text-lp-faint-3">←</span> : null}

@@ -61,7 +61,7 @@ export function PersonasSection({ registerUrl }: Props) {
         <p className="text-lp-muted text-[16px] leading-loose">{M.subtitle}</p>
       </div>
 
-      <div className="lp-rail h-10 border-lp-line mt-9 flex items-stretch overflow-x-auto rounded-2xl border bg-white">
+      <div className="lp-rail border-lp-line mt-9 flex h-10 items-stretch overflow-x-auto rounded-2xl border bg-white">
         {M.ladder.map((step, index) => {
           const last = index === M.ladder.length - 1;
           return (
