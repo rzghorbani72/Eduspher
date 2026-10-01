@@ -3,6 +3,8 @@
 import { cookies } from 'next/headers';
 import { decodeJwt } from 'jose';
 import { backendApiBaseUrl } from '@/lib/env';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 /**
  * Check authentication status from SSR cookies
@@ -121,7 +123,7 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
         });
       } catch (error) {
         // Cookie deletion below is the source of truth — backend call is best-effort
-        console.warn('Backend logout call failed:', error);
+        logger.warn('Auth', 'BackendLogoutFailed', errorFields(error));
       }
     }
 
@@ -129,7 +131,7 @@ export async function logout(): Promise<{ success: boolean; error?: string }> {
 
     return { success: true };
   } catch (error) {
-    console.error('Logout error:', error);
+    logger.error('Auth', 'LogoutFailed', errorFields(error));
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Logout failed',

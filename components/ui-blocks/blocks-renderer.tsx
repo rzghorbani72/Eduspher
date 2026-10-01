@@ -14,6 +14,8 @@ import { CategoriesBlock } from './categories-block';
 import { ProjectsBlock } from './projects-block';
 import { VideosBlock } from './videos-block';
 import { resolveTemplateSection } from '@/components/templates/registry';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 interface BlocksRendererProps {
   blocks: UIBlockConfig[];
@@ -47,7 +49,7 @@ export function BlocksRenderer({
 }: BlocksRendererProps) {
   if (!blocks || blocks.length === 0) {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[BlocksRenderer] No blocks provided');
+      logger.warn('SiteBlocks', 'NoBlocks');
     }
     return null;
   }
@@ -65,7 +67,7 @@ export function BlocksRenderer({
 
   if (visibleBlocks.length === 0) {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[BlocksRenderer] No visible blocks after filtering');
+      logger.warn('SiteBlocks', 'NoVisibleBlocks');
     }
     return null;
   }
@@ -160,7 +162,11 @@ export function BlocksRenderer({
               return null;
           }
         } catch (error) {
-          console.error(`Error rendering block ${block.id} (${block.type}):`, error);
+          logger.error('SiteBlocks', 'RenderFailed', {
+            block_id: block.id,
+            block_type: block.type,
+            ...errorFields(error),
+          });
           return (
             <div
               key={block.id}

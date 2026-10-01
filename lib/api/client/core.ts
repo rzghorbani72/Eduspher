@@ -3,6 +3,8 @@
 import { notifyLoginRequiredAndRedirect } from '@/lib/api/notify-api-error';
 import { getClientBackendApiBaseUrl, env } from '@/lib/env';
 import { assertNoRequestStorm } from '@/lib/api/request-storm';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 const withTrailingSlash = (value: string) => (value.endsWith('/') ? value.slice(0, -1) : value);
 
@@ -139,14 +141,14 @@ async function refreshToken(): Promise<boolean> {
       });
 
       if (response.ok) {
-        console.log('[Auth] Token refreshed successfully');
+        logger.ok('Auth', 'TokenRefreshed');
         return true;
       }
 
-      console.warn('[Auth] Token refresh failed:', response.status);
+      logger.warn('Auth', 'TokenRefreshRejected', { status_code: response.status });
       return false;
     } catch (error) {
-      console.error('[Auth] Token refresh error:', error);
+      logger.error('Auth', 'TokenRefreshFailed', errorFields(error));
       return false;
     } finally {
       isRefreshing = false;
@@ -228,7 +230,7 @@ export async function handleResponse<T>(
 
     // Handle 401 - attempt token refresh
     if (response.status === 401 && !skipRefresh && retryFn) {
-      console.log('[Auth] Access token expired, attempting refresh...');
+      logger.ok('Auth', 'AccessTokenExpired');
       const refreshSuccess = await refreshToken();
 
       if (refreshSuccess) {

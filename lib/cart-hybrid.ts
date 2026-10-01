@@ -1,4 +1,6 @@
-'use client';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
+('use client');
 
 const CART_STORAGE_KEY = 'academy_cart';
 const CART_SYNC_KEY = 'academy_cart_synced';
@@ -170,12 +172,11 @@ export async function syncCartToServer(): Promise<boolean> {
     } else if (response.status === 401) {
       return false;
     } else {
-      const errorText = await response.text();
-      console.error('Cart sync failed:', response.status, errorText);
+      logger.warn('Cart', 'SyncRejected', { status_code: response.status });
       return false;
     }
   } catch (error) {
-    console.error('Cart sync error:', error);
+    logger.error('Cart', 'SyncFailed', errorFields(error));
     return false;
   }
 }

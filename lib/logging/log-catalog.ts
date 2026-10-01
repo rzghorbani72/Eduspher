@@ -27,6 +27,66 @@ export const LOG_CATALOG = {
       },
     },
   },
+  Auth: {
+    description: 'Sign-in session upkeep on the public website: token refresh, logout.',
+    actions: {
+      AccessTokenExpired: {
+        description: 'Auth access token expired.',
+        level: 'info',
+        fields: [] as const,
+      },
+      BackendLogoutFailed: {
+        description: 'Auth backend logout failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      JwtSecretMissing: {
+        description: 'Auth jwt secret missing.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      LogoutFailed: {
+        description: 'Auth logout failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      TokenRefreshed: {
+        description: 'Auth token refreshed.',
+        level: 'info',
+        fields: [] as const,
+      },
+      TokenRefreshFailed: {
+        description: 'Auth token refresh failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      TokenRefreshRejected: {
+        description: 'Auth token refresh rejected.',
+        level: 'warn',
+        fields: ['status_code'] as const,
+      },
+    },
+  },
+  Cart: {
+    description: 'The student cart syncing between the browser and the server.',
+    actions: {
+      SyncAfterRemovalFailed: {
+        description: 'Cart sync after removal failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      SyncFailed: {
+        description: 'Cart sync failed.',
+        level: 'error',
+        fields: [] as const,
+      },
+      SyncRejected: {
+        description: 'Cart sync rejected.',
+        level: 'warn',
+        fields: ['status_code'] as const,
+      },
+    },
+  },
   ClassRequest: {
     description: 'Logs emitted by the ClassRequest domain.',
     actions: {
@@ -69,6 +129,16 @@ export const LOG_CATALOG = {
         description: 'Media player error.',
         level: 'error',
         fields: ['error_details', 'error_type', 'video_id'] as const,
+      },
+    },
+  },
+  Motion: {
+    description: 'Scroll animations on public pages.',
+    actions: {
+      ScrollTriggerLoadFailed: {
+        description: 'Motion scroll trigger load failed.',
+        level: 'warn',
+        fields: [] as const,
       },
     },
   },
@@ -132,6 +202,26 @@ export const LOG_CATALOG = {
       },
     },
   },
+  SiteBlocks: {
+    description: 'Rendering an academy site\'s page sections.',
+    actions: {
+      NoBlocks: {
+        description: 'Site blocks no blocks.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      NoVisibleBlocks: {
+        description: 'Site blocks no visible blocks.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      RenderFailed: {
+        description: 'Site blocks render failed.',
+        level: 'error',
+        fields: ['block_id', 'block_type'] as const,
+      },
+    },
+  },
   SiteCache: {
     description: 'Logs emitted by the SiteCache domain.',
     actions: {
@@ -154,6 +244,21 @@ export const LOG_CATALOG = {
         description: 'Site preview preset fetch failed.',
         level: 'error',
         fields: ['draft', 'error_message', 'has_token', 'template_key'] as const,
+      },
+    },
+  },
+  SiteTheme: {
+    description: 'Loading an academy site\'s theme and template.',
+    actions: {
+      ThemeConfigFetchFailed: {
+        description: 'Site theme config fetch failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
+      UiTemplateFetchFailed: {
+        description: 'Site theme UI template fetch failed.',
+        level: 'warn',
+        fields: ['academy_slug', 'error_message'] as const,
       },
     },
   },

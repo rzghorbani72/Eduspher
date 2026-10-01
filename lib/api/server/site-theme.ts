@@ -2,6 +2,7 @@ import 'server-only';
 
 import { logger } from '@/lib/logging/app-logger';
 import { UnauthorizedError, serverFetchRaw } from './core';
+import { errorFields } from '@/lib/logging/error-fields';
 
 // Theme and UI Template functions
 export async function getStoreThemeConfig(storeSlug?: string, previewToken?: string) {
@@ -61,7 +62,7 @@ export async function getStoreThemeConfig(storeSlug?: string, previewToken?: str
     if (process.env.NODE_ENV === 'development' && error instanceof Error) {
       const status = (error as Error & { status?: number }).status;
       if (status !== 404 && !error.message.includes('404')) {
-        console.error('Failed to fetch theme config:', error);
+        logger.warn('SiteTheme', 'ThemeConfigFetchFailed', errorFields(error));
       }
     }
     return null;
@@ -175,7 +176,10 @@ export async function getStoreUITemplate(storeSlug?: string, previewToken?: stri
       if (status !== 404 && !error.message.includes('404')) {
         // Log with more context in development
         if (process.env.NODE_ENV === 'development') {
-          console.error(`Failed to fetch UI template for store "${storeSlug}":`, error.message);
+          logger.warn('SiteTheme', 'UiTemplateFetchFailed', {
+            academy_slug: storeSlug ?? '',
+            error_message: error.message,
+          });
         }
       }
     }

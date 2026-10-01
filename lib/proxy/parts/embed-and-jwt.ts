@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { jwtVerify, decodeJwt, type JWTPayload } from 'jose';
+import { logger } from '@/lib/logging/app-logger';
 
 export let jwtSecretWarningLogged = false;
 
@@ -135,9 +136,7 @@ export async function verifyJWT(
     if (!secret) {
       if (process.env.NODE_ENV === 'development' && !jwtSecretWarningLogged) {
         jwtSecretWarningLogged = true;
-        console.warn(
-          '⚠️ JWT_SECRET not set in edusphere — JWT signature verification disabled. Copy JWT_SECRET from Backend/.env into edusphere/.env.local',
-        );
+        logger.warn('Auth', 'JwtSecretMissing');
       }
       const payload = decodeJwt(token);
       // At minimum, check expiration

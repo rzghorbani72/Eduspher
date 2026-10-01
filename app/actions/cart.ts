@@ -18,6 +18,8 @@ import {
   mergeCarts,
   type CartItem,
 } from '@/lib/cart-hybrid';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 // Re-export types
 export type { CartItem };
@@ -58,7 +60,7 @@ export function removeCourseFromCart(course_id: string): boolean {
   if (success) {
     syncCartToServer().catch((error) => {
       // Log error but don't block UI - cart is still in localStorage
-      console.error('Failed to sync cart after removal:', error);
+      logger.warn('Cart', 'SyncAfterRemovalFailed', errorFields(error));
     });
   }
 

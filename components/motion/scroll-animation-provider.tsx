@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { logger } from '@/lib/logging/app-logger';
+import { errorFields } from '@/lib/logging/error-fields';
 
 /**
  * `enabled` exists because this provider kills every ScrollTrigger on the page
@@ -103,7 +105,7 @@ export function ScrollAnimationProvider({
           ScrollTriggerInstance.getAll().forEach((trigger: { kill: () => void }) => trigger.kill());
         };
       } catch (error) {
-        console.warn('GSAP ScrollTrigger failed to load:', error);
+        logger.warn('Motion', 'ScrollTriggerLoadFailed', errorFields(error));
       }
     };
 
