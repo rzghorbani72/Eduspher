@@ -869,6 +869,13 @@ const tr = {
     productStore: 'Ürün Mağazası',
     productStoreDescription:
       'Tüm öğretmenlerden ürünlere göz atın. Dijital indirmeler, fiziksel öğeler ve kurslarınızla ilgili daha fazlasını bulun.',
+    addressAvailableTitle: 'Bu adres müsait',
+    addressAvailableDescription:
+      'Bu adresi henüz hiçbir akademi kullanmıyor. Akademini bu adresle hemen oluştur.',
+    addressReleasedTitle: 'Bu adres yeniden boşta',
+    addressReleasedDescription:
+      'Bu adreste daha önce bir akademi vardı, ancak aboneliği sona erdi ve kaldırıldı. Artık bu adresi kendi akademin için alabilirsin.',
+    createAcademyAtAddress: 'Bu adreste akademi oluştur',
     pageNotFound: 'Sayfa bulunamadı',
     pageNotFoundDescription:
       'Aradığınız sayfa taşınmış veya artık mevcut değil. Kurs kataloğunu keşfedin veya ana sayfaya dönün.',

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-/** Soft 404 for unknown academy hosts — never index. */
+/** Unknown academy hosts (free-address invite or 404) — never index. */
 export const metadata: Metadata = {
   title: 'Academy not found',
   robots: { index: false, follow: false },

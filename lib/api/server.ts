@@ -25,6 +25,8 @@ export {
   getCurrentUser,
 } from './server/catalog';
 export type { AcademyEnrollmentStatus } from './server/catalog';
+export { getAcademyAddressStatus } from './server/academy-address';
+export type { AcademyAddressStatus } from './server/academy-address';
 export {
   getPublicPricingConfig,
   getPublicPlans,

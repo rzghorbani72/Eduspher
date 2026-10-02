@@ -13,6 +13,7 @@ import { LiveSection } from './live-section';
 import { PersonasSection } from './personas-section';
 import { PricingSection } from './pricing-section';
 import { ProblemSection } from './problem-section';
+import { QuickSignupFromLink } from './quick-signup/quick-signup-from-link';
 // import { SalesSection } from './sales-section';
 import { SamplesSection } from './samples-section';
 // import { SolutionSection } from './solution-section';
@@ -29,6 +30,7 @@ type Props = {
 export function LandingPage({ adminLoginUrl, adminRegisterUrl, academies, plans }: Props) {
   return (
     <LandingShell loginUrl={adminLoginUrl} registerUrl={adminRegisterUrl}>
+      <QuickSignupFromLink />
       <HeroSection registerUrl={adminRegisterUrl} />
       <PersonasSection registerUrl={adminRegisterUrl} />
       <StepsSection />

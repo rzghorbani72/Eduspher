@@ -52,15 +52,34 @@ export const matchStoreByCustomHost = (
   );
 };
 
-export const fetchStores = async () => {
+export type StoreLookup = {
+  host: string | null;
+  slugs: ReadonlyArray<string | null | undefined>;
+  ids: ReadonlyArray<string | null | undefined>;
+};
+
+const uniqueList = (values: ReadonlyArray<string | null | undefined>) =>
+  [...new Set(values.filter((value): value is string => Boolean(value)))].join(',');
+
+/** Only the academies this request could belong to — never the capped marketing list. */
+export const fetchStores = async (lookup: StoreLookup) => {
+  const query = new URLSearchParams();
+  if (lookup.host) query.set('host', lookup.host);
+  const slugs = uniqueList(lookup.slugs.map((slug) => slug?.toLowerCase()));
+  const ids = uniqueList(lookup.ids);
+  if (slugs) query.set('slugs', slugs);
+  if (ids) query.set('ids', ids);
   try {
-    const response = await fetch(`${BACKEND_ORIGIN}${BACKEND_API_PATH}/academies/public`, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${BACKEND_ORIGIN}${BACKEND_API_PATH}/academies/public/resolve?${query}`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
       },
-      cache: 'no-store',
-    });
+    );
     if (!response.ok) return null;
     const payload = (await response.json()) as { data?: PublicStore[] };
     return payload.data ?? null;

@@ -861,6 +861,13 @@ export const ar = {
     productStore: 'متجر المنتجات',
     productStoreDescription:
       'تصفح المنتجات من جميع المعلمين. ابحث عن التنزيلات الرقمية والعناصر المادية والمزيد المتعلقة بدوراتك.',
+    addressAvailableTitle: 'هذا العنوان متاح',
+    addressAvailableDescription:
+      'لا توجد أكاديمية بهذا العنوان بعد. أنشئ أكاديميتك بهذا العنوان الآن.',
+    addressReleasedTitle: 'هذا العنوان متاح من جديد',
+    addressReleasedDescription:
+      'كانت هناك أكاديمية بهذا العنوان، لكن اشتراكها انتهى وتم حذفها. يمكنك الآن استخدام هذا العنوان لأكاديميتك.',
+    createAcademyAtAddress: 'أنشئ أكاديمية بهذا العنوان',
     pageNotFound: 'الصفحة غير موجودة',
     pageNotFoundDescription:
       'الصفحة التي تبحث عنها انتقلت أو لم تعد موجودة. استكشف كتالوج الدورات أو ارجع إلى الصفحة الرئيسية.',

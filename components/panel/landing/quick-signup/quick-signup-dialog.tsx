@@ -16,6 +16,7 @@ const M = LANDING.quickSignup;
 
 type Props = {
   onClose: () => void;
+  initialSlug?: string;
 };
 
 /**
@@ -26,8 +27,8 @@ type Props = {
  * Portal + own overlay, matching `checkout-dialog.tsx`; edusphere has no Radix
  * dialog and this is not the place to add one.
  */
-export function QuickSignupDialog({ onClose }: Props) {
-  const flow = useQuickSignup();
+export function QuickSignupDialog({ onClose, initialSlug }: Props) {
+  const flow = useQuickSignup(undefined, initialSlug);
   const done = flow.step === 'done';
   const redirecting = flow.step === 'redirecting';
 

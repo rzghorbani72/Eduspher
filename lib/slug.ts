@@ -7,6 +7,9 @@ const MAX_SLUG_LENGTH = 40;
 
 export type SlugStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid';
 
+/** Landing query param that opens the signup dialog with this address filled in. */
+export const QUICK_SIGNUP_SLUG_PARAM = 'start';
+
 export const ACADEMY_DOMAIN = process.env.NEXT_PUBLIC_ACADEMY_DOMAIN ?? 'mentoma.ir';
 
 /**

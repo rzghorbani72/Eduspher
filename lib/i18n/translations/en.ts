@@ -1420,6 +1420,13 @@ export const en = {
     productStore: 'Product Store',
     productStoreDescription:
       'Browse products from all teachers. Find digital downloads, physical items, and more related to your courses.',
+    addressAvailableTitle: 'This address is available',
+    addressAvailableDescription:
+      'No academy uses this address yet. Create your own academy with it right now.',
+    addressReleasedTitle: 'This address is free again',
+    addressReleasedDescription:
+      'An academy used this address before, but its subscription ended and it was removed. You can now take this address for your own academy.',
+    createAcademyAtAddress: 'Create an academy at this address',
     pageNotFound: 'Page not found',
     pageNotFoundDescription:
       'The page you are looking for has moved or no longer exists. Explore the courses catalogue or return to the home page.',

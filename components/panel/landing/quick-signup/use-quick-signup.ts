@@ -54,10 +54,10 @@ export type QuickSignupResult = {
  * sent, and the OTP is verified before the account is created, so the user
  * never burns a code only to be told the phone was unusable all along.
  */
-export function useQuickSignup(onFinished?: () => void) {
+export function useQuickSignup(onFinished?: () => void, initialSlug = '') {
   const [step, setStep] = useState<QuickSignupStep>('identity');
   const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
+  const [slug, setSlug] = useState(initialSlug);
   const [slugStatus, setSlugStatus] = useState<SlugStatus>('idle');
   const [phone, setPhone] = useState('');
   const country = IR_COUNTRY;
