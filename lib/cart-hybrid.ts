@@ -1,6 +1,7 @@
+'use client';
+
 import { logger } from '@/lib/logging/app-logger';
 import { errorFields } from '@/lib/logging/error-fields';
-('use client');
 
 const CART_STORAGE_KEY = 'academy_cart';
 const CART_SYNC_KEY = 'academy_cart_synced';

@@ -33,8 +33,6 @@ import {
   rangeRatioFromClick,
 } from './preview-edit-dom';
 
-('use client');
-
 export function PreviewEditBridge() {
   usePreviewScrollMemory();
 
