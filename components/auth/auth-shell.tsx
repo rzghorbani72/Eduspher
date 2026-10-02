@@ -2,9 +2,7 @@
 
 import { AppImage } from '@/components/ui/app-image';
 import { usePathname } from 'next/navigation';
-import { Globe } from 'lucide-react';
 
-import { useI18n } from '@/lib/i18n/provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface AuthShellProps {
@@ -57,10 +55,8 @@ export function AuthShell({
   children,
 }: AuthShellProps) {
   const pathname = usePathname();
-  const { language, setLanguage } = useI18n();
   const { t } = useTranslation();
 
-  const nextLanguage = language === 'fa' ? 'en' : 'fa';
   const tagline = academyTagline ?? t('auth.academyPanelTagline');
   const heading = HEADING_KEYS.find((entry) => pathname.includes(entry.match));
 
@@ -89,13 +85,6 @@ export function AuthShell({
           <div className="auth-brand-name">{academyName}</div>
           <p className="auth-brand-tagline">{tagline}</p>
           {academySubtitle ? <div className="auth-brand-sub">{academySubtitle}</div> : null}
-        </div>
-
-        <div className="auth-ctrl">
-          <button type="button" className="auth-pill" onClick={() => setLanguage(nextLanguage)}>
-            <Globe size={12} />
-            {nextLanguage === 'en' ? 'English' : 'فارسی'}
-          </button>
         </div>
       </div>
     </div>
