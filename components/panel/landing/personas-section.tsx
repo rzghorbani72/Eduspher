@@ -76,7 +76,7 @@ export function PersonasSection({ registerUrl }: Props) {
                 >
                   {step.stage}
                 </div>
-                <div className={cn('mt-1 text-[14px] font-extrabold', last && 'text-lp-on-mint')}>
+                <div className={cn('mt-1 text-[14px] font-extrabold', last && 'text-lp-green-2')}>
                   {step.text}
                 </div>
               </div>

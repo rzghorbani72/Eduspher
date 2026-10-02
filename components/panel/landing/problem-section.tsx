@@ -19,7 +19,7 @@ export function ProblemSection() {
               <div dir="ltr" className={`${bubble} text-lp-sky rounded-se-md bg-white/10`}>
                 {M.chat.b}
               </div>
-              <div className={`${bubble} bg-lp-mint-soft text-lp-on-mint ms-auto rounded-ss-md`}>
+              <div className={`${bubble} bg-lp-mint-soft text-lp-green-2 ms-auto rounded-ss-md`}>
                 {M.chat.reply}
               </div>
             </div>

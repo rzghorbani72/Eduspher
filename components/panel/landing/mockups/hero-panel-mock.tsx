@@ -18,7 +18,7 @@ function PanelSidebar() {
           key={item}
           className={cn(
             'flex items-center gap-[7px] rounded-lg px-2 py-[7px] text-[10.5px]',
-            index === 0 ? 'bg-lp-mint-soft text-lp-on-mint font-extrabold' : 'text-lp-muted-2',
+            index === 0 ? 'bg-lp-mint-soft text-lp-green-2 font-extrabold' : 'text-lp-muted-2',
           )}
         >
           <span

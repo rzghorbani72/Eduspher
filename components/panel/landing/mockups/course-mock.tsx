@@ -12,7 +12,7 @@ export function CourseMock() {
         <div>
           <div className="lp-stripe border-lp-line-soft h-28 rounded-2xl border [--lp-stripe-s:7px]" />
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="bg-lp-mint-soft text-lp-on-mint rounded-lg px-2.5 py-1.5 text-[11px] font-extrabold">
+            <span className="bg-lp-mint-soft text-lp-green-2 rounded-lg px-2.5 py-1.5 text-[11px] font-extrabold">
               {M.tags.paid}
             </span>
             <span className="bg-lp-surface-2 text-lp-muted rounded-lg px-2.5 py-1.5 text-[11px] font-semibold">
@@ -54,8 +54,8 @@ export function CourseMock() {
           <div className="bg-lp-mint-soft mt-3.5 flex items-start gap-2.5 rounded-xl border border-[rgba(10,127,92,.2)] p-3">
             <span className="text-lp-green text-[12px] font-bold">◆</span>
             <div>
-              <div className="text-lp-on-mint text-[11px] font-extrabold">{M.secureTitle}</div>
-              <div className="mt-1 text-[10px] leading-[1.9] text-[#0a5c43]">{M.secureBody}</div>
+              <div className="text-lp-green-2 text-[11px] font-extrabold">{M.secureTitle}</div>
+              <div className="text-lp-green-2 mt-1 text-[10px] leading-[1.9]">{M.secureBody}</div>
             </div>
           </div>
         </div>

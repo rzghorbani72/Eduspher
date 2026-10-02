@@ -49,7 +49,7 @@ export function StepCustomizeMock() {
   return (
     <div className={`${box} flex gap-2.5`}>
       <div className="flex w-[44%] flex-col gap-2">
-        <div className="bg-lp-mint-soft text-lp-on-mint rounded-lg px-2 py-1.5 text-[9.5px] font-extrabold">
+        <div className="bg-lp-mint-soft text-lp-green-2 rounded-lg px-2 py-1.5 text-[9.5px] font-extrabold">
           {M.customize.brandColor}
         </div>
         <div className="flex gap-1.5">

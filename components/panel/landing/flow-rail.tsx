@@ -18,7 +18,7 @@ export function FlowRail({ steps, active, className }: Props) {
             className={cn(
               'rounded-xl px-3.5 py-2.5 text-[13.5px] whitespace-nowrap',
               index === active
-                ? 'bg-lp-mint-soft text-lp-on-mint font-extrabold'
+                ? 'bg-lp-mint-soft text-lp-green-2 font-extrabold'
                 : 'border-lp-line text-lp-ink-2 border bg-white font-semibold',
             )}
           >

@@ -14,7 +14,7 @@ function PhoneMock() {
           {M.phone.sms}
         </div>
         <div className="bg-lp-mint-soft mt-3 rounded-2xl p-3.5">
-          <div className="text-lp-on-mint text-[10.5px] font-extrabold">{M.phone.pushTitle}</div>
+          <div className="text-lp-green-2 text-[10.5px] font-extrabold">{M.phone.pushTitle}</div>
           <div className="text-lp-green-2 mt-1 text-[10.5px]">{M.phone.pushBody}</div>
         </div>
       </div>
