@@ -19,12 +19,13 @@ export function LandingShell({ loginUrl, registerUrl, children }: Props) {
       data-theme="light"
       className="lp-root bg-lp-surface text-lp-ink min-h-screen font-[Vazirmatn,system-ui,sans-serif] [text-wrap:pretty] antialiased"
     >
-      {/* Restores the saved theme before first paint so a returning dark-mode
-          visitor never sees a white flash. Runs ahead of hydration, which is
-          why ThemeToggle reads the DOM instead of holding React state. */}
+      {/* Picks the theme before first paint (saved choice, else the device
+          theme) so a dark-mode visitor never sees a white flash. Runs ahead of
+          hydration, which is why ThemeToggle reads the DOM instead of holding
+          React state. */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `try{var t=localStorage.getItem('landing-theme');if(t==='dark'){document.currentScript.parentElement.dataset.theme='dark'}}catch(e){}`,
+          __html: `try{var t=localStorage.getItem('landing-theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches)){document.currentScript.parentElement.dataset.theme='dark'}}catch(e){}`,
         }}
       />
 
