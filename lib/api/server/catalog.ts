@@ -73,26 +73,15 @@ export async function getCourses(params?: {
   category_id?: string;
   academy_id?: string;
 }) {
-  try {
-    const result = await serverFetch<CourseListPayload>('/courses', {
-      query: {
-        ...params,
-      },
+  if (params?.published) {
+    const result = await serverFetch<CourseListPayload>('/courses/public', {
+      includeAuth: false,
+      query: { ...params },
     });
     return result.data;
-  } catch (error) {
-    if (error instanceof Error && /401/.test(error.message)) {
-      const fallback = await serverFetch<CourseListPayload>('/courses/public', {
-        includeAuth: false,
-        query: {
-          ...params,
-          published: true,
-        },
-      }).catch(() => null);
-      return fallback?.data ?? null;
-    }
-    throw error;
   }
+  const result = await serverFetch<CourseListPayload>('/courses', { query: { ...params } });
+  return result.data;
 }
 
 export async function getCourseById(id: string | number) {
