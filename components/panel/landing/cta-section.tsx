@@ -24,10 +24,12 @@ export function CtaSection({ registerUrl }: Props) {
           <p className="text-lp-sky-3 mx-auto mt-5 max-w-[620px] text-[16px] leading-loose">
             {M.subtitle}
           </p>
-          <p className="text-lp-sky-2 mt-9 text-[12.5px] font-semibold">{M.trialNote}</p>
+          <p className="text-lp-sky-2 mt-9 hidden text-[12.5px] font-semibold md:block">
+            {M.trialNote}
+          </p>
           <StartFreeLink
             href={registerUrl}
-            className="rounded-lp bg-lp-mint text-lp-on-mint mt-3 inline-block px-8 py-4 text-[16.5px] font-extrabold transition-transform hover:-translate-y-0.5"
+            className="rounded-lp bg-lp-mint text-lp-on-mint mt-3 hidden px-8 py-4 text-[16.5px] font-extrabold transition-transform hover:-translate-y-0.5 md:inline-block"
           >
             {M.primary}
           </StartFreeLink>

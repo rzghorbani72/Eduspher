@@ -56,7 +56,7 @@ export function PlanCard({ plan, live, cycle, registerUrl }: Props) {
       <StartFreeLink
         href={withPlanParams(registerUrl, plan.id, cycle)}
         className={cn(
-          'mt-7 rounded-[13px] px-5 py-3.5 text-center text-[14.5px]',
+          'mt-7 hidden rounded-[13px] px-5 py-3.5 text-center text-[14.5px] md:block',
           plan.featured
             ? 'bg-lp-mint text-lp-on-mint font-extrabold'
             : 'border-lp-ink/16 hover:border-lp-ink/34 border-[1.5px] font-bold transition-colors',

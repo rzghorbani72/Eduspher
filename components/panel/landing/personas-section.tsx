@@ -42,7 +42,7 @@ function PersonaCard({ title, body, features, tone, registerUrl, mock }: CardPro
       </ul>
       <StartFreeLink
         href={registerUrl}
-        className="bg-lp-mint text-lp-on-mint mt-auto inline-block w-fit rounded-[13px] px-5 py-3 text-[14.5px] font-bold"
+        className="bg-lp-mint text-lp-on-mint mt-auto hidden w-fit rounded-[13px] px-5 py-3 text-[14.5px] font-bold md:inline-block"
       >
         {M.cta}
       </StartFreeLink>
