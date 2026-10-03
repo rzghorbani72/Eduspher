@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Eye, EyeOff, Loader2, Mail, Phone } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 import { PhoneInput } from '@/components/ui/phone-input';
 import Link from '@/components/ui/link';
-import { toEnglishDigits } from '@/lib/phone-utils';
 import { sanitizePasswordInput } from '@/lib/password-utils';
 import { withAuthIdentifier } from '@/lib/auth/auth-identifier-draft';
 import { cn } from '@/lib/utils';
@@ -25,41 +24,14 @@ export function LoginFormStep({ login }: { login: Login }) {
 
   return (
     <form className="space-y-5" noValidate onSubmit={login.submit}>
-      <div className="auth-segment">
-        {(['phone', 'email'] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => login.changeChannel(m)}
-            className={cn('auth-segment-item', login.channel === m && 'on')}
-          >
-            {m === 'email' ? <Mail className="h-3.5 w-3.5" /> : <Phone className="h-3.5 w-3.5" />}
-            {m === 'email' ? t('auth.email') : t('auth.phone')}
-          </button>
-        ))}
-      </div>
-
-      {login.channel === 'email' ? (
-        <input
-          id="identifier"
-          type="email"
-          dir="ltr"
-          autoComplete="email"
-          value={login.email}
-          onChange={(e) => login.setEmail(toEnglishDigits(e.target.value))}
-          placeholder={t('auth.enterEmail')}
-          className="auth-input"
-        />
-      ) : (
-        <PhoneInput
-          id="identifier"
-          value={login.phoneNumber}
-          onChange={login.setPhoneNumber}
-          lockCountryCode={login.country.code}
-          autoComplete="tel"
-          className="auth-phone"
-        />
-      )}
+      <PhoneInput
+        id="identifier"
+        value={login.phoneNumber}
+        onChange={login.setPhoneNumber}
+        lockCountryCode={login.country.code}
+        autoComplete="tel"
+        className="auth-phone"
+      />
 
       <div className="auth-segment">
         {(['password', 'otp'] as const).map((m) => (

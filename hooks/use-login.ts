@@ -6,11 +6,9 @@ import { toast } from 'react-toastify';
 
 import {
   apiErrorCode,
-  loginByEmailOtp,
   loginByPhoneOtp,
   postJson,
   resolveAcademyId,
-  sendEmailOtp,
   sendPhoneOtp,
 } from '@/lib/api/client';
 import { useOtpTimer } from '@/hooks/use-otp-timer';
@@ -20,11 +18,10 @@ import { ACCOUNT_HOME_PATH } from '@/lib/account-index-path';
 import { isPasswordValid } from '@/lib/password-utils';
 import {
   clearAuthIdentifierDraft,
-  isEmailIdentifier,
   readAuthIdentifierDraft,
   writeAuthIdentifierDraft,
 } from '@/lib/auth/auth-identifier-draft';
-import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
+import { isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { safeRedirectPath } from '@/lib/auth/redirect-target';
 import { useAuthContext } from '@/components/providers/auth-provider';
 import { useStorePath } from '@/components/providers/store-provider';
@@ -38,26 +35,13 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 import { OtpType } from '@/lib/constants';
 
-export type LoginChannel = 'email' | 'phone';
 export type LoginMethod = 'password' | 'otp';
 export type LoginStep = 'form' | 'otpLogin' | 'otpGate' | 'passwordReset';
 
-function initialFromQuery(raw: string | null): {
-  channel: LoginChannel;
-  email: string;
-  phone: string;
-} {
+function phoneFromQuery(raw: string | null): string {
   const value = raw?.trim() ?? '';
-  if (!value) return { channel: 'phone', email: '', phone: '' };
-  if (isEmailIdentifier(value)) {
-    return { channel: 'email', email: toEnglishDigits(value), phone: '' };
-  }
-  const country = getDefaultCountry();
-  return {
-    channel: 'phone',
-    email: '',
-    phone: toLocalPhoneNumber(value, country) || value.replace(/\D/g, ''),
-  };
+  if (!value) return '';
+  return toLocalPhoneNumber(value, getDefaultCountry()) || value.replace(/\D/g, '');
 }
 
 /**
@@ -73,16 +57,14 @@ export function useLogin() {
   const buildPath = useStorePath();
   const { t } = useTranslation();
 
-  const seeded = initialFromQuery(searchParams.get('identifier'));
-
   const [pending, startTransition] = useTransition();
   const [step, setStep] = useState<LoginStep>('form');
   const [error, setError] = useState<string | null>(null);
 
-  const [channel, setChannel] = useState<LoginChannel>(seeded.channel);
   const [method, setMethod] = useState<LoginMethod>('password');
-  const [email, setEmail] = useState(seeded.email);
-  const [phoneNumber, setPhoneNumber] = useState(seeded.phone);
+  const [phoneNumber, setPhoneNumber] = useState(() =>
+    phoneFromQuery(searchParams.get('identifier')),
+  );
   const [draftReady, setDraftReady] = useState(false);
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
   const country = getDefaultCountry();
@@ -110,36 +92,22 @@ export function useLogin() {
   // Fill any gaps from the last auth screen (e.g. typed phone, then opened forgot).
   useEffect(() => {
     const draft = readAuthIdentifierDraft();
-    if (draft) {
-      setPhoneNumber((prev) => prev || draft.phone);
-      setEmail((prev) => prev || draft.email);
-      if (!searchParams.get('identifier') && (draft.phone || draft.email)) {
-        setChannel(draft.channel);
-      }
-    }
+    if (draft) setPhoneNumber((prev) => prev || draft.phone);
     setDraftReady(true);
-    // Only on mount — URL seed already applied above.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional once
   }, []);
 
   useEffect(() => {
     if (!draftReady) return;
-    writeAuthIdentifierDraft({ phone: phoneNumber, email, channel });
-  }, [phoneNumber, email, channel, draftReady]);
+    writeAuthIdentifierDraft({ phone: phoneNumber, channel: 'phone' });
+  }, [phoneNumber, draftReady]);
 
-  const identifier =
-    channel === 'phone'
-      ? phoneNumber
-        ? getFullPhoneNumber(cleanPhoneNumber(phoneNumber, country), country)
-        : ''
-      : email.trim();
-  const displayIdentifier =
-    channel === 'phone' ? toLocalPhoneNumber(identifier, country) : identifier;
+  const identifier = phoneNumber
+    ? getFullPhoneNumber(cleanPhoneNumber(phoneNumber, country), country)
+    : '';
+  const displayIdentifier = toLocalPhoneNumber(identifier, country);
 
-  // The identifier is only judged once it is complete, so the button turns on
-  // exactly when a whole phone number (or email) has been typed.
-  const identifierValid =
-    channel === 'phone' ? isValidPhoneInput(phoneNumber, country) : isValidEmail(email);
+  // Only judged once complete, so the button turns on exactly when a whole number is typed.
+  const identifierValid = isValidPhoneInput(phoneNumber, country);
   const canSubmit = identifierValid && (method === 'otp' || password.length >= 6) && captcha.solved;
 
   function clearFeedback() {
@@ -172,7 +140,7 @@ export function useLogin() {
   // No account yet: carry the typed identifier into signup so it is verified
   // there, then name + password — the visitor never types it twice.
   function goToRegister() {
-    writeAuthIdentifierDraft({ phone: phoneNumber, email, channel });
+    writeAuthIdentifierDraft({ phone: phoneNumber, channel: 'phone' });
     const query = new URLSearchParams({ identifier: displayIdentifier });
     const redirect = searchParams.get('redirect');
     if (redirect) query.set('redirect', redirect);
@@ -198,15 +166,11 @@ export function useLogin() {
     clearFeedback();
     startTransition(async () => {
       try {
-        if (channel === 'phone') {
-          await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE, captchaToken);
-        } else {
-          await sendEmailOtp(identifier, OtpType.LOGIN_BY_EMAIL, captchaToken);
-        }
+        await sendPhoneOtp(identifier, OtpType.LOGIN_BY_PHONE, captchaToken);
         setOtp('');
         setStep('otpLogin');
         otpLoginTimer.start();
-        showSentCode(channel === 'phone' ? 'auth.otpSentToPhone' : 'auth.otpSentToEmail');
+        showSentCode('auth.otpSentToPhone');
       } catch (err) {
         failed(err);
       }
@@ -259,7 +223,7 @@ export function useLogin() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!identifier) {
-      setError(channel === 'phone' ? t('auth.phoneRequired') : t('auth.emailRequired'));
+      setError(t('auth.phoneRequired'));
       return;
     }
     if (method === 'password' && password.length < 6) {
@@ -292,10 +256,8 @@ export function useLogin() {
             setStep('passwordReset');
             return;
           }
-        } else if (channel === 'phone') {
-          await loginByPhoneOtp(identifier, otp);
         } else {
-          await loginByEmailOtp(identifier, otp);
+          await loginByPhoneOtp(identifier, otp);
         }
         await finishLogin();
       } catch (err) {
@@ -360,12 +322,6 @@ export function useLogin() {
     clearFeedback();
   }
 
-  function changeChannel(next: LoginChannel) {
-    setChannel(next);
-    writeAuthIdentifierDraft({ channel: next, phone: phoneNumber, email });
-    clearFeedback();
-  }
-
   function changeMethod(next: LoginMethod) {
     setMethod(next);
     clearFeedback();
@@ -379,12 +335,8 @@ export function useLogin() {
     error,
     captcha,
     resendCaptcha,
-    channel,
-    changeChannel,
     method,
     changeMethod,
-    email,
-    setEmail: (v: string) => setEmail(toEnglishDigits(v)),
     phoneNumber,
     setPhoneNumber,
     country,

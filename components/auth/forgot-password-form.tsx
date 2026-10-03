@@ -9,9 +9,7 @@ import { toast } from 'react-toastify';
 
 import {
   validatePhoneAndEmail,
-  sendEmailOtp,
   sendPhoneOtp,
-  verifyEmailOtp,
   verifyPhoneOtp,
   forgetPassword,
 } from '@/lib/api/client';
@@ -27,41 +25,25 @@ import {
 } from '@/lib/phone-utils';
 import {
   clearAuthIdentifierDraft,
-  isEmailIdentifier,
   readAuthIdentifierDraft,
   withAuthIdentifier,
   writeAuthIdentifierDraft,
 } from '@/lib/auth/auth-identifier-draft';
-import { isValidEmail, isValidPhoneInput } from '@/lib/auth/identifier-validation';
+import { isValidPhoneInput } from '@/lib/auth/identifier-validation';
 import { isPasswordValid, sanitizePasswordInput } from '@/lib/password-utils';
 import { useHumanCheck } from '@/hooks/use-human-check';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { NewPasswordStep } from './forgot-password-form/new-password-step';
 import { OtpStep } from './forgot-password-form/otp-step';
 import { IdentifierStep } from './forgot-password-form/identifier-step';
-import { Step, AuthMethod } from './_lib/forgot-password-form-helpers';
+import { Step } from './_lib/forgot-password-form-helpers';
 
-function seedFromQuery(raw: string | null): {
-  method: AuthMethod;
-  email: string;
-  phone: string;
-  identifier: string;
-} {
+function seedFromQuery(raw: string | null): { phone: string; identifier: string } {
   const value = raw?.trim() ?? '';
   const country = getDefaultCountry();
-  if (!value) return { method: 'phone', email: '', phone: '', identifier: '' };
-  if (isEmailIdentifier(value)) {
-    const email = toEnglishDigits(value);
-    return { method: 'email', email, phone: '', identifier: email };
-  }
+  if (!value) return { phone: '', identifier: '' };
   const phone = toLocalPhoneNumber(value, country) || value.replace(/\D/g, '');
-  const cleaned = cleanPhoneNumber(phone, country);
-  return {
-    method: 'phone',
-    email: '',
-    phone,
-    identifier: getFullPhoneNumber(cleaned, country),
-  };
+  return { phone, identifier: getFullPhoneNumber(cleanPhoneNumber(phone, country), country) };
 }
 
 export const ForgotPasswordForm = () => {
@@ -71,7 +53,6 @@ export const ForgotPasswordForm = () => {
   const seeded = seedFromQuery(searchParams.get('identifier'));
 
   const [step, setStep] = useState<Step>('identifier');
-  const [authMethod, setAuthMethod] = useState<AuthMethod>(seeded.method);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,7 +65,6 @@ export const ForgotPasswordForm = () => {
   // v1 is Iran-only: the dial code is fixed, never picked by the visitor.
   const selectedCountry = getDefaultCountry();
   const [phoneNumber, setPhoneNumber] = useState(seeded.phone);
-  const [email, setEmail] = useState(seeded.email);
 
   const [formData, setFormData] = useState({
     identifier: seeded.identifier,
@@ -93,28 +73,16 @@ export const ForgotPasswordForm = () => {
     otp: '',
   });
 
-  // Restore phone + email from the last auth screen (login/register/forgot).
+  // Restore the phone from the last auth screen (login/register/forgot).
   useEffect(() => {
     const draft = readAuthIdentifierDraft();
-    if (draft) {
-      setPhoneNumber((prev) => prev || draft.phone);
-      setEmail((prev) => prev || draft.email);
-      if (!searchParams.get('identifier') && (draft.phone || draft.email)) {
-        setAuthMethod(draft.channel);
-        if (draft.channel === 'email' && draft.email) {
-          setFormData((prev) => ({ ...prev, identifier: draft.email }));
-        } else if (draft.phone) {
-          const cleaned = cleanPhoneNumber(draft.phone, selectedCountry);
-          setFormData((prev) => ({
-            ...prev,
-            identifier: getFullPhoneNumber(cleaned, selectedCountry),
-          }));
-        }
-      } else if (seeded.method === 'email' && draft.phone) {
-        setPhoneNumber((prev) => prev || draft.phone);
-      } else if (seeded.method === 'phone' && draft.email) {
-        setEmail((prev) => prev || draft.email);
-      }
+    if (draft?.phone && !searchParams.get('identifier')) {
+      setPhoneNumber(draft.phone);
+      const cleaned = cleanPhoneNumber(draft.phone, selectedCountry);
+      setFormData((prev) => ({
+        ...prev,
+        identifier: getFullPhoneNumber(cleaned, selectedCountry),
+      }));
     }
     setDraftReady(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only
@@ -122,8 +90,8 @@ export const ForgotPasswordForm = () => {
 
   useEffect(() => {
     if (!draftReady) return;
-    writeAuthIdentifierDraft({ phone: phoneNumber, email, channel: authMethod });
-  }, [phoneNumber, email, authMethod, draftReady]);
+    writeAuthIdentifierDraft({ phone: phoneNumber, channel: 'phone' });
+  }, [phoneNumber, draftReady]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: toEnglishDigits(value) }));
@@ -145,38 +113,12 @@ export const ForgotPasswordForm = () => {
     setError(null);
   };
 
-  const handleEmailChange = (value: string) => {
-    const v = toEnglishDigits(value);
-    setEmail(v);
-    setFormData((prev) => ({ ...prev, identifier: v }));
-    setError(null);
-  };
-
-  const switchMethod = (m: AuthMethod) => {
-    setAuthMethod(m);
-    setError(null);
-    if (m === 'email' && email) {
-      setFormData((prev) => ({ ...prev, identifier: email }));
-    } else if (m === 'phone' && phoneNumber) {
-      const cleaned = cleanPhoneNumber(phoneNumber, selectedCountry);
-      setFormData((prev) => ({
-        ...prev,
-        identifier: getFullPhoneNumber(cleaned, selectedCountry),
-      }));
-    }
-    writeAuthIdentifierDraft({ channel: m, phone: phoneNumber, email });
-  };
-
   const validateIdentifier = () => {
     if (!formData.identifier.trim()) {
       setError(t('auth.identifierRequired'));
       return false;
     }
-    if (authMethod === 'email' && !isValidEmail(formData.identifier)) {
-      setError(t('auth.invalidEmail'));
-      return false;
-    }
-    if (authMethod === 'phone' && !isValidPhoneInput(phoneNumber, selectedCountry)) {
+    if (!isValidPhoneInput(phoneNumber, selectedCountry)) {
       setError(t('auth.invalidPhone'));
       return false;
     }
@@ -204,19 +146,12 @@ export const ForgotPasswordForm = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const phone = authMethod === 'phone' ? formData.identifier : undefined;
-      const emailVal = authMethod === 'email' ? formData.identifier : undefined;
-      await validatePhoneAndEmail(phone, emailVal);
+      await validatePhoneAndEmail(formData.identifier);
 
       const captchaToken = captcha.token;
       captcha.reset();
-      if (authMethod === 'email') {
-        await sendEmailOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_EMAIL, captchaToken);
-        notifyOtpSent(t('auth.otpSentToEmail'), 'forgot-otp');
-      } else {
-        await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE, captchaToken);
-        notifyOtpSent(t('auth.otpSentToPhone'), 'forgot-otp');
-      }
+      await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE, captchaToken);
+      notifyOtpSent(t('auth.otpSentToPhone'), 'forgot-otp');
       setStep('otp');
       otpTimer.start();
     } catch (err) {
@@ -234,11 +169,7 @@ export const ForgotPasswordForm = () => {
     setIsLoading(true);
     setError(null);
     try {
-      if (authMethod === 'email') {
-        await verifyEmailOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_EMAIL);
-      } else {
-        await verifyPhoneOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_PHONE);
-      }
+      await verifyPhoneOtp(formData.identifier, formData.otp, OtpType.RESET_PASSWORD_BY_PHONE);
       setStep('password');
       toast.success(t('auth.otpVerifiedSuccess'));
     } catch (err) {
@@ -277,18 +208,12 @@ export const ForgotPasswordForm = () => {
       otp: '',
     });
     setPhoneNumber('');
-    setEmail('');
     setError(null);
     clearAuthIdentifierDraft();
   };
 
-  const identifierValid =
-    authMethod === 'phone' ? isValidPhoneInput(phoneNumber, selectedCountry) : isValidEmail(email);
-
-  const activeIdentifier =
-    authMethod === 'email'
-      ? email || formData.identifier
-      : toLocalPhoneNumber(formData.identifier, selectedCountry) || phoneNumber;
+  const identifierValid = isValidPhoneInput(phoneNumber, selectedCountry);
+  const activeIdentifier = toLocalPhoneNumber(formData.identifier, selectedCountry) || phoneNumber;
 
   const loginHref = withAuthIdentifier(buildPath('/auth/login'), activeIdentifier);
 
@@ -302,18 +227,14 @@ export const ForgotPasswordForm = () => {
     <div className="space-y-5">
       {step === 'identifier' && (
         <IdentifierStep
-          authMethod={authMethod}
           captcha={captcha}
-          email={email}
           errorBlock={errorBlock}
-          handleEmailChange={handleEmailChange}
           handlePhoneChange={handlePhoneChange}
           handleSendOtp={handleSendOtp}
           identifierValid={identifierValid}
           isLoading={isLoading}
           phoneNumber={phoneNumber}
           selectedCountry={selectedCountry}
-          switchMethod={switchMethod}
         />
       )}
 
