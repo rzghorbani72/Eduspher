@@ -105,6 +105,7 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
           <ul className="max-h-[45vh] space-y-3 overflow-y-auto text-sm">
             {pending.map((doc) => {
               const diff = diffs?.find((entry) => entry.type === doc.type);
+              const addedLines = (diff?.diff ?? []).filter((line) => line.added).slice(0, 12);
               const fullDocHref = DOCUMENT_LINKS[doc.type];
               return (
                 <li key={doc.type} className="border-theme rounded-lg border px-3 py-2.5">
@@ -124,18 +125,14 @@ export function LegalConsentGate({ children }: { children?: ReactNode }) {
                       </Link>
                     ) : null}
                   </div>
-                  {diff?.diff?.length ? (
+                  {addedLines.length ? (
                     <ul className="mt-2 space-y-1 text-xs">
-                      {diff.diff.slice(0, 12).map((line, index) => (
+                      {addedLines.map((line, index) => (
                         <li
                           key={`${doc.type}-${index}`}
-                          className={
-                            line.added
-                              ? 'text-green-700 dark:text-green-400'
-                              : 'text-red-700 line-through dark:text-red-400'
-                          }
+                          className="text-green-700 dark:text-green-400"
                         >
-                          <span aria-hidden="true">{line.added ? '+ ' : '− '}</span>
+                          <span aria-hidden="true">+ </span>
                           {line.value}
                         </li>
                       ))}
