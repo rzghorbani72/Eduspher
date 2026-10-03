@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { UIBlockConfig } from '@/lib/theme-config';
 import { HeroBlock } from './hero-block';
 import { FeaturesBlock } from './features-block';
@@ -14,6 +15,7 @@ import { CategoriesBlock } from './categories-block';
 import { ProjectsBlock } from './projects-block';
 import { VideosBlock } from './videos-block';
 import { resolveTemplateSection } from '@/components/templates/registry';
+import { slotOverrideProps, type SlotStyle } from '@/lib/slot-config';
 import { logger } from '@/lib/logging/app-logger';
 import { errorFields } from '@/lib/logging/error-fields';
 
@@ -81,13 +83,16 @@ export function BlocksRenderer({
           // shared blocks below, so legacy styles keep working unchanged.
           const TemplateSection = resolveTemplateSection(block.config?.style, block.type);
           if (TemplateSection) {
-            return (
-              <TemplateSection
-                key={block.id}
-                id={block.id}
-                config={block.config}
-                storeContext={storeContext}
-              />
+            const section = (
+              <TemplateSection id={block.id} config={block.config} storeContext={storeContext} />
+            );
+            const slotProps = slotOverrideProps(block.config?.slotStyle as SlotStyle | undefined);
+            return slotProps ? (
+              <div key={block.id} className="contents" {...slotProps}>
+                {section}
+              </div>
+            ) : (
+              <Fragment key={block.id}>{section}</Fragment>
             );
           }
 

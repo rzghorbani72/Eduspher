@@ -77,6 +77,7 @@
 /* Research-area entries: a bordered block that warms on hover. */
 .area {
   border: 1px solid var(--theme-border-color);
+  border-radius: var(--theme-border-radius, 16px);
   background: var(--theme-surface);
   transition:
     border-color 0.2s,

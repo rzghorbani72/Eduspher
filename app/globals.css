@@ -686,6 +686,21 @@ button {
   border-radius: var(--theme-border-radius, 16px);
 }
 
+/* Owner card sizing on template sections — see slotOverrideProps() */
+[data-slot-overrides~='minWidth'] :is([data-editable-list='items'], [data-slot-grid]) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--slot-basis)), 1fr));
+}
+[data-slot-overrides~='gap'] :is([data-editable-list='items'], [data-slot-grid]) {
+  gap: var(--slot-gap);
+}
+[data-slot-overrides~='padding'] :is([data-editable-list='items'], [data-slot-grid]) > * {
+  padding: var(--slot-pad);
+}
+[data-slot-overrides~='height'] :is([data-editable-list='items'], [data-slot-grid]) > * {
+  min-height: var(--slot-h);
+}
+
 /* Apply theme border radius to all select elements */
 select:not([class*='rounded-']),
 select[class*='rounded-lg'],

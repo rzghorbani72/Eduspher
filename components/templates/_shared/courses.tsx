@@ -66,7 +66,7 @@ export async function TemplateCourses({
           />
         ) : (
           <>
-            <div className={COURSE_CARD_GRID_CLASS}>
+            <div className={COURSE_CARD_GRID_CLASS} data-slot-grid>
               {courses.map((course, index) => (
                 <TemplateCourseCard key={course.id} course={course} spec={card} index={index} />
               ))}

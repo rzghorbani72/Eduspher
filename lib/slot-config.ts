@@ -74,3 +74,28 @@ export function buildSlotStyleVars(
   if (typeof style?.padding === 'number') vars['--slot-pad'] = clampVar(style.padding, 'padding');
   return vars as CSSProperties;
 }
+
+const SLOT_VAR_NAMES: Record<keyof SlotStyle, string> = {
+  minWidth: '--slot-basis',
+  height: '--slot-h',
+  padding: '--slot-pad',
+  gap: '--slot-gap',
+};
+
+// Template sections own their grid markup, so overrides reach it as CSS vars
+// plus a list of set keys that `[data-slot-overrides]` in globals.css matches.
+// Returns null when the owner changed nothing, so the template keeps its look.
+export function slotOverrideProps(
+  style: SlotStyle | undefined,
+): { style: CSSProperties; 'data-slot-overrides': string } | null {
+  const vars: Record<string, string> = {};
+  const keys: string[] = [];
+  for (const key of Object.keys(SLOT_VAR_NAMES) as (keyof SlotStyle)[]) {
+    const value = style?.[key];
+    if (typeof value !== 'number') continue;
+    vars[SLOT_VAR_NAMES[key]] = clampVar(value, key);
+    keys.push(key);
+  }
+  if (keys.length === 0) return null;
+  return { style: vars as CSSProperties, 'data-slot-overrides': keys.join(' ') };
+}
