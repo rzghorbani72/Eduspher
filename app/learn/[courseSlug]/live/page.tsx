@@ -3,8 +3,14 @@ import { redirect } from 'next/navigation';
 
 import { AccountPageHeader } from '@/components/account/account-page-header';
 import { LiveRoomShell } from '@/components/live/live-room-shell';
-import { getMyLiveRoomForCourse, getTutoringGroupRoom } from '@/lib/api/account-server';
+import {
+  getCourseAccess,
+  getMyLiveRoomForCourse,
+  getTutoringGroupRoom,
+} from '@/lib/api/account-server';
 import { RoleBadges } from '@/components/account/role-badges';
+import Link from '@/components/ui/link';
+import { t } from '@/lib/i18n/server-translations';
 import { getCurrentUser, getPublicCourseDetail } from '@/lib/api/server';
 import { viewerRoles } from '@/lib/courses/staff-access';
 import { getSession } from '@/lib/auth/session';
@@ -46,7 +52,23 @@ export default async function LiveLearningPage({
   const pickedRoom = classId ? await getTutoringGroupRoom(classId) : null;
   const room =
     pickedRoom?.course_id === course.id ? pickedRoom : await getMyLiveRoomForCourse(course.id);
-  if (!room) redirect(buildAcademyPath(storeSlug, coursePath(course.slug)));
+  const courseHref = buildAcademyPath(storeSlug, coursePath(course.slug));
+  if (!room) {
+    const access = await getCourseAccess();
+    if (!access.some((row) => row.course_id === course.id)) redirect(courseHref);
+    return (
+      <div className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:px-6">
+        <AccountPageHeader
+          title={course.title}
+          description={t('courses.liveNoClassesYet')}
+          icon={CalendarClock}
+        />
+        <Link href={courseHref} className="text-sm font-bold text-(--theme-primary-ink)">
+          {t('courses.backToCourse')}
+        </Link>
+      </div>
+    );
+  }
 
   const user = await getCurrentUser().catch(() => null);
   const roles = viewerRoles(
@@ -65,7 +87,7 @@ export default async function LiveLearningPage({
       <LiveRoomShell
         room={room}
         currentProfileId={session.profileId ?? ''}
-        courseHref={buildAcademyPath(storeSlug, coursePath(course.slug))}
+        courseHref={courseHref}
         invitePath={
           room.invite_code ? buildAcademyPath(storeSlug, `/classes/join/${room.invite_code}`) : null
         }

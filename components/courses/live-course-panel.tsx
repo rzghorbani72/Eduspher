@@ -68,20 +68,23 @@ export function LiveCoursePanel({
           {t('courses.liveCourse')}
         </div>
 
-        {enrolledGroup && joinHref ? (
+        {joinHref ? (
           <>
             <p className="text-sm text-(--theme-foreground)">
               {t(
-                enrolledGroup.session_live
+                enrolledGroup?.session_live
                   ? 'courses.liveSessionOnHint'
                   : 'courses.liveHasAccessHint',
               )}
             </p>
-            <SlotChips slots={enrolledGroup.Slots} />
-            <Link href={liveRoomHref(joinHref, enrolledGroup.id)} className={ctaClassName}>
-              {t(liveEnterLabelKey(enrolledGroup.session_live))}
+            {enrolledGroup ? <SlotChips slots={enrolledGroup.Slots} /> : null}
+            <Link
+              href={enrolledGroup ? liveRoomHref(joinHref, enrolledGroup.id) : joinHref}
+              className={ctaClassName}
+            >
+              {t(liveEnterLabelKey(enrolledGroup?.session_live))}
             </Link>
-            {canBuyMoreSeats(enrolledGroup) && canPurchase ? (
+            {enrolledGroup && canBuyMoreSeats(enrolledGroup) && canPurchase ? (
               <a href={`#${groupAnchorId(enrolledGroup.id)}`} className={secondaryCtaClassName}>
                 {t('courses.groupBuyMoreSeats')}
               </a>
