@@ -59,6 +59,12 @@ export function LiveCoursePanel({
   const format = (amount: number) => formatCurrencyWithAcademy(amount, currencyConfig, 1, language);
   const fromPrice = groups.length ? Math.min(...groups.map(seatPriceOfGroup)) : null;
   const seatsLeft = groups.reduce((sum, group) => sum + group.seats_left, 0);
+  // Never hide the main button: no access yet means "register", pointing at the
+  // one open class, the class list, or the request form.
+  const registerHref =
+    buyableGroups.length === 1
+      ? enrollHref(buyableGroups[0].id)
+      : `#${buyableGroups.length ? GROUP_CLASSES_ANCHOR_ID : CLASS_REQUEST_ANCHOR_ID}`;
 
   return (
     <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
@@ -155,21 +161,30 @@ export function LiveCoursePanel({
                 );
               })}
             </ul>
-            {isStaff ? null : closed ? (
-              <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
-            ) : buyableGroups.length === 1 ? (
-              <>
-                <Link href={enrollHref(buyableGroups[0].id)} className={ctaClassName}>
-                  {t('courses.liveEnrollAndJoin')}
-                </Link>
-                {isLoggedIn ? <CreditBalanceNote /> : null}
-              </>
-            ) : isLoggedIn && buyableGroups.length ? (
-              <CreditBalanceNote />
-            ) : null}
           </>
         ) : (
           <p className="text-muted text-sm">{t('courses.liveNoClassesYet')}</p>
+        )}
+
+        {joinHref ? null : (
+          <>
+            {canPurchase ? (
+              <Link href={registerHref} className={ctaClassName}>
+                {t('courses.liveEnrollAndJoin')}
+              </Link>
+            ) : (
+              <span
+                aria-disabled="true"
+                className={`${ctaClassName} cursor-not-allowed opacity-50`}
+              >
+                {t('courses.liveEnrollAndJoin')}
+              </span>
+            )}
+            {closed && !isStaff ? (
+              <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p>
+            ) : null}
+            {isLoggedIn && canPurchase && buyableGroups.length ? <CreditBalanceNote /> : null}
+          </>
         )}
       </div>
     </div>
