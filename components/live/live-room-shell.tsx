@@ -19,7 +19,7 @@ import type { TutoringGroupRoom } from '@/lib/api/account-types';
 import { useNow } from '@/lib/hooks/use-now';
 import { useTheaterMode } from '@/lib/hooks/use-theater-mode';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { withMeetAppName } from '@/lib/live/embeddable';
+import { isJitsiMeetUrl, withMeetAppName } from '@/lib/live/embeddable';
 import { pickPlaySession, sessionName, sessionState } from '@/lib/live/session-state';
 import { cn, formatNumber } from '@/lib/utils';
 
@@ -127,7 +127,8 @@ export function LiveRoomShell({
               displayName={displayName}
               onGoAfterClass={() => setTab('afterClass')}
             />
-            {brandedMeetUrl && (selectedState === 'live' || room.is_tutor) ? (
+            {brandedMeetUrl &&
+            (room.is_tutor || (selectedState === 'live' && !isJitsiMeetUrl(brandedMeetUrl))) ? (
               <MeetLinkBar meetingUrl={brandedMeetUrl} />
             ) : null}
             {room.backup_meeting_url ? <BackupLinkHint url={room.backup_meeting_url} /> : null}

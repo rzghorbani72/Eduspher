@@ -62,7 +62,7 @@ test.describe('Live classroom reliability (fixture)', () => {
     await expect(page.locator('[data-fake-jitsi]')).toHaveCount(0);
   });
 
-  test('theater mode hides the session rail and Meet link bar is shown when live', async ({
+  test('theater mode hides the session rail and a student never sees the room link', async ({
     page,
   }) => {
     await installFakeJitsi(page);
@@ -70,15 +70,18 @@ test.describe('Live classroom reliability (fixture)', () => {
     expect(response?.ok(), 'e2e live fixture must be reachable in non-production').toBeTruthy();
 
     await expect(page.getByTestId('e2e-live-room')).toBeVisible();
-    await expect(page.getByTestId('meet-link-bar')).toBeVisible({ timeout: 15_000 });
+    await expect(
+      page.locator('[data-meet-phase="inCall"], [data-meet-phase="loading"]'),
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByTestId('meet-link-bar')).toHaveCount(0);
     await expect(page.getByTestId('live-session-rail')).toBeVisible();
 
     await page.getByTestId('theater-toggle').click();
-    await expect(page.locator('[data-theater="on"]')).toBeVisible();
+    await expect(page.locator('div[data-theater="on"]')).toBeVisible();
     await expect(page.getByTestId('live-session-rail')).toBeHidden();
 
     await page.getByTestId('theater-toggle').click();
-    await expect(page.locator('[data-theater="off"]')).toBeVisible();
+    await expect(page.locator('div[data-theater="off"]')).toBeVisible();
     await expect(page.getByTestId('live-session-rail')).toBeVisible();
   });
 });

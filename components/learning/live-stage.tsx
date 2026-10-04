@@ -155,7 +155,7 @@ export function LiveStage({
       )}
 
       <div className="flex flex-wrap items-center gap-4">
-        {isLive && meetingUrl ? (
+        {isLive && meetingUrl && !isJitsiMeetUrl(meetingUrl) ? (
           <a
             href={meetingUrl}
             target="_blank"
@@ -182,7 +182,7 @@ export function LiveStage({
           </a>
         ) : null}
 
-        {isLive ? (
+        {isLive && meetingUrl && !isJitsiMeetUrl(meetingUrl) ? (
           <p className="max-w-[42ch] text-[13px] leading-[1.95] text-white/70">
             {t('learning.joinOpensNewTab')}
           </p>
