@@ -66,7 +66,7 @@ export function CourseDetailTabs({
     <div className="space-y-7">
       <div
         role="tablist"
-        className="sticky top-[70px] z-30 flex gap-1 overflow-x-auto rounded-full border border-(--theme-border-color) bg-(--theme-surface) p-[5px]"
+        className="flex gap-1 overflow-x-auto rounded-full border border-(--theme-border-color) bg-(--theme-surface) p-[5px]"
       >
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
