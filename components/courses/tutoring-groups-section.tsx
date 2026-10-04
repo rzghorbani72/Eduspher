@@ -139,6 +139,7 @@ export const TutoringGroupsSection = ({
             enrolledHref={liveRoomHref(liveClassHref, group.id)}
             isLoggedIn={isLoggedIn}
             canPurchase={!closed && !isStaff}
+            enrollmentClosed={closed && !isStaff}
           />
         ))}
         <ShowMoreButton list={list} />

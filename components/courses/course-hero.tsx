@@ -18,6 +18,7 @@ interface CourseHeroProps {
   accessLabel: string;
   durationLabel: string;
   avatarUrl: string | null;
+  showCertificate: boolean;
 }
 
 const DIFFICULTY_KEY: Record<string, string> = {
@@ -40,6 +41,7 @@ export function CourseHero({
   accessLabel,
   durationLabel,
   avatarUrl,
+  showCertificate,
 }: CourseHeroProps) {
   const translate = (key: string) => t(key, language);
   const updatedAt = course.updated_at ?? course.published_at ?? null;
@@ -82,7 +84,9 @@ export function CourseHero({
             <Badge>{translate(DIFFICULTY_KEY[course.difficulty] ?? 'courses.beginner')}</Badge>
           )}
           <Badge>{accessLabel}</Badge>
-          {course.is_certificate && <Badge>{translate('courses.certificate')}</Badge>}
+          {showCertificate && course.is_certificate && (
+            <Badge>{translate('courses.certificate')}</Badge>
+          )}
           {course.is_featured && <Badge>{translate('courses.featured')}</Badge>}
           {updatedAt && (
             <Badge>

@@ -91,3 +91,12 @@ export const ACCOUNT_NAV_SECTIONS: AccountNavSection[] = [
     ],
   },
 ];
+
+/** Account menu without the pages the platform owner switched off. */
+export const visibleAccountNavSections = (showCertificates: boolean): AccountNavSection[] =>
+  showCertificates
+    ? ACCOUNT_NAV_SECTIONS
+    : ACCOUNT_NAV_SECTIONS.map((section) => ({
+        ...section,
+        items: section.items.filter((item) => item.segment !== '/certificates'),
+      }));

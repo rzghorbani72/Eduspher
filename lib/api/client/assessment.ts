@@ -53,6 +53,8 @@ export interface DiscussionMessage {
   created_at: string;
   Author?: { id: string; display_name: string | null };
   Document?: DiscussionAttachment | null;
+  /** Teacher's grade (0-100) on a handed-in file. */
+  score?: number | null;
 }
 
 export type Envelope<T> = { message: string; status: string; data: T };
@@ -111,6 +113,7 @@ export type DiscussionParent = {
   tutoring_session_id?: string;
   tutoring_group_id?: string;
   lesson_id?: string;
+  course_id?: string;
 };
 
 /**
@@ -144,12 +147,12 @@ export const postDiscussionMessage = async (
   ).data;
 
 /** A file for a chat message; the id is then sent with the message. */
-export const uploadDiscussionAttachment = async (file: File, options?: RequestOptions) => {
+const uploadToDiscussions = async (path: string, file: File, options?: RequestOptions) => {
   const form = new FormData();
   form.append('file', file);
   // No Content-Type: the browser sets the multipart boundary itself.
   const headers = await buildHeaders({}, { mutate: true });
-  const response = await apiFetch('/discussions/attachments', {
+  const response = await apiFetch(path, {
     method: 'POST',
     credentials: 'include',
     headers,
@@ -158,6 +161,13 @@ export const uploadDiscussionAttachment = async (file: File, options?: RequestOp
   });
   return (await handleResponse<Envelope<DiscussionAttachment>>(response, undefined, true)).data;
 };
+
+export const uploadDiscussionAttachment = (file: File, options?: RequestOptions) =>
+  uploadToDiscussions('/discussions/attachments', file, options);
+
+/** Teacher chat accepts .zip only; the server checks the bytes. */
+export const uploadDiscussionZip = (file: File, options?: RequestOptions) =>
+  uploadToDiscussions('/discussions/attachments/zip', file, options);
 
 /**
  * Live ClassChat: open an SSE stream (with auth headers). Falls back silently

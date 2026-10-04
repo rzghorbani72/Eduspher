@@ -3,6 +3,8 @@
 import { ChevronDown, MessageSquare } from 'lucide-react';
 
 import { DiscussionBubble } from '@/components/discussion/discussion-bubble';
+import { OutgoingBubble } from '@/components/discussion/outgoing-bubble';
+import type { OutgoingMessage } from '@/components/discussion/use-discussion-outbox';
 import { EmptyState } from '@/components/ui/empty-state';
 import { chatDayKey, formatChatDay, isSameAuthorBurst } from '@/lib/discussion/chat-time';
 import type { DiscussionMessage } from '@/lib/api/client';
@@ -12,6 +14,9 @@ import { cn } from '@/lib/utils';
 
 interface DiscussionMessagePaneProps {
   messages: DiscussionMessage[];
+  outbox: OutgoingMessage[];
+  onRetry: (localId: string) => void;
+  onDiscard: (localId: string) => void;
   currentProfileId?: string;
   emptyDescription: string;
   jumpLabel: string;
@@ -19,12 +24,15 @@ interface DiscussionMessagePaneProps {
 
 export function DiscussionMessagePane({
   messages,
+  outbox,
+  onRetry,
+  onDiscard,
   currentProfileId,
   emptyDescription,
   jumpLabel,
 }: DiscussionMessagePaneProps) {
   const { t, language } = useTranslation();
-  const { ref, onScroll, away, jumpToLatest } = useStickToBottom(messages.length);
+  const { ref, onScroll, away, jumpToLatest } = useStickToBottom(messages.length + outbox.length);
 
   return (
     <div className="relative">
@@ -39,7 +47,7 @@ export function DiscussionMessagePane({
           away && 'pb-12',
         )}
       >
-        {messages.length === 0 ? (
+        {messages.length === 0 && outbox.length === 0 ? (
           <EmptyState
             compact
             icon={<MessageSquare className="size-6" aria-hidden="true" />}
@@ -65,12 +73,21 @@ export function DiscussionMessagePane({
                   mine={mine}
                   showMeta={!isSameAuthorBurst(previous, message)}
                   unknownLabel={t('account.unknown')}
+                  gradeLabel={t('courses.teacherChatGrade')}
                   language={language}
                 />
               </div>
             );
           })
         )}
+        {outbox.map((item) => (
+          <OutgoingBubble
+            key={item.localId}
+            message={item}
+            onRetry={onRetry}
+            onDiscard={onDiscard}
+          />
+        ))}
       </div>
       {away ? (
         <button

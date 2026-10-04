@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { ClassAssignments } from '@/components/live/class-assignments';
-import { ClassChat } from '@/components/live/class-chat';
 import { ClassSyllabus } from '@/components/live/class-syllabus';
 import { InviteFriendsCard } from '@/components/live/invite-friends-card';
 import { LiveRoomTabs, type LiveTabKey } from '@/components/live/live-room-tabs';
@@ -52,7 +51,7 @@ const resolveSessionId = (
 };
 
 const defaultTabFor = (state: ReturnType<typeof sessionState> | null): LiveTabKey =>
-  state === 'held' ? 'afterClass' : 'chat';
+  state === 'held' ? 'afterClass' : 'sessions';
 
 /**
  * The classroom. Deliberately shaped like the recorded course's learn page —
@@ -113,11 +112,7 @@ export function LiveRoomShell({
         </div>
 
         {awaitingSchedule ? (
-          <PrivateScheduleRequest
-            room={room}
-            courseHref={courseHref}
-            onOpenChat={() => setTab('chat')}
-          />
+          <PrivateScheduleRequest room={room} courseHref={courseHref} />
         ) : (
           <div className="space-y-3">
             <MeetingRoom
@@ -138,15 +133,6 @@ export function LiveRoomShell({
         <div className="border-theme bg-card rounded-2xl border">
           <LiveRoomTabs value={tab} onChange={setTab} />
           <div className="p-5">
-            {tab === 'chat' ? (
-              <ClassChat
-                sessionId={realSelectedId}
-                groupThreadParent={room.group_thread_parent}
-                privateThreadParent={room.private_thread_parent}
-                currentProfileId={currentProfileId}
-                realtime
-              />
-            ) : null}
             {tab === 'homework' ? (
               <ClassAssignments
                 assignments={room.assignments}

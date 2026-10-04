@@ -1,17 +1,24 @@
 'use client';
 
-import { MessageAttachment } from '@/components/discussion/message-attachment';
+import type { ReactNode } from 'react';
+
+import { FileRow, MessageAttachment } from '@/components/discussion/message-attachment';
 import { initialsOf } from '@/lib/learning/live-schedule';
 import { formatChatTime } from '@/lib/discussion/chat-time';
 import type { DiscussionMessage } from '@/lib/api/client';
-import { cn } from '@/lib/utils';
+import { cn, formatNumber } from '@/lib/utils';
 
 interface DiscussionBubbleProps {
   message: DiscussionMessage;
   mine: boolean;
   showMeta: boolean;
   unknownLabel: string;
+  gradeLabel: string;
   language: string;
+  /** Not sent yet: the file's name, shown in the same row a sent file uses. */
+  pendingFileName?: string;
+  /** Replaces the sent time while the message is on its way. */
+  status?: ReactNode;
 }
 
 export function DiscussionBubble({
@@ -19,7 +26,10 @@ export function DiscussionBubble({
   mine,
   showMeta,
   unknownLabel,
+  gradeLabel,
   language,
+  pendingFileName,
+  status,
 }: DiscussionBubbleProps) {
   const name = message.Author?.display_name ?? unknownLabel;
   return (
@@ -50,8 +60,14 @@ export function DiscussionBubble({
           <p className="wrap-break-word whitespace-pre-wrap">{message.body}</p>
         ) : null}
         {message.Document ? <MessageAttachment attachment={message.Document} mine={mine} /> : null}
+        {pendingFileName ? <FileRow name={pendingFileName} mine={mine} /> : null}
+        {message.score != null ? (
+          <p className="mt-1 text-xs font-bold">
+            {gradeLabel.replace('{score}', formatNumber(message.score, language))}
+          </p>
+        ) : null}
         <p className={cn('mt-1 text-[10px] opacity-70', mine ? 'text-end' : 'text-start')}>
-          {formatChatTime(message.created_at, language)}
+          {status ?? formatChatTime(message.created_at, language)}
         </p>
       </div>
     </div>

@@ -17,6 +17,7 @@ import { buildAcademyPath, resolveAssetUrl } from '@/lib/utils';
 import { getSession } from '@/lib/auth/session';
 import { getAcademyLanguage } from '@/lib/i18n/server';
 import { t } from '@/lib/i18n/server-translations';
+import { getPlatformFeatures } from '@/lib/api/server/platform-features';
 
 type SearchParams = Promise<{
   course?: string;
@@ -54,6 +55,7 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Sea
     currentAcademy?.country_code || null,
   );
   const translate = (key: string) => t(key, language);
+  const { certificates_enabled } = await getPlatformFeatures();
 
   // Closed to new enrollments: the server refuses the checkout anyway, so say why
   // here instead of letting a deep link walk into a payment form.
@@ -213,13 +215,15 @@ export default async function CheckoutPage({ searchParams }: { searchParams: Sea
                 <span className="font-bold text-[var(--theme-primary)]">✓</span>
                 {translate('checkout.lifetimeAccess')}
               </li>
-              <li className="flex items-center gap-2">
-                <span className="font-bold text-[var(--theme-primary)]">✓</span>
-                {translate('checkout.certificateOfCompletion')}{' '}
-                {course.is_certificate
-                  ? `(${translate('checkout.included')})`
-                  : `(${translate('checkout.notIncluded')})`}
-              </li>
+              {certificates_enabled && (
+                <li className="flex items-center gap-2">
+                  <span className="font-bold text-[var(--theme-primary)]">✓</span>
+                  {translate('checkout.certificateOfCompletion')}{' '}
+                  {course.is_certificate
+                    ? `(${translate('checkout.included')})`
+                    : `(${translate('checkout.notIncluded')})`}
+                </li>
+              )}
               <li className="flex items-center gap-2">
                 <span className="font-bold text-[var(--theme-primary)]">✓</span>
                 {translate('checkout.satisfactionGuarantee')}

@@ -15,6 +15,7 @@ import { LessonQuiz } from '@/components/quiz/lesson-quiz';
 import { SafeHtml } from '@/components/safe-html';
 import { Unavailable } from '@/components/learning/unavailable';
 import type { LessonDetail } from '@/lib/api/learning';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { resolveAssetUrl, toPersianDigits } from '@/lib/utils';
 
@@ -58,6 +59,7 @@ export function LessonBody({
   onQuizPassed,
 }: LessonBodyProps) {
   const { t, language } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
 
   const stage =
     type === 'VIDEO' ? (
@@ -108,7 +110,7 @@ export function LessonBody({
     : [];
 
   const overview = lesson.content ?? lesson.description ?? '';
-  const hasQuiz = Boolean(lesson.Quiz) || type === 'QUIZ';
+  const hasQuiz = quizzes_enabled && (Boolean(lesson.Quiz) || type === 'QUIZ');
   const hasAssignment = Boolean(lesson.Assignment) || type === 'ASSIGNMENT';
 
   const tabs: LessonTab[] = (
@@ -179,7 +181,8 @@ export function LessonBody({
     ] as (LessonTab | null)[]
   ).filter((tab): tab is LessonTab => tab !== null);
 
-  const defaultTabId = type === 'QUIZ' ? 'quiz' : type === 'ASSIGNMENT' ? 'assignment' : 'overview';
+  const defaultTabId =
+    hasQuiz && type === 'QUIZ' ? 'quiz' : type === 'ASSIGNMENT' ? 'assignment' : 'overview';
 
   return (
     <>

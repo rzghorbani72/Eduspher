@@ -30,6 +30,8 @@ import {
 import { EnrollmentClosedBanner } from '@/components/academy/enrollment-closed-banner';
 import { ActiveDiscountBanner } from '@/components/academy/active-discount-banner';
 import { EnrollmentStatusProvider } from '@/components/academy/enrollment-status-provider';
+import { PlatformFeaturesProvider } from '@/components/providers/platform-features-provider';
+import { getPlatformFeatures } from '@/lib/api/server/platform-features';
 import { getAcademyLanguage, getAcademyDirection } from '@/lib/i18n/server';
 import { CreativeBackgroundLazy } from '@/components/motion/creative-background-lazy';
 import { PreviewModeBanner } from '@/components/theme/preview-mode-banner';
@@ -98,6 +100,8 @@ export default async function RootLayout({
   const enrollmentStatus = storeContext.slug
     ? await getAcademyEnrollmentStatus(storeContext.slug)
     : null;
+
+  const platformFeatures = await getPlatformFeatures();
 
   const activeStudentDiscounts = storeContext.slug
     ? await getActiveStudentDiscounts(storeContext.slug)
@@ -225,51 +229,53 @@ export default async function RootLayout({
                     <ThemeDarkModeApplier darkMode={theme?.dark_mode} />
                     <ThemeLiveUpdater />
                     {bareLayout && <ThemeToggleButton />}
-                    <EnrollmentStatusProvider closed={Boolean(enrollmentStatus?.disabled)}>
-                      <ScrollAnimationProvider enabled={!isPanelRoot}>
-                        <div
-                          className="relative flex min-h-screen flex-col overflow-x-clip transition-colors duration-200"
-                          style={{
-                            backgroundColor: 'var(--theme-background)',
-                            color: 'var(--theme-foreground)',
-                          }}
-                        >
-                          {/* Creative animated background with gradients and flying icons */}
-                          {!isPreview && !isSamplePreview && !isAuth && !isPanelRoot && (
-                            <CreativeBackgroundLazy theme={theme} storeIcons={validStoreIcons} />
-                          )}
+                    <PlatformFeaturesProvider features={platformFeatures}>
+                      <EnrollmentStatusProvider closed={Boolean(enrollmentStatus?.disabled)}>
+                        <ScrollAnimationProvider enabled={!isPanelRoot}>
+                          <div
+                            className="relative flex min-h-screen flex-col overflow-x-clip transition-colors duration-200"
+                            style={{
+                              backgroundColor: 'var(--theme-background)',
+                              color: 'var(--theme-foreground)',
+                            }}
+                          >
+                            {/* Creative animated background with gradients and flying icons */}
+                            {!isPreview && !isSamplePreview && !isAuth && !isPanelRoot && (
+                              <CreativeBackgroundLazy theme={theme} storeIcons={validStoreIcons} />
+                            )}
 
-                          {!bareLayout && activeStudentDiscounts.length > 0 && (
-                            <ActiveDiscountBanner
-                              discounts={activeStudentDiscounts}
-                              currencyCode={currentAcademy?.currency ?? 'IRR'}
-                            />
-                          )}
-                          {!bareLayout && <PreviewModeBanner />}
-                          {!bareLayout && enrollmentStatus?.disabled && (
-                            <EnrollmentClosedBanner
-                              message={enrollmentStatus.message}
-                              reopensAt={enrollmentStatus.disabled_until}
-                              contactPhone={enrollmentStatus.contact_phone}
-                              contactEmail={enrollmentStatus.contact_email}
-                            />
-                          )}
-                          {!bareLayout && <TemplateHeader />}
-                          <main className="relative z-10 flex-1">
-                            <MainContainer
-                              fullWidth={isPanelRoot || isSamplePreview}
-                              homePaths={academyHomePaths}
-                            >
-                              {children}
-                            </MainContainer>
-                          </main>
-                          {!bareLayout && <TemplateFooter />}
-                          {/* Pending terms 403 every authenticated call site-wide, not
+                            {!bareLayout && activeStudentDiscounts.length > 0 && (
+                              <ActiveDiscountBanner
+                                discounts={activeStudentDiscounts}
+                                currencyCode={currentAcademy?.currency ?? 'IRR'}
+                              />
+                            )}
+                            {!bareLayout && <PreviewModeBanner />}
+                            {!bareLayout && enrollmentStatus?.disabled && (
+                              <EnrollmentClosedBanner
+                                message={enrollmentStatus.message}
+                                reopensAt={enrollmentStatus.disabled_until}
+                                contactPhone={enrollmentStatus.contact_phone}
+                                contactEmail={enrollmentStatus.contact_email}
+                              />
+                            )}
+                            {!bareLayout && <TemplateHeader />}
+                            <main className="relative z-10 flex-1">
+                              <MainContainer
+                                fullWidth={isPanelRoot || isSamplePreview}
+                                homePaths={academyHomePaths}
+                              >
+                                {children}
+                              </MainContainer>
+                            </main>
+                            {!bareLayout && <TemplateFooter />}
+                            {/* Pending terms 403 every authenticated call site-wide, not
                       just under /account, so the only way back in lives here. */}
-                          {isAuthenticated && !bareLayout && <LegalConsentGate />}
-                        </div>
-                      </ScrollAnimationProvider>
-                    </EnrollmentStatusProvider>
+                            {isAuthenticated && !bareLayout && <LegalConsentGate />}
+                          </div>
+                        </ScrollAnimationProvider>
+                      </EnrollmentStatusProvider>
+                    </PlatformFeaturesProvider>
                     {process.env.NEXT_PUBLIC_GDPR_ENABLED === 'true' && <MarketingAnalytics />}
                     <ToastContainerWrapper />
                   </ThemeProvider>

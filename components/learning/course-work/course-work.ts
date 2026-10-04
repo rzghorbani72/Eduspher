@@ -5,10 +5,11 @@ export type CourseWork =
   | { type: 'quiz'; parent: { kind: 'season' | 'course'; id: string }; title: string }
   | { type: 'assignment'; parent: { kind: 'season'; id: string }; title: string };
 
-export function seasonWork(season: SeasonSummary): CourseWork[] {
+export function seasonWork(season: SeasonSummary, includeQuizzes: boolean): CourseWork[] {
   const parent = { kind: 'season' as const, id: String(season.id) };
   const work: CourseWork[] = [];
-  if (season.Quiz?.is_published) work.push({ type: 'quiz', parent, title: season.Quiz.title });
+  if (includeQuizzes && season.Quiz?.is_published)
+    work.push({ type: 'quiz', parent, title: season.Quiz.title });
   if (season.Assignment) work.push({ type: 'assignment', parent, title: season.Assignment.title });
   return work;
 }

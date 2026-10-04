@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 
 import Link from '@/components/ui/link';
 import { formatMinutes } from '@/components/courses/curriculum/format';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseContentStats } from '@/lib/courses/curriculum';
 import { formatPercent, toPersianDigits } from '@/lib/utils';
@@ -92,9 +93,11 @@ export function EnrolledSideOverview({
   isCertificate,
 }: EnrolledSideOverviewProps) {
   const { t, language } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   const facts = useMemo(
-    () => buildFacts(stats, isCertificate, language, t),
-    [stats, isCertificate, language, t],
+    () =>
+      buildFacts(quizzes_enabled ? stats : { ...stats, quizCount: 0 }, isCertificate, language, t),
+    [stats, quizzes_enabled, isCertificate, language, t],
   );
 
   if (progressPercent == null && facts.length === 0) return null;

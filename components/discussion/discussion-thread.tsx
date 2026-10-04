@@ -4,18 +4,21 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DiscussionComposer } from '@/components/discussion/discussion-composer';
 import { DiscussionMessagePane } from '@/components/discussion/discussion-message-pane';
+import { useDiscussionOutbox } from '@/components/discussion/use-discussion-outbox';
 import {
   findDiscussionThread,
   getDiscussionThread,
   postDiscussionMessage,
   subscribeDiscussionEvents,
   uploadDiscussionAttachment,
+  uploadDiscussionZip,
   type DiscussionMessage,
   type DiscussionParent,
 } from '@/lib/api/client';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const POLL_MS = 8_000;
+const ZIP_ACCEPT = '.zip,application/zip,application/x-zip-compressed';
 const SSE_BACKUP_POLL_MS = 30_000;
 
 interface DiscussionThreadProps {
@@ -25,6 +28,7 @@ interface DiscussionThreadProps {
   engagementId?: string;
   sessionId?: string;
   lessonId?: string;
+  courseId?: string;
   threadId?: string;
   currentProfileId?: string;
   placeholder?: string;
@@ -33,6 +37,8 @@ interface DiscussionThreadProps {
   realtime?: boolean;
   composerHint?: string;
   allowAttachments?: boolean;
+  /** Teacher chat: only .zip files may be attached. */
+  zipOnly?: boolean;
 }
 
 export function DiscussionThread({
@@ -42,6 +48,7 @@ export function DiscussionThread({
   engagementId,
   sessionId,
   lessonId,
+  courseId,
   threadId,
   currentProfileId,
   placeholder,
@@ -49,11 +56,11 @@ export function DiscussionThread({
   realtime = false,
   composerHint,
   allowAttachments,
+  zipOnly = false,
 }: DiscussionThreadProps) {
   const { t } = useTranslation();
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
   const [body, setBody] = useState('');
-  const [sending, setSending] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [liveThreadId, setLiveThreadId] = useState<string | undefined>(threadId);
@@ -69,11 +76,11 @@ export function DiscussionThread({
           ? { tutoring_session_id: sessionId }
           : lessonId
             ? { lesson_id: lessonId }
-            : { engagement_id: engagementId };
+            : courseId
+              ? { course_id: courseId }
+              : { engagement_id: engagementId };
 
   const parentKey = JSON.stringify(parent);
-  const parentRef = useRef(parent);
-  parentRef.current = parent;
 
   const load = useCallback(async () => {
     try {
@@ -93,7 +100,6 @@ export function DiscussionThread({
 
   useEffect(() => {
     activeThreadId.current = threadId;
-    setLiveThreadId(threadId);
     void load();
   }, [load, threadId]);
 
@@ -124,39 +130,55 @@ export function DiscussionThread({
     };
   }, [load, realtime, liveThreadId]);
 
-  const send = useCallback(async () => {
-    const text = body.trim();
-    if (!text && !file) return;
-    setSending(true);
+  const pickFile = (next: File | null) => {
+    if (next && zipOnly && !/\.zip$/i.test(next.name)) {
+      setError(t('courses.teacherChatZipOnly'));
+      return;
+    }
     setError(null);
-    try {
+    setFile(next);
+  };
+
+  const deliver = useCallback(
+    async (text: string, attached: File | null) => {
       let documentId: string | undefined;
-      if (file) {
-        try {
-          documentId = (await uploadDiscussionAttachment(file)).id;
-        } catch {
-          setError(t('live.attachmentUploadFailed'));
-          return;
-        }
+      if (attached) {
+        const upload = zipOnly ? uploadDiscussionZip : uploadDiscussionAttachment;
+        documentId = (await upload(attached)).id;
       }
-      const msg = await postDiscussionMessage(parentRef.current, text, documentId);
+      const target = JSON.parse(parentKey) as DiscussionParent;
+      const msg = await postDiscussionMessage(target, text, documentId);
+      return msg;
+    },
+    [parentKey, zipOnly],
+  );
+  const onDelivered = useCallback(
+    (msg: DiscussionMessage) => {
       activeThreadId.current = msg.thread_id;
       setLiveThreadId(msg.thread_id);
-      setBody('');
-      setFile(null);
-      await load();
-      if (!activeThreadId.current) setMessages((prev) => [...prev, msg]);
-    } catch {
-      setError(t('learning.messageSendFailed'));
-    } finally {
-      setSending(false);
-    }
-  }, [body, file, load, t]);
+      setMessages((prev) => (prev.some((row) => row.id === msg.id) ? prev : [...prev, msg]));
+      void load();
+    },
+    [load],
+  );
+  const { outbox, enqueue, retry, discard } = useDiscussionOutbox(deliver, onDelivered);
+
+  const send = () => {
+    const text = body.trim();
+    if (!text && !file) return;
+    enqueue(text, file);
+    setBody('');
+    setFile(null);
+    setError(null);
+  };
 
   return (
     <div className="space-y-3" data-testid={lessonId ? 'lesson-qa-thread' : 'discussion-thread'}>
       <DiscussionMessagePane
         messages={messages}
+        outbox={outbox}
+        onRetry={retry}
+        onDiscard={discard}
         currentProfileId={currentProfileId}
         emptyDescription={emptyDescription ?? t('learning.noMessages')}
         jumpLabel={t('live.chatJumpLatest')}
@@ -165,15 +187,16 @@ export function DiscussionThread({
         body={body}
         onBodyChange={setBody}
         file={file}
-        onPickFile={setFile}
-        sending={sending}
+        onPickFile={pickFile}
+        sending={false}
         placeholder={placeholder ?? t('learning.writeMessage')}
         attachLabel={t('live.attachFile')}
         removeLabel={t('live.removeAttachment')}
         sendLabel={t('learning.sendMessage')}
         hint={composerHint ?? t('live.chatComposerHint')}
-        onSend={() => void send()}
+        onSend={send}
         allowAttachments={allowAttachments}
+        accept={zipOnly ? ZIP_ACCEPT : undefined}
       />
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
     </div>

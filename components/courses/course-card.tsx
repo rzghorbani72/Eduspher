@@ -8,6 +8,7 @@ import { formatMinutes } from '@/components/courses/curriculum/format';
 import { AppImage } from '@/components/ui/app-image';
 import { isLiveCourse, seatPriceOf } from '@/lib/courses/live-course';
 import { coursePath } from '@/lib/content-paths';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { CourseSummary } from '@/lib/api/types';
 import { courseCoverGradient } from '@/lib/courses/course-cover';
@@ -33,6 +34,7 @@ const LIVE_RED = '#e11d48';
 
 export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCardProps) => {
   const { t, language } = useTranslation();
+  const { certificates_enabled } = usePlatformFeatures();
   const detailHref = buildAcademyPath(storeSlug, coursePath(course.slug));
   const coverUrl = resolveAssetUrl(course.Image?.publicUrl);
   const thumbGradient = courseCoverGradient(course.id);
@@ -62,7 +64,9 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
   const chips = [
     isLive ? { label: t('courses.liveCourse'), color: LIVE_RED } : null,
     !isLive && course.is_free ? { label: t('courses.free'), color: FREE_GREEN } : null,
-    course.is_certificate ? { label: t('courses.certificate'), color: '#4f8cff' } : null,
+    certificates_enabled && course.is_certificate
+      ? { label: t('courses.certificate'), color: '#4f8cff' }
+      : null,
     course.is_featured ? { label: t('courses.featured'), color: '#f5a623' } : null,
   ].filter((chip): chip is { label: string; color: string } => chip !== null);
 

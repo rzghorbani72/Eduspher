@@ -15,6 +15,7 @@ import Link from '@/components/ui/link';
 
 import { usePreviewPlayer } from '@/components/courses/preview-player-context';
 
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn, toPersianDigits } from '@/lib/utils';
 import type { LessonType } from '@/lib/api/types';
@@ -83,6 +84,7 @@ interface LessonRowProps {
 
 export function LessonRow({ lesson, now, previewHref, unlocked = false }: LessonRowProps) {
   const { t, language } = useTranslation();
+  const { quizzes_enabled } = usePlatformFeatures();
   const player = usePreviewPlayer();
   const Icon = TYPE_ICON[lesson.type];
   const live = lesson.live ? liveStateAt(lesson.live, now) : null;
@@ -90,7 +92,7 @@ export function LessonRow({ lesson, now, previewHref, unlocked = false }: Lesson
 
   const meta: string[] = [t(TYPE_LABEL[lesson.type])];
   if (lesson.live) meta.push(formatLiveWindow(lesson.live, language, t));
-  if (lesson.quiz) {
+  if (quizzes_enabled && lesson.quiz) {
     meta.push(
       t('courses.quizMeta')
         .replace('{count}', toPersianDigits(lesson.quiz.questionCount, language))

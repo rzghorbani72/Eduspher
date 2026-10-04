@@ -22,6 +22,7 @@ import { learnPath } from '@/lib/content-paths';
 import { cn, buildAcademyPath, toPersianDigits } from '@/lib/utils';
 import { CourseWorkItems } from './course-work/course-work-items';
 import { courseWork, seasonWork, type CourseWork } from './course-work/course-work';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 
 const TYPE_ICON: Record<LessonType, typeof PlayCircle> = {
   VIDEO: PlayCircle,
@@ -83,6 +84,7 @@ export function LearningCurriculum({
   language,
   t,
 }: LearningCurriculumProps) {
+  const { quizzes_enabled } = usePlatformFeatures();
   // Same source of truth as prev/next, so the numbers a student sees and the
   // order they move through never disagree.
   const flat = flattenLessons(seasons);
@@ -237,7 +239,7 @@ export function LearningCurriculum({
               })}
             </ol>
             <CourseWorkItems
-              work={seasonWork(season)}
+              work={seasonWork(season, quizzes_enabled)}
               locked={lockedAfter(lessons.at(-1))}
               onOpen={onOpenWork}
               t={t}
@@ -246,7 +248,7 @@ export function LearningCurriculum({
         );
       })}
       <CourseWorkItems
-        work={courseWork(courseId, courseQuiz)}
+        work={courseWork(courseId, quizzes_enabled ? courseQuiz : null)}
         locked={lockedAfter(flat.at(-1)?.lesson)}
         onOpen={onOpenWork}
         t={t}

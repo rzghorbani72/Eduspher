@@ -106,6 +106,7 @@ export {
   findDiscussionThread,
   postDiscussionMessage,
   uploadDiscussionAttachment,
+  uploadDiscussionZip,
   subscribeDiscussionEvents,
 } from './client/assessment';
 export type {

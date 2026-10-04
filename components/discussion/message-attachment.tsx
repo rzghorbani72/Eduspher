@@ -38,18 +38,26 @@ export function MessageAttachment({
     );
   }
 
-  return (
-    <a
-      href={attachment.publicUrl}
-      target="_blank"
-      rel="noreferrer"
-      className={cn(
-        'mt-2 flex items-center gap-2 rounded-md px-2 py-1.5 text-xs underline-offset-2 hover:underline',
-        mine ? 'bg-white/15' : 'bg-black/5 dark:bg-white/10',
-      )}
-    >
+  return <FileRow name={attachment.title} href={attachment.publicUrl} mine={mine} />;
+}
+
+const FILE_ROW_CLASS =
+  'mt-2 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-inherit underline-offset-2 hover:text-inherit';
+
+/** The file line of a bubble; without `href` it is the not-yet-uploaded copy, same size. */
+export function FileRow({ name, href, mine }: { name: string; href?: string; mine: boolean }) {
+  const className = cn(FILE_ROW_CLASS, mine ? 'bg-white/15' : 'bg-black/5 dark:bg-white/10');
+  const content = (
+    <>
       <FileText className="size-4 shrink-0" aria-hidden="true" />
-      <span className="min-w-0 truncate">{attachment.title}</span>
+      <span className="min-w-0 truncate">{name}</span>
+    </>
+  );
+  return href ? (
+    <a href={href} target="_blank" rel="noreferrer" className={cn(className, 'hover:underline')}>
+      {content}
     </a>
+  ) : (
+    <span className={className}>{content}</span>
   );
 }

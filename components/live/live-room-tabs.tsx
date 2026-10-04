@@ -1,11 +1,11 @@
 'use client';
 
-import { CalendarClock, ListChecks, MessageSquare, NotebookPen, Video } from 'lucide-react';
+import { CalendarClock, ListChecks, NotebookPen, Video } from 'lucide-react';
 
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 
-export type LiveTabKey = 'chat' | 'homework' | 'afterClass' | 'syllabus' | 'sessions';
+export type LiveTabKey = 'homework' | 'afterClass' | 'syllabus' | 'sessions';
 
 interface LiveRoomTabsProps {
   value: LiveTabKey;
@@ -14,8 +14,7 @@ interface LiveRoomTabsProps {
 
 export function LiveRoomTabs({ value, onChange }: LiveRoomTabsProps) {
   const { t } = useTranslation();
-  const tabs: { key: LiveTabKey; label: string; icon: typeof MessageSquare }[] = [
-    { key: 'chat', label: t('live.tabChat'), icon: MessageSquare },
+  const tabs: { key: LiveTabKey; label: string; icon: typeof Video }[] = [
     { key: 'homework', label: t('live.tabHomework'), icon: NotebookPen },
     { key: 'afterClass', label: t('live.tabRecordings'), icon: Video },
     { key: 'syllabus', label: t('live.tabSyllabus'), icon: ListChecks },

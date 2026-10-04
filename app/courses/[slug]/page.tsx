@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import { TemplatedCourseCard } from '@/components/courses/templated-course-card';
 import { COURSE_CARD_GRID_CLASS } from '@/components/courses/course-card-layout';
 import { CourseDetailTabs } from '@/components/courses/course-detail-tabs';
+import { isCourseTabKey } from '@/lib/courses/course-tabs';
+import { TeacherChat } from '@/components/courses/teacher-chat';
 import { CourseHero } from '@/components/courses/course-hero';
 import { CoursePreviewPlayer } from '@/components/courses/course-preview-player';
 import {
@@ -28,6 +30,7 @@ import {
 } from '@/lib/api/server';
 import { getCourseAccess } from '@/lib/api/account-server';
 import { getAcademyContext } from '@/lib/store-context';
+import { getPlatformFeatures } from '@/lib/api/server/platform-features';
 import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
 import { buildAcademyPath, resolveAssetUrl, truncate } from '@/lib/utils';
 import { coursePath, decodePathSegment, learnPath, liveClassPath } from '@/lib/content-paths';
@@ -86,8 +89,14 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   };
 }
 
-export default async function CourseDetailPage({ params }: { params: PageParams }) {
-  const { slug } = await params;
+export default async function CourseDetailPage({
+  params,
+  searchParams,
+}: {
+  params: PageParams;
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const [{ slug }, { tab }] = await Promise.all([params, searchParams]);
   const courseKey = decodePathSegment(slug);
   const storeContext = await getAcademyContext();
   const buildPath = (path: string) =>
@@ -96,14 +105,16 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
   const course = await getPublicCourseDetail(courseKey);
   if (!course) return notFound();
 
-  const [user, publicGroups, courseOfferings, paymentPlans, seoCtx, topics] = await Promise.all([
-    getCurrentUser().catch(() => null),
-    getTutoringGroupsPublic(course.id).catch(() => []),
-    getCourseOfferingsPublic(course.id).catch(() => []),
-    getCoursePaymentPlans(course.id),
-    getSeoRequestContext(),
-    isLiveCourse(course) ? getCourseTopicsPublic(course.id).catch(() => []) : [],
-  ]);
+  const [user, publicGroups, courseOfferings, paymentPlans, seoCtx, topics, features] =
+    await Promise.all([
+      getCurrentUser().catch(() => null),
+      getTutoringGroupsPublic(course.id).catch(() => []),
+      getCourseOfferingsPublic(course.id).catch(() => []),
+      getCoursePaymentPlans(course.id),
+      getSeoRequestContext(),
+      isLiveCourse(course) ? getCourseTopicsPublic(course.id).catch(() => []) : [],
+      getPlatformFeatures(),
+    ]);
 
   const { academy, language, currencyConfig } = await resolveAcademyForRequest(
     user,
@@ -233,6 +244,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
         accessLabel={formatAccessTerm(course.access_duration_days, language, translate)}
         durationLabel={formatMinutes(stats.totalMinutes, language, translate)}
         avatarUrl={avatarUrl}
+        showCertificate={features.certificates_enabled}
       />
 
       <PreviewPlayerProvider media={previewMedia} defaultLessonId={defaultPreviewId}>
@@ -260,6 +272,16 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 }
                 instructorAvatarUrl={avatarUrl}
                 topics={topics}
+                initialTab={isCourseTabKey(tab) ? tab : undefined}
+                teacherChat={
+                  isStaff ? null : (
+                    <TeacherChat
+                      courseId={isEnrolled || hasLiveSeat ? course.id : null}
+                      currentProfileId={user ? String(user.id) : null}
+                      loginHref={user ? null : loginHref}
+                    />
+                  )
+                }
                 classes={
                   isLiveCourse(course) ? (
                     <div className="space-y-8">
@@ -317,7 +339,7 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 access={access}
                 stats={stats}
                 progressPercent={isEnrolled ? progressPercent : null}
-                isCertificate={Boolean(course.is_certificate)}
+                isCertificate={features.certificates_enabled && Boolean(course.is_certificate)}
               />
             )}
           </aside>

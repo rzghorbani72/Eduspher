@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { isLiveCourse } from '@/lib/courses/live-course';
 import type { CourseSummary } from '@/lib/api/types';
+import type { CourseTabKey } from '@/lib/courses/course-tabs';
 import type { CourseTopic } from '@/lib/api/account-types';
 import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
 import { CourseOverview } from '@/components/courses/course-overview';
@@ -26,9 +27,12 @@ interface CourseDetailTabsProps {
   topics?: CourseTopic[];
   /** Bookable classes; kept mounted so the sidebar's `?class=` enroll link always works. */
   classes?: ReactNode;
+  /** Live course: the student's chat with the teacher, shown on the teacher tab. */
+  teacherChat?: ReactNode;
+  initialTab?: TabKey;
 }
 
-type TabKey = 'overview' | 'instructor' | 'reviews';
+type TabKey = CourseTabKey;
 
 export function CourseDetailTabs({
   course,
@@ -39,6 +43,8 @@ export function CourseDetailTabs({
   instructorAvatarUrl,
   topics = [],
   classes,
+  teacherChat,
+  initialTab = 'overview',
 }: CourseDetailTabsProps) {
   const { t } = useTranslation();
   const seasons = useMemo(() => buildCurriculum(course), [course]);
@@ -60,7 +66,7 @@ export function CourseDetailTabs({
   const showLiveSchedule = isLive && stats.liveCount > 0;
   const showSyllabus = !isLive || seasons.length > 0 || topics.length > 0;
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview');
+  const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
 
   return (
     <div className="space-y-7">
@@ -114,12 +120,15 @@ export function CourseDetailTabs({
       {classes && <div hidden={activeTab !== 'overview'}>{classes}</div>}
 
       {activeTab === 'instructor' && (
-        <CourseInstructor
-          author={course.author ?? course.Profile ?? null}
-          avatarUrl={instructorAvatarUrl}
-          rating={course.rating ?? null}
-          studentsCount={course.students_count ?? null}
-        />
+        <div className="space-y-6">
+          <CourseInstructor
+            author={course.author ?? course.Profile ?? null}
+            avatarUrl={instructorAvatarUrl}
+            rating={course.rating ?? null}
+            studentsCount={course.students_count ?? null}
+          />
+          {teacherChat}
+        </div>
       )}
 
       {activeTab === 'reviews' && <CourseReviews courseId={course.id} isLoggedIn={isLoggedIn} />}

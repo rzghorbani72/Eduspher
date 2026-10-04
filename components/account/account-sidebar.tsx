@@ -4,7 +4,8 @@ import { useState, useTransition } from 'react';
 
 import { AccountNavGroup } from '@/components/account/account-nav-group';
 import { AccountNavItem } from '@/components/account/account-nav-item';
-import { ACCOUNT_NAV_SECTIONS } from '@/components/account/account-nav-sections';
+import { visibleAccountNavSections } from '@/components/account/account-nav-sections';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { AnimatedHoverIcon } from '@/components/account/animated-hover-icon';
 import { AppImage } from '@/components/ui/app-image';
 import { HouseIcon } from '@animateicons/react/lucide/house-icon';
@@ -55,6 +56,7 @@ export function AccountSidebar({
 }: AccountSidebarProps) {
   const { t } = useTranslation();
   const format = useLocaleFormat();
+  const navSections = visibleAccountNavSections(usePlatformFeatures().certificates_enabled);
   const homePath = basePath.replace(/\/account$/, '') || '/';
   const role = roleLabel(rawRole, t);
   const [isPending, startTransition] = useTransition();
@@ -108,7 +110,7 @@ export function AccountSidebar({
 
       <nav>
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
-          {ACCOUNT_NAV_SECTIONS.flatMap((section) =>
+          {navSections.flatMap((section) =>
             section.items.map((item) => {
               const href = `${basePath}${item.segment}`;
               const isActive = currentPath.startsWith(`/account${item.segment}`);
@@ -125,7 +127,7 @@ export function AccountSidebar({
           )}
         </div>
         <div className="hidden lg:flex lg:flex-col lg:gap-1">
-          {ACCOUNT_NAV_SECTIONS.map((section) => (
+          {navSections.map((section) => (
             <AccountNavGroup
               key={section.titleKey}
               section={section}

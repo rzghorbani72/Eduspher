@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 const CONTROL = 'h-11 w-11 shrink-0 px-0';
 const MIN_H = 44;
 const MAX_H = 160;
+const MEDIA_ACCEPT =
+  'image/jpeg,image/png,image/gif,image/webp,application/pdf,.jpg,.jpeg,.png,.gif,.webp,.pdf';
 
 interface DiscussionComposerProps {
   body: string;
@@ -23,6 +25,7 @@ interface DiscussionComposerProps {
   hint: string;
   onSend: () => void;
   allowAttachments?: boolean;
+  accept?: string;
 }
 
 // scrollHeight excludes the border, so add it back or the box stays 2px short and scrolls.
@@ -46,6 +49,7 @@ export function DiscussionComposer({
   hint,
   onSend,
   allowAttachments = true,
+  accept = MEDIA_ACCEPT,
 }: DiscussionComposerProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const fieldRef = useRef<HTMLTextAreaElement>(null);
@@ -85,7 +89,7 @@ export function DiscussionComposer({
               ref={fileInput}
               type="file"
               hidden
-              accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,.jpg,.jpeg,.png,.gif,.webp,.pdf"
+              accept={accept}
               onChange={(event) => onPickFile(event.target.files?.[0] ?? null)}
             />
             <Button

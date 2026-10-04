@@ -6,6 +6,7 @@ import { VideoLesson } from '@/components/learning/video-lesson';
 import { LessonQuiz } from '@/components/quiz/lesson-quiz';
 import { EmptyState } from '@/components/ui/empty-state';
 import type { MyTutoringGroupSession, SessionMaterial } from '@/lib/api/account-types';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { sessionName } from '@/lib/live/session-state';
 import { formatDate } from '@/lib/utils';
@@ -18,12 +19,17 @@ interface SessionAfterClassProps {
 }
 
 /** A meeting's quiz opens when the meeting starts, and only once it is published. */
-const hasOpenQuiz = (session: MyTutoringGroupSession) =>
-  Boolean(session.Quiz?.is_published) && new Date(session.starts_at).getTime() <= Date.now();
+const hasOpenQuiz = (session: MyTutoringGroupSession, quizzesEnabled: boolean) =>
+  quizzesEnabled &&
+  Boolean(session.Quiz?.is_published) &&
+  new Date(session.starts_at).getTime() <= Date.now();
 
-const hasContent = (session: MyTutoringGroupSession) =>
+const hasContent = (session: MyTutoringGroupSession, quizzesEnabled: boolean) =>
   Boolean(
-    session.notes || session.recording?.url || session.Materials?.length || hasOpenQuiz(session),
+    session.notes ||
+    session.recording?.url ||
+    session.Materials?.length ||
+    hasOpenQuiz(session, quizzesEnabled),
   );
 
 const isImage = (material: SessionMaterial) =>
@@ -41,9 +47,12 @@ export function SessionAfterClass({
   onSelect,
 }: SessionAfterClassProps) {
   const { t } = useTranslation();
-  const others = sessions.filter((row) => row.id !== session?.id && hasContent(row));
+  const { quizzes_enabled } = usePlatformFeatures();
+  const others = sessions.filter(
+    (row) => row.id !== session?.id && hasContent(row, quizzes_enabled),
+  );
 
-  if (!session || !hasContent(session)) {
+  if (!session || !hasContent(session, quizzes_enabled)) {
     return (
       <div className="space-y-4">
         <EmptyState compact title={t('live.noAfterClassForSession')} />
@@ -60,7 +69,9 @@ export function SessionAfterClass({
 
   return (
     <div className="space-y-6">
-      {hasOpenQuiz(session) ? <LessonQuiz parent={{ kind: 'session', id: session.id }} /> : null}
+      {hasOpenQuiz(session, quizzes_enabled) ? (
+        <LessonQuiz parent={{ kind: 'session', id: session.id }} />
+      ) : null}
 
       {session.notes ? (
         <section className="space-y-1">

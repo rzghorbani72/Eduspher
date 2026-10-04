@@ -30,6 +30,8 @@ type Props = {
   isLoggedIn: boolean;
   /** False when the academy is not selling new seats (existing members can still enter). */
   canPurchase?: boolean;
+  /** The academy stopped taking new students — said out loud so the missing button has a reason. */
+  enrollmentClosed?: boolean;
 };
 
 /**
@@ -47,6 +49,7 @@ export const TutoringGroupCard = ({
   enrolledHref,
   isLoggedIn,
   canPurchase = true,
+  enrollmentClosed = false,
 }: Props) => {
   const { t, language } = useTranslation();
   const seatPrice = seatPriceOfGroup(group);
@@ -172,6 +175,11 @@ export const TutoringGroupCard = ({
             >
               {buyLabel}
             </button>
+          ) : null}
+          {enrollmentClosed && !isMember && !closedReason ? (
+            <p className="rounded-lg bg-(--theme-primary-subtle) px-3 py-2 text-xs text-(--theme-primary-ink)">
+              {t('courses.enrollmentClosed')}
+            </p>
           ) : null}
           {closedReason ? (
             <p className="rounded-lg bg-(--theme-primary-subtle) px-3 py-2 text-xs text-(--theme-primary-ink)">

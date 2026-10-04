@@ -3,6 +3,7 @@
 import { Check, Dot } from 'lucide-react';
 import Link from '@/components/ui/link';
 
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toPersianDigits } from '@/lib/utils';
 import { renderMarkdown } from '@/lib/markdown';
@@ -28,6 +29,7 @@ const DIFFICULTY_KEY: Record<string, string> = {
 
 export function CourseOverview({ course, stats, prerequisiteHref }: CourseOverviewProps) {
   const { t, language } = useTranslation();
+  const { quizzes_enabled, certificates_enabled } = usePlatformFeatures();
   const outcomes = parseAuthoredList(course.learning_outcomes);
   const requirements = parseAuthoredList(course.requirements);
   const outcomeList = useShowMore(outcomes, 6);
@@ -49,11 +51,12 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
       value: toPersianDigits(stats.liveCount, language),
       label: t('courses.statLiveLabel'),
     },
-    stats.quizCount > 0 && {
-      key: 'quiz',
-      value: toPersianDigits(stats.quizCount, language),
-      label: t('courses.statQuizLabel'),
-    },
+    quizzes_enabled &&
+      stats.quizCount > 0 && {
+        key: 'quiz',
+        value: toPersianDigits(stats.quizCount, language),
+        label: t('courses.statQuizLabel'),
+      },
     stats.assignmentCount > 0 && {
       key: 'assignment',
       value: toPersianDigits(stats.assignmentCount, language),
@@ -69,11 +72,12 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
       value: t(DIFFICULTY_KEY[course.difficulty] ?? 'courses.beginner'),
       label: t('courses.difficulty'),
     },
-    course.is_certificate && {
-      key: 'certificate',
-      value: t('courses.certificateIncluded'),
-      label: t('courses.certificate'),
-    },
+    certificates_enabled &&
+      course.is_certificate && {
+        key: 'certificate',
+        value: t('courses.certificateIncluded'),
+        label: t('courses.certificate'),
+      },
   ].filter((fact): fact is { key: string; value: string; label: string } => Boolean(fact));
 
   return (

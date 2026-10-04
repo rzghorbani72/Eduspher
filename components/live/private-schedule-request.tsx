@@ -7,6 +7,7 @@ import { CLASS_REQUEST_ANCHOR_ID } from '@/components/courses/live-course-panel'
 import { JoinableClasses } from '@/components/live/joinable-classes';
 import Link from '@/components/ui/link';
 import type { TutoringGroupRoom } from '@/lib/api/account-types';
+import { teacherChatHref } from '@/lib/courses/live-course';
 import { weekdayLabelKey } from '@/lib/courses/weekly-rule';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toPersianDigits } from '@/lib/utils';
@@ -14,7 +15,6 @@ import { toPersianDigits } from '@/lib/utils';
 interface PrivateScheduleRequestProps {
   room: TutoringGroupRoom;
   courseHref: string;
-  onOpenChat: () => void;
 }
 
 const minuteLabel = (minute: number) =>
@@ -25,11 +25,7 @@ const minuteLabel = (minute: number) =>
  * classes of this course are listed here; asking for a new time lives on the
  * course page, not in this classroom.
  */
-export function PrivateScheduleRequest({
-  room,
-  courseHref,
-  onOpenChat,
-}: PrivateScheduleRequestProps) {
+export function PrivateScheduleRequest({ room, courseHref }: PrivateScheduleRequestProps) {
   const { t, language } = useTranslation();
   const router = useRouter();
   const pending = room.pending_request ?? null;
@@ -94,14 +90,13 @@ export function PrivateScheduleRequest({
         </Link>
       )}
 
-      <button
-        type="button"
-        onClick={onOpenChat}
+      <Link
+        href={teacherChatHref(courseHref)}
         className="mt-5 flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
       >
         <MessageCircle className="size-4" aria-hidden="true" />
         {t('live.privateMessageTeacher')}
-      </button>
+      </Link>
     </section>
   );
 }

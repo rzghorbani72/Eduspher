@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Link from '@/components/ui/link';
 import type { QuizAttempt } from '@/lib/api/client';
+import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { buildAcademyPath, toPersianDigits } from '@/lib/utils';
 
@@ -20,6 +21,7 @@ interface Props {
 
 export function QuizResultCard({ title, attempt, onTryAgain, storeSlug }: Props) {
   const { t, language } = useTranslation();
+  const { certificates_enabled } = usePlatformFeatures();
   const pending = attempt.status === 'PENDING_REVIEW';
 
   return (
@@ -50,7 +52,7 @@ export function QuizResultCard({ title, attempt, onTryAgain, storeSlug }: Props)
       </p>
       {attempt.feedback && <p className="bg-muted rounded-md p-3 text-sm">{attempt.feedback}</p>}
 
-      {attempt.certificate_number && (
+      {certificates_enabled && attempt.certificate_number && (
         <Link
           href={buildAcademyPath(storeSlug, `/certificates/${attempt.certificate_number}`)}
           className="inline-flex items-center gap-2 rounded-lg bg-emerald-100 px-3 py-2 text-sm font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"

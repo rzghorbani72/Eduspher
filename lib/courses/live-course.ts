@@ -82,3 +82,7 @@ export const sessionsOfGroup = (group: {
   term_weeks: number;
   Slots: unknown[];
 }): number => group.session_count ?? group.term_weeks * Math.max(group.Slots.length, 1);
+
+/** The course page opened on its teacher tab, where a class member chats with the tutor. */
+export const TEACHER_TAB = 'instructor';
+export const teacherChatHref = (courseHref: string): string => `${courseHref}?tab=${TEACHER_TAB}`;
