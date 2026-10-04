@@ -34,19 +34,21 @@ export {
   getEnrollments,
   createPayment,
   initiateCheckoutPayment,
+} from './server/pricing';
+export type { PublicPlan } from './server/pricing';
+export {
   getAcademyPlansPublic,
   getAcademyBundlesPublic,
   getAcademyBundlePublic,
   getCoursePaymentPlans,
   getTutoringOffersPublic,
-} from './server/pricing';
+} from './server/offers';
 export type {
-  PublicPlan,
   PublicBundleOffer,
   PublicPaymentPlan,
   PublicTutoringOffer,
   PublicTutoringGroupSlot,
-} from './server/pricing';
+} from './server/offers';
 export {
   getCourseTopicsPublic,
   getTutoringGroupsPublic,

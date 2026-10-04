@@ -4,7 +4,7 @@ import { headers as nextHeaders } from 'next/headers';
 import { resolvePublicOriginFromHeaders } from '@/lib/public-request-origin';
 import type { CourseTopic } from '@/lib/api/account-types';
 import { serverFetchRaw } from './core';
-import type { PublicTutoringGroupSlot } from './pricing';
+import type { PublicTutoringGroupSlot } from './offers';
 
 export interface PublicTutoringGroup {
   id: string;
