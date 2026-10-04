@@ -3,9 +3,11 @@
 import { useTranslation } from '@/lib/i18n/hooks';
 import { toPersianDigits } from '@/lib/utils';
 import type { CourseTopic } from '@/lib/api/account-types';
+import { ShowMoreButton, useShowMore } from '@/components/courses/show-more';
 
 export function CourseTopicList({ topics }: { topics: CourseTopic[] }) {
   const { t, language } = useTranslation();
+  const list = useShowMore(topics, 3);
 
   return (
     <div className="space-y-5">
@@ -17,7 +19,7 @@ export function CourseTopicList({ topics }: { topics: CourseTopic[] }) {
       </div>
 
       <ol className="space-y-3">
-        {topics.map((topic, index) => (
+        {list.visible.map((topic, index) => (
           <li
             key={topic.id}
             className="cd-review-card flex items-start gap-3 rounded-2xl border p-4"
@@ -38,6 +40,8 @@ export function CourseTopicList({ topics }: { topics: CourseTopic[] }) {
           </li>
         ))}
       </ol>
+
+      <ShowMoreButton list={list} />
     </div>
   );
 }

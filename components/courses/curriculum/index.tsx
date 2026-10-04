@@ -10,6 +10,7 @@ import type { CourseContentStats, CurriculumSeasonView } from '@/lib/courses/cur
 import { LessonRow } from '@/components/courses/curriculum/lesson-row';
 import { formatMinutes, formatSeconds } from '@/components/courses/curriculum/format';
 import { CourseTopicList } from '@/components/courses/curriculum/topic-list';
+import { ShowMoreButton, useShowMore } from '@/components/courses/show-more';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useNow } from '@/lib/hooks/use-now';
 import type { CourseTopic } from '@/lib/api/account-types';
@@ -35,6 +36,7 @@ export function CourseCurriculum({
   const { t, language } = useTranslation();
   const now = useNow();
   const [openIds, setOpenIds] = useState<string[]>(() => seasons.slice(0, 1).map((s) => s.id));
+  const list = useShowMore(seasons, 3);
 
   const summary = useMemo(
     () =>
@@ -78,7 +80,10 @@ export function CourseCurriculum({
           <span className="cd-price text-sm font-semibold text-(--theme-muted)">{summary}</span>
           <button
             type="button"
-            onClick={() => setOpenIds(allOpen ? [] : seasons.map((s) => s.id))}
+            onClick={() => {
+              setOpenIds(allOpen ? [] : seasons.map((s) => s.id));
+              list.setExpanded(!allOpen);
+            }}
             className="cursor-pointer text-xs font-bold text-(--theme-primary) hover:underline"
           >
             {allOpen ? t('courses.collapseAll') : t('courses.expandAll')}
@@ -87,7 +92,7 @@ export function CourseCurriculum({
       </div>
 
       <div className="space-y-4">
-        {seasons.map((season, index) => {
+        {list.visible.map((season, index) => {
           const isOpen = openIds.includes(season.id);
           const seasonSummary = [
             `${toPersianDigits(season.lessons.length, language)} ${t('courses.lesson')}`,
@@ -157,6 +162,8 @@ export function CourseCurriculum({
           );
         })}
       </div>
+
+      <ShowMoreButton list={list} />
     </div>
   );
 }

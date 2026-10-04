@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -24,9 +24,11 @@ interface CourseDetailTabsProps {
   instructorAvatarUrl: string | null;
   /** Live-course syllabus, shown when there are no recorded lessons. */
   topics?: CourseTopic[];
+  /** Bookable classes; kept mounted so the sidebar's `?class=` enroll link always works. */
+  classes?: ReactNode;
 }
 
-type TabKey = 'overview' | 'curriculum' | 'live' | 'instructor' | 'reviews';
+type TabKey = 'overview' | 'instructor' | 'reviews';
 
 export function CourseDetailTabs({
   course,
@@ -36,6 +38,7 @@ export function CourseDetailTabs({
   prerequisiteHref,
   instructorAvatarUrl,
   topics = [],
+  classes,
 }: CourseDetailTabsProps) {
   const { t } = useTranslation();
   const seasons = useMemo(() => buildCurriculum(course), [course]);
@@ -44,24 +47,20 @@ export function CourseDetailTabs({
     [seasons, course.lessons_count, course.duration],
   );
 
-  const tabs = useMemo(() => {
-    const list: { key: TabKey; label: string }[] = [
+  const tabs = useMemo<{ key: TabKey; label: string }[]>(
+    () => [
       { key: 'overview', label: t('courses.tabIntro') },
-      { key: 'curriculum', label: t('courses.tabCurriculum') },
-    ];
-    // A recorded course has no live timetable, even if an old lesson still
-    // carries a live session.
-    if (isLiveCourse(course) && stats.liveCount > 0) {
-      list.push({ key: 'live', label: t('courses.tabLive') });
-    }
-    list.push(
       { key: 'instructor', label: t('courses.tabInstructor') },
       { key: 'reviews', label: t('courses.tabReviews') },
-    );
-    return list;
-  }, [course, stats.liveCount, t]);
+    ],
+    [t],
+  );
+  const isLive = isLiveCourse(course);
+  // A recorded course has no live timetable, even if an old lesson still carries a live session.
+  const showLiveSchedule = isLive && stats.liveCount > 0;
+  const showSyllabus = !isLive || seasons.length > 0 || topics.length > 0;
 
-  const [activeTab, setActiveTab] = useState<TabKey>('curriculum');
+  const [activeTab, setActiveTab] = useState<TabKey>('overview');
 
   return (
     <div className="space-y-7">
@@ -98,20 +97,21 @@ export function CourseDetailTabs({
       </div>
 
       {activeTab === 'overview' && (
-        <CourseOverview course={course} stats={stats} prerequisiteHref={prerequisiteHref} />
+        <div className="space-y-10">
+          <CourseOverview course={course} stats={stats} prerequisiteHref={prerequisiteHref} />
+          {showSyllabus && (
+            <CourseCurriculum
+              seasons={seasons}
+              stats={stats}
+              previewBasePath={previewBasePath}
+              hasLessonAccess={hasLessonAccess}
+              topics={topics}
+            />
+          )}
+          {showLiveSchedule && <CourseLiveSchedule seasons={seasons} />}
+        </div>
       )}
-
-      {activeTab === 'curriculum' && (
-        <CourseCurriculum
-          seasons={seasons}
-          stats={stats}
-          previewBasePath={previewBasePath}
-          hasLessonAccess={hasLessonAccess}
-          topics={topics}
-        />
-      )}
-
-      {activeTab === 'live' && <CourseLiveSchedule seasons={seasons} />}
+      {classes && <div hidden={activeTab !== 'overview'}>{classes}</div>}
 
       {activeTab === 'instructor' && (
         <CourseInstructor

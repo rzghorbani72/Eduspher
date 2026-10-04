@@ -260,36 +260,37 @@ export default async function CourseDetailPage({ params }: { params: PageParams 
                 }
                 instructorAvatarUrl={avatarUrl}
                 topics={topics}
+                classes={
+                  isLiveCourse(course) ? (
+                    <div className="space-y-8">
+                      {tutoringGroups.length ? (
+                        <TutoringGroupsSection
+                          groups={tutoringGroups}
+                          currencyConfig={currencyConfig}
+                          language={language}
+                          loginHref={loginHref}
+                          isLoggedIn={!!user}
+                          isStaff={isStaff}
+                          liveClassHref={liveClassHref}
+                        />
+                      ) : (
+                        <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
+                          {translate('courses.liveNoClassesYet')}
+                        </p>
+                      )}
+                      {!hasLiveSeat && !isStaff ? (
+                        <ClassRequestSection
+                          courseId={course.id}
+                          hasOpenClasses={tutoringGroups.length > 0}
+                          isLoggedIn={!!user}
+                          loginHref={loginHref}
+                        />
+                      ) : null}
+                    </div>
+                  ) : null
+                }
               />
             </div>
-
-            {isLiveCourse(course) ? (
-              <div className="mt-10 space-y-8">
-                {tutoringGroups.length ? (
-                  <TutoringGroupsSection
-                    groups={tutoringGroups}
-                    currencyConfig={currencyConfig}
-                    language={language}
-                    loginHref={loginHref}
-                    isLoggedIn={!!user}
-                    isStaff={isStaff}
-                    liveClassHref={liveClassHref}
-                  />
-                ) : (
-                  <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
-                    {translate('courses.liveNoClassesYet')}
-                  </p>
-                )}
-                {!hasLiveSeat && !isStaff ? (
-                  <ClassRequestSection
-                    courseId={course.id}
-                    hasOpenClasses={tutoringGroups.length > 0}
-                    isLoggedIn={!!user}
-                    loginHref={loginHref}
-                  />
-                ) : null}
-              </div>
-            ) : null}
           </div>
 
           <aside className="space-y-3 lg:sticky lg:top-[72px]">

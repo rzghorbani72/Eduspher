@@ -23,6 +23,7 @@ import { QuickEnrollDialog } from '@/components/courses/quick-enroll/quick-enrol
 import type { PublicTutoringGroup } from '@/lib/api/server';
 import type { CurrencyConfig } from '@/components/courses/purchase-panel';
 import { GROUP_CLASSES_ANCHOR_ID } from '@/components/courses/live-course-panel';
+import { ShowMoreButton, useShowMore } from '@/components/courses/show-more';
 
 interface Props {
   groups: PublicTutoringGroup[];
@@ -63,6 +64,8 @@ export const TutoringGroupsSection = ({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const resumeClassId = searchParams.get('class');
+  // A class picked from the sidebar must be on screen, even past the first few.
+  const list = useShowMore(groups, 2, Boolean(resumeClassId));
 
   // `?class=<id>` means "start enrolling in this class": the sidebar button
   // sets it, and the sign-in dialog reloads to it so the server sees the new
@@ -124,7 +127,7 @@ export const TutoringGroupsSection = ({
       </div>
 
       <div className="space-y-4">
-        {groups.map((group) => (
+        {list.visible.map((group) => (
           <TutoringGroupCard
             key={group.id}
             group={group}
@@ -138,6 +141,7 @@ export const TutoringGroupsSection = ({
             canPurchase={!closed && !isStaff}
           />
         ))}
+        <ShowMoreButton list={list} />
         {closed ? <p className="text-muted text-sm">{t('courses.enrollmentClosed')}</p> : null}
       </div>
 

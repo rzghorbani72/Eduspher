@@ -14,6 +14,7 @@ import {
 } from '@/components/courses/curriculum/format';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useNow } from '@/lib/hooks/use-now';
+import { ShowMoreButton, useShowMore } from '@/components/courses/show-more';
 
 interface CourseLiveScheduleProps {
   seasons: CurriculumSeasonView[];
@@ -42,6 +43,7 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
         ),
     [seasons],
   );
+  const list = useShowMore(sessions, 3);
 
   if (sessions.length === 0) {
     return (
@@ -62,7 +64,7 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
       </div>
 
       <ol className="space-y-3">
-        {sessions.map(({ lesson, seasonTitle }) => {
+        {list.visible.map(({ lesson, seasonTitle }) => {
           const live = lesson.live!;
           const state = liveStateAt(live, now);
           return (
@@ -125,6 +127,8 @@ export function CourseLiveSchedule({ seasons }: CourseLiveScheduleProps) {
           );
         })}
       </ol>
+
+      <ShowMoreButton list={list} />
     </section>
   );
 }

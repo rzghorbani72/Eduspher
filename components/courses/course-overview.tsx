@@ -7,6 +7,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { toPersianDigits } from '@/lib/utils';
 import { renderMarkdown } from '@/lib/markdown';
 import { CollapsibleHtml } from '@/components/courses/collapsible-html';
+import { ShowMoreButton, useShowMore } from '@/components/courses/show-more';
 import type { CourseSummary } from '@/lib/api/types';
 import type { CourseContentStats } from '@/lib/courses/curriculum';
 import { parseAuthoredList } from '@/lib/courses/curriculum';
@@ -29,6 +30,8 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
   const { t, language } = useTranslation();
   const outcomes = parseAuthoredList(course.learning_outcomes);
   const requirements = parseAuthoredList(course.requirements);
+  const outcomeList = useShowMore(outcomes, 6);
+  const requirementList = useShowMore(requirements, 4);
 
   const facts = [
     {
@@ -94,8 +97,8 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
           <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
             {t('courses.whatYouWillLearn')}
           </h2>
-          <ul className="grid gap-x-8 gap-y-3 md:grid-cols-2">
-            {outcomes.map((point) => (
+          <ul className="mb-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
+            {outcomeList.visible.map((point) => (
               <li key={point} className="flex items-start gap-2 text-sm text-(--theme-foreground)">
                 <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,#22c55e_15%,transparent)]">
                   <Check className="h-3 w-3 text-[#16a34a]" />
@@ -104,6 +107,7 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
               </li>
             ))}
           </ul>
+          <ShowMoreButton list={outcomeList} />
         </div>
       )}
 
@@ -112,8 +116,8 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
           <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
             {t('courses.requirements')}
           </h2>
-          <ul className="space-y-2">
-            {requirements.map((item) => (
+          <ul className="mb-4 space-y-2">
+            {requirementList.visible.map((item) => (
               <li key={item} className="flex items-start gap-1 text-sm text-(--theme-muted)">
                 <Dot className="h-5 w-5 shrink-0 text-(--theme-primary)" />
                 {item}
@@ -134,6 +138,7 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
               </li>
             )}
           </ul>
+          <ShowMoreButton list={requirementList} />
         </div>
       )}
 
