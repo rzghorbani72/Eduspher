@@ -24,7 +24,7 @@ interface QuickEnrollDialogProps {
 }
 
 const fieldClassName =
-  'border-theme bg-card h-12 w-full rounded-xl border px-4 text-sm text-(--theme-foreground) outline-none focus:border-(--theme-primary)';
+  'border-theme bg-card h-12 w-full rounded-xl border px-4 text-sm text-(--theme-foreground) placeholder:text-muted placeholder:opacity-70 outline-none focus:border-(--theme-primary)';
 const primaryButtonClassName =
   'flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60';
 

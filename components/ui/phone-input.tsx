@@ -84,7 +84,7 @@ export const PhoneInput = ({
         disabled={disabled}
         inputMode="numeric"
         className={cn(
-          'rounded-theme border-theme bg-card flex h-11 w-full border px-3',
+          'rounded-theme border-theme bg-card placeholder:text-muted flex h-11 w-full border px-3 text-(--theme-foreground) placeholder:opacity-70',
           disabled && 'cursor-not-allowed opacity-50',
           showFormatError && 'border-destructive',
           inputClassName,
