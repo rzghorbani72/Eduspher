@@ -321,6 +321,12 @@ body {
   a:hover {
     color: var(--theme-secondary);
   }
+
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary {
+    cursor: pointer;
+  }
 }
 
 /* Ensure links styled as solid buttons keep readable text. A link that already
