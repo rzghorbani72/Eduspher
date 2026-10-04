@@ -150,6 +150,7 @@ export function useLogin() {
 
   function failed(err: unknown) {
     captcha.reset();
+    resendCaptcha.reset();
     if (apiErrorCode(err) === 'AUTH_USER_NOT_REGISTERED') {
       goToRegister();
       return;
@@ -230,8 +231,7 @@ export function useLogin() {
       setError(t('auth.passwordMinLength'));
       return;
     }
-    const captchaToken = captcha.token;
-    captcha.reset();
+    const captchaToken = captcha.take();
     if (method === 'otp') {
       sendLoginOtp(captchaToken);
     } else {
@@ -293,8 +293,7 @@ export function useLogin() {
 
   // Every resend is a new anonymous SMS, so it needs its own captcha widget.
   async function resendOtp() {
-    const captchaToken = resendCaptcha.token;
-    resendCaptcha.reset();
+    const captchaToken = resendCaptcha.take();
     if (step === 'otpLogin') {
       sendLoginOtp(captchaToken);
       otpLoginTimer.start();
@@ -310,6 +309,7 @@ export function useLogin() {
     } catch (err) {
       failed(err);
     } finally {
+      resendCaptcha.reset();
       setOtpResending(false);
     }
   }

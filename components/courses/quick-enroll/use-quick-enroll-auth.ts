@@ -66,9 +66,9 @@ export function useQuickEnrollAuth(onDone: () => void) {
     setError(null);
     startTransition(async () => {
       try {
-        const captchaToken = captcha.token;
-        captcha.reset();
-        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
+        await captcha.run((captchaToken) =>
+          sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken),
+        );
         setOtp('');
         setStep('otp');
         timer.start();
@@ -112,9 +112,9 @@ export function useQuickEnrollAuth(onDone: () => void) {
     setError(null);
     startTransition(async () => {
       try {
-        const captchaToken = resendCaptcha.token;
-        resendCaptcha.reset();
-        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
+        await resendCaptcha.run((captchaToken) =>
+          sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken),
+        );
         timer.start();
         notifyOtpSent(t('auth.otpSentToPhone'), 'quick-enroll-otp');
       } catch (err) {

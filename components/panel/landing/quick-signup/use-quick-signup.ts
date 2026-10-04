@@ -178,9 +178,9 @@ export function useQuickSignup(onFinished?: () => void, initialSlug = '') {
       if (!terms || !privacy) {
         throw new Error(M.legalUnavailable);
       }
-      const captchaToken = captcha.token;
-      captcha.reset();
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
+      await captcha.run((captchaToken) =>
+        sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken),
+      );
       setResendIn(RESEND_SECONDS);
       setStep('otp');
     });
@@ -189,9 +189,9 @@ export function useQuickSignup(onFinished?: () => void, initialSlug = '') {
   const resendOtp = useCallback(() => {
     if (resendIn > 0 || !captcha.solved) return Promise.resolve();
     return guard(null, async () => {
-      const captchaToken = captcha.token;
-      captcha.reset();
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
+      await captcha.run((captchaToken) =>
+        sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken),
+      );
       setResendIn(RESEND_SECONDS);
     });
   }, [captcha, fullPhone, guard, resendIn]);

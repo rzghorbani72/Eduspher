@@ -9,6 +9,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { toast } from 'react-toastify';
 import { RegisterValues } from '../_lib/register-form-helpers';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { UseFormHandleSubmit } from 'react-hook-form';
 import { CountryCode } from '@/lib/country-codes';
 
@@ -43,13 +44,7 @@ export function useRegisterSubmit({
   isSubmittingRef: RefObject<boolean>;
   isValidPhone: (phone: string) => boolean;
   legalVersions: { terms: string | null; privacy: string | null };
-  loginCaptcha: {
-    token: string;
-    setToken: Dispatch<SetStateAction<string>>;
-    resetKey: number;
-    reset: () => void;
-    solved: boolean;
-  };
+  loginCaptcha: HumanCheckState;
   loginHref: string;
   phoneNumber: string;
   phoneOtp: string;
@@ -167,13 +162,13 @@ export function useRegisterSubmit({
 
       await postJson('/auth/register', userData);
       toast.success(t('auth.registrationSuccess'));
-      const loginCaptchaToken = loginCaptcha.token;
-      loginCaptcha.reset();
-      await signInNewAccount(
-        userData.phone_number ?? userData.email ?? '',
-        userData.password ?? '',
-        loginCaptchaToken,
-        finalAcademyId,
+      await loginCaptcha.run((loginCaptchaToken) =>
+        signInNewAccount(
+          userData.phone_number ?? userData.email ?? '',
+          userData.password ?? '',
+          loginCaptchaToken,
+          finalAcademyId,
+        ),
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : t('auth.unableToCreateAccount'));

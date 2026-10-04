@@ -8,6 +8,7 @@ import { useTranslation } from '@/lib/i18n/hooks';
 import { toast } from 'react-toastify';
 import { RegisterValues, Step } from '../_lib/register-form-helpers';
 import type { Dispatch, SetStateAction } from 'react';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { UseFormGetValues } from 'react-hook-form';
 import { CountryCode } from '@/lib/country-codes';
 
@@ -32,13 +33,7 @@ export function useRegisterOtp({
   setPhoneOtpVerified,
   setStep,
 }: {
-  captcha: {
-    token: string;
-    setToken: Dispatch<SetStateAction<string>>;
-    resetKey: number;
-    reset: () => void;
-    solved: boolean;
-  };
+  captcha: HumanCheckState;
   emailOtp: string;
   emailOtpTimer: { formatted: string; canResend: boolean; start: () => void };
   getValues: UseFormGetValues<RegisterValues>;
@@ -71,9 +66,9 @@ export function useRegisterOtp({
         cleanPhoneNumber(phoneNumber, selectedCountry),
         selectedCountry,
       );
-      const captchaToken = captcha.token;
-      captcha.reset();
-      await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
+      await captcha.run((captchaToken) =>
+        sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken),
+      );
       setPhoneOtpSent(true);
       phoneOtpTimer.start();
       notifyOtpSent(t('auth.otpSentToPhone'), 'register-phone-otp');
@@ -122,9 +117,9 @@ export function useRegisterOtp({
     setOtpLoading(true);
     setError(null);
     try {
-      const captchaToken = captcha.token;
-      captcha.reset();
-      await sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION, captchaToken);
+      await captcha.run((captchaToken) =>
+        sendEmailOtp(emailVal, OtpType.REGISTER_EMAIL_VERIFICATION, captchaToken),
+      );
       setEmailOtpSent(true);
       emailOtpTimer.start();
       notifyOtpSent(t('auth.otpSentToEmail'), 'register-email-otp');

@@ -148,9 +148,9 @@ export const ForgotPasswordForm = () => {
     try {
       await validatePhoneAndEmail(formData.identifier);
 
-      const captchaToken = captcha.token;
-      captcha.reset();
-      await sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE, captchaToken);
+      await captcha.run((captchaToken) =>
+        sendPhoneOtp(formData.identifier, OtpType.RESET_PASSWORD_BY_PHONE, captchaToken),
+      );
       notifyOtpSent(t('auth.otpSentToPhone'), 'forgot-otp');
       setStep('otp');
       otpTimer.start();

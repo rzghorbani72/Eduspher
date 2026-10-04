@@ -5,6 +5,7 @@ import { OtpBoxInput } from '@/components/ui/otp-box-input';
 import { HumanCheck } from '@/components/auth/human-check';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { Dispatch, SetStateAction, JSX } from 'react';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { Step, OTP_LENGTH } from '../_lib/forgot-password-form-helpers';
 
 export function OtpStep({
@@ -18,13 +19,7 @@ export function OtpStep({
   otpTimer,
   setStep,
 }: {
-  captcha: {
-    token: string;
-    setToken: Dispatch<SetStateAction<string>>;
-    resetKey: number;
-    reset: () => void;
-    solved: boolean;
-  };
+  captcha: HumanCheckState;
   errorBlock: '' | JSX.Element | null;
   formData: { identifier: string; password: string; confirmed_password: string; otp: string };
   handleInputChange: (field: string, value: string) => void;

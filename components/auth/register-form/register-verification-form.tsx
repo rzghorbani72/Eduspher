@@ -9,6 +9,7 @@ import { getFullPhoneNumber, cleanPhoneNumber, toEnglishDigits } from '@/lib/pho
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
 import type { Dispatch, SetStateAction, FormEvent, JSX } from 'react';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { RegisterValues } from '../_lib/register-form-helpers';
 import { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { CountryCode } from '@/lib/country-codes';
@@ -52,13 +53,7 @@ export function RegisterVerificationForm({
   watchedEmail,
 }: {
   canSubmitVerification: boolean;
-  captcha: {
-    token: string;
-    setToken: Dispatch<SetStateAction<string>>;
-    resetKey: number;
-    reset: () => void;
-    solved: boolean;
-  };
+  captcha: HumanCheckState;
   changeContact: () => void;
   emailOtp: string;
   emailOtpSent: boolean;

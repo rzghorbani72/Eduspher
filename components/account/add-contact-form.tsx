@@ -99,9 +99,9 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
           setEmailError(emailError);
           return;
         }
-        const captchaToken = captcha.token;
-        captcha.reset();
-        await sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION, captchaToken);
+        await captcha.run((captchaToken) =>
+          sendEmailOtp(email, OtpType.REGISTER_EMAIL_VERIFICATION, captchaToken),
+        );
         setMessage(t('auth.otpSentToEmail'));
         setOtpSent(true);
         setStep('otp');
@@ -119,9 +119,9 @@ export const AddContactForm = ({ method, defaultCountryCode, onSuccess }: AddCon
           setPhoneError(phoneError);
           return;
         }
-        const captchaToken = captcha.token;
-        captcha.reset();
-        await sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken);
+        await captcha.run((captchaToken) =>
+          sendPhoneOtp(fullPhone, OtpType.REGISTER_PHONE_VERIFICATION, captchaToken),
+        );
         setMessage(t('auth.otpSentToPhone'));
         setOtpSent(true);
         setStep('otp');

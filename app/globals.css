@@ -2555,5 +2555,6 @@ altcha-widget {
   --altcha-checkbox-border-color: var(--theme-border-strong);
   --altcha-checkbox-border-radius: 6px;
   --altcha-checkbox-outline-color: var(--theme-primary);
+  --altcha-input-background-color: #fff;
   --altcha-shadow: none;
 }

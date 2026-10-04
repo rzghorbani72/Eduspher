@@ -3,6 +3,7 @@
 import { RegisterDetailsStep } from '@/components/auth/register-details-step';
 import { useTranslation } from '@/lib/i18n/hooks';
 import type { Dispatch, SetStateAction, JSX } from 'react';
+import type { HumanCheckState } from '@/hooks/use-human-check';
 import { RegisterValues, Step } from '../_lib/register-form-helpers';
 import { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 
@@ -26,13 +27,7 @@ export function RegisterDetailsPanel({
   errorBlock: JSX.Element | null;
   errors: FieldErrors<RegisterValues>;
   isLoading: boolean;
-  loginCaptcha: {
-    token: string;
-    setToken: Dispatch<SetStateAction<string>>;
-    resetKey: number;
-    reset: () => void;
-    solved: boolean;
-  };
+  loginCaptcha: HumanCheckState;
   onFormSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
   primaryVerificationMethod: 'phone' | 'email';
   register: UseFormRegister<RegisterValues>;
