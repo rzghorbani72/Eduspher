@@ -49,7 +49,7 @@ export function CoursePreviewPlayer({
 
   return (
     <div id="course-preview-player" className="scroll-mt-24">
-      <div className="cd-preview-card group relative">
+      <div className="cd-preview-card relative">
         {!coverUrl ? (
           <CourseCoverPlaceholder
             courseId={courseId}
@@ -69,19 +69,10 @@ export function CoursePreviewPlayer({
             className="relative z-10 h-full w-full"
           />
         ) : coverUrl ? (
-          <>
-            <AppImage
-              src={coverUrl}
-              alt={coverAlt}
-              preset="cover"
-              fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="cd-preview-overlay" />
-          </>
+          <AppImage src={coverUrl} alt={coverAlt} preset="cover" fill className="object-cover" />
         ) : null}
         {hasPreviewLessons && (
-          <span className="cd-preview-label absolute end-3 top-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
+          <span className="cd-glass absolute end-3 top-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
             {t('courses.freePreview')}
           </span>
         )}

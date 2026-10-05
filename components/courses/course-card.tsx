@@ -95,7 +95,9 @@ export const CourseCard = ({ course, storeSlug = null, store = null }: CourseCar
             {monogram}
           </span>
         )}
-        <div className="absolute inset-0 bg-linear-to-b from-black/5 to-black/35" />
+        {coverUrl ? null : (
+          <div className="absolute inset-0 bg-linear-to-b from-black/5 to-black/35" />
+        )}
 
         {course.Category ? (
           <span className="absolute top-3 right-3 rounded-full bg-white/90 px-[11px] py-[5px] text-xs font-extrabold text-[#23253f] backdrop-blur-sm">

@@ -42,7 +42,7 @@ export function TemplateCourseCard({
     <article className="group flex h-full w-full min-w-0 flex-col overflow-hidden rounded-(--theme-border-radius) border border-(--theme-border-color) bg-(--theme-surface) shadow-(--theme-shadow) transition-[transform,border-color] duration-200 hover:-translate-y-1 hover:border-(--theme-primary)">
       <a href={course.href} className="flex flex-1 cursor-pointer flex-col">
         <div
-          className={cn(thumbClassName, COURSE_CARD_THUMB_CLASS)}
+          className={cn(thumbClassName, COURSE_CARD_THUMB_CLASS, coverUrl && 'course-cover-clean')}
           style={
             coverUrl
               ? {

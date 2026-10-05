@@ -2259,7 +2259,11 @@ select[class*='rounded-sm'] {
   background: #ef4444;
 }
 .cd-teacher-avatar {
-  background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-primary) 75%, #fff),
+    color-mix(in srgb, var(--theme-accent) 75%, #fff)
+  );
   color: var(--theme-on-primary);
 }
 .cd-preview-card {
@@ -2268,7 +2272,12 @@ select[class*='rounded-sm'] {
   overflow: hidden;
   background: var(--theme-surface);
   border: 1px solid var(--theme-border-color);
-  box-shadow: 0 20px 40px -18px color-mix(in srgb, var(--theme-primary) 35%, transparent);
+  box-shadow: 0 20px 40px -20px color-mix(in srgb, var(--theme-primary) 18%, transparent);
+}
+/* Template card patterns decorate the empty gradient only, never a real cover photo. */
+.course-cover-clean.course-cover-clean::before,
+.course-cover-clean.course-cover-clean::after {
+  content: none;
 }
 .cd-preview-placeholder {
   background: linear-gradient(
@@ -2344,30 +2353,12 @@ select[class*='rounded-sm'] {
   );
   pointer-events: none;
 }
-.cd-preview-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4));
-}
-.cd-preview-label {
-  background: rgba(0, 0, 0, 0.32);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-  color: #fff;
-}
 
 /* Prices & numeric stats — force a Persian-friendly font with tabular figures */
 .cd-price {
   font-family: 'Vazirmatn', sans-serif;
   font-feature-settings: 'tnum';
   font-variant-numeric: tabular-nums;
-}
-
-/* Center play button over the preview media */
-.cd-play-btn {
-  background: rgba(255, 255, 255, 0.95);
-  color: #15172b;
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
 }
 
 /* Enrollment sidebar */
@@ -2385,24 +2376,28 @@ select[class*='rounded-sm'] {
 .cd-badge-save,
 .cd-badge-popular {
   background: var(--theme-accent-subtle);
-  color: color-mix(in srgb, var(--theme-accent) 60%, var(--theme-foreground));
+  color: color-mix(in srgb, var(--theme-accent) 75%, var(--theme-foreground));
 }
 .cd-cta-btn {
   background: linear-gradient(
     135deg,
-    var(--theme-primary),
-    color-mix(in srgb, var(--theme-secondary) 70%, var(--theme-primary))
+    color-mix(in srgb, var(--theme-primary) 88%, #fff),
+    color-mix(
+      in srgb,
+      var(--theme-secondary) 55%,
+      color-mix(in srgb, var(--theme-primary) 80%, #fff)
+    )
   );
   color: var(--theme-on-primary);
-  box-shadow: 0 12px 24px -10px var(--theme-primary);
+  box-shadow: 0 10px 22px -12px color-mix(in srgb, var(--theme-primary) 45%, transparent);
 }
 .cd-side-card {
   background: var(--theme-background);
   border-color: color-mix(in srgb, var(--theme-primary) 25%, var(--theme-border-color));
-  box-shadow: 0 30px 60px -24px color-mix(in srgb, var(--theme-primary) 35%, transparent);
+  box-shadow: 0 30px 60px -28px color-mix(in srgb, var(--theme-primary) 18%, transparent);
 }
 .cd-price-ink {
-  color: var(--theme-primary-ink);
+  color: color-mix(in srgb, var(--theme-primary) 80%, var(--theme-foreground));
 }
 .cd-include-icon {
   background: color-mix(in srgb, var(--theme-primary) 12%, transparent);
@@ -2471,7 +2466,7 @@ select[class*='rounded-sm'] {
   border-color: var(--ac);
   box-shadow:
     0 0 0 3px color-mix(in srgb, var(--ac) 14%, transparent),
-    0 14px 28px -16px color-mix(in srgb, var(--ac) 45%, transparent);
+    0 14px 28px -18px color-mix(in srgb, var(--ac) 25%, transparent);
 }
 .cd-class-tile {
   background: linear-gradient(
@@ -2494,10 +2489,10 @@ select[class*='rounded-sm'] {
 .cd-class-icon {
   background: var(--theme-background);
   color: var(--ac);
-  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--ac) 70%, transparent);
+  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--ac) 35%, transparent);
 }
 .cd-class-ink {
-  color: color-mix(in srgb, var(--ac) 70%, var(--theme-foreground));
+  color: color-mix(in srgb, var(--ac) 80%, var(--theme-foreground));
 }
 .cd-day {
   background: var(--theme-surface);
@@ -2508,7 +2503,7 @@ select[class*='rounded-sm'] {
 .cd-class-offer-btn,
 .cd-class-selected .cd-class-pick {
   background: color-mix(in srgb, var(--ac) 20%, var(--theme-background));
-  color: color-mix(in srgb, var(--ac) 70%, var(--theme-foreground));
+  color: color-mix(in srgb, var(--ac) 80%, var(--theme-foreground));
   font-weight: 600;
 }
 .cd-class-offer-btn,
