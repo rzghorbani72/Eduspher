@@ -18,6 +18,7 @@
     "Tutoring": "Logs emitted by the Tutoring domain."
   },
   "events": {
+    "Account.AvatarCropFailed": "Browser could not crop the picked avatar before upload.",
     "Account.AvatarRemoved": "Account avatar removed.",
     "Account.AvatarUpdated": "Account avatar updated.",
     "Account.AvatarUpdateFailed": "Account avatar update failed.",

@@ -10,6 +10,11 @@ export const LOG_CATALOG = {
   Account: {
     description: 'The account area a student uses on the public website.',
     actions: {
+      AvatarCropFailed: {
+        description: 'Browser could not crop the picked avatar before upload.',
+        level: 'error',
+        fields: [] as const,
+      },
       AvatarRemoved: {
         description: 'Account avatar removed.',
         level: 'info',

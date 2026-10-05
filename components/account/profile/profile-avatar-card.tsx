@@ -6,6 +6,9 @@ import { Camera, Loader2, Trash2, ImageIcon } from 'lucide-react';
 
 import { AccountSection } from '@/components/account/account-section';
 import { Button } from '@/components/ui/button';
+import { ImageCropDialog } from '@/components/ui/image-crop-dialog';
+import { useImageCrop } from '@/hooks/use-image-crop';
+import { CROP_PRESETS } from '@/lib/image-crop';
 import { updateProfile, uploadImage } from '@/lib/api/client';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { logger } from '@/lib/logging/app-logger';
@@ -97,9 +100,10 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
       setError(err instanceof Error ? err.message : t('account.avatarUploadFailed'));
     } finally {
       setBusy(false);
-      if (inputRef.current) inputRef.current.value = '';
     }
   }
+
+  const cropper = useImageCrop(CROP_PRESETS.avatar, (file) => void handleFile(file));
 
   return (
     <AccountSection
@@ -132,7 +136,8 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
             className="hidden"
             onChange={(event) => {
               const file = event.target.files?.[0];
-              if (file) void handleFile(file);
+              if (file) cropper.pick(file);
+              event.target.value = '';
             }}
           />
           <Button
@@ -188,6 +193,7 @@ export function ProfileAvatarCard({ profileId, displayName, avatarUrl }: Profile
         </p>
       ) : null}
       {message ? <p className="mt-3 text-center text-sm text-green-600">{message}</p> : null}
+      {cropper.dialog ? <ImageCropDialog {...cropper.dialog} /> : null}
     </AccountSection>
   );
 }

@@ -502,6 +502,11 @@ const tr = {
     privacyPolicy: 'Gizlilik Politikası',
   },
   account: {
+    cropTitle: 'Görseli kırp',
+    cropHint: 'Görselin en iyi kısmı çerçeveye sığacak şekilde sürükleyip yakınlaştırın.',
+    cropZoom: 'Yakınlaştır',
+    cropConfirm: 'Kırp ve yükle',
+    cropFailed: 'Görsel kırpılamadı. Lütfen başka bir görsel deneyin.',
     groupClasses: 'Group classes',
     groupWaitingToStart: 'Waiting to start',
     groupWaitingExplain: 'This class starts once this many more students join:',

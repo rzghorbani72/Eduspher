@@ -764,6 +764,11 @@ export const en = {
     printHint: "Use your browser's print option to save this as a PDF.",
   },
   account: {
+    cropTitle: 'Crop image',
+    cropHint: 'Drag and zoom so the best part of the image fits the frame.',
+    cropZoom: 'Zoom',
+    cropConfirm: 'Crop and upload',
+    cropFailed: 'Could not crop the image. Please try another image.',
     certificates: 'Certificates',
     certificatesDescription: 'The course certificates you have earned.',
     noCertificates: 'You have no certificates yet.',

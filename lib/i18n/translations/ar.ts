@@ -499,6 +499,11 @@ export const ar = {
     privacyPolicy: 'سياسة الخصوصية',
   },
   account: {
+    cropTitle: 'قص الصورة',
+    cropHint: 'اسحب الصورة وكبّرها ليظهر أفضل جزء منها داخل الإطار.',
+    cropZoom: 'تكبير',
+    cropConfirm: 'قص ورفع',
+    cropFailed: 'تعذّر قص الصورة. يرجى تجربة صورة أخرى.',
     groupClasses: 'Group classes',
     groupWaitingToStart: 'Waiting to start',
     groupWaitingExplain: 'This class starts once this many more students join:',
