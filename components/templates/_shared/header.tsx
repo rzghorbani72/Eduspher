@@ -12,6 +12,7 @@ import { RemovableSlot } from './removable-slot';
 import { list, text, type SectionConfig } from './types';
 import { templateHref, type TemplateRoute } from './routes';
 import { editableList, editableItem } from './editable-list';
+import { MobileMenu } from './mobile-menu';
 
 export interface HeaderNavItem {
   label: string;
@@ -229,14 +230,12 @@ export async function TemplateTopBar({
             {ctaSlot}
             {accountSlot}
 
-            {/* CSS-only mobile menu: native disclosure, no JavaScript. */}
-            <details className="relative lg:hidden">
-              <summary
-                aria-label="منو"
-                className="grid size-10 cursor-pointer list-none place-items-center rounded-(--theme-border-radius) border border-current/25 [&::-webkit-details-marker]:hidden"
-              >
-                <span aria-hidden="true">☰</span>
-              </summary>
+            <MobileMenu
+              label="منو"
+              className="lg:hidden"
+              summaryClassName="grid size-10 cursor-pointer list-none place-items-center rounded-(--theme-border-radius) border border-current/25 [&::-webkit-details-marker]:hidden"
+              summary={<span aria-hidden="true">☰</span>}
+            >
               <div
                 className={`absolute end-0 top-[calc(100%+8px)] z-50 w-56 rounded-(--theme-border-radius) border p-2 shadow-(--theme-shadow) ${
                   spec.tone === 'deep'
@@ -267,7 +266,7 @@ export async function TemplateTopBar({
                   />
                 </div>
               </div>
-            </details>
+            </MobileMenu>
           </div>
         </div>
       </Container>
