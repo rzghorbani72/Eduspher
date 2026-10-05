@@ -29,7 +29,9 @@ const DIFFICULTY_KEY: Record<string, string> = {
 };
 
 const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="cd-white-badge rounded-full px-3 py-1.5 text-[13px] font-bold">{children}</span>
+  <span className="cd-white-badge rounded-full px-3 py-1 text-[13px] font-semibold">
+    {children}
+  </span>
 );
 
 /** Server-rendered so the title, summary and stats stay crawlable. */
@@ -52,9 +54,6 @@ export function CourseHero({
 
   return (
     <section className="cd-hero relative -mt-8 overflow-hidden sm:-mt-10 lg:-mt-12">
-      <div className="cd-hero-orb-left" />
-      <div className="cd-hero-orb-right" />
-
       <div className="relative mx-auto max-w-[1240px] px-4 pt-10 pb-36 sm:px-6 lg:px-8">
         <nav
           aria-label="breadcrumb"
@@ -75,7 +74,7 @@ export function CourseHero({
 
         <div className="mb-5 flex flex-wrap items-center gap-2.5">
           {isLive && (
-            <span className="cd-live-badge flex items-center gap-2 rounded-full px-3 py-1.5 text-[13px] font-bold">
+            <span className="cd-live-badge flex items-center gap-2 rounded-full px-3 py-1 text-[13px] font-bold">
               <span className="cd-blink-dot h-2 w-2 rounded-full" />
               {translate('courses.liveCourse')}
             </span>

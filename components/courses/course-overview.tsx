@@ -12,7 +12,7 @@ import { ShowMoreButton, useShowMore } from '@/components/courses/show-more';
 import type { CourseSummary } from '@/lib/api/types';
 import type { CourseContentStats } from '@/lib/courses/curriculum';
 import { parseAuthoredList } from '@/lib/courses/curriculum';
-import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
+import { formatMinutes } from '@/components/courses/curriculum/format';
 
 interface CourseOverviewProps {
   course: CourseSummary;
@@ -61,11 +61,6 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
       key: 'assignment',
       value: toPersianDigits(stats.assignmentCount, language),
       label: t('courses.statAssignmentLabel'),
-    },
-    {
-      key: 'access',
-      value: formatAccessTerm(course.access_duration_days, language, t),
-      label: t('courses.statAccessLabel'),
     },
     course.difficulty && {
       key: 'difficulty',
@@ -148,8 +143,10 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {facts.map((fact) => (
-          <div key={fact.key} className="cd-review-card rounded-2xl border p-4 text-center">
-            <div className="cd-price text-lg font-black text-(--theme-primary)">{fact.value}</div>
+          <div key={fact.key} className="bg-surface rounded-xl p-4">
+            <div className="cd-price text-base font-bold text-(--theme-foreground)">
+              {fact.value}
+            </div>
             <div className="mt-1 text-xs text-(--theme-muted)">{fact.label}</div>
           </div>
         ))}

@@ -31,7 +31,7 @@ export function LiveCoursePanel() {
       : null;
 
   return (
-    <div className="cd-side-card hidden overflow-hidden rounded-2xl border shadow-2xl lg:block">
+    <div className="cd-side-card hidden overflow-hidden rounded-2xl border lg:block">
       <div className="space-y-4 p-5">
         <div className="flex items-center gap-2 text-xs font-bold text-(--theme-primary-ink)">
           <CalendarClock className="size-4" aria-hidden="true" />

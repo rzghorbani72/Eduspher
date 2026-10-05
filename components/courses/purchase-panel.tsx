@@ -98,7 +98,7 @@ export function PurchasePanel({
 
   if (hasAccess) {
     return (
-      <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
+      <div className="cd-side-card overflow-hidden rounded-2xl border">
         <MyAccessPanel
           access={access}
           owned={ownedOptions}
@@ -119,7 +119,7 @@ export function PurchasePanel({
   const disabled = isBusy || enrollmentClosed;
 
   return (
-    <div className="cd-side-card overflow-hidden rounded-2xl border shadow-2xl">
+    <div className="cd-side-card overflow-hidden rounded-2xl border">
       <div className="px-6 pt-6 pb-2">
         <h2 className="text-lg font-black text-(--theme-foreground)">
           {t('courses.chooseEnrollMethod')}

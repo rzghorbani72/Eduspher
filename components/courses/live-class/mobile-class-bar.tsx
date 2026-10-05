@@ -21,7 +21,7 @@ export function MobileClassBar() {
     : null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-(--theme-border-color) bg-(--theme-card-bg) px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-2xl lg:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-(--theme-border-color) bg-(--theme-background) px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
       {selected ? (
         <a href={`#${GROUP_CLASSES_ANCHOR_ID}`} className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-(--theme-foreground)">{selected.title}</p>

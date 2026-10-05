@@ -72,7 +72,7 @@ export function CourseDetailTabs({
     <div className="space-y-7">
       <div
         role="tablist"
-        className="flex gap-1 overflow-x-auto rounded-full border border-(--theme-border-color) bg-(--theme-surface) p-[5px]"
+        className="flex gap-6 overflow-x-auto border-b border-(--theme-border-color)"
       >
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
@@ -83,7 +83,7 @@ export function CourseDetailTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActiveTab(tab.key)}
-              className={`relative min-w-fit flex-1 rounded-full px-3 py-2.5 text-sm font-extrabold whitespace-nowrap transition-colors duration-200 ${
+              className={`relative min-w-fit px-1 pb-3 text-sm font-bold whitespace-nowrap transition-colors duration-200 ${
                 isActive
                   ? 'text-(--theme-foreground)'
                   : 'text-(--theme-muted) hover:text-(--theme-foreground)'
@@ -92,7 +92,7 @@ export function CourseDetailTabs({
               {isActive && (
                 <motion.span
                   layoutId="cd-tab-bg"
-                  className="absolute inset-0 rounded-full bg-(--theme-card-bg) shadow-sm"
+                  className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-(--theme-primary)"
                   transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 />
               )}

@@ -25,7 +25,7 @@ export function PublicGroupSessions({ sessions, timezone }: PublicGroupSessionsP
         {sessions.map((session) => (
           <li
             key={session.starts_at}
-            className="bg-surface cd-price rounded-lg px-2 py-1 text-xs text-(--theme-foreground)"
+            className="border-theme cd-price rounded-md border px-2 py-0.5 text-xs text-(--theme-foreground)"
           >
             {formatDateTime(session.starts_at, language, timezone)}
           </li>

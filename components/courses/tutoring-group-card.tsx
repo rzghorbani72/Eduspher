@@ -80,9 +80,11 @@ export const TutoringGroupCard = ({
         onSelect();
       }}
       className={cn(
-        'bg-card grid cursor-pointer scroll-mt-24 gap-5 rounded-2xl border-2 p-5 transition-colors md:grid-cols-[minmax(0,1fr)_280px]',
+        'grid cursor-pointer scroll-mt-24 gap-5 rounded-2xl border p-5 backdrop-blur-md transition-colors md:grid-cols-[minmax(0,1fr)_280px]',
         'focus-visible:ring-2 focus-visible:ring-(--theme-primary) focus-visible:outline-none',
-        selected ? 'border-(--theme-primary)' : 'border-theme hover:border-(--theme-primary)/50',
+        selected
+          ? 'border-(--theme-primary)/35 bg-(--theme-primary)/5'
+          : 'border-(--theme-foreground)/6 bg-(--theme-background)/60 hover:border-(--theme-foreground)/12',
       )}
     >
       <div className="space-y-3">
@@ -145,7 +147,7 @@ export const TutoringGroupCard = ({
         ) : null}
       </div>
 
-      <div className="md:border-theme space-y-3 md:border-s md:ps-5">
+      <div className="space-y-3 md:border-s md:border-(--theme-foreground)/6 md:ps-5">
         {showPricing ? (
           <TutoringGroupPricing
             group={group}
