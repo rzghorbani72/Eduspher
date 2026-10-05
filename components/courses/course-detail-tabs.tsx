@@ -72,7 +72,7 @@ export function CourseDetailTabs({
     <div className="space-y-7">
       <div
         role="tablist"
-        className="flex gap-6 overflow-x-auto border-b border-(--theme-border-color)"
+        className="flex gap-6 overflow-x-auto overflow-y-hidden border-b border-(--theme-border-color) [scrollbar-width:none]"
       >
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
@@ -92,7 +92,7 @@ export function CourseDetailTabs({
               {isActive && (
                 <motion.span
                   layoutId="cd-tab-bg"
-                  className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-(--theme-primary)"
+                  className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-(--theme-primary)"
                   transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                 />
               )}
