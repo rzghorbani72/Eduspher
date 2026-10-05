@@ -47,6 +47,7 @@ import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum
 import { buildCourseJsonLd, buildBreadcrumbJsonLd } from '@/lib/seo/course-json-ld';
 import { getSeoRequestContext } from '@/lib/seo/request-context';
 import { serializeJsonLd } from '@/lib/seo/json-ld-script';
+import { LoginDialogProvider } from '@/components/courses/quick-enroll/login-dialog-provider';
 
 type PageParams = Promise<{ slug: string }>;
 
@@ -198,9 +199,7 @@ export default async function CourseDetailPage({
   const loginHref = buildPath(
     `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
   );
-  const teacherChatLoginHref = buildPath(
-    `/auth/login?redirect=${encodeURIComponent(teacherChatHref(coursePath(course.slug)))}`,
-  );
+  const teacherChatNext = buildPath(teacherChatHref(coursePath(course.slug)));
   // Free lessons open the full learning page for everyone, enrolled or not —
   // the page itself only requires sign-in, not a purchase, for a free lesson.
   const previewBasePath = learnPathHref;
@@ -232,90 +231,91 @@ export default async function CourseDetailPage({
 
   const isLive = isLiveCourse(course);
   const courseBody = (
-    <PreviewPlayerProvider media={previewMedia} defaultLessonId={defaultPreviewId}>
-      <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_340px]">
-        <div className="min-w-0">
-          <CoursePreviewPlayer
-            promoVideoId={promoVideoId}
-            courseId={course.id}
-            coverUrl={coverUrl}
-            courseTitle={course.title}
-            coverAlt={course.Image?.alt ?? course.title}
-            hasPreviewLessons={stats.previewCount > 0}
-          />
-
-          <div className="mt-7">
-            <CourseDetailTabs
-              course={course}
-              isLoggedIn={!!user}
-              previewBasePath={previewBasePath}
-              hasLessonAccess={isEnrolled}
-              prerequisiteHref={
-                course.PrerequisiteCourse
-                  ? buildPath(coursePath(course.PrerequisiteCourse.slug))
-                  : null
-              }
-              instructorAvatarUrl={avatarUrl}
-              topics={topics}
-              initialTab={isCourseTabKey(tab) ? tab : undefined}
-              teacherChat={
-                isStaff ? null : (
-                  <TeacherChat
-                    courseId={isEnrolled || hasLiveSeat ? course.id : null}
-                    currentProfileId={user ? String(user.id) : null}
-                    loginHref={user ? null : teacherChatLoginHref}
-                  />
-                )
-              }
-              classes={
-                isLive ? (
-                  <div className="space-y-8">
-                    {tutoringGroups.length ? (
-                      <TutoringGroupsSection />
-                    ) : (
-                      <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
-                        {translate('courses.liveNoClassesYet')}
-                      </p>
-                    )}
-                    {!hasLiveSeat && !isStaff ? (
-                      <ClassRequestSection
-                        courseId={course.id}
-                        hasOpenClasses={tutoringGroups.length > 0}
-                        isLoggedIn={!!user}
-                        loginHref={loginHref}
-                      />
-                    ) : null}
-                  </div>
-                ) : null
-              }
+    <LoginDialogProvider>
+      <PreviewPlayerProvider media={previewMedia} defaultLessonId={defaultPreviewId}>
+        <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_340px]">
+          <div className="min-w-0">
+            <CoursePreviewPlayer
+              promoVideoId={promoVideoId}
+              courseId={course.id}
+              coverUrl={coverUrl}
+              courseTitle={course.title}
+              coverAlt={course.Image?.alt ?? course.title}
+              hasPreviewLessons={stats.previewCount > 0}
             />
+
+            <div className="mt-7">
+              <CourseDetailTabs
+                course={course}
+                isLoggedIn={!!user}
+                previewBasePath={previewBasePath}
+                hasLessonAccess={isEnrolled}
+                prerequisiteHref={
+                  course.PrerequisiteCourse
+                    ? buildPath(coursePath(course.PrerequisiteCourse.slug))
+                    : null
+                }
+                instructorAvatarUrl={avatarUrl}
+                topics={topics}
+                initialTab={isCourseTabKey(tab) ? tab : undefined}
+                teacherChat={
+                  isStaff ? null : (
+                    <TeacherChat
+                      courseId={isEnrolled || hasLiveSeat ? course.id : null}
+                      currentProfileId={user ? String(user.id) : null}
+                      loginNext={user ? null : teacherChatNext}
+                    />
+                  )
+                }
+                classes={
+                  isLive ? (
+                    <div className="space-y-8">
+                      {tutoringGroups.length ? (
+                        <TutoringGroupsSection />
+                      ) : (
+                        <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
+                          {translate('courses.liveNoClassesYet')}
+                        </p>
+                      )}
+                      {!hasLiveSeat && !isStaff ? (
+                        <ClassRequestSection
+                          courseId={course.id}
+                          hasOpenClasses={tutoringGroups.length > 0}
+                          isLoggedIn={!!user}
+                        />
+                      ) : null}
+                    </div>
+                  ) : null
+                }
+              />
+            </div>
           </div>
-        </div>
 
-        <aside id="course-purchase" className="space-y-3 lg:sticky lg:top-[72px]">
-          <RoleBadges roles={roles} />
-          {isLive ? (
-            <LiveCoursePanel />
-          ) : (
-            <PurchasePanel
-              options={options}
-              language={language}
-              currencyConfig={currencyConfig}
-              loginHref={loginHref}
-              isLoggedIn={!!user}
-              continueHref={isEnrolled ? learnPathHref : null}
-              learnHref={learnPathHref}
-              liveClassesHref={liveClassHref}
-              tutoringHref={tutoringHref}
-              access={access}
-              stats={stats}
-              progressPercent={isEnrolled ? progressPercent : null}
-              isCertificate={features.certificates_enabled && Boolean(course.is_certificate)}
-            />
-          )}
-        </aside>
-      </div>
-    </PreviewPlayerProvider>
+          <aside id="course-purchase" className="space-y-3 lg:sticky lg:top-[72px]">
+            <RoleBadges roles={roles} />
+            {isLive ? (
+              <LiveCoursePanel />
+            ) : (
+              <PurchasePanel
+                options={options}
+                language={language}
+                currencyConfig={currencyConfig}
+                loginHref={loginHref}
+                isLoggedIn={!!user}
+                continueHref={isEnrolled ? learnPathHref : null}
+                learnHref={learnPathHref}
+                liveClassesHref={liveClassHref}
+                tutoringHref={tutoringHref}
+                access={access}
+                stats={stats}
+                progressPercent={isEnrolled ? progressPercent : null}
+                isCertificate={features.certificates_enabled && Boolean(course.is_certificate)}
+              />
+            )}
+          </aside>
+        </div>
+      </PreviewPlayerProvider>
+    </LoginDialogProvider>
   );
 
   return (

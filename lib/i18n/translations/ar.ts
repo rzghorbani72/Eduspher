@@ -83,6 +83,8 @@ export const ar = {
     changeClass: 'تغيير الصف',
     enrollLogin: 'سجّل الدخول للتسجيل',
     guestClassesHint: 'اختر الصف الذي تناسبك أوقاته واضغط «سجّل» — تدخل برقم هاتفك ورمز تحقق فقط.',
+    quickLoginTitle: 'دخول سريع',
+    quickLoginConfirm: 'تحقّق وادخل',
     quickEnrollTitle: 'دخول سريع للتسجيل',
     quickEnrollHint: 'أدخل رقم هاتفك؛ سنرسل لك رمزاً نصياً. لا حاجة لكلمة مرور.',
     quickEnrollConfirm: 'تحقّق وتابع',

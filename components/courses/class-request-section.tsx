@@ -10,14 +10,12 @@ interface ClassRequestSectionProps {
   courseId: string;
   hasOpenClasses: boolean;
   isLoggedIn: boolean;
-  loginHref: string;
 }
 
 export function ClassRequestSection({
   courseId,
   hasOpenClasses,
   isLoggedIn,
-  loginHref,
 }: ClassRequestSectionProps) {
   const { t } = useTranslation();
 
@@ -43,7 +41,7 @@ export function ClassRequestSection({
       </div>
       <div className="border-theme bg-card rounded-2xl border p-5 md:p-6">
         <div className="max-w-xl">
-          <ClassRequestForm courseId={courseId} isLoggedIn={isLoggedIn} loginHref={loginHref} />
+          <ClassRequestForm courseId={courseId} isLoggedIn={isLoggedIn} />
         </div>
       </div>
     </section>

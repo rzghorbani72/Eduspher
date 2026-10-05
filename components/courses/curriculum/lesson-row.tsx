@@ -14,7 +14,8 @@ import {
 import Link from '@/components/ui/link';
 
 import { usePreviewPlayer } from '@/components/courses/preview-player-context';
-
+import { useRequireLogin } from '@/components/courses/quick-enroll/login-dialog-provider';
+import { useAuthContext } from '@/components/providers/auth-provider';
 import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn, toPersianDigits } from '@/lib/utils';
@@ -86,6 +87,8 @@ export function LessonRow({ lesson, now, previewHref, unlocked = false }: Lesson
   const { t, language } = useTranslation();
   const { quizzes_enabled } = usePlatformFeatures();
   const player = usePreviewPlayer();
+  const { isAuthenticated } = useAuthContext();
+  const requireLogin = useRequireLogin();
   const Icon = TYPE_ICON[lesson.type];
   const live = lesson.live ? liveStateAt(lesson.live, now) : null;
   const isRunning = live === 'running';
@@ -216,7 +219,16 @@ export function LessonRow({ lesson, now, previewHref, unlocked = false }: Lesson
   if (canOpen && previewHref) {
     return (
       <li>
-        <Link href={previewHref} aria-label={openLabel} className={rowClass}>
+        <Link
+          href={previewHref}
+          aria-label={openLabel}
+          className={rowClass}
+          onClick={(event) => {
+            if (isAuthenticated) return;
+            event.preventDefault();
+            requireLogin(previewHref);
+          }}
+        >
           {rowBody}
         </Link>
       </li>

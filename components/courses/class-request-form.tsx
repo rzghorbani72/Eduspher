@@ -6,12 +6,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Link from '@/components/ui/link';
 import { Textarea } from '@/components/ui/textarea';
 import {
   ClassRequestWindowRow,
   type RequestWindow,
 } from '@/components/courses/class-request-window-row';
+import { useRequireLogin } from '@/components/courses/quick-enroll/login-dialog-provider';
 import { postJson } from '@/lib/api/client';
 import { sortWeekdays } from '@/lib/courses/weekly-rule';
 import { useTranslation } from '@/lib/i18n/hooks';
@@ -27,7 +27,6 @@ const toMinute = (time: string): number => {
 interface ClassRequestFormProps {
   courseId: string;
   isLoggedIn: boolean;
-  loginHref: string;
   /** The student's own paid private class: one seat, asked from its classroom. */
   engagementId?: string;
   onDone?: () => void;
@@ -40,11 +39,11 @@ interface ClassRequestFormProps {
 export function ClassRequestForm({
   courseId,
   isLoggedIn,
-  loginHref,
   engagementId,
   onDone,
 }: ClassRequestFormProps) {
   const { t } = useTranslation();
+  const requireLogin = useRequireLogin();
   const [seats, setSeats] = useState('1');
   const [windows, setWindows] = useState<RequestWindow[]>([
     { weekday: WEEK[0], from: '16:00', duration: 90 },
@@ -85,13 +84,14 @@ export function ClassRequestForm({
 
   if (!isLoggedIn) {
     return (
-      <Link
-        href={loginHref}
+      <button
+        type="button"
+        onClick={() => requireLogin()}
         className="inline-flex items-center gap-2 text-sm font-semibold text-(--theme-primary-ink) underline-offset-4 hover:underline"
       >
         <CalendarPlus className="size-4" aria-hidden="true" />
         {t('courses.requestClassLogin')}
-      </Link>
+      </button>
     );
   }
 

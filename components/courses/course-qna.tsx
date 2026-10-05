@@ -1,15 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 
 import { CourseQnAForm } from '@/components/courses/course-qna-form';
 import { CourseQnAItem } from '@/components/courses/course-qna-item';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
-import { useStorePath } from '@/components/providers/store-provider';
+import { useRequireLogin } from '@/components/courses/quick-enroll/login-dialog-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { getCourseQnAs, type CourseQnAList } from '@/lib/api/client';
 
@@ -27,8 +25,7 @@ const formatQnADate = (iso: string, language: string) =>
 
 export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
   const { t, language } = useTranslation();
-  const buildPath = useStorePath();
-  const pathname = usePathname();
+  const requireLogin = useRequireLogin();
   const [list, setList] = useState<CourseQnAList | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
@@ -51,8 +48,6 @@ export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
     }
   }, [isLoggedIn, load]);
 
-  const loginHref = buildPath(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
-
   return (
     <section className="space-y-5">
       <div>
@@ -69,10 +64,10 @@ export function CourseQnA({ courseId, isLoggedIn }: CourseQnASectionProps) {
             description={t('courseQnA.loginToAskDescription')}
             action={
               <Button
-                asChild
+                onClick={() => requireLogin()}
                 className="cd-cta-btn h-11 px-6 text-sm font-extrabold text-white hover:scale-100"
               >
-                <Link href={loginHref}>{t('navigation.login')}</Link>
+                {t('navigation.login')}
               </Button>
             }
           />

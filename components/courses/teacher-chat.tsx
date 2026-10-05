@@ -4,19 +4,21 @@ import { MessageCircle } from 'lucide-react';
 
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
 import { Button } from '@/components/ui/button';
-import Link from '@/components/ui/link';
+import { useRequireLogin } from '@/components/courses/quick-enroll/login-dialog-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface TeacherChatProps {
   /** Set only when the viewer holds the course (bought, granted, or a class seat). */
   courseId: string | null;
   currentProfileId: string | null;
-  loginHref: string | null;
+  /** Guests only: where the page reopens after the quick sign-in. */
+  loginNext: string | null;
 }
 
 /** Private student ↔ teacher chat on the course page's teacher tab. Zip files only. */
-export function TeacherChat({ courseId, currentProfileId, loginHref }: TeacherChatProps) {
+export function TeacherChat({ courseId, currentProfileId, loginNext }: TeacherChatProps) {
   const { t } = useTranslation();
+  const requireLogin = useRequireLogin();
 
   return (
     <section className="border-theme bg-card space-y-3 rounded-2xl border p-5">
@@ -35,10 +37,14 @@ export function TeacherChat({ courseId, currentProfileId, loginHref }: TeacherCh
           allowAttachments
           zipOnly
         />
-      ) : loginHref ? (
-        <Link href={loginHref} className="text-sm font-bold text-(--theme-primary-ink)">
+      ) : loginNext ? (
+        <button
+          type="button"
+          onClick={() => requireLogin(loginNext)}
+          className="text-sm font-bold text-(--theme-primary-ink)"
+        >
           {t('courses.teacherChatLogin')}
-        </Link>
+        </button>
       ) : (
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-muted text-sm">{t('courses.teacherChatJoinFirst')}</p>

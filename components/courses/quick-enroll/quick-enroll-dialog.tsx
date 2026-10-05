@@ -17,7 +17,9 @@ const OTP_LENGTH = 5;
 
 interface QuickEnrollDialogProps {
   /** Class the visitor picked, shown so they know what the code unlocks. */
-  classTitle: string;
+  classTitle?: string;
+  title?: string;
+  confirmLabel?: string;
   loginHref: string;
   onDone: () => void;
   onClose: () => void;
@@ -28,12 +30,11 @@ const fieldClassName =
 const primaryButtonClassName =
   'flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-(--theme-primary) text-sm font-bold text-(--theme-on-primary) transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60';
 
-/**
- * Phone → code, nothing else, so a guest who found a class time that suits
- * them enrolls without leaving the course page. New phones give a name too.
- */
+/** Phone → code, nothing else, so a guest signs in without leaving the course page. */
 export function QuickEnrollDialog({
   classTitle,
+  title,
+  confirmLabel,
   loginHref,
   onDone,
   onClose,
@@ -64,9 +65,9 @@ export function QuickEnrollDialog({
         <div className="border-theme flex items-start justify-between gap-3 border-b px-5 py-4">
           <div>
             <h2 id="quick-enroll-title" className="text-base font-black text-(--theme-foreground)">
-              {t('courses.quickEnrollTitle')}
+              {title ?? t('courses.quickEnrollTitle')}
             </h2>
-            <p className="text-muted mt-0.5 text-xs">{classTitle}</p>
+            {classTitle ? <p className="text-muted mt-0.5 text-xs">{classTitle}</p> : null}
           </div>
           <button
             type="button"
@@ -160,7 +161,9 @@ export function QuickEnrollDialog({
             className={primaryButtonClassName}
           >
             {auth.pending && <Loader2 className="h-4 w-4 animate-spin" />}
-            {auth.step === 'phone' ? t('auth.continueLabel') : t('courses.quickEnrollConfirm')}
+            {auth.step === 'phone'
+              ? t('auth.continueLabel')
+              : (confirmLabel ?? t('courses.quickEnrollConfirm'))}
           </button>
           {auth.step === 'otp' ? (
             <button

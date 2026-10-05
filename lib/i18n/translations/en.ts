@@ -99,6 +99,8 @@ export const en = {
     enrollLogin: 'Sign in to enroll',
     guestClassesHint:
       'Pick the class whose times suit you and press Enroll — you sign in with just your phone number and a code.',
+    quickLoginTitle: 'Quick sign-in',
+    quickLoginConfirm: 'Verify and sign in',
     quickEnrollTitle: 'Quick sign-in to enroll',
     quickEnrollHint: 'Enter your mobile number; we will text you a code. No password needed.',
     quickEnrollConfirm: 'Verify and continue',

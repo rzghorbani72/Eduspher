@@ -83,6 +83,8 @@ const tr = {
     enrollLogin: 'Kaydolmak için giriş yapın',
     guestClassesHint:
       'Saatleri sana uyan sınıfı seç ve Kaydol’a bas — yalnızca telefon numaran ve bir kodla giriş yaparsın.',
+    quickLoginTitle: 'Hızlı giriş',
+    quickLoginConfirm: 'Doğrula ve giriş yap',
     quickEnrollTitle: 'Kayıt için hızlı giriş',
     quickEnrollHint: 'Cep numaranı gir; sana bir kod göndeririz. Şifre gerekmez.',
     quickEnrollConfirm: 'Doğrula ve devam et',

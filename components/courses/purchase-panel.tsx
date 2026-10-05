@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Lock } from 'lucide-react';
 
-import Link from '@/components/ui/link';
+import { useRequireLogin } from '@/components/courses/quick-enroll/login-dialog-provider';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { formatCurrencyWithAcademy, toPersianDigits, cn } from '@/lib/utils';
 import { useEnrollmentClosed } from '@/components/academy/enrollment-status-provider';
@@ -75,6 +75,7 @@ export function PurchasePanel({
 }: PurchasePanelProps) {
   const { t } = useTranslation();
   const enrollmentClosed = useEnrollmentClosed();
+  const requireLogin = useRequireLogin();
   const { purchase, pendingKey, error, gateways, reset } = usePurchase({
     loginHref,
   });
@@ -163,12 +164,13 @@ export function PurchasePanel({
                 : t(CTA_KEY[selected.kind] ?? 'courses.ctaBuy')}
           </button>
         ) : (
-          <Link
-            href={loginHref}
+          <button
+            type="button"
+            onClick={() => requireLogin()}
             className="cd-cta-btn flex h-13 w-full items-center justify-center rounded-full text-base font-extrabold text-white transition-all hover:-translate-y-0.5"
           >
             {t('courses.enrollLogin')}
-          </Link>
+          </button>
         )}
 
         {selected.installments && (
