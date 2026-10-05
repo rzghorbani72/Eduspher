@@ -93,3 +93,18 @@ export const sessionsOfGroup = (group: {
 /** The course page opened on its teacher tab, where a class member chats with the tutor. */
 export const TEACHER_TAB = 'instructor';
 export const teacherChatHref = (courseHref: string): string => `${courseHref}?tab=${TEACHER_TAB}`;
+
+type SeatGroup = { seats_left: number; capacity: number; whole_class_booking: boolean };
+
+/** Most seats one buyer may take now: every seat only when the class allows a whole booking. */
+export const maxSeatsOf = (group: SeatGroup): number =>
+  group.whole_class_booking ? group.seats_left : Math.min(group.seats_left, group.capacity - 1);
+
+/** The buyer is taking every free seat of a class that allows it. */
+export const isWholeBooking = (group: SeatGroup, seats: number): boolean =>
+  group.whole_class_booking && group.seats_left > 1 && seats === group.seats_left;
+
+const CLASS_ACCENTS = ['var(--theme-primary)', '#f79ab5', '#f5bd6b', '#5dd3a8'] as const;
+
+/** Each class card gets its own accent so the list is easy to scan. */
+export const classAccent = (index: number): string => CLASS_ACCENTS[index % CLASS_ACCENTS.length];

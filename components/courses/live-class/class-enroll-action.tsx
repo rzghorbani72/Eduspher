@@ -13,8 +13,8 @@ import {
 import { useTranslation } from '@/lib/i18n/hooks';
 
 const baseCta =
-  'flex h-11 items-center justify-center rounded-xl px-4 text-sm font-bold whitespace-nowrap transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50';
-const primaryCta = `${baseCta} bg-(--theme-primary) text-(--theme-on-primary)`;
+  'flex h-12 items-center justify-center rounded-[14px] px-6 text-[15px] font-bold whitespace-nowrap transition hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0';
+const primaryCta = `${baseCta} cd-cta-btn`;
 const secondaryCta = `${baseCta} border border-(--theme-primary) text-(--theme-primary-ink)`;
 
 /** Why the selected class can't be bought right now, or null when it can (or is mine). */

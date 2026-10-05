@@ -15,6 +15,7 @@ import {
   canBuyMoreSeats,
   enrollHref,
   groupAnchorId,
+  maxSeatsOf,
   pickDefaultClass,
   seatPriceOfGroup,
 } from '@/lib/courses/live-course';
@@ -25,7 +26,12 @@ type LiveClassContextValue = {
   selected: PublicTutoringGroup | null;
   select: (groupId: string) => void;
   seats: number;
-  setSeats: (seats: number) => void;
+  /** Seats for the selected class, or for `groupId` when picking a class in the same click. */
+  setSeats: (seats: number, groupId?: string) => void;
+  /** The signed-in buyer may choose how many seats of the selected class to take. */
+  canPickSeats: boolean;
+  /** What the selected class costs at the chosen seat count. */
+  total: number | null;
   /** Starts enrolling in the selected class: sign-in dialog for guests, checkout otherwise. */
   enroll: () => void;
   pending: boolean;
@@ -91,6 +97,7 @@ export function LiveClassProvider({
   const selected = groups.find((group) => group.id === selectedId) ?? null;
   const seatsFor = (group: PublicTutoringGroup) => seatsByGroup[group.id] ?? 1;
   const canPurchase = !closed && !isStaff;
+  const buyable = Boolean(selected && canPurchase && isLoggedIn && canBuyMoreSeats(selected));
 
   const start = (group: PublicTutoringGroup) => {
     if (!canPurchase || !canBuyMoreSeats(group)) return;
@@ -102,7 +109,6 @@ export function LiveClassProvider({
     if (!resumeClassId) return;
     const picked = groups.find((group) => group.id === resumeClassId);
     if (picked) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from the URL once
       setSelectedId(picked.id);
       if (!isStaff && !closed && canBuyMoreSeats(picked)) {
         (isLoggedIn ? setConfirming : setAuthFor)(picked);
@@ -125,9 +131,11 @@ export function LiveClassProvider({
     selected,
     select: setSelectedId,
     seats: selected ? seatsFor(selected) : 1,
-    setSeats: (seats) => {
-      if (selected) setSeatsByGroup((prev) => ({ ...prev, [selected.id]: seats }));
+    setSeats: (seats, groupId = selected?.id) => {
+      if (groupId) setSeatsByGroup((prev) => ({ ...prev, [groupId]: seats }));
     },
+    canPickSeats: Boolean(buyable && selected && maxSeatsOf(selected) > 1),
+    total: selected ? seatPriceOfGroup(selected) * (buyable ? seatsFor(selected) : 1) : null,
     enroll: () => {
       if (selected) start(selected);
     },

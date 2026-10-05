@@ -244,7 +244,26 @@ export default async function CourseDetailPage({
               hasPreviewLessons={stats.previewCount > 0}
             />
 
-            <div className="mt-7">
+            {isLive ? (
+              <div className="mt-8 space-y-8">
+                {tutoringGroups.length ? (
+                  <TutoringGroupsSection />
+                ) : (
+                  <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
+                    {translate('courses.liveNoClassesYet')}
+                  </p>
+                )}
+                {!hasLiveSeat && !isStaff ? (
+                  <ClassRequestSection
+                    courseId={course.id}
+                    hasOpenClasses={tutoringGroups.length > 0}
+                    isLoggedIn={!!user}
+                  />
+                ) : null}
+              </div>
+            ) : null}
+
+            <div className="mt-10">
               <CourseDetailTabs
                 course={course}
                 isLoggedIn={!!user}
@@ -266,26 +285,6 @@ export default async function CourseDetailPage({
                       loginNext={user ? null : teacherChatNext}
                     />
                   )
-                }
-                classes={
-                  isLive ? (
-                    <div className="space-y-8">
-                      {tutoringGroups.length ? (
-                        <TutoringGroupsSection />
-                      ) : (
-                        <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
-                          {translate('courses.liveNoClassesYet')}
-                        </p>
-                      )}
-                      {!hasLiveSeat && !isStaff ? (
-                        <ClassRequestSection
-                          courseId={course.id}
-                          hasOpenClasses={tutoringGroups.length > 0}
-                          isLoggedIn={!!user}
-                        />
-                      ) : null}
-                    </div>
-                  ) : null
                 }
               />
             </div>

@@ -97,14 +97,14 @@ export function CourseHero({
           )}
         </div>
 
-        <h1 className="m-0 max-w-[780px] text-[clamp(26px,4.6vw,46px)] leading-tight font-black tracking-tight">
+        <h1 className="m-0 max-w-[780px] text-[clamp(26px,4.5vw,38px)] leading-tight font-black tracking-[-0.5px]">
           {course.title}
         </h1>
 
         {descriptionMarkdown ? (
           <CollapsibleHtml
             html={renderMarkdown(descriptionMarkdown)}
-            className="prose-description cd-hero-desc mt-3.5 max-w-[680px] text-lg leading-relaxed"
+            className="prose-description cd-hero-desc mt-2.5 max-w-[620px] text-[15px] leading-relaxed"
             collapsedClassName="max-h-[7.5rem]"
             toggleClassName="text-white/90 hover:text-white"
           />
@@ -151,25 +151,25 @@ export function CourseHero({
         </div>
 
         {course.author && (
-          <div className="mt-6 flex items-center gap-3">
+          <div className="cd-teacher-pill mt-6 inline-flex items-center gap-2.5 rounded-full py-1.5 ps-1.5 pe-4">
             {avatarUrl ? (
               <AppImage
                 src={avatarUrl}
                 alt={course.author.display_name}
                 preset="avatar"
-                width={44}
-                height={44}
-                sizes="44px"
-                className="h-11 w-11 shrink-0 rounded-full object-cover"
+                width={38}
+                height={38}
+                sizes="38px"
+                className="size-[38px] shrink-0 rounded-full object-cover"
               />
             ) : (
-              <span className="cd-teacher-avatar grid h-11 w-11 shrink-0 place-items-center rounded-full text-lg font-extrabold text-white">
+              <span className="cd-teacher-avatar grid size-[38px] shrink-0 place-items-center rounded-full text-base font-extrabold text-white">
                 {course.author.display_name.charAt(0)}
               </span>
             )}
             <div>
               <div className="cd-hero-meta text-xs">{translate('courses.instructor')}</div>
-              <div className="text-base font-extrabold">{course.author.display_name}</div>
+              <div className="text-sm font-extrabold">{course.author.display_name}</div>
             </div>
           </div>
         )}

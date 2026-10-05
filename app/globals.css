@@ -2202,7 +2202,22 @@ select[class*='rounded-sm'] {
 }
 
 .cd-hero {
-  background: #11132a;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in srgb, var(--theme-primary) 40%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      color-mix(in srgb, var(--theme-secondary) 25%, transparent),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-primary) 40%, #0b0920),
+      color-mix(in srgb, var(--theme-primary) 75%, #0b0920)
+    );
   color: #fff;
   /* Full-bleed: span the whole viewport even inside a centered, padded
      max-width container. left:50% + -50vw margins ignore parent padding. */
@@ -2229,26 +2244,34 @@ select[class*='rounded-sm'] {
   color: rgba(255, 255, 255, 0.8);
 }
 .cd-live-badge {
-  background: #ff5f76;
-  color: #fff;
+  background: rgba(255, 77, 109, 0.2);
+  color: #ffb3c1;
 }
 .cd-blink-dot {
   animation: cd-blink 1.2s infinite;
-  background: #fff;
+  background: #ff4d6d;
 }
 .cd-white-badge {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+.cd-teacher-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 .cd-teacher-avatar {
-  background: var(--theme-primary);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 70%, #fff), #ff7eb6);
 }
 .cd-preview-card {
   aspect-ratio: 16/9;
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
   background: #0c0e22;
-  border: 1px solid var(--theme-border-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 40px -16px color-mix(in srgb, var(--theme-primary) 47%, transparent);
 }
 .cd-preview-placeholder {
   background: linear-gradient(150deg, #1a1d42 0%, #12152e 48%, #0a0c1e 100%);
@@ -2372,11 +2395,108 @@ select[class*='rounded-sm'] {
   color: #16a34a;
 }
 .cd-cta-btn {
-  background: var(--theme-primary);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-primary) 75%, #fff),
+    var(--theme-primary)
+  );
   color: var(--theme-on-primary);
+  box-shadow: 0 8px 18px -10px var(--theme-primary);
 }
-.cd-cta-btn:hover {
-  opacity: 0.9;
+
+/* Class picker cards: `--ac` is the per-card accent set inline. */
+.cd-class {
+  background: var(--theme-background);
+  border-color: var(--theme-border-color);
+}
+.cd-class::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  background: var(--ac);
+  opacity: 0.8;
+  z-index: 1;
+}
+@media (max-width: 639px) {
+  .cd-class::before {
+    inset-inline: 0;
+    inset-block-end: auto;
+    width: auto;
+    height: 4px;
+  }
+}
+.cd-class-selected {
+  border-color: var(--ac);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--ac) 14%, transparent),
+    0 14px 28px -16px color-mix(in srgb, var(--ac) 45%, transparent);
+}
+.cd-class-tile {
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--ac) 28%, var(--theme-background)),
+    color-mix(in srgb, var(--ac) 12%, var(--theme-background))
+  );
+  color: var(--theme-foreground);
+}
+.cd-class-tile::after {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ac) 18%, transparent);
+  top: -40px;
+  inset-inline-end: -40px;
+}
+.cd-class-icon {
+  background: var(--theme-background);
+  color: var(--ac);
+  box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--ac) 70%, transparent);
+}
+.cd-class-ink {
+  color: color-mix(in srgb, var(--ac) 70%, var(--theme-foreground));
+}
+.cd-day {
+  background: var(--theme-surface);
+  color: var(--theme-muted);
+}
+.cd-day-on {
+  background: var(--ac);
+  color: #fff;
+}
+.cd-class-chip {
+  border-radius: 99px;
+  background: var(--theme-surface);
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--theme-foreground);
+}
+.cd-class-wait {
+  background: rgba(18, 161, 80, 0.1);
+  color: #12a150;
+}
+.cd-class-offer {
+  background: color-mix(in srgb, var(--ac) 9%, var(--theme-background));
+  border-color: color-mix(in srgb, var(--ac) 25%, var(--theme-border-color));
+}
+.cd-class-offer-btn {
+  background: var(--ac);
+  color: #fff;
+}
+.cd-class-pick {
+  background: var(--theme-background);
+  border-color: var(--theme-border-color);
+  color: var(--theme-muted);
+}
+.cd-class-selected .cd-class-pick {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #fff;
+  font-weight: 600;
 }
 
 /* Reviews */
