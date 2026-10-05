@@ -3,6 +3,7 @@
 import { MessageCircle } from 'lucide-react';
 
 import { DiscussionThread } from '@/components/discussion/discussion-thread';
+import { Button } from '@/components/ui/button';
 import Link from '@/components/ui/link';
 import { useTranslation } from '@/lib/i18n/hooks';
 
@@ -39,7 +40,12 @@ export function TeacherChat({ courseId, currentProfileId, loginHref }: TeacherCh
           {t('courses.teacherChatLogin')}
         </Link>
       ) : (
-        <p className="text-muted text-sm">{t('courses.teacherChatJoinFirst')}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-muted text-sm">{t('courses.teacherChatJoinFirst')}</p>
+          <Button asChild size="sm">
+            <a href="#course-purchase">{t('courses.teacherChatEnroll')}</a>
+          </Button>
+        </div>
       )}
     </section>
   );

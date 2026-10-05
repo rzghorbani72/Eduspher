@@ -97,6 +97,8 @@ export const ar = {
     teacherChatJoinFirst: 'سجّل في هذه الدورة لمراسلة المعلم.',
     teacherChatGrade: 'الدرجة: {score} من ١٠٠',
     teacherChatLogin: 'سجّل الدخول لمراسلة المعلم.',
+    teacherChatEnroll: 'سجّل في الدورة',
+    tabInstructor: 'راسل المعلم',
     groupClosedEnded: 'هذا الصف لا يقبل طلاباً جدداً.',
     groupSessionsHeld: 'عُقدت {held} من {total} جلسة',
     groupClosedBadge: 'مغلق',

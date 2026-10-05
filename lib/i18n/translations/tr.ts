@@ -97,6 +97,8 @@ const tr = {
     teacherChatJoinFirst: 'Öğretmene yazmak için bu kursa kaydol.',
     teacherChatGrade: 'Not: {score} / 100',
     teacherChatLogin: 'Öğretmene yazmak için giriş yap.',
+    teacherChatEnroll: 'Kursa kaydol',
+    tabInstructor: 'Öğretmene yaz',
     groupClosedEnded: 'Bu sınıf yeni öğrenci almıyor.',
     groupSessionsHeld: '{total} dersten {held} tanesi yapıldı',
     groupClosedBadge: 'Kapalı',

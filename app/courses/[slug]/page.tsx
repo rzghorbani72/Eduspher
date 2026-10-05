@@ -40,7 +40,7 @@ import { markdownToPlainText } from '@/lib/markdown';
 import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
 import { t } from '@/lib/i18n/server-translations';
 import { buildContentStats, buildCurriculum } from '@/lib/courses/curriculum';
-import { isLiveCourse } from '@/lib/courses/live-course';
+import { isLiveCourse, teacherChatHref } from '@/lib/courses/live-course';
 import { isAcademyStaff, staffCanOpen, viewerRoles } from '@/lib/courses/staff-access';
 import { buildPurchaseOptions } from '@/lib/courses/purchase-options';
 import { formatAccessTerm, formatMinutes } from '@/components/courses/curriculum/format';
@@ -198,6 +198,9 @@ export default async function CourseDetailPage({
   const loginHref = buildPath(
     `/auth/login?redirect=${encodeURIComponent(coursePath(course.slug))}`,
   );
+  const teacherChatLoginHref = buildPath(
+    `/auth/login?redirect=${encodeURIComponent(teacherChatHref(coursePath(course.slug)))}`,
+  );
   // Free lessons open the full learning page for everyone, enrolled or not —
   // the page itself only requires sign-in, not a purchase, for a free lesson.
   const previewBasePath = learnPathHref;
@@ -260,7 +263,7 @@ export default async function CourseDetailPage({
                   <TeacherChat
                     courseId={isEnrolled || hasLiveSeat ? course.id : null}
                     currentProfileId={user ? String(user.id) : null}
-                    loginHref={user ? null : loginHref}
+                    loginHref={user ? null : teacherChatLoginHref}
                   />
                 )
               }
@@ -289,7 +292,7 @@ export default async function CourseDetailPage({
           </div>
         </div>
 
-        <aside className="space-y-3 lg:sticky lg:top-[72px]">
+        <aside id="course-purchase" className="space-y-3 lg:sticky lg:top-[72px]">
           <RoleBadges roles={roles} />
           {isLive ? (
             <LiveCoursePanel />
