@@ -177,7 +177,7 @@ export function PurchasePanel({
           )}
 
           <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-(--theme-muted)">
-            <Lock className="h-3.5 w-3.5 text-emerald-600" />
+            <Lock className="h-3.5 w-3.5 text-(--theme-primary-ink)" />
             {t('courses.securePaymentNote')}
           </p>
         </div>

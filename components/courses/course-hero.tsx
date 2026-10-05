@@ -31,9 +31,7 @@ const DIFFICULTY_KEY: Record<string, string> = {
 };
 
 const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="cd-white-badge rounded-full px-3 py-1 text-[13px] font-semibold">
-    {children}
-  </span>
+  <span className="cd-glass rounded-full px-3 py-1 text-[13px] font-semibold">{children}</span>
 );
 
 /** Server-rendered so the title, summary and stats stay crawlable. */
@@ -56,13 +54,13 @@ export function CourseHero({
   const outcomes = parseAuthoredList(course.learning_outcomes);
 
   return (
-    <section className="cd-hero relative -mt-8 overflow-hidden sm:-mt-10 lg:-mt-12">
+    <section className="cd-hero cd-glow relative -mt-8 overflow-hidden sm:-mt-10 lg:-mt-12">
       <div className="relative mx-auto max-w-[1240px] px-4 pt-10 pb-24 sm:px-6 lg:px-8 lg:pb-52">
         <nav
           aria-label="breadcrumb"
           className="cd-hero-breadcrumb mb-6 flex flex-wrap items-center gap-2 text-[13.5px]"
         >
-          <Link href={coursesHref} className="transition-colors hover:text-white">
+          <Link href={coursesHref} className="transition-colors hover:text-(--theme-foreground)">
             {translate('pages.courseCatalogue')}
           </Link>
           {course.Category && (
@@ -72,12 +70,12 @@ export function CourseHero({
             </>
           )}
           <span aria-hidden>/</span>
-          <span className="font-semibold text-white">{course.title}</span>
+          <span className="font-semibold text-(--theme-foreground)">{course.title}</span>
         </nav>
 
         <div className="mb-5 flex flex-wrap items-center gap-2.5">
           {isLive && (
-            <span className="cd-live-badge flex items-center gap-2 rounded-full px-3 py-1 text-[13px] font-bold">
+            <span className="cd-glass flex items-center gap-2 rounded-full px-3 py-1 text-[13px] font-bold">
               <span className="cd-blink-dot h-2 w-2 rounded-full" />
               {translate('courses.liveCourse')}
             </span>
@@ -121,7 +119,7 @@ export function CourseHero({
               isLive ? 'mt-2.5 max-w-[620px] text-[15px]' : 'mt-3.5 max-w-[680px] text-lg',
             )}
             collapsedClassName="max-h-[7.5rem]"
-            toggleClassName="text-white/90 hover:text-white"
+            toggleClassName="text-(--theme-primary-ink) hover:underline"
           />
         ) : null}
 
@@ -166,7 +164,7 @@ export function CourseHero({
         </div>
 
         {course.author && (
-          <div className="cd-teacher-pill mt-6 items-center gap-3">
+          <div className="cd-teacher-pill cd-glass mt-6 items-center gap-3">
             {avatarUrl ? (
               <AppImage
                 src={avatarUrl}
@@ -178,7 +176,7 @@ export function CourseHero({
                 className="size-[38px] shrink-0 rounded-full object-cover"
               />
             ) : (
-              <span className="cd-teacher-avatar grid size-[38px] shrink-0 place-items-center rounded-full text-base font-extrabold text-white">
+              <span className="cd-teacher-avatar grid size-[38px] shrink-0 place-items-center rounded-full text-base font-extrabold">
                 {course.author.display_name.charAt(0)}
               </span>
             )}

@@ -79,9 +79,7 @@ export function CoursePreviewPlayer({
             />
             <div className="cd-preview-overlay" />
           </>
-        ) : (
-          <div className="cd-preview-overlay pointer-events-none absolute inset-0 z-10" />
-        )}
+        ) : null}
         {hasPreviewLessons && (
           <span className="cd-preview-label absolute end-3 top-3 rounded-full px-2 py-0.5 text-[11px] font-medium">
             {t('courses.freePreview')}

@@ -2201,24 +2201,38 @@ select[class*='rounded-sm'] {
   }
 }
 
-.cd-hero {
+/* Light glass look built only from the active template colours. */
+.cd-glow {
   background:
     radial-gradient(
-      circle at 12% 75%,
-      color-mix(in srgb, var(--theme-secondary) 35%, transparent),
+      circle at 10% 85%,
+      color-mix(in srgb, var(--theme-accent) 22%, transparent),
       transparent 45%
     ),
     radial-gradient(
-      circle at 90% 0%,
-      color-mix(in srgb, var(--theme-primary) 35%, transparent),
-      transparent 40%
+      circle at 90% 5%,
+      color-mix(in srgb, var(--theme-primary) 28%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 55% 110%,
+      color-mix(in srgb, var(--theme-secondary) 24%, transparent),
+      transparent 50%
     ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--theme-primary) 45%, #0b0920),
-      color-mix(in srgb, var(--theme-primary) 75%, #0b0920)
+      color-mix(in srgb, var(--theme-primary) 10%, var(--theme-background)),
+      color-mix(in srgb, var(--theme-secondary) 8%, var(--theme-background))
     );
-  color: #fff;
+  color: var(--theme-foreground);
+}
+.cd-glass {
+  background: color-mix(in srgb, var(--theme-background) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-background) 60%, var(--theme-border-color));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.cd-hero {
   /* Full-bleed: span the whole viewport even inside a centered, padded
      max-width container. left:50% + -50vw margins ignore parent padding. */
   position: relative;
@@ -2228,42 +2242,40 @@ select[class*='rounded-sm'] {
   margin-left: -50vw;
   margin-right: -50vw;
 }
-.cd-hero-breadcrumb {
-  color: rgba(255, 255, 255, 0.7);
+.cd-hero-breadcrumb,
+.cd-hero-meta {
+  color: var(--theme-muted);
 }
 .cd-hero-breadcrumb-dim {
-  color: rgba(255, 255, 255, 0.5);
+  color: color-mix(in srgb, var(--theme-muted) 75%, transparent);
 }
-.cd-hero-stat-dim {
-  color: rgba(255, 255, 255, 0.85);
-}
-.cd-hero-meta {
-  color: rgba(255, 255, 255, 0.6);
-}
+.cd-hero-stat-dim,
 .cd-hero-desc {
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--theme-foreground) 78%, var(--theme-background));
 }
-.cd-live-badge {
-  background: #ff5f76;
-  color: #fff;
-}
+/* Red stays: it means "live now" on every academy. */
 .cd-blink-dot {
   animation: cd-blink 1.2s infinite;
-  background: #fff;
+  background: #ef4444;
 }
 .cd-teacher-avatar {
-  background: var(--theme-primary);
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+  color: var(--theme-on-primary);
 }
 .cd-preview-card {
   aspect-ratio: 16/9;
   border-radius: 20px;
   overflow: hidden;
-  background: #0c0e22;
+  background: var(--theme-surface);
   border: 1px solid var(--theme-border-color);
-  box-shadow: 0 20px 40px -16px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 20px 40px -18px color-mix(in srgb, var(--theme-primary) 35%, transparent);
 }
 .cd-preview-placeholder {
-  background: linear-gradient(150deg, #1a1d42 0%, #12152e 48%, #0a0c1e 100%);
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--theme-primary) 14%, var(--theme-background)),
+    color-mix(in srgb, var(--theme-secondary) 10%, var(--theme-background))
+  );
 }
 .cd-preview-placeholder-orb-left {
   position: absolute;
@@ -2291,7 +2303,7 @@ select[class*='rounded-sm'] {
   opacity: 0.22;
   background-image: radial-gradient(
     circle at 1px 1px,
-    rgba(255, 255, 255, 0.14) 1px,
+    color-mix(in srgb, var(--theme-foreground) 12%, transparent) 1px,
     transparent 0
   );
   background-size: 22px 22px;
@@ -2306,7 +2318,7 @@ select[class*='rounded-sm'] {
   font-size: clamp(7rem, 24vw, 15rem);
   font-weight: 900;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.05);
+  color: color-mix(in srgb, var(--theme-primary) 10%, transparent);
 }
 .cd-preview-placeholder-heading {
   margin: 0;
@@ -2316,10 +2328,7 @@ select[class*='rounded-sm'] {
   font-weight: 800;
   line-height: 1.45;
   letter-spacing: -0.02em;
-  color: rgba(255, 255, 255, 0.94);
-  text-shadow:
-    0 2px 20px rgba(0, 0, 0, 0.55),
-    0 1px 2px rgba(0, 0, 0, 0.35);
+  color: var(--theme-foreground);
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -2330,9 +2339,8 @@ select[class*='rounded-sm'] {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.08) 0%,
-    transparent 38%,
-    rgba(0, 0, 0, 0.45) 100%
+    transparent 60%,
+    color-mix(in srgb, var(--theme-background) 35%, transparent) 100%
   );
   pointer-events: none;
 }
@@ -2376,8 +2384,8 @@ select[class*='rounded-sm'] {
 }
 .cd-badge-save,
 .cd-badge-popular {
-  background: color-mix(in srgb, #22c55e 18%, transparent);
-  color: #16a34a;
+  background: var(--theme-accent-subtle);
+  color: color-mix(in srgb, var(--theme-accent) 60%, var(--theme-foreground));
 }
 .cd-cta-btn {
   background: linear-gradient(
@@ -2391,22 +2399,10 @@ select[class*='rounded-sm'] {
 .cd-side-card {
   background: var(--theme-background);
   border-color: color-mix(in srgb, var(--theme-primary) 25%, var(--theme-border-color));
-  box-shadow: 0 30px 60px -24px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 30px 60px -24px color-mix(in srgb, var(--theme-primary) 35%, transparent);
 }
-.cd-price-head {
-  color: #fff;
-  background:
-    radial-gradient(circle at 95% 0%, color-mix(in srgb, #fff 35%, transparent), transparent 45%),
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--theme-primary) 80%, #000),
-      var(--theme-primary) 50%,
-      var(--theme-secondary)
-    );
-}
-.cd-price-chip {
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.28);
+.cd-price-ink {
+  color: var(--theme-primary-ink);
 }
 .cd-include-icon {
   background: color-mix(in srgb, var(--theme-primary) 12%, transparent);
@@ -2422,34 +2418,14 @@ select[class*='rounded-sm'] {
 }
 
 /* Live course page: the class-picker extras. */
-.cd-live .cd-live-badge {
-  background: rgba(255, 77, 109, 0.2);
-  color: #ffb3c1;
-}
-.cd-live .cd-blink-dot {
-  background: #ff4d6d;
-}
-.cd-white-badge {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.18);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  color: #fff;
-}
 .cd-teacher-pill {
   display: inline-flex;
   border-radius: 99px;
   padding-block: 6px;
   padding-inline: 6px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-.cd-live .cd-teacher-avatar {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 70%, #fff), #ff7eb6);
 }
 .cd-live .cd-preview-card {
   border-radius: 24px;
-  border-color: rgba(255, 255, 255, 0.2);
   box-shadow: 0 16px 40px -16px color-mix(in srgb, var(--theme-primary) 47%, transparent);
 }
 .cd-live .cd-review-card {
@@ -2470,7 +2446,7 @@ select[class*='rounded-sm'] {
 
 /* Class picker cards: `--ac` is the per-card accent set inline. */
 .cd-class {
-  background: var(--theme-background);
+  background: color-mix(in srgb, var(--ac) 4%, var(--theme-background));
   border-color: var(--theme-border-color);
 }
 .cd-class::before {
@@ -2527,9 +2503,17 @@ select[class*='rounded-sm'] {
   background: var(--theme-surface);
   color: var(--theme-muted);
 }
-.cd-day-on {
-  background: var(--ac);
-  color: #fff;
+.cd-day-on,
+.cd-class-wait,
+.cd-class-offer-btn,
+.cd-class-selected .cd-class-pick {
+  background: color-mix(in srgb, var(--ac) 20%, var(--theme-background));
+  color: color-mix(in srgb, var(--ac) 70%, var(--theme-foreground));
+  font-weight: 600;
+}
+.cd-class-offer-btn,
+.cd-class-selected .cd-class-pick {
+  border: 1px solid color-mix(in srgb, var(--ac) 45%, transparent);
 }
 .cd-class-chip {
   border-radius: 99px;
@@ -2539,28 +2523,14 @@ select[class*='rounded-sm'] {
   font-weight: 500;
   color: var(--theme-foreground);
 }
-.cd-class-wait {
-  background: rgba(18, 161, 80, 0.1);
-  color: #12a150;
-}
 .cd-class-offer {
   background: color-mix(in srgb, var(--ac) 9%, var(--theme-background));
   border-color: color-mix(in srgb, var(--ac) 25%, var(--theme-border-color));
-}
-.cd-class-offer-btn {
-  background: var(--ac);
-  color: #fff;
 }
 .cd-class-pick {
   background: var(--theme-background);
   border-color: var(--theme-border-color);
   color: var(--theme-muted);
-}
-.cd-class-selected .cd-class-pick {
-  background: var(--ac);
-  border-color: var(--ac);
-  color: #fff;
-  font-weight: 600;
 }
 
 /* Reviews */

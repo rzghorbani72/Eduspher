@@ -104,7 +104,15 @@ export const maxSeatsOf = (group: SeatGroup): number =>
 export const isWholeBooking = (group: SeatGroup, seats: number): boolean =>
   group.whole_class_booking && group.seats_left > 1 && seats === group.seats_left;
 
-const CLASS_ACCENTS = ['var(--theme-primary)', '#f79ab5', '#f5bd6b', '#5dd3a8'] as const;
+/** Taken from the active template only, so every academy's cards match its brand. */
+const CLASS_ACCENTS = [
+  'var(--theme-primary)',
+  'var(--theme-accent)',
+  'var(--theme-secondary)',
+  'color-mix(in srgb, var(--theme-primary) 50%, var(--theme-accent))',
+  'color-mix(in srgb, var(--theme-secondary) 50%, var(--theme-accent))',
+  'color-mix(in srgb, var(--theme-primary) 50%, var(--theme-secondary))',
+] as const;
 
 /** Each class card gets its own accent so the list is easy to scan. */
 export const classAccent = (index: number): string => CLASS_ACCENTS[index % CLASS_ACCENTS.length];

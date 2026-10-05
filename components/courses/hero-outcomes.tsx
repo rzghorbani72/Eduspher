@@ -35,7 +35,7 @@ export function HeroOutcomes({ items }: { items: readonly string[] }) {
           type="button"
           aria-expanded={expanded}
           onClick={() => setExpanded(!expanded)}
-          className="mt-2 cursor-pointer text-[13px] font-bold text-white/90 hover:text-white"
+          className="mt-2 cursor-pointer text-[13px] font-bold text-(--theme-primary-ink) hover:underline"
         >
           {expanded ? t('courses.showLess') : t('courses.showMore')}
         </button>

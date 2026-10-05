@@ -19,32 +19,34 @@ export function PurchasePriceHead({ option, format }: PurchasePriceHeadProps) {
   ].join(' · ');
 
   return (
-    <div className="cd-price-head px-6 pt-5 pb-5">
+    <div className="cd-glow border-b border-(--theme-border-color) px-6 pt-5 pb-5">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="cd-price-chip rounded-full px-3 py-0.5 text-xs font-bold">
+        <span className="cd-glass rounded-full px-3 py-0.5 text-xs font-bold">
           {t('courses.enrollThisCourse')}
         </span>
         {option.discountPercent ? (
-          <span className="cd-price rounded-full bg-white px-2 py-0.5 text-[11px] font-extrabold text-(--theme-primary)">
+          <span className="cd-price cd-badge-save rounded-full px-2 py-0.5 text-[11px] font-extrabold">
             {toPersianDigits(option.discountPercent, language)}%
           </span>
         ) : null}
       </div>
 
       <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
-        <span className="cd-price text-[40px] leading-tight font-black tracking-tight">
+        <span className="cd-price cd-price-ink text-[40px] leading-tight font-black tracking-tight">
           {isFree ? t('courses.free') : format(option.price)}
         </span>
         {option.installments ? (
-          <span className="text-sm font-semibold opacity-85">{t('courses.perInstallment')}</span>
+          <span className="text-sm font-semibold text-(--theme-muted)">
+            {t('courses.perInstallment')}
+          </span>
         ) : null}
         {option.originalPrice ? (
-          <span className="cd-price text-sm font-semibold line-through opacity-70">
+          <span className="cd-price text-sm font-semibold text-(--theme-muted) line-through">
             {format(option.originalPrice)}
           </span>
         ) : null}
       </div>
-      <p className="mt-1 text-[13px] opacity-85">{subtitle}</p>
+      <p className="mt-1 text-[13px] text-(--theme-muted)">{subtitle}</p>
     </div>
   );
 }

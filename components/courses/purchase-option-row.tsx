@@ -61,7 +61,7 @@ export function PurchaseOptionRow({ option, selected, onSelect, format }: Purcha
         className={cn(
           'grid h-8 w-8 shrink-0 place-items-center rounded-lg',
           selected
-            ? 'bg-(--theme-primary) text-white'
+            ? 'bg-(--theme-primary) text-(--theme-on-primary)'
             : 'bg-(--theme-surface) text-(--theme-muted)',
         )}
       >
