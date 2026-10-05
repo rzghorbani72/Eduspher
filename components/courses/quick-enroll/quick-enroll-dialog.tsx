@@ -67,13 +67,15 @@ export function QuickEnrollDialog({
             <h2 id="quick-enroll-title" className="text-base font-black text-(--theme-foreground)">
               {title ?? t('courses.quickEnrollTitle')}
             </h2>
-            {classTitle ? <p className="text-muted mt-0.5 text-xs">{classTitle}</p> : null}
+            {classTitle ? (
+              <p className="mt-0.5 text-xs text-(--theme-foreground)">{classTitle}</p>
+            ) : null}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label={t('common.cancel')}
-            className="text-muted rounded-full p-1 hover:text-(--theme-foreground)"
+            className="rounded-full p-1 text-(--theme-foreground)"
           >
             <X className="h-4 w-4" />
           </button>
@@ -82,7 +84,7 @@ export function QuickEnrollDialog({
         <div className="space-y-4 px-5 py-4 text-sm">
           {auth.step === 'phone' ? (
             <>
-              <p className="text-muted text-xs">{t('courses.quickEnrollHint')}</p>
+              <p className="text-xs text-(--theme-foreground)">{t('courses.quickEnrollHint')}</p>
               <PhoneInput
                 id="quick-enroll-phone"
                 value={auth.phoneNumber}
@@ -95,7 +97,7 @@ export function QuickEnrollDialog({
             </>
           ) : (
             <>
-              <p className="text-muted text-center text-xs">
+              <p className="text-center text-xs text-(--theme-foreground)">
                 {t('auth.enterVerificationCode')
                   .split('{phone}')
                   .flatMap((part, i) =>
@@ -121,7 +123,7 @@ export function QuickEnrollDialog({
                   }
                 }}
               />
-              <div className="text-muted text-center text-xs">
+              <div className="text-center text-xs text-(--theme-foreground)">
                 {auth.timer.canResend ? (
                   <div className="flex flex-col items-center gap-2">
                     <HumanCheck
@@ -170,12 +172,12 @@ export function QuickEnrollDialog({
               type="button"
               onClick={auth.back}
               disabled={auth.pending}
-              className="text-muted w-full text-center text-xs hover:underline"
+              className="w-full text-center text-xs text-(--theme-foreground) hover:underline"
             >
               {t('common.back')}
             </button>
           ) : null}
-          <p className="text-muted text-center text-[11px]">
+          <p className="text-center text-[11px] text-(--theme-foreground)">
             {t('courses.quickEnrollLegalPrefix')}{' '}
             <a href={buildPath('/terms')} target="_blank" rel="noreferrer" className="underline">
               {t('auth.termsOfService')}
@@ -186,7 +188,7 @@ export function QuickEnrollDialog({
             </a>{' '}
             {t('courses.quickEnrollLegalSuffix')}
           </p>
-          <p className="text-muted text-center text-[11px]">
+          <p className="text-center text-[11px] text-(--theme-foreground)">
             {t('courses.quickEnrollTrouble')}{' '}
             <Link href={loginHref} className="font-semibold underline">
               {t('auth.login')}

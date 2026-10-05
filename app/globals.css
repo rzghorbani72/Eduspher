@@ -2558,3 +2558,16 @@ altcha-widget {
   --altcha-input-background-color: #fff;
   --altcha-shadow: none;
 }
+
+/* Persian is typed right-to-left, even when the academy layout is LTR. */
+html[lang='fa'] textarea:not([dir]),
+html[lang='fa'] input:is([type='text'], [type='search'], :not([type])):not([dir]) {
+  direction: rtl;
+}
+
+/* Chrome autofill paints its own colors; keep our readable ones. */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--theme-surface) inset;
+  -webkit-text-fill-color: var(--theme-foreground);
+  caret-color: var(--theme-foreground);
+}
