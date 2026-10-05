@@ -5,7 +5,6 @@ import { Clock3, Star } from 'lucide-react';
 
 import { useTranslation } from '@/lib/i18n/hooks';
 import { cn } from '@/lib/utils';
-import { CourseQnA } from '@/components/courses/course-qna';
 import { CourseReviewCard } from '@/components/courses/course-review-card';
 import { CourseReviewForm } from '@/components/courses/course-review-form';
 import { CourseReviewSummary } from '@/components/courses/course-review-summary';
@@ -112,10 +111,6 @@ export function CourseReviews({ courseId, isLoggedIn }: CourseReviewsProps) {
           ))}
         </div>
       )}
-
-      <div className="border-theme border-t pt-6">
-        <CourseQnA courseId={courseId} isLoggedIn={isLoggedIn} />
-      </div>
     </section>
   );
 }

@@ -2202,7 +2202,22 @@ select[class*='rounded-sm'] {
 }
 
 .cd-hero {
-  background: #11132a;
+  background:
+    radial-gradient(
+      circle at 12% 75%,
+      color-mix(in srgb, var(--theme-secondary) 35%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 90% 0%,
+      color-mix(in srgb, var(--theme-primary) 35%, transparent),
+      transparent 40%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--theme-primary) 45%, #0b0920),
+      color-mix(in srgb, var(--theme-primary) 75%, #0b0920)
+    );
   color: #fff;
   /* Full-bleed: span the whole viewport even inside a centered, padded
      max-width container. left:50% + -50vw margins ignore parent padding. */
@@ -2236,10 +2251,6 @@ select[class*='rounded-sm'] {
   animation: cd-blink 1.2s infinite;
   background: #fff;
 }
-.cd-white-badge {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
-}
 .cd-teacher-avatar {
   background: var(--theme-primary);
 }
@@ -2249,6 +2260,7 @@ select[class*='rounded-sm'] {
   overflow: hidden;
   background: #0c0e22;
   border: 1px solid var(--theme-border-color);
+  box-shadow: 0 20px 40px -16px rgba(15, 23, 42, 0.35);
 }
 .cd-preview-placeholder {
   background: linear-gradient(150deg, #1a1d42 0%, #12152e 48%, #0a0c1e 100%);
@@ -2351,10 +2363,6 @@ select[class*='rounded-sm'] {
 }
 
 /* Enrollment sidebar */
-.cd-side-card {
-  background: var(--theme-background);
-  border-color: var(--theme-border-color);
-}
 .cd-method {
   background: transparent;
   border-color: var(--theme-border-color);
@@ -2372,32 +2380,48 @@ select[class*='rounded-sm'] {
   color: #16a34a;
 }
 .cd-cta-btn {
-  background: var(--theme-primary);
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary),
+    color-mix(in srgb, var(--theme-secondary) 70%, var(--theme-primary))
+  );
   color: var(--theme-on-primary);
+  box-shadow: 0 12px 24px -10px var(--theme-primary);
 }
-.cd-cta-btn:hover {
-  opacity: 0.9;
+.cd-side-card {
+  background: var(--theme-background);
+  border-color: color-mix(in srgb, var(--theme-primary) 25%, var(--theme-border-color));
+  box-shadow: 0 30px 60px -24px rgba(15, 23, 42, 0.35);
 }
-
-/* Live course page (the class-picker design). Recorded courses keep the flat base above. */
-.cd-live .cd-hero {
+.cd-price-head {
+  color: #fff;
   background:
-    radial-gradient(
-      circle at 15% 20%,
-      color-mix(in srgb, var(--theme-primary) 40%, transparent),
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      color-mix(in srgb, var(--theme-secondary) 25%, transparent),
-      transparent 40%
-    ),
+    radial-gradient(circle at 95% 0%, color-mix(in srgb, #fff 35%, transparent), transparent 45%),
     linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--theme-primary) 40%, #0b0920),
-      color-mix(in srgb, var(--theme-primary) 75%, #0b0920)
+      145deg,
+      color-mix(in srgb, var(--theme-primary) 80%, #000),
+      var(--theme-primary) 50%,
+      var(--theme-secondary)
     );
 }
+.cd-price-chip {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+.cd-include-icon {
+  background: color-mix(in srgb, var(--theme-primary) 12%, transparent);
+  color: var(--theme-primary);
+}
+.cd-tabs {
+  background: var(--theme-background);
+  border: 1px solid var(--theme-border-color);
+}
+.cd-tab-on {
+  background: var(--theme-surface);
+  color: var(--theme-foreground);
+}
+
+/* Live course page: the class-picker extras. */
 .cd-live .cd-live-badge {
   background: rgba(255, 77, 109, 0.2);
   color: #ffb3c1;
@@ -2405,14 +2429,14 @@ select[class*='rounded-sm'] {
 .cd-live .cd-blink-dot {
   background: #ff4d6d;
 }
-.cd-live .cd-white-badge {
+.cd-white-badge {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.18);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   color: #fff;
 }
-.cd-live .cd-teacher-pill {
+.cd-teacher-pill {
   display: inline-flex;
   border-radius: 99px;
   padding-block: 6px;
@@ -2427,17 +2451,6 @@ select[class*='rounded-sm'] {
   border-radius: 24px;
   border-color: rgba(255, 255, 255, 0.2);
   box-shadow: 0 16px 40px -16px color-mix(in srgb, var(--theme-primary) 47%, transparent);
-}
-.cd-live .cd-cta-btn {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--theme-primary) 75%, #fff),
-    var(--theme-primary)
-  );
-  box-shadow: 0 8px 18px -10px var(--theme-primary);
-}
-.cd-live .cd-cta-btn:hover {
-  opacity: 1;
 }
 .cd-live .cd-review-card {
   border-width: 1.5px;

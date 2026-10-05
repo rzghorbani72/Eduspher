@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Dot } from 'lucide-react';
+import { Dot } from 'lucide-react';
 import Link from '@/components/ui/link';
 
 import { usePlatformFeatures } from '@/components/providers/platform-features-provider';
@@ -18,6 +18,8 @@ interface CourseOverviewProps {
   course: CourseSummary;
   stats: CourseContentStats;
   prerequisiteHref: string | null;
+  /** Recorded courses list these in the buy box instead. */
+  showFacts: boolean;
 }
 
 const DIFFICULTY_KEY: Record<string, string> = {
@@ -27,12 +29,15 @@ const DIFFICULTY_KEY: Record<string, string> = {
   EXPERT: 'courses.expert',
 };
 
-export function CourseOverview({ course, stats, prerequisiteHref }: CourseOverviewProps) {
+export function CourseOverview({
+  course,
+  stats,
+  prerequisiteHref,
+  showFacts,
+}: CourseOverviewProps) {
   const { t, language } = useTranslation();
   const { quizzes_enabled, certificates_enabled } = usePlatformFeatures();
-  const outcomes = parseAuthoredList(course.learning_outcomes);
   const requirements = parseAuthoredList(course.requirements);
-  const outcomeList = useShowMore(outcomes, 6);
   const requirementList = useShowMore(requirements, 4);
 
   const facts = [
@@ -91,25 +96,6 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
         </div>
       )}
 
-      {outcomes.length > 0 && (
-        <div>
-          <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
-            {t('courses.whatYouWillLearn')}
-          </h2>
-          <ul className="mb-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
-            {outcomeList.visible.map((point) => (
-              <li key={point} className="flex items-start gap-2 text-sm text-(--theme-foreground)">
-                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,#22c55e_15%,transparent)]">
-                  <Check className="h-3 w-3 text-[#16a34a]" />
-                </span>
-                {point}
-              </li>
-            ))}
-          </ul>
-          <ShowMoreButton list={outcomeList} />
-        </div>
-      )}
-
       {(requirements.length > 0 || prerequisiteHref) && (
         <div>
           <h2 className="mb-4 text-xl font-black text-(--theme-foreground)">
@@ -141,16 +127,18 @@ export function CourseOverview({ course, stats, prerequisiteHref }: CourseOvervi
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {facts.map((fact) => (
-          <div key={fact.key} className="bg-surface rounded-xl p-4">
-            <div className="cd-price text-base font-bold text-(--theme-foreground)">
-              {fact.value}
+      {showFacts ? (
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {facts.map((fact) => (
+            <div key={fact.key} className="bg-surface rounded-xl p-4">
+              <div className="cd-price text-base font-bold text-(--theme-foreground)">
+                {fact.value}
+              </div>
+              <div className="mt-1 text-xs text-(--theme-muted)">{fact.label}</div>
             </div>
-            <div className="mt-1 text-xs text-(--theme-muted)">{fact.label}</div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }

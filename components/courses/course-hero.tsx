@@ -9,6 +9,8 @@ import { renderMarkdown } from '@/lib/markdown';
 import type { LanguageCode } from '@/lib/i18n/config';
 import { AppImage } from '@/components/ui/app-image';
 import { CollapsibleHtml } from '@/components/courses/collapsible-html';
+import { HeroOutcomes } from '@/components/courses/hero-outcomes';
+import { parseAuthoredList } from '@/lib/courses/curriculum';
 
 interface CourseHeroProps {
   course: CourseSummary;
@@ -51,10 +53,11 @@ export function CourseHero({
   // even if an old lesson still carries a live session.
   const isLive = isLiveCourse(course);
   const descriptionMarkdown = course.description?.trim() || course.short_description?.trim() || '';
+  const outcomes = parseAuthoredList(course.learning_outcomes);
 
   return (
     <section className="cd-hero relative -mt-8 overflow-hidden sm:-mt-10 lg:-mt-12">
-      <div className="relative mx-auto max-w-[1240px] px-4 pt-10 pb-36 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-[1240px] px-4 pt-10 pb-24 sm:px-6 lg:px-8 lg:pb-52">
         <nav
           aria-label="breadcrumb"
           className="cd-hero-breadcrumb mb-6 flex flex-wrap items-center gap-2 text-[13.5px]"
@@ -108,7 +111,9 @@ export function CourseHero({
           {course.title}
         </h1>
 
-        {descriptionMarkdown ? (
+        {outcomes.length > 0 ? (
+          <HeroOutcomes items={outcomes} />
+        ) : descriptionMarkdown ? (
           <CollapsibleHtml
             html={renderMarkdown(descriptionMarkdown)}
             className={cn(
@@ -161,7 +166,7 @@ export function CourseHero({
         </div>
 
         {course.author && (
-          <div className="cd-teacher-pill mt-6 flex w-fit items-center gap-3">
+          <div className="cd-teacher-pill mt-6 items-center gap-3">
             {avatarUrl ? (
               <AppImage
                 src={avatarUrl}

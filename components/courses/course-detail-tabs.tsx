@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useState, type ReactNode } from 'react';
-import { motion } from 'framer-motion';
 
 import { useTranslation } from '@/lib/i18n/hooks';
+import { cn } from '@/lib/utils';
 import { isLiveCourse } from '@/lib/courses/live-course';
 import type { CourseSummary } from '@/lib/api/types';
 import type { CourseTabKey } from '@/lib/courses/course-tabs';
@@ -14,6 +14,7 @@ import { CourseCurriculum } from '@/components/courses/curriculum';
 import { CourseLiveSchedule } from '@/components/courses/course-live-schedule';
 import { CourseInstructor } from '@/components/courses/course-instructor';
 import { CourseReviews } from '@/components/courses/course-reviews';
+import { CourseQnA } from '@/components/courses/course-qna';
 
 interface CourseDetailTabsProps {
   course: CourseSummary;
@@ -70,10 +71,7 @@ export function CourseDetailTabs({
 
   return (
     <div className="space-y-7">
-      <div
-        role="tablist"
-        className="flex gap-6 overflow-x-auto overflow-y-hidden border-b border-(--theme-border-color) [scrollbar-width:none]"
-      >
+      <div role="tablist" className="cd-tabs flex rounded-full p-1">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           return (
@@ -83,20 +81,14 @@ export function CourseDetailTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActiveTab(tab.key)}
-              className={`relative min-w-fit px-1 pb-3 text-sm font-bold whitespace-nowrap transition-colors duration-200 ${
+              className={cn(
+                'flex-1 cursor-pointer rounded-full px-2 py-2 text-[13px] whitespace-nowrap transition-colors duration-200',
                 isActive
-                  ? 'text-(--theme-foreground)'
-                  : 'text-(--theme-muted) hover:text-(--theme-foreground)'
-              }`}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="cd-tab-bg"
-                  className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-(--theme-primary)"
-                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                />
+                  ? 'cd-tab-on font-bold'
+                  : 'text-(--theme-muted) hover:text-(--theme-foreground)',
               )}
-              <span className="relative z-10">{tab.label}</span>
+            >
+              {tab.label}
             </button>
           );
         })}
@@ -104,7 +96,12 @@ export function CourseDetailTabs({
 
       {activeTab === 'overview' && (
         <div className="space-y-10">
-          <CourseOverview course={course} stats={stats} prerequisiteHref={prerequisiteHref} />
+          <CourseOverview
+            course={course}
+            stats={stats}
+            prerequisiteHref={prerequisiteHref}
+            showFacts={isLive}
+          />
           {showSyllabus && (
             <CourseCurriculum
               seasons={seasons}
@@ -132,6 +129,10 @@ export function CourseDetailTabs({
       )}
 
       {activeTab === 'reviews' && <CourseReviews courseId={course.id} isLoggedIn={isLoggedIn} />}
+
+      <div className="border-t border-(--theme-border-color) pt-8">
+        <CourseQnA courseId={course.id} isLoggedIn={isLoggedIn} />
+      </div>
     </div>
   );
 }

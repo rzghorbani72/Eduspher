@@ -34,7 +34,7 @@ import { getCourseAccess } from '@/lib/api/account-server';
 import { getAcademyContext } from '@/lib/store-context';
 import { getPlatformFeatures } from '@/lib/api/server/platform-features';
 import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
-import { buildAcademyPath, resolveAssetUrl, truncate } from '@/lib/utils';
+import { buildAcademyPath, cn, resolveAssetUrl, truncate } from '@/lib/utils';
 import { coursePath, decodePathSegment, learnPath, liveClassPath } from '@/lib/content-paths';
 import { markdownToPlainText } from '@/lib/markdown';
 import { getAcademyShareImageUrl } from '@/lib/seo/share-image';
@@ -233,7 +233,7 @@ export default async function CourseDetailPage({
   const courseBody = (
     <LoginDialogProvider>
       <PreviewPlayerProvider media={previewMedia} defaultLessonId={defaultPreviewId}>
-        <div className="relative z-10 -mt-24 grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_340px]">
+        <div className="relative z-10 -mt-12 grid grid-cols-1 items-start gap-8 lg:-mt-44 lg:grid-cols-[1fr_400px]">
           <div className="min-w-0">
             <CoursePreviewPlayer
               promoVideoId={promoVideoId}
@@ -287,7 +287,13 @@ export default async function CourseDetailPage({
             </div>
           </div>
 
-          <aside id="course-purchase" className="space-y-3 lg:sticky lg:top-[72px]">
+          <aside
+            id="course-purchase"
+            className={cn(
+              'space-y-3 lg:sticky lg:top-[72px]',
+              !isLive && 'order-first lg:order-none',
+            )}
+          >
             <RoleBadges roles={roles} />
             {isLive ? (
               <LiveCoursePanel />
