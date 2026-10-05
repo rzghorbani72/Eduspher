@@ -1,59 +1,48 @@
 'use client';
 
-import { CalendarClock, Users } from 'lucide-react';
+import { CalendarClock, CircleCheck, Circle, Users } from 'lucide-react';
 
 import { PublicGroupSessions } from '@/components/courses/public-group-sessions';
 import { TutoringGroupPricing } from '@/components/courses/tutoring-group-pricing';
 import { clockRangeLabel } from '@/components/live/slot-chips';
 import {
   CLOSED_REASON_KEY,
-  canBuyMoreSeats,
   closedReasonOf,
   groupAnchorId,
-  liveEnterLabelKey,
   seatPriceOfGroup,
   sessionsOfGroup,
 } from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
-import { formatDate, formatNumber } from '@/lib/utils';
+import { cn, formatDate, formatNumber } from '@/lib/utils';
 import { weekdayLabelKey } from '@/lib/courses/weekly-rule';
 import type { PublicTutoringGroup } from '@/lib/api/server';
 
 type Props = {
   group: PublicTutoringGroup;
   format: (amount: number) => string;
+  selected: boolean;
+  onSelect: () => void;
   seats: number;
-  pending: boolean;
   onSeatsChange: (seats: number) => void;
-  onJoin: () => void;
-  enrolledHref?: string;
-  isLoggedIn: boolean;
-  /** False when the academy is not selling new seats (existing members can still enter). */
-  canPurchase?: boolean;
-  /** The academy stopped taking new students — said out loud so the missing button has a reason. */
-  enrollmentClosed?: boolean;
+  /** Seat stepper and whole-class price: only for a signed-in buyer on the selected class. */
+  showPricing: boolean;
 };
 
 /**
- * One scheduled class: timetable, remaining seats, enter if already enrolled,
- * and a buy button while registration is still open. Guests get the same
- * button; the section opens the phone-code dialog before checkout.
+ * One scheduled class to pick: timetable, term, remaining seats and price.
+ * Enrolling happens once for the selected class (sidebar / mobile bar).
  */
 export const TutoringGroupCard = ({
   group,
   format,
+  selected,
+  onSelect,
   seats,
-  pending,
   onSeatsChange,
-  onJoin,
-  enrolledHref,
-  isLoggedIn,
-  canPurchase = true,
-  enrollmentClosed = false,
+  showPricing,
 }: Props) => {
   const { t, language } = useTranslation();
   const seatPrice = seatPriceOfGroup(group);
-  const price = seatPrice * seats;
   const waiting = group.status === 'WAITING';
   const needed = Math.max(group.min_students - group.seats_taken, 0);
   const sessions = sessionsOfGroup(group);
@@ -68,9 +57,7 @@ export const TutoringGroupCard = ({
       : `${t('courses.groupStarts')}: ${formatDate(group.starts_on, language)}`
     : null;
   const termFacts = [sessionLabel, termLabel].filter(Boolean).join(' · ');
-  const isMember = Boolean(group.joined && enrolledHref);
-  const canBuy = canPurchase && canBuyMoreSeats(group);
-  const closedReason = closedReasonOf(group);
+  const closedReason = group.joined ? null : closedReasonOf(group);
   const held = group.sessions_held ?? 0;
   const heldLabel =
     held > 0 && sessions > 0
@@ -78,28 +65,42 @@ export const TutoringGroupCard = ({
           .replace('{held}', formatNumber(held, language))
           .replace('{total}', formatNumber(sessions, language))
       : null;
-  const primaryCta =
-    'rounded-lg bg-(--theme-primary) px-4 py-2.5 text-center text-sm font-semibold text-(--theme-on-primary) disabled:opacity-60';
-  const secondaryCta =
-    'rounded-lg border border-(--theme-primary) px-4 py-2.5 text-center text-sm font-semibold text-(--theme-primary-ink) disabled:opacity-60';
-  const buyLabel =
-    !isMember && seats === group.capacity && group.capacity > 1
-      ? t('courses.groupBookWhole')
-      : isMember
-        ? t('courses.groupBuyMoreSeats')
-        : t('courses.groupJoin');
 
   return (
     <article
       id={groupAnchorId(group.id)}
-      className="border-theme bg-card grid scroll-mt-24 gap-5 rounded-2xl border p-5 md:grid-cols-[minmax(0,1fr)_280px]"
+      role="radio"
+      aria-checked={selected}
+      tabIndex={0}
+      onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        onSelect();
+      }}
+      className={cn(
+        'bg-card grid cursor-pointer scroll-mt-24 gap-5 rounded-2xl border-2 p-5 transition-colors md:grid-cols-[minmax(0,1fr)_280px]',
+        'focus-visible:ring-2 focus-visible:ring-(--theme-primary) focus-visible:outline-none',
+        selected ? 'border-(--theme-primary)' : 'border-theme hover:border-(--theme-primary)/50',
+      )}
     >
       <div className="space-y-3">
-        <header className="space-y-1">
-          <h3 className="text-base font-semibold text-(--theme-foreground)">{group.title}</h3>
-          {group.Tutor?.display_name ? (
-            <p className="text-muted text-xs">{group.Tutor.display_name}</p>
-          ) : null}
+        <header className="flex items-start gap-2">
+          {selected ? (
+            <CircleCheck
+              className="mt-0.5 size-5 shrink-0 text-(--theme-primary)"
+              aria-hidden="true"
+            />
+          ) : (
+            <Circle className="text-muted mt-0.5 size-5 shrink-0" aria-hidden="true" />
+          )}
+          <div className="space-y-1">
+            <h3 className="text-base font-semibold text-(--theme-foreground)">{group.title}</h3>
+            {group.Tutor?.display_name ? (
+              <p className="text-muted text-xs">{group.Tutor.display_name}</p>
+            ) : null}
+          </div>
         </header>
 
         <ul className="space-y-1.5">
@@ -145,42 +146,22 @@ export const TutoringGroupCard = ({
       </div>
 
       <div className="md:border-theme space-y-3 md:border-s md:ps-5">
-        {isLoggedIn && canBuy ? (
+        {showPricing ? (
           <TutoringGroupPricing
             group={group}
             seatPrice={seatPrice}
             seats={seats}
             format={format}
             onSeatsChange={onSeatsChange}
-            buyMore={isMember}
+            buyMore={Boolean(group.joined)}
           />
         ) : null}
 
         <div className="flex flex-col gap-2">
           <span className="cd-price text-lg font-black whitespace-nowrap text-(--theme-foreground)">
-            {format(isLoggedIn && canBuy ? price : seatPrice)}
+            {format(showPricing ? seatPrice * seats : seatPrice)}
           </span>
           {heldLabel ? <p className="text-muted text-xs">{heldLabel}</p> : null}
-          {isLoggedIn && isMember && enrolledHref ? (
-            <a href={enrolledHref} className={primaryCta}>
-              {t(liveEnterLabelKey(group.session_live))}
-            </a>
-          ) : null}
-          {canBuy ? (
-            <button
-              type="button"
-              disabled={pending || group.seats_left < seats}
-              onClick={onJoin}
-              className={isMember ? secondaryCta : primaryCta}
-            >
-              {buyLabel}
-            </button>
-          ) : null}
-          {enrollmentClosed && !isMember && !closedReason ? (
-            <p className="rounded-lg bg-(--theme-primary-subtle) px-3 py-2 text-xs text-(--theme-primary-ink)">
-              {t('courses.enrollmentClosed')}
-            </p>
-          ) : null}
           {closedReason ? (
             <p className="rounded-lg bg-(--theme-primary-subtle) px-3 py-2 text-xs text-(--theme-primary-ink)">
               {t(CLOSED_REASON_KEY[closedReason])}

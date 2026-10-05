@@ -94,7 +94,8 @@ export const en = {
     fromPrice: 'from {price}',
     openClasses: '{count} open classes',
     liveChooseClass: 'See and pick a class',
-    liveEnrollAndJoin: 'Enroll and join the class',
+    selectedClass: 'Selected class',
+    changeClass: 'Change class',
     enrollLogin: 'Sign in to enroll',
     guestClassesHint:
       'Pick the class whose times suit you and press Enroll — you sign in with just your phone number and a code.',
@@ -116,13 +117,10 @@ export const en = {
     groupClosedEnded: 'This class is not taking new students.',
     groupSessionsHeld: '{held} of {total} sessions held',
     groupClosedBadge: 'Closed',
-    liveSidebarPickOne: 'Pick a class to start enrolling.',
     groupUpcomingSessions: 'Upcoming sessions',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
     liveSessionOnHint: 'A live session is on now. Enter it to join the video.',
-    liveSidebarPickHint:
-      'Pick a published class that still has seats. Enroll, or join if the teacher already gave you access.',
     requestClassLinkWithClasses: 'No time fits? Suggest your own',
     requestClassTitle: 'Ask for a class time',
     requestClassHint:

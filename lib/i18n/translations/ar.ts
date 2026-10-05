@@ -79,7 +79,8 @@ export const ar = {
     fromPrice: 'from {price}',
     openClasses: '{count} open classes',
     liveChooseClass: 'See and pick a class',
-    liveEnrollAndJoin: 'Enroll and join the class',
+    selectedClass: 'الصف المختار',
+    changeClass: 'تغيير الصف',
     enrollLogin: 'سجّل الدخول للتسجيل',
     guestClassesHint: 'اختر الصف الذي تناسبك أوقاته واضغط «سجّل» — تدخل برقم هاتفك ورمز تحقق فقط.',
     quickEnrollTitle: 'دخول سريع للتسجيل',
@@ -99,13 +100,10 @@ export const ar = {
     groupClosedEnded: 'هذا الصف لا يقبل طلاباً جدداً.',
     groupSessionsHeld: 'عُقدت {held} من {total} جلسة',
     groupClosedBadge: 'مغلق',
-    liveSidebarPickOne: 'اختر صفاً لبدء التسجيل.',
     groupUpcomingSessions: 'الحصص القادمة',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
     liveSessionOnHint: 'A live session is on now. Enter it to join the video.',
-    liveSidebarPickHint:
-      'Pick a published class that still has seats. Enroll, or join if the teacher already gave you access.',
     requestClassLinkWithClasses: 'No time fits? Suggest your own',
     groupTerm: 'Runs',
     groupStarts: 'Starts',

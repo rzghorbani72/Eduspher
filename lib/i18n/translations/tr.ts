@@ -78,7 +78,8 @@ const tr = {
     fromPrice: 'from {price}',
     openClasses: '{count} open classes',
     liveChooseClass: 'See and pick a class',
-    liveEnrollAndJoin: 'Enroll and join the class',
+    selectedClass: 'Seçilen sınıf',
+    changeClass: 'Sınıfı değiştir',
     enrollLogin: 'Kaydolmak için giriş yapın',
     guestClassesHint:
       'Saatleri sana uyan sınıfı seç ve Kaydol’a bas — yalnızca telefon numaran ve bir kodla giriş yaparsın.',
@@ -99,13 +100,10 @@ const tr = {
     groupClosedEnded: 'Bu sınıf yeni öğrenci almıyor.',
     groupSessionsHeld: '{total} dersten {held} tanesi yapıldı',
     groupClosedBadge: 'Kapalı',
-    liveSidebarPickOne: 'Kayda başlamak için bir sınıf seç.',
     groupUpcomingSessions: 'Yaklaşan oturumlar',
     liveHasAccessHint:
       'Your classroom is always open. Live video starts only in the sessions the teacher scheduled.',
     liveSessionOnHint: 'A live session is on now. Enter it to join the video.',
-    liveSidebarPickHint:
-      'Pick a published class that still has seats. Enroll, or join if the teacher already gave you access.',
     requestClassLinkWithClasses: 'No time fits? Suggest your own',
     groupTerm: 'Runs',
     groupStarts: 'Starts',

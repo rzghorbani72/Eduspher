@@ -3,7 +3,7 @@
 import { CalendarPlus } from 'lucide-react';
 
 import { ClassRequestForm } from '@/components/courses/class-request-form';
-import { CLASS_REQUEST_ANCHOR_ID } from '@/components/courses/live-course-panel';
+import { CLASS_REQUEST_ANCHOR_ID } from '@/lib/courses/live-course';
 import { useTranslation } from '@/lib/i18n/hooks';
 
 interface ClassRequestSectionProps {

@@ -95,7 +95,8 @@ export const fa = {
     fromPrice: 'از {price}',
     openClasses: '{count} کلاس باز',
     liveChooseClass: 'مشاهده و انتخاب کلاس',
-    liveEnrollAndJoin: 'ثبت‌نام و ورود به کلاس',
+    selectedClass: 'کلاس انتخاب‌شده',
+    changeClass: 'تغییر کلاس',
     enrollLogin: 'برای ثبت‌نام وارد شو',
     guestClassesHint:
       'کلاسی را که زمانش برایت مناسب است انتخاب کن و «ثبت‌نام» را بزن؛ فقط با شماره موبایل و کد تأیید وارد می‌شوی.',
@@ -117,13 +118,10 @@ export const fa = {
     groupClosedEnded: 'ثبت‌نام این کلاس بسته است.',
     groupSessionsHeld: '{held} از {total} جلسه برگزار شده',
     groupClosedBadge: 'بسته',
-    liveSidebarPickOne: 'یک کلاس را انتخاب کن تا ثبت‌نام شروع شود.',
     groupUpcomingSessions: 'جلسه‌های پیش رو',
     liveHasAccessHint:
       'کلاس همیشه باز است. ویدیوی زنده فقط در جلسه‌هایی که مدرس زمان‌بندی کرده فعال می‌شود.',
     liveSessionOnHint: 'جلسهٔ زنده در حال برگزاری است. وارد شو تا به ویدیو بپیوندی.',
-    liveSidebarPickHint:
-      'یک کلاس منتشرشده با صندلی خالی را انتخاب کن. ثبت‌نام کن، یا اگر مدرس دسترسی داده وارد شو.',
     requestClassLinkWithClasses: 'زمان مناسبی نیست؟ زمان خودت را پیشنهاد بده',
     requestClassTitle: 'درخواست زمان کلاس',
     requestClassHint:

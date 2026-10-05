@@ -3,7 +3,7 @@
 import { CalendarClock, Clock3, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { CLASS_REQUEST_ANCHOR_ID } from '@/components/courses/live-course-panel';
+import { CLASS_REQUEST_ANCHOR_ID } from '@/lib/courses/live-course';
 import { JoinableClasses } from '@/components/live/joinable-classes';
 import Link from '@/components/ui/link';
 import type { TutoringGroupRoom } from '@/lib/api/account-types';

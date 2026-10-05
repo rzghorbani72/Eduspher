@@ -23,6 +23,9 @@ export const seatPriceOfGroup = (group: {
   Offer: { price: number } | null;
 }): number => group.seat_price ?? group.Offer?.price ?? 0;
 
+export const CLASS_REQUEST_ANCHOR_ID = 'request-class';
+export const GROUP_CLASSES_ANCHOR_ID = 'group-classes';
+
 export const groupAnchorId = (groupId: string): string => `class-${groupId}`;
 
 /** Same-page link that starts enrolling in one class (see TutoringGroupsSection). */
@@ -69,6 +72,10 @@ export const CLOSED_REASON_KEY: Record<ClosedReason, string> = {
 /** A class still open to pick, or one the student already holds a seat in. */
 export const isJoinablePublicGroup = (group: PublicJoinGroup): boolean =>
   Boolean(group.joined) || canBuyMoreSeats(group);
+
+/** Class picked when the page opens: the one I hold, else the first open one, else the first. */
+export const pickDefaultClass = <T extends PublicJoinGroup>(groups: readonly T[]): T | null =>
+  groups.find((group) => group.joined) ?? groups.find(canBuyMoreSeats) ?? groups[0] ?? null;
 
 /** Classroom page vs live video: the label follows whether a session is on now. */
 export const liveEnterLabelKey = (

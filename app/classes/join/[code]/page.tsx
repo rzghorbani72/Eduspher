@@ -1,4 +1,6 @@
 import { TutoringGroupsSection } from '@/components/courses/tutoring-groups-section';
+import { ClassEnrollAction } from '@/components/courses/live-class/class-enroll-action';
+import { LiveClassProvider } from '@/components/courses/live-class/live-class-provider';
 import { EmptyState } from '@/components/ui/empty-state';
 import { getCurrentUser, getPublicCourseDetail, getTutoringGroupByCode } from '@/lib/api/server';
 import { resolveAcademyForRequest } from '@/lib/courses/academy-context';
@@ -47,7 +49,7 @@ export default async function JoinClassByCodePage({
       <h1 className="mb-6 text-2xl font-bold text-(--theme-foreground)">
         {t('courses.groupInviteTitle', language)}
       </h1>
-      <TutoringGroupsSection
+      <LiveClassProvider
         groups={[group]}
         currencyConfig={currencyConfig}
         language={language}
@@ -55,7 +57,12 @@ export default async function JoinClassByCodePage({
         isLoggedIn={Boolean(user)}
         joinCode={code}
         liveClassHref={buildPath(liveClassPath(publicCourse.slug))}
-      />
+      >
+        <TutoringGroupsSection />
+        <div className="mt-4">
+          <ClassEnrollAction />
+        </div>
+      </LiveClassProvider>
     </main>
   );
 }
