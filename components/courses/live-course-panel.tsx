@@ -26,7 +26,7 @@ export function LiveCoursePanel() {
   const showTotal = buyable && isLoggedIn && !selected?.joined;
   const hint = selected?.session_live
     ? 'courses.liveSessionOnHint'
-    : selected?.joined || hasAccess
+    : (selected ? selected.joined : hasAccess)
       ? 'courses.liveHasAccessHint'
       : null;
 

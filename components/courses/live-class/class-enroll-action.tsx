@@ -19,8 +19,8 @@ const secondaryCta = `${baseCta} border border-(--theme-primary) text-(--theme-p
 
 /** Why the selected class can't be bought right now, or null when it can (or is mine). */
 export function useBlockedReasonKey(): string | null {
-  const { selected, hasAccess, enrollmentClosed } = useLiveClass();
-  if (!selected || selected.joined || hasAccess) return null;
+  const { selected, enrollmentClosed } = useLiveClass();
+  if (!selected || selected.joined) return null;
   const reason = closedReasonOf(selected);
   if (reason) return CLOSED_REASON_KEY[reason];
   return enrollmentClosed ? 'courses.enrollmentClosed' : null;
@@ -62,7 +62,7 @@ export function ClassEnrollAction({ inline = false }: { inline?: boolean }) {
 
   const isMember = Boolean(selected.joined);
   const buyable = canPurchase && canBuyMoreSeats(selected);
-  const showBuy = !isStaff && (isMember ? buyable : !hasAccess);
+  const showBuy = !isStaff && (buyable || !isMember);
   const buyLabel = isMember
     ? 'courses.groupBuyMoreSeats'
     : seats === selected.capacity && selected.capacity > 1
@@ -72,11 +72,8 @@ export function ClassEnrollAction({ inline = false }: { inline?: boolean }) {
   return (
     <div className="space-y-2">
       <div className={layout}>
-        {isMember || hasAccess ? (
-          <Link
-            href={isMember ? liveRoomHref(liveClassHref, selected.id) : liveClassHref}
-            className={primaryCta}
-          >
+        {isMember ? (
+          <Link href={liveRoomHref(liveClassHref, selected.id)} className={primaryCta}>
             {t(liveEnterLabelKey(selected.session_live))}
           </Link>
         ) : null}

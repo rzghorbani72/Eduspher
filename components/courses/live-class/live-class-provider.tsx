@@ -36,7 +36,7 @@ type LiveClassContextValue = {
   /** The academy sells seats and the viewer may buy one. */
   canPurchase: boolean;
   enrollmentClosed: boolean;
-  /** The viewer may open the classroom without a seat (teacher grant, staff). */
+  /** The viewer holds the course. Never opens a class: each class needs its own seat. */
   hasAccess: boolean;
   liveClassHref: string;
 };
