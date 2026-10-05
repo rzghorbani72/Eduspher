@@ -144,6 +144,12 @@ export const en = {
     requestClassAddWindow: 'Add another time',
     requestClassNote: 'Note for the teacher (optional)',
     requestClassSubmit: 'Send request',
+    requestClassTimeInvalid:
+      'This time runs past midnight. Start earlier or pick a shorter length.',
+    requestClassTimeOverlap: 'This overlaps another time you picked.',
+    requestClassTeacherBusy: 'The teacher has a class at this time. Pick a free time.',
+    requestClassBusyOn: 'Teacher is busy on this day at:',
+    requestClassAnother: 'Send another request',
     groupTerm: 'Runs',
     groupStarts: 'Starts',
     groupSeatsLeft: 'Seats left',

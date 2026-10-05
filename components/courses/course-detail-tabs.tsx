@@ -25,6 +25,8 @@ interface CourseDetailTabsProps {
   instructorAvatarUrl: string | null;
   /** Live-course syllabus, shown when there are no recorded lessons. */
   topics?: CourseTopic[];
+  /** Live classes, under the overview; kept mounted so the `?class=` enroll resume always works. */
+  classes?: ReactNode;
   /** Live course: the student's chat with the teacher, shown on the teacher tab. */
   teacherChat?: ReactNode;
   initialTab?: TabKey;
@@ -40,6 +42,7 @@ export function CourseDetailTabs({
   prerequisiteHref,
   instructorAvatarUrl,
   topics = [],
+  classes,
   teacherChat,
   initialTab = 'overview',
 }: CourseDetailTabsProps) {
@@ -114,6 +117,7 @@ export function CourseDetailTabs({
           {showLiveSchedule && <CourseLiveSchedule seasons={seasons} />}
         </div>
       )}
+      {classes ? <div hidden={activeTab !== 'overview'}>{classes}</div> : null}
 
       {activeTab === 'instructor' && (
         <div className="space-y-6">

@@ -20,8 +20,8 @@ export const TutoringGroupsSection = () => {
   // The selected class stays on screen even when it is past the first few.
   const visible =
     selected && !list.visible.includes(selected) ? [...list.visible, selected] : list.visible;
-  // Same rule the page uses to render the request form below the list.
-  const showRequest = !isStaff && !groups.some((group) => group.joined);
+  // Requests are unlimited, so every student may ask for another time.
+  const showRequest = !isStaff;
 
   return (
     <section

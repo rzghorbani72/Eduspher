@@ -95,6 +95,11 @@ export const LOG_CATALOG = {
   ClassRequest: {
     description: 'Logs emitted by the ClassRequest domain.',
     actions: {
+      BusyTimesFailed: {
+        description: 'Class request busy times failed.',
+        level: 'warn',
+        fields: [] as const,
+      },
       SubmitFailed: {
         description: 'Class request submit failed.',
         level: 'warn',

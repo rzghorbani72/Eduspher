@@ -244,26 +244,7 @@ export default async function CourseDetailPage({
               hasPreviewLessons={stats.previewCount > 0}
             />
 
-            {isLive ? (
-              <div className="mt-8 space-y-8">
-                {tutoringGroups.length ? (
-                  <TutoringGroupsSection />
-                ) : (
-                  <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
-                    {translate('courses.liveNoClassesYet')}
-                  </p>
-                )}
-                {!hasLiveSeat && !isStaff ? (
-                  <ClassRequestSection
-                    courseId={course.id}
-                    hasOpenClasses={tutoringGroups.length > 0}
-                    isLoggedIn={!!user}
-                  />
-                ) : null}
-              </div>
-            ) : null}
-
-            <div className="mt-10">
+            <div className="mt-7">
               <CourseDetailTabs
                 course={course}
                 isLoggedIn={!!user}
@@ -277,6 +258,22 @@ export default async function CourseDetailPage({
                 instructorAvatarUrl={avatarUrl}
                 topics={topics}
                 initialTab={isCourseTabKey(tab) ? tab : undefined}
+                classes={
+                  isLive ? (
+                    <div className="space-y-8">
+                      {tutoringGroups.length ? (
+                        <TutoringGroupsSection />
+                      ) : (
+                        <p className="border-theme text-muted rounded-2xl border border-dashed p-6 text-center text-sm">
+                          {translate('courses.liveNoClassesYet')}
+                        </p>
+                      )}
+                      {isStaff ? null : (
+                        <ClassRequestSection courseId={course.id} isLoggedIn={!!user} />
+                      )}
+                    </div>
+                  ) : null
+                }
                 teacherChat={
                   isStaff ? null : (
                     <TeacherChat
@@ -318,7 +315,7 @@ export default async function CourseDetailPage({
   );
 
   return (
-    <div className={isLive ? 'pb-24 lg:pb-0' : undefined}>
+    <div className={isLive ? 'cd-live pb-24 lg:pb-0' : undefined}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}

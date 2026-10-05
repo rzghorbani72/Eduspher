@@ -2202,22 +2202,7 @@ select[class*='rounded-sm'] {
 }
 
 .cd-hero {
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      color-mix(in srgb, var(--theme-primary) 40%, transparent),
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      color-mix(in srgb, var(--theme-secondary) 25%, transparent),
-      transparent 40%
-    ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--theme-primary) 40%, #0b0920),
-      color-mix(in srgb, var(--theme-primary) 75%, #0b0920)
-    );
+  background: #11132a;
   color: #fff;
   /* Full-bleed: span the whole viewport even inside a centered, padded
      max-width container. left:50% + -50vw margins ignore parent padding. */
@@ -2244,34 +2229,26 @@ select[class*='rounded-sm'] {
   color: rgba(255, 255, 255, 0.8);
 }
 .cd-live-badge {
-  background: rgba(255, 77, 109, 0.2);
-  color: #ffb3c1;
+  background: #ff5f76;
+  color: #fff;
 }
 .cd-blink-dot {
   animation: cd-blink 1.2s infinite;
-  background: #ff4d6d;
+  background: #fff;
 }
 .cd-white-badge {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  color: #fff;
-}
-.cd-teacher-pill {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 .cd-teacher-avatar {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 70%, #fff), #ff7eb6);
+  background: var(--theme-primary);
 }
 .cd-preview-card {
   aspect-ratio: 16/9;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
   background: #0c0e22;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 16px 40px -16px color-mix(in srgb, var(--theme-primary) 47%, transparent);
+  border: 1px solid var(--theme-border-color);
 }
 .cd-preview-placeholder {
   background: linear-gradient(150deg, #1a1d42 0%, #12152e 48%, #0a0c1e 100%);
@@ -2395,13 +2372,87 @@ select[class*='rounded-sm'] {
   color: #16a34a;
 }
 .cd-cta-btn {
+  background: var(--theme-primary);
+  color: var(--theme-on-primary);
+}
+.cd-cta-btn:hover {
+  opacity: 0.9;
+}
+
+/* Live course page (the class-picker design). Recorded courses keep the flat base above. */
+.cd-live .cd-hero {
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      color-mix(in srgb, var(--theme-primary) 40%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      color-mix(in srgb, var(--theme-secondary) 25%, transparent),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--theme-primary) 40%, #0b0920),
+      color-mix(in srgb, var(--theme-primary) 75%, #0b0920)
+    );
+}
+.cd-live .cd-live-badge {
+  background: rgba(255, 77, 109, 0.2);
+  color: #ffb3c1;
+}
+.cd-live .cd-blink-dot {
+  background: #ff4d6d;
+}
+.cd-live .cd-white-badge {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+.cd-live .cd-teacher-pill {
+  display: inline-flex;
+  border-radius: 99px;
+  padding-block: 6px;
+  padding-inline: 6px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.cd-live .cd-teacher-avatar {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--theme-primary) 70%, #fff), #ff7eb6);
+}
+.cd-live .cd-preview-card {
+  border-radius: 24px;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 40px -16px color-mix(in srgb, var(--theme-primary) 47%, transparent);
+}
+.cd-live .cd-cta-btn {
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--theme-primary) 75%, #fff),
     var(--theme-primary)
   );
-  color: var(--theme-on-primary);
   box-shadow: 0 8px 18px -10px var(--theme-primary);
+}
+.cd-live .cd-cta-btn:hover {
+  opacity: 1;
+}
+.cd-live .cd-review-card {
+  border-width: 1.5px;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--theme-primary) 7%, transparent);
+}
+.cd-live .cd-review-field {
+  border-radius: 12px;
+}
+.cd-live .cd-rating-bar {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--theme-primary) 70%, #fff),
+    var(--theme-primary)
+  );
 }
 
 /* Class picker cards: `--ac` is the per-card accent set inline. */

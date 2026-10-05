@@ -2,7 +2,7 @@ import Link from '@/components/ui/link';
 
 import type { CourseSummary } from '@/lib/api/types';
 import type { CourseContentStats } from '@/lib/courses/curriculum';
-import { formatDate, toPersianDigits } from '@/lib/utils';
+import { cn, formatDate, toPersianDigits } from '@/lib/utils';
 import { t } from '@/lib/i18n/server-translations';
 import { isLiveCourse } from '@/lib/courses/live-course';
 import { renderMarkdown } from '@/lib/markdown';
@@ -97,14 +97,24 @@ export function CourseHero({
           )}
         </div>
 
-        <h1 className="m-0 max-w-[780px] text-[clamp(26px,4.5vw,38px)] leading-tight font-black tracking-[-0.5px]">
+        <h1
+          className={cn(
+            'm-0 max-w-[780px] leading-tight font-black',
+            isLive
+              ? 'text-[clamp(26px,4.5vw,38px)] tracking-[-0.5px]'
+              : 'text-[clamp(26px,4.6vw,46px)] tracking-tight',
+          )}
+        >
           {course.title}
         </h1>
 
         {descriptionMarkdown ? (
           <CollapsibleHtml
             html={renderMarkdown(descriptionMarkdown)}
-            className="prose-description cd-hero-desc mt-2.5 max-w-[620px] text-[15px] leading-relaxed"
+            className={cn(
+              'prose-description cd-hero-desc leading-relaxed',
+              isLive ? 'mt-2.5 max-w-[620px] text-[15px]' : 'mt-3.5 max-w-[680px] text-lg',
+            )}
             collapsedClassName="max-h-[7.5rem]"
             toggleClassName="text-white/90 hover:text-white"
           />
@@ -151,7 +161,7 @@ export function CourseHero({
         </div>
 
         {course.author && (
-          <div className="cd-teacher-pill mt-6 inline-flex items-center gap-2.5 rounded-full py-1.5 ps-1.5 pe-4">
+          <div className="cd-teacher-pill mt-6 flex w-fit items-center gap-3">
             {avatarUrl ? (
               <AppImage
                 src={avatarUrl}

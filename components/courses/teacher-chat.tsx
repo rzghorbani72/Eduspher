@@ -21,8 +21,8 @@ export function TeacherChat({ courseId, currentProfileId, loginNext }: TeacherCh
   const requireLogin = useRequireLogin();
 
   return (
-    <section className="border-theme bg-card space-y-3 rounded-2xl border p-5">
-      <h3 className="flex items-center gap-2 text-base font-bold text-(--theme-foreground)">
+    <section className="cd-review-card space-y-3 rounded-2xl border p-5">
+      <h3 className="border-theme flex items-center gap-2 border-b pb-2.5 text-[17px] font-black text-(--theme-foreground)">
         <MessageCircle className="size-4 text-(--theme-primary)" aria-hidden="true" />
         {t('courses.teacherChatTitle')}
       </h3>

@@ -32,6 +32,7 @@
     "Cart.SyncAfterRemovalFailed": "Cart sync after removal failed.",
     "Cart.SyncFailed": "Cart sync failed.",
     "Cart.SyncRejected": "Cart sync rejected.",
+    "ClassRequest.BusyTimesFailed": "Class request busy times failed.",
     "ClassRequest.SubmitFailed": "Class request submit failed.",
     "ClassRequest.Submitted": "Class request submitted.",
     "Gdpr.ConsentAccepted": "GDPR consent accepted.",

@@ -12,7 +12,9 @@ import {
   type RequestWindow,
 } from '@/components/courses/class-request-window-row';
 import { useRequireLogin } from '@/components/courses/quick-enroll/login-dialog-provider';
+import { useTeacherBusyTimes } from '@/hooks/use-teacher-busy-times';
 import { postJson } from '@/lib/api/client';
+import { windowProblemAt, type WeeklyWindow } from '@/lib/courses/class-request-windows';
 import { sortWeekdays } from '@/lib/courses/weekly-rule';
 import { useTranslation } from '@/lib/i18n/hooks';
 import { logger } from '@/lib/logging/app-logger';
@@ -23,6 +25,12 @@ const toMinute = (time: string): number => {
   const [h, m] = time.split(':').map(Number);
   return h * 60 + m;
 };
+const FIRST_WINDOW: RequestWindow = { weekday: WEEK[0], from: '16:00', duration: 90 };
+const toWeekly = (w: RequestWindow): WeeklyWindow => ({
+  weekday: w.weekday,
+  start_minute: toMinute(w.from),
+  end_minute: toMinute(w.from) + w.duration,
+});
 
 interface ClassRequestFormProps {
   courseId: string;
@@ -35,6 +43,7 @@ interface ClassRequestFormProps {
 /**
  * A student tells the teacher when they can attend. Nothing is booked here —
  * the teacher answers by opening a class, and the student then buys a seat.
+ * Requests are unlimited, but each time must be free and valid (the server re-checks).
  */
 export function ClassRequestForm({
   courseId,
@@ -45,30 +54,27 @@ export function ClassRequestForm({
   const { t } = useTranslation();
   const requireLogin = useRequireLogin();
   const [seats, setSeats] = useState('1');
-  const [windows, setWindows] = useState<RequestWindow[]>([
-    { weekday: WEEK[0], from: '16:00', duration: 90 },
-  ]);
+  const [windows, setWindows] = useState<RequestWindow[]>([FIRST_WINDOW]);
   const [note, setNote] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const busy = useTeacherBusyTimes(courseId, isLoggedIn);
+  const weekly = windows.map(toWeekly);
+  const problems = weekly.map((_, index) => windowProblemAt(weekly, index, busy));
 
   const update = (index: number, patch: Partial<RequestWindow>) =>
     setWindows((all) => all.map((w, i) => (i === index ? { ...w, ...patch } : w)));
 
   const submit = async () => {
-    setBusy(true);
+    setSending(true);
     setError(null);
     try {
       await postJson('/class-requests', {
         course_id: courseId,
         engagement_id: engagementId,
         seats: engagementId ? 1 : Math.max(1, Number(seats) || 1),
-        windows: windows.map((w) => ({
-          weekday: w.weekday,
-          start_minute: toMinute(w.from),
-          end_minute: toMinute(w.from) + w.duration,
-        })),
+        windows: weekly,
         note: note.trim() || undefined,
       });
       setDone(true);
@@ -78,7 +84,7 @@ export function ClassRequestForm({
       setError(t('courses.requestClassFailed'));
       logger.warn('ClassRequest', 'SubmitFailed', errorFields(err));
     } finally {
-      setBusy(false);
+      setSending(false);
     }
   };
 
@@ -97,9 +103,21 @@ export function ClassRequestForm({
 
   if (done) {
     return (
-      <p className="border-theme bg-surface rounded-xl border p-4 text-sm">
-        {t('courses.requestClassDone')}
-      </p>
+      <div className="bg-surface space-y-3 rounded-xl p-4 text-sm">
+        <p>{t('courses.requestClassDone')}</p>
+        <button
+          type="button"
+          onClick={() => {
+            setWindows([FIRST_WINDOW]);
+            setNote('');
+            setDone(false);
+          }}
+          className="inline-flex items-center gap-1 text-sm font-bold text-(--theme-primary-ink)"
+        >
+          <Plus className="size-4" aria-hidden="true" />
+          {t('courses.requestClassAnother')}
+        </button>
+      </div>
     );
   }
 
@@ -133,6 +151,8 @@ export function ClassRequestForm({
           <ClassRequestWindowRow
             key={index}
             window={w}
+            problem={problems[index] ?? null}
+            busy={busy}
             removable={windows.length > 1}
             onChange={(patch) => update(index, patch)}
             onRemove={() => setWindows((all) => all.filter((_, i) => i !== index))}
@@ -141,9 +161,7 @@ export function ClassRequestForm({
         {windows.length < 7 ? (
           <button
             type="button"
-            onClick={() =>
-              setWindows((all) => [...all, { weekday: WEEK[0], from: '16:00', duration: 90 }])
-            }
+            onClick={() => setWindows((all) => [...all, FIRST_WINDOW])}
             className="inline-flex items-center gap-1 text-xs font-semibold text-(--theme-primary-ink)"
           >
             <Plus className="size-3.5" aria-hidden="true" />
@@ -165,7 +183,12 @@ export function ClassRequestForm({
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <Button type="submit" loading={busy} className="w-full">
+      <Button
+        type="submit"
+        loading={sending}
+        disabled={problems.some(Boolean)}
+        className="cd-cta-btn h-12 w-full rounded-[14px]"
+      >
         {t('courses.requestClassSubmit')}
       </Button>
     </form>
